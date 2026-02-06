@@ -1,0 +1,44 @@
+{
+  "name": "kilimo-agri-ai-suite",
+  "version": "1.0.0",
+  "description": "KILIMO Agri-AI Suite - Empowering smallholder farmers in Tanzania",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy:staging": "bash scripts/deploy.sh staging",
+    "deploy:production": "bash scripts/deploy.sh production",
+    "deploy:kilimo": "bash deploy-kilimo.sh",
+    "deploy:kilimo:staging": "bash deploy-kilimo.sh staging",
+    "deploy:kilimo:production": "bash deploy-kilimo.sh production",
+    "test:smoke": "bash scripts/smoke-test.sh",
+    "test:ai": "node scripts/ai-audit.js",
+    "test:runtime": "node scripts/runtime-test.js",
+    "test:payment": "node scripts/payment-sms-test.js",
+    "test:logs": "node scripts/log-checker.js",
+    "test:ui": "node scripts/ui-ux-audit.js",
+    "audit": "cd audit && npm run audit",
+    "audit:quick": "cd audit && npm run audit:quick",
+    "validate:translations": "node scripts/validate-translations.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.294.0",
+    "sonner": "^1.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/kilimo-agri-ai-suite"
+  },
+  "author": "CREOVA",
+  "license": "MIT"
+}

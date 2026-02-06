@@ -1,0 +1,3 @@
+import { SystemDiagnostics } from "./components/SystemDiagnostics";
+import WalletAdminDashboard from "./components/WalletAdminDashboard";
+import { projectId, publicAnonKey } from "./utils/supabase/info";

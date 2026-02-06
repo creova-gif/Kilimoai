@@ -1,0 +1,276 @@
+name: KILIMO Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # ============================================
+  # JOB 1: AUDIT
+  # ============================================
+  audit:
+    name: 🔍 Automated Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        working-directory: ./audit
+        run: npm install
+      
+      - name: Run comprehensive audit
+        working-directory: ./audit
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: npm run audit:headless
+      
+      - name: Check audit results
+        working-directory: ./audit
+        run: |
+          AUDIT_FILE=$(ls -t audit-reports/audit-report-*.json | head -1)
+          SUCCESS_RATE=$(node -p "JSON.parse(require('fs').readFileSync('$AUDIT_FILE')).summary.successRate")
+          echo "Audit Success Rate: $SUCCESS_RATE%"
+          
+          if (( $(echo "$SUCCESS_RATE < 85" | bc -l) )); then
+            echo "❌ Audit failed: Success rate below 85%"
+            exit 1
+          fi
+      
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: audit-report
+          path: audit/audit-reports/
+          retention-days: 30
+      
+      - name: Comment PR with audit results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const auditFile = fs.readdirSync('./audit/audit-reports')
+              .filter(f => f.endsWith('.json'))
+              .sort()
+              .reverse()[0];
+            
+            const audit = JSON.parse(fs.readFileSync(`./audit/audit-reports/${auditFile}`));
+            
+            const comment = `## 🔍 Audit Results
+            
+            **Success Rate:** ${audit.summary.successRate}%
+            **Tests Passed:** ${audit.summary.passed}/${audit.summary.totalTests}
+            **Duration:** ${audit.metadata.duration}s
+            
+            ${audit.summary.successRate >= 85 ? '✅ Audit passed!' : '❌ Audit failed!'}
+            
+            [View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # ============================================
+  # JOB 2: BUILD
+  # ============================================
+  build:
+    name: 🏗️ Build Frontend
+    runs-on: ubuntu-latest
+    needs: audit
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: dist/
+          retention-days: 7
+
+  # ============================================
+  # JOB 3: DEPLOY BACKEND
+  # ============================================
+  deploy-backend:
+    name: 🚀 Deploy Backend
+    runs-on: ubuntu-latest
+    needs: [audit, build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+      
+      - name: Link Supabase project
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      
+      - name: Deploy Edge Functions
+        run: supabase functions deploy --no-verify-jwt
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      
+      - name: Set function secrets
+        run: |
+          supabase secrets set OPENROUTER_API_KEY="${{ secrets.OPENROUTER_API_KEY }}"
+          supabase secrets set MPESA_API_KEY="${{ secrets.MPESA_API_KEY }}"
+          supabase secrets set FLUTTERWAVE_SECRET_KEY="${{ secrets.FLUTTERWAVE_SECRET_KEY }}"
+          supabase secrets set AFRICAS_TALKING_API_KEY="${{ secrets.AFRICAS_TALKING_API_KEY }}"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+  # ============================================
+  # JOB 4: DEPLOY FRONTEND
+  # ============================================
+  deploy-frontend:
+    name: 🌐 Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: [build, deploy-backend]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist/
+      
+      - name: Deploy to Vercel (Production)
+        if: github.ref == 'refs/heads/main'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+      
+      - name: Deploy to Vercel (Staging)
+        if: github.ref == 'refs/heads/staging'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  # ============================================
+  # JOB 5: SMOKE TESTS
+  # ============================================
+  smoke-tests:
+    name: 🔥 Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Wait for deployment
+        run: sleep 30
+      
+      - name: Run smoke tests
+        run: bash scripts/smoke-test.sh
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      
+      - name: Test critical endpoints
+        run: |
+          echo "Testing critical endpoints..."
+          
+          # Test health endpoint
+          curl -f ${{ secrets.API_BASE_URL }}/health || exit 1
+          
+          # Test wallet endpoint (expect 401 without auth)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.API_BASE_URL }}/wallet/test)
+          if [ "$STATUS" != "401" ] && [ "$STATUS" != "200" ]; then
+            echo "Unexpected status: $STATUS"
+            exit 1
+          fi
+          
+          echo "✅ Smoke tests passed!"
+
+  # ============================================
+  # JOB 6: NOTIFY
+  # ============================================
+  notify:
+    name: 📧 Notify Team
+    runs-on: ubuntu-latest
+    needs: [smoke-tests]
+    if: always()
+    
+    steps:
+      - name: Send Slack notification
+        if: secrets.SLACK_WEBHOOK_URL != ''
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            KILIMO Deployment ${{ job.status }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Create deployment record
+        if: success()
+        run: |
+          echo "Deployment successful!"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Timestamp: $(date)"
