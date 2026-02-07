@@ -12,17 +12,16 @@ import {
   PhoneCall, Info, PlayCircle, MessageCircle, Building2, DollarSign, Boxes, Zap, Wallet
 } from "lucide-react";
 
-import { LoginForm } from "./components/LoginForm";
-import { RegistrationForm } from "./components/RegistrationForm";
-import { RoleBasedRegistrationForm } from "./components/RoleBasedRegistrationForm";
-import { SignupWithOTPFlow } from "./components/SignupWithOTPFlow"; // ✅ Added OTP flow
-import { MasterOnboarding } from "./components/MasterOnboarding";
+import { WorldClassAuth } from "./components/auth/WorldClassAuth"; // ✅ NEW: World-class auth system
+import { InlinePersonalizationCard } from "./components/InlinePersonalizationCard"; // ✅ Non-blocking personalization
 import { DemoModeControlPanel } from "./components/DemoModeControlPanel";
 import logo from "figma:asset/59f0b6f20637b554072039bc3a2caa41a72f5af6.png";
 import circleLogo from "figma:asset/9ef1fbe0081cc013ac53d20ae90d325e9b280b39.png";
 import { hasFeatureAccess, filterFeaturesByRole, getRoleDisplayName, getRoleFeatures, FeatureId } from "./utils/roleBasedAccess";
 import { isDemoMode, getDemoUser, demoModeFeatureAccess, getDemoModeState } from "./utils/demoMode";
 import type { DemoModeState } from "./utils/demoMode";
+import { analytics } from "./utils/analytics"; // ✅ Analytics tracking
+import { useSessionTimeout } from "./hooks/useSessionTimeout"; // ✅ Session security
 
 // Component imports
 import { DashboardHome } from "./components/DashboardHome";
@@ -117,13 +116,47 @@ export default function App() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [language, setLanguage] = useState<"en" | "sw">("en");
-  const [showMasterOnboarding, setShowMasterOnboarding] = useState(false);
+  const [language, setLanguage] = useState<"en" | "sw">("sw"); // Default Swahili
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showInlinePersonalization, setShowInlinePersonalization] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [showDemoControl, setShowDemoControl] = useState(false);
   const [demoModeActive, setDemoModeActive] = useState(false);
 
   const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
+
+  // ✅ Initialize analytics on app load
+  useEffect(() => {
+    analytics.page('app_root');
+    analytics.track('app_initialized', {
+      version: '3.0.0',
+      environment: 'production'
+    });
+  }, []);
+
+  // ✅ Session timeout for security (15 minutes of inactivity)
+  useSessionTimeout({
+    timeout: 15 * 60 * 1000, // 15 minutes
+    warningTime: 60 * 1000, // 1 minute warning
+    enabled: isRegistered && !demoModeActive, // Only for logged-in users, not demo
+    onWarning: () => {
+      toast.warning(
+        language === 'en'
+          ? 'Your session will expire in 1 minute due to inactivity.'
+          : 'Kipindi chako kitaisha baada ya dakika 1 kwa ukosefu wa shughuli.',
+        { duration: 10000 }
+      );
+    },
+    onTimeout: () => {
+      handleLogout();
+      analytics.track('session_timeout');
+      toast.error(
+        language === 'en'
+          ? 'Session expired for security. Please log in again.'
+          : 'Kipindi kimeisha kwa usalama. Tafadhali ingia tena.'
+      );
+    }
+  });
 
   // Check if user is already registered OR if demo mode is active
   useEffect(() => {
@@ -147,7 +180,7 @@ export default function App() {
         if (demoUser) {
           setCurrentUser(demoUser);
           setIsRegistered(true);
-          setShowMasterOnboarding(false);
+          setShowOnboarding(false);
         }
       }
       return;
@@ -165,10 +198,24 @@ export default function App() {
       const user = JSON.parse(savedUser);
       setCurrentUser(user);
       setIsRegistered(true);
-      setShowMasterOnboarding(false);
+      setShowOnboarding(false);
+      
+      // ✅ Identify user in analytics
+      analytics.identify(user.id, {
+        role: user.role,
+        language: savedLanguage || 'sw',
+        onboardingCompleted: user.onboardingCompleted,
+        tier: user.tier || 'free'
+      });
+      
+      // Show inline personalization if not completed
+      if (user.onboardingCompleted && !localStorage.getItem('kilimoMainActivity')) {
+        setTimeout(() => setShowInlinePersonalization(true), 3000);
+      }
     } else if (!hasSeenWelcome) {
-      // First time user - show master onboarding
-      setShowMasterOnboarding(true);
+      // First time user - show world-class onboarding
+      analytics.track('first_visit');
+      setShowOnboarding(true);
     }
   }, []);
 
@@ -277,7 +324,7 @@ export default function App() {
     if (demoUser) {
       setCurrentUser(demoUser);
       setIsRegistered(true);
-      setShowMasterOnboarding(false);
+      setShowOnboarding(false);
       toast.success("Demo Mode Launched!", {
         description: `Role: ${demoState.active_role.replace(/_/g, " ")}`,
         duration: 3000,
@@ -471,6 +518,19 @@ export default function App() {
     ? filterFeaturesByRole(allNavigationItems, currentUser.role)
     : allNavigationItems;
 
+  // ✅ Track tab changes
+  useEffect(() => {
+    if (activeTab && currentUser) {
+      analytics.page(activeTab);
+      analytics.track('navigation_change', {
+        from: activeTab,
+        to: activeTab,
+        userId: currentUser.id,
+        userRole: currentUser.role
+      });
+    }
+  }, [activeTab]);
+
   // Group navigation by category
   const categories = [
     { id: "main", label: "Main", icon: Home },
@@ -497,77 +557,54 @@ export default function App() {
     );
   }
 
-  // Login/Register Screen
+  // Login/Register Screen - WORLD-CLASS REDESIGN
   if (!isRegistered) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+      <>
         <Toaster position="top-center" richColors />
-        
-        {/* Login/Register Forms */}
-        <div className="max-w-md mx-auto px-4 py-12">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-            {showLogin ? (
-              <LoginForm onLogin={handleLogin} loading={loading} language={language} />
-            ) : (
-              <SignupWithOTPFlow 
-                onComplete={(userData) => {
-                  setCurrentUser(userData);
-                  setIsRegistered(true);
-                  const roleDisplayName = getRoleDisplayName(userData.role, language);
-                  const featureCount = getRoleFeatures(userData.role).length;
-                  toast.success(
-                    language === "en"
-                      ? `✅ Phone verified! Welcome to KILIMO, ${userData.name}! (${roleDisplayName} • ${featureCount} features)`
-                      : `✅ Simu imethibitishwa! Karibu KILIMO, ${userData.name}! (${roleDisplayName} • Vipengele ${featureCount})`
-                  );
-                }}
-                language={language}
-              />
-            )}
+        <WorldClassAuth
+          onSuccess={(userData) => {
+            setCurrentUser(userData);
+            setIsRegistered(true);
             
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => setShowLogin(!showLogin)}
-                className="text-sm text-green-600 hover:text-green-700 font-medium"
-              >
-                {showLogin ? "Don't have an account? Register" : "Already have an account? Login"}
-              </button>
-            </div>
-          </div>
-
-          {/* Features Preview */}
-          <div className="mt-8 grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
-              <div className="p-2 bg-green-100 rounded-xl w-fit mb-2">
-                <Brain className="h-5 w-5 text-green-600" />
-              </div>
-              <h3 className="font-bold text-sm text-gray-900">AI Workflows</h3>
-              <p className="text-xs text-gray-600 mt-1">5 intelligent farm management tools</p>
-            </div>
-            <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
-              <div className="p-2 bg-green-100 rounded-xl w-fit mb-2">
-                <MessageSquare className="h-5 w-5 text-green-600" />
-              </div>
-              <h3 className="font-bold text-sm text-gray-900">Sankofa AI</h3>
-              <p className="text-xs text-gray-600 mt-1">24/7 agricultural advisor</p>
-            </div>
-            <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
-              <div className="p-2 bg-green-100 rounded-xl w-fit mb-2">
-                <TrendingUp className="h-5 w-5 text-green-600" />
-              </div>
-              <h3 className="font-bold text-sm text-gray-900">Live Prices</h3>
-              <p className="text-xs text-gray-600 mt-1">Real-time market data</p>
-            </div>
-            <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
-              <div className="p-2 bg-green-100 rounded-xl w-fit mb-2">
-                <Camera className="h-5 w-5 text-green-600" />
-              </div>
-              <h3 className="font-bold text-sm text-gray-900">Diagnosis</h3>
-              <p className="text-xs text-gray-600 mt-1">AI crop health analysis</p>
-            </div>
-          </div>
-        </div>
-      </div>
+            // ✅ Track successful authentication
+            analytics.identify(userData.id, {
+              role: userData.role,
+              language: language,
+              verified: userData.verified,
+              tier: userData.tier || 'free'
+            });
+            
+            analytics.track('auth_success', {
+              method: userData.verified ? 'otp' : 'password',
+              role: userData.role,
+              isNewUser: !userData.onboardingCompleted
+            });
+            
+            // Store user
+            localStorage.setItem("kilimoUser", JSON.stringify(userData));
+            
+            // Welcome message
+            const roleDisplayName = getRoleDisplayName(userData.role, language);
+            const featureCount = getRoleFeatures(userData.role).length;
+            toast.success(
+              language === "en"
+                ? `Welcome to KILIMO, ${userData.name}! 🌾`
+                : `Karibu KILIMO, ${userData.name}! 🌾`,
+              {
+                description: `${roleDisplayName} • ${featureCount} ${language === "en" ? "features" : "vipengele"}`,
+                duration: 3000
+              }
+            );
+            
+            // Show inline personalization for new users
+            if (!userData.onboardingCompleted) {
+              setTimeout(() => setShowInlinePersonalization(true), 2000);
+            }
+          }}
+          language={language}
+        />
+      </>
     );
   }
 
@@ -1037,6 +1074,20 @@ export default function App() {
                         </div>
                       </div>
 
+                      {/* Inline Personalization Card */}
+                      {showInlinePersonalization && (
+                        <InlinePersonalizationCard
+                          onComplete={(answer) => {
+                            localStorage.setItem('kilimoMainActivity', answer);
+                            setShowInlinePersonalization(false);
+                          }}
+                          onDismiss={() => {
+                            setShowInlinePersonalization(false);
+                          }}
+                          language={language}
+                        />
+                      )}
+
                       {/* Content Container with Smart Loading */}
                       <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm overflow-hidden">
                         {/* Tab Content with Transition System */}
@@ -1461,37 +1512,24 @@ export default function App() {
       {/* Floating Action Button */}
       <FloatingActionButton onAction={handleFABAction} language={language} />
 
-      {/* Master Onboarding */}
-      {showMasterOnboarding && (
-        <MasterOnboarding 
-          onComplete={(data) => {
-            setShowMasterOnboarding(false);
-            setLanguage(data.language);
-            if (data.mode === "guest") {
-              setIsGuestMode(true);
-              setIsRegistered(true);
-              // Create a guest user
-              const guestUser = {
-                id: "guest",
-                name: "Guest User",
-                phone: "",
-                region: "Dar es Salaam",
-                crops: [],
-                farmSize: "",
-                userType: "guest",
-                tier: "free" as const
-              };
-              setCurrentUser(guestUser);
+      {/* OnboardingV3WorldClass - Unified Access Flow */}
+      {showOnboarding && (
+        <OnboardingV3WorldClass 
+          onComplete={(userData) => {
+            setShowOnboarding(false);
+            setLanguage(userData.language);
+            setCurrentUser(userData);
+            setIsRegistered(true);
+            
+            // Show inline personalization after 3 seconds (new users only)
+            if (!userData.personalizationCompleted) {
+              setTimeout(() => {
+                setShowInlinePersonalization(true);
+              }, 3000);
             }
           }}
-          onShowRegister={() => {
-            setShowMasterOnboarding(false);
-            setShowLogin(false);
-          }}
-          onShowLogin={() => {
-            setShowMasterOnboarding(false);
-            setShowLogin(true);
-          }}
+          apiBase={API_BASE}
+          apiKey={publicAnonKey}
         />
       )}
     </div>

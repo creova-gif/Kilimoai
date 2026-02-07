@@ -125,6 +125,11 @@ export function registerSignupEndpoints(app: Hono) {
 
       if (email) {
         authPayload.email = email;
+      } else if (phone_number) {
+        // Generate placeholder email from phone number for Supabase Auth
+        // This is required because Supabase Auth needs an email field
+        authPayload.email = `${phone_number.replace(/\+/g, '')}@kilimo.app`;
+        authPayload.email_confirm = true; // Auto-confirm placeholder email
       }
 
       const { data: authData, error: authError } = await supabase.auth.admin.createUser(authPayload);

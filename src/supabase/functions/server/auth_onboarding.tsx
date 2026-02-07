@@ -106,7 +106,17 @@ authRoutes.post("/auth/send-otp", async (c) => {
     } catch (smsError) {
       console.error('⚠️ SMS send error:', smsError);
       console.log(`📱 OTP for testing: ${otp} (user: ${userId})`);
+      
+      // Log detailed SMS error for debugging
+      console.error('SMS Error Details:', {
+        phone: phone_number,
+        userId,
+        errorMessage: smsError.message,
+        timestamp: new Date().toISOString()
+      });
+      
       // Don't fail the request if SMS fails - user can retry
+      // Return a warning so frontend knows SMS might not have been sent
     }
 
     return c.json({
@@ -123,6 +133,38 @@ authRoutes.post("/auth/send-otp", async (c) => {
     return c.json({
       status: 'error',
       message: 'Failed to send OTP'
+    }, 500);
+  }
+});
+
+/**
+ * POST /auth/check-user
+ * Check if a phone number is already registered
+ */
+authRoutes.post("/auth/check-user", async (c) => {
+  try {
+    const { phone_number } = await c.req.json();
+
+    if (!phone_number) {
+      return c.json({
+        status: 'error',
+        message: 'Phone number is required'
+      }, 400);
+    }
+
+    // Check if phone exists in our system
+    const existingUserId = await kv.get(`phone:${phone_number}`);
+
+    return c.json({
+      exists: !!existingUserId,
+      user_id: existingUserId || null
+    });
+
+  } catch (error) {
+    console.error('Check user error:', error);
+    return c.json({
+      status: 'error',
+      message: 'Failed to check user'
     }, 500);
   }
 });
@@ -317,6 +359,225 @@ authRoutes.post("/wallet/init", async (c) => {
     return c.json({
       status: 'error',
       message: 'Failed to create wallet'
+    }, 500);
+  }
+});
+
+/**
+ * POST /users/create
+ * Create or update user after onboarding completion
+ */
+authRoutes.post("/users/create", async (c) => {
+  try {
+    const userData = await c.req.json();
+    const { id, phone, role, language } = userData;
+
+    if (!id || !phone) {
+      return c.json({
+        status: 'error',
+        message: 'Missing required fields: id, phone'
+      }, 400);
+    }
+
+    // Check if user already exists
+    const existingUser = await kv.get(`user:${id}`);
+    
+    if (existingUser) {
+      // Update existing user
+      const updatedUser = {
+        ...existingUser,
+        ...userData,
+        updatedAt: new Date().toISOString(),
+      };
+      
+      await kv.set(`user:${id}`, updatedUser);
+      
+      return c.json({
+        status: 'success',
+        user: updatedUser,
+        message: 'User updated successfully'
+      });
+    }
+
+    // Create new user
+    const newUser = {
+      ...userData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      verified: false, // Will be set to true after OTP verification
+    };
+
+    await kv.set(`user:${id}`, newUser);
+    await kv.set(`phone:${phone}`, id);
+
+    // Also create in Supabase Auth if not exists (with placeholder email)
+    try {
+      const placeholderEmail = `${phone.replace(/\+/g, '')}@kilimo.app`;
+      
+      const { error: authError } = await supabase.auth.admin.createUser({
+        phone: phone,
+        email: placeholderEmail,
+        email_confirm: true, // Auto-confirm placeholder
+        user_metadata: {
+          role,
+          language,
+          onboarding_completed: true,
+        }
+      });
+
+      if (authError && authError.code !== 'phone_exists') {
+        console.error('Supabase auth create error:', authError);
+      }
+    } catch (authCreateError) {
+      console.error('Error creating Supabase auth user:', authCreateError);
+      // Don't fail the whole request - user data is saved in KV
+    }
+
+    return c.json({
+      status: 'success',
+      user: newUser,
+      message: 'User created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create user error:', error);
+    return c.json({
+      status: 'error',
+      message: 'Failed to create user'
+    }, 500);
+  }
+});
+
+/**
+ * POST /auth/login-otp
+ * Login with OTP for returning users
+ */
+authRoutes.post("/auth/login-otp", async (c) => {
+  try {
+    const { phone_number, otp_code } = await c.req.json();
+
+    if (!phone_number || !otp_code) {
+      return c.json({
+        success: false,
+        error: 'Missing phone_number or otp_code'
+      }, 400);
+    }
+
+    // Get user ID from phone
+    const userId = await kv.get(`phone:${phone_number}`);
+    
+    if (!userId) {
+      return c.json({
+        success: false,
+        error: 'User not found'
+      }, 404);
+    }
+
+    // Get OTP record
+    const otpRecord = await kv.get(`otp:${userId}`) as OTPRecord | null;
+
+    if (!otpRecord) {
+      return c.json({
+        success: false,
+        error: 'No OTP found. Please request a new code.'
+      }, 404);
+    }
+
+    // Check expiry
+    if (Date.now() > otpRecord.expiresAt) {
+      await kv.del(`otp:${userId}`);
+      return c.json({
+        success: false,
+        error: 'OTP expired. Please request a new code.'
+      }, 400);
+    }
+
+    // Verify OTP
+    if (otpRecord.code !== otp_code) {
+      return c.json({
+        success: false,
+        error: 'Invalid code'
+      }, 400);
+    }
+
+    // Get user data
+    const user = await kv.get(`user:${userId}`);
+    
+    if (!user) {
+      return c.json({
+        success: false,
+        error: 'User not found'
+      }, 404);
+    }
+
+    // Delete used OTP
+    await kv.del(`otp:${userId}`);
+
+    return c.json({
+      success: true,
+      user: user
+    });
+
+  } catch (error) {
+    console.error('Login with OTP error:', error);
+    return c.json({
+      success: false,
+      error: 'Failed to login with OTP'
+    }, 500);
+  }
+});
+
+/**
+ * POST /auth/complete-profile
+ * Complete user profile after phone verification (new users only)
+ */
+authRoutes.post("/auth/complete-profile", async (c) => {
+  try {
+    const { user_id, name, role, phone_number } = await c.req.json();
+
+    if (!user_id || !name || !role || !phone_number) {
+      return c.json({
+        success: false,
+        error: 'Missing required fields'
+      }, 400);
+    }
+
+    // Get existing user
+    const existingUser = await kv.get(`user:${user_id}`);
+    
+    if (!existingUser) {
+      return c.json({
+        success: false,
+        error: 'User not found'
+      }, 404);
+    }
+
+    // Update user with profile data
+    const updatedUser = {
+      ...existingUser,
+      name,
+      role,
+      phone: phone_number,
+      onboardingCompleted: false, // Will show contextual setup later
+      tier: 'free',
+      updatedAt: new Date().toISOString(),
+    };
+
+    await kv.set(`user:${user_id}`, updatedUser);
+
+    // Ensure phone mapping exists
+    await kv.set(`phone:${phone_number}`, user_id);
+
+    return c.json({
+      success: true,
+      user: updatedUser
+    });
+
+  } catch (error) {
+    console.error('Complete profile error:', error);
+    return c.json({
+      success: false,
+      error: 'Failed to complete profile'
     }, 500);
   }
 });

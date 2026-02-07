@@ -210,7 +210,7 @@ export function PhoneVerification({ onVerified, language, apiBase, apiKey }: Pho
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-12 px-4">
+    <div className="min-h-screen bg-white py-12 px-4">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <motion.div

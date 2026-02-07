@@ -41,6 +41,7 @@ function validateSMSConfig() {
   console.log(`   Environment: ${Deno.env.get("ENVIRONMENT") || "sandbox"}`);
   console.log(`   Username: ${AFRICAS_TALKING_USERNAME}`);
   console.log(`   API URL: ${BASE_URL}`);
+  console.log(`   API Key (first 6 chars): ${AFRICAS_TALKING_API_KEY.substring(0, 6)}...`);
   return true;
 }
 
