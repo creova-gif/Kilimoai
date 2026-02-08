@@ -98,6 +98,7 @@ function formatPhoneNumber(phone: string): string {
  */
 export async function sendSMS(request: SMSRequest): Promise<SMSResponse> {
   if (!SMS_CONFIGURED) {
+    console.warn("⚠️ SMS not configured. Message content:", request);
     throw new Error("SMS configuration is not valid. Cannot send SMS.");
   }
 
@@ -122,34 +123,52 @@ export async function sendSMS(request: SMSRequest): Promise<SMSResponse> {
     formData.append("enqueue", "1");
   }
 
-  // Make API request
-  const response = await fetch(`${BASE_URL}/messaging`, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/x-www-form-urlencoded",
-      "apiKey": AFRICAS_TALKING_API_KEY,
-    },
-    body: formData.toString(),
-  });
+  console.log(`📱 Sending SMS to: ${recipients}`);
+  console.log(`   From: ${request.from || AFRICAS_TALKING_SENDER_ID}`);
+  console.log(`   Message preview: ${request.message.substring(0, 50)}...`);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    
-    // Provide helpful error messages
-    if (response.status === 401) {
-      throw new Error(
-        `SMS API Authentication Failed (401): Invalid API key or username. ` +
-        `Please check AFRICAS_TALKING_API_KEY and AFRICAS_TALKING_USERNAME in Supabase secrets. ` +
-        `Error details: ${errorText}`
-      );
+  try {
+    // Make API request
+    const response = await fetch(`${BASE_URL}/messaging`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "apiKey": AFRICAS_TALKING_API_KEY,
+      },
+      body: formData.toString(),
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      console.error(`❌ SMS API Error (${response.status}):`, responseText);
+      
+      // Provide helpful error messages
+      if (response.status === 401) {
+        throw new Error(
+          `SMS API Authentication Failed (401): Invalid API key or username. ` +
+          `Please check AFRICAS_TALKING_API_KEY and AFRICAS_TALKING_USERNAME in Supabase secrets. ` +
+          `Error details: ${responseText}`
+        );
+      }
+      
+      throw new Error(`SMS API error: ${response.status} - ${responseText}`);
     }
-    
-    throw new Error(`SMS API error: ${response.status} - ${errorText}`);
-  }
 
-  const data = await response.json();
-  return data;
+    const data = JSON.parse(responseText);
+    console.log(`✅ SMS sent successfully to ${recipients}`);
+    console.log(`   Response:`, data);
+    return data;
+  } catch (error) {
+    console.error("❌ SMS send error:", error);
+    console.error("   Error details:", {
+      message: error.message,
+      to: recipients,
+      from: request.from || AFRICAS_TALKING_SENDER_ID,
+    });
+    throw error;
+  }
 }
 
 /**
@@ -253,10 +272,18 @@ Thank you!
 export async function sendOTP(
   phone: string,
   otp: string,
+  language: "en" | "sw" = "en",
   expiryMinutes: number = 5
 ): Promise<SMSResponse> {
-  const message = `
-CREOVA Verification
+  const message = language === "sw" ? `
+KILIMO Uthibitishaji
+
+Msimbo wako: ${otp}
+
+Halali kwa dakika ${expiryMinutes}.
+Usimshirikishe mtu yeyote.
+  `.trim() : `
+KILIMO Verification
 
 Your OTP: ${otp}
 

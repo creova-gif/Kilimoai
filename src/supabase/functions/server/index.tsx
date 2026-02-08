@@ -23,6 +23,9 @@ import aiEngine from "./ai_engine.tsx"; // Unified AI Engine
 import { createClient } from "npm:@supabase/supabase-js";
 import * as authMiddleware from "./auth_middleware.tsx"; // Auth middleware
 import authRoutes from "./auth_onboarding.tsx"; // World-class onboarding auth
+import * as authUnified from "./auth_unified.tsx"; // Unified email + phone auth
+import * as aiTelemetry from "./ai_telemetry.tsx"; // AI telemetry and monitoring
+import * as crashReporting from "./crash_reporting.tsx"; // Crash reporting
 
 const app = new Hono();
 
@@ -5399,6 +5402,216 @@ app.route("/make-server-ce1844e7/ai", aiEngine);
 
 // Mount world-class onboarding auth routes
 app.route("/make-server-ce1844e7", authRoutes);
+
+// Unified Auth Routes (Email + Phone)
+app.post("/make-server-ce1844e7/auth/signup", (c) => authUnified.handleAuthSignup(c.req.raw));
+app.post("/make-server-ce1844e7/auth/phone-verify", (c) => authUnified.handlePhoneVerify(c.req.raw));
+
+// AI Telemetry & Monitoring Routes
+app.post("/make-server-ce1844e7/ai-telemetry/log", (c) => aiTelemetry.logAIEvent(c.req.raw));
+app.get("/make-server-ce1844e7/ai-telemetry/metrics/:userId", (c) => {
+  const userId = c.req.param("userId");
+  return aiTelemetry.getAIMetrics(c.req.raw, userId);
+});
+app.get("/make-server-ce1844e7/ai-telemetry/dashboard", (c) => aiTelemetry.getAIAnalyticsDashboard(c.req.raw));
+
+// Crash Reporting Routes
+app.post("/make-server-ce1844e7/crash-reports/log", (c) => crashReporting.logCrashReport(c.req.raw));
+app.get("/make-server-ce1844e7/crash-reports/metrics", (c) => crashReporting.getCrashMetrics(c.req.raw));
+
+// ==================== DASHBOARD HOME ====================
+
+// Get dashboard data for user
+app.get("/make-server-ce1844e7/dashboard/:userId", async (c) => {
+  try {
+    const userId = c.req.param("userId");
+    
+    if (!userId) {
+      return c.json({ error: "User ID required" }, 400);
+    }
+
+    // Fetch user data
+    const user = await kv.get(`user:${userId}`);
+    
+    // Handle demo users - they may not exist in database
+    const isDemoUser = userId.includes("demo-user");
+    
+    if (!user && !isDemoUser) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    // Use demo user data if user doesn't exist in DB
+    const userData = user || {
+      id: userId,
+      name: "Demo Farmer",
+      region: "Morogoro",
+      role: "smallholder_farmer"
+    };
+
+    // Get weather data for user's region
+    let weatherData = {
+      temp: 28,
+      condition: "Partly Cloudy",
+      humidity: 65,
+      rainfall: 12,
+      wind: 15
+    };
+
+    try {
+      // Try to get real weather if region is available
+      if (userData.region) {
+        const weatherResponse = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${user.region},TZ&units=metric&appid=${Deno.env.get("OPENWEATHER_API_KEY")}`
+        );
+        if (weatherResponse.ok) {
+          const weather = await weatherResponse.json();
+          weatherData = {
+            temp: Math.round(weather.main.temp),
+            condition: weather.weather[0].main,
+            humidity: weather.main.humidity,
+            rainfall: weather.rain?.["1h"] || 0,
+            wind: Math.round(weather.wind.speed * 3.6) // Convert m/s to km/h
+          };
+        }
+      }
+    } catch (err) {
+      console.warn("Weather fetch failed, using defaults:", err.message);
+    }
+
+    // Get user's tasks
+    const tasksData = await kv.getByPrefix(`task:${userId}:`);
+    const tasks = tasksData.map((task: any) => ({
+      id: task.id,
+      title: task.title,
+      priority: task.priority || "medium",
+      completed: task.completed || false
+    }));
+
+    // Get user's active crops
+    const cropsData = await kv.getByPrefix(`crop:${userId}:`);
+    const activeCrops = cropsData.length;
+
+    // Calculate pending tasks
+    const pendingTasks = tasks.filter((t: any) => !t.completed).length;
+
+    // Get farm stats
+    const farmStats = await kv.get(`farm_stats:${userId}`) || {
+      revenueTarget: 15000000,
+      currentProgress: 0,
+      daysLeft: 120
+    };
+
+    // Get revenue (from transactions or farm stats)
+    let totalRevenue = 0;
+    const transactions = await kv.getByPrefix(`transaction:${userId}:`);
+    transactions.forEach((tx: any) => {
+      if (tx.type === "income" || tx.type === "sale") {
+        totalRevenue += tx.amount;
+      }
+    });
+
+    // Format revenue
+    const revenue = totalRevenue >= 1000000 
+      ? `${(totalRevenue / 1000000).toFixed(1)}M`
+      : `${(totalRevenue / 1000).toFixed(0)}k`;
+
+    // Get market trends for user's region
+    const marketTrends = [
+      { crop: "Maize", price: 850000, change: 5.2, trend: "up" },
+      { crop: "Rice", price: 1200000, change: -2.1, trend: "down" },
+      { crop: "Beans", price: 950000, change: 3.8, trend: "up" }
+    ];
+
+    // Try to get real market data
+    try {
+      const realMarketData = await kv.getByPrefix(`market:${userData.region}:`);
+      if (realMarketData.length > 0) {
+        marketTrends.length = 0; // Clear defaults
+        realMarketData.slice(0, 3).forEach((market: any) => {
+          marketTrends.push({
+            crop: market.crop,
+            price: market.price,
+            change: market.change || 0,
+            trend: market.change > 0 ? "up" : "down"
+          });
+        });
+      }
+    } catch (err) {
+      console.warn("Market data fetch failed, using defaults");
+    }
+
+    // Calculate progress
+    const currentProgress = Math.min(
+      100,
+      Math.round((totalRevenue / farmStats.revenueTarget) * 100)
+    );
+
+    return c.json({
+      stats: {
+        activeCrops,
+        pendingTasks,
+        revenue,
+        soilHealth: "Good" // TODO: Calculate from real data
+      },
+      weather: weatherData,
+      tasks: tasks.slice(0, 3), // Top 3 tasks
+      marketTrends,
+      farmStats: {
+        revenueTarget: farmStats.revenueTarget,
+        currentProgress,
+        daysLeft: farmStats.daysLeft
+      }
+    });
+
+  } catch (error: any) {
+    console.error("Dashboard error:", error);
+    return c.json({ 
+      error: "Failed to load dashboard",
+      message: error.message 
+    }, 500);
+  }
+});
+
+// Toggle task completion
+app.post("/make-server-ce1844e7/tasks/:taskId/toggle", async (c) => {
+  try {
+    const taskId = c.req.param("taskId");
+    
+    if (!taskId) {
+      return c.json({ error: "Task ID required" }, 400);
+    }
+
+    // Get task
+    const tasks = await kv.getByPrefix(`task:`);
+    const task = tasks.find((t: any) => t.id === parseInt(taskId));
+    
+    if (!task) {
+      return c.json({ error: "Task not found" }, 404);
+    }
+
+    // Toggle completion
+    const updatedTask = {
+      ...task,
+      completed: !task.completed,
+      updatedAt: new Date().toISOString()
+    };
+
+    // Save updated task
+    await kv.set(`task:${task.userId}:${taskId}`, updatedTask);
+
+    return c.json({
+      success: true,
+      task: updatedTask
+    });
+
+  } catch (error: any) {
+    console.error("Task toggle error:", error);
+    return c.json({ 
+      error: "Failed to update task",
+      message: error.message 
+    }, 500);
+  }
+});
 
 // ==================== 404 HANDLER (Must be last) ====================
 // Catch-all for undefined routes - returns JSON instead of HTML

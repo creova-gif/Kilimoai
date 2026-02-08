@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../utils/supabase/client"; // ✅ Use singleton client
 import { projectId, publicAnonKey } from "../utils/supabase/info";
 
 interface FormField {
@@ -47,11 +47,6 @@ export function DynamicRoleOnboarding({
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  const supabase = createClient(
-    `https://${projectId}.supabase.co`,
-    publicAnonKey
-  );
 
   // Fetch form schema from Supabase
   useEffect(() => {

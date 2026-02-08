@@ -246,18 +246,10 @@ export function AIFarmPlanGenerator({
 
   return (
     <div className="space-y-4 md:space-y-6">
-      {/* Premium Header with Glass Morphism */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 via-emerald-600 to-teal-700 p-6 md:p-8 shadow-2xl border border-green-400/30">
-        {/* Animated Background Orbs */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-300/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl"></div>
-        
-        {/* Glass Morphism Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm"></div>
-        
+      {/* Header - Clean & Professional */}
+      <div className="rounded-2xl bg-[#2E7D32] p-6 md:p-8 shadow-lg">
         {/* Content */}
-        <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="space-y-2">
             {/* Title with Icon Badge */}
             <div className="flex items-center gap-3">
@@ -315,7 +307,7 @@ export function AIFarmPlanGenerator({
       </div>
 
       {/* Plan Configuration */}
-      <Card className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200">
+      <Card className="bg-white border-2 border-gray-200">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg md:text-xl">Plan Configuration</CardTitle>
           <CardDescription>Customize your farming season plan</CardDescription>
@@ -378,7 +370,7 @@ export function AIFarmPlanGenerator({
       {farmPlan ? (
         <>
           {/* Overall Progress */}
-          <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+          <Card className="border-2 border-gray-200 bg-white">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm">Overall Progress</span>
@@ -386,7 +378,7 @@ export function AIFarmPlanGenerator({
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <motion.div
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full"
+                  className="bg-[#2E7D32] h-3 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${getOverallProgress()}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}

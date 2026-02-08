@@ -12,8 +12,10 @@ import {
   PhoneCall, Info, PlayCircle, MessageCircle, Building2, DollarSign, Boxes, Zap, Wallet
 } from "lucide-react";
 
-import { WorldClassAuth } from "./components/auth/WorldClassAuth"; // ✅ NEW: World-class auth system
+import { UnifiedDualAuth } from "./components/auth/UnifiedDualAuth"; // ✅ PRODUCTION: Dual-method auth (Email+Password OR Phone+OTP)
+import { supabase } from "./utils/supabase/client"; // ✅ Singleton Supabase client
 import { InlinePersonalizationCard } from "./components/InlinePersonalizationCard"; // ✅ Non-blocking personalization
+import { OnboardingV3WorldClass } from "./components/onboarding-v3/OnboardingV3WorldClass"; // ✅ Legacy onboarding (if needed)
 import { DemoModeControlPanel } from "./components/DemoModeControlPanel";
 import logo from "figma:asset/59f0b6f20637b554072039bc3a2caa41a72f5af6.png";
 import circleLogo from "figma:asset/9ef1fbe0081cc013ac53d20ae90d325e9b280b39.png";
@@ -22,6 +24,7 @@ import { isDemoMode, getDemoUser, demoModeFeatureAccess, getDemoModeState } from
 import type { DemoModeState } from "./utils/demoMode";
 import { analytics } from "./utils/analytics"; // ✅ Analytics tracking
 import { useSessionTimeout } from "./hooks/useSessionTimeout"; // ✅ Session security
+import { crashReporter, ErrorBoundary } from "./utils/crash-reporting"; // ✅ Crash reporting & error boundaries
 
 // Component imports
 import { DashboardHome } from "./components/DashboardHome";
@@ -92,25 +95,42 @@ import { AutoAIInsights } from "./components/AutoAIInsights";
 import { SystemDiagnostics } from "./components/SystemDiagnostics";
 import { OfflineIndicator } from "./components/OfflineIndicator"; // ✅ Added offline detection
 import WalletAdminDashboard from "./components/WalletAdminDashboard";
+import { CollapsibleNavCategory } from "./components/CollapsibleNavCategory";
 import { projectId, publicAnonKey } from "./utils/supabase/info";
 
 interface User {
   id: string;
   name: string;
-  phone: string;
-  region: string;
-  crops: string[];
-  farmSize: string;
-  userType: string;
+  phone?: string;
+  email?: string;
+  region?: string;
+  crops?: string[];
+  farmSize?: string;
+  userType?: string;
   role?: string;
   tier?: "free" | "basic" | "premium" | "enterprise";
+  verified?: boolean;
+  onboardingCompleted?: boolean;
 }
 
 export default function App() {
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(true); // ✅ TEMP: Skip auth for testing
   const [showLogin, setShowLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false); // ✅ TEMP: Disable loading screen
+  const [currentUser, setCurrentUser] = useState<User | null>({
+    id: "demo-user-123",
+    name: "Demo Farmer",
+    email: "demo@kilimo.tz",
+    phoneNumber: "+255712345678",
+    role: "farmer",
+    region: "Arusha",
+    crops: ["Maize", "Beans", "Coffee"],
+    farmSize: "5 acres",
+    language: "sw",
+    verified: true,
+    onboardingCompleted: true,
+    tier: "premium"
+  } as User); // ✅ TEMP: Demo user for testing
   const [activeTab, setActiveTab] = useState("home");
   const [notificationCount, setNotificationCount] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -124,6 +144,59 @@ export default function App() {
   const [demoModeActive, setDemoModeActive] = useState(false);
 
   const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
+  
+  // Supabase client (singleton from utils/supabase/client.ts)
+  // Already imported at top: import { supabase } from "./utils/supabase/client";
+
+  // ✅ SESSION RESTORATION - Check for active session on load
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        // Check for active Supabase session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session && session.user) {
+          // Session exists - restore user
+          const userData = {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || session.user.email,
+            role: session.user.user_metadata?.role || "smallholder_farmer",
+            tier: session.user.user_metadata?.tier || "free",
+            verified: true,
+            onboardingCompleted: session.user.user_metadata?.onboarding_complete || false,
+          };
+
+          setCurrentUser(userData);
+          setIsRegistered(true);
+          localStorage.setItem("kilimoUser", JSON.stringify(userData));
+          
+          console.log("✅ Session restored:", userData.email || userData.phone);
+        } else {
+          // No session - check localStorage fallback
+          const savedUser = localStorage.getItem("kilimoUser");
+          if (savedUser) {
+            const user = JSON.parse(savedUser);
+            setCurrentUser(user);
+            setIsRegistered(true);
+          }
+        }
+      } catch (error) {
+        console.error("Session restoration error:", error);
+        // Fallback to localStorage
+        const savedUser = localStorage.getItem("kilimoUser");
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          setCurrentUser(user);
+          setIsRegistered(true);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, []);
 
   // ✅ Initialize analytics on app load
   useEffect(() => {
@@ -306,11 +379,20 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Sign out from Supabase
+    await supabase.auth.signOut();
+    
+    // Clear local state
     setCurrentUser(null);
     setIsRegistered(false);
     localStorage.removeItem("kilimoUser");
-    toast.success("Logged out successfully");
+    
+    toast.success(
+      language === "en" 
+        ? "Logged out successfully" 
+        : "Umetoka nje kikamilifu"
+    );
   };
 
   const handleLaunchDemo = (demoState: DemoModeState) => {
@@ -457,60 +539,60 @@ export default function App() {
     }
   };
 
-  // Navigation items - ALL 50+ FEATURES
-  const allNavigationItems: Array<{ id: FeatureId; label: string; icon: any; color: string; category: string; badge?: string }> = [
-    { id: "home", label: "Dashboard", icon: Home, color: "text-blue-600", category: "main" },
-    { id: "workflows", label: "AI Workflows", icon: Brain, color: "text-purple-600", badge: "NEW", category: "ai" },
-    { id: "ai-chat", label: "Sankofa AI", icon: MessageSquare, color: "text-green-600", category: "ai" },
-    { id: "diagnosis", label: "Crop Diagnosis", icon: Camera, color: "text-orange-600", category: "ai" },
-    { id: "voice", label: "Voice Assistant", icon: Phone, color: "text-blue-600", category: "ai" },
-    { id: "ai-training", label: "AI Training Hub", icon: Brain, color: "text-purple-600", badge: "NEW", category: "ai" },
-    { id: "market", label: "Market Prices", icon: TrendingUp, color: "text-indigo-600", category: "market" },
-    { id: "weather", label: "Weather", icon: CloudRain, color: "text-sky-600", category: "main" },
-    { id: "marketplace", label: "Marketplace", icon: ShoppingCart, color: "text-pink-600", category: "market" },
-    { id: "experts", label: "Expert Consult", icon: Users, color: "text-cyan-600", category: "services" },
-    { id: "soil-test", label: "Soil Testing", icon: Microscope, color: "text-emerald-600", category: "services" },
-    { id: "videos", label: "Video Tutorials", icon: PlayCircle, color: "text-rose-600", category: "learning" },
-    { id: "knowledge", label: "Knowledge Base", icon: BookOpen, color: "text-amber-600", category: "learning" },
-    { id: "discussions", label: "Discussion Groups", icon: MessageCircle, color: "text-violet-600", category: "community" },
-    { id: "tasks", label: "Task Management", icon: ClipboardList, color: "text-blue-600", category: "farm" },
-    { id: "crop-planning", label: "Crop Planning", icon: Sprout, color: "text-green-600", category: "farm" },
-    { id: "crop-planning-ai", label: "Crop Planning AI", icon: Brain, color: "text-emerald-600", category: "farm" },
-    { id: "crop-dashboard", label: "Crop Dashboard", icon: BarChart3, color: "text-emerald-600", category: "farm" },
-    { id: "livestock", label: "Livestock", icon: Activity, color: "text-orange-600", category: "farm" },
-    { id: "livestock-health", label: "Livestock Health", icon: Activity, color: "text-red-600", category: "farm" },
-    { id: "farm-mapping", label: "Farm Mapping", icon: Map, color: "text-indigo-600", category: "farm" },
-    { id: "land-allocation", label: "Land Allocation", icon: Target, color: "text-purple-600", category: "farm" },
-    { id: "inventory", label: "Inventory", icon: Warehouse, color: "text-blue-600", category: "farm" },
-    { id: "finance", label: "Farm Finance", icon: Calculator, color: "text-green-600", category: "finance" },
-    { id: "mobile-money", label: "Mobile Money", icon: CreditCard, color: "text-pink-600", category: "finance" },
-    { id: "wallet-admin", label: "Wallet Admin", icon: Wallet, color: "text-emerald-600", category: "finance" },
-    { id: "orders", label: "Orders & Sales", icon: ShoppingBag, color: "text-purple-600", category: "market" },
-    { id: "agribusiness", label: "Agribusiness", icon: Building2, color: "text-purple-600", category: "market" },
-    { id: "input-supply", label: "Input Supply", icon: Package, color: "text-blue-600", category: "finance" },
-    { id: "contracts", label: "Contract Farming", icon: FileText, color: "text-green-600", category: "finance" },
-    { id: "insurance", label: "Insurance", icon: Shield, color: "text-red-600", category: "services" },
-    { id: "agro-id", label: "KILIMO Agro-ID", icon: IdCard, color: "text-blue-600", category: "services" },
-    { id: "analytics", label: "Analytics", icon: BarChart3, color: "text-purple-600", category: "insights" },
-    { id: "reports", label: "Reporting", icon: LineChart, color: "text-indigo-600", category: "insights" },
-    { id: "farm-graph", label: "Farm Graph", icon: Network, color: "text-cyan-600", category: "insights" },
-    { id: "predictive", label: "Predictions", icon: TrendingUp, color: "text-green-600", category: "insights" },
-    { id: "digital-twin", label: "Digital Twin", icon: Boxes, color: "text-purple-600", category: "insights" },
-    { id: "ai-recommendations", label: "AI Recommendations", icon: Lightbulb, color: "text-yellow-600", category: "ai" },
-    { id: "ai-insights", label: "AI Insights", icon: Brain, color: "text-green-600", category: "ai" },
-    { id: "crop-tips", label: "Crop Specific Tips", icon: Leaf, color: "text-emerald-600", category: "learning" },
-    { id: "family-planner", label: "Family Planner", icon: Users, color: "text-pink-600", category: "farm" },
-    { id: "farmer-lab", label: "Farmer Lab", icon: Microscope, color: "text-purple-600", category: "learning" },
-    { id: "gamification", label: "Achievements", icon: Award, color: "text-yellow-600", category: "admin" },
-    { id: "extension", label: "Extension Officer", icon: Briefcase, color: "text-indigo-600", category: "admin" },
-    { id: "institutional", label: "Institutional", icon: Building2, color: "text-purple-600", category: "admin" },
-    { id: "cooperative", label: "Cooperative", icon: Users, color: "text-green-600", category: "community" },
-    { id: "diagnostics", label: "System Diagnostics", icon: Settings, color: "text-gray-600", category: "admin" },
-    { id: "training", label: "Training Courses", icon: BookOpen, color: "text-blue-600", category: "learning" },
-    { id: "support", label: "Support", icon: HelpCircle, color: "text-blue-600", category: "help" },
-    { id: "contact", label: "Contact Us", icon: PhoneCall, color: "text-green-600", category: "help" },
-    { id: "faq", label: "FAQ", icon: Info, color: "text-cyan-600", category: "help" },
-    { id: "privacy", label: "Privacy", icon: Shield, color: "text-gray-600", category: "settings" },
+  // Navigation items - ALL 50+ FEATURES (🔥 CLEAN DATA - NO COLOR PROPS)
+  const allNavigationItems: Array<{ id: FeatureId; label: string; icon: any; category: string }> = [
+    { id: "home", label: "Dashboard", icon: Home, category: "main" },
+    { id: "workflows", label: "AI Workflows", icon: Brain, category: "ai" },
+    { id: "ai-chat", label: "Sankofa AI", icon: MessageSquare, category: "ai" },
+    { id: "diagnosis", label: "Crop Diagnosis", icon: Camera, category: "ai" },
+    { id: "voice", label: "Voice Assistant", icon: Phone, category: "ai" },
+    { id: "ai-training", label: "AI Training Hub", icon: Brain, category: "ai" },
+    { id: "market", label: "Market Prices", icon: TrendingUp, category: "market" },
+    { id: "weather", label: "Weather", icon: CloudRain, category: "main" },
+    { id: "marketplace", label: "Marketplace", icon: ShoppingCart, category: "market" },
+    { id: "experts", label: "Expert Consult", icon: Users, category: "services" },
+    { id: "soil-test", label: "Soil Testing", icon: Microscope, category: "services" },
+    { id: "videos", label: "Video Tutorials", icon: PlayCircle, category: "learning" },
+    { id: "knowledge", label: "Knowledge Base", icon: BookOpen, category: "learning" },
+    { id: "discussions", label: "Discussion Groups", icon: MessageCircle, category: "community" },
+    { id: "tasks", label: "Task Management", icon: ClipboardList, category: "farm" },
+    { id: "crop-planning", label: "Crop Planning", icon: Sprout, category: "farm" },
+    { id: "crop-planning-ai", label: "Crop Planning AI", icon: Brain, category: "farm" },
+    { id: "crop-dashboard", label: "Crop Dashboard", icon: BarChart3, category: "farm" },
+    { id: "livestock", label: "Livestock", icon: Activity, category: "farm" },
+    { id: "livestock-health", label: "Livestock Health", icon: Activity, category: "farm" },
+    { id: "farm-mapping", label: "Farm Mapping", icon: Map, category: "farm" },
+    { id: "land-allocation", label: "Land Allocation", icon: Target, category: "farm" },
+    { id: "inventory", label: "Inventory", icon: Warehouse, category: "farm" },
+    { id: "finance", label: "Farm Finance", icon: Calculator, category: "finance" },
+    { id: "mobile-money", label: "Mobile Money", icon: CreditCard, category: "finance" },
+    { id: "wallet-admin", label: "Wallet Admin", icon: Wallet, category: "finance" },
+    { id: "orders", label: "Orders & Sales", icon: ShoppingBag, category: "market" },
+    { id: "agribusiness", label: "Agribusiness", icon: Building2, category: "market" },
+    { id: "input-supply", label: "Input Supply", icon: Package, category: "finance" },
+    { id: "contracts", label: "Contract Farming", icon: FileText, category: "finance" },
+    { id: "insurance", label: "Insurance", icon: Shield, category: "services" },
+    { id: "agro-id", label: "KILIMO Agro-ID", icon: IdCard, category: "services" },
+    { id: "analytics", label: "Analytics", icon: BarChart3, category: "insights" },
+    { id: "reports", label: "Reporting", icon: LineChart, category: "insights" },
+    { id: "farm-graph", label: "Farm Graph", icon: Network, category: "insights" },
+    { id: "predictive", label: "Predictions", icon: TrendingUp, category: "insights" },
+    { id: "digital-twin", label: "Digital Twin", icon: Boxes, category: "insights" },
+    { id: "ai-recommendations", label: "AI Recommendations", icon: Lightbulb, category: "ai" },
+    { id: "ai-insights", label: "AI Insights", icon: Brain, category: "ai" },
+    { id: "crop-tips", label: "Crop Specific Tips", icon: Leaf, category: "learning" },
+    { id: "family-planner", label: "Family Planner", icon: Users, category: "farm" },
+    { id: "farmer-lab", label: "Farmer Lab", icon: Microscope, category: "learning" },
+    { id: "gamification", label: "Achievements", icon: Award, category: "admin" },
+    { id: "extension", label: "Extension Officer", icon: Briefcase, category: "admin" },
+    { id: "institutional", label: "Institutional", icon: Building2, category: "admin" },
+    { id: "cooperative", label: "Cooperative", icon: Users, category: "community" },
+    { id: "diagnostics", label: "System Diagnostics", icon: Settings, category: "admin" },
+    { id: "training", label: "Training Courses", icon: BookOpen, category: "learning" },
+    { id: "support", label: "Support", icon: HelpCircle, category: "help" },
+    { id: "contact", label: "Contact Us", icon: PhoneCall, category: "help" },
+    { id: "faq", label: "FAQ", icon: Info, category: "help" },
+    { id: "privacy", label: "Privacy", icon: Shield, category: "settings" },
   ];
 
   // Filter navigation items based on user role
@@ -557,12 +639,26 @@ export default function App() {
     );
   }
 
-  // Login/Register Screen - WORLD-CLASS REDESIGN
+  // Loading screen while checking session
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-12 w-12 border-4 border-[#2E7D32] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">
+            {language === "en" ? "Loading..." : "Inapakia..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Login/Register Screen - UNIFIED DUAL AUTH
   if (!isRegistered) {
     return (
       <>
         <Toaster position="top-center" richColors />
-        <WorldClassAuth
+        <UnifiedDualAuth
           onSuccess={(userData) => {
             setCurrentUser(userData);
             setIsRegistered(true);
@@ -576,12 +672,12 @@ export default function App() {
             });
             
             analytics.track('auth_success', {
-              method: userData.verified ? 'otp' : 'password',
+              method: userData.email ? 'email_password' : 'phone_otp',
               role: userData.role,
               isNewUser: !userData.onboardingCompleted
             });
             
-            // Store user
+            // Store user (already done in component, but ensure it's set)
             localStorage.setItem("kilimoUser", JSON.stringify(userData));
             
             // Welcome message
@@ -632,47 +728,14 @@ export default function App() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden relative group"
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="Toggle mobile menu"
               >
-                <div className="relative w-12 h-12 flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border-2 border-green-200 hover:border-green-400">
-                  {/* Animated background pulse */}
-                  <div className={`absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${showMobileMenu ? 'animate-pulse' : ''}`} />
-                  
-                  {/* Menu icon container */}
-                  <div className="relative w-6 h-6 flex flex-col justify-center items-center gap-1.5">
-                    {/* Top bar */}
-                    <span className={`block h-0.5 w-6 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full transition-all duration-300 ease-out ${
-                      showMobileMenu 
-                        ? 'rotate-45 translate-y-2 w-6' 
-                        : 'group-hover:w-5'
-                    }`} />
-                    
-                    {/* Middle bar */}
-                    <span className={`block h-0.5 w-6 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full transition-all duration-300 ease-out ${
-                      showMobileMenu 
-                        ? 'opacity-0 scale-0' 
-                        : 'group-hover:w-4 opacity-100'
-                    }`} />
-                    
-                    {/* Bottom bar */}
-                    <span className={`block h-0.5 w-6 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full transition-all duration-300 ease-out ${
-                      showMobileMenu 
-                        ? '-rotate-45 -translate-y-2 w-6' 
-                        : 'group-hover:w-5'
-                    }`} />
-                  </div>
-                  
-                  {/* Notification dot when menu is active */}
-                  {showMobileMenu && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-full border-2 border-white shadow-md animate-bounce" />
-                  )}
-                </div>
-                
-                {/* Tooltip */}
-                <span className="absolute left-1/2 -translate-x-1/2 -bottom-8 px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  {showMobileMenu ? 'Close menu' : 'Open menu'}
-                </span>
+                {showMobileMenu ? (
+                  <X className="h-6 w-6 text-gray-700" />
+                ) : (
+                  <Menu className="h-6 w-6 text-gray-700" />
+                )}
               </button>
               
               <button
@@ -682,7 +745,7 @@ export default function App() {
                 <img 
                   src={logo}
                   alt="KILIMO Logo" 
-                  className="h-12 w-auto object-contain"
+                  className="h-10 w-auto object-contain"
                 />
               </button>
             </div>
@@ -693,8 +756,8 @@ export default function App() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search features, crops, markets..."
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder={language === "en" ? "Search..." : "Tafuta..."}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                 />
               </div>
             </div>
@@ -702,18 +765,20 @@ export default function App() {
             {/* Right Actions */}
             <div className="flex items-center gap-2">
               {/* Role Badge */}
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full border border-green-200">
-                <Briefcase className="h-3.5 w-3.5 text-green-600" />
-                <span className="text-xs font-semibold text-green-700">
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
+                <Briefcase className="h-4 w-4 text-gray-600" />
+                <span className="text-xs font-medium text-gray-700">
                   {getRoleDisplayName(currentUser?.role || "smallholder_farmer", language)}
                 </span>
               </div>
 
               {/* Tier Badge */}
-              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full">
-                <Award className="h-4 w-4 text-purple-600" />
-                <span className="text-xs font-bold text-purple-700 uppercase">{currentUser?.tier || "FREE"}</span>
-              </div>
+              {currentUser?.tier && currentUser.tier !== "free" && (
+                <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 rounded-lg border border-purple-200">
+                  <Award className="h-3.5 w-3.5 text-purple-600" />
+                  <span className="text-xs font-semibold text-purple-700 uppercase">{currentUser.tier}</span>
+                </div>
+              )}
 
               {/* Language Toggle */}
               <button
@@ -727,13 +792,13 @@ export default function App() {
                       : "Lugha imebadilishwa kuwa Kiswahili"
                   );
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 hover:bg-gray-100 rounded-xl transition-colors border border-gray-200"
+                className="flex items-center gap-1.5 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
               >
-                <span className={`text-xs font-semibold ${language === "en" ? "text-green-600" : "text-gray-400"}`}>
+                <span className={`text-xs font-medium ${language === "en" ? "text-gray-900" : "text-gray-400"}`}>
                   EN
                 </span>
-                <span className="text-gray-400">|</span>
-                <span className={`text-xs font-semibold ${language === "sw" ? "text-green-600" : "text-gray-400"}`}>
+                <span className="text-gray-300">|</span>
+                <span className={`text-xs font-medium ${language === "sw" ? "text-gray-900" : "text-gray-400"}`}>
                   SW
                 </span>
               </button>
@@ -741,12 +806,12 @@ export default function App() {
               {/* Notifications */}
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <Bell className="h-5 w-5 text-gray-700" />
                 {notificationCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {notificationCount}
+                  <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+                    {notificationCount > 9 ? '9+' : notificationCount}
                   </span>
                 )}
               </button>
@@ -754,24 +819,24 @@ export default function App() {
               {/* Profile */}
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-xl transition-colors"
+                className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <div className="p-1.5 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg">
+                <div className="p-1.5 bg-[#2E7D32] rounded-lg">
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-xs font-semibold text-gray-900">{currentUser?.name}</p>
-                  <p className="text-xs text-gray-500">{currentUser?.region}</p>
+                  <p className="text-xs font-medium text-gray-900">{currentUser?.name}</p>
+                  <p className="text-[10px] text-gray-500">{currentUser?.region}</p>
                 </div>
               </button>
 
               {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="p-2 hover:bg-red-50 rounded-xl transition-colors group"
-                title="Logout"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title={language === "en" ? "Logout" : "Ondoka"}
               >
-                <LogOut className="h-5 w-5 text-gray-600 group-hover:text-red-600" />
+                <LogOut className="h-5 w-5 text-gray-600" />
               </button>
             </div>
           </div>
@@ -784,16 +849,16 @@ export default function App() {
         <aside className="hidden lg:block w-72 h-[calc(100vh-4rem)] sticky top-16 border-r border-gray-200 bg-white overflow-y-auto">
           <div className="p-4 space-y-6">
             {/* Role Summary Card */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200">
+            <div className="bg-white rounded-2xl p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                  <Briefcase className="h-4 w-4 text-green-600" />
+                <div className="p-1.5 bg-gray-50 rounded-lg">
+                  <Briefcase className="h-4 w-4 text-gray-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xs font-bold text-green-900">
+                  <h3 className="text-xs font-bold text-gray-900">
                     {getRoleDisplayName(currentUser?.role || "smallholder_farmer", language)}
                   </h3>
-                  <p className="text-[10px] text-green-700">
+                  <p className="text-[10px] text-gray-600">
                     {navigationItems.length} {language === "en" ? "features available" : "vipengele vinavyopatikana"}
                   </p>
                 </div>
@@ -808,16 +873,15 @@ export default function App() {
               
               return (
                 <div key={category.id} className="space-y-2">
-                  {/* Enhanced Category Header */}
+                  {/* Category Header */}
                   <div className="relative group">
-                    <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200/60 shadow-sm">
-                      <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover:shadow transition-shadow">
-                        <CategoryIcon className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
+                      <div className="p-1.5 bg-white rounded-lg">
+                        <CategoryIcon className="h-4 w-4 text-gray-600" />
                       </div>
                       <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
                         {category.label}
                       </h3>
-                      <div className="ml-auto h-1 w-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-60"></div>
                     </div>
                   </div>
 
@@ -889,104 +953,24 @@ export default function App() {
         {showMobileMenu && (
           <div className="lg:hidden fixed inset-0 z-40 bg-black/50" onClick={() => setShowMobileMenu(false)}>
             <aside className="w-80 h-full bg-white overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="p-4 space-y-6">
-                {/* Role Summary Card - Mobile */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                      <Briefcase className="h-4 w-4 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xs font-bold text-green-900">
-                        {getRoleDisplayName(currentUser?.role || "smallholder_farmer", language)}
-                      </h3>
-                      <p className="text-[10px] text-green-700">
-                        {navigationItems.length} {language === "en" ? "features" : "vipengele"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
+              <div className="p-4">
                 {categories.map((category) => {
                   const categoryItems = navigationItems.filter(item => item.category === category.id);
                   if (categoryItems.length === 0) return null;
-
-                  const CategoryIcon = category.icon;
+                  
+                  // Mark "main" category (Dashboard) as primary anchor
+                  const isPrimaryAnchor = category.id === "main";
                   
                   return (
-                    <div key={category.id} className="space-y-2">
-                      {/* Enhanced Category Header */}
-                      <div className="relative group">
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200/60 shadow-sm">
-                          <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover:shadow transition-shadow">
-                            <CategoryIcon className="h-4 w-4 text-green-600" />
-                          </div>
-                          <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
-                            {category.label}
-                          </h3>
-                          <div className="ml-auto h-1 w-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-60"></div>
-                        </div>
-                      </div>
-
-                      {/* Navigation Items */}
-                      <nav className="space-y-1.5 pl-1">
-                        {categoryItems.map((item) => {
-                          const Icon = item.icon;
-                          const isActive = activeTab === item.id;
-                          
-                          return (
-                            <button
-                              key={item.id}
-                              onClick={() => {
-                                setActiveTab(item.id);
-                                setShowMobileMenu(false);
-                              }}
-                              className={`
-                                w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-left group/item
-                                ${isActive 
-                                  ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 shadow-md shadow-green-100/50 scale-[1.02]' 
-                                  : 'bg-white border border-gray-100 hover:border-green-200 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]'
-                                }
-                              `}
-                            >
-                              {/* Icon Container with Gradient Background */}
-                              <div className={`
-                                p-1.5 rounded-lg transition-all duration-200
-                                ${isActive 
-                                  ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-sm' 
-                                  : 'bg-gray-50 group-hover/item:bg-green-50'
-                                }
-                              `}>
-                                <Icon className={`
-                                  h-4 w-4 transition-colors duration-200
-                                  ${isActive ? 'text-white' : item.color + ' group-hover/item:text-green-600'}
-                                `} />
-                              </div>
-
-                              {/* Label */}
-                              <span className={`
-                                text-sm font-semibold transition-colors duration-200 flex-1
-                                ${isActive ? 'text-gray-900' : 'text-gray-700 group-hover/item:text-gray-900'}
-                              `}>
-                                {item.label}
-                              </span>
-
-                              {/* Badge */}
-                              {item.badge && (
-                                <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs font-bold rounded-lg shadow-sm animate-pulse">
-                                  {item.badge}
-                                </span>
-                              )}
-
-                              {/* Active Indicator */}
-                              {isActive && (
-                                <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-sm shadow-green-300 animate-pulse"></div>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </nav>
-                    </div>
+                    <CollapsibleNavCategory
+                      key={category.id}
+                      category={category}
+                      items={categoryItems}
+                      activeTab={activeTab}
+                      onItemClick={setActiveTab}
+                      onMenuClose={() => setShowMobileMenu(false)}
+                      isPrimaryAnchor={isPrimaryAnchor}
+                    />
                   );
                 })}
               </div>
@@ -996,63 +980,29 @@ export default function App() {
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto relative">
-          {/* Multi-Layer Animated Background */}
-          <div className="fixed inset-0 pointer-events-none overflow-hidden">
-            {/* Gradient Base Layer */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 via-emerald-50/30 to-teal-50/40"></div>
-            
-            {/* Animated Orbs - Layer 1 */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-green-200/40 to-emerald-300/30 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-teal-200/40 to-green-300/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            
-            {/* Animated Orbs - Layer 2 */}
-            <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-gradient-to-br from-emerald-200/30 to-green-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            <div className="absolute bottom-1/4 right-1/3 w-[450px] h-[450px] bg-gradient-to-tl from-teal-200/30 to-emerald-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
-            
-            {/* Central Glow */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-green-100/20 via-transparent to-transparent rounded-full blur-3xl"></div>
-            
-            {/* Subtle Grid Pattern */}
-            <div className="absolute inset-0 opacity-[0.03]" style={{
-              backgroundImage: `linear-gradient(0deg, transparent 24%, rgba(34, 197, 94, 0.3) 25%, rgba(34, 197, 94, 0.3) 26%, transparent 27%, transparent 74%, rgba(34, 197, 94, 0.3) 75%, rgba(34, 197, 94, 0.3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(34, 197, 94, 0.3) 25%, rgba(34, 197, 94, 0.3) 26%, transparent 27%, transparent 74%, rgba(34, 197, 94, 0.3) 75%, rgba(34, 197, 94, 0.3) 76%, transparent 77%, transparent)`,
-              backgroundSize: '50px 50px'
-            }}></div>
-          </div>
+
 
           {/* Content Container with Enhanced Design */}
           <div className="relative z-10 min-h-full p-4 lg:p-8">
             {/* Floating Content Container with Glass Morphism */}
             <div className="relative">
-              {/* Decorative Top Border Glow */}
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-60"></div>
-              
-              {/* Content Wrapper with Premium Styling */}
-              <div className="relative bg-white/40 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/60 overflow-hidden">
-                {/* Top Gradient Accent Bar */}
-                <div className="h-1.5 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"></div>
+              {/* Content Wrapper - Clean & Professional */}
+              <div className="relative bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                {/* Top Accent Bar - Brand Color Only */}
+                <div className="h-1.5 bg-[#2E7D32]"></div>
                 
                 {/* Inner Content with Padding */}
                 <div className="p-4 lg:p-8 pb-24 lg:pb-8">
-                  {/* Advanced Content Delivery System with State Management */}
+                  {/* Content Delivery System */}
                   <div className="relative min-h-[calc(100vh-12rem)]">
-                    {/* Multi-layer Background System */}
-                    <div className="absolute inset-0 overflow-hidden rounded-2xl">
-                      {/* Base layer */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50/50 to-green-50/20"></div>
-                      {/* Accent layer for active states */}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-green-50/10 via-transparent to-blue-50/10 opacity-0 transition-opacity duration-500"></div>
-                      {/* Pattern overlay */}
-                      <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgb(0 0 0) 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
-                    </div>
-                    
-                    {/* Content Layer with Progressive Enhancement */}
-                    <div className="relative z-10">
+                    {/* Content Layer */}
+                    <div className="relative">
                       {/* Status Bar - Shows connection, sync, and data freshness */}
                       <div className="mb-4 flex items-center justify-between px-2">
                         <div className="flex items-center gap-3">
                           {/* Data Freshness Indicator */}
                           <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                            <div className="h-1.5 w-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                            <div className="h-1.5 w-1.5 bg-[#2E7D32] rounded-full animate-pulse"></div>
                             <span className="hidden sm:inline">Live</span>
                           </div>
                           
@@ -1094,7 +1044,9 @@ export default function App() {
                         <div className="relative">
                           {activeTab === "home" && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                              <DashboardHome user={currentUser!} onNavigate={setActiveTab} language={language} />
+                              <ErrorBoundary componentName="DashboardHome">
+                                <DashboardHome user={currentUser!} onNavigate={setActiveTab} language={language} />
+                              </ErrorBoundary>
                             </div>
                           )}
                       {activeTab === "workflows" && (
@@ -1250,6 +1202,15 @@ export default function App() {
                           <CreovaAgroID userId={currentUser?.id!} language={language} />
                         </div>
                       )}
+                      {activeTab === "agribusiness" && (
+                        <div className="animate-fadeIn">
+                          <AgribusinessDashboard 
+                            companyName={currentUser?.name || "Agribusiness"}
+                            onLogout={handleLogout}
+                            language={language}
+                          />
+                        </div>
+                      )}
                       {activeTab === "analytics" && (
                         <div className="animate-fadeIn">
                           <AnalyticsDashboard userId={currentUser?.id!} language={language} />
@@ -1387,6 +1348,11 @@ export default function App() {
                           <DataPrivacyConsent userId={currentUser?.id!} language={language} />
                         </div>
                       )}
+                      {activeTab === "training" && (
+                        <div className="animate-fadeIn">
+                          <VideoTutorials language={language} onNavigate={setActiveTab} />
+                        </div>
+                      )}
                       {activeTab === "master-audit" && (
                         <div className="animate-fadeIn">
                           <MasterPromptAudit language={language} />
@@ -1456,12 +1422,11 @@ export default function App() {
                   </div>
                 </div>
                 
-                {/* Bottom Decorative Glow */}
-                <div className="h-px bg-gradient-to-r from-transparent via-green-400/50 to-transparent"></div>
+                {/* Bottom Decorative Separator */}
+                <div className="h-px bg-gray-200"></div>
               </div>
               
-              {/* Decorative Bottom Border Glow */}
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-40"></div>
+
             </div>
           </div>
         </main>

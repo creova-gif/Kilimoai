@@ -194,86 +194,30 @@ export function AIRecommendationEngine({
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <RefreshCw className="h-8 w-8 animate-spin text-green-600" />
+        <RefreshCw className="h-8 w-8 animate-spin text-[#2E7D32]" />
       </div>
     );
   }
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-6 border-2 border-green-200 shadow-xl">
-        {/* Animated Background Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-green-300 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-300 rounded-full blur-3xl opacity-20 animate-pulse delay-1000"></div>
-        
-        {/* Decorative Pattern */}
-        <div className="absolute inset-0 opacity-10 overflow-hidden">
-          {/* Animated Grid Pattern */}
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                <circle cx="20" cy="20" r="1.5" fill="currentColor" className="text-green-600">
-                  <animate attributeName="r" values="1;2;1" dur="3s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite" />
-                </circle>
-              </pattern>
-              <pattern id="grid-pattern-2" width="60" height="60" patternUnits="userSpaceOnUse">
-                <circle cx="30" cy="30" r="2" fill="currentColor" className="text-emerald-500">
-                  <animate attributeName="r" values="1.5;2.5;1.5" dur="4s" repeatCount="indefinite" begin="0.5s" />
-                  <animate attributeName="opacity" values="0.2;0.6;0.2" dur="4s" repeatCount="indefinite" begin="0.5s" />
-                </circle>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-            <rect width="100%" height="100%" fill="url(#grid-pattern-2)" />
-          </svg>
-          
-          {/* Floating Particles */}
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-green-400 rounded-full animate-ping opacity-30"></div>
-          <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping opacity-25" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-1/4 left-1/2 w-2 h-2 bg-teal-400 rounded-full animate-ping opacity-20" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-2/3 right-1/4 w-1 h-1 bg-green-500 rounded-full animate-ping opacity-30" style={{ animationDelay: '1.5s' }}></div>
-        </div>
-
-        <div className="relative flex items-center justify-between flex-wrap gap-4">
+      {/* Header - Clean & Professional */}
+      <div className="rounded-2xl bg-[#2E7D32] p-6 shadow-lg">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
             {/* Icon Badge */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl blur-xl opacity-50 animate-pulse"></div>
-              <div className="relative p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-2xl border-2 border-green-300">
-                <TrendingUp className="h-8 w-8 text-white" />
-              </div>
-              {/* Status Indicator */}
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+            <div className="p-4 bg-white/20 rounded-2xl">
+              <TrendingUp className="h-8 w-8 text-white" />
             </div>
 
             {/* Title Section */}
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-green-700 via-emerald-700 to-teal-700 bg-clip-text text-transparent">
-                  AI Recommendation Engine
-                </h2>
-                <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md hidden md:flex">
-                  <Brain className="h-3 w-3 mr-1" />
-                  AI-Powered
-                </Badge>
-              </div>
-              <p className="text-sm md:text-base text-gray-700 font-medium flex items-center gap-2">
-                <Zap className="h-4 w-4 text-amber-500" />
-                Smart irrigation & fertilizer plans powered by machine learning
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">
+                AI Recommendation Engine
+              </h2>
+              <p className="text-sm md:text-base text-white/90 font-medium">
+                Smart irrigation & fertilizer plans powered by AI
               </p>
-              
-              {/* Quick Stats */}
-              <div className="flex items-center gap-3 mt-2">
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full border border-green-200 shadow-sm">
-                  <Target className="h-3 w-3 text-green-600" />
-                  <span className="text-xs font-bold text-gray-700">98% Accuracy</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full border border-blue-200 shadow-sm">
-                  <BarChart3 className="h-3 w-3 text-blue-600" />
-                  <span className="text-xs font-bold text-gray-700">Real-time Data</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -281,7 +225,7 @@ export function AIRecommendationEngine({
           <Button 
             onClick={loadRecommendations} 
             size="lg" 
-            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105 border-0"
+            className="bg-white text-[#2E7D32] hover:bg-white/90 font-bold shadow-lg"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh Insights

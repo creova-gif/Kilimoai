@@ -6,6 +6,7 @@
 export type UserRole =
   | "smallholder_farmer"
   | "farmer"
+  | "commercial_farmer"  // Added: Commercial farmer role
   | "farm_manager"
   | "commercial_farm_admin"
   | "agribusiness_ops"
@@ -137,6 +138,50 @@ export const ROLE_FEATURES: Record<UserRole, FeatureId[]> = {
    * Focus: Smallholder + some advanced planning
    */
   farmer: [
+    // All smallholder features
+    "home",
+    "workflows",
+    "ai-chat",
+    "diagnosis",
+    "voice",
+    "ai-recommendations",
+    "ai-training",
+    "ai-insights",
+    "crop-planning",
+    "crop-planning-ai",
+    "crop-dashboard",
+    "livestock",
+    "livestock-health",
+    "family-planner",
+    "farmer-lab",
+    "farm-graph", // Added for larger farms
+    "market",
+    "marketplace",
+    "finance", // Added
+    "mobile-money",
+    "insurance",
+    "contracts",
+    "input-supply",
+    "experts",
+    "soil-test",
+    "weather",
+    "crop-tips",
+    "knowledge",
+    "videos",
+    "training",
+    "discussions",
+    "support",
+    "contact",
+    "faq",
+    "privacy",
+    "gamification",
+  ],
+
+  /**
+   * COMMERCIAL FARMER (5+ acres, independent)
+   * Focus: Smallholder + some advanced planning
+   */
+  commercial_farmer: [
     // All smallholder features
     "home",
     "workflows",
@@ -450,6 +495,10 @@ export function getRoleDisplayName(
       en: "Farmer (5+ acres)",
       sw: "Mkulima (Ekari 5+)",
     },
+    commercial_farmer: {
+      en: "Commercial Farmer (5+ acres)",
+      sw: "Mkulima ya Biashara (Ekari 5+)",
+    },
     farm_manager: {
       en: "Farm Manager",
       sw: "Meneja wa Shamba",
@@ -493,6 +542,10 @@ export function getRoleDescription(
       sw: "Ekari 0-5, kilimo cha msingi na ushauri wa AI",
     },
     farmer: {
+      en: "5+ acres, independent farming with advanced tools",
+      sw: "Ekari 5+, kilimo huru na zana za juu",
+    },
+    commercial_farmer: {
       en: "5+ acres, independent farming with advanced tools",
       sw: "Ekari 5+, kilimo huru na zana za juu",
     },

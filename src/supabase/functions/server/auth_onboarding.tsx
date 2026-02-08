@@ -1,11 +1,12 @@
 /**
  * KILIMO AUTH - WORLD-CLASS ONBOARDING ENDPOINTS
- * Handles: OTP send, OTP verify, wallet init
+ * Handles: OTP send (phone/email), OTP verify, wallet init
  * Inspired by: M-Pesa, Twiga Foods, Plantix
  */
 
 import { Hono } from "npm:hono@4.6.14";
 import { sendSMS } from "./sms.tsx";
+import { sendOTPEmail } from "./email.tsx";
 import * as kv from "./kv_store.tsx";
 import { createClient } from "npm:@supabase/supabase-js@2.39.7";
 
@@ -21,8 +22,10 @@ interface OTPRecord {
   code: string;
   expiresAt: number;
   attempts: number;
-  phone: string;
+  phone?: string;
+  email?: string;
   userId: string;
+  method: "phone" | "email";
 }
 
 // Generate secure 6-digit OTP
@@ -33,20 +36,123 @@ function generateOTP(): string {
 }
 
 /**
+ * POST /auth/send-otp-email
+ * Send OTP to email address
+ */
+authRoutes.post("/auth/send-otp-email", async (c) => {
+  try {
+    const { email, language = 'en' } = await c.req.json();
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return c.json({
+        status: 'error',
+        message: language === 'sw'
+          ? 'Barua pepe si sahihi'
+          : 'Invalid email address'
+      }, 400);
+    }
+
+    // Check rate limit
+    const rateLimitKey = `ratelimit:otp:${email}`;
+    const rateLimitData = await kv.get(rateLimitKey);
+    
+    if (rateLimitData) {
+      const { count, firstAttempt } = rateLimitData;
+      const now = Date.now();
+      
+      if (now - firstAttempt > 15 * 60 * 1000) {
+        await kv.set(rateLimitKey, { count: 1, firstAttempt: now });
+      } else if (count >= 3) {
+        return c.json({
+          status: 'error',
+          message: language === 'sw'
+            ? 'Majaribio mengi mno. Subiri dakika 15.'
+            : 'Too many attempts. Please wait 15 minutes.'
+        }, 429);
+      } else {
+        await kv.set(rateLimitKey, { count: count + 1, firstAttempt });
+      }
+    } else {
+      await kv.set(rateLimitKey, { count: 1, firstAttempt: Date.now() });
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    
+    // Check if user already exists
+    const existingUserByEmail = await kv.get(`email:${email}`);
+    const userId = existingUserByEmail 
+      ? existingUserByEmail 
+      : `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    // Store OTP
+    const otpRecord: OTPRecord = {
+      code: otp,
+      expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+      attempts: 0,
+      email: email,
+      userId,
+      method: "email"
+    };
+    
+    await kv.set(`otp:${userId}`, otpRecord);
+
+    // Send Email
+    try {
+      await sendOTPEmail(email, otp, language);
+      console.log(`✓ OTP email sent to ${email}`);
+      console.log(`📧 OTP Code: ${otp} (user: ${userId})`); // Always log for debugging
+    } catch (emailError) {
+      console.error('⚠️ Email send error:', emailError);
+      console.log(`📧 OTP for testing: ${otp} (user: ${userId})`);
+      
+      // Log detailed error for debugging
+      console.error('Email Error Details:', {
+        email,
+        userId,
+        errorMessage: emailError.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    return c.json({
+      status: 'success',
+      user_id: userId,
+      existing_user: !!existingUserByEmail,
+      message: language === 'sw'
+        ? 'Msimbo umetumwa kwa barua pepe yako'
+        : 'Code sent to your email',
+      // DEV MODE: Send OTP in response for debugging (remove in production)
+      debug_otp: otp
+    });
+
+  } catch (error) {
+    console.error('Send email OTP error:', error);
+    return c.json({
+      status: 'error',
+      message: 'Failed to send OTP'
+    }, 500);
+  }
+});
+
+/**
  * POST /auth/send-otp
- * Send OTP to phone number
+ * Send OTP to phone number via SMS
  */
 authRoutes.post("/auth/send-otp", async (c) => {
   try {
     const { phone_number, language = 'sw' } = await c.req.json();
 
-    // Validate phone number
-    if (!phone_number || !phone_number.startsWith('+255')) {
+    // Validate phone number (Tanzania format)
+    const phoneRegex = /^\+255[67]\d{8}$/;
+    if (!phone_number || !phoneRegex.test(phone_number)) {
       return c.json({
         status: 'error',
-        message: language === 'sw' 
-          ? 'Namba ya simu si sahihi. Lazima ianze na +255'
-          : 'Invalid phone number. Must start with +255'
+        message: language === 'sw'
+          ? 'Namba ya simu si sahihi. Tumia +255XXXXXXXXX'
+          : 'Invalid phone number. Use +255XXXXXXXXX'
       }, 400);
     }
 
@@ -58,7 +164,6 @@ authRoutes.post("/auth/send-otp", async (c) => {
       const { count, firstAttempt } = rateLimitData;
       const now = Date.now();
       
-      // Reset if outside 15-minute window
       if (now - firstAttempt > 15 * 60 * 1000) {
         await kv.set(rateLimitKey, { count: 1, firstAttempt: now });
       } else if (count >= 3) {
@@ -91,32 +196,32 @@ authRoutes.post("/auth/send-otp", async (c) => {
       attempts: 0,
       phone: phone_number,
       userId,
+      method: "phone"
     };
     
     await kv.set(`otp:${userId}`, otpRecord);
 
     // Send SMS
-    const message = language === 'sw'
-      ? `Msimbo wako wa KILIMO ni: ${otp}. Utaisha muda baada ya dakika 5.`
-      : `Your KILIMO verification code is: ${otp}. Expires in 5 minutes.`;
-
     try {
-      await sendSMS({ to: phone_number, message });
+      await sendSMS({
+        to: phone_number,
+        message: language === 'sw' 
+          ? `KILIMO Uthibitishaji\n\nMsimbo wako: ${otp}\n\nHalali kwa dakika 5.\nUsimshirikishe mtu yeyote.`
+          : `KILIMO Verification\n\nYour OTP: ${otp}\n\nValid for 5 minutes.\nDo not share this code.`
+      });
       console.log(`✓ OTP SMS sent to ${phone_number}`);
+      console.log(`📱 OTP Code: ${otp} (user: ${userId})`); // Always log for debugging
     } catch (smsError) {
       console.error('⚠️ SMS send error:', smsError);
       console.log(`📱 OTP for testing: ${otp} (user: ${userId})`);
       
-      // Log detailed SMS error for debugging
+      // Log detailed error for debugging
       console.error('SMS Error Details:', {
         phone: phone_number,
         userId,
         errorMessage: smsError.message,
         timestamp: new Date().toISOString()
       });
-      
-      // Don't fail the request if SMS fails - user can retry
-      // Return a warning so frontend knows SMS might not have been sent
     }
 
     return c.json({
@@ -125,11 +230,13 @@ authRoutes.post("/auth/send-otp", async (c) => {
       existing_user: !!existingUserByPhone,
       message: language === 'sw'
         ? 'Msimbo umetumwa kwa simu yako'
-        : 'Code sent to your phone'
+        : 'Code sent to your phone',
+      // DEV MODE: Send OTP in response for debugging (remove in production)
+      debug_otp: otp
     });
 
   } catch (error) {
-    console.error('Send OTP error:', error);
+    console.error('Send phone OTP error:', error);
     return c.json({
       status: 'error',
       message: 'Failed to send OTP'
@@ -139,21 +246,26 @@ authRoutes.post("/auth/send-otp", async (c) => {
 
 /**
  * POST /auth/check-user
- * Check if a phone number is already registered
+ * Check if phone number or email is already registered
  */
 authRoutes.post("/auth/check-user", async (c) => {
   try {
-    const { phone_number } = await c.req.json();
+    const { phone_number, email } = await c.req.json();
 
-    if (!phone_number) {
+    if (!phone_number && !email) {
       return c.json({
         status: 'error',
-        message: 'Phone number is required'
+        message: 'Phone number or email is required'
       }, 400);
     }
 
-    // Check if phone exists in our system
-    const existingUserId = await kv.get(`phone:${phone_number}`);
+    // Check if phone or email exists in our system
+    let existingUserId = null;
+    if (phone_number) {
+      existingUserId = await kv.get(`phone:${phone_number}`);
+    } else if (email) {
+      existingUserId = await kv.get(`email:${email}`);
+    }
 
     return c.json({
       exists: !!existingUserId,
@@ -224,25 +336,37 @@ authRoutes.post("/auth/verify-otp", async (c) => {
       }, 400);
     }
 
-    // Success! Create user record
-    const userData = {
+    // Success! Create user record based on method
+    const userData: any = {
       id: user_id,
-      phone: otpRecord.phone,
       verified: true,
-      phoneVerified: true,
       verifiedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
     };
 
+    // Add phone or email based on verification method
+    if (otpRecord.method === "phone" && otpRecord.phone) {
+      userData.phone = otpRecord.phone;
+      userData.phoneVerified = true;
+      await kv.set(`phone:${otpRecord.phone}`, user_id); // Map phone to userId
+    } else if (otpRecord.method === "email" && otpRecord.email) {
+      userData.email = otpRecord.email;
+      userData.emailVerified = true;
+      await kv.set(`email:${otpRecord.email}`, user_id); // Map email to userId
+    }
+
     await kv.set(`user:${user_id}`, userData);
-    await kv.set(`phone:${otpRecord.phone}`, user_id); // Map phone to userId
     await kv.del(`otp:${user_id}`); // Delete used OTP
+
+    const successMessage = otpRecord.method === "phone" 
+      ? 'Phone verified successfully'
+      : 'Email verified successfully';
 
     return c.json({
       status: 'success',
       verified: true,
       user_id,
-      message: 'Phone verified successfully'
+      message: successMessage
     });
 
   } catch (error) {

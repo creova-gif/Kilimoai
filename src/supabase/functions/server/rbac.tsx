@@ -9,6 +9,7 @@ import type { Context } from "npm:hono@4";
 export type UserRole =
   | "smallholder_farmer"
   | "farmer"
+  | "commercial_farmer"  // Added: Commercial farmer role
   | "farm_manager"
   | "commercial_farm_admin"
   | "agribusiness_ops"
@@ -82,6 +83,15 @@ const ROLE_FEATURES: Record<UserRole, FeatureId[]> = {
     "faq", "privacy", "gamification"
   ],
   farmer: [
+    "home", "workflows", "ai-chat", "diagnosis", "voice", "ai-recommendations",
+    "ai-training", "ai-insights", "crop-planning", "crop-planning-ai",
+    "crop-dashboard", "livestock", "livestock-health", "family-planner",
+    "farmer-lab", "farm-graph", "market", "marketplace", "finance",
+    "mobile-money", "insurance", "contracts", "input-supply", "experts",
+    "soil-test", "weather", "crop-tips", "knowledge", "videos", "training",
+    "discussions", "support", "contact", "faq", "privacy", "gamification"
+  ],
+  commercial_farmer: [  // Added: Commercial farmer role
     "home", "workflows", "ai-chat", "diagnosis", "voice", "ai-recommendations",
     "ai-training", "ai-insights", "crop-planning", "crop-planning-ai",
     "crop-dashboard", "livestock", "livestock-health", "family-planner",

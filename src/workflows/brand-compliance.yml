@@ -1,0 +1,141 @@
+name: KILIMO AI - Brand Compliance Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'components/**/*.tsx'
+      - 'components/**/*.ts'
+  push:
+    branches: [main, develop]
+
+jobs:
+  brand-compliance:
+    name: Brand Compliance Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Make scripts executable
+        run: chmod +x scripts/check-brand-compliance.sh
+
+      - name: Run Brand Compliance Check
+        id: compliance_check
+        run: |
+          echo "🔍 Running KILIMO AI Brand Compliance Check..."
+          ./scripts/check-brand-compliance.sh
+        continue-on-error: true
+
+      - name: Comment on PR (if violations found)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ❌ Brand Compliance Check Failed
+              
+              Your changes contain brand violations.
+              
+              **KILIMO Design System Rules:**
+              - ✅ Only \`#2E7D32\` (Raspberry Leaf Green) allowed
+              - ❌ No gradients (\`from-\`, \`to-\`, \`via-\`)
+              - ❌ No color utilities: \`green-[number]\`, \`blue-\`, \`purple-\`, etc.
+              - ❌ No decorative elements (animated orbs, glows)
+              
+              **How to Fix:**
+              1. Use components from \`/components/ai-ui/\`
+              2. See reference: \`/components/AIRecommendationEngineV2.tsx\`
+              3. Read guide: \`/docs/AI_COMPONENT_STANDARDS.md\`
+              4. Run locally: \`./scripts/check-brand-compliance.sh\`
+              
+              **Need Help?**
+              Check \`/AI_VERIFICATION_COMPLETE.md\` for complete guidance.`
+            })
+
+      - name: Fail workflow if violations found
+        if: failure()
+        run: |
+          echo "❌ Brand compliance check failed. Please fix violations before merging."
+          exit 1
+
+  typescript-check:
+    name: TypeScript Strict Mode Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript Check
+        run: npx tsc --noEmit --strict
+
+      - name: Comment on PR (if TypeScript errors)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ❌ TypeScript Check Failed
+              
+              Your changes contain TypeScript errors in strict mode.
+              
+              **Common Issues:**
+              - Using \`any\` type (replace with proper types)
+              - Missing null checks (use optional chaining \`?.\`)
+              - Untyped props (add interface/type definitions)
+              
+              **How to Fix:**
+              1. Run locally: \`npx tsc --noEmit --strict\`
+              2. Fix reported errors
+              3. See examples in \`/components/AIRecommendationEngineV2.tsx\`
+              
+              **Type Safety Standards:**
+              - No \`any\` types allowed
+              - All props must be typed
+              - Safe null handling required`
+            })
+
+  summary:
+    name: Quality Gate Summary
+    runs-on: ubuntu-latest
+    needs: [brand-compliance, typescript-check]
+    if: always()
+    
+    steps:
+      - name: Check overall status
+        run: |
+          if [ "${{ needs.brand-compliance.result }}" == "success" ] && [ "${{ needs.typescript-check.result }}" == "success" ]; then
+            echo "✅ All quality gates passed!"
+            echo "✅ Brand compliance: PASS"
+            echo "✅ TypeScript strict: PASS"
+            echo ""
+            echo "🚀 Ready to merge!"
+          else
+            echo "❌ Quality gates failed"
+            if [ "${{ needs.brand-compliance.result }}" != "success" ]; then
+              echo "  ❌ Brand compliance: FAIL"
+            fi
+            if [ "${{ needs.typescript-check.result }}" != "success" ]; then
+              echo "  ❌ TypeScript strict: FAIL"
+            fi
+            echo ""
+            echo "Please fix issues before merging."
+            exit 1
+          fi

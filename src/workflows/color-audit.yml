@@ -1,0 +1,76 @@
+name: KILIMO Brand Color Enforcement
+on:
+  pull_request:
+    paths:
+      - '**.tsx'
+      - '**.ts'
+      - 'App.tsx'
+      - 'components/**'
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  color-audit:
+    runs-on: ubuntu-latest
+    name: Enforce Raspberry Leaf Green (#2E7D32) Only
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Run Color Audit
+        run: |
+          echo "🔍 Checking for banned color violations..."
+          echo "📋 KILIMO Brand Standard: Raspberry Leaf Green (#2E7D32) ONLY"
+          echo ""
+          
+          # Check for banned colors in TypeScript/TSX files
+          violations=$(grep -rn \
+            --include="*.tsx" \
+            --include="*.ts" \
+            --exclude-dir="node_modules" \
+            --exclude-dir=".git" \
+            --exclude="*.md" \
+            -E "(green-[0-9]|emerald-|teal-|cyan-|lime-)" \
+            App.tsx components/ 2>/dev/null \
+            | grep -v "#2E7D32" \
+            | grep -v "\.md" \
+            | grep -v "// ALLOWED" || true)
+          
+          if [ -n "$violations" ]; then
+            echo "❌ BANNED COLORS DETECTED!"
+            echo ""
+            echo "The following violations were found:"
+            echo "$violations"
+            echo ""
+            echo "🚫 BANNED COLORS:"
+            echo "  - green-50 through green-900"
+            echo "  - emerald-* (all shades)"
+            echo "  - teal-* (all shades)"
+            echo "  - cyan-* (all shades)"
+            echo "  - lime-* (all shades)"
+            echo ""
+            echo "✅ ONLY ALLOWED:"
+            echo "  - #2E7D32 (Raspberry Leaf Green)"
+            echo "  - rgba(46, 125, 50, X) opacity variants"
+            echo "  - bg-[#2E7D32], text-[#2E7D32], border-[#2E7D32]"
+            echo ""
+            echo "📖 See /BRUTAL_COLOR_AUDIT_REPORT.md for details"
+            exit 1
+          fi
+          
+          echo "✅ Color audit PASSED!"
+          echo "✅ All greens are compliant with brand standards"
+          echo "🌾 KILIMO: One Green. One Trust. One Vision."
+        
+      - name: Report Success
+        if: success()
+        run: |
+          echo "::notice::✅ Brand color audit passed - #2E7D32 compliance verified"
+          
+      - name: Report Failure
+        if: failure()
+        run: |
+          echo "::error::❌ Brand color violations detected - only #2E7D32 is allowed"

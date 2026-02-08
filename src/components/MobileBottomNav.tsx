@@ -90,10 +90,6 @@ export function MobileBottomNav({ activeTab, onTabChange, notificationCount = 0,
   const navItems = getRoleNavItems();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-2xl z-50 md:hidden safe-area-bottom">
-      <div className="h-16 relative">
-        {/* Mobile bottom nav removed - navigation handled by sidebar menu */}
-      </div>
-    </div>
+    <></>
   );
 }

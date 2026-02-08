@@ -1,291 +1,335 @@
-# CREOVA Agri-AI Suite - Founder Stack Integrations
+# 🔧 KILIMO AI - Quick Integration Guide
 
-## 🚀 Overview
+## 🚀 5-Minute Integration
 
-This document outlines the professional-grade integrations added to the CREOVA Agri-AI Suite to accelerate growth, expand market reach, and enhance AI capabilities for smallholder farmers across Africa.
+### Step 1: Add UnifiedAuth to App.tsx
 
----
+```tsx
+import { useState, useEffect } from 'react';
+import { UnifiedAuth } from './components/UnifiedAuth';
+import { crashReporter, ErrorBoundary } from './utils/crash-reporting';
 
-## ✅ INTEGRATED TOOLS
+export default function App() {
+  const [user, setUser] = useState(null);
 
-### 1. **Flutterwave Payment Gateway** 🌍💳
-**Status:** ✅ Active  
-**Purpose:** Pan-African payment processing
+  useEffect(() => {
+    // Initialize crash reporting
+    crashReporter.init();
+    
+    // Check for existing session
+    checkExistingSession();
+  }, []);
 
-#### Features Implemented:
-- ✅ Multi-currency support (TZS, KES, NGN, GHS, UGX, RWF, ZMW, ZAR)
-- ✅ Mobile money integration (M-Pesa, MTN, Airtel, Tigo across 8 countries)
-- ✅ Card payments (Visa, Mastercard)
-- ✅ Bank transfers & USSD payments
-- ✅ Payment verification and transaction tracking
+  const checkExistingSession = async () => {
+    // Check if user has active session
+    // Implementation depends on your session management
+  };
 
-#### Backend Routes:
-```
-POST /make-server-ce1844e7/payment/flutterwave/initiate
-GET  /make-server-ce1844e7/payment/flutterwave/verify/:transactionId
-POST /make-server-ce1844e7/payment/flutterwave/mobile-money
-GET  /make-server-ce1844e7/payment/flutterwave/countries
-```
+  if (!user) {
+    return (
+      <UnifiedAuth
+        onSuccess={(authenticatedUser) => {
+          setUser(authenticatedUser);
+          crashReporter.setUserId(authenticatedUser.id);
+        }}
+        language="en" // or "sw" for Swahili
+      />
+    );
+  }
 
-#### Environment Variables Required:
-```
-FLUTTERWAVE_SECRET_KEY=your_secret_key
-FLUTTERWAVE_PUBLIC_KEY=your_public_key
-FLUTTERWAVE_ENCRYPTION_KEY=your_encryption_key
-```
-
-#### Supported Countries:
-🇹🇿 Tanzania (TZS) | 🇰🇪 Kenya (KES) | 🇳🇬 Nigeria (NGN) | 🇬🇭 Ghana (GHS)  
-🇺🇬 Uganda (UGX) | 🇷🇼 Rwanda (RWF) | 🇿🇲 Zambia (ZMW) | 🇿🇦 South Africa (ZAR)
-
----
-
-### 2. **OpenRouter AI (Multi-LLM Access)** 🤖🧠
-**Status:** ✅ Active  
-**Purpose:** Access 100+ AI models through one unified API
-
-#### Features Implemented:
-- ✅ GPT-4 Turbo for complex agricultural analysis
-- ✅ Claude 3 Opus/Sonnet for detailed crop diagnostics
-- ✅ Gemini Pro for multilingual support (Swahili optimization)
-- ✅ Automatic model selection based on query complexity
-- ✅ Cost optimization (cheaper models for simple queries)
-- ✅ Fallback system (if one provider fails)
-
-#### Backend Routes:
-```
-POST /make-server-ce1844e7/ai/sankofa/query
-POST /make-server-ce1844e7/ai/analyze-image
-GET  /make-server-ce1844e7/ai/models
-GET  /make-server-ce1844e7/ai/history/:userId
-```
-
-#### Environment Variables Required:
-```
-OPENROUTER_API_KEY=your_openrouter_api_key
-```
-
-#### Available AI Models:
-- **Premium:** GPT-4 Turbo, Claude 3 Opus, Gemini Pro
-- **Balanced:** GPT-3.5 Turbo, Claude 3 Sonnet, Gemini Flash
-- **Fast:** GPT-3.5, Llama 3, Mistral 7B
-
-#### Intelligent Model Selection:
-```typescript
-// Complex queries → Premium models (GPT-4)
-// Medium queries → Balanced models (GPT-3.5 Turbo)
-// Simple queries → Fast models (GPT-3.5)
+  return (
+    <ErrorBoundary componentName="App">
+      <YourMainApp user={user} />
+    </ErrorBoundary>
+  );
+}
 ```
 
 ---
 
-### 3. **Integrations Hub UI** ✨
-**Status:** ✅ Active  
-**Purpose:** Beautiful dashboard to showcase and manage all integrations
+### Step 2: Wrap AI Components with Telemetry
 
-#### Features:
-- ✅ Bilingual support (English/Swahili)
-- ✅ Visual integration cards with status indicators
-- ✅ Feature breakdowns for each integration
-- ✅ Benefits section highlighting value proposition
-- ✅ Real-time stats footer (100+ AI models, 8 countries, 15+ payment methods)
+**Before**:
+```tsx
+export function AIComponent() {
+  const [data, setData] = useState(null);
+  
+  const fetchAIData = async () => {
+    const response = await fetch('/api/ai');
+    setData(await response.json());
+  };
+  
+  return <div>{data}</div>;
+}
+```
 
-#### Access:
-Navigate to the "Integrations" tab in the main app or directly via:
-```typescript
-setActiveTab('integrations')
+**After**:
+```tsx
+import { aiTelemetry } from '../utils/ai-telemetry';
+
+export function AIComponent({ userId }) {
+  const [data, setData] = useState(null);
+  
+  const fetchAIData = async () => {
+    const requestId = aiTelemetry.startRequest(
+      userId,
+      "ai_component_data",
+      "farmer",
+      "openrouter"
+    );
+    
+    try {
+      const response = await fetch('/api/ai');
+      const result = await response.json();
+      
+      aiTelemetry.successRequest(
+        requestId,
+        userId,
+        "ai_component_data",
+        "farmer",
+        "openrouter"
+      );
+      
+      setData(result);
+    } catch (error) {
+      aiTelemetry.failRequest(
+        requestId,
+        userId,
+        "ai_component_data",
+        "farmer",
+        "openrouter",
+        error.message
+      );
+      
+      // Use fallback
+      aiTelemetry.fallbackUsed(userId, "ai_component_data", "farmer", "openrouter");
+      setData(getMockData());
+    }
+  };
+  
+  return (
+    <ErrorBoundary componentName="AIComponent">
+      <div>{data}</div>
+    </ErrorBoundary>
+  );
+}
 ```
 
 ---
 
-## 🔧 BACKEND ARCHITECTURE
+### Step 3: Add Error Boundaries
 
-### Files Created:
-```
-/supabase/functions/server/flutterwave.tsx    - Flutterwave payment logic
-/supabase/functions/server/openrouter.tsx     - OpenRouter AI integration
-/components/IntegrationsHub.tsx               - Frontend integrations UI
-```
+Wrap critical components:
 
-### Files Modified:
-```
-/supabase/functions/server/index.tsx          - Added new API routes
-/App.tsx                                      - Added integrations tab
-```
+```tsx
+import { ErrorBoundary } from './utils/crash-reporting';
 
----
+// Wrap entire features
+<ErrorBoundary componentName="Dashboard">
+  <DashboardHome user={user} />
+</ErrorBoundary>
 
-## 📊 INTEGRATION BENEFITS
+// Wrap AI features
+<ErrorBoundary componentName="AIRecommendations">
+  <AIRecommendations userId={user.id} />
+</ErrorBoundary>
 
-### 1. **Geographic Expansion**
-- Expand from Tanzania to 8 African countries instantly
-- Access 200M+ mobile money users across Africa
-- Process payments in local currencies
-
-### 2. **AI Enhancement**
-- 40% better accuracy with multi-model AI
-- Automatic failover if one provider is down
-- Cost optimization (save 60% on simple queries)
-- Superior Swahili language support
-
-### 3. **Revenue Opportunities**
-- Enable premium AI features for paying users
-- Process farmer transactions and take small fees
-- Monetize advanced analytics for cooperatives
-- Support subscription models
-
-### 4. **Scalability**
-- Enterprise-grade payment infrastructure
-- Support millions of concurrent AI requests
-- Built-in monitoring and error tracking
-- Production-ready with 99.9% uptime
-
----
-
-## 🚦 GETTING STARTED
-
-### Step 1: Set Up Flutterwave
-1. Sign up at [Flutterwave.com](https://flutterwave.com)
-2. Get your API keys from the dashboard
-3. Add keys to Supabase environment variables:
-   - `FLUTTERWAVE_SECRET_KEY`
-   - `FLUTTERWAVE_PUBLIC_KEY`
-   - `FLUTTERWAVE_ENCRYPTION_KEY`
-
-### Step 2: Set Up OpenRouter
-1. Sign up at [OpenRouter.ai](https://openrouter.ai)
-2. Get your API key
-3. Add to Supabase: `OPENROUTER_API_KEY` ✅ (Already configured)
-
-### Step 3: Test Integration
-```typescript
-// Test Flutterwave Payment
-const response = await fetch(`${API_BASE}/payment/flutterwave/initiate`, {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${authToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    amount: 10000,
-    currency: 'TZS',
-    email: 'farmer@example.com',
-    phone: '+255754123456',
-    name: 'John Farmer'
-  })
-});
-
-// Test OpenRouter AI
-const aiResponse = await fetch(`${API_BASE}/ai/sankofa/query`, {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${authToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    userId: 'user123',
-    question: 'How do I control fall armyworm in maize?',
-    language: 'en'
-  })
-});
+// Wrap critical sections
+<ErrorBoundary componentName="MarketPrices">
+  <MarketPricesWidget />
+</ErrorBoundary>
 ```
 
 ---
 
-## 📈 NEXT RECOMMENDED INTEGRATIONS
+## 📊 View Metrics
 
-### Coming Soon:
-- **Sentry** - Real-time error tracking and monitoring
-- **PostHog** - Product analytics, session replay, feature flags
-- **Twilio** - SMS notifications and voice calls (critical for farmers)
-- **Mapbox** - Farm mapping and GIS visualization
+### In Your Admin Dashboard:
 
----
+```tsx
+import { aiTelemetry } from './utils/ai-telemetry';
 
-## 🎯 IMPACT METRICS
-
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Supported Countries | 1 (Tanzania) | 8 (East + West Africa) | +700% |
-| Payment Methods | 4 (Tanzania only) | 15+ (Pan-African) | +275% |
-| AI Models Available | 1 (GPT-3.5) | 100+ (Multi-model) | +10,000% |
-| AI Accuracy | 60% | 85% | +42% |
-| Query Cost (simple) | $0.002 | $0.0008 | -60% |
-| Market Reach | 60M | 200M+ | +233% |
-
----
-
-## 🔐 SECURITY & COMPLIANCE
-
-### ✅ Implemented:
-- Environment variable storage for API keys
-- Backend-only API key access (never exposed to frontend)
-- HTTPS-only communication
-- Bearer token authentication
-- CORS protection
-- Request validation
-
-### 🛡️ Production Checklist:
-- [ ] Enable rate limiting on API routes
-- [ ] Set up webhook verification for Flutterwave
-- [ ] Implement request logging
-- [ ] Add IP whitelisting for sensitive endpoints
-- [ ] Enable 2FA for admin access
-- [ ] Conduct security audit
-
----
-
-## 💡 DEVELOPER NOTES
-
-### Flutterwave Webhook Setup:
-For production, you'll need to set up webhooks to receive payment confirmations:
-```typescript
-app.post("/make-server-ce1844e7/webhook/flutterwave", async (c) => {
-  const signature = c.req.header("verif-hash");
-  // Verify webhook signature
-  // Update payment status in database
-});
-```
-
-### OpenRouter Model Recommendations:
-```typescript
-// Use GPT-4 for:
-- Complex disease diagnosis
-- Multi-step farming plans
-- Image analysis
-
-// Use GPT-3.5 Turbo for:
-- General farming questions
-- Market price queries
-- Weather-based advice
-
-// Use Claude 3 for:
-- Long-form educational content
-- Detailed crop guides
-- Research summaries
+export function AdminDashboard() {
+  const [metrics, setMetrics] = useState(null);
+  
+  useEffect(() => {
+    loadMetrics();
+  }, []);
+  
+  const loadMetrics = async () => {
+    const response = await fetch(
+      `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7/ai-telemetry/dashboard`,
+      {
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`
+        }
+      }
+    );
+    
+    const data = await response.json();
+    setMetrics(data.metrics);
+  };
+  
+  return (
+    <div>
+      <h2>AI Performance (Last 7 Days)</h2>
+      {metrics?.map(day => (
+        <div key={day.date}>
+          <p>{day.date}</p>
+          <p>Requests: {day.totalRequests}</p>
+          <p>Success Rate: {day.successRate}%</p>
+          <p>Avg Latency: {day.avgLatency}ms</p>
+          <p>Error Rate: {day.errorRate}%</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 ```
 
 ---
 
-## 📞 SUPPORT
+## 🔍 Debugging Tips
 
-For integration issues or questions:
-- **Flutterwave:** support@flutterwave.com
-- **OpenRouter:** hello@openrouter.ai
-- **CREOVA:** Open GitHub issue
+### Check Telemetry in Console
+
+```tsx
+// In development, telemetry logs to console
+// Look for: [AI Telemetry] AI_REQUEST_SENT { ... }
+```
+
+### Check Crash Reports
+
+```tsx
+// Crashes are automatically logged
+// Check backend at: /crash-reports/metrics
+```
+
+### Manual Error Reporting
+
+```tsx
+import { useErrorReporting } from './utils/crash-reporting';
+
+function MyComponent() {
+  const { reportError, reportNetworkError } = useErrorReporting();
+  
+  const handleAction = async () => {
+    try {
+      await riskyOperation();
+    } catch (error) {
+      reportError(error, 'MyComponent.handleAction');
+    }
+  };
+}
+```
 
 ---
 
-## 🎉 SUCCESS CRITERIA
+## ⚙️ Configuration
 
-Integration is complete when:
-- [x] Backend routes are functional
-- [x] Environment variables are configured
-- [x] Frontend UI is implemented
-- [x] Bilingual support works
-- [x] Error handling is robust
-- [x] Documentation is complete
+### Environment Variables
+
+```bash
+# Already configured in Supabase
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJxxxxx
+SUPABASE_SERVICE_ROLE_KEY=eyJxxxxx
+
+# For SMS OTP (Africa's Talking)
+AFRICAS_TALKING_API_KEY=xxxxx
+AFRICAS_TALKING_USERNAME=xxxxx
+```
+
+### Phone Auth Setup
+
+1. Enable Phone Auth in Supabase Dashboard
+2. Configure SMS provider (Africa's Talking)
+3. Set OTP template
+4. Configure rate limits
 
 ---
 
-**Built with ❤️ for African farmers by CREOVA**
+## 🧪 Testing
+
+### Test Email Auth:
+1. Open app
+2. Click Email tab
+3. Enter: test@example.com / password123
+4. Should signup and redirect
+
+### Test Phone Auth:
+1. Open app
+2. Click Phone tab
+3. Enter: +255712345678
+4. OTP sent to phone
+5. Enter OTP code
+6. Should verify and redirect
+
+### Test Telemetry:
+1. Use any AI feature
+2. Open browser console
+3. Look for: `[AI Telemetry]` logs
+4. Check Network tab for `/ai-telemetry/log` calls
+
+### Test Crash Reporting:
+1. Throw error in component:
+   ```tsx
+   throw new Error('Test crash');
+   ```
+2. Should show Error Boundary fallback
+3. Check console for crash log
+4. Check backend at `/crash-reports/metrics`
+
+---
+
+## 🚨 Common Issues
+
+### Issue: OTP not sending
+**Solution**: Check Africa's Talking configuration in Supabase dashboard
+
+### Issue: Telemetry not logging
+**Solution**: Check browser console for errors, verify API endpoint
+
+### Issue: Crashes not captured
+**Solution**: Make sure crash reporter is initialized in App.tsx
+
+### Issue: Auth not persisting
+**Solution**: Implement session management with Supabase Auth
+
+---
+
+## 📞 Quick Reference
+
+### Auth API:
+- `POST /auth/signup` - Email signup
+- `POST /auth/phone-verify` - Phone verification
+
+### Telemetry API:
+- `POST /ai-telemetry/log` - Log event
+- `GET /ai-telemetry/metrics/:userId` - User metrics
+- `GET /ai-telemetry/dashboard` - Admin metrics
+
+### Crash API:
+- `POST /crash-reports/log` - Log crash
+- `GET /crash-reports/metrics` - Crash metrics
+
+---
+
+## ✅ Integration Checklist
+
+- [ ] Added `UnifiedAuth` to App.tsx
+- [ ] Wrapped AI components with telemetry
+- [ ] Added Error Boundaries to critical components
+- [ ] Initialized crash reporter in App.tsx
+- [ ] Tested email auth flow
+- [ ] Tested phone auth flow
+- [ ] Verified telemetry logging
+- [ ] Verified crash reporting
+- [ ] Configured SMS provider
+- [ ] Set up monitoring dashboard
+- [ ] Tested on mobile device
+- [ ] Ready for production
+
+---
+
+**Need Help?** Check `/PRODUCTION_READINESS_COMPLETE.md` for full documentation.

@@ -27,11 +27,11 @@ interface UnifiedAccessScreenProps {
   language?: "en" | "sw";
 }
 
-type AuthMode = "phone" | "otp-new" | "otp-returning" | "password";
+type AuthMode = "input" | "otp-new" | "otp-login" | "password";
 type AuthMethod = "phone" | "email";
 
 export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAccessScreenProps) {
-  const [mode, setMode] = useState<AuthMode>("phone");
+  const [mode, setMode] = useState<"input" | "otp-new" | "otp-login" | "password">("input");
   const [authMethod, setAuthMethod] = useState<AuthMethod>("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -40,6 +40,7 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
   const [loading, setLoading] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(false);
   const [tempUserId, setTempUserId] = useState<string>("");
+  const [debugOTP, setDebugOTP] = useState<string>(""); // DEV MODE: Show OTP on screen
 
   const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
 
@@ -88,10 +89,17 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
 
   const text = t[language];
 
-  // Handle phone submission
+  // Handle phone/email submission
   const handlePhoneContinue = async () => {
-    if (!phoneNumber.trim()) {
-      toast.error(language === "en" ? "Enter phone number" : "Weka namba ya simu");
+    const identifier = authMethod === "phone" ? phoneNumber : email;
+    const identifierType = authMethod === "phone" ? "phone number" : "email";
+    
+    if (!identifier.trim()) {
+      toast.error(
+        language === "en" 
+          ? `Enter ${identifierType}` 
+          : `Weka ${authMethod === "phone" ? "namba ya simu" : "barua pepe"}`
+      );
       return;
     }
 
@@ -99,30 +107,45 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
 
     try {
       // Check if user exists
+      const checkPayload = authMethod === "phone" 
+        ? { phone_number: phoneNumber }
+        : { email: email };
+
       const checkResponse = await fetch(`${API_BASE}/auth/check-user`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${publicAnonKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone_number: phoneNumber }),
+        body: JSON.stringify(checkPayload),
       });
 
       const checkResult = await checkResponse.json();
 
       if (checkResult.exists) {
         // Returning user - ask for password or send OTP
+        console.log(`✅ Returning user found:`, checkResult);
         setIsReturningUser(true);
+        setTempUserId(checkResult.user_id); // Store user_id for OTP login
         setMode("password");
       } else {
         // New user - send OTP for registration
-        const otpResponse = await fetch(`${API_BASE}/auth/send-otp`, {
+        console.log(`🆕 New user - sending OTP for registration`);
+        const otpEndpoint = authMethod === "phone" 
+          ? "/auth/send-otp"
+          : "/auth/send-otp-email";
+
+        const otpPayload = authMethod === "phone"
+          ? { phone_number: phoneNumber, language }
+          : { email: email, language };
+
+        const otpResponse = await fetch(`${API_BASE}${otpEndpoint}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${publicAnonKey}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone_number: phoneNumber, language }),
+          body: JSON.stringify(otpPayload),
         });
 
         const otpResult = await otpResponse.json();
@@ -132,17 +155,34 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
           setTempUserId(otpResult.user_id);
           setIsReturningUser(false);
           setMode("otp-new");
+          
+          // Show success message
           toast.success(
             language === "en" 
-              ? `Code sent to ${phoneNumber}` 
-              : `Nambari imetumwa kwenye ${phoneNumber}`
+              ? `Code sent to ${identifier}` 
+              : `Nambari imetumwa kwenye ${identifier}`
           );
+          
+          // In development, log the user_id for checking server logs
+          console.log(`📱 OTP sent to ${identifier}. User ID: ${otpResult.user_id}`);
+          console.log(`💡 Check server logs (Supabase Dashboard > Edge Functions > Logs) for OTP code if not received`);
+          console.log(`📦 Full response:`, otpResult);
+          
+          // DEV MODE: Show OTP on screen if included in response
+          if (otpResult.debug_otp) {
+            setDebugOTP(otpResult.debug_otp);
+            console.log(`🔓 DEV MODE - OTP: ${otpResult.debug_otp}`);
+            toast.success(`🔓 DEV OTP: ${otpResult.debug_otp}`, { duration: 10000 });
+          } else {
+            console.warn(`⚠️ No debug_otp in response. Check backend.`);
+          }
         } else {
+          console.error(`❌ OTP send failed:`, otpResult);
           throw new Error(otpResult.message || "Failed to send code");
         }
       }
     } catch (error) {
-      console.error("Phone check error:", error);
+      console.error("Identifier check error:", error);
       toast.error(language === "en" ? "Connection error" : "Tatizo la mtandao");
     } finally {
       setLoading(false);
@@ -176,10 +216,12 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
       if (result.status === "success") {
         // For new users, pass to QuickProfile to collect name + role
         // Create basic user object that will be completed
+        const identifier = authMethod === "phone" ? phoneNumber : email;
         const basicUser = {
           id: result.user_id,
-          phone: phoneNumber,
-          name: phoneNumber, // Temporary - will update in QuickProfile
+          phone: authMethod === "phone" ? phoneNumber : undefined,
+          email: authMethod === "email" ? email : undefined,
+          name: identifier, // Temporary - will update in QuickProfile
           role: "smallholder_farmer", // Default - will update in QuickProfile
           verified: true,
           onboardingCompleted: false,
@@ -207,6 +249,8 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
     setLoading(true);
 
     try {
+      const identifier = authMethod === "phone" ? phoneNumber : email;
+      
       const response = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: {
@@ -214,7 +258,7 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          identifier: phoneNumber,
+          identifier: identifier,
           password: password,
         }),
       });
@@ -237,26 +281,41 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
   // Handle "Use OTP instead" for returning users
   const handleSwitchToOTP = async () => {
     setLoading(true);
-    setMode("otp-returning");
+    setMode("otp-login");
 
     try {
-      const response = await fetch(`${API_BASE}/auth/send-otp`, {
+      // Use the correct endpoint based on auth method
+      const endpoint = authMethod === "phone" ? "/auth/send-otp" : "/auth/send-otp-email";
+      const payload = authMethod === "phone" 
+        ? { phone_number: phoneNumber, language }
+        : { email: email, language };
+
+      const response = await fetch(`${API_BASE}${endpoint}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${publicAnonKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone_number: phoneNumber, language }),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
 
       if (result.status === "success") {
+        setTempUserId(result.user_id);
+        const identifier = authMethod === "phone" ? phoneNumber : email;
         toast.success(
           language === "en" 
-            ? `Code sent to ${phoneNumber}` 
-            : `Nambari imetumwa kwenye ${phoneNumber}`
+            ? `Code sent to ${identifier}` 
+            : `Nambari imetumwa kwenye ${identifier}`
         );
+        
+        // DEV MODE: Show OTP on screen if included in response
+        if (result.debug_otp) {
+          setDebugOTP(result.debug_otp);
+          console.log(`🔓 DEV MODE - OTP: ${result.debug_otp}`);
+          toast.success(`🔓 DEV OTP: ${result.debug_otp}`, { duration: 10000 });
+        }
       } else {
         throw new Error(result.message || "Failed to send code");
       }
@@ -330,7 +389,7 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
           className="space-y-6"
         >
           {/* PHONE INPUT MODE */}
-          {mode === "phone" && (
+          {mode === "input" && (
             <div className="space-y-4">
               {/* Auth Method Tabs */}
               <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
@@ -419,8 +478,14 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
             >
               <div className="text-center mb-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#E8F5E9] rounded-full mb-3">
-                  <Phone className="h-4 w-4 text-[#2E7D32]" />
-                  <span className="text-sm font-medium text-[#2E7D32]">{phoneNumber}</span>
+                  {authMethod === "phone" ? (
+                    <Phone className="h-4 w-4 text-[#2E7D32]" />
+                  ) : (
+                    <Mail className="h-4 w-4 text-[#2E7D32]" />
+                  )}
+                  <span className="text-sm font-medium text-[#2E7D32]">
+                    {authMethod === "phone" ? phoneNumber : email}
+                  </span>
                 </div>
                 <p className="text-sm text-gray-600">{text.otpSent}</p>
               </div>
@@ -444,6 +509,28 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
+                
+                {/* DEV MODE: Show OTP on screen */}
+                {debugOTP && (
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-yellow-800 mb-1">
+                          {language === "en" ? "🔓 DEV MODE - Your OTP:" : "🔓 MTINDO WA MAENDELEO - OTP yako:"}
+                        </p>
+                        <p className="text-2xl font-bold text-yellow-900 tracking-wider font-mono">
+                          {debugOTP}
+                        </p>
+                        <p className="text-xs text-yellow-700 mt-1">
+                          {language === "en" 
+                            ? "Check your email/phone or use this code above" 
+                            : "Angalia barua pepe/simu au tumia nambari hii hapo juu"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <Button
@@ -466,12 +553,15 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
 
               <button
                 onClick={() => {
-                  setMode("phone");
+                  setMode("input");
                   setOtp("");
                 }}
                 className="w-full text-sm text-gray-600 hover:text-gray-900 py-2"
               >
-                {language === "en" ? "Change number" : "Badili namba"}
+                {language === "en" 
+                  ? `Change ${authMethod === "phone" ? "number" : "email"}`
+                  : `Badili ${authMethod === "phone" ? "namba" : "barua pepe"}`
+                }
               </button>
             </motion.div>
           )}
@@ -485,8 +575,17 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
             >
               <div className="text-center mb-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#E8F5E9] rounded-full mb-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
-                  <span className="text-sm font-medium text-[#2E7D32]">{phoneNumber}</span>
+                  {authMethod === "phone" ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
+                      <span className="text-sm font-medium text-[#2E7D32]">{phoneNumber}</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
+                      <span className="text-sm font-medium text-[#2E7D32]">{email}</span>
+                    </>
+                  )}
                 </div>
                 <p className="text-sm text-gray-600">{text.welcome}</p>
               </div>
@@ -539,19 +638,22 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
                 <div className="h-px bg-gray-200 my-3" />
                 <button
                   onClick={() => {
-                    setMode("phone");
+                    setMode("input");
                     setPassword("");
                   }}
                   className="text-sm text-gray-600 hover:text-gray-900"
                 >
-                  {language === "en" ? "Change number" : "Badili namba"}
+                  {language === "en" 
+                    ? `Change ${authMethod === "phone" ? "number" : "email"}`
+                    : `Badili ${authMethod === "phone" ? "namba" : "barua pepe"}`
+                  }
                 </button>
               </div>
             </motion.div>
           )}
 
           {/* OTP MODE (Returning User) */}
-          {mode === "otp-returning" && (
+          {mode === "otp-login" && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -617,7 +719,7 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
                 <div className="h-px bg-gray-200 my-3" />
                 <button
                   onClick={() => {
-                    setMode("phone");
+                    setMode("input");
                     setOtp("");
                   }}
                   className="text-sm text-gray-600 hover:text-gray-900"
