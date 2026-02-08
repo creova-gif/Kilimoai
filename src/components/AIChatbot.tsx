@@ -21,7 +21,10 @@ import {
   Sprout,
   DollarSign,
   Cloud,
-  Info
+  Info,
+  Bot,
+  User,
+  Languages
 } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { motion, AnimatePresence } from "motion/react";
@@ -72,20 +75,20 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
 
   const quickActions: QuickAction[] = language === "sw" 
     ? [
-        { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "text-green-600 bg-green-50 hover:bg-green-100" },
-        { icon: Bug, label: "Magonjwa ya Nyanya", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100" },
-        { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi na maharagwe", category: "market", color: "text-blue-600 bg-blue-50 hover:bg-blue-100" },
-        { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "text-purple-600 bg-purple-50 hover:bg-purple-100" },
-        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-cyan-600 bg-cyan-50 hover:bg-cyan-100" },
-        { icon: TrendingUp, label: "Uzalishaji Bora", prompt: "Jinsi ya kuongeza mavuno ya mahindi", category: "general", color: "text-orange-600 bg-orange-50 hover:bg-orange-100" },
+        { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: Bug, label: "Magonjwa ya Nyanya", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100 border-red-200" },
+        { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi na maharagwe", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
+        { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
+        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: TrendingUp, label: "Uzalishaji Bora", prompt: "Jinsi ya kuongeza mavuno ya mahindi", category: "general", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
       ]
     : [
-        { icon: Sprout, label: "Maize Fertilizer", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "text-green-600 bg-green-50 hover:bg-green-100" },
-        { icon: Bug, label: "Tomato Diseases", prompt: "How to control tomato diseases", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100" },
-        { icon: DollarSign, label: "Market Prices", prompt: "Current prices for maize and beans", category: "market", color: "text-blue-600 bg-blue-50 hover:bg-blue-100" },
-        { icon: Cloud, label: "Weather Forecast", prompt: "Weather forecast for next week", category: "weather", color: "text-purple-600 bg-purple-50 hover:bg-purple-100" },
-        { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-cyan-600 bg-cyan-50 hover:bg-cyan-100" },
-        { icon: TrendingUp, label: "Yield Boost", prompt: "How to increase maize yield", category: "general", color: "text-orange-600 bg-orange-50 hover:bg-orange-100" },
+        { icon: Sprout, label: "Maize Fertilizer", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: Bug, label: "Tomato Diseases", prompt: "How to control tomato diseases", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100 border-red-200" },
+        { icon: DollarSign, label: "Market Prices", prompt: "Current prices for maize and beans", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
+        { icon: Cloud, label: "Weather Forecast", prompt: "Weather forecast for next week", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
+        { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: TrendingUp, label: "Yield Boost", prompt: "How to increase maize yield", category: "general", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
       ];
 
   // Auto-scroll to bottom when new messages arrive
@@ -200,11 +203,11 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
 
   const getCategoryColor = (category?: string) => {
     switch (category) {
-      case "weather": return "text-purple-600";
-      case "market": return "text-blue-600";
+      case "weather": return "text-gray-700";
+      case "market": return "text-gray-700";
       case "pest": return "text-red-600";
-      case "fertilizer": return "text-green-600";
-      case "irrigation": return "text-cyan-600";
+      case "fertilizer": return "text-[#2E7D32]";
+      case "irrigation": return "text-[#2E7D32]";
       default: return "text-gray-600";
     }
   };
@@ -231,19 +234,19 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
 
   return (
     <Card className="h-[calc(100vh-200px)] md:h-[700px] flex flex-col shadow-xl border-2">
-      <CardHeader className="border-b bg-gradient-to-r from-green-50 to-blue-50 pb-4">
+      <CardHeader className="border-b bg-white pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-3">
             <div className="relative">
-              <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20"></div>
-              <div className="relative bg-gradient-to-br from-green-500 to-green-600 p-2 rounded-full">
+              <div className="absolute inset-0 bg-[#2E7D32] rounded-full animate-ping opacity-20"></div>
+              <div className="relative bg-[#2E7D32] p-2 rounded-full">
                 <Bot className="h-6 w-6 text-white" />
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xl">Sankofa AI</span>
-                <Badge className="bg-green-100 text-green-700 border-green-200">
+                <Badge className="bg-green-100 text-[#2E7D32] border-[#2E7D32]">
                   <span className="animate-pulse">●</span>
                   <span className="ml-1">{language === "sw" ? "Mtandaoni" : "Online"}</span>
                 </Badge>
@@ -288,16 +291,16 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
                 >
                   {message.role !== "system" && (
                     <motion.div 
-                      className={`flex h-10 w-10 items-center justify-center rounded-full flex-shrink-0 ${
+                      className={`flex h-10 w-10 items-center justify-center rounded-full flex-shrink-0 shadow-lg ${
                         message.role === "user" 
-                          ? "bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg" 
-                          : "bg-gradient-to-br from-green-500 to-green-600 shadow-lg"
+                          ? "bg-gray-200" 
+                          : "bg-[#2E7D32]"
                       }`}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
                       {message.role === "user" ? (
-                        <User className="h-5 w-5 text-white" />
+                        <User className="h-5 w-5 text-gray-700" />
                       ) : (
                         <Bot className="h-5 w-5 text-white" />
                       )}
@@ -316,7 +319,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
                         <motion.div 
                           className={`inline-block rounded-2xl px-4 py-3 shadow-sm ${
                             message.role === "user"
-                              ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white"
+                              ? "bg-gray-100 text-gray-900 border border-gray-200"
                               : "bg-white border border-gray-200 text-gray-900"
                           }`}
                           whileHover={{ scale: 1.02 }}
@@ -348,7 +351,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
                               onClick={() => handleCopy(message.content, message.id)}
                             >
                               {copiedId === message.id ? (
-                                <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                <CheckCircle2 className="h-3 w-3 text-[#2E7D32]" />
                               ) : (
                                 <Copy className="h-3 w-3" />
                               )}
@@ -368,24 +371,24 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-start gap-3"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2E7D32] shadow-lg">
                   <Loader2 className="h-5 w-5 text-white animate-spin" />
                 </div>
                 <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1">
                       <motion.div
-                        className="w-2 h-2 bg-green-500 rounded-full"
+                        className="w-2 h-2 bg-[#2E7D32] rounded-full"
                         animate={{ scale: [1, 1.5, 1] }}
                         transition={{ duration: 1, repeat: Infinity, delay: 0 }}
                       />
                       <motion.div
-                        className="w-2 h-2 bg-green-500 rounded-full"
+                        className="w-2 h-2 bg-[#2E7D32] rounded-full"
                         animate={{ scale: [1, 1.5, 1] }}
                         transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
                       />
                       <motion.div
-                        className="w-2 h-2 bg-green-500 rounded-full"
+                        className="w-2 h-2 bg-[#2E7D32] rounded-full"
                         animate={{ scale: [1, 1.5, 1] }}
                         transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
                       />
@@ -401,7 +404,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
           </div>
         </ScrollArea>
 
-        <div className="border-t bg-gradient-to-r from-gray-50 to-blue-50 p-4 space-y-3">
+        <div className="border-t bg-white p-4 space-y-3">
           {/* Quick Actions */}
           <AnimatePresence>
             {showQuickActions && (
@@ -413,7 +416,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
               >
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
-                    <Plus className="h-4 w-4 text-green-600" />
+                    <Plus className="h-4 w-4 text-[#2E7D32]" />
                     <p className="text-xs font-medium text-gray-600">
                       {language === "sw" ? "Maswali ya Haraka:" : "Quick Actions:"}
                     </p>
@@ -453,13 +456,13 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
                 disabled={loading}
-                className="pr-10 border-2 focus:border-green-500 transition-colors"
+                className="pr-10 border-2 focus:border-[#2E7D32] transition-colors"
               />
               {!showQuickActions && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-gray-400 hover:text-green-600"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-gray-400 hover:text-[#2E7D32]"
                   onClick={() => setShowQuickActions(!showQuickActions)}
                 >
                   <Plus className="h-4 w-4" />
@@ -471,7 +474,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
               <Button 
                 onClick={() => handleSend()} 
                 disabled={loading || !input.trim()}
-                className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg"
+                className="bg-[#2E7D32] hover:bg-[#2E7D32]/90 shadow-lg"
               >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -488,7 +491,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
                 className={`${
                   isRecording 
                     ? "bg-red-600 hover:bg-red-700 animate-pulse" 
-                    : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                    : "bg-gray-600 hover:bg-gray-700"
                 } shadow-lg`}
               >
                 {isRecording ? (

@@ -170,14 +170,14 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Sprout className="h-6 w-6 text-green-600" />
+            <Sprout className="h-6 w-6 text-[#2E7D32]" />
             AI Crop Planning & Scheduling
           </h2>
           <p className="text-sm text-gray-600 mt-1">
             AI-powered crop selection, planting schedules, and yield forecasting
           </p>
         </div>
-        <Button onClick={() => setShowNewPlan(true)} className="bg-green-600">
+        <Button onClick={() => setShowNewPlan(true)} className="bg-[#2E7D32] hover:bg-[#2E7D32]/90">
           <Plus className="h-4 w-4 mr-2" />
           New AI Plan
         </Button>
@@ -287,7 +287,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
               <Button
                 onClick={generateAIPlan}
                 disabled={!formData.cropName || !formData.plantingDate || generatingAI}
-                className="bg-green-600"
+                className="bg-[#2E7D32] hover:bg-[#2E7D32]/90"
               >
                 {generatingAI ? (
                   <>
@@ -312,7 +312,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
       {/* Plans List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#2E7D32]" />
         </div>
       ) : plans.length === 0 ? (
         <Card>
@@ -322,7 +322,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
             <p className="text-sm text-gray-600 mb-4">
               Create your first AI-powered crop plan to get started
             </p>
-            <Button onClick={() => setShowNewPlan(true)} className="bg-green-600">
+            <Button onClick={() => setShowNewPlan(true)} className="bg-[#2E7D32] hover:bg-[#2E7D32]/90">
               <Plus className="h-4 w-4 mr-2" />
               Create Your First Plan
             </Button>
@@ -336,7 +336,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <Sprout className="h-5 w-5 text-green-600" />
+                      <Sprout className="h-5 w-5 text-[#2E7D32]" />
                       {plan.cropName}
                       {plan.variety && (
                         <span className="text-sm font-normal text-gray-500">
@@ -364,7 +364,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Planting Date</p>
                     <p className="font-semibold flex items-center gap-1">
-                      <Calendar className="h-4 w-4 text-green-600" />
+                      <Calendar className="h-4 w-4 text-[#2E7D32]" />
                       {new Date(plan.plantingDate).toLocaleDateString()}
                     </p>
                     {calculateDaysUntilPlanting(plan.plantingDate) > 0 && (
@@ -376,14 +376,14 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Expected Harvest</p>
                     <p className="font-semibold flex items-center gap-1">
-                      <Calendar className="h-4 w-4 text-purple-600" />
+                      <Calendar className="h-4 w-4 text-[#2E7D32]" />
                       {plan.expectedHarvest}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Water Needs</p>
                     <p className="font-semibold flex items-center gap-1">
-                      <Droplet className="h-4 w-4 text-blue-600" />
+                      <Droplet className="h-4 w-4 text-[#2E7D32]" />
                       {plan.aiRecommendations.waterRequirements}
                     </p>
                   </div>
@@ -398,14 +398,14 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <p className="text-xs font-medium text-gray-600">Optimal Planting Window</p>
-                      <p className="text-sm bg-blue-50 p-2 rounded">
+                      <p className="text-sm bg-gray-50 p-2 rounded border border-gray-200">
                         {plan.aiRecommendations.optimalPlantingWindow}
                       </p>
                     </div>
                     <div className="space-y-2">
                       <p className="text-xs font-medium text-gray-600">Expected Yield</p>
-                      <p className="text-sm bg-green-50 p-2 rounded flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-green-600" />
+                      <p className="text-sm bg-gray-50 p-2 rounded border border-gray-200 flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-[#2E7D32]" />
                         {plan.aiRecommendations.expectedYield}
                       </p>
                     </div>
@@ -417,7 +417,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                     <div className="space-y-1">
                       {plan.aiRecommendations.fertilizerSchedule.map((schedule, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-sm">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 text-[#2E7D32] mt-0.5" />
                           <span>{schedule}</span>
                         </div>
                       ))}
@@ -430,7 +430,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                     <div className="space-y-1">
                       {plan.aiRecommendations.pestManagement.map((pest, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-sm">
-                          <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 text-[#2E7D32] mt-0.5" />
                           <span>{pest}</span>
                         </div>
                       ))}
@@ -453,33 +453,33 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                   )}
 
                   {/* Profitability Analysis */}
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                     <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      <TrendingUp className="h-4 w-4 text-[#2E7D32]" />
                       Profitability Analysis
                     </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div>
                         <p className="text-xs text-gray-600">Estimated Cost</p>
-                        <p className="font-bold text-red-600">
+                        <p className="font-bold text-gray-900">
                           TZS {plan.aiRecommendations.profitability.estimatedCost.toLocaleString()}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-600">Estimated Revenue</p>
-                        <p className="font-bold text-green-600">
+                        <p className="font-bold text-[#2E7D32]">
                           TZS {plan.aiRecommendations.profitability.estimatedRevenue.toLocaleString()}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-600">Net Profit</p>
-                        <p className="font-bold text-blue-600">
+                        <p className="font-bold text-gray-900">
                           TZS {plan.aiRecommendations.profitability.netProfit.toLocaleString()}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-600">ROI</p>
-                        <p className="font-bold text-purple-600">
+                        <p className="font-bold text-gray-900">
                           {plan.aiRecommendations.profitability.roi}%
                         </p>
                       </div>

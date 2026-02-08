@@ -95,18 +95,18 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
     ? [
         { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "text-green-600 bg-green-50 hover:bg-green-100" },
         { icon: Bug, label: "Magonjwa ya Nyanya", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100" },
-        { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi na maharagwe", category: "market", color: "text-blue-600 bg-blue-50 hover:bg-blue-100" },
-        { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "text-purple-600 bg-purple-50 hover:bg-purple-100" },
-        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-cyan-600 bg-cyan-50 hover:bg-cyan-100" },
-        { icon: TrendingUp, label: "Uzalishaji Bora", prompt: "Jinsi ya kuongeza mavuno ya mahindi", category: "general", color: "text-orange-600 bg-orange-50 hover:bg-orange-100" },
+        { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi na maharagwe", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100" },
+        { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100" },
+        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100" },
+        { icon: TrendingUp, label: "Uzalishaji Bora", prompt: "Jinsi ya kuongeza mavuno ya mahindi", category: "general", color: "text-gray-700 bg-gray-50 hover:bg-gray-100" },
       ]
     : [
         { icon: Sprout, label: "Maize Fertilizer", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "text-green-600 bg-green-50 hover:bg-green-100" },
         { icon: Bug, label: "Tomato Diseases", prompt: "How to control tomato diseases", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100" },
-        { icon: DollarSign, label: "Market Prices", prompt: "Current prices for maize and beans", category: "market", color: "text-blue-600 bg-blue-50 hover:bg-blue-100" },
-        { icon: Cloud, label: "Weather Forecast", prompt: "Weather forecast for next week", category: "weather", color: "text-purple-600 bg-purple-50 hover:bg-purple-100" },
-        { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-cyan-600 bg-cyan-50 hover:bg-cyan-100" },
-        { icon: TrendingUp, label: "Yield Boost", prompt: "How to increase maize yield", category: "general", color: "text-orange-600 bg-orange-50 hover:bg-orange-100" },
+        { icon: DollarSign, label: "Market Prices", prompt: "Current prices for maize and beans", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100" },
+        { icon: Cloud, label: "Weather Forecast", prompt: "Weather forecast for next week", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100" },
+        { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100" },
+        { icon: TrendingUp, label: "Yield Boost", prompt: "How to increase maize yield", category: "general", color: "text-gray-700 bg-gray-50 hover:bg-gray-100" },
       ];
 
   // Load recommendations
@@ -337,7 +337,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
       case "medium":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "low":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
@@ -373,7 +373,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white p-8"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-[#2E7D32]/90 text-white p-8"
       >
         <div className="relative">
           <div className="flex items-start justify-between">
@@ -388,7 +388,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                 </motion.div>
                 <div>
                   <h1 className="text-4xl font-bold">AI Support Center</h1>
-                  <p className="text-green-100 mt-1">Chat with Sankofa AI & Get Personalized Recommendations</p>
+                  <p className="text-white/90 mt-1">Chat with Sankofa AI & Get Personalized Recommendations</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
@@ -401,11 +401,11 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Send className="h-5 w-5 text-green-100" />
+                      <Send className="h-5 w-5 text-white/90" />
                     </div>
-                    <Badge className="bg-green-400/20 text-white border-0 text-xs">Active</Badge>
+                    <Badge className="bg-white/20 text-white border-0 text-xs">Active</Badge>
                   </div>
-                  <p className="text-xs text-green-100 mb-1">Total Messages</p>
+                  <p className="text-xs text-white/80 mb-1">Total Messages</p>
                   <p className="text-3xl font-bold">{messages.length - 1}</p>
                 </motion.div>
 
@@ -418,11 +418,11 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Brain className="h-5 w-5 text-green-100" />
+                      <Brain className="h-5 w-5 text-white/90" />
                     </div>
                     <Zap className="h-4 w-4 text-yellow-300" />
                   </div>
-                  <p className="text-xs text-green-100 mb-1">AI Responses</p>
+                  <p className="text-xs text-white/80 mb-1">AI Responses</p>
                   <p className="text-3xl font-bold">{messages.filter(m => m.role === "assistant").length}</p>
                 </motion.div>
 
@@ -435,7 +435,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Lightbulb className="h-5 w-5 text-green-100" />
+                      <Lightbulb className="h-5 w-5 text-white/90" />
                     </div>
                     {allRecommendations.length > 0 && (
                       <Badge className="bg-red-500 text-white border-0 text-xs px-2">
@@ -443,7 +443,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-green-100 mb-1">Tips</p>
+                  <p className="text-xs text-white/80 mb-1">Tips</p>
                   <p className="text-3xl font-bold">{allRecommendations.length}</p>
                 </motion.div>
 
@@ -456,16 +456,16 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Globe className="h-5 w-5 text-green-100" />
+                      <Globe className="h-5 w-5 text-white/90" />
                     </div>
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
                   </div>
-                  <p className="text-xs text-green-100 mb-1">Language</p>
+                  <p className="text-xs text-white/80 mb-1">Language</p>
                   <p className="text-3xl font-bold">{language === "sw" ? "SW" : "EN"}</p>
                 </motion.div>
               </div>
             </div>
-            <Badge className="bg-green-500 text-white border-0">
+            <Badge className="bg-white/20 text-white border-0">
               <Sparkles className="h-3 w-3 mr-1" />
               Powered by AI
             </Badge>
@@ -481,14 +481,14 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
               <TabsList className="inline-flex h-auto items-center justify-start gap-2 bg-transparent p-0 w-full flex-wrap">
                 <TabsTrigger 
                   value="chat" 
-                  className="relative rounded-full px-3 md:px-6 py-2.5 text-xs md:text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-green-200 data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:bg-gray-200 border-0"
+                  className="relative rounded-full px-3 md:px-6 py-2.5 text-xs md:text-sm font-medium transition-all data-[state=active]:bg-[#2E7D32] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:bg-gray-200 border-0"
                 >
                   <MessageSquare className="h-4 w-4 md:mr-2" />
                   <span className="hidden sm:inline">AI Chat</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="recommendations" 
-                  className="relative rounded-full px-3 md:px-6 py-2.5 text-xs md:text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-green-200 data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:bg-gray-200 border-0"
+                  className="relative rounded-full px-3 md:px-6 py-2.5 text-xs md:text-sm font-medium transition-all data-[state=active]:bg-[#2E7D32] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:bg-gray-200 border-0"
                 >
                   <Target className="h-4 w-4 md:mr-2" />
                   <span className="hidden sm:inline">Recommendations</span>
@@ -501,7 +501,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                 </TabsTrigger>
                 <TabsTrigger 
                   value="insights" 
-                  className="relative rounded-full px-3 md:px-6 py-2.5 text-xs md:text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-green-200 data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:bg-gray-200 border-0"
+                  className="relative rounded-full px-3 md:px-6 py-2.5 text-xs md:text-sm font-medium transition-all data-[state=active]:bg-[#2E7D32] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:bg-gray-200 border-0"
                 >
                   <Lightbulb className="h-4 w-4 md:mr-2" />
                   <span className="hidden sm:inline">AI Insights</span>
@@ -520,7 +520,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <motion.div 
-                            className="p-2.5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg"
+                            className="p-2.5 bg-[#2E7D32] rounded-xl shadow-lg"
                             animate={{ rotate: [0, 5, -5, 0] }}
                             transition={{ duration: 3, repeat: Infinity }}
                           >
@@ -528,8 +528,8 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                           </motion.div>
                           <div>
                             <CardTitle className="text-lg font-bold mb-0.5">Sankofa AI</CardTitle>
-                            <p className="text-xs text-green-600 font-normal flex items-center gap-1">
-                              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block" />
+                            <p className="text-xs text-[#2E7D32] font-normal flex items-center gap-1">
+                              <span className="w-2 h-2 bg-[#2E7D32] rounded-full animate-pulse inline-block" />
                               Online now
                             </p>
                           </div>
@@ -563,13 +563,13 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                 <motion.div 
                                   className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-md ${
                                     message.role === "user" 
-                                      ? "bg-gradient-to-br from-blue-500 to-blue-600" 
-                                      : "bg-gradient-to-br from-purple-500 to-indigo-600"
+                                      ? "bg-gray-200" 
+                                      : "bg-[#2E7D32]"
                                   }`}
                                   whileHover={{ scale: 1.1 }}
                                 >
                                   {message.role === "user" ? (
-                                    <User className="h-4 w-4 text-white" />
+                                    <User className="h-4 w-4 text-gray-700" />
                                   ) : (
                                     <Bot className="h-4 w-4 text-white" />
                                   )}
@@ -578,7 +578,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                   <motion.div 
                                     className={`inline-block max-w-[85%] sm:max-w-[75%] ${
                                       message.role === "user"
-                                        ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-3xl rounded-tr-md shadow-lg"
+                                        ? "bg-gray-100 text-gray-900 border border-gray-200 rounded-3xl rounded-tr-md shadow-lg"
                                         : "bg-white text-gray-900 rounded-3xl rounded-tl-md shadow-md border border-gray-100"
                                     } px-4 py-3`}
                                     whileHover={{ scale: 1.01 }}
@@ -606,7 +606,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                     )}
                                     
                                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-black/5">
-                                      <span className={`text-[10px] ${message.role === "user" ? "text-blue-100" : "text-gray-500"}`}>
+                                      <span className={`text-[10px] ${message.role === "user" ? "text-gray-500" : "text-gray-500"}`}>
                                         {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                       </span>
                                       {message.role === "assistant" && (
@@ -617,7 +617,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                           onClick={() => handleCopy(message.content, message.id)}
                                         >
                                           {copiedId === message.id ? (
-                                            <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                            <CheckCircle2 className="h-3 w-3 text-[#2E7D32]" />
                                           ) : (
                                             <Copy className="h-3 w-3 text-gray-400" />
                                           )}
@@ -636,23 +636,23 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                               animate={{ opacity: 1, y: 0 }}
                               className="flex gap-2 mb-3"
                             >
-                              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-md">
+                              <div className="w-9 h-9 rounded-full bg-[#2E7D32] flex items-center justify-center shadow-md">
                                 <Bot className="h-4 w-4 text-white" />
                               </div>
                               <div className="bg-white rounded-3xl rounded-tl-md shadow-md border border-gray-100 px-5 py-4">
                                 <div className="flex gap-1.5">
                                   <motion.div
-                                    className="w-2.5 h-2.5 bg-purple-400 rounded-full"
+                                    className="w-2.5 h-2.5 bg-[#2E7D32] rounded-full"
                                     animate={{ y: [0, -8, 0] }}
                                     transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
                                   />
                                   <motion.div
-                                    className="w-2.5 h-2.5 bg-purple-400 rounded-full"
+                                    className="w-2.5 h-2.5 bg-[#2E7D32] rounded-full"
                                     animate={{ y: [0, -8, 0] }}
                                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.15 }}
                                   />
                                   <motion.div
-                                    className="w-2.5 h-2.5 bg-purple-400 rounded-full"
+                                    className="w-2.5 h-2.5 bg-[#2E7D32] rounded-full"
                                     animate={{ y: [0, -8, 0] }}
                                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }}
                                   />
@@ -688,7 +688,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                             <Button 
                               onClick={() => handleSend()} 
                               disabled={loading || !input.trim()}
-                              className="rounded-full h-11 w-11 p-0 bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg disabled:opacity-50"
+                              className="rounded-full h-11 w-11 p-0 bg-[#2E7D32] hover:bg-[#2E7D32]/90 shadow-lg disabled:opacity-50"
                             >
                               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                             </Button>
@@ -701,10 +701,10 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
 
                 {/* Quick Actions Sidebar */}
                 <div>
-                  <Card className="border-2 bg-gradient-to-br from-purple-50 to-indigo-50">
+                  <Card className="border-2 bg-white">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        <Zap className="h-5 w-5 text-purple-600" />
+                        <Zap className="h-5 w-5 text-[#2E7D32]" />
                         Quick Actions
                       </CardTitle>
                       <CardDescription>
@@ -738,21 +738,21 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                   <Card className="border-2 mt-4">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        <Info className="h-5 w-5 text-blue-600" />
+                        <Info className="h-5 w-5 text-gray-700" />
                         Tips
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                        <CheckCircle2 className="h-4 w-4 text-[#2E7D32] mt-0.5" />
                         <p className="text-gray-700">Be specific in your questions</p>
                       </div>
                       <div className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                        <CheckCircle2 className="h-4 w-4 text-[#2E7D32] mt-0.5" />
                         <p className="text-gray-700">Ask in English or Swahili</p>
                       </div>
                       <div className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                        <CheckCircle2 className="h-4 w-4 text-[#2E7D32] mt-0.5" />
                         <p className="text-gray-700">Include your crop type for better advice</p>
                       </div>
                     </CardContent>
@@ -770,7 +770,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                   >
-                    <Loader2 className="h-12 w-12 text-purple-600 mx-auto animate-spin mb-4" />
+                    <Loader2 className="h-12 w-12 text-[#2E7D32] mx-auto animate-spin mb-4" />
                     <p className="text-gray-600">Generating personalized recommendations...</p>
                   </motion.div>
                 </div>
@@ -817,50 +817,50 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                      <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+                      <Card className="border-2 border-[#2E7D32] bg-green-50">
                         <CardContent className="p-6">
                           <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 bg-green-100 rounded-lg">
-                              <TrendingUp className="h-5 w-5 text-green-600" />
+                              <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
                             </div>
                             <div>
                               <p className="text-sm text-gray-600">Market</p>
-                              <p className="text-3xl font-bold text-green-700">
+                              <p className="text-3xl font-bold text-[#2E7D32]">
                                 {recommendations?.market?.length || 0}
                               </p>
                             </div>
                           </div>
-                          <p className="text-xs text-green-600">Opportunities</p>
+                          <p className="text-xs text-[#2E7D32]">Opportunities</p>
                         </CardContent>
                       </Card>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                      <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
+                      <Card className="border-2 border-gray-200 bg-gray-50">
                         <CardContent className="p-6">
                           <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                              <BookOpen className="h-5 w-5 text-blue-600" />
+                            <div className="p-2 bg-gray-100 rounded-lg">
+                              <BookOpen className="h-5 w-5 text-gray-700" />
                             </div>
                             <div>
                               <p className="text-sm text-gray-600">Learning</p>
-                              <p className="text-3xl font-bold text-blue-700">
+                              <p className="text-3xl font-bold text-gray-900">
                                 {recommendations?.learning?.length || 0}
                               </p>
                             </div>
                           </div>
-                          <p className="text-xs text-blue-600">Resources</p>
+                          <p className="text-xs text-gray-700">Resources</p>
                         </CardContent>
                       </Card>
                     </motion.div>
                   </div>
 
                   {/* All Recommendations */}
-                  <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 via-white to-pink-50 shadow-lg">
+                  <Card className="border-2 border-gray-200 bg-white shadow-lg">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-md">
+                          <div className="p-3 bg-[#2E7D32] rounded-xl shadow-md">
                             <Target className="h-6 w-6 text-white" />
                           </div>
                           <div>
@@ -868,13 +868,13 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                               Smart Recommendations
                             </CardTitle>
                             <CardDescription className="flex items-center gap-2 mt-1">
-                              <Brain className="h-4 w-4 text-purple-600" />
+                              <Brain className="h-4 w-4 text-[#2E7D32]" />
                               <span>{allRecommendations.length} personalized insights from your Farm Graph</span>
                             </CardDescription>
                           </div>
                         </div>
                         {allRecommendations.length > 0 && (
-                          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 text-sm">
+                          <Badge className="bg-red-600 text-white px-4 py-2 text-sm">
                             <Award className="h-4 w-4 mr-1" />
                             {allRecommendations.filter((r: any) => r.priority === "high").length} Urgent
                           </Badge>
@@ -904,7 +904,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: 0.05 }}
-                              className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border-2 border-orange-200"
+                              className="bg-orange-50 rounded-xl p-4 border-2 border-orange-200"
                             >
                               <div className="flex items-center gap-2 mb-1">
                                 <TrendingUp className="h-4 w-4 text-orange-600" />
@@ -919,13 +919,13 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: 0.1 }}
-                              className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200"
+                              className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200"
                             >
                               <div className="flex items-center gap-2 mb-1">
-                                <Info className="h-4 w-4 text-blue-600" />
-                                <span className="text-xs font-medium text-blue-700">Low Priority</span>
+                                <Info className="h-4 w-4 text-gray-700" />
+                                <span className="text-xs font-medium text-gray-700">Low Priority</span>
                               </div>
-                              <p className="text-2xl font-bold text-blue-600">
+                              <p className="text-2xl font-bold text-gray-900">
                                 {allRecommendations.filter((r: any) => r.priority === "low").length}
                               </p>
                             </motion.div>
@@ -961,20 +961,20 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                 >
                                   <Card className={`border-2 transition-all duration-300 hover:shadow-xl ${
                                     rec.priority === "high" 
-                                      ? "border-red-200 bg-gradient-to-br from-red-50 to-white hover:border-red-400" 
+                                      ? "border-red-200 bg-red-50 hover:border-red-400" 
                                       : rec.priority === "medium"
-                                      ? "border-orange-200 bg-gradient-to-br from-orange-50 to-white hover:border-orange-400"
-                                      : "border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:border-blue-400"
+                                      ? "border-orange-200 bg-orange-50 hover:border-orange-400"
+                                      : "border-gray-200 bg-gray-50 hover:border-gray-300"
                                   }`}>
                                     <CardContent className="p-5">
                                       <div className="flex items-start gap-4">
                                         {/* Priority Icon */}
                                         <div className={`p-3 rounded-xl shadow-md flex-shrink-0 ${
                                           rec.priority === "high" 
-                                            ? "bg-gradient-to-br from-red-500 to-red-600" 
+                                            ? "bg-red-600" 
                                             : rec.priority === "medium"
-                                            ? "bg-gradient-to-br from-orange-500 to-orange-600"
-                                            : "bg-gradient-to-br from-blue-500 to-blue-600"
+                                            ? "bg-orange-600"
+                                            : "bg-gray-600"
                                         }`}>
                                           <div className="text-white">
                                             {getPriorityIcon(rec.priority)}
@@ -986,7 +986,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                           {/* Header */}
                                           <div className="flex items-start justify-between gap-3 mb-3">
                                             <div className="flex-1">
-                                              <h4 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
+                                              <h4 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-[#2E7D32] transition-colors">
                                                 {rec.title}
                                               </h4>
                                               <div className="flex items-center gap-2 flex-wrap">
@@ -1002,7 +1002,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                                       ? "bg-red-600 hover:bg-red-700" 
                                                       : rec.priority === "medium"
                                                       ? "bg-orange-600 hover:bg-orange-700"
-                                                      : "bg-blue-600 hover:bg-blue-700"
+                                                      : "bg-gray-600 hover:bg-gray-700"
                                                   }`}
                                                 >
                                                   {rec.priority.toUpperCase()} PRIORITY
@@ -1020,17 +1020,17 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                           <div className="flex items-center justify-between flex-wrap gap-3">
                                             <div className="flex items-center gap-3 text-sm">
                                               {rec.dueDate && (
-                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg border-2 border-purple-200">
-                                                  <Calendar className="h-4 w-4 text-purple-600" />
+                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg border-2 border-gray-300">
+                                                  <Calendar className="h-4 w-4 text-gray-700" />
                                                   <span className="font-medium text-gray-700">
                                                     Due: {new Date(rec.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                                   </span>
                                                 </div>
                                               )}
                                               {rec.actionable && (
-                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-100 rounded-lg border-2 border-green-300">
-                                                  <Lightbulb className="h-4 w-4 text-green-600" />
-                                                  <span className="text-xs font-semibold text-green-700">
+                                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-100 rounded-lg border-2 border-[#2E7D32]">
+                                                  <Lightbulb className="h-4 w-4 text-[#2E7D32]" />
+                                                  <span className="text-xs font-semibold text-[#2E7D32]">
                                                     ACTION READY
                                                   </span>
                                                 </div>
@@ -1040,7 +1040,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                                             {rec.actionable && (
                                               <Button 
                                                 size="sm" 
-                                                className="gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-md hover:shadow-lg transition-all group-hover:scale-105"
+                                                className="gap-2 bg-[#2E7D32] hover:bg-[#2E7D32]/90 shadow-md hover:shadow-lg transition-all group-hover:scale-105"
                                               >
                                                 <Zap className="h-4 w-4" />
                                                 Take Action
@@ -1061,7 +1061,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                         <motion.div
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className="text-center py-16 bg-gradient-to-br from-purple-50 via-white to-pink-50 rounded-2xl border-2 border-dashed border-purple-300"
+                          className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-300"
                         >
                           <motion.div
                             animate={{ 
@@ -1075,8 +1075,8 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                             }}
                             className="inline-block mb-4"
                           >
-                            <div className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl">
-                              <Sparkles className="h-16 w-16 text-purple-600" />
+                            <div className="p-4 bg-green-100 rounded-2xl">
+                              <Sparkles className="h-16 w-16 text-[#2E7D32]" />
                             </div>
                           </motion.div>
                           
@@ -1115,7 +1115,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
 
             {/* AI Insights Tab */}
             <TabsContent value="insights" className="p-6 m-0">
-              <Card className="border-2 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+              <Card className="border-2 bg-white">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Lightbulb className="h-6 w-6 text-yellow-600" />
