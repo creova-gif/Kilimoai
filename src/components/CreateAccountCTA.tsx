@@ -38,7 +38,7 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
       {/* Background effects */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <motion.div
@@ -47,7 +47,7 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
         className="max-w-lg w-full relative"
       >
         <Card className="bg-white border-0 shadow-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white p-8 text-center">
+          <CardHeader className="bg-[#2E7D32] text-white p-8 text-center">
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
@@ -99,7 +99,7 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
             <div className="space-y-3">
               <Button
                 onClick={onPhoneSignup}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-14 text-lg font-bold shadow-lg"
+                className="w-full bg-[#2E7D32] hover:bg-[#1f5a24] h-14 text-lg font-bold shadow-lg"
               >
                 <Phone className="h-5 w-5 mr-2" />
                 {language === "sw" ? "Jisajili kwa Namba ya Simu" : "Sign up with Phone Number"}

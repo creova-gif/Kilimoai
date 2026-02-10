@@ -354,7 +354,7 @@ export function MobileMoneyHub({
   return (
     <div className="space-y-6 pb-6">
       {/* Wallet Balance Card */}
-      <Card className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 text-white">
+      <Card className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -362,7 +362,7 @@ export function MobileMoneyHub({
                 <Wallet className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm text-purple-200">CREOVA Wallet Balance</p>
+                <p className="text-sm text-gray-200">CREOVA Wallet Balance</p>
                 <p className="text-3xl font-bold">TZS {walletData.balance.toLocaleString()}</p>
               </div>
             </div>
@@ -374,15 +374,15 @@ export function MobileMoneyHub({
 
           <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/20">
             <div>
-              <p className="text-sm text-purple-200">Pending</p>
+              <p className="text-sm text-gray-200">Pending</p>
               <p className="text-lg font-bold">TZS {walletData.pendingPayments.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-sm text-purple-200">In Escrow</p>
+              <p className="text-sm text-gray-200">In Escrow</p>
               <p className="text-lg font-bold">TZS {walletData.escrowAmount.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-sm text-purple-200">Total Earned</p>
+              <p className="text-sm text-gray-200">Total Earned</p>
               <p className="text-lg font-bold">TZS {walletData.totalEarned.toLocaleString()}</p>
             </div>
           </div>
@@ -415,7 +415,7 @@ export function MobileMoneyHub({
                   <div 
                     key={provider.id}
                     className={`p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-all ${
-                      provider.featured ? 'border-purple-500 bg-purple-50' : ''
+                      provider.featured ? 'border-green-500 bg-green-50' : ''
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -427,7 +427,7 @@ export function MobileMoneyHub({
                         </div>
                       </div>
                       {provider.featured && (
-                        <Badge className="bg-purple-600">Lowest Fee</Badge>
+                        <Badge className="bg-green-600">Lowest Fee</Badge>
                       )}
                     </div>
                     <Button 
@@ -491,8 +491,8 @@ export function MobileMoneyHub({
                       <button
                         key={provider.id}
                         onClick={() => setDepositProvider(provider.name)}
-                        className={`p-3 border rounded-lg hover:border-purple-500 transition-all ${
-                          depositProvider === provider.name ? 'border-purple-500 bg-purple-50' : ''
+                        className={`p-3 border rounded-lg hover:border-green-500 transition-all ${
+                          depositProvider === provider.name ? 'border-green-500 bg-green-50' : ''
                         }`}
                       >
                         <div className="text-2xl mb-1">{provider.logo}</div>
@@ -516,11 +516,14 @@ export function MobileMoneyHub({
                 </div>
 
                 {depositAmount && depositProvider && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-900">
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-sm text-gray-900">
+                      Transaction time: 1-5 minutes for instant deposit
+                    </p>
+                    <p className="text-sm text-gray-900 mt-1">
                       <strong>Transaction Fee:</strong> TZS {(parseFloat(depositAmount) * 0.015).toFixed(0)}
                     </p>
-                    <p className="text-sm text-blue-900 mt-1">
+                    <p className="text-sm text-gray-900 mt-1">
                       <strong>You will receive:</strong> TZS {(parseFloat(depositAmount) - parseFloat(depositAmount) * 0.015).toFixed(0)}
                     </p>
                   </div>
@@ -570,8 +573,8 @@ export function MobileMoneyHub({
                       <button
                         key={provider.id}
                         onClick={() => setSelectedProvider(provider.name)}
-                        className={`p-3 border rounded-lg hover:border-purple-500 transition-all ${
-                          selectedProvider === provider.name ? 'border-purple-500 bg-purple-50' : ''
+                        className={`p-3 border rounded-lg hover:border-green-500 transition-all ${
+                          selectedProvider === provider.name ? 'border-green-500 bg-green-50' : ''
                         }`}
                       >
                         <div className="text-2xl mb-1">{provider.logo}</div>
@@ -610,11 +613,14 @@ export function MobileMoneyHub({
                 </div>
 
                 {amount && selectedProvider && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-900">
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-sm text-gray-900">
+                      Processing time: 1-5 minutes
+                    </p>
+                    <p className="text-sm text-gray-900 mt-1">
                       <strong>Transaction Fee:</strong> TZS {(parseFloat(amount) * 0.015).toFixed(0)}
                     </p>
-                    <p className="text-sm text-blue-900 mt-1">
+                    <p className="text-sm text-gray-900 mt-1">
                       <strong>You will receive:</strong> TZS {(parseFloat(amount) - parseFloat(amount) * 0.015).toFixed(0)}
                     </p>
                   </div>
@@ -751,7 +757,7 @@ export function MobileMoneyHub({
       </Tabs>
 
       {/* Benefits Banner */}
-      <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+      <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
         <CardContent className="p-6">
           <h3 className="text-xl font-bold mb-3">Why Use CREOVA Wallet?</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -759,28 +765,28 @@ export function MobileMoneyHub({
               <CheckCircle2 className="h-5 w-5 mt-1 flex-shrink-0" />
               <div>
                 <p className="font-medium">Instant Payments</p>
-                <p className="text-sm text-blue-100">Get paid immediately when you sell crops</p>
+                <p className="text-sm text-gray-100">Get paid immediately when you sell crops</p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <CheckCircle2 className="h-5 w-5 mt-1 flex-shrink-0" />
               <div>
                 <p className="font-medium">Secure Escrow</p>
-                <p className="text-sm text-blue-100">Payments held safely until delivery confirmed</p>
+                <p className="text-sm text-gray-100">Payments held safely until delivery confirmed</p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <CheckCircle2 className="h-5 w-5 mt-1 flex-shrink-0" />
               <div>
                 <p className="font-medium">Transparent Receipts</p>
-                <p className="text-sm text-blue-100">Digital records of all transactions</p>
+                <p className="text-sm text-gray-100">Digital records of all transactions</p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <CheckCircle2 className="h-5 w-5 mt-1 flex-shrink-0" />
               <div>
                 <p className="font-medium">Bulk Payments</p>
-                <p className="text-sm text-blue-100">Perfect for cooperatives and agribusinesses</p>
+                <p className="text-sm text-gray-100">Perfect for cooperatives and agribusinesses</p>
               </div>
             </div>
           </div>

@@ -112,13 +112,13 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
       </div>
 
       {/* Quality Assurance Banner */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900">Quality Verification System</h4>
-              <p className="text-sm text-blue-700 mt-1">
+              <h4 className="font-medium text-gray-900">Quality Verification System</h4>
+              <p className="text-sm text-gray-700 mt-1">
                 Products marked with <CheckCircle className="h-3 w-3 inline text-green-600" /> are verified authentic by TFRA and TOSCI.
                 Report counterfeit products to protect your crops.
               </p>
@@ -177,7 +177,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                   <Badge variant="outline" className="bg-green-50">Seeds</Badge>
                 )}
                 {dealer.inventory.fertilizer && (
-                  <Badge variant="outline" className="bg-blue-50">Fertilizer</Badge>
+                  <Badge variant="outline" className="bg-gray-50">Fertilizer</Badge>
                 )}
                 {dealer.inventory.pesticides && (
                   <Badge variant="outline" className="bg-orange-50">Pesticides</Badge>
@@ -235,10 +235,10 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
       </div>
 
       {/* Group Buying Option */}
-      <Card className="border-purple-200 bg-purple-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardHeader>
-          <CardTitle className="text-purple-900">Bulk Group Purchasing</CardTitle>
-          <CardDescription className="text-purple-700">
+          <CardTitle className="text-gray-900">Bulk Group Purchasing</CardTitle>
+          <CardDescription className="text-gray-700">
             Join with other farmers to buy inputs at discounted prices
           </CardDescription>
         </CardHeader>
@@ -249,7 +249,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                 <p className="font-medium">Maize Seeds Group Order</p>
                 <p className="text-sm text-gray-600">12/20 farmers joined • 15% discount</p>
               </div>
-              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+              <Button size="sm" className="bg-green-600 hover:bg-green-700">
                 Join Group
               </Button>
             </div>
@@ -258,7 +258,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                 <p className="font-medium">DAP Fertilizer Bulk Buy</p>
                 <p className="text-sm text-gray-600">8/15 farmers joined • 12% discount</p>
               </div>
-              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+              <Button size="sm" className="bg-green-600 hover:bg-green-700">
                 Join Group
               </Button>
             </div>

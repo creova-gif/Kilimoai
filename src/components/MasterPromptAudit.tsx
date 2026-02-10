@@ -450,7 +450,7 @@ export function MasterPromptAudit() {
       </div>
 
       {/* Compliance Score */}
-      <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-gray-300 bg-gradient-to-r from-gray-50 to-gray-100">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
@@ -460,7 +460,7 @@ export function MasterPromptAudit() {
               </p>
             </div>
             <div className="text-center">
-              <div className="text-6xl font-bold text-purple-600">
+              <div className="text-6xl font-bold text-gray-600">
                 {Math.round((summary.pass / summary.total) * 100)}%
               </div>
               <p className="text-sm text-gray-600 mt-2">
@@ -510,14 +510,14 @@ export function MasterPromptAudit() {
                       <p className="text-sm text-gray-600">{item.issue}</p>
                     </div>
 
-                    <div className="bg-blue-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-blue-700 mb-1">Recommendation:</p>
-                      <p className="text-sm text-blue-600">{item.recommendation}</p>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Recommendation:</p>
+                      <p className="text-sm text-gray-600">{item.recommendation}</p>
                     </div>
 
-                    <div className="bg-purple-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-purple-700 mb-1">Master Prompt Rule:</p>
-                      <p className="text-sm text-purple-600 italic">"{item.masterPromptRule}"</p>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Master Prompt Rule:</p>
+                      <p className="text-sm text-gray-600 italic">"{item.masterPromptRule}"</p>
                     </div>
                   </div>
                 </div>
@@ -540,8 +540,8 @@ export function MasterPromptAudit() {
                     </div>
                     <p className="text-sm text-gray-700">{item.issue}</p>
                     <div className="bg-white p-3 rounded-lg">
-                      <p className="text-sm font-medium text-blue-700 mb-1">Fix:</p>
-                      <p className="text-sm text-blue-600">{item.recommendation}</p>
+                      <p className="text-sm font-medium text-gray-700 mb-1">Fix:</p>
+                      <p className="text-sm text-gray-600">{item.recommendation}</p>
                     </div>
                   </div>
                 </div>
@@ -564,8 +564,8 @@ export function MasterPromptAudit() {
                     </div>
                     <p className="text-sm text-gray-700">{item.issue}</p>
                     <div className="bg-white p-3 rounded-lg">
-                      <p className="text-sm font-medium text-blue-700 mb-1">Improvement:</p>
-                      <p className="text-sm text-blue-600">{item.recommendation}</p>
+                      <p className="text-sm font-medium text-gray-700 mb-1">Improvement:</p>
+                      <p className="text-sm text-gray-600">{item.recommendation}</p>
                     </div>
                   </div>
                 </div>
@@ -589,7 +589,7 @@ export function MasterPromptAudit() {
                       </div>
                       <p className="text-sm text-gray-700">{item.issue}</p>
                       <div className="bg-white p-3 rounded-lg">
-                        <p className="text-sm text-blue-600">{item.recommendation}</p>
+                        <p className="text-sm text-gray-600">{item.recommendation}</p>
                       </div>
                     </div>
                   </div>

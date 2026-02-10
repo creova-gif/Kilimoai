@@ -70,7 +70,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardDescription>Active Users (30d)</CardDescription>
-              <Activity className="h-5 w-5 text-blue-600" />
+              <Activity className="h-5 w-5 text-green-600" />
             </div>
           </CardHeader>
           <CardContent>
@@ -85,7 +85,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardDescription>Female Farmers</CardDescription>
-              <Heart className="h-5 w-5 text-purple-600" />
+              <Heart className="h-5 w-5 text-gray-600" />
             </div>
           </CardHeader>
           <CardContent>
@@ -154,7 +154,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-blue-600" />
+                    <Target className="h-4 w-4 text-green-600" />
                     <span>Market Access</span>
                   </div>
                   <span className="text-sm font-semibold">{projectMetrics.marketAccess}%</span>
@@ -176,7 +176,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-purple-600" />
+                    <Heart className="h-4 w-4 text-gray-600" />
                     <span>Gender Equality</span>
                   </div>
                   <span className="text-sm font-semibold">{projectMetrics.genderEquality}%</span>
@@ -317,10 +317,10 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
                   </div>
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <Progress value={item.female} className="h-2 bg-purple-100 [&>div]:bg-purple-500" />
+                      <Progress value={item.female} className="h-2 bg-gray-100 [&>div]:bg-gray-500" />
                     </div>
                     <div className="flex-1">
-                      <Progress value={item.male} className="h-2 bg-blue-100 [&>div]:bg-blue-500" />
+                      <Progress value={item.male} className="h-2 bg-gray-100 [&>div]:bg-gray-600" />
                     </div>
                   </div>
                 </div>
@@ -382,7 +382,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
             <CardContent className="space-y-4">
               {[
                 { range: "Excellent (80-100)", count: 2847, percentage: 22, color: "bg-green-500" },
-                { range: "Good (70-79)", count: 5134, percentage: 40, color: "bg-blue-500" },
+                { range: "Good (70-79)", count: 5134, percentage: 40, color: "bg-gray-500" },
                 { range: "Fair (60-69)", count: 3214, percentage: 25, color: "bg-yellow-500" },
                 { range: "Poor (50-59)", count: 1234, percentage: 10, color: "bg-orange-500" },
                 { range: "Very Poor (<50)", count: 418, percentage: 3, color: "bg-red-500" }

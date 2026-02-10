@@ -101,7 +101,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-200", dot: "bg-blue-500" };
+      case "open": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
       case "in-progress": return { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-200", dot: "bg-yellow-500" };
       case "resolved": return { bg: "bg-green-100", text: "text-green-700", border: "border-green-200", dot: "bg-green-500" };
       case "closed": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
@@ -113,7 +113,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
     switch (priority) {
       case "high": return "text-red-600";
       case "medium": return "text-yellow-600";
-      case "low": return "text-blue-600";
+      case "low": return "text-gray-600";
       default: return "text-gray-600";
     }
   };
@@ -133,9 +133,9 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -145,7 +145,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Support Center" : "Kituo cha Msaada"}
               </h1>
-              <p className="text-blue-100 text-sm">
+              <p className="text-green-100 text-sm">
                 {language === "en" 
                   ? "Track your support requests"
                   : "Fuatilia maombi yako ya msaada"}
@@ -157,15 +157,15 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
           <div className="grid grid-cols-3 gap-3 mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{tickets.filter(t => t.status === "open").length}</div>
-              <div className="text-xs text-blue-100">{language === "en" ? "Open" : "Wazi"}</div>
+              <div className="text-xs text-white/90">{language === "en" ? "Open" : "Wazi"}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{tickets.filter(t => t.status === "in-progress").length}</div>
-              <div className="text-xs text-blue-100">{language === "en" ? "In Progress" : "Inaendelea"}</div>
+              <div className="text-xs text-white/90">{language === "en" ? "In Progress" : "Inaendelea"}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{tickets.filter(t => t.status === "resolved").length}</div>
-              <div className="text-xs text-blue-100">{language === "en" ? "Resolved" : "Imetatuliwa"}</div>
+              <div className="text-xs text-white/90">{language === "en" ? "Resolved" : "Imetatuliwa"}</div>
             </div>
           </div>
         </div>
@@ -192,16 +192,16 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
                 </div>
               </button>
 
-              <button className="flex items-center gap-3 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 rounded-xl border-2 border-blue-200 transition-all group">
-                <Phone className="h-6 w-6 text-blue-600" />
+              <button className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl border-2 border-gray-200 transition-all group">
+                <Phone className="h-6 w-6 text-green-600" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900">{language === "en" ? "Call Support" : "Piga Msaada"}</div>
                   <div className="text-xs text-gray-600">+255 123 456 789</div>
                 </div>
               </button>
 
-              <button className="flex items-center gap-3 p-4 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-xl border-2 border-purple-200 transition-all group">
-                <Book className="h-6 w-6 text-purple-600" />
+              <button className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl border-2 border-gray-200 transition-all group">
+                <Book className="h-6 w-6 text-green-600" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900">{language === "en" ? "Help Center" : "Kituo cha Msaada"}</div>
                   <div className="text-xs text-gray-600">{language === "en" ? "FAQs & guides" : "Maswali & miongozo"}</div>
@@ -274,9 +274,9 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
                     />
                   </div>
 
-                  <div className="flex items-center gap-2 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-                    <Clock className="h-5 w-5 text-blue-600" />
-                    <span className="text-sm text-blue-700">
+                  <div className="flex items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+                    <Clock className="h-5 w-5 text-gray-600" />
+                    <span className="text-sm text-gray-700">
                       {language === "en" 
                         ? "Expected response time: 2-4 hours"
                         : "Muda unatarajiwa wa majibu: saa 2-4"}

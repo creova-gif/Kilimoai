@@ -353,7 +353,7 @@ export function IntelligentInputMarketplace({
 
                 {/* Recommendation Reason */}
                 {product.recommendationReason && (
-                  <div className="mb-3 p-2 bg-blue-50 rounded text-xs text-blue-800 flex items-start gap-2">
+                  <div className="mb-3 p-2 bg-gray-50 rounded text-xs text-gray-800 flex items-start gap-2">
                     <Info className="h-3 w-3 flex-shrink-0 mt-0.5" />
                     <span>{product.recommendationReason}</span>
                   </div>
@@ -394,7 +394,7 @@ export function IntelligentInputMarketplace({
                     </span>
                   )}
                   {product.paymentOptions.includes("later") && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded flex items-center gap-1">
+                    <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {language === "en" ? "Pay Later" : "Lipa Baadaye"}
                     </span>
@@ -577,10 +577,10 @@ function PaymentOptionsModal({ product, language, onClose }: PaymentOptionsModal
             )}
 
             {product.paymentOptions.includes("later") && (
-              <button className="w-full p-6 border-2 border-blue-500 rounded-xl hover:bg-blue-50 transition-all text-left">
+              <button className="w-full p-6 border-2 border-gray-500 rounded-xl hover:bg-gray-50 transition-all text-left">
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Calendar className="h-7 w-7 text-blue-600" />
+                  <div className="h-14 w-14 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Calendar className="h-7 w-7 text-gray-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-lg text-gray-900">
@@ -596,10 +596,10 @@ function PaymentOptionsModal({ product, language, onClose }: PaymentOptionsModal
             )}
 
             {product.paymentOptions.includes("installments") && (
-              <button className="w-full p-6 border-2 border-purple-500 rounded-xl hover:bg-purple-50 transition-all text-left">
+              <button className="w-full p-6 border-2 border-gray-500 rounded-xl hover:bg-gray-50 transition-all text-left">
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 bg-purple-100 rounded-full flex items-center justify-center">
-                    <CreditCard className="h-7 w-7 text-purple-600" />
+                  <div className="h-14 w-14 bg-gray-100 rounded-full flex items-center justify-center">
+                    <CreditCard className="h-7 w-7 text-gray-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-lg text-gray-900">

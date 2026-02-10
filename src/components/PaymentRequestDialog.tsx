@@ -194,7 +194,7 @@ export function PaymentRequestDialog({ open, onOpenChange, userName, userId }: P
             </div>
 
             {requestData.amount && (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                 <h4 className="font-medium text-sm mb-2">Payment Request Preview</h4>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
@@ -207,7 +207,7 @@ export function PaymentRequestDialog({ open, onOpenChange, userName, userId }: P
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Amount:</span>
-                    <span className="font-bold text-blue-700">
+                    <span className="font-bold text-gray-700">
                       TZS {parseFloat(requestData.amount).toLocaleString()}
                     </span>
                   </div>
@@ -234,7 +234,7 @@ export function PaymentRequestDialog({ open, onOpenChange, userName, userId }: P
               <p className="text-sm text-gray-600">Request ID: {requestId}</p>
             </div>
 
-            <div className="p-4 bg-gray-50 border rounded-lg space-y-3">
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Amount:</span>

@@ -333,12 +333,12 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {healthData.nextSteps.map((step, idx) => (
-              <div key={idx} className="border-l-4 border-blue-600 pl-4">
+              <div key={idx} className="border-l-4 border-green-600 pl-4">
                 <h4 className="font-medium mb-2">{step.stage}</h4>
                 <ul className="space-y-1">
                   {step.actions.map((action, aIdx) => (
                     <li key={aIdx} className="flex items-center gap-2 text-sm text-gray-700">
-                      <div className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-green-600" />
                       <span>{action}</span>
                     </li>
                   ))}
@@ -357,8 +357,8 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                <Droplets className="h-5 w-5 text-blue-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <Droplets className="h-5 w-5 text-gray-700" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Soil Moisture</p>
@@ -384,8 +384,8 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-                <Leaf className="h-5 w-5 text-purple-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <Leaf className="h-5 w-5 text-gray-700" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Nutrient Level</p>
@@ -397,13 +397,13 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
       </Card>
 
       {/* Monitoring Schedule */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-gray-700 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900 mb-1">Recommended Monitoring</h4>
-              <p className="text-sm text-blue-800">{healthData.monitoring}</p>
+              <h4 className="font-medium text-gray-900 mb-1">Recommended Monitoring</h4>
+              <p className="text-sm text-gray-800">{healthData.monitoring}</p>
             </div>
           </div>
         </CardContent>

@@ -5860,4 +5860,368 @@ app.post("/make-server-ce1844e7/alerts/mark-read", async (c) => {
   }
 });
 
+// ==================== CROP INTELLIGENCE SYSTEM ROUTES ====================
+
+// Crop Profiles
+app.post('/make-server-ce1844e7/crop-profiles', async (c) => {
+  try {
+    const { crop, userId } = await c.req.json();
+    if (!crop || !userId) return c.json({ error: 'Crop and userId required' }, 400);
+    const key = `crop_profiles:${userId}`;
+    const existing = await kv.get(key) || [];
+    existing.push(crop);
+    await kv.set(key, existing);
+    return c.json({ success: true, crop });
+  } catch (error) {
+    console.error('Crop profile save error:', error);
+    return c.json({ error: 'Failed to save crop profile' }, 500);
+  }
+});
+
+app.get('/make-server-ce1844e7/crop-profiles', async (c) => {
+  try {
+    const userId = c.req.query('userId');
+    if (!userId) return c.json({ error: 'userId required' }, 400);
+    const profiles = await kv.get(`crop_profiles:${userId}`) || [];
+    return c.json({ profiles });
+  } catch (error) {
+    console.error('Crop profiles load error:', error);
+    return c.json({ error: 'Failed to load profiles' }, 500);
+  }
+});
+
+// Growing Templates
+app.post('/make-server-ce1844e7/growing-templates', async (c) => {
+  try {
+    const { template, userId } = await c.req.json();
+    if (!template || !userId) return c.json({ error: 'Template and userId required' }, 400);
+    const key = `growing_templates:${userId}`;
+    const existing = await kv.get(key) || [];
+    existing.push(template);
+    await kv.set(key, existing);
+    return c.json({ success: true, template });
+  } catch (error) {
+    console.error('Template save error:', error);
+    return c.json({ error: 'Failed to save template' }, 500);
+  }
+});
+
+app.get('/make-server-ce1844e7/growing-templates', async (c) => {
+  try {
+    const userId = c.req.query('userId');
+    if (!userId) return c.json({ error: 'userId required' }, 400);
+    const templates = await kv.get(`growing_templates:${userId}`) || [];
+    return c.json({ templates });
+  } catch (error) {
+    console.error('Templates load error:', error);
+    return c.json({ error: 'Failed to load templates' }, 500);
+  }
+});
+
+// Crop Plans
+app.post('/make-server-ce1844e7/crop-plans', async (c) => {
+  try {
+    const { plan, userId } = await c.req.json();
+    if (!plan || !userId) return c.json({ error: 'Plan and userId required' }, 400);
+    const key = `crop_plans:${userId}`;
+    const existing = await kv.get(key) || [];
+    existing.push(plan);
+    await kv.set(key, existing);
+    return c.json({ success: true, plan });
+  } catch (error) {
+    console.error('Plan save error:', error);
+    return c.json({ error: 'Failed to save plan' }, 500);
+  }
+});
+
+app.get('/make-server-ce1844e7/crop-plans', async (c) => {
+  try {
+    const userId = c.req.query('userId');
+    if (!userId) return c.json({ error: 'userId required' }, 400);
+    const plans = await kv.get(`crop_plans:${userId}`) || [];
+    return c.json({ plans });
+  } catch (error) {
+    console.error('Plans load error:', error);
+    return c.json({ error: 'Failed to load plans' }, 500);
+  }
+});
+
+// Tasks (with batch support for auto-generation)
+app.post('/make-server-ce1844e7/tasks', async (c) => {
+  try {
+    const { task, userId } = await c.req.json();
+    if (!task || !userId) return c.json({ error: 'Task and userId required' }, 400);
+    const key = `tasks:${userId}`;
+    const existing = await kv.get(key) || [];
+    existing.push(task);
+    await kv.set(key, existing);
+    return c.json({ success: true, task });
+  } catch (error) {
+    console.error('Task save error:', error);
+    return c.json({ error: 'Failed to save task' }, 500);
+  }
+});
+
+app.post('/make-server-ce1844e7/tasks/batch', async (c) => {
+  try {
+    const { tasks, userId } = await c.req.json();
+    if (!tasks || !Array.isArray(tasks) || !userId) return c.json({ error: 'Tasks array and userId required' }, 400);
+    const key = `tasks:${userId}`;
+    const existing = await kv.get(key) || [];
+    await kv.set(key, [...existing, ...tasks]);
+    return c.json({ success: true, count: tasks.length });
+  } catch (error) {
+    console.error('Batch tasks save error:', error);
+    return c.json({ error: 'Failed to batch save tasks' }, 500);
+  }
+});
+
+app.get('/make-server-ce1844e7/tasks', async (c) => {
+  try {
+    const userId = c.req.query('userId');
+    if (!userId) return c.json({ error: 'userId required' }, 400);
+    const tasks = await kv.get(`tasks:${userId}`) || [];
+    return c.json({ tasks });
+  } catch (error) {
+    console.error('Tasks load error:', error);
+    return c.json({ error: 'Failed to load tasks' }, 500);
+  }
+});
+
+app.patch('/make-server-ce1844e7/tasks/:id', async (c) => {
+  try {
+    const userId = c.req.query('userId');
+    const taskId = c.req.param('id');
+    const updates = await c.req.json();
+    if (!userId) return c.json({ error: 'userId required' }, 400);
+    const key = `tasks:${userId}`;
+    const tasks = await kv.get(key) || [];
+    await kv.set(key, tasks.map((t: any) => t.id === taskId ? { ...t, ...updates } : t));
+    return c.json({ success: true });
+  } catch (error) {
+    console.error('Task update error:', error);
+    return c.json({ error: 'Failed to update task' }, 500);
+  }
+});
+
+app.delete('/make-server-ce1844e7/tasks/:id', async (c) => {
+  try {
+    const userId = c.req.query('userId');
+    const taskId = c.req.param('id');
+    if (!userId) return c.json({ error: 'userId required' }, 400);
+    const key = `tasks:${userId}`;
+    const tasks = await kv.get(key) || [];
+    await kv.set(key, tasks.filter((t: any) => t.id !== taskId));
+    return c.json({ success: true });
+  } catch (error) {
+    console.error('Task delete error:', error);
+    return c.json({ error: 'Failed to delete task' }, 500);
+  }
+});
+
+// ==================== PREDICTIONS ====================
+
+// Get yield predictions for user
+app.get('/make-server-ce1844e7/predictions/yield/:userId', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    
+    // Fetch user data to get crop information
+    const userData = await kv.get(`user:${userId}`);
+    if (!userData) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Generate mock yield predictions based on user's crops
+    const crops = userData.crops || ['Maize', 'Beans'];
+    const predictions = crops.map((crop: string) => ({
+      crop,
+      currentYield: (2.5 + Math.random() * 2).toFixed(1), // 2.5-4.5 tons/hectare
+      potentialYield: (4.5 + Math.random() * 2).toFixed(1), // 4.5-6.5 tons/hectare
+      confidence: (0.75 + Math.random() * 0.2).toFixed(2), // 0.75-0.95
+      factors: [
+        'Optimal planting timing',
+        'Proper fertilizer application',
+        'Adequate water management',
+        'Early pest control'
+      ],
+      recommendations: [
+        `Use certified ${crop} seeds for better yields`,
+        'Apply fertilizer in split doses',
+        'Maintain proper plant spacing',
+        'Control weeds in first 6 weeks'
+      ]
+    }));
+
+    return c.json({ 
+      success: true,
+      predictions,
+      generatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Yield prediction error:', error);
+    return c.json({ error: 'Failed to generate yield predictions' }, 500);
+  }
+});
+
+// Get price predictions for specific crop and location
+app.get('/make-server-ce1844e7/predictions/price/:location/:crop', async (c) => {
+  try {
+    const location = c.req.param('location');
+    const crop = c.req.param('crop');
+
+    // Generate mock price predictions
+    const currentPrice = Math.floor(800 + Math.random() * 1200); // TSh 800-2000
+    const priceChange = (Math.random() - 0.5) * 20; // -10% to +10%
+    
+    const predictions = [
+      {
+        period: 'Next Week',
+        priceMin: Math.floor(currentPrice * 0.95),
+        priceMax: Math.floor(currentPrice * 1.05),
+        confidence: 0.85,
+        trend: priceChange > 0 ? 'increasing' : 'decreasing'
+      },
+      {
+        period: 'Next Month',
+        priceMin: Math.floor(currentPrice * 0.90),
+        priceMax: Math.floor(currentPrice * 1.15),
+        confidence: 0.70,
+        trend: priceChange > 5 ? 'increasing' : priceChange < -5 ? 'decreasing' : 'stable'
+      },
+      {
+        period: 'Next Quarter',
+        priceMin: Math.floor(currentPrice * 0.85),
+        priceMax: Math.floor(currentPrice * 1.25),
+        confidence: 0.60,
+        trend: 'seasonal'
+      }
+    ];
+
+    return c.json({
+      success: true,
+      crop,
+      location,
+      currentPrice,
+      currency: 'TSh',
+      unit: 'kg',
+      predictions,
+      factors: [
+        'Seasonal demand patterns',
+        'Regional supply levels',
+        'Weather conditions',
+        'Market accessibility'
+      ],
+      recommendations: [
+        priceChange > 5 ? 'Consider holding stock for better prices' : 'Current prices are favorable for selling',
+        'Monitor competing markets for better opportunities',
+        'Store produce properly to maintain quality'
+      ],
+      generatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Price prediction error:', error);
+    return c.json({ error: 'Failed to generate price predictions' }, 500);
+  }
+});
+
+// Get disease predictions for user's crops
+app.get('/make-server-ce1844e7/predictions/disease/:userId', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    
+    // Fetch user data
+    const userData = await kv.get(`user:${userId}`);
+    if (!userData) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Generate mock disease risk predictions
+    const crops = userData.crops || ['Maize', 'Beans'];
+    const region = userData.region || 'Arusha';
+    
+    const diseaseRisks = [
+      {
+        disease: 'Late Blight',
+        crop: crops[0] || 'Maize',
+        riskLevel: 'medium',
+        probability: (0.35 + Math.random() * 0.3).toFixed(2),
+        peakPeriod: 'Next 2-3 weeks',
+        symptoms: [
+          'Water-soaked spots on leaves',
+          'White fungal growth on leaf underside',
+          'Brown lesions spreading rapidly'
+        ],
+        prevention: [
+          'Apply preventive fungicide (Ridomil Gold)',
+          'Improve air circulation between plants',
+          'Remove infected plant parts immediately',
+          'Avoid overhead irrigation'
+        ],
+        treatment: 'Apply Mancozeb or Ridomil Gold every 7-10 days'
+      },
+      {
+        disease: 'Fall Armyworm',
+        crop: crops[0] || 'Maize',
+        riskLevel: 'high',
+        probability: (0.55 + Math.random() * 0.25).toFixed(2),
+        peakPeriod: 'Current season',
+        symptoms: [
+          'Ragged holes in leaves',
+          'Sawdust-like frass near whorl',
+          'Visible caterpillars in plant whorl'
+        ],
+        prevention: [
+          'Scout fields regularly (2-3 times per week)',
+          'Plant early to avoid peak infestation',
+          'Use companion planting (desmodium)',
+          'Apply neem-based products early'
+        ],
+        treatment: 'Apply recommended insecticide (Actellic, Karate) targeting young larvae'
+      },
+      {
+        disease: 'Bean Rust',
+        crop: crops[1] || 'Beans',
+        riskLevel: 'low',
+        probability: (0.15 + Math.random() * 0.20).toFixed(2),
+        peakPeriod: 'Mid to late season',
+        symptoms: [
+          'Small rust-colored pustules on leaves',
+          'Yellow halos around pustules',
+          'Premature leaf drop'
+        ],
+        prevention: [
+          'Use resistant varieties',
+          'Ensure proper plant spacing',
+          'Avoid working in wet fields',
+          'Remove crop residue after harvest'
+        ],
+        treatment: 'Apply sulfur-based fungicide if infection appears'
+      }
+    ];
+
+    return c.json({
+      success: true,
+      region,
+      crops,
+      diseaseRisks,
+      weatherFactors: {
+        humidity: '75-85% (favorable for fungal diseases)',
+        temperature: '24-28°C (moderate risk)',
+        rainfall: 'Above average (increased disease pressure)'
+      },
+      generalRecommendations: [
+        'Increase field scouting frequency during rainy season',
+        'Keep records of pest and disease occurrences',
+        'Rotate crops to break disease cycles',
+        'Maintain farm hygiene and sanitation'
+      ],
+      generatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Disease prediction error:', error);
+    return c.json({ error: 'Failed to generate disease predictions' }, 500);
+  }
+});
+
 Deno.serve(app.fetch);

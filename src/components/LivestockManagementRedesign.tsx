@@ -418,11 +418,11 @@ function HealthIntelligenceView({ language }: { language: "en" | "sw" }) {
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${
                   alert.severity === "critical" ? "bg-red-50" :
-                  alert.severity === "warning" ? "bg-amber-50" : "bg-blue-50"
+                  alert.severity === "warning" ? "bg-amber-50" : "bg-gray-50"
                 }`}>
                   <Heart className={`h-5 w-5 ${
                     alert.severity === "critical" ? "text-red-600" :
-                    alert.severity === "warning" ? "text-amber-600" : "text-blue-600"
+                    alert.severity === "warning" ? "text-amber-600" : "text-gray-600"
                   }`} />
                 </div>
                 <div>
@@ -452,8 +452,8 @@ function BreedingLineageView({ language }: { language: "en" | "sw" }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-pink-50 rounded-lg">
-              <Baby className="h-5 w-5 text-pink-600" />
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <Baby className="h-5 w-5 text-gray-600" />
             </div>
             <div className="text-sm font-medium text-gray-600">
               {language === "en" ? "In Heat Cycle" : "Katika Mzunguko wa Joto"}
@@ -467,8 +467,8 @@ function BreedingLineageView({ language }: { language: "en" | "sw" }) {
 
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-purple-50 rounded-lg">
-              <Heart className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <Heart className="h-5 w-5 text-gray-600" />
             </div>
             <div className="text-sm font-medium text-gray-600">
               {language === "en" ? "Pregnant" : "Wanawake Wajawazito"}
@@ -496,14 +496,14 @@ function BreedingLineageView({ language }: { language: "en" | "sw" }) {
         </div>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
         <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5 text-blue-600" />
+          <Calendar className="h-5 w-5 text-gray-600" />
           <div>
-            <h4 className="font-semibold text-blue-900">
+            <h4 className="font-semibold text-gray-900">
               {language === "en" ? "3 Animals Ready for Breeding" : "Wanyama 3 Tayari kwa Uzazi"}
             </h4>
-            <p className="text-sm text-blue-700 mt-1">
+            <p className="text-sm text-gray-700 mt-1">
               {language === "en" ? "Optimal window: Next 48 hours" : "Dirisha bora: Masaa 48 yajayo"}
             </p>
           </div>
@@ -519,7 +519,7 @@ function ProductionOutputView({ language }: { language: "en" | "sw" }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <Droplets className="h-5 w-5 text-blue-600" />
+            <Droplets className="h-5 w-5 text-gray-600" />
             <TrendingUp className="h-4 w-4 text-green-500" />
           </div>
           <div className="text-2xl font-bold text-gray-900">1,247L</div>

@@ -113,7 +113,7 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "low": return "bg-blue-100 text-blue-800 border-blue-300";
+      case "low": return "bg-gray-100 text-gray-800 border-gray-300";
       case "moderate": return "bg-yellow-100 text-yellow-800 border-yellow-300";
       case "high": return "bg-orange-100 text-orange-800 border-orange-300";
       case "critical": return "bg-red-100 text-red-800 border-red-300";
@@ -140,7 +140,7 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <CloudRain className="h-6 w-6 text-blue-600" />
+            <CloudRain className="h-6 w-6 text-gray-600" />
             AI Climate Risk Alerts
           </h2>
           <p className="text-sm text-gray-600 mt-1">
@@ -197,10 +197,10 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Active Alerts</p>
-                <p className="text-2xl font-bold text-blue-600">{activeAlerts.length}</p>
+                <p className="text-2xl font-bold text-gray-600">{activeAlerts.length}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Bell className="h-5 w-5 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <Bell className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -245,7 +245,7 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
       {/* Alerts List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
         </div>
       ) : alerts.length === 0 ? (
         <Card>
@@ -275,12 +275,12 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
                       <div className={`p-2 rounded-lg ${
                         alert.severity === "critical" ? "bg-red-100" :
                         alert.severity === "high" ? "bg-orange-100" :
-                        alert.severity === "moderate" ? "bg-yellow-100" : "bg-blue-100"
+                        alert.severity === "moderate" ? "bg-yellow-100" : "bg-gray-100"
                       }`}>
                         <AlertIcon className={`h-5 w-5 ${
                           alert.severity === "critical" ? "text-red-600" :
                           alert.severity === "high" ? "text-orange-600" :
-                          alert.severity === "moderate" ? "text-yellow-600" : "text-blue-600"
+                          alert.severity === "moderate" ? "text-yellow-600" : "text-gray-600"
                         }`} />
                       </div>
                       <div className="flex-1">
@@ -353,32 +353,32 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
                   )}
 
                   {/* Preventive Measures */}
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-sm mb-2 text-blue-900 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <h4 className="font-semibold text-sm mb-2 text-gray-900 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-gray-600" />
                       Preventive Measures
                     </h4>
                     <div className="space-y-1">
                       {alert.preventiveMeasures.map((measure, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-sm">
-                          <div className="min-w-[4px] w-1 h-1 bg-blue-600 rounded-full mt-2" />
-                          <span className="text-blue-900">{measure}</span>
+                          <div className="min-w-[4px] w-1 h-1 bg-gray-600 rounded-full mt-2" />
+                          <span className="text-gray-900">{measure}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* AI Recommendations */}
-                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
-                    <h4 className="font-semibold text-sm mb-2 text-purple-900 flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-purple-600" />
+                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <h4 className="font-semibold text-sm mb-2 text-gray-900 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-gray-600" />
                       AI Recommendations
                     </h4>
                     <div className="space-y-1">
                       {alert.recommendations.map((rec, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-sm">
-                          <div className="min-w-[4px] w-1 h-1 bg-purple-600 rounded-full mt-2" />
-                          <span className="text-purple-900">{rec}</span>
+                          <div className="min-w-[4px] w-1 h-1 bg-gray-600 rounded-full mt-2" />
+                          <span className="text-gray-900">{rec}</span>
                         </div>
                       ))}
                     </div>

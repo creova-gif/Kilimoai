@@ -149,12 +149,12 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                     </div>
 
                     {/* Specifications */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                      <h5 className="font-medium text-blue-900 mb-2">Specifications:</h5>
-                      <ul className="space-y-1 text-sm text-blue-800">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                      <h5 className="font-medium text-gray-900 mb-2">Specifications:</h5>
+                      <ul className="space-y-1 text-sm text-gray-800">
                         {product.specifications.map((spec, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                             <span>{spec}</span>
                           </li>
                         ))}

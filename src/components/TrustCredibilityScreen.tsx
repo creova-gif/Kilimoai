@@ -14,8 +14,8 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
       icon: Shield,
       textEn: "We protect your data",
       textSw: "Tunalinda taarifa zako",
-      color: "text-blue-600",
-      bg: "bg-blue-50"
+      color: "text-gray-600",
+      bg: "bg-gray-50"
     },
     {
       icon: Smartphone,
@@ -28,8 +28,8 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
       icon: MapPin,
       textEn: "Advice tailored for Tanzania",
       textSw: "Ushauri unaendana na mazingira ya Tanzania",
-      color: "text-orange-600",
-      bg: "bg-orange-50"
+      color: "text-gray-600",
+      bg: "bg-gray-50"
     }
   ];
 

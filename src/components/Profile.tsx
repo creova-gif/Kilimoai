@@ -81,8 +81,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
 
   const getTierBadge = (tier?: string) => {
     switch (tier) {
-      case "premium": return "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200";
-      case "basic": return "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 border-blue-200";
+      case "premium": return "bg-gradient-to-r from-gray-100 to-gray-100 text-gray-700 border-gray-200";
+      case "basic": return "bg-gradient-to-r from-gray-100 to-gray-100 text-gray-700 border-gray-200";
       default: return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
@@ -270,8 +270,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
             <Card className="shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <User className="h-4 w-4 text-blue-600" />
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <User className="h-4 w-4 text-gray-600" />
                   </div>
                   Personal Information
                 </CardTitle>
@@ -379,13 +379,13 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
                 <CardTitle className="text-base">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-3">
-                <button className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 rounded-xl transition-all border-2 border-blue-200">
-                  <Share2 className="h-6 w-6 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-700">Share Profile</span>
+                <button className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl transition-all border-2 border-gray-200">
+                  <Share2 className="h-6 w-6 text-green-600" />
+                  <span className="text-sm font-medium text-green-700">Share Profile</span>
                 </button>
-                <button className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-xl transition-all border-2 border-purple-200">
-                  <Download className="h-6 w-6 text-purple-600" />
-                  <span className="text-sm font-medium text-purple-700">Export Data</span>
+                <button className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl transition-all border-2 border-gray-200">
+                  <Download className="h-6 w-6 text-green-600" />
+                  <span className="text-sm font-medium text-green-700">Export Data</span>
                 </button>
               </CardContent>
             </Card>
@@ -396,14 +396,14 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
         {activeSection === "stats" && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
             {/* Level Progress */}
-            <Card className="shadow-sm border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+            <Card className="shadow-sm border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Your Level</p>
                     <h3 className="text-3xl font-bold text-gray-900">Level {stats.level}</h3>
                   </div>
-                  <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg">
+                  <div className="p-4 bg-gradient-to-br from-gray-500 to-gray-500 rounded-2xl shadow-lg">
                     <Trophy className="h-8 w-8 text-white" />
                   </div>
                 </div>
@@ -452,8 +452,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-blue-100 rounded-full mb-3">
-                      <MessageCircle className="h-6 w-6 text-blue-600" />
+                    <div className="p-3 bg-gray-100 rounded-full mb-3">
+                      <MessageCircle className="h-6 w-6 text-gray-600" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900">{stats.consultations}</p>
                     <p className="text-xs text-gray-600 mt-1">Consultations</p>
@@ -465,8 +465,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-purple-100 rounded-full mb-3">
-                      <Award className="h-6 w-6 text-purple-600" />
+                    <div className="p-3 bg-gray-100 rounded-full mb-3">
+                      <Award className="h-6 w-6 text-gray-600" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900">{stats.achievements}</p>
                     <p className="text-xs text-gray-600 mt-1">Achievements</p>
@@ -497,15 +497,15 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-3 bg-blue-100 rounded-full">
-                      <Calendar className="h-5 w-5 text-blue-600" />
+                    <div className="p-3 bg-gray-100 rounded-full">
+                      <Calendar className="h-5 w-5 text-gray-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Member Since</p>
                       <p className="font-bold text-gray-900">{stats.joinDate}</p>
                     </div>
                   </div>
-                  <Badge className="bg-blue-100 text-blue-700 border-blue-200">
+                  <Badge className="bg-gray-100 text-gray-700 border-gray-200">
                     Verified
                   </Badge>
                 </div>
@@ -514,7 +514,7 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
 
             {/* Upgrade CTA */}
             {user.tier === "free" && (
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 overflow-hidden relative">
+              <Card className="shadow-lg border-0 bg-gradient-to-br from-green-500 via-green-500 to-green-500 overflow-hidden relative">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
                 <CardContent className="p-6 text-center relative">
                   <div className="inline-flex p-4 bg-white/20 backdrop-blur-sm rounded-3xl mb-4">
@@ -542,7 +542,7 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
                       <span>Priority customer support</span>
                     </li>
                   </ul>
-                  <Button className="w-full bg-white text-purple-600 hover:bg-gray-100 font-bold shadow-lg">
+                  <Button className="w-full bg-white text-green-600 hover:bg-gray-100 font-bold shadow-lg">
                     Upgrade to Premium
                   </Button>
                 </CardContent>
@@ -558,8 +558,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
             <Card className="shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Settings className="h-4 w-4 text-purple-600" />
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <Settings className="h-4 w-4 text-gray-600" />
                   </div>
                   Preferences
                 </CardTitle>
@@ -595,8 +595,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
             <Card className="shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <User className="h-4 w-4 text-blue-600" />
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <User className="h-4 w-4 text-gray-600" />
                   </div>
                   Account Management
                 </CardTitle>
@@ -633,17 +633,17 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <Card className="shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <Crown className="h-4 w-4 text-purple-600" />
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <Crown className="h-4 w-4 text-gray-600" />
                     </div>
                     Subscription
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200">
+                  <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl border-2 border-gray-200">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700">Current Plan</span>
-                      <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                      <Badge className="bg-gray-100 text-gray-700 border-gray-200">
                         {user.tier?.toUpperCase()}
                       </Badge>
                     </div>

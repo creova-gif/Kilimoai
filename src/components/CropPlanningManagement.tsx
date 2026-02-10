@@ -303,7 +303,7 @@ export function CropPlanningManagement() {
       case "cached":
         return <WifiOff className="h-3 w-3 text-amber-500" />;
       case "loading":
-        return <Loader2 className="h-3 w-3 text-blue-500 animate-spin" />;
+        return <Loader2 className="h-3 w-3 text-gray-500 animate-spin" />;
       case "error":
         return <AlertCircle className="h-3 w-3 text-red-500" />;
       case "offline":
@@ -460,7 +460,7 @@ export function CropPlanningManagement() {
                             ? 'bg-white/20 text-white border-white/30' 
                             : tab.insightType === 'warning' 
                               ? 'bg-amber-100 text-amber-700 border-amber-200' 
-                              : 'bg-blue-100 text-blue-700 border-blue-200'
+                              : 'bg-gray-100 text-gray-700 border-gray-200'
                           }
                         `}
                       >
@@ -559,8 +559,8 @@ export function CropPlanningManagement() {
                     <div key={plan.id} className="p-4 border rounded-lg">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className={`h-12 w-12 ${plan.status === 'growing' ? 'bg-green-100' : plan.status === 'harvested' ? 'bg-blue-100' : 'bg-gray-100'} rounded-lg flex items-center justify-center`}>
-                            <Sprout className={`h-6 w-6 ${plan.status === 'growing' ? 'text-green-600' : plan.status === 'harvested' ? 'text-blue-600' : 'text-gray-600'}`} />
+                          <div className={`h-12 w-12 ${plan.status === 'growing' ? 'bg-green-100' : plan.status === 'harvested' ? 'bg-gray-100' : 'bg-gray-100'} rounded-lg flex items-center justify-center`}>
+                            <Sprout className={`h-6 w-6 ${plan.status === 'growing' ? 'text-green-600' : plan.status === 'harvested' ? 'text-gray-600' : 'text-gray-600'}`} />
                           </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
@@ -577,7 +577,7 @@ export function CropPlanningManagement() {
                             plan.status === "growing"
                               ? "bg-green-100 text-green-700"
                               : plan.status === "harvested"
-                              ? "bg-blue-100 text-blue-700"
+                              ? "bg-gray-100 text-gray-700"
                               : "bg-gray-100 text-gray-700"
                           }
                         >
@@ -669,7 +669,7 @@ export function CropPlanningManagement() {
                               ? "bg-red-100 text-red-700"
                               : task.priority === "medium"
                               ? "bg-yellow-100 text-yellow-700"
-                              : "bg-blue-100 text-blue-700"
+                              : "bg-gray-100 text-gray-700"
                           }
                         >
                           {task.priority}
@@ -694,7 +694,7 @@ export function CropPlanningManagement() {
               <div className="space-y-6">
                 {/* Timeline visualization */}
                 <div className="grid grid-cols-5 gap-2 text-center text-sm font-medium mb-4">
-                  <div className="p-2 bg-blue-100 rounded">Mar</div>
+                  <div className="p-2 bg-gray-100 rounded">Mar</div>
                   <div className="p-2 bg-green-100 rounded">Apr-May</div>
                   <div className="p-2 bg-yellow-100 rounded">Jun</div>
                   <div className="p-2 bg-orange-100 rounded">Jul</div>
@@ -718,7 +718,7 @@ export function CropPlanningManagement() {
                         <span className="font-medium">{plan.plantingDate}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <Droplets className="h-4 w-4 text-blue-600" />
+                        <Droplets className="h-4 w-4 text-gray-700" />
                         <span className="text-gray-600">Flowering:</span>
                         <span className="font-medium">Week 8-10</span>
                       </div>
@@ -816,7 +816,7 @@ export function CropPlanningManagement() {
                         <p className="text-2xl font-bold">{soil.pH}</p>
                         <p className="text-xs text-gray-600">Target: 6.5-7.0</p>
                       </div>
-                      <div className="text-center p-3 bg-blue-50 rounded-lg">
+                      <div className="text-center p-3 bg-gray-50 rounded-lg">
                         <p className="text-xs text-gray-600 mb-1">Nitrogen (N)</p>
                         <p className="text-lg font-bold">{soil.nitrogen}</p>
                       </div>
@@ -824,7 +824,7 @@ export function CropPlanningManagement() {
                         <p className="text-xs text-gray-600 mb-1">Phosphorus (P)</p>
                         <p className="text-lg font-bold">{soil.phosphorus}</p>
                       </div>
-                      <div className="text-center p-3 bg-purple-50 rounded-lg">
+                      <div className="text-center p-3 bg-gray-50 rounded-lg">
                         <p className="text-xs text-gray-600 mb-1">Potassium (K)</p>
                         <p className="text-lg font-bold">{soil.potassium}</p>
                       </div>
@@ -835,15 +835,15 @@ export function CropPlanningManagement() {
                       </div>
                     </div>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                       <h5 className="font-medium mb-2 text-sm flex items-center gap-2">
-                        <Target className="h-4 w-4 text-blue-600" />
+                        <Target className="h-4 w-4 text-gray-700" />
                         Recommendations
                       </h5>
                       <ul className="space-y-1 text-sm">
                         {soil.recommendations.map((rec, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <CheckCircle2 className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-700">{rec}</span>
                           </li>
                         ))}
@@ -907,7 +907,7 @@ export function CropPlanningManagement() {
                         <h5 className="font-medium mb-2 text-sm">Yield Factors</h5>
                         <div className="grid grid-cols-3 gap-3 text-sm">
                           <div className="flex items-center gap-2">
-                            <CloudRain className="h-4 w-4 text-blue-600" />
+                            <CloudRain className="h-4 w-4 text-gray-700" />
                             <span>Rainfall: Good</span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -985,7 +985,7 @@ export function CropPlanningManagement() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="pt-6">
-                <BarChart3 className="h-10 w-10 mb-3 text-blue-600" />
+                <BarChart3 className="h-10 w-10 mb-3 text-gray-700" />
                 <h4 className="font-medium mb-2">Production Report</h4>
                 <p className="text-sm text-gray-600 mb-4">Detailed yield and harvest data</p>
                 <Button size="sm" variant="outline" className="w-full">
@@ -1009,7 +1009,7 @@ export function CropPlanningManagement() {
 
             <Card>
               <CardContent className="pt-6">
-                <Leaf className="h-10 w-10 mb-3 text-purple-600" />
+                <Leaf className="h-10 w-10 mb-3 text-gray-700" />
                 <h4 className="font-medium mb-2">Sustainability Report</h4>
                 <p className="text-sm text-gray-600 mb-4">Environmental impact metrics</p>
                 <Button size="sm" variant="outline" className="w-full">
@@ -1026,17 +1026,17 @@ export function CropPlanningManagement() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Total Acres Cultivated</p>
-                  <p className="text-3xl font-bold text-blue-600">{stats.totalAcresPlanned}</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalAcresPlanned}</p>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Expected Revenue</p>
                   <p className="text-3xl font-bold text-green-600">TZS {(stats.expectedRevenue / 1000000).toFixed(1)}M</p>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Input Costs</p>
-                  <p className="text-3xl font-bold text-purple-600">TZS 12.5M</p>
+                  <p className="text-3xl font-bold text-gray-900">TZS 12.5M</p>
                 </div>
                 <div className="text-center p-4 bg-orange-50 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Net Profit (Est.)</p>

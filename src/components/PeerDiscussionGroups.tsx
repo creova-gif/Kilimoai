@@ -120,9 +120,9 @@ export function PeerDiscussionGroups() {
   const getAuthorBadge = (type: string) => {
     switch (type) {
       case "extension":
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-300">Extension Officer</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Extension Officer</Badge>;
       case "champion":
-        return <Badge className="bg-purple-100 text-purple-700 border-purple-300">Champion Farmer</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Champion Farmer</Badge>;
       default:
         return null;
     }
@@ -282,26 +282,24 @@ export function PeerDiscussionGroups() {
       )}
 
       {/* Community Guidelines */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardHeader>
-          <CardTitle className="text-blue-900">Community Guidelines</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2 text-sm text-blue-800">
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+      <Card className="border-gray-200 bg-gray-50">
+        <CardContent className="p-4">
+          <CardTitle className="text-gray-900">Community Guidelines</CardTitle>
+          <ul className="space-y-2 text-sm text-gray-800">
+            <li className="flex gap-2">
+              <span className="text-gray-600 mt-0.5">•</span>
               <span>Be respectful and supportive of fellow farmers</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+            <li className="flex gap-2">
+              <span className="text-gray-600 mt-0.5">•</span>
               <span>Share accurate information - misinformation will be flagged</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+            <li className="flex gap-2">
+              <span className="text-gray-600 mt-0.5">•</span>
               <span>Extension officers verify critical farming advice</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+            <li className="flex gap-2">
+              <span className="text-gray-600 mt-0.5">•</span>
               <span>Report suspicious or harmful content immediately</span>
             </li>
           </ul>

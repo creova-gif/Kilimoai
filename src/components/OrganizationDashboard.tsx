@@ -171,8 +171,8 @@ export function OrganizationDashboard({
                 <span className="text-gray-500 ml-1">{description}</span>
               </div>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Icon className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-gray-100 rounded-lg">
+              <Icon className="h-6 w-6 text-gray-600" />
             </div>
           </div>
         </CardContent>
@@ -429,7 +429,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Target className="h-8 w-8 text-blue-600" />
+                    <Target className="h-8 w-8 text-green-600" />
                     <div>
                       <p className="text-sm text-gray-600">Crops Diversified</p>
                       <p className="text-2xl font-bold">{dashboardData.cropsDiversified}</p>
@@ -443,7 +443,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <MapPin className="h-8 w-8 text-purple-600" />
+                    <MapPin className="h-8 w-8 text-green-600" />
                     <div>
                       <p className="text-sm text-gray-600">Districts Covered</p>
                       <p className="text-2xl font-bold">{dashboardData.areasServed}</p>
@@ -492,12 +492,12 @@ export function OrganizationDashboard({
             </Card>
 
             {/* M&E Cost Savings Banner */}
-            <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-xl font-bold mb-2">M&E Cost Savings</h3>
-                    <p className="text-blue-100">
+                    <p className="text-green-100">
                       Real-time data eliminates 6-12 month survey delays
                     </p>
                     <p className="text-2xl font-bold mt-2">40-60% Cost Reduction</p>
@@ -515,10 +515,10 @@ export function OrganizationDashboard({
         {/* Gender Analytics Tab */}
         {activeTab === "gender" && (
           <div className="space-y-6">
-            <Card className="bg-pink-50 border-pink-200">
+            <Card className="bg-gray-50 border-gray-200">
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Users className="h-6 w-6 text-pink-600" />
+                  <Users className="h-6 w-6 text-gray-600" />
                   <h3 className="text-lg font-bold">Gender Equality & Inclusion Tracking</h3>
                 </div>
                 <p className="text-sm text-gray-700">
@@ -532,7 +532,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Female-Headed Households</p>
-                  <p className="text-3xl font-bold text-pink-600">{dashboardData.femaleHeaded.toLocaleString()}</p>
+                  <p className="text-3xl font-bold text-gray-900">{dashboardData.femaleHeaded.toLocaleString()}</p>
                   <p className="text-sm text-gray-500 mt-1">42.2% of total farmers</p>
                 </CardContent>
               </Card>
@@ -540,7 +540,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Male-Headed Households</p>
-                  <p className="text-3xl font-bold text-blue-600">{dashboardData.maleHeaded.toLocaleString()}</p>
+                  <p className="text-3xl font-bold text-green-600">{dashboardData.maleHeaded.toLocaleString()}</p>
                   <p className="text-sm text-gray-500 mt-1">57.8% of total farmers</p>
                 </CardContent>
               </Card>
@@ -548,7 +548,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Youth Engagement (18-35)</p>
-                  <p className="text-3xl font-bold text-purple-600">{dashboardData.youthFarmers.toLocaleString()}</p>
+                  <p className="text-3xl font-bold text-green-600">{dashboardData.youthFarmers.toLocaleString()}</p>
                   <p className="text-sm text-gray-500 mt-1">29.7% of total farmers</p>
                 </CardContent>
               </Card>

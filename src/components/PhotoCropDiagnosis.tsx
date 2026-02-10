@@ -90,7 +90,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
     low: { 
       color: "bg-green-100 text-green-700 border-green-200", 
       icon: CheckCircle,
-      gradient: "from-green-500 to-emerald-500",
+      gradient: "from-[#2E7D32] to-green-600",
       label: "Low Risk"
     },
     medium: { 
@@ -113,7 +113,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white p-8"
+        className="relative overflow-hidden rounded-2xl bg-[#2E7D32] text-white p-8"
       >
         <div className="relative">
           <div className="flex items-start justify-between">
@@ -128,7 +128,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 </motion.div>
                 <div>
                   <h1 className="text-4xl font-bold">AI Crop Diagnosis</h1>
-                  <p className="text-green-100 mt-1">Instant disease detection powered by computer vision</p>
+                  <p className="text-white/90 mt-1">Instant disease detection powered by computer vision</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
@@ -141,11 +141,11 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Scan className="h-5 w-5 text-green-100" />
+                      <Scan className="h-5 w-5 text-white" />
                     </div>
-                    <Badge className="bg-green-400/20 text-white border-0 text-xs">Live</Badge>
+                    <Badge className="bg-white/20 text-white border-0 text-xs">Live</Badge>
                   </div>
-                  <p className="text-xs text-green-100 mb-1">{language === "sw" ? "Usahihi" : "Accuracy"}</p>
+                  <p className="text-xs text-white/80 mb-1">{language === "sw" ? "Usahihi" : "Accuracy"}</p>
                   <p className="text-3xl font-bold">95%+</p>
                 </motion.div>
 
@@ -158,11 +158,11 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Clock className="h-5 w-5 text-green-100" />
+                      <Clock className="h-5 w-5 text-white" />
                     </div>
                     <Zap className="h-4 w-4 text-yellow-300" />
                   </div>
-                  <p className="text-xs text-green-100 mb-1">{language === "sw" ? "Muda" : "Response"}</p>
+                  <p className="text-xs text-white/80 mb-1">{language === "sw" ? "Muda" : "Response"}</p>
                   <p className="text-3xl font-bold">&lt;3s</p>
                 </motion.div>
 
@@ -175,11 +175,11 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <Leaf className="h-5 w-5 text-green-100" />
+                      <Leaf className="h-5 w-5 text-white" />
                     </div>
-                    <Shield className="h-4 w-4 text-green-200" />
+                    <Shield className="h-4 w-4 text-white" />
                   </div>
-                  <p className="text-xs text-green-100 mb-1">{language === "sw" ? "Magonjwa" : "Diseases"}</p>
+                  <p className="text-xs text-white/80 mb-1">{language === "sw" ? "Magonjwa" : "Diseases"}</p>
                   <p className="text-3xl font-bold">50+</p>
                 </motion.div>
 
@@ -192,11 +192,11 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <TrendingUp className="h-5 w-5 text-green-100" />
+                      <TrendingUp className="h-5 w-5 text-white" />
                     </div>
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
                   </div>
-                  <p className="text-xs text-green-100 mb-1">{language === "sw" ? "Lugha" : "Language"}</p>
+                  <p className="text-xs text-white/80 mb-1">{language === "sw" ? "Lugha" : "Language"}</p>
                   <p className="text-3xl font-bold">{language === "sw" ? "SW" : "EN"}</p>
                 </motion.div>
               </div>
@@ -220,8 +220,8 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
           <Card className="border-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Upload className="h-5 w-5 text-purple-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Upload className="h-5 w-5 text-gray-600" />
                 </div>
                 Upload Crop Photo
               </CardTitle>
@@ -260,7 +260,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                      className="w-full gap-2 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 hover:border-[#2E7D32]"
                     >
                       <Upload className="h-4 w-4" />
                       Choose Photo
@@ -305,7 +305,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                   <Button
                     onClick={handleAnalyze}
                     disabled={analyzing}
-                    className="w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-12"
+                    className="w-full gap-2 bg-[#2E7D32] hover:bg-[#1f5a24] h-12"
                   >
                     {analyzing ? (
                       <>
@@ -325,10 +325,10 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
           </Card>
 
           {/* Tips Card */}
-          <Card className="border-2 mt-4 bg-gradient-to-br from-blue-50 to-cyan-50">
+          <Card className="border-2 mt-4 bg-gray-50">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Info className="h-5 w-5 text-blue-600" />
+                <Info className="h-5 w-5 text-gray-600" />
                 Tips for Best Results
               </CardTitle>
             </CardHeader>
@@ -428,14 +428,14 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                     </Card>
 
                     {/* Confidence Score */}
-                    <Card className="border-2 bg-gradient-to-br from-purple-50 to-pink-50">
+                    <Card className="border-2 bg-gray-50">
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            <Shield className="h-5 w-5 text-purple-600" />
+                            <Shield className="h-5 w-5 text-green-600" />
                             <span className="font-semibold">AI Confidence</span>
                           </div>
-                          <span className="text-2xl font-bold text-purple-600">
+                          <span className="text-2xl font-bold text-green-600">
                             {Math.round(diagnosis.confidence * 100)}%
                           </span>
                         </div>
@@ -460,10 +460,10 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
 
                     {/* Nearby Dealers */}
                     {diagnosis.nearbyDealers && diagnosis.nearbyDealers.length > 0 && (
-                      <Card className="border-2 border-blue-200">
+                      <Card className="border-2 border-gray-200">
                         <CardHeader className="pb-3">
                           <CardTitle className="text-lg flex items-center gap-2">
-                            <MapPin className="h-5 w-5 text-blue-600" />
+                            <MapPin className="h-5 w-5 text-green-600" />
                             Nearby Agro Dealers
                           </CardTitle>
                         </CardHeader>
@@ -471,12 +471,12 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                           {diagnosis.nearbyDealers.map((dealer, index) => (
                             <div 
                               key={index}
-                              className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200"
+                              className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
                             >
-                              <div className="p-2 bg-blue-100 rounded-lg">
-                                <Store className="h-4 w-4 text-blue-600" />
+                              <div className="p-2 bg-gray-100 rounded-lg">
+                                <Store className="h-4 w-4 text-gray-600" />
                               </div>
-                              <p className="text-sm font-medium text-blue-900">{dealer}</p>
+                              <p className="text-sm font-medium text-gray-900">{dealer}</p>
                             </div>
                           ))}
                         </CardContent>
@@ -494,7 +494,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                         New Scan
                       </Button>
                       <Button 
-                        className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600"
+                        className="gap-2 bg-[#2E7D32] hover:bg-[#1f5a24]"
                       >
                         <Info className="h-4 w-4" />
                         Learn More
@@ -530,13 +530,13 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card className="border-2 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 shadow-lg">
+        <Card className="border-2 bg-white shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-md">
+              <div className="p-2 bg-[#2E7D32] rounded-xl shadow-md">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-gray-900">
                 How AI Diagnosis Works
               </span>
             </CardTitle>
@@ -551,13 +551,13 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white rounded-xl p-5 border-2 border-purple-200 shadow-md hover:shadow-xl hover:border-purple-400 transition-all duration-300 group"
+                className="bg-white rounded-xl p-5 border-2 border-gray-200 shadow-md hover:shadow-xl hover:border-gray-300 transition-all duration-300 group"
               >
-                <div className="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl inline-block mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <Camera className="h-6 w-6 text-purple-600" />
+                <div className="p-3 bg-gray-100 rounded-xl inline-block mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <Camera className="h-6 w-6 text-gray-700" />
                 </div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-sm font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#2E7D32] text-white flex items-center justify-center text-sm font-bold">
                     1
                   </div>
                   <h4 className="font-bold text-gray-900">Image Capture</h4>
@@ -572,13 +572,13 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-xl p-5 border-2 border-blue-200 shadow-md hover:shadow-xl hover:border-blue-400 transition-all duration-300 group"
+                className="bg-white rounded-xl p-5 border-2 border-gray-200 shadow-md hover:shadow-xl hover:border-gray-300 transition-all duration-300 group"
               >
-                <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl inline-block mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-gray-100 rounded-xl inline-block mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <Zap className="h-6 w-6 text-gray-700" />
                 </div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#2E7D32] text-white flex items-center justify-center text-sm font-bold">
                     2
                   </div>
                   <h4 className="font-bold text-gray-900">AI Analysis</h4>
@@ -615,11 +615,11 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200"
+              className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200"
             >
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <Info className="h-5 w-5 text-indigo-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Info className="h-5 w-5 text-gray-700" />
                 </div>
                 <div className="flex-1">
                   <h5 className="font-semibold text-gray-900 mb-1">AI-Powered Accuracy</h5>

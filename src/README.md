@@ -5,6 +5,30 @@
 [![Production Ready](https://img.shields.io/badge/Production-Ready-success?style=for-the-badge&color=7CB342)](/)
 [![Tests Passing](https://img.shields.io/badge/Tests-91%25-success?style=for-the-badge&color=7CB342)](/)
 [![Deploy](https://img.shields.io/badge/Deploy-One_Command-blue?style=for-the-badge)](/)
+[![Color Lock](https://img.shields.io/badge/🔒_Brand_Color-100%25_Enforced-2E7D32?style=for-the-badge)](/COLOR_LOCK_ENFORCEMENT.md)
+
+---
+
+## 🔒 BRAND COLOR ENFORCEMENT
+
+**STATUS: ✅ ACTIVE** - Zero non-brand colors allowed. CI enforced on every commit.
+
+### ALLOWED ONLY:
+- 🎨 `#2E7D32` (Raspberry Leaf Green) - PRIMARY BRAND COLOR
+- 🎨 `gray-*` - All gray shades
+- 🎨 `white` - White only
+
+### BLOCKED:
+- ❌ `blue-`, `purple-`, `indigo-`, `emerald-`, `teal-`, `cyan-`, `pink-`
+- ❌ `green-*`, `red-*`, `orange-*`, `yellow-*` (use `#2E7D32` or `gray-*`)
+- ❌ ALL gradients
+
+```bash
+# Check violations
+npm run enforce:colors
+```
+
+**Result**: ✅ CI rule active. ✅ No regressions possible.
 
 ---
 

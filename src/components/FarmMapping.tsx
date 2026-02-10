@@ -159,14 +159,14 @@ export function FarmMapping() {
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <Navigation className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <Navigation className="h-5 w-5 text-green-600 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-blue-900 mb-1">
+                      <p className="text-sm font-medium text-gray-900 mb-1">
                         GPS Boundary Marking
                       </p>
-                      <p className="text-xs text-blue-700">
+                      <p className="text-xs text-gray-700">
                         On mobile, walk around your field perimeter while the app records GPS coordinates to automatically calculate area.
                       </p>
                     </div>
@@ -212,7 +212,7 @@ export function FarmMapping() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <Sprout className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+              <Sprout className="h-8 w-8 mx-auto mb-2 text-green-600" />
               <p className="text-2xl font-bold">{activeFields}</p>
               <p className="text-xs text-gray-600 mt-1">Active Fields</p>
             </div>
@@ -230,7 +230,7 @@ export function FarmMapping() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <Home className="h-8 w-8 mx-auto mb-2 text-purple-600" />
+              <Home className="h-8 w-8 mx-auto mb-2 text-gray-600" />
               <p className="text-2xl font-bold">{assets.length}</p>
               <p className="text-xs text-gray-600 mt-1">Assets Mapped</p>
             </div>
@@ -291,7 +291,7 @@ export function FarmMapping() {
 
                 {/* Field B */}
                 <div 
-                  className="absolute bottom-1/4 left-1/4 w-24 h-24 rounded-lg opacity-70 border-4 border-blue-600 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="absolute bottom-1/4 left-1/4 w-24 h-24 rounded-lg opacity-70 border-4 border-green-600 cursor-pointer hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: fields[1].color }}
                   onClick={() => setSelectedField(fields[1].id)}
                 >

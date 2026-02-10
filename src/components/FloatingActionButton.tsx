@@ -10,8 +10,8 @@ export function FloatingActionButton({ onAction }: FABProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const actions = [
-    { id: "ai-insight", label: "AI Insight", icon: Brain, color: "bg-purple-600 hover:bg-purple-700" },
-    { id: "new-task", label: "New Task", icon: ClipboardPlus, color: "bg-blue-600 hover:bg-blue-700" },
+    { id: "ai-insight", label: "AI Insight", icon: Brain, color: "bg-green-600 hover:bg-green-700" },
+    { id: "new-task", label: "New Task", icon: ClipboardPlus, color: "bg-green-600 hover:bg-green-700" },
     { id: "ask-sankofa", label: "Ask Sankofa", icon: MessageSquare, color: "bg-green-600 hover:bg-green-700" },
     { id: "scan-crop", label: "Scan Crop", icon: Camera, color: "bg-orange-600 hover:bg-orange-700" }
   ];

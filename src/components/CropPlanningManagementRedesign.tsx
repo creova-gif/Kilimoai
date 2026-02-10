@@ -38,7 +38,7 @@ interface CropPlan {
   season: string;
   location: string;
   field_size_ha: number;
-  status: "planned" | "active" | "completed";
+  status: "planned" | "active" | "completed" | "at-risk";
   ai_plan: {
     recommendations: {
       seed_variety: string;
@@ -170,379 +170,344 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
   };
 
   const getHealthColor = (confidence: string) => {
-    if (confidence === "high") return "text-green-600 bg-green-100";
-    if (confidence === "medium") return "text-yellow-600 bg-yellow-100";
-    return "text-red-600 bg-red-100";
+    if (confidence === "high") return "text-gray-900 bg-gray-100";
+    if (confidence === "medium") return "text-yellow-800 bg-yellow-50";
+    return "text-red-800 bg-red-50";
   };
 
   const getStatusBadge = (status: string) => {
     const colors = {
-      planned: "bg-blue-100 text-blue-700",
-      active: "bg-green-100 text-green-700",
-      completed: "bg-gray-100 text-gray-700"
+      planned: "bg-gray-100 text-gray-700",
+      active: "bg-gray-100 text-gray-900",
+      completed: "bg-gray-100 text-gray-600",
+      "at-risk": "bg-red-50 text-red-700"
     };
     return colors[status as keyof typeof colors] || colors.planned;
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">
-            {language === "en" ? "Crop Planning & Management" : "Mipango na Usimamizi wa Mazao"}
-          </h1>
-          <p className="text-gray-600">
-            {language === "en" 
-              ? "Plan crops from soil → seed → harvest with AI optimization" 
-              : "Panga mazao kutoka udongo → mbegu → mavuno kwa uboresho wa AI"}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <select
-            value={selectedSeason}
-            onChange={(e) => setSelectedSeason(e.target.value)}
-            className="px-4 py-2 border rounded-lg"
-          >
-            <option>2025 Masika</option>
-            <option>2025 Vuli</option>
-            <option>2024 Masika</option>
-          </select>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-6xl mx-auto px-4 py-6 md:py-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-200">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1">
+              {language === "en" ? "Crop Planning" : "Mipango ya Mazao"}
+            </h1>
+            <div className="flex items-center gap-3 mt-2">
+              <label className="text-sm text-gray-500">
+                {language === "en" ? "Season:" : "Msimu:"}
+              </label>
+              <select
+                value={selectedSeason}
+                onChange={(e) => setSelectedSeason(e.target.value)}
+                className="px-3 py-1.5 border border-gray-300 rounded text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
+              >
+                <option>2025 Masika</option>
+                <option>2025 Vuli</option>
+                <option>2024 Masika</option>
+              </select>
+            </div>
+          </div>
           <Button
             onClick={() => setShowCreateModal(true)}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-[#2E7D32] hover:bg-[rgba(46,125,50,0.9)] text-white px-5 py-2.5 h-auto text-base font-medium"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            {language === "en" ? "New Crop Plan" : "Mpango Mpya"}
+            <Plus className="h-5 w-5 mr-2" />
+            {language === "en" ? "New Plan" : "Mpango Mpya"}
           </Button>
         </div>
-      </div>
 
-      {/* Main Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
-          <TabsTrigger value="overview">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            {language === "en" ? "Overview" : "Muhtasari"}
-          </TabsTrigger>
-          <TabsTrigger value="calendar">
-            <Calendar className="h-4 w-4 mr-2" />
-            {language === "en" ? "Calendar" : "Kalenda"}
-          </TabsTrigger>
-          <TabsTrigger value="soil">
-            <Beaker className="h-4 w-4 mr-2" />
-            {language === "en" ? "Soil & Inputs" : "Udongo"}
-          </TabsTrigger>
-          <TabsTrigger value="revenue">
-            <DollarSign className="h-4 w-4 mr-2" />
-            {language === "en" ? "Yield & Revenue" : "Mapato"}
-          </TabsTrigger>
-          <TabsTrigger value="history">
-            <History className="h-4 w-4 mr-2" />
-            {language === "en" ? "History" : "Historia"}
-          </TabsTrigger>
-        </TabsList>
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="w-full inline-flex h-auto bg-gray-50 p-1 rounded-lg border border-gray-200">
+            <TabsTrigger value="overview" className="flex-1 text-sm px-3 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              {language === "en" ? "Overview" : "Muhtasari"}
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex-1 text-sm px-3 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              {language === "en" ? "Calendar" : "Kalenda"}
+            </TabsTrigger>
+            <TabsTrigger value="soil" className="flex-1 text-sm px-3 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              {language === "en" ? "Soil" : "Udongo"}
+            </TabsTrigger>
+            <TabsTrigger value="revenue" className="flex-1 text-sm px-3 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              {language === "en" ? "Revenue" : "Mapato"}
+            </TabsTrigger>
+            <TabsTrigger value="history" className="hidden sm:flex flex-1 text-sm px-3 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              {language === "en" ? "History" : "Historia"}
+            </TabsTrigger>
+          </TabsList>
 
-        {/* OVERVIEW TAB */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Column 1: Active Crop Plans */}
-            <div className="lg:col-span-2 space-y-4">
-              <h3 className="text-lg font-semibold">
-                {language === "en" ? "Active Crop Plans" : "Mipango Hai ya Mazao"}
-              </h3>
-              
-              {loading ? (
-                <Card>
-                  <CardContent className="pt-6 text-center">
-                    <RefreshCw className="h-8 w-8 mx-auto mb-2 animate-spin text-green-600" />
-                    <p className="text-sm text-gray-600">{language === "en" ? "Loading..." : "Inapakia..."}</p>
-                  </CardContent>
-                </Card>
-              ) : cropPlans.length === 0 ? (
-                <Card>
-                  <CardContent className="pt-12 pb-12 text-center">
-                    <Sprout className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      {language === "en" ? "No Crop Plans Yet" : "Hakuna Mipango Bado"}
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      {language === "en" 
-                        ? "Create your first AI-powered crop plan" 
-                        : "Tengeneza mpango wako wa kwanza wa mazao"}
-                    </p>
-                    <Button onClick={() => setShowCreateModal(true)} className="bg-green-600">
-                      <Plus className="h-4 w-4 mr-2" />
-                      {language === "en" ? "Create Plan" : "Tengeneza Mpango"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                cropPlans.map((plan) => (
-                  <Card key={plan.id} className="hover:shadow-lg transition-shadow border-l-4 border-green-500">
-                    <CardContent className="pt-6">
-                      <div className="flex items-start justify-between mb-4">
+          {/* OVERVIEW TAB */}
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-32">
+                <RefreshCw className="h-8 w-8 mb-3 animate-spin text-gray-400" />
+                <p className="text-base text-gray-600">{language === "en" ? "Loading..." : "Inapakia..."}</p>
+              </div>
+            ) : cropPlans.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-32 px-4">
+                <Sprout className="h-16 w-16 text-gray-300 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {language === "en" ? "No plans yet" : "Hakuna mipango bado"}
+                </h3>
+                <p className="text-base text-gray-600 mb-8 text-center max-w-sm">
+                  {language === "en" 
+                    ? "Create your first crop plan to get started" 
+                    : "Tengeneza mpango wako wa kwanza wa mazao"}
+                </p>
+                <Button 
+                  onClick={() => setShowCreateModal(true)} 
+                  className="bg-[#2E7D32] hover:bg-[rgba(46,125,50,0.9)] text-white px-6 py-2.5 h-auto text-base"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  {language === "en" ? "Create Plan" : "Tengeneza Mpango"}
+                </Button>
+              </div>
+            ) : (
+              <div className="grid lg:grid-cols-3 gap-6">
+                {/* Main Content */}
+                <div className="lg:col-span-2 space-y-4">
+                  {cropPlans.map((plan) => (
+                    <div key={plan.id} className="bg-white border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-5 pb-5 border-b border-gray-100">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <h3 className="text-lg font-semibold text-gray-900">{plan.crop}</h3>
+                            {plan.status === "at-risk" && (
+                              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
+                                {language === "en" ? "At Risk" : "Hatari"}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500">
+                            <span>{plan.location}</span>
+                            <span>•</span>
+                            <span>{plan.field_size_ha} ha</span>
+                            <span>•</span>
+                            <span>{plan.season}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Metrics */}
+                      <div className="grid grid-cols-2 gap-6 mb-5">
                         <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Leaf className="h-5 w-5 text-green-600" />
-                            <h4 className="text-lg font-bold">{plan.crop}</h4>
-                            <Badge className={getStatusBadge(plan.status)}>
-                              {plan.status}
-                            </Badge>
+                          <div className="text-sm text-gray-500 mb-1">
+                            {language === "en" ? "Expected Yield" : "Mavuno"}
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <span>📍 {plan.location}</span>
-                            <span>📏 {plan.field_size_ha} ha</span>
-                            <span>🌱 {plan.season}</span>
+                          <div className="text-xl font-semibold text-gray-900">
+                            {plan.ai_plan.forecast.yield_kg_per_ha.expected}
+                            <span className="text-sm font-normal text-gray-500 ml-1">kg/ha</span>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <Badge className={getHealthColor(plan.ai_plan.forecast.confidence)}>
-                            AI: {plan.ai_plan.forecast.confidence}
-                          </Badge>
+                        <div>
+                          <div className="text-sm text-gray-500 mb-1">
+                            {language === "en" ? "Total Cost" : "Gharama"}
+                          </div>
+                          <div className="text-xl font-semibold text-gray-900">
+                            {(plan.ai_plan.estimated_costs.total / 1000).toFixed(1)}k
+                            <span className="text-sm font-normal text-gray-500 ml-1">TZS</span>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                        <div className="bg-gray-50 p-3 rounded-lg">
-                          <p className="text-xs text-gray-600 mb-1">{language === "en" ? "Expected Yield" : "Mavuno Yanayotarajiwa"}</p>
-                          <p className="text-lg font-bold text-green-600">
-                            {plan.ai_plan.forecast.yield_kg_per_ha.expected} kg/ha
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-3 rounded-lg">
-                          <p className="text-xs text-gray-600 mb-1">{language === "en" ? "Total Cost" : "Gharama Jumla"}</p>
-                          <p className="text-lg font-bold text-blue-600">
-                            {(plan.ai_plan.estimated_costs.total / 1000).toFixed(0)}k TZS
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-3 rounded-lg">
-                          <p className="text-xs text-gray-600 mb-1">{language === "en" ? "Variety" : "Aina"}</p>
-                          <p className="text-sm font-semibold truncate">
-                            {plan.ai_plan.recommendations.seed_variety}
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-3 rounded-lg">
-                          <p className="text-xs text-gray-600 mb-1">{language === "en" ? "Planting" : "Kupanda"}</p>
-                          <p className="text-sm font-semibold">
-                            {plan.ai_plan.recommendations.planting_window}
-                          </p>
-                        </div>
-                      </div>
-
+                      {/* Risks */}
                       {plan.ai_plan.risks.length > 0 && (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
-                          <div className="flex items-start gap-2">
-                            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                            <div>
-                              <p className="text-xs font-semibold text-yellow-800 mb-1">
-                                {language === "en" ? "Risk Factors:" : "Hatari:"}
-                              </p>
-                              <ul className="text-xs text-yellow-700 list-disc list-inside">
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-5">
+                          <div className="flex items-start gap-3">
+                            <AlertTriangle className="h-5 w-5 text-yellow-700 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-yellow-900 mb-1.5">
+                                {language === "en" ? "Risk Factors" : "Hatari"}
+                              </div>
+                              <div className="space-y-1">
                                 {plan.ai_plan.risks.map((risk, idx) => (
-                                  <li key={idx}>{risk}</li>
+                                  <p key={idx} className="text-sm text-yellow-800">{risk}</p>
                                 ))}
-                              </ul>
+                              </div>
                             </div>
                           </div>
                         </div>
                       )}
 
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <FileText className="h-4 w-4 mr-2" />
-                          {language === "en" ? "View Details" : "Angalia Maelezo"}
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => analyzeHistory(plan.id)}>
-                          <Brain className="h-4 w-4 mr-2" />
-                          {language === "en" ? "AI Analysis" : "Uchambuzi wa AI"}
-                        </Button>
+                      {/* Action */}
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-gray-300 text-gray-900 hover:bg-gray-50 font-medium"
+                      >
+                        {language === "en" ? "View Details" : "Angalia Maelezo"}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Sidebar */}
+                <div className="space-y-4">
+                  {/* AI Insights */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-5">
+                    <h3 className="text-base font-semibold text-gray-900 mb-4">
+                      {language === "en" ? "AI Insights" : "Maarifa ya AI"}
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      {/* Warning */}
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                        <div className="flex gap-2.5">
+                          <AlertTriangle className="h-4 w-4 text-yellow-700 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-yellow-900 mb-1">
+                              {language === "en" ? "Nitrogen Deficit" : "Upungufu wa Nitrojeni"}
+                            </p>
+                            <p className="text-sm text-yellow-800">
+                              {language === "en" 
+                                ? "Field B may see 8-12% yield reduction" 
+                                : "Shamba B linaweza kupunguza mavuno 8-12%"}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
+
+                      {/* Info */}
+                      <div className="border border-gray-200 rounded-lg p-3">
+                        <div className="flex gap-2.5">
+                          <Droplets className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 mb-1">
+                              {language === "en" ? "Good Rainfall Expected" : "Mvua Nzuri Inatarajiwa"}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {language === "en" 
+                                ? "Optimal planting window next week" 
+                                : "Wakati bora wa kupanda wiki ijayo"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Success */}
+                      <div className="border border-gray-200 rounded-lg p-3">
+                        <div className="flex gap-2.5">
+                          <CheckCircle className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 mb-1">
+                              {language === "en" ? "Soil Health Optimal" : "Afya ya Udongo Nzuri"}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {language === "en" 
+                                ? "pH and nutrients at good levels" 
+                                : "pH na virutubishi viko vizuri"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Financial */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-5">
+                    <h3 className="text-base font-semibold text-gray-900 mb-4">
+                      {language === "en" ? "Financial Summary" : "Muhtasari wa Fedha"}
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">{language === "en" ? "Investment" : "Uwekezaji"}</span>
+                        <span className="text-base font-semibold text-gray-900">2.5M TZS</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">{language === "en" ? "Revenue" : "Mapato"}</span>
+                        <span className="text-base font-semibold text-gray-900">4.2M TZS</span>
+                      </div>
+                      <div className="pt-3 border-t border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-900">{language === "en" ? "Net Margin" : "Faida"}</span>
+                          <span className="text-lg font-bold text-gray-900">+68%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* CALENDAR TAB */}
+          <TabsContent value="calendar">
+            <div className="bg-white border border-gray-200 rounded-lg p-12">
+              <div className="text-center py-16">
+                <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-base text-gray-600">
+                  {language === "en" ? "Calendar view coming soon" : "Muonekano wa kalenda unakuja hivi karibuni"}
+                </p>
+              </div>
             </div>
+          </TabsContent>
 
-            {/* Column 2: AI Insights Panel (Sticky) */}
-            <div className="space-y-4">
-              <Card className="border-purple-300 bg-gradient-to-br from-purple-50 to-blue-50 sticky top-4">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Brain className="h-5 w-5 text-purple-600" />
-                    <CardTitle className="text-lg">
-                      {language === "en" ? "AI Crop Advisor" : "Mshauri wa Mazao wa AI"}
-                    </CardTitle>
-                  </div>
-                  <CardDescription>
-                    {language === "en" ? "Real-time insights and recommendations" : "Maarifa ya wakati halisi"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="bg-white p-3 rounded-lg border-l-4 border-yellow-500">
-                    <div className="flex items-start gap-2">
-                      <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-semibold text-yellow-800 mb-1">
-                          {language === "en" ? "Nitrogen Deficit Warning" : "Tahadhari ya Upungufu wa Nitrojeni"}
-                        </p>
-                        <p className="text-xs text-yellow-700">
-                          {language === "en" 
-                            ? "Nitrogen deficit likely to reduce yield by 8-12% in Field B" 
-                            : "Upungufu wa nitrojeni unaweza kupunguza mavuno kwa 8-12% kwenye Shamba B"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-3 rounded-lg border-l-4 border-blue-500">
-                    <div className="flex items-start gap-2">
-                      <Droplets className="h-4 w-4 text-blue-600 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-semibold text-blue-800 mb-1">
-                          {language === "en" ? "Climate Opportunity" : "Fursa ya Hali ya Hewa"}
-                        </p>
-                        <p className="text-xs text-blue-700">
-                          {language === "en" 
-                            ? "Good rainfall expected - optimal planting window next week" 
-                            : "Mvua nzuri inatarajiwa - wakati bora wa kupanda wiki ijayo"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-3 rounded-lg border-l-4 border-green-500">
-                    <div className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-semibold text-green-800 mb-1">
-                          {language === "en" ? "Soil Health Good" : "Afya ya Udongo Nzuri"}
-                        </p>
-                        <p className="text-xs text-green-700">
-                          {language === "en" 
-                            ? "Soil pH and organic matter at optimal levels" 
-                            : "pH ya udongo na vituhai viko kwa kiwango bora"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Financial Snapshot */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    {language === "en" ? "Financial Snapshot" : "Muhtasari wa Kifedha"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">{language === "en" ? "Total Investment" : "Uwekezaji Jumla"}</span>
-                    <span className="font-bold">2.5M TZS</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">{language === "en" ? "Expected Revenue" : "Mapato Yanayotarajiwa"}</span>
-                    <span className="font-bold text-green-600">4.2M TZS</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-sm font-semibold">{language === "en" ? "Net Margin" : "Faida Halisi"}</span>
-                    <span className="font-bold text-green-600">+68%</span>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* SOIL TAB */}
+          <TabsContent value="soil">
+            <div className="bg-white border border-gray-200 rounded-lg p-12">
+              <div className="text-center py-16">
+                <Beaker className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-base text-gray-600">
+                  {language === "en" ? "Soil tracking coming soon" : "Ufuatiliaji wa udongo unakuja hivi karibuni"}
+                </p>
+              </div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        {/* CALENDAR TAB */}
-        <TabsContent value="calendar">
-          <Card>
-            <CardHeader>
-              <CardTitle>{language === "en" ? "Crop Calendar" : "Kalenda ya Mazao"}</CardTitle>
-              <CardDescription>
-                {language === "en" ? "Scheduled activities and milestones" : "Shughuli zilizopangwa"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-gray-600 py-8">
-                {language === "en" ? "Calendar view coming soon..." : "Muonekano wa kalenda unakuja hivi karibuni..."}
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          {/* REVENUE TAB */}
+          <TabsContent value="revenue">
+            <div className="bg-white border border-gray-200 rounded-lg p-12">
+              <div className="text-center py-16">
+                <DollarSign className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-base text-gray-600">
+                  {language === "en" ? "Revenue analytics coming soon" : "Uchambuzi wa mapato unakuja hivi karibuni"}
+                </p>
+              </div>
+            </div>
+          </TabsContent>
 
-        {/* SOIL & INPUTS TAB */}
-        <TabsContent value="soil">
-          <Card>
-            <CardHeader>
-              <CardTitle>{language === "en" ? "Soil Health & Amendments" : "Afya ya Udongo"}</CardTitle>
-              <CardDescription>
-                {language === "en" ? "Track soil tests and input applications" : "Fuatilia vipimo vya udongo"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-gray-600 py-8">
-                {language === "en" ? "Soil tracking coming soon..." : "Ufuatiliaji wa udongo unakuja hivi karibuni..."}
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* REVENUE TAB */}
-        <TabsContent value="revenue">
-          <Card>
-            <CardHeader>
-              <CardTitle>{language === "en" ? "Yield & Revenue Forecast" : "Utabiri wa Mavuno na Mapato"}</CardTitle>
-              <CardDescription>
-                {language === "en" ? "Financial projections and yield estimates" : "Makadirio ya kifedha"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-gray-600 py-8">
-                {language === "en" ? "Revenue analytics coming soon..." : "Uchambuzi wa mapato unakuja hivi karibuni..."}
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* HISTORY TAB */}
-        <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle>{language === "en" ? "Crop Plan History" : "Historia ya Mipango"}</CardTitle>
-              <CardDescription>
-                {language === "en" ? "AI-powered performance analysis" : "Uchambuzi wa utendaji wa AI"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-gray-600 py-8">
-                {language === "en" ? "Historical analysis coming soon..." : "Uchambuzi wa kihistoria unakuja hivi karibuni..."}
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          {/* HISTORY TAB */}
+          <TabsContent value="history">
+            <div className="bg-white border border-gray-200 rounded-lg p-12">
+              <div className="text-center py-16">
+                <History className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-base text-gray-600">
+                  {language === "en" ? "Historical analysis coming soon" : "Uchambuzi wa kihistoria unakuja hivi karibuni"}
+                </p>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
 
       {/* Create Plan Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <CardHeader>
-              <CardTitle>{language === "en" ? "Create New Crop Plan" : "Tengeneza Mpango Mpya"}</CardTitle>
-              <CardDescription>
-                {language === "en" ? "AI will generate an optimized plan based on your inputs" : "AI itatengeneza mpango ulio bora"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+            {/* Modal Header */}
+            <div className="border-b border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {language === "en" ? "Create New Crop Plan" : "Tengeneza Mpango Mpya"}
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                {language === "en" ? "AI will optimize your plan based on conditions" : "AI itaboresha mpango kulingana na hali"}
+              </p>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label>{language === "en" ? "Crop" : "Mazao"}</Label>
+                  <Label className="text-sm font-medium text-gray-900 mb-2 block">
+                    {language === "en" ? "Crop" : "Mazao"}
+                  </Label>
                   <select
                     value={newPlan.crop}
                     onChange={(e) => setNewPlan({...newPlan, crop: e.target.value})}
-                    className="w-full mt-1 p-2 border rounded"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                   >
                     <option>Maize</option>
                     <option>Rice</option>
@@ -552,11 +517,13 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
                   </select>
                 </div>
                 <div>
-                  <Label>{language === "en" ? "Season" : "Msimu"}</Label>
+                  <Label className="text-sm font-medium text-gray-900 mb-2 block">
+                    {language === "en" ? "Season" : "Msimu"}
+                  </Label>
                   <select
                     value={newPlan.season}
                     onChange={(e) => setNewPlan({...newPlan, season: e.target.value})}
-                    className="w-full mt-1 p-2 border rounded"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                   >
                     <option>2025 Masika</option>
                     <option>2025 Vuli</option>
@@ -564,29 +531,37 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label>{language === "en" ? "Location" : "Mahali"}</Label>
+                  <Label className="text-sm font-medium text-gray-900 mb-2 block">
+                    {language === "en" ? "Location" : "Mahali"}
+                  </Label>
                   <Input
                     value={newPlan.location}
                     onChange={(e) => setNewPlan({...newPlan, location: e.target.value})}
+                    className="focus:ring-2 focus:ring-[#2E7D32]"
                   />
                 </div>
                 <div>
-                  <Label>{language === "en" ? "Field Size (hectares)" : "Ukubwa wa Shamba (hekta)"}</Label>
+                  <Label className="text-sm font-medium text-gray-900 mb-2 block">
+                    {language === "en" ? "Field Size (hectares)" : "Ukubwa wa Shamba (hekta)"}
+                  </Label>
                   <Input
                     type="number"
                     value={newPlan.field_size_ha}
                     onChange={(e) => setNewPlan({...newPlan, field_size_ha: Number(e.target.value)})}
+                    className="focus:ring-2 focus:ring-[#2E7D32]"
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="mb-2 block">{language === "en" ? "Soil Data (Optional)" : "Data ya Udongo (Si lazima)"}</Label>
-                <div className="grid grid-cols-2 gap-3">
+                <Label className="text-sm font-medium text-gray-900 mb-3 block">
+                  {language === "en" ? "Soil Data (Optional)" : "Data ya Udongo (Si lazima)"}
+                </Label>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs">pH</Label>
+                    <Label className="text-xs text-gray-600 mb-1.5 block">pH</Label>
                     <Input
                       type="number"
                       step="0.1"
@@ -595,17 +570,20 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
                         ...newPlan,
                         soil_data: {...newPlan.soil_data, ph: Number(e.target.value)}
                       })}
+                      className="focus:ring-2 focus:ring-[#2E7D32]"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">{language === "en" ? "Nitrogen" : "Nitrojeni"}</Label>
+                    <Label className="text-xs text-gray-600 mb-1.5 block">
+                      {language === "en" ? "Nitrogen" : "Nitrojeni"}
+                    </Label>
                     <select
                       value={newPlan.soil_data.nitrogen}
                       onChange={(e) => setNewPlan({
                         ...newPlan,
                         soil_data: {...newPlan.soil_data, nitrogen: e.target.value}
                       })}
-                      className="w-full p-2 border rounded text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                     >
                       <option>low</option>
                       <option>medium</option>
@@ -614,30 +592,36 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="flex gap-2 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCreateModal(false)}
-                  className="flex-1"
-                >
-                  {language === "en" ? "Cancel" : "Ghairi"}
-                </Button>
-                <Button
-                  onClick={generateCropPlan}
-                  disabled={loading}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                >
-                  {loading ? (
+            {/* Modal Footer */}
+            <div className="border-t border-gray-200 p-6 flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                {language === "en" ? "Cancel" : "Ghairi"}
+              </Button>
+              <Button
+                onClick={generateCropPlan}
+                disabled={loading}
+                className="flex-1 bg-[#2E7D32] hover:bg-[rgba(46,125,50,0.9)] text-white"
+              >
+                {loading ? (
+                  <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
+                    {language === "en" ? "Generating..." : "Inatengeneza..."}
+                  </>
+                ) : (
+                  <>
                     <Brain className="h-4 w-4 mr-2" />
-                  )}
-                  {language === "en" ? "Generate with AI" : "Tengeneza na AI"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                    {language === "en" ? "Generate Plan" : "Tengeneza Mpango"}
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

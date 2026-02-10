@@ -168,8 +168,8 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "expert": return { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-200" };
-      case "admin": return { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-200" };
+      case "expert": return { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-200" };
+      case "admin": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200" };
       default: return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200" };
     }
   };
@@ -184,9 +184,9 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gray-50 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-[#2E7D32] text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -228,7 +228,7 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <button
               onClick={() => setShowNewPost(!showNewPost)}
-              className="w-full flex items-center gap-3 p-4 bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-xl border-2 border-green-200 transition-all group"
+              className="w-full flex items-center gap-3 p-4 bg-green-50 hover:bg-green-100 rounded-xl border-2 border-green-200 transition-all group"
             >
               <div className="p-2 bg-green-600 rounded-full">
                 <Plus className="h-5 w-5 text-white" />
@@ -372,26 +372,26 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
           {pinnedPosts.length > 0 && (
             <div className="space-y-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 px-2">
-                <Pin className="h-5 w-5 text-blue-600" />
+                <Pin className="h-5 w-5 text-green-600" />
                 {language === "en" ? "Pinned Posts" : "Machapisho Yaliyobanwa"}
               </h2>
               {pinnedPosts.map((post) => {
                 const roleColors = getRoleColor(post.author.role);
                 
                 return (
-                  <Card key={post.id} className="border-2 border-blue-200 bg-blue-50/50 hover:shadow-md transition-all">
+                  <Card key={post.id} className="border-2 border-green-200 bg-green-50/50 hover:shadow-md transition-all">
                     <CardContent className="p-5">
                       {/* Author */}
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full">
+                          <div className="p-2 bg-[#2E7D32] rounded-full">
                             <User className="h-5 w-5 text-white" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-bold text-gray-900">{post.author.name}</span>
                               {post.author.verified && (
-                                <CheckCircle className="h-4 w-4 text-blue-500" />
+                                <CheckCircle className="h-4 w-4 text-green-600" />
                               )}
                               <Badge className={`${roleColors.bg} ${roleColors.text} ${roleColors.border} border text-xs`}>
                                 {getRoleLabel(post.author.role)}
@@ -407,7 +407,7 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Pin className="h-4 w-4 text-blue-600" />
+                          <Pin className="h-4 w-4 text-green-600" />
                           <button className="p-2 hover:bg-gray-100 rounded-lg">
                             <MoreVertical className="h-4 w-4 text-gray-400" />
                           </button>
@@ -455,7 +455,7 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
                             <ThumbsUp className="h-4 w-4" />
                             <span className="font-medium">{post.likes}</span>
                           </button>
-                          <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+                          <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
                             <MessageCircle className="h-4 w-4" />
                             <span className="font-medium">{post.comments}</span>
                           </button>
@@ -513,7 +513,7 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
                             <div className="flex items-center gap-2">
                               <span className="font-bold text-gray-900">{post.author.name}</span>
                               {post.author.verified && (
-                                <CheckCircle className="h-4 w-4 text-blue-500" />
+                                <CheckCircle className="h-4 w-4 text-green-600" />
                               )}
                               {post.author.role !== "farmer" && (
                                 <Badge className={`${roleColors.bg} ${roleColors.text} ${roleColors.border} border text-xs`}>
@@ -582,7 +582,7 @@ export function DiscussionGroups({ language, userId }: DiscussionGroupsProps) {
                             <ThumbsUp className="h-4 w-4" />
                             <span className="font-medium">{post.likes}</span>
                           </button>
-                          <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+                          <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
                             <MessageCircle className="h-4 w-4" />
                             <span className="font-medium">{post.comments}</span>
                           </button>

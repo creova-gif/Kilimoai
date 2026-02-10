@@ -113,7 +113,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
       case "urgent": return "bg-red-100 text-red-700 border-red-300";
       case "high": return "bg-orange-100 text-orange-700 border-orange-300";
       case "medium": return "bg-yellow-100 text-yellow-700 border-yellow-300";
-      default: return "bg-blue-100 text-blue-700 border-blue-300";
+      default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
   };
 
@@ -128,7 +128,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
   const getStatusColumns = () => {
     return [
       { id: "todo", label: "To Do", icon: Circle, color: "text-gray-600", count: tasks.filter(t => t.status === "todo").length },
-      { id: "in-progress", label: "In Progress", icon: Clock, color: "text-blue-600", count: tasks.filter(t => t.status === "in-progress").length },
+      { id: "in-progress", label: "In Progress", icon: Clock, color: "text-yellow-600", count: tasks.filter(t => t.status === "in-progress").length },
       { id: "completed", label: "Completed", icon: CheckCircle, color: "text-green-600", count: tasks.filter(t => t.status === "completed").length },
     ];
   };
@@ -376,12 +376,12 @@ export function TaskManagement({ userId }: TaskManagementProps) {
 
             <div className="p-4 bg-white rounded-xl">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Activity className="h-4 w-4 text-blue-600" />
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <Activity className="h-4 w-4 text-yellow-600" />
                 </div>
                 <h4 className="font-semibold text-sm">Active Tasks</h4>
               </div>
-              <p className="text-3xl font-black text-blue-600">{stats.inProgress}</p>
+              <p className="text-3xl font-black text-yellow-600">{stats.inProgress}</p>
               <p className="text-xs text-gray-600 mt-1">Currently being worked on</p>
             </div>
 

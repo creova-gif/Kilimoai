@@ -41,11 +41,11 @@ export function NotificationBadge({
       message: "text-red-700"
     },
     info: {
-      bg: "bg-blue-50",
-      border: "border-blue-200",
-      icon: "text-blue-600",
-      title: "text-blue-900",
-      message: "text-blue-700"
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "text-gray-600",
+      title: "text-gray-900",
+      message: "text-gray-700"
     }
   };
 

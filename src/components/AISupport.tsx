@@ -934,7 +934,7 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: 0.15 }}
-                              className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-200"
+                              className="bg-green-50 rounded-xl p-4 border-2 border-green-200"
                             >
                               <div className="flex items-center gap-2 mb-1">
                                 <Zap className="h-4 w-4 text-green-600" />
@@ -1092,16 +1092,16 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                           </p>
 
                           <div className="flex items-center justify-center gap-3 flex-wrap">
-                            <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border-2 border-purple-200">
-                              <MessageSquare className="h-4 w-4 text-purple-600" />
+                            <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border-2 border-gray-200">
+                              <MessageSquare className="h-4 w-4 text-gray-700" />
                               <span className="text-sm font-medium text-gray-700">Chat with Sankofa</span>
                             </div>
                             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border-2 border-green-200">
                               <Sprout className="h-4 w-4 text-green-600" />
                               <span className="text-sm font-medium text-gray-700">Track Your Crops</span>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border-2 border-blue-200">
-                              <Globe className="h-4 w-4 text-blue-600" />
+                            <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border-2 border-gray-200">
+                              <Globe className="h-4 w-4 text-gray-700" />
                               <span className="text-sm font-medium text-gray-700">Explore Features</span>
                             </div>
                           </div>
@@ -1129,9 +1129,9 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex items-start gap-3 p-4 bg-white rounded-lg border-2 border-purple-200"
+                    className="flex items-start gap-3 p-4 bg-white rounded-lg border-2 border-gray-200"
                   >
-                    <div className="h-10 w-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                    <div className="h-10 w-10 rounded-xl bg-gray-700 text-white flex items-center justify-center font-bold flex-shrink-0">
                       1
                     </div>
                     <div className="flex-1 min-w-0">
@@ -1146,9 +1146,9 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="flex items-start gap-3 p-4 bg-white rounded-lg border-2 border-blue-200"
+                    className="flex items-start gap-3 p-4 bg-white rounded-lg border-2 border-gray-200"
                   >
-                    <div className="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                    <div className="h-10 w-10 rounded-xl bg-gray-700 text-white flex items-center justify-center font-bold flex-shrink-0">
                       2
                     </div>
                     <div className="flex-1 min-w-0">
@@ -1228,10 +1228,10 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 bg-gradient-to-br from-green-50 to-blue-50">
+                <Card className="border-2 bg-green-50">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-purple-600" />
+                      <Sparkles className="h-5 w-5 text-gray-700" />
                       Next Steps
                     </CardTitle>
                   </CardHeader>

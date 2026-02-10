@@ -426,18 +426,18 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
             className={`flex items-start gap-2 p-3 rounded-xl border ${
               assist.type === "warning" ? "bg-amber-50 border-amber-200" :
               assist.type === "success" ? "bg-green-50 border-green-200" :
-              "bg-blue-50 border-blue-200"
+              "bg-gray-50 border-gray-200"
             }`}
           >
             <Sparkles className={`h-4 w-4 flex-shrink-0 mt-0.5 ${
               assist.type === "warning" ? "text-amber-600" :
               assist.type === "success" ? "text-green-600" :
-              "text-blue-600"
+              "text-gray-600"
             }`} />
             <p className={`text-xs font-medium ${
               assist.type === "warning" ? "text-amber-800" :
               assist.type === "success" ? "text-green-800" :
-              "text-blue-800"
+              "text-gray-800"
             }`}>
               {assist.suggestion}
             </p>
@@ -584,37 +584,37 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
             </SelectItem>
             <SelectItem value="farmer">
               <div className="flex items-center gap-2">
-                <Wheat className="h-4 w-4 text-blue-600" />
+                <Wheat className="h-4 w-4 text-green-600" />
                 <span>Farmer (&gt;5 acres)</span>
               </div>
             </SelectItem>
             <SelectItem value="farm_manager">
               <div className="flex items-center gap-2">
-                <UserCog className="h-4 w-4 text-blue-600" />
+                <UserCog className="h-4 w-4 text-gray-600" />
                 <span>Farm Manager</span>
               </div>
             </SelectItem>
             <SelectItem value="commercial_farm">
               <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-purple-600" />
+                <Building2 className="h-4 w-4 text-gray-600" />
                 <span>Commercial Farm Admin</span>
               </div>
             </SelectItem>
             <SelectItem value="agribusiness">
               <div className="flex items-center gap-2">
-                <Package className="h-4 w-4 text-purple-600" />
+                <Package className="h-4 w-4 text-gray-600" />
                 <span>Agribusiness Operations</span>
               </div>
             </SelectItem>
             <SelectItem value="extension_officer">
               <div className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4 text-blue-600" />
+                <GraduationCap className="h-4 w-4 text-gray-600" />
                 <span>Extension Officer / NGO</span>
               </div>
             </SelectItem>
             <SelectItem value="cooperative">
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-600" />
+                <Users className="h-4 w-4 text-gray-600" />
                 <span>Cooperative Leader</span>
               </div>
             </SelectItem>
@@ -769,7 +769,7 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
             {IRRIGATION_METHODS.map((method) => (
               <SelectItem key={method} value={method}>
                 <div className="flex items-center gap-2">
-                  <Droplet className="h-4 w-4 text-blue-600" />
+                  <Droplet className="h-4 w-4 text-gray-600" />
                   <span>{method}</span>
                 </div>
               </SelectItem>
@@ -1188,9 +1188,9 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
         )}
       </div>
 
-      <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-xl border border-blue-200">
-        <AlertCircle className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-blue-800 font-medium">
+      <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-xl border border-gray-200">
+        <AlertCircle className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
+        <p className="text-xs text-gray-800 font-medium">
           By creating an account, you agree to KILIMO's Terms of Service and Privacy Policy
         </p>
       </div>

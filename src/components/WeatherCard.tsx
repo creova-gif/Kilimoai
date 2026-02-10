@@ -398,7 +398,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
     if (index <= 5) return { text: "Moderate", color: "text-yellow-600", bg: "bg-yellow-50" };
     if (index <= 7) return { text: "High", color: "text-orange-600", bg: "bg-orange-50" };
     if (index <= 10) return { text: "Very High", color: "text-red-600", bg: "bg-red-50" };
-    return { text: "Extreme", color: "text-purple-600", bg: "bg-purple-50" };
+    return { text: "Extreme", color: "text-gray-600", bg: "bg-gray-50" };
   };
 
   const uvSeverity = getUVSeverity(uvIndex);
@@ -576,7 +576,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                                       variant="outline" 
                                       className={`text-xs px-2 py-0.5 ${
                                         alert.type === "warning" ? "bg-orange-100 text-orange-700 border-orange-300" :
-                                        alert.type === "info" ? "bg-blue-100 text-blue-700 border-blue-300" :
+                                        alert.type === "info" ? "bg-gray-100 text-gray-700 border-gray-300" :
                                         "bg-green-100 text-green-700 border-green-300"
                                       }`}
                                     >
@@ -617,7 +617,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                                     size="sm"
                                     className={`flex-1 h-8 text-xs ${
                                       alert.type === "warning" ? "bg-orange-600 hover:bg-orange-700" :
-                                      alert.type === "info" ? "bg-blue-600 hover:bg-blue-700" :
+                                      alert.type === "info" ? "bg-gray-600 hover:bg-gray-700" :
                                       "bg-green-600 hover:bg-green-700"
                                     } text-white shadow-md`}
                                     onClick={(e) => {
@@ -684,8 +684,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
           <div className="flex items-start justify-between flex-wrap gap-2">
             <div>
               <CardTitle className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Cloud className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Cloud className="h-5 w-5 text-gray-600" />
                 </div>
                 {language === "sw" ? "Dashibodi ya Hali ya Hewa" : "Weather Dashboard"} - {region || "Unknown Location"}
               </CardTitle>
@@ -733,15 +733,15 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                       <p className="text-gray-600 mt-2">Sunny</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <Droplets className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <Droplets className="h-5 w-5 text-gray-600 flex-shrink-0" />
                         <div>
                           <p className="text-xs text-gray-600">Humidity</p>
                           <p className="font-semibold text-sm">{(Math.random() * 30 + 60).toFixed(0)}%</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                        <Wind className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <Wind className="h-5 w-5 text-gray-600 flex-shrink-0" />
                         <div>
                           <p className="text-xs text-gray-600">Wind</p>
                           <p className="font-semibold text-sm">{windSpeed.toFixed(1)} km/h</p>
@@ -772,17 +772,17 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                       </Badge>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2">
-                        <Gauge className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                        <Gauge className="h-5 w-5 text-gray-600 flex-shrink-0" />
                         <span className="text-sm font-medium">Pressure</span>
                       </div>
                       <span className="font-semibold">{pressure.toFixed(1)} hPa</span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-200">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2">
-                        <Eye className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                        <Eye className="h-5 w-5 text-gray-600 flex-shrink-0" />
                         <span className="text-sm font-medium">Visibility</span>
                       </div>
                       <span className="font-semibold">{visibility.toFixed(1)} km</span>
@@ -813,8 +813,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Sunset className="h-8 w-8 text-indigo-600" />
+                      <div className="p-3 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Sunset className="h-8 w-8 text-gray-600" />
                       </div>
                       <div className="flex flex-col justify-center">
                         <p className="text-sm text-gray-600">Sunset</p>
@@ -832,10 +832,10 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-blue-600" />
+                    <Calendar className="h-5 w-5 text-gray-600" />
                     14-Day Weather Forecast
                   </h3>
-                  <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-300">
+                  <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">
                     <Plus className="h-3 w-3 mr-1" />
                     Extended Forecast
                   </Badge>
@@ -876,13 +876,13 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                               transition={{ duration: 0.5 }}
                             >
                               <WeatherIcon className={`h-8 w-8 mx-auto ${
-                                day.condition.includes("Rain") ? "text-blue-600" : "text-orange-500"
+                                day.condition.includes("Rain") ? "text-gray-600" : "text-orange-500"
                               }`} />
                             </motion.div>
                             <p className="text-2xl font-bold mt-2">{Math.round(day.temp)}°</p>
                             <p className="text-xs text-gray-500 mt-1">{day.condition}</p>
                             {day.rainfall > 0 && (
-                              <Badge className="mt-2 bg-blue-100 text-blue-700 text-xs">
+                              <Badge className="mt-2 bg-gray-100 text-gray-700 text-xs">
                                 {day.rainfall.toFixed(1)}mm
                               </Badge>
                             )}
@@ -897,7 +897,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 {/* Second Week */}
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-3 flex items-center gap-2">
-                    <Info className="h-3 w-3 text-blue-600" />
+                    <Info className="h-3 w-3 text-gray-600" />
                     Days 8-14 (Medium Confidence)
                   </p>
                   <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-7">
@@ -930,13 +930,13 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                               transition={{ duration: 0.5 }}
                             >
                               <WeatherIcon className={`h-8 w-8 mx-auto ${
-                                day.condition.includes("Rain") ? "text-blue-600" : "text-orange-500"
+                                day.condition.includes("Rain") ? "text-gray-600" : "text-orange-500"
                               }`} />
                             </motion.div>
                             <p className="text-2xl font-bold mt-2">{Math.round(day.temp + 25)}°</p>
                             <p className="text-xs text-gray-500 mt-1">{day.condition}</p>
                             {day.rainfall > 0 && (
-                              <Badge className="mt-2 bg-blue-100 text-blue-700 text-xs border-0">
+                              <Badge className="mt-2 bg-gray-100 text-gray-700 text-xs border-0">
                                 {day.rainfall.toFixed(1)}mm
                               </Badge>
                             )}
@@ -1000,8 +1000,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               <Card className="border-2 border-green-200">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <CloudRain className="h-5 w-5 text-blue-600" />
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <CloudRain className="h-5 w-5 text-gray-600" />
                     </div>
                     24-Hour Rainfall Forecast
                   </CardTitle>
@@ -1071,8 +1071,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 <Card className="border-2 border-green-200">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Droplets className="h-5 w-5 text-blue-600" />
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <Droplets className="h-5 w-5 text-gray-600" />
                       </div>
                       Humidity
                     </CardTitle>
@@ -1081,7 +1081,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Current</span>
-                        <span className="text-xl font-bold text-blue-600">{(Math.random() * 30 + 60).toFixed(0)}%</span>
+                        <span className="text-xl font-bold text-gray-600">{(Math.random() * 30 + 60).toFixed(0)}%</span>
                       </div>
                       <Progress value={Math.random() * 30 + 60} className="h-2" />
                     </div>
@@ -1091,7 +1091,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Status:</span>
-                      <Badge className={Math.random() > 0.5 ? "bg-blue-100 text-blue-700 border-0" : "bg-yellow-100 text-yellow-700 border-0"}>
+                      <Badge className={Math.random() > 0.5 ? "bg-gray-100 text-gray-700 border-0" : "bg-yellow-100 text-yellow-700 border-0"}>
                         {Math.random() > 0.5 ? "High" : "Normal"}
                       </Badge>
                     </div>
@@ -1151,15 +1151,15 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                       <p className="text-sm text-gray-600 mb-1">Current Season</p>
                       <p className="text-xl font-bold text-green-700">Rainy Season</p>
                     </div>
-                    <div className="p-4 bg-white rounded-lg border-2 border-blue-200">
+                    <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
                       <p className="text-sm text-gray-600 mb-1">Next Planting Date</p>
-                      <p className="text-lg font-bold text-blue-700">
+                      <p className="text-lg font-bold text-gray-700">
                         {new Date(Date.now() + 10 * 86400000).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="p-4 bg-white rounded-lg border-2 border-purple-200">
+                    <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
                       <p className="text-sm text-gray-600 mb-1">Days Until Planting</p>
-                      <p className="text-xl font-bold text-purple-700">
+                      <p className="text-xl font-bold text-gray-700">
                         {Math.ceil((new Date(Date.now() + 10 * 86400000).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
                       </p>
                     </div>
@@ -1197,8 +1197,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               <Card className="border-2 border-green-200">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <Lightbulb className="h-5 w-5 text-purple-600" />
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <Lightbulb className="h-5 w-5 text-gray-600" />
                     </div>
                     Weather-Based Farming Recommendations
                   </CardTitle>
@@ -1230,32 +1230,32 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     <ArrowRight className="h-5 w-5 text-orange-600 flex-shrink-0 mt-1" />
                   </div>
 
-                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border-2 border-blue-200">
-                    <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                      <CloudRain className="h-5 w-5 text-blue-600" />
+                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">
+                    <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                      <CloudRain className="h-5 w-5 text-gray-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-blue-900 mb-1">Rainfall Management</h4>
-                      <p className="text-sm text-blue-700">
+                      <h4 className="font-semibold text-gray-900 mb-1">Rainfall Management</h4>
+                      <p className="text-sm text-gray-700">
                         {Math.random() > 0.5
                           ? "Heavy rainfall recorded. Ensure proper drainage to prevent waterlogging."
                           : "Low rainfall. Monitor soil moisture and increase irrigation if needed."}
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
+                    <ArrowRight className="h-5 w-5 text-gray-600 flex-shrink-0 mt-1" />
                   </div>
 
-                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border-2 border-purple-200">
-                    <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-                      <Shield className="h-5 w-5 text-purple-600" />
+                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">
+                    <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                      <Shield className="h-5 w-5 text-gray-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-purple-900 mb-1">Pest & Disease Alert</h4>
-                      <p className="text-sm text-purple-700">
+                      <h4 className="font-semibold text-gray-900 mb-1">Pest & Disease Alert</h4>
+                      <p className="text-sm text-gray-700">
                         High humidity increases fungal disease risk. Monitor crops closely and apply preventive fungicides if necessary.
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-purple-600 flex-shrink-0 mt-1" />
+                    <ArrowRight className="h-5 w-5 text-gray-600 flex-shrink-0 mt-1" />
                   </div>
                 </CardContent>
               </Card>

@@ -180,7 +180,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
       case "falling":
         return <Badge className="bg-red-100 text-red-700 flex items-center gap-1"><TrendingDown className="h-3 w-3" />Falling</Badge>;
       default:
-        return <Badge className="bg-blue-100 text-blue-700 flex items-center gap-1"><Minus className="h-3 w-3" />Stable</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 flex items-center gap-1"><Minus className="h-3 w-3" />Stable</Badge>;
     }
   };
   
@@ -467,8 +467,8 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
               onClick={handleMarketplaceNavigation}
               className="flex items-start gap-3 p-3 bg-white rounded-xl hover:shadow-md transition-all cursor-pointer hover:scale-105"
             >
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Activity className="h-4 w-4 text-blue-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Activity className="h-4 w-4 text-gray-600" />
               </div>
               <div>
                 <p className="font-semibold text-sm text-gray-900">Stable Grain Markets</p>

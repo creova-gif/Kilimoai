@@ -151,8 +151,8 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
 
         <div className="space-y-4">
           {/* Wallet Balance */}
-          <div className="p-4 bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-lg">
-            <p className="text-sm text-purple-200">Available Balance</p>
+          <div className="p-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg">
+            <p className="text-sm text-green-200">Available Balance</p>
             <p className="text-2xl font-bold">TZS {walletBalance.toLocaleString()}</p>
           </div>
 
@@ -167,7 +167,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
                 <div
                   key={loan.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    isSelected ? "border-purple-500 bg-purple-50" : "hover:bg-gray-50"
+                    isSelected ? "border-green-500 bg-green-50" : "hover:bg-gray-50"
                   }`}
                   onClick={() => setSelectedLoan(loan.id)}
                 >
@@ -266,7 +266,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
               </div>
 
               {paymentAmount && (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded space-y-1 text-sm">
+                <div className="p-3 bg-gray-50 border border-gray-200 rounded space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Payment Amount:</span>
                     <span className="font-medium">TZS {parseFloat(paymentAmount).toLocaleString()}</span>

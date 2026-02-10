@@ -81,7 +81,7 @@ export function QuickAccessCards({
       case "medium":
         return { bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-600" };
       default:
-        return { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-600" };
+        return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-600" };
     }
   };
 
@@ -96,21 +96,21 @@ export function QuickAccessCards({
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
         <Card 
-          className="border-2 border-purple-200 bg-purple-50 cursor-pointer hover:shadow-lg transition-all group"
+          className="border-2 border-green-200 bg-green-50 cursor-pointer hover:shadow-lg transition-all group"
           onClick={onTipClick}
         >
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
-                <Sparkles className="h-5 w-5 text-purple-600" />
+              <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                <Sparkles className="h-5 w-5 text-green-600" />
               </div>
-              <ChevronRight className="h-5 w-5 text-purple-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-green-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="font-bold text-sm mb-2 text-purple-900">Today's Tip</h3>
-            <p className="text-xs text-purple-700 line-clamp-2 leading-relaxed">
+            <h3 className="font-bold text-sm mb-2 text-green-900">Today's Tip</h3>
+            <p className="text-xs text-green-700 line-clamp-2 leading-relaxed">
               {todayTip}
             </p>
-            <div className="mt-3 flex items-center gap-1 text-xs text-purple-600 font-medium">
+            <div className="mt-3 flex items-center gap-1 text-xs text-green-600 font-medium">
               <Lightbulb className="h-3 w-3" />
               <span>Tap to learn more</span>
             </div>

@@ -186,10 +186,10 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "crop": return { bg: "bg-green-50", text: "text-green-700", border: "border-green-200", icon: "text-green-600" };
-      case "livestock": return { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200", icon: "text-purple-600" };
-      case "finance": return { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", icon: "text-blue-600" };
+      case "livestock": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
+      case "finance": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
       case "tools": return { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", icon: "text-orange-600" };
-      case "market": return { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200", icon: "text-indigo-600" };
+      case "market": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
       default: return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
     }
   };
@@ -316,7 +316,7 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
                                 {categories.find(c => c.id === article.category)?.label}
                               </Badge>
                               {article.expertVerified && (
-                                <Badge className="bg-blue-100 text-blue-700 border-blue-200 border-2">
+                                <Badge className="bg-gray-100 text-gray-700 border-gray-200 border-2">
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   {language === "en" ? "Verified" : "Imethibitishwa"}
                                 </Badge>
@@ -421,7 +421,7 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
                                             ? "Test your soil's "
                                             : "Pima "}
                                           <span 
-                                            className="relative inline-flex items-center gap-1 text-blue-600 font-medium cursor-help border-b-2 border-blue-300 border-dotted"
+                                            className="relative inline-flex items-center gap-1 text-gray-600 font-medium cursor-help border-b-2 border-gray-300 border-dotted"
                                             onMouseEnter={() => setHoveredTerm("pH")}
                                             onMouseLeave={() => setHoveredTerm(null)}
                                           >

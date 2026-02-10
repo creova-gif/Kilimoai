@@ -386,31 +386,27 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
               </CardHeader>
               <CardContent className="space-y-4">
                 {recommendations.tasks.map((task) => (
-                  <Card key={task.id} className="border-blue-200 bg-blue-50">
-                    <CardContent className="pt-6">
+                  <Card key={task.id} className="border-gray-200 bg-gray-50">
+                    <CardContent className="p-4">
                       <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h4 className="font-semibold text-lg mb-1">
-                              {task.name[language]}
-                            </h4>
-                            <p className="text-sm text-gray-700 flex items-start gap-2">
-                              <AlertTriangle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                              {task.suggestion[language]}
-                            </p>
+                        <div className="flex items-start gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-start gap-2">
+                              <AlertTriangle className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
+                              <p className="text-sm font-medium">{task.task}</p>
+                            </div>
                           </div>
-                          <Badge className="bg-blue-600 text-white">
-                            {language === "en" ? "Suggested" : "Pendekezo"}
+                          <Badge className="bg-gray-600 text-white">
+                            {task.priority}
                           </Badge>
                         </div>
-
-                        <div className="pl-6 space-y-2 border-l-2 border-blue-300 ml-2">
+                        <div className="pl-6 space-y-2 border-l-2 border-gray-300 ml-2">
                           <p className="text-sm font-medium text-gray-700">
                             {language === "en" ? "Step-by-Step Guide:" : "Mwongozo wa Hatua kwa Hatua:"}
                           </p>
                           {task.steps.map((step, idx) => (
                             <div key={idx} className="flex items-start gap-2">
-                              <div className="h-6 w-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                              <div className="h-6 w-6 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                 {idx + 1}
                               </div>
                               <p className="text-sm text-gray-700 pt-0.5">{step[language]}</p>
@@ -420,7 +416,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
 
                         <Button 
                           size="sm" 
-                          className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
+                          className="bg-gray-600 hover:bg-gray-700 w-full sm:w-auto"
                           onClick={() => toast.success(language === "en" ? "Task marked as acknowledged" : "Kazi imewekwa alama kuwa imetambuliwa")}
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
@@ -489,13 +485,13 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
                   <div key={animal.id} className="p-4 border rounded-lg hover:bg-gray-50">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Beef className="h-5 w-5 text-purple-600" />
+                        <Beef className="h-5 w-5 text-gray-700" />
                         <div>
                           <p className="font-medium">{animal.species[language]}</p>
                           <p className="text-sm text-gray-600">ID: {animal.id}</p>
                         </div>
                       </div>
-                      <Badge className="bg-purple-100 text-purple-700">
+                      <Badge className="bg-gray-100 text-gray-700">
                         {language === "en" ? "Action Needed" : "Hatua Inahitajika"}
                       </Badge>
                     </div>
@@ -521,10 +517,10 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
               </CardHeader>
               <CardContent className="space-y-3">
                 {recommendations.climate_alerts.map((alert, idx) => (
-                  <div key={idx} className="p-4 border rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50">
+                  <div key={idx} className="p-4 border rounded-lg bg-gray-50">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Droplets className="h-5 w-5 text-blue-600" />
+                        <Droplets className="h-5 w-5 text-gray-700" />
                         <div>
                           <p className="font-medium">
                             {new Date(alert.date).toLocaleDateString(language === "en" ? "en-US" : "sw-TZ", {
@@ -559,7 +555,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
               </CardHeader>
               <CardContent className="space-y-3">
                 {recommendations.finance_advice.map((advice, idx) => (
-                  <div key={idx} className="p-4 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50">
+                  <div key={idx} className="p-4 border rounded-lg bg-green-50">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="h-5 w-5 text-green-600" />

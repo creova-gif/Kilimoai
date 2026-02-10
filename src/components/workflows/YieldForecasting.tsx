@@ -124,14 +124,14 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-purple-600" />
+            <BarChart3 className="h-6 w-6 text-gray-600" />
             AI Yield & Revenue Forecasting
           </h2>
           <p className="text-sm text-gray-600 mt-1">
             Predictive analytics for crop yields and revenue projections
           </p>
         </div>
-        <Button onClick={generateNewForecast} disabled={generating} className="bg-purple-600">
+        <Button onClick={generateNewForecast} disabled={generating} className="bg-[#2E7D32]">
           {generating ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -169,13 +169,13 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Avg. Yield Improvement</p>
-                <p className="text-xl font-bold text-blue-600 flex items-center gap-1">
+                <p className="text-xl font-bold text-gray-800 flex items-center gap-1">
                   {avgYieldImprovement > 0 && <TrendingUp className="h-4 w-4" />}
                   {avgYieldImprovement.toFixed(1)}%
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -188,8 +188,8 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                 <p className="text-xs text-gray-600">Active Forecasts</p>
                 <p className="text-xl font-bold">{forecasts.length}</p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <BarChart3 className="h-5 w-5 text-purple-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <BarChart3 className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -200,14 +200,14 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Avg. Confidence</p>
-                <p className="text-xl font-bold text-purple-600">
+                <p className="text-xl font-bold text-gray-800">
                   {forecasts.length > 0 
                     ? (forecasts.reduce((sum, f) => sum + f.confidence, 0) / forecasts.length).toFixed(0)
                     : 0}%
                 </p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Sparkles className="h-5 w-5 text-purple-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <Sparkles className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -217,7 +217,7 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
       {/* Forecasts List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
         </div>
       ) : forecasts.length === 0 ? (
         <Card>
@@ -227,7 +227,7 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
             <p className="text-sm text-gray-600 mb-4">
               Generate your first AI-powered yield forecast
             </p>
-            <Button onClick={generateNewForecast} className="bg-purple-600">
+            <Button onClick={generateNewForecast} className="bg-[#2E7D32]">
               <Sparkles className="h-4 w-4 mr-2" />
               Generate First Forecast
             </Button>
@@ -241,7 +241,7 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="h-5 w-5 text-purple-600" />
+                      <BarChart3 className="h-5 w-5 text-gray-600" />
                       {forecast.cropName}
                     </CardTitle>
                     <CardDescription className="flex items-center gap-4 mt-1">
@@ -253,14 +253,14 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                       </span>
                     </CardDescription>
                   </div>
-                  <Badge className="bg-purple-100 text-purple-800">
+                  <Badge className="bg-gray-100 text-gray-800">
                     {forecast.confidence}% Confidence
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Yield Comparison */}
-                <div className="grid md:grid-cols-3 gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+                <div className="grid md:grid-cols-3 gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Historical Yield</p>
                     <p className="text-2xl font-bold text-gray-600">
@@ -269,7 +269,7 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                   </div>
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Forecasted Yield</p>
-                    <p className="text-2xl font-bold text-purple-600">
+                    <p className="text-2xl font-bold text-gray-800">
                       {forecast.forecastedYield} tons
                     </p>
                   </div>
@@ -342,7 +342,7 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                     </div>
                     <div className="bg-white p-3 rounded">
                       <p className="text-xs text-gray-600 mb-1">Optimistic</p>
-                      <p className="text-lg font-bold text-blue-600">
+                      <p className="text-lg font-bold text-gray-800">
                         TZS {forecast.revenue.optimistic.toLocaleString()}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">Best case scenario</p>
@@ -353,13 +353,13 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                 {/* AI Recommendations */}
                 <div>
                   <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-purple-600" />
+                    <Sparkles className="h-4 w-4 text-gray-600" />
                     AI Recommendations to Maximize Yield
                   </h4>
                   <div className="space-y-2">
                     {forecast.recommendations.map((rec, idx) => (
-                      <div key={idx} className="flex items-start gap-2 p-2 bg-purple-50 rounded text-sm">
-                        <AlertCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <div key={idx} className="flex items-start gap-2 p-2 bg-gray-50 rounded text-sm">
+                        <AlertCircle className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
                         <span>{rec}</span>
                       </div>
                     ))}

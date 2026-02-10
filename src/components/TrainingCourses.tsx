@@ -112,9 +112,9 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
   const completed = courses.filter(c => c.completed);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -124,7 +124,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Training Courses" : "Kozi za Mafunzo"}
               </h1>
-              <p className="text-indigo-100 text-sm">
+              <p className="text-green-100 text-sm">
                 {language === "en" 
                   ? "Structured learning paths with certificates"
                   : "Njia za kujifunza zilizopangwa na vyeti"}
@@ -136,15 +136,15 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
           <div className="grid grid-cols-3 gap-3 mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{inProgress.length}</div>
-              <div className="text-xs text-indigo-100">{language === "en" ? "In Progress" : "Inaendelea"}</div>
+              <div className="text-xs text-green-100">{language === "en" ? "In Progress" : "Inaendelea"}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{completed.length}</div>
-              <div className="text-xs text-indigo-100">{language === "en" ? "Completed" : "Imekamilika"}</div>
+              <div className="text-xs text-green-100">{language === "en" ? "Completed" : "Imekamilika"}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{completed.length}</div>
-              <div className="text-xs text-indigo-100">{language === "en" ? "Certificates" : "Vyeti"}</div>
+              <div className="text-xs text-green-100">{language === "en" ? "Certificates" : "Vyeti"}</div>
             </div>
           </div>
         </div>
@@ -224,7 +224,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                 const cat = categories.find(c => c.id === course.category);
                 
                 return (
-                  <Card key={course.id} className="border-2 border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all">
+                  <Card key={course.id} className="border-2 border-gray-200 hover:border-gray-300 hover:shadow-md transition-all">
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <div className={`p-2 bg-${cat?.color}-100 rounded-lg`}>
@@ -232,7 +232,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                         </div>
                         <div className="flex flex-col items-end gap-2">
                           {course.price === "premium" && (
-                            <Badge className="bg-purple-100 text-purple-700 border-purple-200 border">
+                            <Badge className="bg-gray-100 text-gray-700 border-gray-200 border">
                               Premium
                             </Badge>
                           )}
@@ -274,9 +274,9 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                       </div>
 
                       {course.hasCertificate && (
-                        <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-200 rounded-lg mb-4">
-                          <Trophy className="h-4 w-4 text-blue-600" />
-                          <span className="text-xs font-medium text-blue-700">
+                        <div className="flex items-center gap-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                          <Trophy className="h-4 w-4 text-yellow-600" />
+                          <span className="text-xs font-medium text-yellow-700">
                             {language === "en" ? "Certificate upon completion" : "Cheti baada ya kukamilisha"}
                           </span>
                         </div>
@@ -293,7 +293,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                           course.completed 
                             ? "bg-green-600 hover:bg-green-700" 
                             : course.progress
-                            ? "bg-indigo-600 hover:bg-indigo-700"
+                            ? "bg-green-600 hover:bg-green-700"
                             : "bg-gray-900 hover:bg-gray-800"
                         }`}
                       >

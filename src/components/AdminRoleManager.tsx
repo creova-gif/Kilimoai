@@ -204,15 +204,14 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
     }
   };
 
-  const getRoleBadgeColor = (role: UserRole) => {
-    const colors: Record<UserRole, string> = {
-      smallholder_farmer: "bg-green-100 text-green-700",
-      farmer: "bg-emerald-100 text-emerald-700",
-      farm_manager: "bg-blue-100 text-blue-700",
-      commercial_farm_admin: "bg-purple-100 text-purple-700",
-      agribusiness_ops: "bg-orange-100 text-orange-700",
-      extension_officer: "bg-cyan-100 text-cyan-700",
-      cooperative_leader: "bg-teal-100 text-teal-700",
+  const getRoleBadgeColor = (role: string) => {
+    const colors: Record<string, string> = {
+      farmer: "bg-green-100 text-green-700",
+      farm_manager: "bg-gray-100 text-gray-700",
+      commercial_farm_admin: "bg-gray-100 text-gray-700",
+      admin: "bg-orange-100 text-orange-700",
+      extension_officer: "bg-gray-100 text-gray-700",
+      cooperative_leader: "bg-gray-100 text-gray-700",
     };
     return colors[role] || "bg-gray-100 text-gray-700";
   };
@@ -220,7 +219,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
   return (
     <div className="space-y-6 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 text-white">
+      <div className="bg-[#2E7D32] rounded-2xl p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-white/20 rounded-lg">
             <Shield className="h-6 w-6" />
@@ -237,8 +236,8 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Users className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Users className="h-5 w-5 text-gray-700" />
               </div>
               <div>
                 <p className="text-xs text-gray-600">{text.totalUsers}</p>
@@ -252,8 +251,8 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
           <Card key={role}>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <UserCheck className="h-5 w-5 text-purple-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <UserCheck className="h-5 w-5 text-gray-700" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-600">{getRoleDisplayName(role as UserRole, language)}</p>
@@ -277,7 +276,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
                 placeholder={text.searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
               />
             </div>
 
@@ -286,7 +285,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
               <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value as UserRole | "all")}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
               >
                 <option value="all">{text.allRoles}</option>
                 {availableRoles.map((role) => (
@@ -352,7 +351,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
                         <select
                           value={selectedRole || user.role}
                           onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                          className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32]"
                         >
                           {availableRoles.map((role) => (
                             <option key={role} value={role}>
@@ -388,7 +387,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
                             {getFeatureCount(user.role)} {text.features}
                           </p>
                         </div>
-                        <Badge className="bg-purple-100 text-purple-700">
+                        <Badge className="bg-gray-100 text-gray-700">
                           {user.tier.toUpperCase()}
                         </Badge>
                         <Button
@@ -435,7 +434,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
-                      className="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
+                      className="bg-[#2E7D32] h-2 rounded-full transition-all duration-500"
                       style={{ width: `${percentage}%` }}
                     ></div>
                   </div>

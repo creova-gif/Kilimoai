@@ -211,13 +211,13 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
       </Card>
 
       {/* Price Forecast */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="pt-4">
+      <Card className="border-gray-200 bg-gray-50">
+        <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <BarChart3 className="h-5 w-5 text-blue-600 mt-0.5" />
+            <BarChart3 className="h-5 w-5 text-gray-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900 mb-1">Price Forecast (Next 2 Weeks)</h4>
-              <p className="text-blue-800">{marketData.forecast}</p>
+              <h4 className="font-medium text-gray-900 mb-1">Price Forecast (Next 2 Weeks)</h4>
+              <p className="text-gray-800">{marketData.forecast}</p>
             </div>
           </div>
         </CardContent>
@@ -244,7 +244,7 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className={`h-2 rounded-full ${item.date === "Today" ? 'bg-green-600' : 'bg-blue-600'}`}
+                      className={`h-2 rounded-full ${item.date === "Today" ? 'bg-green-600' : 'bg-gray-600'}`}
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -361,17 +361,16 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
       </Card>
 
       {/* Data Source */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="pt-4">
+      <Card className="border-gray-200 bg-gray-50">
+        <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-gray-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900 mb-1">Verified Market Data</h4>
-              <p className="text-sm text-blue-800">
-                Prices verified by <strong>Tanzania Agricultural Marketing Information System</strong> and 
-                local market agents. Data updated daily at 9 AM.
+              <h4 className="font-medium text-gray-900 mb-1">Verified Market Data</h4>
+              <p className="text-sm text-gray-800">
+                All prices sourced from official agricultural market boards and verified traders.
               </p>
-              <p className="text-xs text-blue-700 mt-2">
+              <p className="text-xs text-gray-700 mt-2">
                 Last updated: {new Date().toLocaleTimeString()}
               </p>
             </div>

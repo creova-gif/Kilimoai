@@ -1,3 +1,6 @@
+import type { Context, Next } from "npm:hono@4.6.14";
+import * as kv from "./kv_store.tsx";
+
 /**
  * Extract user from Authorization header or request body
  * Sets user in context for downstream middleware/handlers

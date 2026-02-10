@@ -7,7 +7,7 @@ interface CaptureFlowDemoProps {
 }
 
 export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
-  const [activeCaptureMode, setActiveCaptureMode] = useState<"crop-diagnosis" | "livestock-health" | "voice-assistant" | "general-query" | null>(null);
+  const [activeCaptureMode, setActiveCaptureMode] = useState<"crop-diagnosis" | "livestock" | "voice" | "general-query" | null>(null);
   const [captureResult, setCaptureResult] = useState<any>(null);
 
   const handleCapture = (data: any) => {
@@ -25,21 +25,21 @@ export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
       title: { en: "Crop Health Check", sw: "Ukaguzi wa Afya ya Zao" },
       description: { en: "Diagnose plant diseases and pests", sw: "Tambua magonjwa ya mimea na wadudu" },
       icon: <div className="text-3xl">🌱</div>,
-      color: "from-green-500 to-emerald-500"
+      color: "bg-green-500"
     },
     {
-      id: "livestock-health" as const,
-      title: { en: "Livestock Health", sw: "Afya ya Mifugo" },
+      id: "livestock" as const,
+      name: { en: "Livestock Health", sw: "Afya ya Mifugo" },
       description: { en: "Check animal health issues", sw: "Kagua matatizo ya afya ya wanyama" },
       icon: <Stethoscope className="h-8 w-8" />,
-      color: "from-blue-500 to-cyan-500"
+      color: "from-gray-400 to-gray-500"
     },
     {
-      id: "voice-assistant" as const,
-      title: { en: "Voice Assistant", sw: "Msaidizi wa Sauti" },
+      id: "voice" as const,
+      name: { en: "Voice Query", sw: "Swali la Sauti" },
       description: { en: "Ask farming questions", sw: "Uliza maswali ya kilimo" },
       icon: <Mic className="h-8 w-8" />,
-      color: "from-purple-500 to-pink-500"
+      color: "from-gray-400 to-gray-500"
     },
     {
       id: "general-query" as const,
@@ -51,7 +51,7 @@ export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 p-4 lg:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 lg:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -78,7 +78,7 @@ export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
                   {useCase.icon}
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="font-bold text-lg">{useCase.title[language]}</h3>
+                  <h3 className="font-bold text-lg">{useCase.title ? useCase.title[language] : useCase.name[language]}</h3>
                   <p className="text-sm text-white/90">{useCase.description[language]}</p>
                 </div>
               </div>

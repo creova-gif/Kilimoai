@@ -61,8 +61,8 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate }: AIWork
       name: "Task & Labor",
       icon: ClipboardList,
       component: TaskManagement,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
+      color: "text-gray-700",
+      bgColor: "bg-gray-100",
       requiredTier: "basic",
       badge: "BASIC"
     },
@@ -71,8 +71,8 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate }: AIWork
       name: "Yield Forecasting",
       icon: BarChart3,
       component: YieldForecasting,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100",
+      color: "text-gray-700",
+      bgColor: "bg-gray-100",
       requiredTier: "basic",
       badge: "AI PRO"
     },
@@ -81,8 +81,8 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate }: AIWork
       name: "Climate Alerts",
       icon: CloudRain,
       component: ClimateRisk,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
+      color: "text-gray-700",
+      bgColor: "bg-gray-100",
       badge: "LIVE"
     }
   ];
@@ -175,7 +175,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate }: AIWork
                       {workflow.name.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim()}
                     </span>
                     {workflow.badge && !locked && (
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 h-5 bg-purple-100 text-purple-700 border-purple-200">
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 h-5 bg-gray-100 text-gray-700 border-gray-200">
                         {workflow.badge.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim()}
                       </Badge>
                     )}
@@ -199,7 +199,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate }: AIWork
                   )}
                 </div>
                 {isActive && (
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full" />
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#2E7D32] rounded-full" />
                 )}
               </button>
             );

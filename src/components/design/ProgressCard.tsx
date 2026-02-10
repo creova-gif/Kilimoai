@@ -31,10 +31,10 @@ export function ProgressCard({
       progress: "bg-green-600"
     },
     blue: {
-      bg: "from-blue-50 to-cyan-50",
-      border: "border-blue-200",
-      icon: "bg-blue-100 text-blue-600",
-      progress: "bg-blue-600"
+      bg: "from-gray-50 to-gray-100",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      progress: "bg-gray-600"
     },
     orange: {
       bg: "from-orange-50 to-amber-50",
@@ -43,10 +43,10 @@ export function ProgressCard({
       progress: "bg-orange-600"
     },
     purple: {
-      bg: "from-purple-50 to-pink-50",
-      border: "border-purple-200",
-      icon: "bg-purple-100 text-purple-600",
-      progress: "bg-purple-600"
+      bg: "from-gray-50 to-gray-100",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      progress: "bg-gray-600"
     }
   };
 

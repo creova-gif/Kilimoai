@@ -52,11 +52,13 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
       case "free":
         return "bg-gray-100 text-gray-800";
       case "basic":
-        return "bg-blue-100 text-blue-800";
+        return "bg-gray-100 text-gray-800";
       case "premium":
-        return "bg-purple-100 text-purple-800";
+        return "bg-gray-100 text-gray-800";
       case "enterprise":
         return "bg-yellow-100 text-yellow-800";
+      case "agribusiness_ops":
+        return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -280,7 +282,7 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
 
       {/* Upgrade CTA - Only show for non-enterprise tiers */}
       {role.tier !== "enterprise" && role.tier !== "premium" && onUpgrade && (
-        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+        <Card className="bg-gradient-to-r from-green-50 to-green-50 border-green-200">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
@@ -290,22 +292,22 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
                 </p>
                 <ul className="text-sm space-y-1 text-gray-600">
                   <li className="flex items-center gap-2">
-                    <ArrowUp className="h-3 w-3 text-purple-600" />
+                    <ArrowUp className="h-3 w-3 text-green-600" />
                     <span>Advanced AI (GPT-4) for better recommendations</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <ArrowUp className="h-3 w-3 text-purple-600" />
+                    <ArrowUp className="h-3 w-3 text-green-600" />
                     <span>Unlimited AI queries and farm size</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <ArrowUp className="h-3 w-3 text-purple-600" />
+                    <ArrowUp className="h-3 w-3 text-green-600" />
                     <span>Access to all dashboard sections and analytics</span>
                   </li>
                 </ul>
               </div>
               <Button
                 onClick={onUpgrade}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 ml-4"
+                className="bg-gradient-to-r from-green-600 to-green-600 ml-4"
               >
                 <Crown className="h-4 w-4 mr-2" />
                 Upgrade Now
@@ -334,8 +336,8 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <BarChart3 className="h-5 w-5 text-gray-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-600">Analytics Run</p>
@@ -348,8 +350,8 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-gray-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-600">Yield Trend</p>

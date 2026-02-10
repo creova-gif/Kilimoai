@@ -163,7 +163,7 @@ export function WeatherAlertDetails({ condition, severity, region }: WeatherAler
       case "medium":
         return <Badge className="bg-orange-100 text-orange-700 border-orange-300">Moderate</Badge>;
       case "low":
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-300">Low Risk</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Low Risk</Badge>;
     }
   };
 
@@ -290,17 +290,17 @@ export function WeatherAlertDetails({ condition, severity, region }: WeatherAler
       </Card>
 
       {/* Data Source */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-gray-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900 mb-1">Verified Weather Data</h4>
-              <p className="text-sm text-blue-800">
+              <h4 className="font-medium text-gray-900 mb-1">Verified Weather Data</h4>
+              <p className="text-sm text-gray-800">
                 Forecast provided by <strong>Tanzania Meteorological Authority (TMA)</strong> and 
                 satellite data. Updated every 6 hours.
               </p>
-              <p className="text-xs text-blue-700 mt-2">Last updated: {new Date().toLocaleString()}</p>
+              <p className="text-xs text-gray-700 mt-2">Last updated: {new Date().toLocaleString()}</p>
             </div>
           </div>
         </CardContent>

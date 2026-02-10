@@ -263,8 +263,8 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
   const getEventColor = (type: CalendarEvent["type"]) => {
     switch (type) {
       case "planting": return "bg-green-100 text-green-800 border-green-300";
-      case "fertilization": return "bg-blue-100 text-blue-800 border-blue-300";
-      case "irrigation": return "bg-cyan-100 text-cyan-800 border-cyan-300";
+      case "fertilization": return "bg-gray-100 text-gray-800 border-gray-300";
+      case "irrigation": return "bg-gray-100 text-gray-800 border-gray-300";
       case "harvest": return "bg-yellow-100 text-yellow-800 border-yellow-300";
       case "pest-control": return "bg-red-100 text-red-800 border-red-300";
       default: return "bg-gray-100 text-gray-800 border-gray-300";
@@ -334,7 +334,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
   return (
     <div className="space-y-6 max-w-7xl mx-auto p-4 lg:p-6 pb-24 lg:pb-8">
       {/* Header & Overview */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-6 text-white">
+      <div className="bg-[#2E7D32] rounded-2xl p-6 text-white">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-white/20 rounded-xl backdrop-blur">
@@ -564,7 +564,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
         </Card>
 
         {/* Expected Revenue */}
-        <Card className="border-emerald-200 hover:shadow-lg transition-shadow">
+        <Card className="border-green-200 hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
               <DollarSign className="w-4 h-4" />
@@ -586,7 +586,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
         </Card>
 
         {/* Soil Health Index */}
-        <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+        <Card className="border-green-200 hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
               <Beaker className="w-4 h-4" />
@@ -665,7 +665,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
                           {getStatusIcon(event.status)}
                           <h4 className="font-semibold">{event.title}</h4>
                           {event.aiGenerated && (
-                            <Badge className="bg-purple-100 text-purple-800 text-xs">
+                            <Badge className="bg-gray-100 text-gray-800 text-xs">
                               <Brain className="w-3 h-3 mr-1" />
                               AI
                             </Badge>
@@ -698,64 +698,51 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
           {/* Active Crop Plans Table */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sprout className="w-5 h-5 text-green-600" />
+              <CardTitle className="text-base font-semibold text-gray-900">
                 {t.activePlans}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm text-gray-600">
                 {metrics.activePlans} {currentLanguage === "en" ? "plans in progress" : "mipango inayoendelea"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {/* Sample Active Plan Card */}
-                <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
+                <div className="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between mb-4 pb-4 border-b border-gray-100">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">Maize - Block A</h4>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <span>2025 Masika</span>
+                        <span>•</span>
+                        <span>25 hectares</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 mb-5">
                     <div>
-                      <h4 className="font-semibold text-lg">Maize - Block A</h4>
-                      <p className="text-sm text-gray-600">2025 Masika • 25 hectares</p>
+                      <p className="text-sm text-gray-500 mb-1">Expected Yield</p>
+                      <p className="text-xl font-semibold text-gray-900">
+                        5000
+                        <span className="text-sm font-normal text-gray-500 ml-1">kg/ha</span>
+                      </p>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 mb-3">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Seed Variety</p>
-                      <p className="font-semibold">UH6303 Hybrid</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Planting Window</p>
-                      <p className="font-semibold">Mar 15-30</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Expected Yield</p>
-                      <p className="font-semibold">5000 kg/ha</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Revenue</p>
-                      <p className="font-semibold">6.5M TZS</p>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Revenue</p>
+                      <p className="text-xl font-semibold text-gray-900">
+                        6.5M
+                        <span className="text-sm font-normal text-gray-500 ml-1">TZS</span>
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Eye className="w-4 h-4 mr-2" />
-                      View Details
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      className="flex-1 bg-purple-600 hover:bg-purple-700"
-                      onClick={() => handleOptimizePlan("1")}
-                      disabled={optimizing}
-                    >
-                      {optimizing ? (
-                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                      ) : (
-                        <Zap className="w-4 h-4 mr-2" />
-                      )}
-                      {t.optimize}
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-gray-300 text-gray-900 hover:bg-gray-50 font-medium"
+                  >
+                    View Details
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -764,13 +751,13 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
 
         {/* Right Column - AI Suggestions Panel */}
         <div className="space-y-6">
-          <Card className="border-purple-200 sticky top-4">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
-              <CardTitle className="flex items-center gap-2 text-purple-900">
+          <Card className="border-gray-200 sticky top-4">
+            <CardHeader className="bg-gray-50">
+              <CardTitle className="flex items-center gap-2 text-gray-900">
                 <Brain className="w-5 h-5" />
                 {t.aiSuggestions}
               </CardTitle>
-              <CardDescription className="text-purple-700">
+              <CardDescription className="text-gray-700">
                 {currentLanguage === "en"
                   ? "Real-time AI-powered recommendations"
                   : "Mapendekezo ya AI ya wakati halisi"}
@@ -818,19 +805,19 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               </div>
 
               {/* AI Suggestion Card 3 */}
-              <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg">
+              <div className="bg-gray-50 border-l-4 border-gray-600 p-4 rounded-r-lg">
                 <div className="flex items-start gap-3">
-                  <Droplets className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Droplets className="w-5 h-5 text-gray-700 mt-0.5" />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-blue-900 mb-1">
+                    <h4 className="font-semibold text-gray-900 mb-1">
                       {currentLanguage === "en" ? "Irrigation Schedule" : "Ratiba ya Umwagiliaji"}
                     </h4>
-                    <p className="text-sm text-blue-800">
+                    <p className="text-sm text-gray-700">
                       {currentLanguage === "en"
                         ? "Dry spell expected April 20-30. Schedule supplemental irrigation to maintain soil moisture."
                         : "Ukame unatarajiwa Aprili 20-30. Panga umwagiliaji wa ziada kudumisha unyevu wa udongo."}
                     </p>
-                    <Button size="sm" variant="ghost" className="mt-2 text-blue-700 hover:text-blue-900 h-auto p-0">
+                    <Button size="sm" variant="ghost" className="mt-2 text-gray-700 hover:text-gray-900 h-auto p-0">
                       {currentLanguage === "en" ? "Add to Calendar" : "Ongeza Kalenda"} →
                     </Button>
                   </div>
@@ -840,7 +827,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               {/* Request New Analysis */}
               <Button 
                 variant="outline" 
-                className="w-full mt-4 border-purple-300 text-purple-700 hover:bg-purple-50"
+                className="w-full mt-4 border-gray-300 text-gray-700 hover:bg-gray-50"
                 onClick={() => toast.info("AI analysis in progress...")}
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
@@ -908,10 +895,10 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-xs text-blue-600 mb-1">Actual Yield</p>
-                  <p className="font-bold text-blue-900">4800 kg/ha</p>
-                  <p className="text-xs text-blue-600">vs 5000 target</p>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-xs text-gray-600 mb-1">Actual Yield</p>
+                  <p className="font-bold text-gray-900">4800 kg/ha</p>
+                  <p className="text-xs text-gray-600">vs 5000 target</p>
                 </div>
                 <div className="bg-green-50 p-3 rounded-lg">
                   <p className="text-xs text-green-600 mb-1">Revenue</p>
@@ -921,14 +908,14 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
                     +12% vs 2023
                   </p>
                 </div>
-                <div className="bg-purple-50 p-3 rounded-lg">
-                  <p className="text-xs text-purple-600 mb-1">AI Score</p>
-                  <p className="font-bold text-purple-900">78/100</p>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-xs text-gray-600 mb-1">AI Score</p>
+                  <p className="font-bold text-gray-900">78/100</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
-                <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h5 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                   <Brain className="w-4 h-4" />
                   {currentLanguage === "en" ? "AI Performance Analysis" : "Uchambuzi wa Utendaji wa AI"}
                 </h5>

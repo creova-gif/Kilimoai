@@ -188,7 +188,7 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
       case "medium":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "low":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
@@ -327,15 +327,15 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-blue-200 bg-blue-50">
+        <Card className="border-2 border-gray-200 bg-gray-50">
           <CardHeader className="pb-2">
             <CardDescription>Learning Resources</CardDescription>
-            <CardTitle className="text-3xl text-blue-700">
+            <CardTitle className="text-3xl text-gray-700">
               {recommendations?.learning?.length || 0}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-blue-600">Knowledge expansion</p>
+            <p className="text-xs text-gray-600">Knowledge expansion</p>
           </CardContent>
         </Card>
       </div>
@@ -657,8 +657,8 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-              <div className="h-8 w-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">
+            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="h-8 w-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold">
                 1
               </div>
               <div>
@@ -669,8 +669,8 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-              <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="h-8 w-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold">
                 2
               </div>
               <div>

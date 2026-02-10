@@ -530,7 +530,7 @@ export function MasterPromptValidator() {
           <Button
             variant="outline"
             onClick={() => setCurrentView(currentView === "web" ? "mobile" : "web")}
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            className="border-green-600 text-green-600 hover:bg-green-50"
           >
             {currentView === "web" ? (
               <><Monitor className="h-4 w-4 mr-2" /> Web View</>
@@ -541,7 +541,7 @@ export function MasterPromptValidator() {
           <Button
             variant="outline"
             onClick={() => setLanguage(language === "en" ? "sw" : "en")}
-            className="border-purple-600 text-purple-600 hover:bg-purple-50"
+            className="border-gray-600 text-gray-600 hover:bg-gray-50"
           >
             <Globe className="h-4 w-4 mr-2" />
             {language === "en" ? "EN" : "SW"}
@@ -561,7 +561,7 @@ export function MasterPromptValidator() {
       </div>
 
       {/* Current State */}
-      <Card className="border-blue-300 bg-blue-50">
+      <Card className="border-gray-300 bg-gray-50">
         <CardHeader>
           <CardTitle>Current Configuration</CardTitle>
           <CardDescription>Active view and language settings</CardDescription>
@@ -570,13 +570,13 @@ export function MasterPromptValidator() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-sm text-gray-600 mb-1">View</p>
-              <Badge className="bg-blue-600 text-white">
+              <Badge className="bg-gray-600 text-white">
                 {currentView === "web" ? "Web" : "Mobile"}
               </Badge>
             </div>
             <div>
               <p className="text-sm text-gray-600 mb-1">Language</p>
-              <Badge className="bg-purple-600 text-white">
+              <Badge className="bg-gray-600 text-white">
                 {language === "en" ? "English" : "Swahili"}
               </Badge>
             </div>
@@ -666,7 +666,7 @@ export function MasterPromptValidator() {
                       <p className="text-sm text-gray-700 mb-3">{result.details}</p>
                       {result.uiOutput && (
                         <div className="bg-white p-3 rounded-lg mb-2">
-                          <p className="text-xs font-semibold text-blue-700 mb-1">UI Output:</p>
+                          <p className="text-xs font-semibold text-gray-700 mb-1">UI Output:</p>
                           <pre className="text-xs text-gray-600 overflow-x-auto">
                             {JSON.stringify(result.uiOutput, null, 2)}
                           </pre>
@@ -674,7 +674,7 @@ export function MasterPromptValidator() {
                       )}
                       {result.aiOutput && (
                         <div className="bg-white p-3 rounded-lg">
-                          <p className="text-xs font-semibold text-purple-700 mb-1">AI Output:</p>
+                          <p className="text-xs font-semibold text-gray-700 mb-1">AI Output:</p>
                           <pre className="text-xs text-gray-600 overflow-x-auto max-h-40">
                             {JSON.stringify(result.aiOutput, null, 2)}
                           </pre>
@@ -708,7 +708,7 @@ export function MasterPromptValidator() {
       )}
 
       {/* JSON Export */}
-      <Card className="border-purple-300 bg-purple-50">
+      <Card className="border-gray-300 bg-gray-50">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>

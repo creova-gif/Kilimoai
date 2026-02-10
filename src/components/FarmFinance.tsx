@@ -48,15 +48,15 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
 
   const incomeCategories = [
     { name: "Crop Sales", amount: 6200000, percentage: 73, color: "bg-green-500", icon: Leaf },
-    { name: "Livestock", amount: 1800000, percentage: 21, color: "bg-blue-500", icon: Users },
-    { name: "Other Income", amount: 500000, percentage: 6, color: "bg-purple-500", icon: Package },
+    { name: "Livestock", amount: 1800000, percentage: 21, color: "bg-gray-500", icon: Users },
+    { name: "Other Income", amount: 500000, percentage: 6, color: "bg-orange-500", icon: Package },
   ];
 
   const expenseCategories = [
     { name: "Seeds & Inputs", amount: 1500000, percentage: 36, color: "bg-orange-500", icon: Package },
     { name: "Fertilizers", amount: 1200000, percentage: 29, color: "bg-yellow-500", icon: Droplet },
-    { name: "Labor", amount: 900000, percentage: 21, color: "bg-blue-500", icon: Users },
-    { name: "Equipment", amount: 400000, percentage: 10, color: "bg-purple-500", icon: Truck },
+    { name: "Labor", amount: 900000, percentage: 21, color: "bg-gray-500", icon: Users },
+    { name: "Equipment", amount: 400000, percentage: 10, color: "bg-orange-500", icon: Truck },
     { name: "Other", amount: 200000, percentage: 4, color: "bg-gray-500", icon: ShoppingCart },
   ];
 
@@ -117,7 +117,7 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-green-600 to-teal-600 rounded-3xl p-6 text-white">
+      <div className="relative overflow-hidden bg-[#2E7D32] rounded-3xl p-6 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
         
@@ -240,13 +240,13 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
         </Card>
 
         {/* Net Profit */}
-        <Card className="border-2 border-blue-200 hover:shadow-xl transition-all">
+        <Card className="border-2 border-gray-200 hover:shadow-xl transition-all">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <div className="p-2 bg-blue-100 rounded-xl">
-                <Wallet className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-gray-100 rounded-xl">
+                <Wallet className="h-6 w-6 text-gray-700" />
               </div>
-              <Badge className="bg-blue-100 text-blue-700">
+              <Badge className="bg-gray-100 text-gray-700">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +{financialSummary.profitChange.toFixed(1)}%
               </Badge>
@@ -338,10 +338,10 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
       </div>
 
       {/* Budget Goals */}
-      <Card className="border-2 border-purple-200">
+      <Card className="border-2 border-orange-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-purple-600" />
+            <Target className="h-5 w-5 text-orange-600" />
             Budget Goals
           </CardTitle>
           <CardDescription>Track spending against your budget</CardDescription>

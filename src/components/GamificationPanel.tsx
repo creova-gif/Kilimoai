@@ -113,11 +113,11 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
 
   // Categories
   const categories = [
-    { id: "all", label: "All", icon: Sparkles, color: "text-purple-600" },
+    { id: "all", label: "All", icon: Sparkles, color: "text-green-600" },
     { id: "crop", label: "Farming", icon: Target, color: "text-green-600" },
-    { id: "market", label: "Trading", icon: TrendingUp, color: "text-blue-600" },
+    { id: "market", label: "Trading", icon: TrendingUp, color: "text-green-600" },
     { id: "learning", label: "Learning", icon: Award, color: "text-orange-600" },
-    { id: "social", label: "Community", icon: Star, color: "text-pink-600" },
+    { id: "social", label: "Community", icon: Star, color: "text-gray-600" },
     { id: "milestone", label: "Milestones", icon: Trophy, color: "text-yellow-600" },
   ];
 
@@ -139,9 +139,9 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
   const getCategoryColor = (category?: string) => {
     switch (category) {
       case "crop": return { bg: "bg-green-50", border: "border-green-200", text: "text-green-700", icon: "text-green-600" };
-      case "market": return { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", icon: "text-blue-600" };
+      case "market": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
       case "learning": return { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", icon: "text-orange-600" };
-      case "social": return { bg: "bg-pink-50", border: "border-pink-200", text: "text-pink-700", icon: "text-pink-600" };
+      case "social": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
       case "milestone": return { bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-700", icon: "text-yellow-600" };
       default: return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
     }
@@ -299,15 +299,15 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
                 />
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-200">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-blue-600" />
+            <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-blue-900">Next Milestone</p>
-                <p className="text-sm text-blue-700 mt-1">{cropProgress.nextMilestone}</p>
+                <p className="text-sm font-semibold text-gray-900">Next Milestone</p>
+                <p className="text-sm text-gray-700 mt-1">{cropProgress.nextMilestone}</p>
               </div>
-              <ChevronRight className="h-5 w-5 text-blue-400 mt-1" />
+              <ChevronRight className="h-5 w-5 text-gray-400 mt-1" />
             </div>
           </CardContent>
         </Card>

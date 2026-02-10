@@ -112,12 +112,12 @@ export function FeatureUpgradePrompt({
   const getRoleBadgeColor = (role: UserRole) => {
     const colors: Record<UserRole, string> = {
       smallholder_farmer: "bg-green-100 text-green-700",
-      farmer: "bg-emerald-100 text-emerald-700",
-      farm_manager: "bg-blue-100 text-blue-700",
-      commercial_farm_admin: "bg-purple-100 text-purple-700",
+      farmer: "bg-green-100 text-green-700",
+      farm_manager: "bg-gray-100 text-gray-700",
+      commercial_farm_admin: "bg-gray-100 text-gray-700",
       agribusiness_ops: "bg-orange-100 text-orange-700",
-      extension_officer: "bg-cyan-100 text-cyan-700",
-      cooperative_leader: "bg-teal-100 text-teal-700",
+      extension_officer: "bg-gray-100 text-gray-700",
+      cooperative_leader: "bg-gray-100 text-gray-700",
     };
     return colors[role] || "bg-gray-100 text-gray-700";
   };
@@ -185,8 +185,8 @@ export function FeatureUpgradePrompt({
                       className={`
                         relative p-6 rounded-xl border-2 transition-all cursor-pointer
                         ${isSelected
-                          ? "border-purple-500 bg-purple-50 shadow-lg"
-                          : "border-gray-200 hover:border-purple-300 hover:shadow-md"
+                          ? "border-green-500 bg-green-50 shadow-lg"
+                          : "border-gray-200 hover:border-green-300 hover:shadow-md"
                         }
                       `}
                       onClick={() => setSelectedRole(role)}
@@ -210,11 +210,11 @@ export function FeatureUpgradePrompt({
                       <div className="flex items-center gap-3 mb-4">
                         <div className={`
                           p-3 rounded-xl
-                          ${isSelected ? "bg-purple-100" : "bg-gray-100"}
+                          ${isSelected ? "bg-green-100" : "bg-gray-100"}
                         `}>
                           <Icon className={`
                             h-6 w-6
-                            ${isSelected ? "text-purple-600" : "text-gray-600"}
+                            ${isSelected ? "text-green-600" : "text-gray-600"}
                           `} />
                         </div>
                         <div className="flex-1">

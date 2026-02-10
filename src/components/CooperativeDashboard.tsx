@@ -178,7 +178,7 @@ export function CooperativeDashboard({
                         {coopStats.activeMembers} active
                       </p>
                     </div>
-                    <Users className="h-10 w-10 text-blue-600" />
+                    <Users className="h-10 w-10 text-gray-700" />
                   </div>
                 </CardContent>
               </Card>
@@ -223,7 +223,7 @@ export function CooperativeDashboard({
                         Market rate
                       </p>
                     </div>
-                    <TrendingUp className="h-10 w-10 text-purple-600" />
+                    <TrendingUp className="h-10 w-10 text-gray-700" />
                   </div>
                 </CardContent>
               </Card>
@@ -290,7 +290,7 @@ export function CooperativeDashboard({
             </div>
 
             {/* Benefits Banner */}
-            <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+            <Card className="bg-[#2E7D32] text-white">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-3">Digital Cooperative Management</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -420,10 +420,10 @@ export function CooperativeDashboard({
                 </CardContent>
               </Card>
 
-              <Card className="bg-blue-50 border-blue-200">
+              <Card className="bg-gray-50 border-gray-200">
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Sold This Year</p>
-                  <p className="text-3xl font-bold text-blue-600">{coopStats.completedSales} tons</p>
+                  <p className="text-3xl font-bold text-gray-900">{coopStats.completedSales} tons</p>
                   <p className="text-sm text-gray-600 mt-1">To date</p>
                 </CardContent>
               </Card>
@@ -449,12 +449,12 @@ export function CooperativeDashboard({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <Card className="bg-[#2E7D32] text-white">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="text-xl font-bold mb-2">Coordinate Bulk Sales</h3>
-                    <p className="text-blue-100 mb-4">
+                    <p className="text-green-100 mb-4">
                       Know exactly how many tons members will harvest. Organize collective sales and negotiate better pricing with buyers.
                     </p>
                     <div className="flex gap-2">
@@ -549,7 +549,7 @@ export function CooperativeDashboard({
                   {inputDistribution.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                       <div className="flex items-center gap-3">
-                        <Package className="h-8 w-8 text-blue-600" />
+                        <Package className="h-8 w-8 text-gray-700" />
                         <div>
                           <p className="font-medium">{item.item}</p>
                           <p className="text-sm text-gray-600">
@@ -616,7 +616,7 @@ export function CooperativeDashboard({
               </CardContent>
             </Card>
 
-            <Card className="bg-purple-50 border-purple-200">
+            <Card className="bg-gray-50 border-gray-200">
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg mb-2">Paperwork Elimination</h3>
                 <p className="text-gray-700 mb-4">

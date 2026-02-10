@@ -414,7 +414,7 @@ export function DesktopNavigation({
                         role="menu"
                       >
                         {/* Dropdown Header */}
-                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-100">
+                        <div className="p-3 bg-green-50 border-b-2 border-green-100">
                           <div className="flex items-center gap-2">
                             <ItemIcon className="h-5 w-5 text-green-600" />
                             <span className="font-semibold text-gray-900">{getLabel(item)}</span>
@@ -525,7 +525,7 @@ export function DesktopNavigation({
                     transition={{ duration: 0.15 }}
                     className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border-2 border-gray-200 overflow-hidden"
                   >
-                    <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-100">
+                    <div className="p-3 bg-green-50 border-b-2 border-green-100">
                       <p className="text-sm font-semibold text-gray-900">{userName}</p>
                       <p className="text-xs text-gray-600">{userRole}</p>
                     </div>

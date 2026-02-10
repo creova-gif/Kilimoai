@@ -159,7 +159,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
     switch (priority) {
       case "high": return { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", dot: "bg-red-500" };
       case "medium": return { bg: "bg-yellow-50", text: "text-yellow-700", border: "border-yellow-200", dot: "bg-yellow-500" };
-      case "low": return { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", dot: "bg-blue-500" };
+      case "low": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
       default: return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
     }
   };
@@ -174,9 +174,9 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gray-50 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-[#2E7D32] text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -224,7 +224,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
           {/* Micro-Metrics Dashboard */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Zap className="h-5 w-5 text-purple-600" />
+              <Zap className="h-5 w-5 text-gray-700" />
               {language === "en" ? "Current Status" : "Hali ya Sasa"}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -330,7 +330,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                               {tip.linkedService === "diagnostics" && (
                                 <Button
                                   size="sm"
-                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                  className="bg-green-600 hover:bg-green-700 text-white"
                                   onClick={() => onNavigate && onNavigate("diagnostics")}
                                 >
                                   <FileText className="h-4 w-4 mr-2" />
@@ -366,7 +366,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
           </div>
 
           {/* Quick Links to Related Services */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 p-6">
+          <div className="bg-green-50 rounded-xl border-2 border-green-200 p-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
               <ArrowRight className="h-5 w-5 text-green-600" />
               {language === "en" ? "Related Services" : "Huduma Zinazohusiana"}
@@ -376,7 +376,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                 onClick={() => onNavigate && onNavigate("diagnostics")}
                 className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all group"
               >
-                <FileText className="h-6 w-6 text-blue-600" />
+                <FileText className="h-6 w-6 text-gray-700" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900 text-sm">
                     {language === "en" ? "Crop Diagnostics" : "Uchunguzi wa Mazao"}

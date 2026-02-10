@@ -23,38 +23,44 @@ export function QuickActionCard({
 }: QuickActionCardProps) {
   const colorSchemes = {
     green: {
-      bg: "bg-gradient-to-br from-green-50 to-emerald-50",
+      bg: "bg-green-50",
       border: "border-green-200",
       icon: "bg-green-100 text-green-600",
       hover: "hover:border-green-300 hover:shadow-green-100"
     },
     blue: {
-      bg: "bg-gradient-to-br from-blue-50 to-cyan-50",
-      border: "border-blue-200",
-      icon: "bg-blue-100 text-blue-600",
-      hover: "hover:border-blue-300 hover:shadow-blue-100"
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      hover: "hover:border-gray-300 hover:shadow-gray-100"
     },
     purple: {
-      bg: "bg-gradient-to-br from-purple-50 to-pink-50",
-      border: "border-purple-200",
-      icon: "bg-purple-100 text-purple-600",
-      hover: "hover:border-purple-300 hover:shadow-purple-100"
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      hover: "hover:border-gray-300 hover:shadow-gray-100"
     },
     orange: {
-      bg: "bg-gradient-to-br from-orange-50 to-amber-50",
+      bg: "bg-orange-50",
       border: "border-orange-200",
       icon: "bg-orange-100 text-orange-600",
       hover: "hover:border-orange-300 hover:shadow-orange-100"
     },
     teal: {
-      bg: "bg-gradient-to-br from-teal-50 to-cyan-50",
-      border: "border-teal-200",
-      icon: "bg-teal-100 text-teal-600",
-      hover: "hover:border-teal-300 hover:shadow-teal-100"
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      hover: "hover:border-gray-300 hover:shadow-gray-100"
+    },
+    default: {
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      hover: "hover:border-gray-300 hover:shadow-gray-100"
     }
   };
 
-  const scheme = colorSchemes[color];
+  const scheme = colorSchemes[color] || colorSchemes.default;
 
   return (
     <motion.button

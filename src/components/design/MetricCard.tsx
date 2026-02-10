@@ -29,14 +29,14 @@ export function MetricCard({
       text: "text-green-700"
     },
     blue: {
-      gradient: "from-blue-500 to-cyan-600",
-      bg: "bg-blue-50",
-      text: "text-blue-700"
+      gradient: "from-gray-500 to-slate-600",
+      bg: "bg-gray-50",
+      text: "text-gray-700"
     },
     purple: {
-      gradient: "from-purple-500 to-pink-600",
-      bg: "bg-purple-50",
-      text: "text-purple-700"
+      gradient: "from-gray-500 to-slate-600",
+      bg: "bg-gray-50",
+      text: "text-gray-700"
     },
     orange: {
       gradient: "from-orange-500 to-amber-600",

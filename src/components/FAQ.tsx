@@ -187,7 +187,7 @@ export function FAQ() {
   return (
     <div className="space-y-6 pb-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+      <Card className="bg-[#2E7D32] text-white">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <HelpCircle className="h-8 w-8" />
@@ -288,10 +288,10 @@ export function FAQ() {
       </div>
 
       {/* Still Need Help */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-green-50 border-green-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" />
+            <MessageSquare className="h-5 w-5 text-green-600" />
             Still Need Help?
           </CardTitle>
           <CardDescription>
@@ -300,10 +300,10 @@ export function FAQ() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <button className="p-4 bg-white border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left">
+            <button className="p-4 bg-white border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-left">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <MessageSquare className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <MessageSquare className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Chat with AI</p>
@@ -311,10 +311,10 @@ export function FAQ() {
                 </div>
               </div>
             </button>
-            <button className="p-4 bg-white border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left">
+            <button className="p-4 bg-white border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-left">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Smartphone className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Smartphone className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Contact Support</p>

@@ -79,21 +79,21 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
               your field of weeds, crop residues, and debris at least 2 weeks before planting.
             </p>
             
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className="border-gray-200 bg-gray-50">
               <CardContent className="pt-4">
-                <h5 className="font-medium text-blue-900 mb-2">Key Steps:</h5>
-                <ul className="space-y-2 text-sm text-blue-800">
+                <h5 className="font-medium text-gray-900 mb-2">Key Steps:</h5>
+                <ul className="space-y-2 text-sm text-gray-800">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Plowing:</strong> Plow to a depth of 15-20cm to break up compacted soil and improve aeration</span>
+                    <CheckCircle className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" />
+                    <span>Test soil pH and nutrients</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Harrowing:</strong> Break down large soil clods and level the field</span>
+                    <CheckCircle className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" />
+                    <span>Prepare land 2 weeks before planting</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>Ridging:</strong> Create ridges 75cm apart for better drainage and root development</span>
+                    <CheckCircle className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" />
+                    <span>Apply recommended fertilizer rates</span>
                   </li>
                 </ul>
               </CardContent>

@@ -317,7 +317,7 @@ export function AutoAIInsights({
     switch (type) {
       case "urgent": return <AlertTriangle className="h-5 w-5 text-red-600" />;
       case "alert": return <AlertTriangle className="h-5 w-5 text-orange-600" />;
-      case "recommendation": return <Brain className="h-5 w-5 text-blue-600" />;
+      case "recommendation": return <Brain className="h-5 w-5 text-gray-700" />;
       case "optimization": return <TrendingUp className="h-5 w-5 text-green-600" />;
       default: return <Brain className="h-5 w-5 text-gray-600" />;
     }
@@ -347,7 +347,7 @@ export function AutoAIInsights({
       <div className="fixed bottom-20 left-4 z-40 md:bottom-4">
         <Button
           onClick={() => setIsMinimized(false)}
-          className="bg-purple-600 hover:bg-purple-700 shadow-xl rounded-full h-12 w-12"
+          className="bg-gray-700 hover:bg-gray-800 shadow-xl rounded-full h-12 w-12"
         >
           <Brain className="h-6 w-6 text-white" />
         </Button>
@@ -361,24 +361,12 @@ export function AutoAIInsights({
   }
 
   return (
-    <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-blue-50 shadow-lg">
+    <Card className="border-gray-300 bg-white shadow-lg">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Brain className="h-6 w-6 text-purple-600" />
-            <div>
-              <CardTitle className="text-lg">
-                {language === "en" ? "AI Insights" : "Maarifa ya AI"}
-              </CardTitle>
-              <CardDescription className="text-xs flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {lastUpdated && (
-                  language === "en" 
-                    ? `Updated ${lastUpdated.toLocaleTimeString()}`
-                    : `Imeboreshwa ${lastUpdated.toLocaleTimeString()}`
-                )}
-              </CardDescription>
-            </div>
+            <Brain className="h-6 w-6 text-gray-700" />
+            AI Insights
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -399,12 +387,20 @@ export function AutoAIInsights({
               <X className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </CardTitle>
+        <CardDescription className="text-xs flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          {lastUpdated && (
+            language === "en" 
+              ? `Updated ${lastUpdated.toLocaleTimeString()}`
+              : `Imeboreshwa ${lastUpdated.toLocaleTimeString()}`
+          )}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {loading && insights.length === 0 ? (
           <div className="text-center py-8">
-            <RefreshCw className="h-8 w-8 mx-auto mb-2 text-purple-600 animate-spin" />
+            <RefreshCw className="h-8 w-8 mx-auto mb-2 text-gray-600 animate-spin" />
             <p className="text-sm text-gray-600">
               {language === "en" ? "Analyzing your farm data..." : "Inachambu a data ya shamba..."}
             </p>
@@ -421,7 +417,7 @@ export function AutoAIInsights({
             {insights.map((insight) => (
               <div
                 key={insight.id}
-                className="p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-all cursor-pointer"
+                className="p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all cursor-pointer"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0 mt-0.5">
@@ -446,7 +442,7 @@ export function AutoAIInsights({
                       <Button
                         variant="link"
                         size="sm"
-                        className="text-purple-600 p-0 h-auto mt-1 text-xs"
+                        className="text-green-600 p-0 h-auto mt-1 text-xs"
                       >
                         {language === "en" ? "Take Action" : "Chukua Hatua"}
                         <ChevronRight className="h-3 w-3 ml-1" />

@@ -175,9 +175,9 @@ export function OrdersSalesEcommerce() {
   const getStatusColor = (status: Order["status"]) => {
     const colors = {
       pending: "bg-yellow-100 text-yellow-700",
-      confirmed: "bg-blue-100 text-blue-700",
-      packed: "bg-purple-100 text-purple-700",
-      shipped: "bg-indigo-100 text-indigo-700",
+      confirmed: "bg-gray-100 text-gray-700",
+      packed: "bg-gray-100 text-gray-700",
+      shipped: "bg-gray-100 text-gray-700",
       delivered: "bg-green-100 text-green-700",
       cancelled: "bg-red-100 text-red-700"
     };
@@ -230,7 +230,7 @@ export function OrdersSalesEcommerce() {
                 <p className="text-3xl font-bold">{stats.totalOrders}</p>
                 <p className="text-sm text-gray-600 mt-1">{stats.pendingOrders} pending</p>
               </div>
-              <ShoppingCart className="h-12 w-12 text-blue-600" />
+              <ShoppingCart className="h-12 w-12 text-green-600" />
             </div>
           </CardContent>
         </Card>
@@ -256,7 +256,7 @@ export function OrdersSalesEcommerce() {
                 <p className="text-2xl font-bold">TZS {(stats.avgOrderValue / 1000000).toFixed(1)}M</p>
                 <p className="text-sm text-gray-600 mt-1">Per order</p>
               </div>
-              <TrendingUp className="h-12 w-12 text-purple-600" />
+              <TrendingUp className="h-12 w-12 text-green-600" />
             </div>
           </CardContent>
         </Card>
@@ -407,19 +407,19 @@ export function OrdersSalesEcommerce() {
                     {/* Actions */}
                     <div className="flex gap-2">
                       {order.status === "pending" && (
-                        <Button size="sm" className="bg-blue-600">
+                        <Button size="sm" className="bg-green-600">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
                           Confirm Order
                         </Button>
                       )}
                       {order.status === "confirmed" && (
-                        <Button size="sm" className="bg-purple-600">
+                        <Button size="sm" className="bg-green-600">
                           <Package className="h-3 w-3 mr-1" />
                           Mark as Packed
                         </Button>
                       )}
                       {order.status === "packed" && (
-                        <Button size="sm" className="bg-indigo-600">
+                        <Button size="sm" className="bg-green-600">
                           <Truck className="h-3 w-3 mr-1" />
                           Mark as Shipped
                         </Button>
@@ -458,8 +458,8 @@ export function OrdersSalesEcommerce() {
                   <div key={customer.id} className="p-4 border rounded-lg">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Users className="h-6 w-6 text-blue-600" />
+                        <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
+                          <Users className="h-6 w-6 text-gray-600" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
@@ -575,7 +575,7 @@ export function OrdersSalesEcommerce() {
                     </div>
                   </div>
 
-                  <Button className="w-full mt-4 bg-blue-600">
+                  <Button className="w-full mt-4 bg-green-600">
                     <Package className="h-4 w-4 mr-2" />
                     Manage Products
                   </Button>
@@ -596,22 +596,22 @@ export function OrdersSalesEcommerce() {
 
                     <div className="flex items-center justify-between p-3 bg-gray-50 border rounded-lg">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 bg-blue-100 rounded flex items-center justify-center">
-                          <CreditCard className="h-4 w-4 text-blue-600" />
+                        <div className="h-8 w-8 bg-gray-100 rounded flex items-center justify-center">
+                          <CreditCard className="h-4 w-4 text-gray-600" />
                         </div>
                         <span className="font-medium">Card Payments</span>
                       </div>
-                      <Badge className="bg-blue-100 text-blue-700">Active</Badge>
+                      <Badge className="bg-gray-100 text-gray-700">Active</Badge>
                     </div>
 
                     <div className="flex items-center justify-between p-3 bg-gray-50 border rounded-lg">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 bg-purple-100 rounded flex items-center justify-center">
-                          <DollarSign className="h-4 w-4 text-purple-600" />
+                        <div className="h-8 w-8 bg-gray-100 rounded flex items-center justify-center">
+                          <DollarSign className="h-4 w-4 text-gray-600" />
                         </div>
                         <span className="font-medium">Cash on Delivery</span>
                       </div>
-                      <Badge className="bg-purple-100 text-purple-700">Active</Badge>
+                      <Badge className="bg-gray-100 text-gray-700">Active</Badge>
                     </div>
 
                     <div className="flex items-center justify-between p-3 bg-gray-50 border rounded-lg">
@@ -627,31 +627,31 @@ export function OrdersSalesEcommerce() {
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
                 <h4 className="font-medium mb-2">Platform Features</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span>Automated order notifications</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span>Integrated mobile money</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span>Pickup & delivery options</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span>Customer reviews & ratings</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span>Wholesale & retail pricing</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                     <span>Real-time inventory sync</span>
                   </div>
                 </div>
@@ -716,19 +716,19 @@ export function OrdersSalesEcommerce() {
 
             <Card>
               <CardContent className="pt-6 text-center">
-                <ShoppingCart className="h-10 w-10 mx-auto mb-3 text-blue-600" />
+                <ShoppingCart className="h-10 w-10 mx-auto mb-3 text-green-600" />
                 <p className="text-3xl font-bold">47</p>
                 <p className="text-sm text-gray-600 mt-1">Orders (This Month)</p>
-                <p className="text-xs text-blue-600 mt-1">↑ 12 orders vs last month</p>
+                <p className="text-xs text-green-600 mt-1">↑ 12 orders vs last month</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardContent className="pt-6 text-center">
-                <Users className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                <Users className="h-10 w-10 mx-auto mb-3 text-green-600" />
                 <p className="text-3xl font-bold">124</p>
                 <p className="text-sm text-gray-600 mt-1">Total Customers</p>
-                <p className="text-xs text-purple-600 mt-1">+8 new this month</p>
+                <p className="text-xs text-green-600 mt-1">+8 new this month</p>
               </CardContent>
             </Card>
           </div>

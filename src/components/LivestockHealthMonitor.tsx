@@ -243,7 +243,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
           {diagnosis && !analyzing && (
             <>
               {/* Animal Info */}
-              <Card className="bg-gradient-to-br from-blue-50 to-green-50 border-2 border-blue-200">
+              <Card className="bg-gradient-to-br from-gray-50 to-green-50 border-2 border-gray-200">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg md:text-xl">Animal Identification</CardTitle>
                 </CardHeader>
@@ -278,9 +278,9 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
                       </div>
                     ))}
                   </div>
-                  <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-                    <p className="text-sm font-medium text-blue-900">Overall Health Status</p>
-                    <p className="text-lg font-bold text-blue-700 mt-1">{diagnosis.vitalSigns.overallHealth}</p>
+                  <div className="p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-900">Overall Health Status</p>
+                    <p className="text-lg font-bold text-gray-700 mt-1">{diagnosis.vitalSigns.overallHealth}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -351,7 +351,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
                       <ul className="space-y-1.5">
                         {condition.treatment.followUp.map((step: string, fIdx: number) => (
                           <li key={fIdx} className="flex items-start gap-2 text-sm">
-                            <span className="text-blue-600 mt-1">→</span>
+                            <span className="text-gray-600 mt-1">→</span>
                             <span>{step}</span>
                           </li>
                         ))}
@@ -362,7 +362,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
               ))}
 
               {/* General Recommendations */}
-              <Card className="bg-blue-50 border-2 border-blue-200">
+              <Card className="bg-gray-50 border-2 border-gray-200">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg md:text-xl">General Recommendations</CardTitle>
                 </CardHeader>
@@ -370,7 +370,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
                   <ul className="space-y-2">
                     {diagnosis.recommendations.map((rec: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-3 p-2 bg-white rounded">
-                        <CheckCircle2 className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
                         <span className="text-sm md:text-base">{rec}</span>
                       </li>
                     ))}

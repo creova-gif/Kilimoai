@@ -202,7 +202,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
               <p className="text-green-100 text-sm">
                 {language === "en" 
                   ? "Learn farming techniques through video"
-                  : "Jifunza mbinu za kilimo kupitia video"}
+                  : "Jifunze mbinu za kilimo kupitia video"}
               </p>
             </div>
           </div>
@@ -390,7 +390,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
                             </Badge>
                           )}
                           {video.new && (
-                            <Badge className="bg-blue-500 text-white border-0">
+                            <Badge className="bg-gray-500 text-white border-0">
                               {language === "en" ? "New" : "Mpya"}
                             </Badge>
                           )}

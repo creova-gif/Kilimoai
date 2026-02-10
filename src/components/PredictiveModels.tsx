@@ -226,7 +226,7 @@ export function PredictiveModels({ userId, region = "Unknown", crops = [], apiBa
                     </div>
                     <div className="bg-white p-3 md:p-4 rounded-lg border">
                       <p className="text-xs md:text-sm text-gray-600">Optimal</p>
-                      <p className="text-xl md:text-2xl font-bold text-blue-600">
+                      <p className="text-xl md:text-2xl font-bold text-green-600">
                         {yieldPredictions.currentSeason.comparison.optimal} t/ha
                       </p>
                     </div>
@@ -317,7 +317,7 @@ export function PredictiveModels({ userId, region = "Unknown", crops = [], apiBa
               ))}
 
               {diseasePredictions.regionalOutbreaks.length > 0 && (
-                <Card className="bg-blue-50 border-blue-200">
+                <Card className="bg-gray-50 border-gray-200">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg">Regional Outbreaks Nearby</CardTitle>
                   </CardHeader>
@@ -339,13 +339,13 @@ export function PredictiveModels({ userId, region = "Unknown", crops = [], apiBa
         <TabsContent value="price" className="space-y-4 mt-0">
           {pricePredictions && (
             <>
-              <Card className="border-2 border-blue-200 bg-blue-50">
+              <Card className="border-2 border-green-200 bg-green-50">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg md:text-xl">Current Market Price</CardTitle>
                   <CardDescription>TZS per 100kg bag</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">
+                  <div className="text-3xl md:text-4xl font-bold text-green-600 mb-4">
                     TZS {pricePredictions.currentPrice.toLocaleString()}
                   </div>
                   <div className="bg-green-100 border-2 border-green-300 rounded-lg p-3 md:p-4">

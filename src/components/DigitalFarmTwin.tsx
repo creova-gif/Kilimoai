@@ -181,7 +181,7 @@ export function DigitalFarmTwin({ userId, region, farmSize, crops, apiBase, auth
 
         {/* Overview */}
         <TabsContent value="overview" className="space-y-4 mt-0">
-          <Card className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200">
+          <Card className="bg-green-50 border-2 border-green-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg md:text-xl flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
@@ -199,13 +199,13 @@ export function DigitalFarmTwin({ userId, region, farmSize, crops, apiBase, auth
                 </div>
                 <div className="bg-white p-3 rounded-lg border">
                   <p className="text-xs text-gray-600">Revenue</p>
-                  <p className="text-base md:text-lg font-bold text-blue-600 mt-1">
+                  <p className="text-base md:text-lg font-bold text-gray-900 mt-1">
                     {twinData.predictions.revenue}
                   </p>
                 </div>
                 <div className="bg-white p-3 rounded-lg border">
                   <p className="text-xs text-gray-600">Profit</p>
-                  <p className="text-base md:text-lg font-bold text-purple-600 mt-1">
+                  <p className="text-base md:text-lg font-bold text-orange-600 mt-1">
                     {twinData.predictions.profit}
                   </p>
                 </div>
@@ -300,7 +300,7 @@ export function DigitalFarmTwin({ userId, region, farmSize, crops, apiBase, auth
             </CardContent>
           </Card>
 
-          <Card className="bg-blue-50 border-blue-200">
+          <Card className="bg-gray-50 border-gray-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Add More Inputs</CardTitle>
             </CardHeader>
@@ -360,9 +360,9 @@ export function DigitalFarmTwin({ userId, region, farmSize, crops, apiBase, auth
 
         {/* Scenarios */}
         <TabsContent value="scenarios" className="space-y-4 mt-0">
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3 md:p-4">
-            <h4 className="font-medium text-blue-900 mb-1">Scenario Planning</h4>
-            <p className="text-sm text-blue-700">
+          <div className="bg-green-50 border-2 border-green-200 rounded-lg p-3 md:p-4">
+            <h4 className="font-medium text-gray-900 mb-1">Scenario Planning</h4>
+            <p className="text-sm text-gray-700">
               Compare different farming strategies and choose the best approach for your goals
             </p>
           </div>
@@ -384,7 +384,7 @@ export function DigitalFarmTwin({ userId, region, farmSize, crops, apiBase, auth
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">Profit</p>
-                    <p className="font-bold text-blue-600">{scenario.profit}</p>
+                    <p className="font-bold text-gray-900">{scenario.profit}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">Risk Level</p>

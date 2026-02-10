@@ -583,7 +583,7 @@ export function NavigationMenu({
                               </Badge>
                             )}
                             {item.newFeature && (
-                              <Badge className="bg-blue-500 text-white text-xs px-2 py-0.5">
+                              <Badge className="bg-green-500 text-white text-xs px-2 py-0.5">
                                 {language === "en" ? "New" : "Mpya"}
                               </Badge>
                             )}
@@ -642,7 +642,7 @@ export function NavigationMenu({
                                         </Badge>
                                       )}
                                       {subPage.newFeature && (
-                                        <Badge className="bg-blue-500 text-white text-xs px-2 py-0.5">
+                                        <Badge className="bg-green-500 text-white text-xs px-2 py-0.5">
                                           {language === "en" ? "New" : "Mpya"}
                                         </Badge>
                                       )}

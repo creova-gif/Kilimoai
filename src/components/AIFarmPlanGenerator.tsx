@@ -208,7 +208,7 @@ export function AIFarmPlanGenerator({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed": return "bg-green-100 text-green-700 border-green-300";
-      case "in-progress": return "bg-blue-100 text-blue-700 border-blue-300";
+      case "in-progress": return "bg-gray-100 text-gray-700 border-gray-300";
       case "upcoming": return "bg-gray-100 text-gray-700 border-gray-300";
       default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
@@ -354,9 +354,9 @@ export function AIFarmPlanGenerator({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg border-2 border-purple-300 flex items-start gap-3"
+              className="mt-4 p-3 bg-gray-100 rounded-lg border-2 border-gray-300 flex items-start gap-3"
             >
-              <Sparkles className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+              <Sparkles className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm">
                   <strong>AI-Powered Plan:</strong> This plan was generated using advanced agricultural AI trained on Tanzanian farming conditions.
@@ -388,10 +388,10 @@ export function AIFarmPlanGenerator({
           </Card>
 
           {/* Financial Summary */}
-          <Card className="border-2 border-blue-200 bg-blue-50">
+          <Card className="border-2 border-gray-200 bg-gray-50">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg md:text-xl flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-blue-600" />
+                <TrendingUp className="h-5 w-5 text-gray-700" />
                 Financial Projection
               </CardTitle>
             </CardHeader>
@@ -407,11 +407,11 @@ export function AIFarmPlanGenerator({
                 </div>
                 <div className="bg-white p-3 rounded-lg border">
                   <p className="text-xs text-gray-600">Revenue</p>
-                  <p className="text-base md:text-lg text-blue-600 mt-1">{farmPlan.summary.expectedRevenue}</p>
+                  <p className="text-base md:text-lg text-gray-900 mt-1">{farmPlan.summary.expectedRevenue}</p>
                 </div>
                 <div className="bg-white p-3 rounded-lg border">
                   <p className="text-xs text-gray-600">Profit</p>
-                  <p className="text-base md:text-lg text-purple-600 mt-1">{farmPlan.summary.profit}</p>
+                  <p className="text-base md:text-lg text-gray-900 mt-1">{farmPlan.summary.profit}</p>
                 </div>
                 <div className="bg-white p-3 rounded-lg border">
                   <p className="text-xs text-gray-600">ROI</p>
@@ -440,7 +440,7 @@ export function AIFarmPlanGenerator({
                     className={`flex items-center justify-between p-3 rounded-lg border-2 ${
                       item.importance === "critical" ? "bg-red-50 border-red-200" :
                       item.importance === "high" ? "bg-orange-50 border-orange-200" :
-                      "bg-blue-50 border-blue-200"
+                      "bg-gray-50 border-gray-200"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -479,7 +479,7 @@ export function AIFarmPlanGenerator({
                           <div className="flex-1">
                             <CardTitle className="text-lg md:text-xl flex items-center gap-2">
                               {phase.status === "completed" && <CheckCircle2 className="h-5 w-5 text-green-600" />}
-                              {phase.status === "in-progress" && <Clock className="h-5 w-5 text-blue-600 animate-pulse" />}
+                              {phase.status === "in-progress" && <Clock className="h-5 w-5 text-gray-600 animate-pulse" />}
                               {phase.name}
                             </CardTitle>
                             <CardDescription>{phase.week} • {phase.days}</CardDescription>
@@ -487,7 +487,7 @@ export function AIFarmPlanGenerator({
                           <div className="flex flex-col items-end gap-2">
                             <Badge className={
                               phase.status === "completed" ? "bg-green-600" :
-                              phase.status === "in-progress" ? "bg-blue-600" :
+                              phase.status === "in-progress" ? "bg-gray-600" :
                               "bg-gray-500"
                             }>
                               {phase.status.toUpperCase().replace("-", " ")}

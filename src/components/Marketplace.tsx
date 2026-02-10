@@ -163,7 +163,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                 </motion.div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold">MarketLink</h1>
-                  <p className="text-blue-100 mt-1">Connect with verified buyers in {region}</p>
+                  <p className="text-gray-100 mt-1">Connect with verified buyers in {region}</p>
                 </div>
               </div>
               
@@ -286,8 +286,8 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Users className="h-5 w-5 text-blue-600" />
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <Users className="h-5 w-5 text-gray-600" />
                   </div>
                   Verified Buyers
                 </CardTitle>
@@ -295,7 +295,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                   All buyers are KYC verified and rated by the community
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+              <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 {buyers?.length || 0} Available
               </Badge>
@@ -327,14 +327,14 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <Card className="border-2 hover:shadow-lg transition-all hover:border-blue-300">
+                      <Card className="border-2 hover:shadow-lg transition-all hover:border-green-300">
                         <CardContent className="p-4">
                           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div className="flex-1 w-full">
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center gap-2">
-                                  <div className="p-2 bg-blue-100 rounded-lg">
-                                    <Store className="h-5 w-5 text-blue-600" />
+                                  <div className="p-2 bg-gray-100 rounded-lg">
+                                    <Store className="h-5 w-5 text-gray-600" />
                                   </div>
                                   <div>
                                     <h3 className="font-semibold text-lg">{buyer.name}</h3>
@@ -358,7 +358,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                               </div>
 
                               <div className="flex items-center gap-2 flex-wrap mb-3">
-                                <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                                <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                                   {buyer.cropType}
                                 </Badge>
                                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
@@ -371,10 +371,10 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                                 </Badge>
                               </div>
 
-                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3">
                                 <div className="flex items-start gap-2">
-                                  <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                                  <div className="text-xs text-blue-800">
+                                  <CheckCircle className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                                  <div className="text-xs text-gray-800">
                                     <span className="font-semibold">Buyer Protection: </span>
                                     <span>This buyer is registered with KILIMO and has completed {Math.floor(buyer.rating * 10)}+ verified transactions with fair pricing</span>
                                   </div>
@@ -383,7 +383,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
 
                               <Button 
                                 variant="outline" 
-                                className="w-full border-2 hover:bg-blue-50 hover:border-blue-500"
+                                className="w-full border-2 hover:bg-gray-50 hover:border-green-500"
                                 onClick={() => {
                                   toast.success(`Contact: ${buyer.contact}`);
                                 }}
@@ -488,7 +488,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                                   <Calendar className="h-3 w-3" />
                                   <span>Listed: {new Date(sale.createdAt).toLocaleDateString()}</span>
                                 </div>
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                                <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   Price Verified
                                 </Badge>
@@ -512,11 +512,11 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+        <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100">
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <Sparkles className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-gray-100 rounded-xl">
+                <Sparkles className="h-6 w-6 text-gray-600" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-lg mb-2">Trust & Safety Guaranteed</h3>

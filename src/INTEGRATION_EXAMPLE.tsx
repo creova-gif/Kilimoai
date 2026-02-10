@@ -124,7 +124,7 @@ export default function App() {
           </div>
 
           {/* Wallet Card */}
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow p-6 text-white">
+          <div className="bg-[#2E7D32] rounded-lg shadow p-6 text-white">
             <h2 className="text-lg font-semibold mb-4">Wallet</h2>
             <div className="space-y-2">
               <p className="text-3xl font-bold">

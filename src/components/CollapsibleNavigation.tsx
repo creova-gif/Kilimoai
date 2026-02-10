@@ -168,7 +168,7 @@ export function CollapsibleNavigation({
                             }}
                             className={`w-full flex items-center gap-3 px-4 pl-12 py-2.5 hover:bg-white transition-all ${
                               isActive 
-                                ? "bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-600" 
+                                ? "bg-green-50 border-l-4 border-green-600" 
                                 : "border-l-4 border-transparent"
                             }`}
                           >
@@ -185,7 +185,7 @@ export function CollapsibleNavigation({
                               {getItemLabel(item.id, item.label)}
                             </span>
                             {item.badge && (
-                              <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs">
+                              <Badge className="bg-green-600 text-white text-xs">
                                 {item.badge}
                               </Badge>
                             )}

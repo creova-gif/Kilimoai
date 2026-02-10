@@ -382,7 +382,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
       case "premium":
         return <BadgeCheck className="h-5 w-5 text-green-600" />;
       case "business":
-        return <CheckCircle2 className="h-5 w-5 text-blue-600" />;
+        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
       case "basic":
         return <Shield className="h-5 w-5 text-gray-600" />;
       default:
@@ -953,7 +953,7 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
               </button>
               <button
                 onClick={() => setShowChat(!showChat)}
-                className="px-6 py-4 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-all flex items-center gap-2"
+                className="px-6 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all flex items-center gap-2"
               >
                 <MessageCircle className="h-5 w-5" />
                 {language === "en" ? "Chat" : "Ongea"}
@@ -972,12 +972,12 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
                 <ShieldCheck className="h-6 w-6 text-green-600 mx-auto mb-1" />
                 <div className="text-xs font-medium text-gray-700">{language === "en" ? "Escrow Protected" : "Ulinzi wa Escrow"}</div>
               </div>
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <Truck className="h-6 w-6 text-blue-600 mx-auto mb-1" />
+              <div className="text-center p-3 bg-gray-50 rounded-lg">
+                <Truck className="h-6 w-6 text-gray-600 mx-auto mb-1" />
                 <div className="text-xs font-medium text-gray-700">{language === "en" ? "Verified Delivery" : "Utoaji Uliothibitishwa"}</div>
               </div>
-              <div className="text-center p-3 bg-purple-50 rounded-lg">
-                <FileCheck className="h-6 w-6 text-purple-600 mx-auto mb-1" />
+              <div className="text-center p-3 bg-gray-50 rounded-lg">
+                <FileCheck className="h-6 w-6 text-gray-600 mx-auto mb-1" />
                 <div className="text-xs font-medium text-gray-700">{language === "en" ? "Quality Assured" : "Ubora Umethibitishwa"}</div>
               </div>
             </div>

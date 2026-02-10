@@ -209,15 +209,15 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/10 pb-6">
+    <div className="min-h-screen bg-gray-50 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white px-4 lg:px-6 py-6">
+      <div className="bg-[#2E7D32] text-white px-4 lg:px-6 py-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold flex items-center gap-2 mb-2">
             <Users className="h-7 w-7" />
             {language === "en" ? "Expert Consultation" : "Ushauri wa Mtaalamu"}
           </h1>
-          <p className="text-blue-100 text-sm">
+          <p className="text-green-100 text-sm">
             {language === "en" 
               ? "Connect with verified agricultural experts for trusted advice"
               : "Unganisha na wataalamu wa kilimo walioidhinishwa kwa ushauri wa kuaminika"}
@@ -232,7 +232,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
             onClick={() => setViewMode("learn")}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               viewMode === "learn"
-                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                ? "bg-[#2E7D32] text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
@@ -243,14 +243,14 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
             onClick={() => setViewMode("experts")}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               viewMode === "experts"
-                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                ? "bg-[#2E7D32] text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
             <Users className="h-5 w-5" />
             {language === "en" ? "Find Expert" : "Tafuta Mtaalamu"}
             {matchedExperts.length > 0 && (
-              <span className="px-2 py-0.5 bg-white text-blue-600 text-xs font-bold rounded-full">
+              <span className="px-2 py-0.5 bg-white text-green-600 text-xs font-bold rounded-full">
                 {matchedExperts.length}
               </span>
             )}
@@ -261,7 +261,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
         {viewMode === "learn" && (
           <div className="space-y-6">
             {/* Hero Banner */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl p-6 shadow-lg">
+            <div className="bg-[#2E7D32] text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                   <Users className="h-8 w-8" />
@@ -279,7 +279,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                   </p>
                   <button 
                     onClick={() => setViewMode("experts")}
-                    className="px-6 py-2 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-colors"
+                    className="px-6 py-2 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
                   >
                     {language === "en" ? "Browse Experts" : "Tazama Wataalamu"}
                   </button>
@@ -294,8 +294,8 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Zap className="h-6 w-6 text-blue-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Zap className="h-6 w-6 text-gray-700" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "Why Get Expert Help?" : "Kwa Nini Kupata Msaada wa Mtaalamu?"}
@@ -316,21 +316,21 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                           : "Pata uchunguzi sahihi na suluhisho ndani ya masaa, sio wiki. Wataalamu wameona tatizo lako hapo awali."
                       },
                       {
-                        icon: <TrendingUp className="h-6 w-6 text-blue-600" />,
+                        icon: <TrendingUp className="h-6 w-6 text-gray-700" />,
                         title: language === "en" ? "Increase Yields" : "Ongeza Mavuno",
                         desc: language === "en"
                           ? "Farmers who consult experts report 30-40% higher yields. Small changes, big impact."
                           : "Wakulima wanaoshauriana na wataalamu wanaripoti ongezeko la mavuno la 30-40%. Mabadiliko madogo, athari kubwa."
                       },
                       {
-                        icon: <DollarSign className="h-6 w-6 text-purple-600" />,
+                        icon: <DollarSign className="h-6 w-6 text-orange-600" />,
                         title: language === "en" ? "Save Money" : "Okoa Pesa",
                         desc: language === "en"
                           ? "Stop wasting money on wrong inputs. Experts recommend exactly what your farm needs."
                           : "Acha kupoteza pesa kwenye pembejeo zisizo sahihi. Wataalamu wanapendekeza hasa kile shamba lako linahitaji."
                       },
                       {
-                        icon: <Shield className="h-6 w-6 text-indigo-600" />,
+                        icon: <Shield className="h-6 w-6 text-gray-700" />,
                         title: language === "en" ? "Reduce Risk" : "Punguza Hatari",
                         desc: language === "en"
                           ? "Expert advice helps you avoid costly mistakes and prevent disease outbreaks."
@@ -371,7 +371,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
 
               {expandedSection === "verification" && (
                 <div className="px-6 pb-6 space-y-4">
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-2 border-green-200">
+                  <div className="bg-green-50 rounded-lg p-5 border-2 border-green-200">
                     <h4 className="font-bold text-green-900 mb-3 flex items-center gap-2">
                       <CheckCircle className="h-5 w-5" />
                       {language === "en" ? "Our 5-Step Verification Process" : "Mchakato wetu wa Hatua 5 za Uthibitishaji"}
@@ -427,14 +427,14 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                     </div>
                   </div>
 
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
                     <div className="flex items-start gap-3">
-                      <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Info className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-bold text-blue-900 text-sm mb-1">
+                        <h4 className="font-bold text-gray-900 text-sm mb-1">
                           {language === "en" ? "What the Badge Means" : "Nini Maana ya Alama"}
                         </h4>
-                        <p className="text-xs text-blue-800">
+                        <p className="text-xs text-gray-700">
                           {language === "en"
                             ? "When you see the ✓ Verified badge, it means this expert has passed all checks and maintains a 4.5+ rating from farmers."
                             : "Unapoona alama ya ✓ Imethibitishwa, inamaanisha mtaalamu huyu amepita ukaguzi wote na anadumisha ukadiriaji wa 4.5+ kutoka kwa wakulima."}
@@ -453,8 +453,8 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <Video className="h-6 w-6 text-purple-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Video className="h-6 w-6 text-gray-700" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "How to Consult" : "Jinsi ya Kushauriana"}
@@ -468,7 +468,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       {
-                        icon: <MessageSquare className="h-6 w-6 text-blue-600" />,
+                        icon: <MessageSquare className="h-6 w-6 text-gray-700" />,
                         mode: language === "en" ? "Text Chat" : "Maandishi",
                         price: "10,000 TZS",
                         time: language === "en" ? "Response within 2-4 hours" : "Jibu ndani ya masaa 2-4",
@@ -482,21 +482,21 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                         best: language === "en" ? "Best for: Low data, describing symptoms" : "Bora kwa: Data kidogo, kuelezea dalili"
                       },
                       {
-                        icon: <Phone className="h-6 w-6 text-purple-600" />,
+                        icon: <Phone className="h-6 w-6 text-orange-600" />,
                         mode: language === "en" ? "Phone Call" : "Simu",
                         price: "15,000 TZS",
                         time: language === "en" ? "30 min scheduled call" : "Simu iliyopangwa ya dakika 30",
                         best: language === "en" ? "Best for: Detailed discussions" : "Bora kwa: Majadiliano ya kina"
                       },
                       {
-                        icon: <Video className="h-6 w-6 text-indigo-600" />,
+                        icon: <Video className="h-6 w-6 text-gray-700" />,
                         mode: language === "en" ? "Video Call" : "Video",
                         price: "20,000 TZS",
                         time: language === "en" ? "30 min video session" : "Kipindi cha video cha dakika 30",
                         best: language === "en" ? "Best for: Visual diagnosis, farm tours" : "Bora kwa: Uchunguzi wa kuona, ziara za shamba"
                       }
                     ].map((mode, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
+                      <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-green-300 hover:shadow-md transition-all">
                         <div className="flex items-center gap-3 mb-3">
                           <div className="flex-shrink-0">{mode.icon}</div>
                           <div className="flex-1">
@@ -564,7 +564,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                     outcome: language === "en" ? "Stopped spread. Saved 75% of crop worth 1.2M TZS." : "Alizuia kuenea. Aliokoa 75% ya zao lenye thamani ya TZS 1.2M."
                   }
                 ].map((story, idx) => (
-                  <div key={idx} className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 border border-green-200">
+                  <div key={idx} className="bg-green-50 rounded-lg p-4 border border-green-200">
                     <div className="flex items-start gap-3 mb-3">
                       <div className="h-10 w-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
                         {story.farmer.charAt(0)}
@@ -594,7 +594,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
             </div>
 
             {/* CTA */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl p-6 text-center">
+            <div className="bg-[#2E7D32] text-white rounded-xl p-6 text-center">
               <h3 className="text-xl font-bold mb-2">
                 {language === "en" ? "Ready to Get Expert Advice?" : "Tayari Kupata Ushauri wa Mtaalamu?"}
               </h3>
@@ -605,7 +605,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
               </p>
               <button
                 onClick={() => setViewMode("experts")}
-                className="px-8 py-3 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-colors"
+                className="px-8 py-3 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
               >
                 {language === "en" ? "Find My Expert" : "Tafuta Mtaalamu Wangu"}
               </button>
@@ -617,18 +617,18 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
         {viewMode === "experts" && (
           <div className="space-y-6">
             {/* Quick Learning Access */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <HelpCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <HelpCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm text-blue-800">
+                  <p className="text-sm text-gray-700">
                     {language === "en"
                       ? "New to expert consultations? Learn how verification works and what to expect."
                       : "Mpya kwenye mashauriano ya wataalamu? Jifunze jinsi uthibitishaji unavyofanya kazi na unachotarajia."}
                   </p>
                   <button
                     onClick={() => setViewMode("learn")}
-                    className="mt-2 text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    className="mt-2 text-sm font-bold text-green-600 hover:text-green-700 flex items-center gap-1"
                   >
                     {language === "en" ? "Learn About Expert Verification" : "Jifunze Kuhusu Uthibitishaji wa Wataalamu"}
                     <ArrowRight className="h-4 w-4" />
@@ -644,13 +644,13 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                   onClick={() => setActiveTab("matched")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors relative ${
                     activeTab === "matched"
-                      ? "text-blue-600 border-b-2 border-blue-600"
+                      ? "text-green-600 border-b-2 border-green-600"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   {language === "en" ? "Matched for You" : "Umepangwa Wewe"}
                   {matchedExperts.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-blue-500 text-white text-xs rounded-full">
+                    <span className="ml-2 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">
                       {matchedExperts.length}
                     </span>
                   )}
@@ -659,7 +659,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                   onClick={() => setActiveTab("browse")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "browse"
-                      ? "text-blue-600 border-b-2 border-blue-600"
+                      ? "text-green-600 border-b-2 border-green-600"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -669,13 +669,13 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                   onClick={() => setActiveTab("my_consultations")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "my_consultations"
-                      ? "text-blue-600 border-b-2 border-blue-600"
+                      ? "text-green-600 border-b-2 border-green-600"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   {language === "en" ? "My Consultations" : "Mashauriano Yangu"}
                   {myConsultations.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-purple-500 text-white text-xs rounded-full">
+                    <span className="ml-2 px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">
                       {myConsultations.length}
                     </span>
                   )}
@@ -687,7 +687,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
             {activeTab === "matched" && (
               <div className="space-y-6">
                 {/* Smart Matching Banner */}
-                <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-6">
+                <div className="bg-[#2E7D32] text-white rounded-xl p-6">
                   <div className="flex items-start gap-4">
                     <Zap className="h-12 w-12 flex-shrink-0" />
                     <div>
@@ -731,13 +731,13 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                         placeholder={language === "en" ? "Search by name or specialty..." : "Tafuta kwa jina au utaalamu..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                     </div>
                     <select
                       value={filterSpecialty}
                       onChange={(e) => setFilterSpecialty(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     >
                       <option value="all">{language === "en" ? "All Specialties" : "Utaalamu Wote"}</option>
                       <option value="Crop Diseases">{language === "en" ? "Crop Diseases" : "Magonjwa ya Mazao"}</option>
@@ -770,7 +770,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                   <div key={consultation.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl">
+                        <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl">
                           {consultation.expertAvatar}
                         </div>
                         <div>
@@ -791,7 +791,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                       <div>
                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                           consultation.status === "scheduled" 
-                            ? "bg-blue-100 text-blue-700"
+                            ? "bg-gray-100 text-gray-700"
                             : consultation.status === "completed"
                             ? "bg-green-100 text-green-700"
                             : "bg-gray-100 text-gray-700"
@@ -823,7 +823,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
 
                     {consultation.status === "scheduled" && (
                       <div className="flex gap-3 mt-4">
-                        <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                        <button className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
                           {consultation.type === "video" && <Video className="h-4 w-4" />}
                           {consultation.type === "phone" && <Phone className="h-4 w-4" />}
                           {consultation.type === "chat" && <MessageSquare className="h-4 w-4" />}
@@ -858,7 +858,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
 
               <div className="space-y-4">
                 <div className="bg-gray-50 rounded-lg p-4 flex items-center gap-4">
-                  <div className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl">
+                  <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl">
                     {selectedExpert.avatar}
                   </div>
                   <div>
@@ -883,7 +883,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                         onClick={() => setConsultationType(option.type)}
                         className={`p-4 rounded-lg border-2 transition-all ${
                           consultationType === option.type
-                            ? "border-blue-500 bg-blue-50"
+                            ? "border-green-500 bg-green-50"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
@@ -904,7 +904,7 @@ export function ExpertConsultations({ userId, language, onNavigate }: ExpertCons
                       : "Ombi la ushauri limetumwa! Mtaalamu atajibu ndani ya masaa 2.");
                     setShowBookingModal(false);
                   }}
-                  className="w-full px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                  className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
                 >
                   {language === "en" ? "Send Request" : "Tuma Ombi"}
                 </button>
@@ -924,9 +924,9 @@ function ExpertCard({ expert, language, onSelect }: { expert: Expert; language: 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-200">
         <div className="flex items-start gap-4">
-          <div className="h-20 w-20 bg-blue-100 rounded-full flex items-center justify-center text-4xl flex-shrink-0">
+          <div className="h-20 w-20 bg-gray-100 rounded-full flex items-center justify-center text-4xl flex-shrink-0">
             {expert.avatar}
           </div>
           <div className="flex-1">
@@ -942,7 +942,7 @@ function ExpertCard({ expert, language, onSelect }: { expert: Expert; language: 
             <div className="text-sm text-gray-600 mb-2">{expert.title}</div>
             <div className="flex flex-wrap gap-2 mb-3">
               {expert.specialty.map((spec, idx) => (
-                <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
+                <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                   {spec}
                 </span>
               ))}
@@ -1002,7 +1002,7 @@ function ExpertCard({ expert, language, onSelect }: { expert: Expert; language: 
             className="w-full flex items-center justify-between text-left py-2 hover:bg-gray-50 rounded transition-colors"
           >
             <span className="font-semibold text-gray-900 text-sm flex items-center gap-2">
-              <Award className="h-4 w-4 text-purple-600" />
+              <Award className="h-4 w-4 text-orange-600" />
               {language === "en" ? "What This Expert Has Helped Farmers Solve" : "Nini Mtaalamu Huyu Amesaidia Wakulima Kutatua"}
             </span>
             <ChevronDown className={`h-5 w-5 text-gray-500 transition-transform ${showOutcomes ? "rotate-180" : ""}`} />
@@ -1011,15 +1011,15 @@ function ExpertCard({ expert, language, onSelect }: { expert: Expert; language: 
           {showOutcomes && (
             <div className="mt-3 space-y-3">
               {expert.recentOutcomes.map((outcome, idx) => (
-                <div key={idx} className="bg-purple-50 rounded-lg p-3 border border-purple-200">
-                  <div className="text-xs text-purple-600 font-semibold mb-1">
+                <div key={idx} className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                  <div className="text-xs text-orange-600 font-semibold mb-1">
                     {language === "en" ? "Problem:" : "Tatizo:"}
                   </div>
-                  <div className="text-sm text-purple-900 mb-2">{outcome.problem}</div>
-                  <div className="text-xs text-purple-600 font-semibold mb-1">
+                  <div className="text-sm text-orange-900 mb-2">{outcome.problem}</div>
+                  <div className="text-xs text-orange-600 font-semibold mb-1">
                     {language === "en" ? "Solution:" : "Suluhisho:"}
                   </div>
-                  <div className="text-sm text-purple-900 mb-2">{outcome.solution}</div>
+                  <div className="text-sm text-orange-900 mb-2">{outcome.solution}</div>
                   <div className="bg-green-100 rounded p-2 border border-green-300">
                     <div className="text-xs text-green-600 font-semibold mb-1">
                       ✓ {language === "en" ? "Impact:" : "Athari:"}
@@ -1038,7 +1038,7 @@ function ExpertCard({ expert, language, onSelect }: { expert: Expert; language: 
           <div className="flex flex-wrap gap-2">
             {expert.credentials.map((cred, idx) => (
               <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded flex items-center gap-1">
-                <BadgeCheck className="h-3 w-3 text-blue-600" />
+                <BadgeCheck className="h-3 w-3 text-green-600" />
                 {cred}
               </span>
             ))}
@@ -1048,7 +1048,7 @@ function ExpertCard({ expert, language, onSelect }: { expert: Expert; language: 
         {/* CTA */}
         <button
           onClick={onSelect}
-          className="w-full px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+          className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
         >
           {language === "en" ? "Book Consultation" : "Panga Ushauri"}
           <ArrowRight className="h-5 w-5" />

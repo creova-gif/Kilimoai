@@ -165,10 +165,10 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
                 </Badge>
               </div>
             </div>
-            <p className="text-gray-700 text-sm md:text-base leading-relaxed">
+            <p className="text-gray-600 text-base leading-relaxed">
               {language === "sw" 
-                ? "Zungumza na SANKOFA AI kwa Kiswahili - Msaidizi wa AI wa kwanza wa sauti kwa wakulima wa Afrika Mashariki"
-                : "Speak to SANKOFA AI in Swahili - East Africa's first voice-first AI for farmers"}
+                ? "Zungumza kwa Kiswahili kupata ushauri wa kilimo"
+                : "Ask farming questions in Swahili using your voice"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
       </div>
 
       {/* Voice Recorder */}
-      <Card className="border-2 border-dashed border-purple-200">
+      <Card className="border-2 border-dashed border-gray-200">
         <CardHeader>
           <CardTitle>
             {language === "sw" ? "Rekodi Swali Lako" : "Record Your Question"}
@@ -219,7 +219,7 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
             
             {isProcessing && (
               <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+                <Loader2 className="h-10 w-10 text-gray-600 animate-spin" />
               </div>
             )}
             
@@ -234,7 +234,7 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
           {audioURL && (
             <div className="border rounded-lg p-4 bg-gray-50">
               <div className="flex items-center gap-3">
-                <Volume2 className="h-5 w-5 text-purple-600" />
+                <Volume2 className="h-5 w-5 text-gray-600" />
                 <div className="flex-1">
                   <audio controls src={audioURL} className="w-full" />
                 </div>
@@ -244,8 +244,8 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
 
           {/* Transcription */}
           {transcription && (
-            <div className="border rounded-lg p-4 bg-blue-50">
-              <p className="text-sm font-medium text-blue-900 mb-2">
+            <div className="border rounded-lg p-4 bg-gray-50">
+              <p className="text-sm font-medium text-gray-900 mb-2">
                 {language === "sw" ? "📝 Maneno Yaliyoandikwa:" : "📝 Transcription:"}
               </p>
               <p className="text-sm text-gray-700">{transcription}</p>
@@ -254,8 +254,8 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
 
           {/* AI Response */}
           {aiResponse && (
-            <div className="border rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50">
-              <p className="text-sm font-medium text-purple-900 mb-2">
+            <div className="border rounded-lg p-4 bg-gradient-to-r from-gray-50 to-gray-50">
+              <p className="text-sm font-medium text-gray-900 mb-2">
                 {language === "sw" ? "🤖 Jibu la KILIMO AI:" : "🤖 KILIMO AI Response:"}
               </p>
               <p className="text-sm text-gray-700">{aiResponse}</p>
@@ -273,8 +273,8 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-              <Mic className="h-5 w-5 text-purple-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <Mic className="h-5 w-5 text-gray-600 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">
                   {language === "sw" ? "Zungumza Kiswahili" : "Speak Swahili"}
@@ -287,8 +287,8 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
               </div>
             </div>
             
-            <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-              <Languages className="h-5 w-5 text-blue-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <Languages className="h-5 w-5 text-gray-600 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">
                   {language === "sw" ? "Hakuna Haja ya Kusoma" : "No Reading Required"}

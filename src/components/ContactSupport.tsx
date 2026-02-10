@@ -139,13 +139,13 @@ export function ContactSupport() {
   return (
     <div className="space-y-6 pb-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+      <Card className="bg-[#2E7D32] text-white">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <Headphones className="h-8 w-8" />
             <h1 className="text-2xl font-bold">Contact Support</h1>
           </div>
-          <p className="text-blue-100">
+          <p className="text-green-100">
             We're here to help! Reach out through any channel that works best for you
           </p>
           <div className="flex items-center gap-2 mt-4 p-3 bg-white/20 rounded-lg backdrop-blur-sm">
@@ -309,7 +309,7 @@ export function ContactSupport() {
             {supportTeam.map((member, index) => (
               <div key={index} className="p-4 border rounded-lg">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-12 h-12 bg-[#2E7D32] rounded-full flex items-center justify-center text-white font-bold">
                     {member.name.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div>
@@ -407,7 +407,7 @@ export function ContactSupport() {
       </Card>
 
       {/* Success Stories */}
-      <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+      <Card className="bg-[#2E7D32] text-white">
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle2 className="h-6 w-6" />

@@ -69,7 +69,7 @@ export function RealTimeWeatherHero({
                   {weatherData?.condition || "Sunny"} · {weatherData?.location || region || "Tanzania"}
                 </p>
                 <div className="flex items-center gap-4 mt-2 flex-wrap">
-                  <div className="flex items-center gap-1 text-sm text-blue-600">
+                  <div className="flex items-center gap-1 text-sm text-green-600">
                     <Droplets className="h-4 w-4" />
                     <span>{language === "sw" ? "Uwezekano" : "Rain"} {weatherData?.rainfallProb || 30}%</span>
                   </div>
@@ -94,7 +94,7 @@ export function RealTimeWeatherHero({
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-2 border-blue-300 hover:bg-blue-50"
+                className="gap-2 border-green-300 hover:bg-green-50"
                 onClick={onOpenNativeApp}
               >
                 <Smartphone className="h-4 w-4" />
@@ -107,11 +107,11 @@ export function RealTimeWeatherHero({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-green-200">
               <p className="text-xs text-gray-600 mb-1">{language === "sw" ? "Unyevu" : "Humidity"}</p>
-              <p className="text-lg font-bold text-blue-600">{weatherData?.humidity.toFixed(0) || 75}%</p>
+              <p className="text-lg font-bold text-green-600">{weatherData?.humidity.toFixed(0) || 75}%</p>
             </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-green-200">
               <p className="text-xs text-gray-600 mb-1">{language === "sw" ? "Upepo" : "Wind"}</p>
-              <p className="text-lg font-bold text-purple-600">{weatherData?.windSpeed.toFixed(1) || 12.5} km/h</p>
+              <p className="text-lg font-bold text-green-600">{weatherData?.windSpeed.toFixed(1) || 12.5} km/h</p>
             </div>
             <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-green-200">
               <p className="text-xs text-gray-600 mb-1">{language === "sw" ? "Msimu" : "Season"}</p>

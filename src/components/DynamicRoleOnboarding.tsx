@@ -354,7 +354,7 @@ export function DynamicRoleOnboarding({
             <p className="text-gray-600">{error}</p>
             <Button
               onClick={() => onSkip?.()}
-              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90"
+              className="bg-[#2E7D32] hover:opacity-90"
             >
               Continue Anyway
             </Button>
@@ -369,14 +369,14 @@ export function DynamicRoleOnboarding({
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <Card className="relative max-w-2xl w-full bg-white/95 backdrop-blur-xl border-0 shadow-2xl overflow-hidden">
         {/* Progress Bar */}
         <div className="h-2 bg-gray-200">
           <motion.div
-            className="h-full bg-gradient-to-r from-green-500 to-emerald-600"
+            className="h-full bg-[#2E7D32]"
             initial={{ width: 0 }}
             animate={{
               width: `${((Object.keys(formData).length) / formSchema.length) * 100}%`,
@@ -391,7 +391,7 @@ export function DynamicRoleOnboarding({
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
-              className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl mb-4"
+              className="inline-flex p-4 rounded-2xl bg-[#2E7D32] shadow-xl mb-4"
             >
               <CheckCircle className="h-12 w-12 text-white" />
             </motion.div>
@@ -424,7 +424,7 @@ export function DynamicRoleOnboarding({
 
             <Button
               type="submit"
-              className="ml-auto bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 flex items-center gap-2"
+              className="ml-auto bg-[#2E7D32] hover:opacity-90 flex items-center gap-2"
             >
               {language === "sw" ? "Endelea" : "Continue"}
               <ArrowRight className="h-4 w-4" />

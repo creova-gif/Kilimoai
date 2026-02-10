@@ -442,10 +442,10 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
         </Card>
 
         {/* Quick Access */}
-        <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+        <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Award className="h-5 w-5 text-purple-600" />
+              <Award className="h-5 w-5 text-gray-600" />
               Quick Access
             </CardTitle>
           </CardHeader>

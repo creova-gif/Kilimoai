@@ -162,7 +162,7 @@ export function SystemDiagnostics() {
       case "error":
         return <XCircle className="w-5 h-5 text-red-600" />;
       case "pending":
-        return <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />;
+        return <Loader2 className="w-5 h-5 text-gray-600 animate-spin" />;
     }
   };
 
@@ -175,7 +175,7 @@ export function SystemDiagnostics() {
       case "error":
         return <Badge className="bg-red-100 text-red-800">Fail</Badge>;
       case "pending":
-        return <Badge className="bg-blue-100 text-blue-800">Testing...</Badge>;
+        return <Badge className="bg-gray-100 text-gray-800">Testing...</Badge>;
     }
   };
 

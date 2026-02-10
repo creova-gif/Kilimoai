@@ -286,9 +286,9 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
   const roleConfig = getRoleById(selectedRole);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-stone-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-900 to-stone-800 text-white p-6 shadow-lg">
+      <div className="bg-[#2E7D32] text-white p-6 shadow-lg">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -416,7 +416,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                   <p className="text-sm text-gray-600">Enabled Features</p>
                   <p className="text-lg font-bold">{demoState.enabled_features.length}</p>
                 </div>
-                <Layers className="h-8 w-8 text-blue-600" />
+                <Layers className="h-8 w-8 text-gray-700" />
               </div>
             </CardContent>
           </Card>
@@ -725,7 +725,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                     <Separator />
                     
                     {/* User Info */}
-                    <Card className="border-2 bg-gradient-to-br from-green-50 to-white">
+                    <Card className="border-2 bg-green-50">
                       <CardHeader>
                         <CardTitle className="text-lg">Simulated User</CardTitle>
                       </CardHeader>
@@ -922,14 +922,14 @@ function getFeatureIcon(feature: FeatureId) {
   const iconMap: Record<string, any> = {
     crop_planning: <Leaf className="h-4 w-4 text-green-600" />,
     livestock_management: <Sprout className="h-4 w-4 text-brown-600" />,
-    farm_finance: <DollarSign className="h-4 w-4 text-blue-600" />,
-    marketplace: <ShoppingCart className="h-4 w-4 text-purple-600" />,
-    analytics_dashboard: <BarChart3 className="h-4 w-4 text-indigo-600" />,
-    ai_chatbot: <MessageSquare className="h-4 w-4 text-pink-600" />,
+    farm_finance: <DollarSign className="h-4 w-4 text-gray-700" />,
+    marketplace: <ShoppingCart className="h-4 w-4 text-orange-600" />,
+    analytics_dashboard: <BarChart3 className="h-4 w-4 text-gray-700" />,
+    ai_chatbot: <MessageSquare className="h-4 w-4 text-gray-600" />,
     photo_diagnosis: <Camera className="h-4 w-4 text-orange-600" />,
     voice_assistant: <Mic className="h-4 w-4 text-red-600" />,
-    farm_mapping: <Map className="h-4 w-4 text-teal-600" />,
-    knowledge_base: <BookOpen className="h-4 w-4 text-cyan-600" />,
+    farm_mapping: <Map className="h-4 w-4 text-gray-600" />,
+    knowledge_base: <BookOpen className="h-4 w-4 text-gray-600" />,
   };
 
   return iconMap[feature] || <Activity className="h-4 w-4 text-gray-600" />;

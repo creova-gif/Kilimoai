@@ -251,7 +251,7 @@ export function LivestockManagement() {
                 <p className="text-3xl font-bold">{stats.totalAnimals}</p>
                 <p className="text-sm text-green-600 mt-1">+3 this month</p>
               </div>
-              <Users className="h-12 w-12 text-blue-600" />
+              <Users className="h-12 w-12 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -277,7 +277,7 @@ export function LivestockManagement() {
                 <p className="text-3xl font-bold">{stats.milkProduction.daily}L</p>
                 <p className="text-sm text-green-600 mt-1">{stats.milkProduction.trend} vs last month</p>
               </div>
-              <Milk className="h-12 w-12 text-purple-600" />
+              <Milk className="h-12 w-12 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -312,13 +312,13 @@ export function LivestockManagement() {
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-gray-200 bg-gray-50">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <Baby className="h-5 w-5 text-blue-600 mt-0.5" />
+              <Baby className="h-5 w-5 text-gray-600 mt-0.5" />
               <div>
-                <p className="font-medium text-blue-900">2 Expected Births</p>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="font-medium text-gray-900">2 Expected Births</p>
+                <p className="text-sm text-gray-700 mt-1">
                   TZ-DAIRY-001 due in 6 months • TZ-GOAT-005 due in 2 weeks
                 </p>
               </div>
@@ -369,7 +369,7 @@ export function LivestockManagement() {
                   <select
                     value={filterSpecies}
                     onChange={(e) => setFilterSpecies(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-w-[140px]"
+                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors min-w-[140px]"
                   >
                     <option value="all">All Species</option>
                     <option value="cattle">Cattle</option>
@@ -402,8 +402,8 @@ export function LivestockManagement() {
                     onClick={() => setSelectedAnimal(animal)}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Beef className="h-6 w-6 text-blue-600" />
+                      <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
+                        <Beef className="h-6 w-6 text-gray-600" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -488,7 +488,7 @@ export function LivestockManagement() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <Syringe className="h-4 w-4 text-blue-600" />
+                            <Syringe className="h-4 w-4 text-gray-600" />
                             <p className="font-medium">{record.description}</p>
                             <Badge variant="outline">{record.type}</Badge>
                           </div>
@@ -521,7 +521,7 @@ export function LivestockManagement() {
                         {record.nextDue && (
                           <div>
                             <p className="text-gray-600">Next Due</p>
-                            <p className="font-medium text-blue-600">{record.nextDue}</p>
+                            <p className="font-medium text-gray-600">{record.nextDue}</p>
                           </div>
                         )}
                       </div>
@@ -569,7 +569,7 @@ export function LivestockManagement() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Baby className="h-10 w-10 mx-auto mb-3 text-blue-600" />
+                  <Baby className="h-10 w-10 mx-auto mb-3 text-gray-600" />
                   <p className="text-3xl font-bold">{stats.pregnant}</p>
                   <p className="text-sm text-gray-600 mt-1">Pregnant Animals</p>
                 </div>
@@ -589,7 +589,7 @@ export function LivestockManagement() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Target className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                  <Target className="h-10 w-10 mx-auto mb-3 text-gray-600" />
                   <p className="text-3xl font-bold">12</p>
                   <p className="text-sm text-gray-600 mt-1">Expected Births (3mo)</p>
                 </div>
@@ -610,14 +610,14 @@ export function LivestockManagement() {
                     <div key={record.id} className="p-4 border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <Baby className="h-5 w-5 text-blue-600" />
+                          <Baby className="h-5 w-5 text-gray-600" />
                           <p className="font-medium">{mother?.name} ({mother?.tagId})</p>
                           <Badge
                             className={
                               record.status === "successful"
                                 ? "bg-green-100 text-green-700"
                                 : record.status === "pending"
-                                ? "bg-blue-100 text-blue-700"
+                                ? "bg-gray-100 text-gray-700"
                                 : "bg-red-100 text-red-700"
                             }
                           >
@@ -710,8 +710,8 @@ export function LivestockManagement() {
                       </div>
                       <Progress value={75} className="h-2" />
                     </div>
-                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm text-blue-700">
+                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                      <p className="text-sm text-gray-700">
                         <Scale className="h-4 w-4 inline mr-1" />
                         Above industry average for breed
                       </p>
@@ -736,13 +736,13 @@ export function LivestockManagement() {
                 </div>
 
                 <div className="p-4 border rounded-lg">
-                  <BarChart3 className="h-8 w-8 text-blue-600 mb-2" />
+                  <BarChart3 className="h-8 w-8 text-gray-600 mb-2" />
                   <p className="text-2xl font-bold">1:6.2</p>
                   <p className="text-sm text-gray-600">Feed Conversion Ratio</p>
                 </div>
 
                 <div className="p-4 border rounded-lg">
-                  <DollarSign className="h-8 w-8 text-purple-600 mb-2" />
+                  <DollarSign className="h-8 w-8 text-gray-600 mb-2" />
                   <p className="text-2xl font-bold">TZS {stats.feedConsumption.costPerAnimal.toLocaleString()}</p>
                   <p className="text-sm text-gray-600">Cost per Animal/Month</p>
                 </div>
@@ -785,7 +785,7 @@ export function LivestockManagement() {
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium">Pasture B</h4>
-                    <Badge className="bg-blue-100 text-blue-700">Resting</Badge>
+                    <Badge className="bg-gray-100 text-gray-700">Resting</Badge>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
@@ -806,9 +806,9 @@ export function LivestockManagement() {
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
                 <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-600" />
+                  <Clock className="h-4 w-4 text-gray-600" />
                   Recommended Rotation Schedule
                 </h4>
                 <div className="space-y-2 text-sm">

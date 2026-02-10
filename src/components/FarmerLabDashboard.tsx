@@ -326,10 +326,10 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                 </div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold">KILIMO Farmer Lab</h1>
-                  <p className="text-purple-100 text-sm">Shape the future of farming technology</p>
+                  <p className="text-green-100 text-sm">Shape the future of farming technology</p>
                 </div>
               </div>
-              <p className="text-purple-100 max-w-2xl">
+              <p className="text-green-100 max-w-2xl">
                 Join 200+ pilot farmers testing new features, voting on improvements, and earning rewards for your contributions to the platform.
               </p>
             </div>
@@ -362,9 +362,9 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
       {userStats && (
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            { label: "Contributions", value: userStats.contributions, icon: MessageSquare, color: "text-blue-600", bg: "bg-blue-100" },
+            { label: "Contributions", value: userStats.contributions, icon: MessageSquare, color: "text-green-600", bg: "bg-green-100" },
             { label: "Feedback Given", value: userStats.feedbackSubmitted, icon: FileText, color: "text-green-600", bg: "bg-green-100" },
-            { label: "Polls Voted", value: userStats.pollsVoted, icon: Vote, color: "text-purple-600", bg: "bg-purple-100" },
+            { label: "Polls Voted", value: userStats.pollsVoted, icon: Vote, color: "text-green-600", bg: "bg-green-100" },
             { label: "Experiments", value: userStats.experimentsJoined, icon: Zap, color: "text-orange-600", bg: "bg-orange-100" }
           ].map((stat, index) => (
             <motion.div
@@ -456,7 +456,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                               ? 'border-green-500 bg-green-50'
                               : poll.userVoted
                               ? 'border-gray-200 cursor-not-allowed opacity-60'
-                              : 'border-gray-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
+                              : 'border-gray-200 hover:border-green-400 hover:bg-green-50 cursor-pointer'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
@@ -505,8 +505,8 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                           onClick={() => handleVoteFeature(feature.id)}
                           className={`p-3 rounded-xl transition-all ${
                             feature.userVoted
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+                              ? 'bg-green-600 text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600'
                           }`}
                         >
                           <ThumbsUp className="h-6 w-6" />
@@ -704,10 +704,10 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
           </div>
 
           {/* Quick Feedback Section */}
-          <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50">
+          <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-600" />
+                <Sparkles className="h-5 w-5 text-green-600" />
                 Quick Feedback
               </CardTitle>
               <CardDescription>
@@ -769,7 +769,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
           </div>
 
           {userStats && userStats.rank > 5 && (
-            <Card className="border-2 border-blue-200 bg-blue-50">
+            <Card className="border-2 border-gray-200 bg-gray-50">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="text-xl font-bold w-8 text-center">
@@ -783,7 +783,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                     <p className="text-sm text-gray-600">{userStats.contributions} contributions</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-blue-600">{userStats.points}</p>
+                    <p className="text-2xl font-bold text-green-600">{userStats.points}</p>
                     <p className="text-xs text-gray-500">points</p>
                   </div>
                 </div>

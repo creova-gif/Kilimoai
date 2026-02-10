@@ -203,7 +203,7 @@ export function CropDetailsSheet({
               {Object.keys(comparativePrices).length > 0 && (
                 <Card className="p-4">
                   <h4 className="font-semibold mb-3 flex items-center gap-2">
-                    <LineChart className="h-4 w-4 text-blue-600" />
+                    <LineChart className="h-4 w-4 text-gray-700" />
                     Regional Price Comparison
                   </h4>
                   <div className="space-y-2">
@@ -234,7 +234,7 @@ export function CropDetailsSheet({
               {priceTrends.length > 0 && (
                 <Card className="p-4">
                   <h4 className="font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-purple-600" />
+                    <TrendingUp className="h-4 w-4 text-gray-700" />
                     30-Day Price Trend
                   </h4>
                   <div className="text-sm text-gray-600 mb-3">
@@ -249,7 +249,7 @@ export function CropDetailsSheet({
                       return (
                         <div key={index} className="flex-1 flex flex-col items-center gap-1">
                           <div 
-                            className="w-full bg-blue-500 rounded-t hover:bg-blue-600 transition-colors"
+                            className="w-full bg-green-500 rounded-t hover:bg-green-600 transition-colors"
                             style={{ height: `${height}%`, minHeight: '4px' }}
                             title={`${trend.date}: ${formatPrice(trend.price)}`}
                           />
@@ -265,12 +265,12 @@ export function CropDetailsSheet({
               )}
 
               {/* Market Insights */}
-              <Card className="p-4 bg-blue-50 border-blue-200">
-                <h4 className="font-semibold mb-2 flex items-center gap-2 text-blue-900">
+              <Card className="p-4 bg-gray-50 border-gray-200">
+                <h4 className="font-semibold mb-2 flex items-center gap-2 text-gray-900">
                   <DollarSign className="h-4 w-4" />
                   Market Insights
                 </h4>
-                <ul className="space-y-2 text-sm text-blue-800">
+                <ul className="space-y-2 text-sm text-gray-800">
                   {cropPrice?.change && cropPrice.change > 3 && (
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -363,16 +363,16 @@ export function CropDetailsSheet({
                   {/* Care Schedule */}
                   <div className="grid gap-4 md:grid-cols-2">
                     <Card className="p-4">
-                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-blue-900">
-                        <Droplets className="h-4 w-4 text-blue-600" />
+                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-gray-900">
+                        <Droplets className="h-4 w-4 text-gray-700" />
                         Watering
                       </h4>
                       <p className="text-sm text-gray-700">{cropAdvice.wateringSchedule}</p>
                     </Card>
 
                     <Card className="p-4">
-                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-purple-900">
-                        <Sprout className="h-4 w-4 text-purple-600" />
+                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-gray-900">
+                        <Sprout className="h-4 w-4 text-gray-700" />
                         Fertilization
                       </h4>
                       <p className="text-sm text-gray-700">{cropAdvice.fertilization}</p>

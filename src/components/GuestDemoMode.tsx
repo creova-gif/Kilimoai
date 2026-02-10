@@ -200,28 +200,28 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                           {/* Weather Demo */}
                           {feature.id === "weather" && (
                             <div className="space-y-4">
-                              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-2xl p-5 shadow-lg">
+                              <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 rounded-2xl p-5 shadow-lg">
                                 <div className="flex items-center gap-4 mb-4">
                                   <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg">
                                     <CloudRain className="h-10 w-10 text-white" />
                                   </div>
                                   <div className="flex-1">
-                                    <h4 className="font-bold text-blue-900 text-lg mb-1">
+                                    <h4 className="font-bold text-gray-900 text-lg mb-1">
                                       {language === "sw" ? feature.demoResult.titleSw : feature.demoResult.titleEn}
                                     </h4>
-                                    <div className="flex items-center gap-3 text-blue-700">
-                                      <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-200/50 rounded-lg">
+                                    <div className="flex items-center gap-3 text-gray-700">
+                                      <div className="flex items-center gap-1.5 px-3 py-1 bg-gray-200/50 rounded-lg">
                                         <Sun className="h-4 w-4" />
                                         <span className="text-sm font-semibold">{feature.demoResult.temp}</span>
                                       </div>
-                                      <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-200/50 rounded-lg">
+                                      <div className="flex items-center gap-1.5 px-3 py-1 bg-gray-200/50 rounded-lg">
                                         <Droplets className="h-4 w-4" />
                                         <span className="text-sm font-semibold">{feature.demoResult.humidity}</span>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                                <p className="text-sm text-blue-900 leading-relaxed bg-white/50 p-3 rounded-xl">
+                                <p className="text-sm text-gray-900 leading-relaxed bg-white/50 p-3 rounded-xl">
                                   <span className="font-bold">{language === "sw" ? "Ushauri:" : "Advice:"}</span>{" "}
                                   {language === "sw" ? feature.demoResult.adviceSw : feature.demoResult.adviceEn}
                                 </p>
@@ -269,12 +269,12 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                                   {language === "sw" ? feature.demoResult.questionSw : feature.demoResult.questionEn}
                                 </p>
                               </div>
-                              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-300 rounded-xl p-4 shadow-md">
+                              <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 rounded-xl p-4 shadow-md">
                                 <div className="flex items-start gap-3">
-                                  <div className="p-2 bg-purple-500 rounded-lg flex-shrink-0">
+                                  <div className="p-2 bg-gray-500 rounded-lg flex-shrink-0">
                                     <MessageSquare className="h-5 w-5 text-white" />
                                   </div>
-                                  <div className="text-sm text-purple-900 leading-relaxed flex-1">
+                                  <div className="text-sm text-gray-900 leading-relaxed flex-1">
                                     <span className="font-bold block mb-1">{language === "sw" ? "AI Jibu:" : "AI Response:"}</span>
                                     {language === "sw" ? feature.demoResult.answerSw : feature.demoResult.answerEn}
                                   </div>

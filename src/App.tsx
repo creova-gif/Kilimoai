@@ -42,6 +42,9 @@ import { VideoTutorials } from "./components/VideoTutorials";
 import { KnowledgeRepository } from "./components/KnowledgeRepository";
 import { PeerDiscussionGroups } from "./components/PeerDiscussionGroups";
 import { TaskManagement } from "./components/TaskManagement";
+import { TaskManagementRedesign } from "./components/TaskManagementRedesign";
+import { VisualCropPlanner } from "./components/VisualCropPlanner";
+import { VisualCropPlannerEnhanced } from "./components/VisualCropPlannerEnhanced";
 import { CropPlanningManagement } from "./components/CropPlanningManagement";
 import { CropPlanningManagementRedesign } from "./components/CropPlanningManagementRedesign";
 import { CropPlanningDashboard } from "./components/CropPlanningDashboard";
@@ -49,6 +52,7 @@ import { LivestockManagement } from "./components/LivestockManagement";
 import { LivestockManagementRedesign } from "./components/LivestockManagementRedesign";
 import { AdvancedLivestockManagement } from "./components/AdvancedLivestockManagement";
 import { FarmMapping } from "./components/FarmMapping";
+import { FarmMappingRedesign } from "./components/FarmMappingRedesign";
 import { FarmLandAllocation } from "./components/FarmLandAllocation";
 import { ResourceInventoryManagement } from "./components/ResourceInventoryManagement";
 import { FarmFinance } from "./components/FarmFinance";
@@ -539,60 +543,90 @@ export default function App() {
     }
   };
 
-  // Navigation items - ALL 50+ FEATURES (🔥 CLEAN DATA - NO COLOR PROPS)
+  // 🎯 KILIMO CORE PAGES - MERGE-BASED ARCHITECTURE
+  // Philosophy: "If two pages answer the same farmer question, merge them"
+  // Target: 12 CORE PAGES (one farmer job = one page)
   const allNavigationItems: Array<{ id: FeatureId; label: string; icon: any; category: string }> = [
-    { id: "home", label: "Dashboard", icon: Home, category: "main" },
-    { id: "workflows", label: "AI Workflows", icon: Brain, category: "ai" },
-    { id: "ai-chat", label: "Sankofa AI", icon: MessageSquare, category: "ai" },
-    { id: "diagnosis", label: "Crop Diagnosis", icon: Camera, category: "ai" },
-    { id: "voice", label: "Voice Assistant", icon: Phone, category: "ai" },
-    { id: "ai-training", label: "AI Training Hub", icon: Brain, category: "ai" },
-    { id: "market", label: "Market Prices", icon: TrendingUp, category: "market" },
-    { id: "weather", label: "Weather", icon: CloudRain, category: "main" },
-    { id: "marketplace", label: "Marketplace", icon: ShoppingCart, category: "market" },
-    { id: "experts", label: "Expert Consult", icon: Users, category: "services" },
-    { id: "soil-test", label: "Soil Testing", icon: Microscope, category: "services" },
-    { id: "videos", label: "Video Tutorials", icon: PlayCircle, category: "learning" },
-    { id: "knowledge", label: "Knowledge Base", icon: BookOpen, category: "learning" },
-    { id: "discussions", label: "Discussion Groups", icon: MessageCircle, category: "community" },
-    { id: "tasks", label: "Task Management", icon: ClipboardList, category: "farm" },
-    { id: "crop-planning", label: "Crop Planning", icon: Sprout, category: "farm" },
-    { id: "crop-planning-ai", label: "Crop Planning AI", icon: Brain, category: "farm" },
-    { id: "crop-dashboard", label: "Crop Dashboard", icon: BarChart3, category: "farm" },
-    { id: "livestock", label: "Livestock", icon: Activity, category: "farm" },
-    { id: "livestock-health", label: "Livestock Health", icon: Activity, category: "farm" },
-    { id: "farm-mapping", label: "Farm Mapping", icon: Map, category: "farm" },
-    { id: "land-allocation", label: "Land Allocation", icon: Target, category: "farm" },
-    { id: "inventory", label: "Inventory", icon: Warehouse, category: "farm" },
-    { id: "finance", label: "Farm Finance", icon: Calculator, category: "finance" },
-    { id: "mobile-money", label: "Mobile Money", icon: CreditCard, category: "finance" },
-    { id: "wallet-admin", label: "Wallet Admin", icon: Wallet, category: "finance" },
-    { id: "orders", label: "Orders & Sales", icon: ShoppingBag, category: "market" },
-    { id: "agribusiness", label: "Agribusiness", icon: Building2, category: "market" },
-    { id: "input-supply", label: "Input Supply", icon: Package, category: "finance" },
-    { id: "contracts", label: "Contract Farming", icon: FileText, category: "finance" },
-    { id: "insurance", label: "Insurance", icon: Shield, category: "services" },
-    { id: "agro-id", label: "KILIMO Agro-ID", icon: IdCard, category: "services" },
-    { id: "analytics", label: "Analytics", icon: BarChart3, category: "insights" },
-    { id: "reports", label: "Reporting", icon: LineChart, category: "insights" },
-    { id: "farm-graph", label: "Farm Graph", icon: Network, category: "insights" },
-    { id: "predictive", label: "Predictions", icon: TrendingUp, category: "insights" },
-    { id: "digital-twin", label: "Digital Twin", icon: Boxes, category: "insights" },
-    { id: "ai-recommendations", label: "AI Recommendations", icon: Lightbulb, category: "ai" },
-    { id: "ai-insights", label: "AI Insights", icon: Brain, category: "ai" },
-    { id: "crop-tips", label: "Crop Specific Tips", icon: Leaf, category: "learning" },
-    { id: "family-planner", label: "Family Planner", icon: Users, category: "farm" },
-    { id: "farmer-lab", label: "Farmer Lab", icon: Microscope, category: "learning" },
-    { id: "gamification", label: "Achievements", icon: Award, category: "admin" },
-    { id: "extension", label: "Extension Officer", icon: Briefcase, category: "admin" },
-    { id: "institutional", label: "Institutional", icon: Building2, category: "admin" },
-    { id: "cooperative", label: "Cooperative", icon: Users, category: "community" },
-    { id: "diagnostics", label: "System Diagnostics", icon: Settings, category: "admin" },
-    { id: "training", label: "Training Courses", icon: BookOpen, category: "learning" },
-    { id: "support", label: "Support", icon: HelpCircle, category: "help" },
-    { id: "contact", label: "Contact Us", icon: PhoneCall, category: "help" },
-    { id: "faq", label: "FAQ", icon: Info, category: "help" },
-    { id: "privacy", label: "Privacy", icon: Shield, category: "settings" },
+    // ========================================
+    // 1. DASHBOARD - Overview & Quick Actions
+    // ========================================
+    { id: "home", label: "Dashboard", icon: Home, category: "dashboard" },
+    
+    // ========================================
+    // 2. AI ADVISOR - Unified AI Intelligence
+    // MERGES: AI Chat + AI Recommendations + AI Insights + AI Training + Diagnosis + Voice
+    // Farmer Question: "What should I do?"
+    // ========================================
+    { id: "ai-chat", label: "AI Advisor", icon: Brain, category: "ai-advisor" },
+    
+    // ========================================
+    // 3. CROP PLANNING - Plan → Yield → Revenue
+    // MERGES: Crop Planning + Land Allocation + Crop Dashboard + Yield Forecasting
+    // Farmer Question: "What crops should I plant and when?"
+    // ========================================
+    { id: "land-allocation", label: "Crop Planning", icon: Sprout, category: "planning" },
+    
+    // ========================================
+    // 4. CROP INTELLIGENCE - Crop Library + Templates
+    // MERGES: Crop Library + Growing Templates + Crop Tips
+    // Farmer Question: "How do I grow this crop?"
+    // ========================================
+    { id: "crop-tips", label: "Crop Intelligence", icon: Leaf, category: "planning" },
+    
+    // ========================================
+    // 5. FARM MAP - Mapping + Allocation
+    // MERGES: Farm Mapping + Land Allocation (view mode)
+    // Farmer Question: "Where is everything on my farm?"
+    // ========================================
+    { id: "farm-mapping", label: "Farm Map", icon: Map, category: "planning" },
+    
+    // ========================================
+    // 6. TASKS & SCHEDULE - Tasks + Calendar
+    // MERGES: Task Management + Calendar views
+    // Farmer Question: "What do I need to do today?"
+    // ========================================
+    { id: "tasks", label: "Tasks & Schedule", icon: ClipboardList, category: "operations" },
+    
+    // ========================================
+    // 7. INVENTORY & INPUTS - Stock + Supplies
+    // MERGES: Inventory + Input Supply + Seed Lists
+    // Farmer Question: "What do I have and what do I need?"
+    // ========================================
+    { id: "inventory", label: "Inventory & Inputs", icon: Warehouse, category: "operations" },
+    
+    // ========================================
+    // 8. MARKET - Buy + Sell + Orders
+    // MERGES: Marketplace + Orders & Sales + Market Prices + Contracts
+    // Farmer Question: "Where can I buy/sell?"
+    // ========================================
+    { id: "orders", label: "Market", icon: ShoppingCart, category: "market" },
+    
+    // ========================================
+    // 9. FINANCE - Money + Wallet + Payments
+    // MERGES: Farm Finance + Mobile Money + Wallet + Insurance
+    // Farmer Question: "How much money do I have/owe/expect?"
+    // ========================================
+    { id: "finance", label: "Finance", icon: DollarSign, category: "finance" },
+    
+    // ========================================
+    // 10. LIVESTOCK (Optional)
+    // Farmer Question: "How are my animals?"
+    // ========================================
+    { id: "livestock", label: "Livestock", icon: Activity, category: "operations" },
+    
+    // ========================================
+    // 11. COMMUNITY (Social features)
+    // MERGES: Discussions + Cooperative + Expert Consult
+    // Farmer Question: "Who can help me?"
+    // ========================================
+    { id: "discussions", label: "Community", icon: Users, category: "community" },
+    
+    // ========================================
+    // 12. LEARNING & SUPPORT
+    // MERGES: Videos + Knowledge Base + Training + Support
+    // Farmer Question: "How do I learn this?"
+    // ========================================
+    { id: "support", label: "Learning & Support", icon: BookOpen, category: "support" },
   ];
 
   // Filter navigation items based on user role
@@ -613,20 +647,16 @@ export default function App() {
     }
   }, [activeTab]);
 
-  // Group navigation by category
+  // 🎯 STREAMLINED CATEGORIES - ONE FARMER JOB = ONE CATEGORY
   const categories = [
-    { id: "main", label: "Main", icon: Home },
-    { id: "ai", label: "AI Tools", icon: Brain },
-    { id: "farm", label: "Farm Management", icon: Wheat },
-    { id: "market", label: "Market & Sales", icon: ShoppingCart },
+    { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "ai-advisor", label: "AI Advisor", icon: Brain },
+    { id: "planning", label: "Planning", icon: Calendar },
+    { id: "operations", label: "Operations", icon: ClipboardList },
+    { id: "market", label: "Market", icon: ShoppingCart },
     { id: "finance", label: "Finance", icon: DollarSign },
-    { id: "services", label: "Services", icon: Briefcase },
-    { id: "insights", label: "Insights", icon: LineChart },
-    { id: "learning", label: "Learning", icon: BookOpen },
     { id: "community", label: "Community", icon: Users },
-    { id: "admin", label: "Admin", icon: Settings },
-    { id: "help", label: "Help & Support", icon: HelpCircle },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "support", label: "Support", icon: HelpCircle },
   ];
 
   // Demo Mode Control Panel (Pre-Auth)
@@ -774,9 +804,9 @@ export default function App() {
 
               {/* Tier Badge */}
               {currentUser?.tier && currentUser.tier !== "free" && (
-                <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 rounded-lg border border-purple-200">
-                  <Award className="h-3.5 w-3.5 text-purple-600" />
-                  <span className="text-xs font-semibold text-purple-700 uppercase">{currentUser.tier}</span>
+                <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-lg border border-gray-300">
+                  <Award className="h-3.5 w-3.5 text-[#2E7D32]" />
+                  <span className="text-xs font-semibold text-gray-700 uppercase">{currentUser.tier}</span>
                 </div>
               )}
 
@@ -930,7 +960,7 @@ export default function App() {
 
                           {/* Badge */}
                           {item.badge && (
-                            <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs font-bold rounded-lg shadow-sm animate-pulse">
+                            <span className="px-2 py-1 bg-[#2E7D32]/20 text-[#2E7D32] text-xs font-bold rounded-lg shadow-sm border border-[#2E7D32]/30">
                               {item.badge}
                             </span>
                           )}
@@ -1124,7 +1154,7 @@ export default function App() {
                       )}
                       {activeTab === "tasks" && (
                         <div className="animate-fadeIn">
-                          <TaskManagement userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
+                          <TaskManagementRedesign userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
                         </div>
                       )}
                       {activeTab === "crop-planning" && (
@@ -1149,12 +1179,16 @@ export default function App() {
                       )}
                       {activeTab === "farm-map" && (
                         <div className="animate-fadeIn">
-                          <FarmMapping userId={currentUser?.id!} language={language} />
+                          <FarmMappingRedesign userId={currentUser?.id!} language={language} />
                         </div>
                       )}
                       {activeTab === "land-allocation" && (
                         <div className="animate-fadeIn">
-                          <FarmLandAllocation userId={currentUser?.id!} language={language} />
+                          <VisualCropPlannerEnhanced 
+                            totalFarmSize={currentUser?.farmSize || 100}
+                            userId={currentUser?.id!} 
+                            language={language} 
+                          />
                         </div>
                       )}
                       {activeTab === "inventory" && (
@@ -1223,7 +1257,12 @@ export default function App() {
                       )}
                       {activeTab === "farm-graph" && (
                         <div className="animate-fadeIn">
-                          <FarmGraphDashboard userId={currentUser?.id!} language={language} />
+                          <FarmGraphDashboard 
+                            userId={currentUser?.id!} 
+                            apiBase={API_BASE}
+                            authToken={publicAnonKey}
+                            language={language} 
+                          />
                         </div>
                       )}
                       {activeTab === "predictions" && (

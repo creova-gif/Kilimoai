@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run enforce:colors && vite build",
     "preview": "vite preview",
+    "enforce:colors": "node scripts/enforce-brand-colors.js",
     "deploy:staging": "bash scripts/deploy.sh staging",
     "deploy:production": "bash scripts/deploy.sh production",
     "deploy:kilimo": "bash deploy-kilimo.sh",

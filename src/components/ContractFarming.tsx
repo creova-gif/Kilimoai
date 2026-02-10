@@ -96,7 +96,7 @@ export function ContractFarming() {
       case "pending":
         return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">Pending Approval</Badge>;
       case "completed":
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-300">Completed</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Completed</Badge>;
       case "disputed":
         return <Badge className="bg-red-100 text-red-700 border-red-300">Disputed</Badge>;
       default:
@@ -107,7 +107,7 @@ export function ContractFarming() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white border-0">
+      <Card className="bg-[#2E7D32] text-white border-0">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <FileText className="h-6 w-6" />
@@ -120,28 +120,28 @@ export function ContractFarming() {
       </Card>
 
       {/* Benefits Banner */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-start gap-3">
-              <DollarSign className="h-5 w-5 text-blue-600 mt-0.5" />
+              <DollarSign className="h-5 w-5 text-gray-700 mt-0.5" />
               <div>
-                <h4 className="font-medium text-blue-900">Price Certainty</h4>
-                <p className="text-sm text-blue-700">Lock in prices before planting</p>
+                <h4 className="font-medium text-gray-900">Price Certainty</h4>
+                <p className="text-sm text-gray-700">Lock in prices before planting</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+              <CheckCircle className="h-5 w-5 text-gray-700 mt-0.5" />
               <div>
-                <h4 className="font-medium text-blue-900">Guaranteed Market</h4>
-                <p className="text-sm text-blue-700">Buyers committed to purchase</p>
+                <h4 className="font-medium text-gray-900">Guaranteed Market</h4>
+                <p className="text-sm text-gray-700">Buyers committed to purchase</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <FileText className="h-5 w-5 text-blue-600 mt-0.5" />
+              <FileText className="h-5 w-5 text-gray-700 mt-0.5" />
               <div>
-                <h4 className="font-medium text-blue-900">Legal Protection</h4>
-                <p className="text-sm text-blue-700">Enforceable digital agreements</p>
+                <h4 className="font-medium text-gray-900">Legal Protection</h4>
+                <p className="text-sm text-gray-700">Enforceable digital agreements</p>
               </div>
             </div>
           </div>
@@ -305,20 +305,20 @@ export function ContractFarming() {
 
       {/* Available Contracts */}
       {showNewContract && (
-        <Card className="border-purple-200">
+        <Card className="border-gray-200">
           <CardHeader>
-            <CardTitle className="text-purple-900">Available Contract Opportunities</CardTitle>
+            <CardTitle className="text-gray-900">Available Contract Opportunities</CardTitle>
             <CardDescription>Browse and apply for new contract farming opportunities</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {availableContracts.map((contract, idx) => (
-              <div key={idx} className="border rounded-lg p-4 hover:bg-purple-50 transition-colors">
+              <div key={idx} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h4 className="font-medium mb-1">{contract.buyer}</h4>
                     <p className="text-sm text-gray-600">Looking for {contract.crop} farmers</p>
                   </div>
-                  <Badge className="bg-purple-100 text-purple-700 border-purple-300">New</Badge>
+                  <Badge className="bg-green-100 text-green-700 border-green-300">New</Badge>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-4">
@@ -337,7 +337,7 @@ export function ContractFarming() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button className="flex-1 bg-purple-600 hover:bg-purple-700">
+                  <Button className="flex-1 bg-[#2E7D32] hover:bg-green-700">
                     Apply for Contract
                   </Button>
                   <Button variant="outline">View Details</Button>

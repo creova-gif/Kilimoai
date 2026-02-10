@@ -1,0 +1,38 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  
+  // KILIMO Brand Color Enforcement
+  "tailwindCSS.lint.cssConflict": "error",
+  "tailwindCSS.validate": true,
+  
+  // Color highlighting warnings
+  "editor.tokenColorCustomizations": {
+    "comments": "#2E7D32"
+  },
+  
+  // Workspace recommendations
+  "recommendations": [
+    "Remind developers to run 'npm run enforce:colors' before committing"
+  ],
+  
+  // Search exclusions
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true,
+    "**/.next": true
+  },
+  
+  // File watching
+  "files.watcherExclude": {
+    "**/node_modules": true,
+    "**/.git": true
+  }
+}

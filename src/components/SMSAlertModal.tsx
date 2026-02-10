@@ -54,24 +54,24 @@ export function SMSAlertModal({ onClose, alertType }: SMSAlertModalProps) {
         <div className="p-6 space-y-4">
           {!enrolled ? (
             <>
-              <Card className="border-blue-200 bg-blue-50">
-                <CardContent className="pt-4">
-                  <h4 className="font-medium text-blue-900 mb-2">What you'll receive:</h4>
-                  <ul className="space-y-1 text-sm text-blue-800">
+              <Card className="border-gray-200 bg-gray-50">
+                <CardContent className="p-4">
+                  <h4 className="font-medium text-gray-900 mb-2">What you'll receive:</h4>
+                  <ul className="space-y-1 text-sm text-gray-800">
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       <span>Daily weather updates at 7 AM</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       <span>Severe weather warnings (storms, floods, droughts)</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       <span>Farming tips based on forecast</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       <span>Market price alerts when prices change</span>
                     </li>
                   </ul>

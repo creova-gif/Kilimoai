@@ -242,46 +242,46 @@ export function RegistrationForm({ onRegister, loading }: RegistrationFormProps)
                   <SelectItem value="farm_manager" className="py-3">
                     <div className="flex items-center justify-between w-full gap-3">
                       <div className="flex items-center gap-2">
-                        <UserCog className="h-4 w-4 text-blue-600" />
+                        <UserCog className="h-4 w-4 text-gray-600" />
                         <span className="text-sm">Farm Manager (5-50 acres)</span>
                       </div>
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full whitespace-nowrap">BASIC</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-full whitespace-nowrap">BASIC</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="commercial" className="py-3">
                     <div className="flex items-center justify-between w-full gap-3">
                       <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-purple-600" />
+                        <Building2 className="h-4 w-4 text-gray-600" />
                         <span className="text-sm">Commercial Farm Admin (50+ acres)</span>
                       </div>
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-bold rounded-full whitespace-nowrap">PREMIUM</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-full whitespace-nowrap">PREMIUM</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="agribusiness" className="py-3">
                     <div className="flex items-center justify-between w-full gap-3">
                       <div className="flex items-center gap-2">
-                        <Package className="h-4 w-4 text-purple-600" />
+                        <Package className="h-4 w-4 text-gray-600" />
                         <span className="text-sm">Agribusiness Operations</span>
                       </div>
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-bold rounded-full whitespace-nowrap">PREMIUM</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-full whitespace-nowrap">PREMIUM</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="ngo" className="py-3">
                     <div className="flex items-center justify-between w-full gap-3">
                       <div className="flex items-center gap-2">
-                        <GraduationCap className="h-4 w-4 text-blue-600" />
+                        <GraduationCap className="h-4 w-4 text-gray-600" />
                         <span className="text-sm">Extension Officer / NGO</span>
                       </div>
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full whitespace-nowrap">BASIC</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-full whitespace-nowrap">BASIC</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="cooperative" className="py-3">
                     <div className="flex items-center justify-between w-full gap-3">
                       <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-blue-600" />
+                        <Users className="h-4 w-4 text-gray-600" />
                         <span className="text-sm">Cooperative</span>
                       </div>
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full whitespace-nowrap">BASIC</span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-full whitespace-nowrap">BASIC</span>
                     </div>
                   </SelectItem>
                 </SelectContent>

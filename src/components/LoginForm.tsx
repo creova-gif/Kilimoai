@@ -141,9 +141,9 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
                       required={loginMethod === "phone"}
                     />
                   </div>
-                  <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                    <AlertCircle className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-blue-800 font-medium leading-relaxed">
+                  <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <AlertCircle className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-gray-800 font-medium leading-relaxed">
                       Use the same phone number you registered with
                     </p>
                   </div>

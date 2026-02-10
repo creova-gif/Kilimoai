@@ -154,9 +154,9 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Package className="h-10 w-10 mx-auto mb-3 text-blue-600" />
+                  <Package className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-3xl font-bold">{operationalMetrics.totalAcres}</p>
-                  <p className="text-sm text-gray-600 mt-1">Total Acres Under Management</p>
+                  <p className="text-sm text-gray-600 mt-1">Total Acres</p>
                 </div>
               </CardContent>
             </Card>
@@ -174,7 +174,7 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Target className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                  <Target className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-3xl font-bold">{operationalMetrics.yieldEfficiency}%</p>
                   <p className="text-sm text-gray-600 mt-1">Yield Efficiency vs Target</p>
                 </div>
@@ -305,10 +305,10 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <TrendingUp className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                  <TrendingUp className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-2xl font-bold">TZS {(financialMetrics.netProfit / 1000000).toFixed(1)}M</p>
                   <p className="text-sm text-gray-600 mt-1">Net Profit</p>
-                  <p className="text-xs text-purple-600 mt-1">{financialMetrics.profitMargin}% margin</p>
+                  <p className="text-xs text-gray-600 mt-1">{financialMetrics.profitMargin}% margin</p>
                 </div>
               </CardContent>
             </Card>
@@ -316,10 +316,10 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <BarChart3 className="h-10 w-10 mx-auto mb-3 text-blue-600" />
+                  <BarChart3 className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-2xl font-bold">{financialMetrics.roi}%</p>
                   <p className="text-sm text-gray-600 mt-1">Return on Investment</p>
-                  <p className="text-xs text-blue-600 mt-1">Above industry avg</p>
+                  <p className="text-xs text-gray-600 mt-1">Above industry avg</p>
                 </div>
               </CardContent>
             </Card>
@@ -404,18 +404,18 @@ export function ComprehensiveReporting() {
                     <p className="text-xs text-gray-600">Revenue: TZS 28.5M | Cost: TZS 11.7M</p>
                   </div>
 
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex justify-between mb-1">
                       <span className="font-medium">Beans</span>
-                      <span className="font-bold text-blue-600">+168%</span>
+                      <span className="font-bold text-gray-900">+168%</span>
                     </div>
                     <p className="text-xs text-gray-600">Revenue: TZS 15.2M | Cost: TZS 5.7M</p>
                   </div>
 
-                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex justify-between mb-1">
                       <span className="font-medium">Sunflower</span>
-                      <span className="font-bold text-purple-600">+112%</span>
+                      <span className="font-bold text-gray-900">+112%</span>
                     </div>
                     <p className="text-xs text-gray-600">Revenue: TZS 11.0M | Cost: TZS 4.9M</p>
                   </div>
@@ -482,7 +482,7 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Package className="h-10 w-10 mx-auto mb-3 text-blue-600" />
+                  <Package className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-3xl font-bold">{productionMetrics.totalYield}</p>
                   <p className="text-sm text-gray-600 mt-1">Total Yield (bags)</p>
                 </div>
@@ -502,7 +502,7 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Award className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                  <Award className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-3xl font-bold">{productionMetrics.qualityGrade}</p>
                   <p className="text-sm text-gray-600 mt-1">Quality Grade</p>
                 </div>
@@ -554,7 +554,7 @@ export function ComprehensiveReporting() {
                 <div className="p-4 border rounded-lg">
                   <div className="flex justify-between mb-3">
                     <h4 className="font-medium">Beans (8 acres)</h4>
-                    <Badge className="bg-blue-100 text-blue-700">Good</Badge>
+                    <Badge className="bg-gray-100 text-gray-700">Good</Badge>
                   </div>
                   <div className="grid grid-cols-4 gap-3 text-sm">
                     <div>
@@ -567,7 +567,7 @@ export function ComprehensiveReporting() {
                     </div>
                     <div>
                       <p className="text-gray-600">vs Target</p>
-                      <p className="font-bold text-blue-600">+8%</p>
+                      <p className="font-bold text-green-600">+8%</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Quality</p>
@@ -621,7 +621,7 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Activity className="h-10 w-10 mx-auto mb-3 text-blue-600" />
+                  <Activity className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-3xl font-bold">{sustainabilityMetrics.soilHealthScore}%</p>
                   <p className="text-sm text-gray-600 mt-1">Soil Health Score</p>
                 </div>
@@ -631,7 +631,7 @@ export function ComprehensiveReporting() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Target className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                  <Target className="h-10 w-10 mx-auto mb-3 text-gray-700" />
                   <p className="text-3xl font-bold">{sustainabilityMetrics.carbonFootprint} t</p>
                   <p className="text-sm text-gray-600 mt-1">Carbon Footprint</p>
                 </div>
@@ -686,20 +686,20 @@ export function ComprehensiveReporting() {
                   <Badge className="bg-green-600 text-white">Active</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-blue-600" />
+                    <CheckCircle2 className="h-5 w-5 text-gray-700" />
                     <span className="font-medium">GlobalGAP Certified</span>
                   </div>
-                  <Badge className="bg-blue-600 text-white">Active</Badge>
+                  <Badge className="bg-gray-700 text-white">Active</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-purple-600" />
+                    <CheckCircle2 className="h-5 w-5 text-gray-700" />
                     <span className="font-medium">Fair Trade Compliance</span>
                   </div>
-                  <Badge className="bg-purple-600 text-white">Active</Badge>
+                  <Badge className="bg-gray-700 text-white">Active</Badge>
                 </div>
               </div>
             </CardContent>
@@ -774,8 +774,8 @@ export function ComprehensiveReporting() {
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Activity className="h-4 w-4 text-blue-600" />
+                      <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Activity className="h-4 w-4 text-gray-700" />
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">Harvest</p>

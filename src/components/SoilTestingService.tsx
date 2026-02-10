@@ -242,12 +242,12 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
 
               {expandedSection === "why-test" && (
                 <div className="px-6 pb-6">
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-4">
-                    <h4 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-4">
+                    <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                       <Info className="h-5 w-5" />
                       {language === "en" ? "The Problem" : "Tatizo"}
                     </h4>
-                    <p className="text-sm text-blue-800 leading-relaxed">
+                    <p className="text-sm text-gray-800 leading-relaxed">
                       {language === "en"
                         ? "Most farmers apply the same fertilizer year after year, regardless of what their soil actually needs. This is like taking random medicine without a diagnosis — wasteful and ineffective."
                         : "Wakulima wengi wanatumia mbolea ile ile kila mwaka, bila kujali udongo wao unahitaji nini. Hii ni kama kunywa dawa bila kuchunguza — ni upotevu na haina ufanisi."}
@@ -264,21 +264,21 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           : "Tumia tu unachohitaji. Wakulima wanaokoa 20-30% kwa gharama za mbolea kwa kutumia mapendekezo maalum ya udongo."
                       },
                       {
-                        icon: <Sprout className="h-6 w-6 text-blue-600" />,
+                        icon: <Sprout className="h-6 w-6 text-green-600" />,
                         title: language === "en" ? "Increase Yields" : "Ongeza Mavuno",
                         desc: language === "en"
                           ? "Balanced nutrition = stronger plants. Expect 30-50% yield increase when you fix soil deficiencies."
                           : "Lishe kamilifu = mimea yenye nguvu. Tarajia ongezeko la mavuno la 30-50% unaporekebisha upungufu wa udongo."
                       },
                       {
-                        icon: <Activity className="h-6 w-6 text-purple-600" />,
+                        icon: <Activity className="h-6 w-6 text-green-600" />,
                         title: language === "en" ? "Prevent Problems" : "Zuia Matatizo",
                         desc: language === "en"
                           ? "Low pH causes stunted growth. Excess nitrogen invites pests. Know problems before they happen."
                           : "pH ya chini inasababisha ukuaji mdogo. Nitrojeni nyingi huita wadudu. Jua matatizo kabla hayajatokea."
                       },
                       {
-                        icon: <Target className="h-6 w-6 text-indigo-600" />,
+                        icon: <Target className="h-6 w-6 text-green-600" />,
                         title: language === "en" ? "Long-Term Planning" : "Mpango wa Muda Mrefu",
                         desc: language === "en"
                           ? "Test once, plan for 3 years. Build soil health season by season with the right amendments."
@@ -323,8 +323,8 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <MapPin className="h-6 w-6 text-blue-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <MapPin className="h-6 w-6 text-gray-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "The Soil Testing Journey" : "Safari ya Upimaji wa Udongo"}
@@ -430,8 +430,8 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="h-6 w-6 text-purple-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="h-6 w-6 text-gray-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "Understanding Your Results" : "Kuelewa Matokeo Yako"}
@@ -442,11 +442,11 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
 
               {expandedSection === "understanding" && (
                 <div className="px-6 pb-6 space-y-4">
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
-                    <h4 className="font-bold text-blue-900 mb-3">
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+                    <h4 className="font-bold text-gray-900 mb-3">
                       {language === "en" ? "We Translate Science Into Action" : "Tunatafsiri Sayansi Kuwa Hatua"}
                     </h4>
-                    <p className="text-sm text-blue-800 mb-4">
+                    <p className="text-sm text-gray-800 mb-4">
                       {language === "en"
                         ? "You won't see confusing lab numbers. You'll see:"
                         : "Hutaona nambari za maabara zinazovuruga. Utaona:"}
@@ -482,7 +482,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <TrendingUp className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <TrendingUp className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                         <div className="flex-1">
                           <div className="font-bold text-gray-900 mb-1">
                             {language === "en" ? "📈 Expected Impact" : "📈 Athari Inayotarajiwa"}
@@ -496,7 +496,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <ShoppingCart className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <ShoppingCart className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                         <div className="flex-1">
                           <div className="font-bold text-gray-900 mb-1">
                             {language === "en" ? "🛒 Buy Now (Linked)" : "🛒 Nunua Sasa (Imeunganishwa)"}
@@ -688,9 +688,9 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
 
                     <button
                       onClick={() => setShowUploadModal(true)}
-                      className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 hover:border-blue-400 transition-all text-left"
+                      className="p-6 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl border-2 border-gray-200 hover:border-gray-400 transition-all text-left"
                     >
-                      <Upload className="h-10 w-10 text-blue-600 mb-3" />
+                      <Upload className="h-10 w-10 text-gray-600 mb-3" />
                       <h4 className="font-bold text-gray-900 mb-2">
                         {language === "en" ? "Upload Existing Results" : "Pakia Matokeo Yaliyopo"}
                       </h4>
@@ -699,7 +699,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           ? "Already have a lab report? Upload it and we'll create your custom fertilizer plan instantly."
                           : "Tayari una ripoti ya maabara? Ipakia na tutaunda mpango wako maalum wa mbolea mara moja."}
                       </p>
-                      <div className="text-xs text-blue-600 font-bold flex items-center gap-1">
+                      <div className="text-xs text-gray-600 font-bold flex items-center gap-1">
                         <Zap className="h-4 w-4" />
                         {language === "en" ? "Get results in minutes" : "Pata matokeo ndani ya dakika"}
                       </div>
@@ -736,7 +736,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                             result.status === "completed"
                               ? "bg-green-100 text-green-700"
                               : result.status === "processing"
-                              ? "bg-blue-100 text-blue-700"
+                              ? "bg-gray-100 text-gray-700"
                               : "bg-gray-200 text-gray-700"
                           }`}>
                             {result.status === "completed" && (language === "en" ? "✓ Complete" : "✓ Kamili")}
@@ -789,30 +789,30 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           </div>
 
                           {/* Action Plan */}
-                          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                            <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                               <Target className="h-5 w-5" />
                               {language === "en" ? "Your Action Plan" : "Mpango Wako wa Hatua"}
                             </h4>
                             <ul className="space-y-2">
                               {result.results.recommendations.actionable.map((action, idx) => (
                                 <li key={idx} className="flex items-start gap-2 text-sm">
-                                  <CheckCircle2 className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                                  <span className="text-blue-800">{action}</span>
+                                  <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                                  <span className="text-gray-800">{action}</span>
                                 </li>
                               ))}
                             </ul>
                           </div>
 
                           {/* Yield Impact */}
-                          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border-2 border-purple-200">
+                          <div className="bg-gradient-to-r from-green-50 to-green-50 rounded-lg p-4 border-2 border-green-200">
                             <div className="flex items-start gap-3">
-                              <TrendingUp className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                              <TrendingUp className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                               <div>
-                                <h4 className="font-bold text-purple-900 mb-1">
+                                <h4 className="font-bold text-green-900 mb-1">
                                   {language === "en" ? "Expected Impact" : "Athari Inayotarajiwa"}
                                 </h4>
-                                <p className="text-sm text-purple-800 font-medium">
+                                <p className="text-sm text-green-800 font-medium">
                                   {result.results.recommendations.yieldImpact}
                                 </p>
                               </div>
@@ -850,7 +850,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                               <Download className="h-4 w-4" />
                               {language === "en" ? "Download PDF" : "Pakua PDF"}
                             </button>
-                            <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                            <button className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
                               <Users className="h-4 w-4" />
                               {language === "en" ? "Consult Expert" : "Shauriana na Mtaalamu"}
                             </button>
@@ -860,7 +860,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
 
                       {result.status === "processing" && (
                         <div className="bg-white rounded-lg p-6 text-center">
-                          <Activity className="h-12 w-12 text-blue-600 mx-auto mb-3 animate-pulse" />
+                          <Activity className="h-12 w-12 text-gray-600 mx-auto mb-3 animate-pulse" />
                           <div className="font-semibold text-gray-900 mb-1">
                             {language === "en" ? "Testing in Progress" : "Upimaji Unaendelea"}
                           </div>

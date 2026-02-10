@@ -206,7 +206,7 @@ export function SMSUSSDSimulator() {
                     description: "Get weekly crop care tips for your registered crops"
                   },
                   {
-                    icon: <DollarSign className="h-5 w-5 text-blue-600" />,
+                    icon: <DollarSign className="h-5 w-5 text-green-600" />,
                     title: "Market Prices",
                     description: "Real-time prices for crops in nearby markets"
                   },
@@ -216,7 +216,7 @@ export function SMSUSSDSimulator() {
                     description: "Check CREOVA wallet and loyalty points"
                   },
                   {
-                    icon: <Smartphone className="h-5 w-5 text-purple-600" />,
+                    icon: <Smartphone className="h-5 w-5 text-green-600" />,
                     title: "Sell Produce",
                     description: "List crops for sale to connected buyers"
                   },
@@ -290,7 +290,7 @@ export function SMSUSSDSimulator() {
                   </Button>
                 </div>
 
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm">
                   <p className="font-medium mb-2">Quick Commands:</p>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <code className="bg-white p-1 rounded">PRICE [crop]</code>
@@ -324,12 +324,12 @@ export function SMSUSSDSimulator() {
                     <p className="text-sm text-gray-600">Weather alerts, market updates, farming tips</p>
                   </div>
 
-                  <div className="border-l-4 border-blue-500 pl-4 py-2">
+                  <div className="border-l-4 border-gray-500 pl-4 py-2">
                     <p className="font-medium">Two-Way Commands</p>
                     <p className="text-sm text-gray-600">Farmers can query prices, weather, advice</p>
                   </div>
 
-                  <div className="border-l-4 border-purple-500 pl-4 py-2">
+                  <div className="border-l-4 border-gray-500 pl-4 py-2">
                     <p className="font-medium">Transaction Confirmations</p>
                     <p className="text-sm text-gray-600">GoPay payments, marketplace sales</p>
                   </div>
@@ -370,13 +370,13 @@ export function SMSUSSDSimulator() {
         <TabsContent value="voice">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Voice Simulator */}
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
+            <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Phone className="h-5 w-5" />
                   Voice IVR Simulator
                 </CardTitle>
-                <CardDescription className="text-blue-100">
+                <CardDescription className="text-gray-100">
                   Call +255 XXX XXX XXX for voice guidance
                 </CardDescription>
               </CardHeader>
@@ -384,7 +384,7 @@ export function SMSUSSDSimulator() {
                 <div className="bg-white text-black rounded-lg p-6 text-center">
                   {voiceStatus === "idle" && (
                     <>
-                      <Phone className="h-16 w-16 mx-auto mb-4 text-blue-600" />
+                      <Phone className="h-16 w-16 mx-auto mb-4 text-green-600" />
                       <p className="mb-4">Press the button to call CREOVA Voice Assistant</p>
                       <Button 
                         onClick={handleVoiceCall}
@@ -398,7 +398,7 @@ export function SMSUSSDSimulator() {
 
                   {voiceStatus === "calling" && (
                     <>
-                      <div className="h-16 w-16 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
+                      <div className="h-16 w-16 bg-green-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
                         <Phone className="h-8 w-8 text-white" />
                       </div>
                       <p className="text-lg mb-2">Calling CREOVA...</p>
@@ -475,7 +475,7 @@ export function SMSUSSDSimulator() {
                     }
                   ].map((item) => (
                     <div key={item.step} className="flex gap-3 p-3 border rounded-lg">
-                      <div className="flex-shrink-0 h-8 w-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
+                      <div className="flex-shrink-0 h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center">
                         {item.step}
                       </div>
                       <div>

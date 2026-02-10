@@ -339,7 +339,7 @@ export function ResourceInventoryManagement() {
                 <p className="text-2xl font-bold">{stats.equipmentOperational}/{stats.equipmentTotal}</p>
                 <p className="text-sm text-green-600 mt-1">Operational</p>
               </div>
-              <Wrench className="h-12 w-12 text-blue-600" />
+              <Wrench className="h-12 w-12 text-green-600" />
             </div>
           </CardContent>
         </Card>
@@ -654,7 +654,7 @@ export function ResourceInventoryManagement() {
                         <Badge
                           className={
                             log.type === "routine"
-                              ? "bg-blue-100 text-blue-700"
+                              ? "bg-gray-100 text-gray-700"
                               : "bg-orange-100 text-orange-700"
                           }
                         >
@@ -690,7 +690,7 @@ export function ResourceInventoryManagement() {
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <Warehouse className="h-8 w-8 text-blue-600" />
+                      <Warehouse className="h-8 w-8 text-green-600" />
                       <div>
                         <h4 className="font-medium">Warehouse A</h4>
                         <p className="text-sm text-gray-600">Main Storage Facility</p>
@@ -727,7 +727,7 @@ export function ResourceInventoryManagement() {
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <Warehouse className="h-8 w-8 text-purple-600" />
+                      <Warehouse className="h-8 w-8 text-green-600" />
                       <div>
                         <h4 className="font-medium">Warehouse B</h4>
                         <p className="text-sm text-gray-600">Chemical & Fertilizer Store</p>
@@ -774,7 +774,7 @@ export function ResourceInventoryManagement() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="p-4 border rounded-lg text-center">
-                  <BarChart3 className="h-10 w-10 mx-auto mb-2 text-blue-600" />
+                  <BarChart3 className="h-10 w-10 mx-auto mb-2 text-green-600" />
                   <p className="text-2xl font-bold">TZS 3.2M</p>
                   <p className="text-sm text-gray-600">Monthly Consumption</p>
                 </div>
@@ -786,7 +786,7 @@ export function ResourceInventoryManagement() {
                 </div>
 
                 <div className="p-4 border rounded-lg text-center">
-                  <Package className="h-10 w-10 mx-auto mb-2 text-purple-600" />
+                  <Package className="h-10 w-10 mx-auto mb-2 text-green-600" />
                   <p className="text-2xl font-bold">18 days</p>
                   <p className="text-sm text-gray-600">Avg. Stock Duration</p>
                 </div>

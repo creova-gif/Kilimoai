@@ -1,0 +1,40 @@
+name: KILIMO Brand Color Enforcement
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  enforce-brand-colors:
+    runs-on: ubuntu-latest
+    name: 🔒 100% COLOR LOCK Enforcement
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 🔒 Run Brand Color Enforcement
+        run: |
+          chmod +x ./scripts/enforce-brand-colors.js
+          node ./scripts/enforce-brand-colors.js
+
+      - name: ✅ Color Lock Success
+        if: success()
+        run: |
+          echo "✅ CI RULE ACTIVE: 100% COLOR LOCK maintained"
+          echo "✅ No regressions possible"
+          echo "✅ Brand consistency verified"
+
+      - name: ❌ Color Lock Failed
+        if: failure()
+        run: |
+          echo "❌ BUILD BLOCKED: Non-brand color detected"
+          echo "❌ Fix violations above to proceed"
+          exit 1

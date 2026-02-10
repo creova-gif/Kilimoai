@@ -113,7 +113,7 @@ export function ExtensionOfficerDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "scheduled":
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-300">Scheduled</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Scheduled</Badge>;
       case "in-progress":
         return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">In Progress</Badge>;
       case "completed":
@@ -130,7 +130,7 @@ export function ExtensionOfficerDashboard() {
       case "progressive":
         return <Badge className="bg-green-100 text-green-700">Progressive</Badge>;
       case "traditional":
-        return <Badge className="bg-blue-100 text-blue-700">Traditional</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700">Traditional</Badge>;
       case "struggling":
         return <Badge className="bg-red-100 text-red-700">Needs Support</Badge>;
       default:
@@ -159,9 +159,9 @@ export function ExtensionOfficerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Farmers Managed</p>
-                <p className="text-2xl font-bold text-blue-600">48</p>
+                <p className="text-2xl font-bold text-gray-900">48</p>
               </div>
-              <Users className="h-10 w-10 text-blue-600 opacity-20" />
+              <Users className="h-10 w-10 text-gray-600 opacity-20" />
             </div>
           </CardContent>
         </Card>
@@ -171,9 +171,9 @@ export function ExtensionOfficerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">This Week</p>
-                <p className="text-2xl font-bold text-purple-600">12</p>
+                <p className="text-2xl font-bold text-orange-600">12</p>
               </div>
-              <Clock className="h-10 w-10 text-purple-600 opacity-20" />
+              <Clock className="h-10 w-10 text-orange-600 opacity-20" />
             </div>
           </CardContent>
         </Card>
@@ -390,13 +390,13 @@ export function ExtensionOfficerDashboard() {
       </Card>
 
       {/* Offline Sync Status */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-green-200 bg-green-50">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900">Offline Mode Active</h4>
-              <p className="text-sm text-blue-700 mt-1">
+              <h4 className="font-medium text-gray-900">Offline Mode Active</h4>
+              <p className="text-sm text-gray-700 mt-1">
                 All visit data is saved locally and will sync when you're back online. Last sync: 2 hours ago
               </p>
             </div>
@@ -427,7 +427,7 @@ export function ExtensionOfficerDashboard() {
                 <span className="font-medium">68/80 (85%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: "85%" }} />
+                <div className="bg-green-600 h-2 rounded-full" style={{ width: "85%" }} />
               </div>
             </div>
             <div>
@@ -436,7 +436,7 @@ export function ExtensionOfficerDashboard() {
                 <span className="font-medium">34/40 (85%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-purple-600 h-2 rounded-full" style={{ width: "85%" }} />
+                <div className="bg-orange-600 h-2 rounded-full" style={{ width: "85%" }} />
               </div>
             </div>
           </div>

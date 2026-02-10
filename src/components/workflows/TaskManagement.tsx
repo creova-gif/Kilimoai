@@ -201,7 +201,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "low": return "bg-gray-100 text-gray-800";
-      case "medium": return "bg-blue-100 text-blue-800";
+      case "medium": return "bg-gray-100 text-gray-800";
       case "high": return "bg-orange-100 text-orange-800";
       case "urgent": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
@@ -211,7 +211,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending": return "bg-gray-100 text-gray-800";
-      case "in_progress": return "bg-blue-100 text-blue-800";
+      case "in_progress": return "bg-gray-100 text-gray-800";
       case "completed": return "bg-green-100 text-green-800";
       case "overdue": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
@@ -233,14 +233,14 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <ClipboardList className="h-6 w-6 text-blue-600" />
+            <ClipboardList className="h-6 w-6 text-gray-600" />
             Task & Labor Management
           </h2>
           <p className="text-sm text-gray-600 mt-1">
             AI-powered task scheduling, worker assignment, and productivity tracking
           </p>
         </div>
-        <Button onClick={() => setShowNewTask(true)} className="bg-blue-600">
+        <Button onClick={() => setShowNewTask(true)} className="bg-[#2E7D32]">
           <Plus className="h-4 w-4 mr-2" />
           New Task
         </Button>
@@ -267,10 +267,10 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">In Progress</p>
-                <p className="text-2xl font-bold text-blue-600">{inProgressTasks}</p>
+                <p className="text-2xl font-bold text-gray-800">{inProgressTasks}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Loader2 className="h-5 w-5 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <Loader2 className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -309,10 +309,10 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Workers</p>
-                <p className="text-2xl font-bold text-purple-600">{workers.length}</p>
+                <p className="text-2xl font-bold text-gray-800">{workers.length}</p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Users className="h-5 w-5 text-purple-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <Users className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -324,7 +324,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
         <Card>
           <CardHeader>
             <CardTitle className="text-sm flex items-center gap-2">
-              <Users className="h-4 w-4 text-purple-600" />
+              <Users className="h-4 w-4 text-gray-600" />
               Labor Force Overview
             </CardTitle>
           </CardHeader>
@@ -340,14 +340,14 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
                       </p>
                       <p className="text-xs text-gray-600">{worker.role}</p>
                     </div>
-                    <Badge className="bg-purple-100 text-purple-800 text-xs">
+                    <Badge className="bg-gray-100 text-gray-800 text-xs">
                       {worker.efficiency}% eff.
                     </Badge>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div>
                       <p className="text-gray-600">Active</p>
-                      <p className="font-semibold text-blue-600">{worker.activeTasks}</p>
+                      <p className="font-semibold text-gray-800">{worker.activeTasks}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Done</p>
@@ -367,7 +367,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
 
       {/* New Task Form */}
       {showNewTask && (
-        <Card className="border-blue-200 bg-blue-50/50">
+        <Card className="border-gray-200 bg-gray-50/50">
           <CardHeader>
             <CardTitle>Create New Task</CardTitle>
             <CardDescription>
@@ -497,7 +497,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
               <Button
                 onClick={createTask}
                 disabled={!taskForm.title || !taskForm.dueDate || creatingTask}
-                className="bg-blue-600"
+                className="bg-[#2E7D32]"
               >
                 {creatingTask ? (
                   <>
@@ -564,7 +564,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
       {/* Tasks List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
         </div>
       ) : filteredTasks.length === 0 ? (
         <Card>
@@ -609,8 +609,8 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
                     </div>
 
                     {task.aiSuggestions && task.aiSuggestions.length > 0 && (
-                      <div className="mt-3 bg-purple-50 p-2 rounded text-xs">
-                        <p className="font-medium text-purple-700 mb-1 flex items-center gap-1">
+                      <div className="mt-3 bg-gray-50 p-2 rounded text-xs">
+                        <p className="font-medium text-gray-700 mb-1 flex items-center gap-1">
                           <Sparkles className="h-3 w-3" />
                           AI Suggestions:
                         </p>
@@ -643,7 +643,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
                           <Button
                             size="sm"
                             onClick={() => updateTaskStatus(task.id, "in_progress")}
-                            className="bg-blue-600 text-xs h-7"
+                            className="bg-[#2E7D32] text-xs h-7"
                           >
                             Start Task
                           </Button>

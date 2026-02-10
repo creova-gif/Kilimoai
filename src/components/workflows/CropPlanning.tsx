@@ -148,10 +148,10 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "planning": return "bg-gray-100 text-gray-800";
-      case "scheduled": return "bg-blue-100 text-blue-800";
+      case "scheduled": return "bg-gray-100 text-gray-800";
       case "planted": return "bg-green-100 text-green-800";
       case "growing": return "bg-yellow-100 text-yellow-800";
-      case "harvested": return "bg-purple-100 text-purple-800";
+      case "harvested": return "bg-gray-100 text-gray-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };

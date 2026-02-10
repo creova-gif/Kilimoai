@@ -101,7 +101,7 @@ export function CollapsibleNavCategory({
 
       {/* Collapsible Navigation Items */}
       {isExpanded && (
-        <nav className="space-y-0.5 mt-1">
+        <nav className="space-y-0.5 mt-1" aria-label={`${category.label} navigation`}>
           {items.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;

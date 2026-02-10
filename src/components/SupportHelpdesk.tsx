@@ -64,7 +64,7 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
       case "open":
         return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">Open</Badge>;
       case "in-progress":
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">In Progress</Badge>;
+        return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">In Progress</Badge>;
       case "resolved":
         return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">Resolved</Badge>;
       default:

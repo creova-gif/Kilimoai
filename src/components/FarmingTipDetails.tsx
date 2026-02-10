@@ -97,21 +97,21 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
       </div>
 
       {/* Context Info */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="pt-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
+      <Card className="border-gray-200 bg-gray-50">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <Leaf className="h-4 w-4 text-blue-600" />
+              <Leaf className="h-4 w-4 text-green-600" />
               <div>
-                <p className="text-blue-600">Crop</p>
-                <p className="font-medium text-blue-900">{crop}</p>
+                <p className="text-gray-600">Crop</p>
+                <p className="font-medium text-gray-900">{crop}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-blue-600" />
+              <Calendar className="h-4 w-4 text-green-600" />
               <div>
-                <p className="text-blue-600">Best Timing</p>
-                <p className="font-medium text-blue-900">{currentTip.timing}</p>
+                <p className="text-gray-600">Best Timing</p>
+                <p className="font-medium text-gray-900">{currentTip.timing}</p>
               </div>
             </div>
           </div>

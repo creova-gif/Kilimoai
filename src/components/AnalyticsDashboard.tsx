@@ -100,7 +100,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 rounded-3xl p-6 text-white">
+      <div className="relative overflow-hidden bg-[#2E7D32] rounded-3xl p-6 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
         
@@ -157,8 +157,8 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize whitespace-nowrap
               ${timeRange === range
-                ? "bg-purple-600 text-white shadow-lg"
-                : "bg-white text-gray-700 border border-gray-200 hover:border-purple-300"
+                ? "bg-[#2E7D32] text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-green-300"
               }
             `}
           >
@@ -190,13 +190,13 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
         </Card>
 
         {/* Profit Margin */}
-        <Card className="hover:shadow-lg transition-all border-2 border-blue-200">
+        <Card className="hover:shadow-lg transition-all border-2 border-gray-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-blue-100 rounded-xl">
-                <Target className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-gray-100 rounded-xl">
+                <Target className="h-5 w-5 text-gray-700" />
               </div>
-              <Badge className="bg-blue-100 text-blue-700">
+              <Badge className="bg-gray-100 text-gray-700">
                 Excellent
               </Badge>
             </div>
@@ -229,13 +229,13 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
         </Card>
 
         {/* Farm Health */}
-        <Card className="hover:shadow-lg transition-all border-2 border-purple-200">
+        <Card className="hover:shadow-lg transition-all border-2 border-gray-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-purple-100 rounded-xl">
-                <Activity className="h-5 w-5 text-purple-600" />
+              <div className="p-2 bg-gray-100 rounded-xl">
+                <Activity className="h-5 w-5 text-gray-700" />
               </div>
-              <Badge className="bg-purple-100 text-purple-700">
+              <Badge className="bg-gray-100 text-gray-700">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Healthy
               </Badge>
@@ -301,7 +301,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
                   </div>
                   <div className="text-center p-3 bg-white rounded-lg">
                     <p className="text-xs text-gray-600 mb-1">Per Acre</p>
-                    <p className="text-lg font-bold text-blue-600">
+                    <p className="text-lg font-bold text-gray-900">
                       {(crop.yield / crop.acres).toFixed(1)} T
                     </p>
                   </div>
@@ -318,7 +318,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
+              <TrendingUp className="h-5 w-5 text-gray-700" />
               Revenue & Profit Trend
             </CardTitle>
             <CardDescription>Last 6 months performance</CardDescription>
@@ -333,7 +333,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
                       <span className="text-green-600 font-bold">
                         +{(month.revenue / 1000000).toFixed(1)}M
                       </span>
-                      <span className="text-blue-600 font-bold">
+                      <span className="text-gray-700 font-bold">
                         {(month.profit / 1000000).toFixed(1)}M
                       </span>
                     </div>
@@ -345,9 +345,9 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
                         style={{ width: `${(month.revenue / 3500000) * 100}%` }}
                       />
                     </div>
-                    <div className="flex-1 bg-blue-100 rounded-full h-2">
+                    <div className="flex-1 bg-gray-100 rounded-full h-2">
                       <div
-                        className="bg-blue-600 rounded-full h-2"
+                        className="bg-gray-600 rounded-full h-2"
                         style={{ width: `${(month.profit / 2000000) * 100}%` }}
                       />
                     </div>
@@ -362,7 +362,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-purple-600" />
+              <PieChart className="h-5 w-5 text-gray-700" />
               Resource Utilization
             </CardTitle>
             <CardDescription>Efficiency metrics for key resources</CardDescription>
@@ -371,8 +371,8 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
             {resourceUtilization.map((resource, idx) => {
               const Icon = resource.icon;
               const colorMap: Record<string, string> = {
-                blue: "bg-blue-500",
-                purple: "bg-purple-500",
+                blue: "bg-gray-500",
+                purple: "bg-gray-500",
                 green: "bg-green-500",
                 orange: "bg-orange-500"
               };
@@ -415,12 +415,12 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
               const iconMap = {
                 success: <CheckCircle className="h-5 w-5 text-green-600" />,
                 warning: <AlertCircle className="h-5 w-5 text-yellow-600" />,
-                info: <Activity className="h-5 w-5 text-blue-600" />
+                info: <Activity className="h-5 w-5 text-gray-700" />
               };
               const bgMap = {
                 success: "bg-green-50 border-green-200",
                 warning: "bg-yellow-50 border-yellow-200",
-                info: "bg-blue-50 border-blue-200"
+                info: "bg-gray-50 border-gray-200"
               };
               
               return (

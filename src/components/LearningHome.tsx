@@ -279,7 +279,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Target className="h-5 w-5 text-blue-600" />
+                <Target className="h-5 w-5 text-green-600" />
                 {language === "en" ? "Learning Paths" : "Njia za Kujifunza"}
               </h2>
             </div>

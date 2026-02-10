@@ -110,7 +110,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Farmer Lab" : "Maabara ya Mkulima"}
               </h1>
-              <p className="text-purple-100 text-sm">
+              <p className="text-green-100 text-sm">
                 {language === "en" 
                   ? "Experiment, learn, and share discoveries"
                   : "Jaribu, jifunze, na shiriki ugunduzi"}
@@ -182,7 +182,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
                 onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                   showVerifiedOnly
-                    ? "bg-blue-100 text-blue-700 border-2 border-blue-300"
+                    ? "bg-gray-100 text-gray-700 border-2 border-gray-300"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
@@ -209,7 +209,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
               const cat = categories.find(c => c.id === exp.category);
               
               return (
-                <Card key={exp.id} className="border-2 border-gray-200 hover:border-purple-300 hover:shadow-md transition-all">
+                <Card key={exp.id} className="border-2 border-gray-200 hover:border-green-300 hover:shadow-md transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -218,7 +218,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
                             {cat?.label}
                           </Badge>
                           {exp.verified && (
-                            <Badge className="bg-blue-100 text-blue-700 border-blue-200 border-2">
+                            <Badge className="bg-gray-100 text-gray-700 border-gray-200 border-2">
                               <CheckCircle className="h-3 w-3 mr-1" />
                               {language === "en" ? "Verified" : "Imethibitishwa"}
                             </Badge>
@@ -283,11 +283,11 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
                           <ThumbsUp className="h-4 w-4" />
                           <span className="font-medium">{exp.likes}</span>
                         </button>
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+                        <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
                           <MessageCircle className="h-4 w-4" />
                           <span className="font-medium">{exp.comments}</span>
                         </button>
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors">
+                        <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
                           <Share2 className="h-4 w-4" />
                           {language === "en" ? "Share" : "Shiriki"}
                         </button>

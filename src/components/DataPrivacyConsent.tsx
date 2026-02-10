@@ -76,11 +76,11 @@ export function DataPrivacyConsent() {
       case "essential":
         return <Badge className="bg-green-100 text-green-700 border-green-300">Essential</Badge>;
       case "analytics":
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-300">Analytics</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Analytics</Badge>;
       case "marketing":
-        return <Badge className="bg-purple-100 text-purple-700 border-purple-300">Marketing</Badge>;
+        return <Badge className="bg-orange-100 text-orange-700 border-orange-300">Marketing</Badge>;
       case "sharing":
-        return <Badge className="bg-orange-100 text-orange-700 border-orange-300">Data Sharing</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">Data Sharing</Badge>;
       default:
         return null;
     }
@@ -89,7 +89,7 @@ export function DataPrivacyConsent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white border-0">
+      <Card className="bg-[#2E7D32] text-white border-0">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Shield className="h-6 w-6" />
@@ -102,35 +102,35 @@ export function DataPrivacyConsent() {
       </Card>
 
       {/* Privacy Principles */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-green-200 bg-green-50">
         <CardHeader>
-          <CardTitle className="text-blue-900">Our Privacy Commitment</CardTitle>
+          <CardTitle className="text-gray-900">Our Privacy Commitment</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-1">Your Data is Secure</h4>
-                <p className="text-blue-800">
+                <h4 className="font-medium text-gray-900 mb-1">Your Data is Secure</h4>
+                <p className="text-gray-700">
                   All personal information is encrypted and protected according to Tanzania Data Protection Act 2022.
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Eye className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Eye className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-1">Transparent Use</h4>
-                <p className="text-blue-800">
+                <h4 className="font-medium text-gray-900 mb-1">Transparent Use</h4>
+                <p className="text-gray-700">
                   We clearly explain how we use your data and will never share it without your permission.
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Database className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Database className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-1">Revenue Sharing</h4>
-                <p className="text-blue-800">
+                <h4 className="font-medium text-gray-900 mb-1">Revenue Sharing</h4>
+                <p className="text-gray-700">
                   If we monetize anonymized data, you receive a fair share of the revenue.
                 </p>
               </div>
@@ -226,10 +226,10 @@ export function DataPrivacyConsent() {
       </Card>
 
       {/* Data Sharing Revenue */}
-      <Card className="border-purple-200 bg-purple-50">
+      <Card className="border-green-200 bg-green-50">
         <CardHeader>
-          <CardTitle className="text-purple-900">Data Sharing Revenue</CardTitle>
-          <CardDescription className="text-purple-700">
+          <CardTitle className="text-gray-900">Data Sharing Revenue</CardTitle>
+          <CardDescription className="text-gray-700">
             Earn from anonymized data products
           </CardDescription>
         </CardHeader>
@@ -237,13 +237,13 @@ export function DataPrivacyConsent() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-purple-900">Your Total Earnings</p>
-                <p className="text-sm text-purple-700">From data sharing (last 6 months)</p>
+                <p className="font-medium text-gray-900">Your Total Earnings</p>
+                <p className="text-sm text-gray-700">From data sharing (last 6 months)</p>
               </div>
-              <p className="text-2xl font-bold text-purple-900">12,500 TZS</p>
+              <p className="text-2xl font-bold text-green-600">12,500 TZS</p>
             </div>
             
-            <div className="border-t border-purple-200 pt-3 text-sm text-purple-800">
+            <div className="border-t border-green-200 pt-3 text-sm text-gray-700">
               <p className="mb-2">
                 <strong>How it works:</strong> When you consent to "Anonymized Research Data", 
                 we may include your farming data (without personal identifiers) in aggregated 
@@ -255,7 +255,7 @@ export function DataPrivacyConsent() {
               </p>
             </div>
 
-            <Button className="w-full bg-purple-600 hover:bg-purple-700">
+            <Button className="w-full bg-green-600 hover:bg-green-700">
               View Revenue Details
             </Button>
           </div>

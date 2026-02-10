@@ -344,17 +344,17 @@ export function UniversalCaptureFlow({ mode, language, onCapture, onClose }: Uni
         {step === "intro" && (
           <div className="p-6 space-y-6 max-w-2xl mx-auto">
             {/* Tips Card */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-start gap-3">
-                <Lightbulb className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-blue-900 mb-2">
+                <Lightbulb className="h-6 w-6 text-gray-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
                     {language === "en" ? "Tips for Best Results" : "Vidokezo kwa Matokeo Bora"}
                   </h3>
                   <ul className="space-y-2">
                     {config.tips[language].map((tip, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-blue-800">
-                        <Check className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-600" />
+                      <li key={idx} className="flex items-start gap-2 text-sm text-gray-800">
+                        <Check className="h-4 w-4 flex-shrink-0 mt-0.5 text-gray-600" />
                         <span>{tip}</span>
                       </li>
                     ))}
@@ -449,7 +449,7 @@ export function UniversalCaptureFlow({ mode, language, onCapture, onClose }: Uni
               {/* Voice Button */}
               <button
                 onClick={startVoiceRecording}
-                className="w-full bg-purple-600 text-white rounded-xl p-6 flex items-center gap-4 hover:bg-purple-700 transition-all shadow-lg"
+                className="w-full bg-green-600 text-white rounded-xl p-6 flex items-center gap-4 hover:bg-green-700 transition-all shadow-lg"
               >
                 <div className="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center">
                   <Mic className="h-7 w-7" />
@@ -495,8 +495,8 @@ export function UniversalCaptureFlow({ mode, language, onCapture, onClose }: Uni
                     )}
                     {config.guidanceOverlay === "animal" && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-80 h-96 border-4 border-blue-400 border-dashed rounded-2xl animate-pulse">
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                        <div className="w-80 h-96 border-4 border-gray-400 border-dashed rounded-2xl animate-pulse">
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
                             {language === "en" ? "Center the animal" : "Weka mnyama katikati"}
                           </div>
                         </div>
@@ -621,7 +621,7 @@ export function UniversalCaptureFlow({ mode, language, onCapture, onClose }: Uni
                         </div>
                       </div>
                       <div className={`text-center p-2 rounded ${
-                        qualityCheck.distance === "optimal" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
+                        qualityCheck.distance === "optimal" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
                       }`}>
                         <Maximize2 className="h-4 w-4 mx-auto mb-1" />
                         <div className="font-medium">
@@ -638,9 +638,9 @@ export function UniversalCaptureFlow({ mode, language, onCapture, onClose }: Uni
 
             {/* Voice Preview */}
             {capturedVoice && (
-              <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 bg-purple-600 rounded-full flex items-center justify-center">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="h-12 w-12 bg-gray-600 rounded-full flex items-center justify-center">
                     <Volume2 className="h-6 w-6 text-white" />
                   </div>
                   <div className="flex-1">

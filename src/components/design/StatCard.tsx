@@ -16,9 +16,9 @@ interface StatCardProps {
 export function StatCard({ label, value, icon, trend, color = "green", delay = 0 }: StatCardProps) {
   const colorClasses = {
     green: "from-green-50 to-emerald-50 border-green-200 text-green-700",
-    blue: "from-blue-50 to-cyan-50 border-blue-200 text-blue-700",
+    blue: "from-gray-50 to-gray-100 border-gray-200 text-gray-700",
     orange: "from-orange-50 to-amber-50 border-orange-200 text-orange-700",
-    purple: "from-purple-50 to-pink-50 border-purple-200 text-purple-700",
+    purple: "from-gray-50 to-gray-100 border-gray-200 text-gray-700",
     red: "from-red-50 to-rose-50 border-red-200 text-red-700"
   }[color];
 

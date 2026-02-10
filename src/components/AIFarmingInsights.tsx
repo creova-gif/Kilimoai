@@ -25,16 +25,16 @@ export function AIFarmingInsights({ insights, language }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
+      <Card className="border-2 border-gray-200 bg-gray-50">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <CardTitle className="flex items-center gap-2">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Brain className="h-5 w-5 text-purple-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Brain className="h-5 w-5 text-gray-700" />
               </div>
               {language === "sw" ? "Ushauri wa AI" : "AI Farming Insights"}
             </CardTitle>
-            <Badge className="bg-purple-100 text-purple-700 border-purple-300">
+            <Badge className="bg-gray-100 text-gray-700 border-gray-300">
               {language === "sw" ? "Akili Bandia" : "AI-Powered"}
             </Badge>
           </div>

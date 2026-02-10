@@ -95,7 +95,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
       case "success": return "text-green-600 bg-green-100";
       case "warning": return "text-yellow-600 bg-yellow-100";
       case "alert": return "text-red-600 bg-red-100";
-      default: return "text-blue-600 bg-blue-100";
+      default: return "text-gray-600 bg-gray-100";
     }
   };
 
@@ -148,8 +148,8 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
       <div className="p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-blue-100 rounded-xl">
-              <Bell className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-gray-100 rounded-xl">
+              <Bell className="h-5 w-5 text-gray-600" />
             </div>
             <div>
               <h2 className="font-bold text-lg text-gray-900">Notifications</h2>
@@ -171,7 +171,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all
               ${filter === "all" 
-                ? "bg-blue-600 text-white" 
+                ? "bg-green-600 text-white" 
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }
             `}
@@ -183,7 +183,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all
               ${filter === "unread" 
-                ? "bg-blue-600 text-white" 
+                ? "bg-green-600 text-white" 
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }
             `}
@@ -193,7 +193,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="ml-auto px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+              className="ml-auto px-3 py-2 text-xs font-medium text-green-600 hover:bg-green-50 rounded-xl transition-colors"
             >
               Mark all read
             </button>
@@ -226,13 +226,13 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
                   relative p-4 rounded-2xl border-2 transition-all cursor-pointer group
                   ${notification.read 
                     ? "bg-white border-gray-200" 
-                    : "bg-blue-50 border-blue-200 shadow-sm"
+                    : "bg-gray-50 border-gray-200 shadow-sm"
                   }
                 `}
                 onClick={() => markAsRead(notification.id)}
               >
                 {!notification.read && (
-                  <div className="absolute top-4 right-4 w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-green-600 rounded-full"></div>
                 )}
 
                 <div className="flex gap-3">

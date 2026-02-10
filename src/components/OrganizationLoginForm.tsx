@@ -42,11 +42,11 @@ export function OrganizationLoginForm({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 p-4">
       <Card className="w-full max-w-md shadow-2xl border-0">
         <CardHeader className="space-y-4 text-center pb-8">
           <div className="flex justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-green-600 to-green-700 text-white shadow-xl">
               <Building2 className="h-10 w-10" />
             </div>
           </div>
@@ -115,7 +115,7 @@ export function OrganizationLoginForm({
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 h-12 shadow-lg"
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 h-12 shadow-lg"
               disabled={loading || !formData.orgType}
             >
               {loading ? "Logging in..." : "Access Dashboard"}
@@ -127,7 +127,7 @@ export function OrganizationLoginForm({
                 <button
                   type="button"
                   onClick={onSwitchToFarmer}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-green-600 hover:text-green-700 font-medium"
                 >
                   Login here
                 </button>

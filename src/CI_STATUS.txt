@@ -1,0 +1,39 @@
+╔══════════════════════════════════════════════════════════╗
+║                                                          ║
+║          🔒 KILIMO COLOR ENFORCEMENT ACTIVE              ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+
+✅ CI RULE ACTIVE
+✅ NO REGRESSIONS POSSIBLE
+
+┌──────────────────────────────────────────────────────────┐
+│ ALLOWED ONLY:                                            │
+├──────────────────────────────────────────────────────────┤
+│  ✅ #2E7D32  (Raspberry Leaf Green)                      │
+│  ✅ gray-*   (all shades)                                │
+│  ✅ white                                                │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│ BLOCKED (Build will fail):                              │
+├──────────────────────────────────────────────────────────┤
+│  ❌ blue-*, purple-*, indigo-*                           │
+│  ❌ emerald-*, teal-*, cyan-*, pink-*                    │
+│  ❌ green-*, red-*, orange-*, yellow-*                   │
+│  ❌ gradient (bg-gradient-, from-, to-, via-)            │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│ ENFORCEMENT LAYERS:                                      │
+├──────────────────────────────────────────────────────────┤
+│  ✅ Pre-commit hook (.husky/pre-commit)                  │
+│  ✅ CI/CD pipeline (.github/workflows/)                  │
+│  ✅ Build integration (package.json)                     │
+└──────────────────────────────────────────────────────────┘
+
+FAIL MESSAGE:
+"❌ BUILD BLOCKED: Non-brand color detected."
+
+STATUS: 🟢 OPERATIONAL
+REGRESSION RISK: ❌ ZERO

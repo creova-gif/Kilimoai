@@ -298,28 +298,28 @@ export function AgribusinessDashboard({
         {/* Supply Forecast Tab */}
         {activeTab === "supply-forecast" && (
           <div className="space-y-6">
-            <Card className="bg-gradient-to-r from-orange-600 to-red-600 text-white">
+            <Card className="bg-[#2E7D32] text-white">
               <CardContent className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Guaranteed Supply Forecasting</h3>
-                <p className="text-orange-100 mb-4">
+                <p className="text-green-100 mb-4">
                   AI-powered predictions BEFORE harvest happens. Plan factory capacity, prepare containers, and negotiate contracts in advance.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <p className="text-3xl font-bold">412 tons</p>
-                    <p className="text-sm text-orange-100">Expected May</p>
+                    <p className="text-sm text-green-100">Expected May</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold">8,234</p>
-                    <p className="text-sm text-orange-100">Active Farmers</p>
+                    <p className="text-sm text-green-100">Active Farmers</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold">98.2%</p>
-                    <p className="text-sm text-orange-100">Forecast Accuracy</p>
+                    <p className="text-sm text-green-100">Forecast Accuracy</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold">23 days</p>
-                    <p className="text-sm text-orange-100">Next Harvest</p>
+                    <p className="text-sm text-green-100">Next Harvest</p>
                   </div>
                 </div>
               </CardContent>
@@ -447,10 +447,10 @@ export function AgribusinessDashboard({
         {/* Farmer Mapping Tab */}
         {activeTab === "farmer-map" && (
           <div className="space-y-6">
-            <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <Card className="bg-gray-900 text-white">
               <CardContent className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Real-Time Farmer Mapping</h3>
-                <p className="text-blue-100 mb-4">
+                <p className="text-gray-100 mb-4">
                   See where every farmer is located, farm size, crop history, disease zones, and delivery distance for logistics optimization.
                 </p>
                 <div className="flex gap-2">
@@ -470,7 +470,7 @@ export function AgribusinessDashboard({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <MapPin className="h-8 w-8 text-blue-600" />
+                    <MapPin className="h-8 w-8 text-gray-700" />
                     <div>
                       <p className="text-sm text-gray-600">Mapped Farms</p>
                       <p className="text-2xl font-bold">11,234</p>
@@ -551,15 +551,15 @@ export function AgribusinessDashboard({
                 </CardContent>
               </Card>
 
-              <Card className="bg-purple-50 border-purple-200">
+              <Card className="bg-gray-50 border-gray-200">
                 <CardContent className="p-6">
                   <h3 className="font-bold text-lg mb-2">Disease Risk Zones</h3>
                   <p className="text-gray-700 mb-4">
                     Identify disease-prone areas to adjust quality expectations and buying strategies.
                   </p>
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-purple-600" />
-                    <span className="font-bold text-purple-600">3 high-risk zones identified</span>
+                    <AlertTriangle className="h-5 w-5 text-gray-700" />
+                    <span className="font-bold text-gray-900">3 high-risk zones identified</span>
                   </div>
                 </CardContent>
               </Card>
@@ -570,7 +570,7 @@ export function AgribusinessDashboard({
         {/* Communication Tab */}
         {activeTab === "communication" && (
           <div className="space-y-6">
-            <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+            <Card className="bg-[#2E7D32] text-white">
               <CardContent className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Direct Farmer Communication</h3>
                 <p className="text-green-100 mb-4">
@@ -705,7 +705,7 @@ export function AgribusinessDashboard({
               </Card>
             </div>
 
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-gray-50 border-gray-200">
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg mb-2">Cost Savings: 40-60%</h3>
                 <p className="text-gray-700">
@@ -719,28 +719,28 @@ export function AgribusinessDashboard({
         {/* Contract Farming Tab */}
         {activeTab === "contracts" && (
           <div className="space-y-6">
-            <Card className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+            <Card className="bg-[#2E7D32] text-white">
               <CardContent className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Contract Farming Management</h3>
-                <p className="text-purple-100 mb-4">
+                <p className="text-green-100 mb-4">
                   Digitally manage inputs, track repayments, monitor compliance, and predict default risk. Increases contract success rates.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <p className="text-2xl font-bold">2,456</p>
-                    <p className="text-sm text-purple-100">Active Contracts</p>
+                    <p className="text-sm text-green-100">Active Contracts</p>
                   </div>
                   <div>
                     <p className="text-2xl font-bold">$234K</p>
-                    <p className="text-sm text-purple-100">Inputs Issued</p>
+                    <p className="text-sm text-green-100">Inputs Issued</p>
                   </div>
                   <div>
                     <p className="text-2xl font-bold">89.5%</p>
-                    <p className="text-sm text-purple-100">Repayment Rate</p>
+                    <p className="text-sm text-green-100">Repayment Rate</p>
                   </div>
                   <div>
                     <p className="text-2xl font-bold">94.2%</p>
-                    <p className="text-sm text-purple-100">Compliance</p>
+                    <p className="text-sm text-green-100">Compliance</p>
                   </div>
                 </div>
               </CardContent>
@@ -831,28 +831,28 @@ export function AgribusinessDashboard({
         {/* Quality Control Tab */}
         {activeTab === "quality" && (
           <div className="space-y-6">
-            <Card className="bg-gradient-to-r from-indigo-600 to-blue-700 text-white">
+            <Card className="bg-[#2E7D32] text-white">
               <CardContent className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Quality Control & Consistency</h3>
-                <p className="text-blue-100 mb-4">
+                <p className="text-green-100 mb-4">
                   AI crop disease detection, soil quality estimation, and grading tools ensure higher-quality produce with fewer rejects.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <p className="text-2xl font-bold">94.2%</p>
-                    <p className="text-sm text-blue-100">Disease-Free</p>
+                    <p className="text-sm text-green-100">Disease-Free</p>
                   </div>
                   <div>
                     <p className="text-2xl font-bold">78.5%</p>
-                    <p className="text-sm text-blue-100">Grade A Quality</p>
+                    <p className="text-sm text-green-100">Grade A Quality</p>
                   </div>
                   <div>
                     <p className="text-2xl font-bold">1.8%</p>
-                    <p className="text-sm text-blue-100">Rejection Rate</p>
+                    <p className="text-sm text-green-100">Rejection Rate</p>
                   </div>
                   <div>
                     <p className="text-2xl font-bold">13.2%</p>
-                    <p className="text-sm text-blue-100">Avg Moisture</p>
+                    <p className="text-sm text-green-100">Avg Moisture</p>
                   </div>
                 </div>
               </CardContent>
@@ -1021,8 +1021,8 @@ export function AgribusinessDashboard({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <Globe className="h-6 w-6 text-blue-600 mb-2" />
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <Globe className="h-6 w-6 text-gray-700 mb-2" />
                     <p className="text-2xl font-bold">{traceabilityData.geoTaggedFarms.toLocaleString()}</p>
                     <p className="text-sm text-gray-600">Geo-tagged Farms</p>
                   </div>
@@ -1031,14 +1031,14 @@ export function AgribusinessDashboard({
                     <p className="text-2xl font-bold">{traceabilityData.certifiedFarmers.toLocaleString()}</p>
                     <p className="text-sm text-gray-600">Certified Farmers</p>
                   </div>
-                  <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                    <Award className="h-6 w-6 text-purple-600 mb-2" />
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <Award className="h-6 w-6 text-gray-700 mb-2" />
                     <p className="text-2xl font-bold">{traceabilityData.organicCertified.toLocaleString()}</p>
                     <p className="text-sm text-gray-600">Organic Certified</p>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg">
+                <div className="p-4 bg-[#2E7D32] text-white rounded-lg">
                   <h4 className="font-bold mb-2">Export Market Ready</h4>
                   <p className="text-sm text-green-100 mb-3">
                     Full farm-to-market traceability enables access to high-value international markets and compliance with:

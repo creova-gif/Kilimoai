@@ -169,7 +169,7 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "low": return "bg-blue-100 text-blue-800";
+      case "low": return "bg-gray-100 text-gray-800";
       case "medium": return "bg-yellow-100 text-yellow-800";
       case "high": return "bg-orange-100 text-orange-800";
       case "critical": return "bg-red-100 text-red-800";
@@ -180,7 +180,7 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
   const getHealthStatusColor = (status: string) => {
     switch (status) {
       case "healthy": return "bg-green-100 text-green-800";
-      case "recovering": return "bg-blue-100 text-blue-800";
+      case "recovering": return "bg-gray-100 text-gray-800";
       case "sick": return "bg-orange-100 text-orange-800";
       case "critical": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
@@ -219,8 +219,8 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                 <p className="text-xs text-gray-600">Total Animals</p>
                 <p className="text-2xl font-bold">{animals.length}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Heart className="h-5 w-5 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <Heart className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -461,9 +461,9 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
 
                 {/* Treatment Plan */}
                 {animal.treatmentPlan && (
-                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
+                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200">
                     <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                      <Pill className="h-4 w-4 text-blue-600" />
+                      <Pill className="h-4 w-4 text-gray-600" />
                       Active Treatment Plan
                     </h4>
                     <div className="space-y-3">
@@ -476,7 +476,7 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                         <p className="text-xs font-medium text-gray-600 mb-1">Treatments</p>
                         {animal.treatmentPlan.treatments.map((treatment, idx) => (
                           <div key={idx} className="flex items-start gap-2 text-sm mb-1">
-                            <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5" />
+                            <CheckCircle2 className="h-4 w-4 text-gray-600 mt-0.5" />
                             <span>{treatment}</span>
                           </div>
                         ))}
@@ -487,7 +487,7 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                         {animal.treatmentPlan.medications.map((med, idx) => (
                           <div key={idx} className="bg-white p-2 rounded text-sm mb-2">
                             <p className="font-medium flex items-center gap-2">
-                              <Syringe className="h-3 w-3 text-blue-600" />
+                              <Syringe className="h-3 w-3 text-gray-600" />
                               {med.name}
                             </p>
                             <div className="text-xs text-gray-600 mt-1 grid grid-cols-3 gap-2">
@@ -499,7 +499,7 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                         ))}
                       </div>
 
-                      <div className="grid grid-cols-3 gap-4 pt-2 border-t border-blue-200">
+                      <div className="grid grid-cols-3 gap-4 pt-2 border-t border-gray-200">
                         <div>
                           <p className="text-xs text-gray-600">Follow-up</p>
                           <p className="text-sm font-semibold flex items-center gap-1">
@@ -528,12 +528,12 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                 {animal.vaccinations.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                      <Syringe className="h-4 w-4 text-purple-600" />
+                      <Syringe className="h-4 w-4 text-gray-600" />
                       Vaccination Schedule
                     </h4>
                     <div className="grid md:grid-cols-2 gap-2">
                       {animal.vaccinations.map((vac, idx) => (
-                        <div key={idx} className="bg-purple-50 p-3 rounded border border-purple-200">
+                        <div key={idx} className="bg-gray-50 p-3 rounded border border-gray-200">
                           <p className="font-medium text-sm">{vac.name}</p>
                           <div className="flex items-center justify-between mt-1">
                             <p className="text-xs text-gray-600">

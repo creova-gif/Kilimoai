@@ -1,486 +1,1108 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Badge } from "./ui/badge";
-import { Progress } from "./ui/progress";
-import { 
-  Plus, 
-  Trash2, 
-  MapPin, 
-  TrendingUp, 
-  DollarSign,
-  Calculator,
-  PieChart,
-  AlertCircle,
-  CheckCircle2,
-  Edit2
-} from "lucide-react";
 import { toast } from "sonner@2.0.3";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Textarea } from "./ui/textarea";
+import { projectId, publicAnonKey } from "../utils/supabase/info";
+import { generateTasksFromTemplate } from "./TaskGenerationEngine";
+import type { GrowingTemplate as TemplateForTaskGen } from "./TaskGenerationEngine";
 
-interface CropAllocation {
+// ==========================================
+// TYPE DEFINITIONS - 3-Layer Architecture
+// ==========================================
+
+interface CropProfile {
   id: string;
-  crop: string;
+  name: string;
+  variety?: string;
+  category: "grain" | "legume" | "vegetable" | "fruit" | "cash";
+  growthCycle: number; // days
+  perennial: boolean;
+  yieldRange: { min: number; max: number }; // tons/acre
+  marketPrice: number; // TZS/kg
+  soilPreference?: string;
+  climateSensitivity?: string;
+  createdAt: string;
+}
+
+interface GrowingTemplate {
+  id: string;
+  cropId: string;
+  name: string; // e.g., "Rainfed High Density", "Irrigated Standard"
+  plantingMethod: string;
+  spacing: string;
+  expectedYield: number; // tons/acre
+  growthStages: { name: string; days: number }[];
+  inputs: { name: string; quantity: string; timing: string }[];
+  isDefault: boolean;
+  createdAt: string;
+}
+
+interface CropPlanEntry {
+  id: string;
+  cropId: string;
+  templateId: string;
   acres: number;
-  expectedYield: number; // tons per acre
-  estimatedRevenue: number;
   plantingDate?: string;
   harvestDate?: string;
   status: "planned" | "planted" | "growing" | "harvesting";
+  expectedYield: number;
+  estimatedRevenue: number;
 }
 
 interface FarmLandAllocationProps {
-  totalFarmSize: number; // in acres
+  totalFarmSize?: number;
   userId: string;
-  region: string;
+  language?: "en" | "sw";
+  region?: string;
 }
 
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
+
 export function FarmLandAllocation({ 
-  totalFarmSize,
+  totalFarmSize = 100,
   userId,
-  region 
+  language = "en",
+  region
 }: FarmLandAllocationProps) {
-  const [allocations, setAllocations] = useState<CropAllocation[]>([
+  
+  // ==========================================
+  // STATE MANAGEMENT
+  // ==========================================
+  
+  // Layer 1: Crop Library (Knowledge)
+  const [cropProfiles, setCropProfiles] = useState<CropProfile[]>([
     {
       id: "1",
-      crop: "Maize",
-      acres: 40,
-      expectedYield: 2.5,
-      estimatedRevenue: 8000000,
-      plantingDate: "2024-02-15",
-      harvestDate: "2024-06-30",
-      status: "planted"
+      name: "Maize",
+      variety: "Hybrid DK8031",
+      category: "grain",
+      growthCycle: 120,
+      perennial: false,
+      yieldRange: { min: 2.0, max: 4.0 },
+      marketPrice: 800,
+      soilPreference: "Loam, Clay Loam",
+      climateSensitivity: "Moderate drought tolerance",
+      createdAt: "2024-01-01"
     },
     {
       id: "2",
-      crop: "Beans",
-      acres: 25,
-      expectedYield: 1.8,
-      estimatedRevenue: 4500000,
-      plantingDate: "2024-02-20",
-      harvestDate: "2024-05-20",
-      status: "planted"
+      name: "Beans",
+      variety: "Lyamungu 90",
+      category: "legume",
+      growthCycle: 90,
+      perennial: false,
+      yieldRange: { min: 1.2, max: 2.5 },
+      marketPrice: 2000,
+      soilPreference: "Well-drained loam",
+      climateSensitivity: "Low drought tolerance",
+      createdAt: "2024-01-01"
     },
     {
       id: "3",
-      crop: "Sunflower",
-      acres: 20,
-      expectedYield: 1.2,
-      estimatedRevenue: 2400000,
-      status: "planned"
+      name: "Sunflower",
+      category: "cash",
+      growthCycle: 110,
+      perennial: false,
+      yieldRange: { min: 0.8, max: 1.8 },
+      marketPrice: 1500,
+      soilPreference: "Sandy loam",
+      climateSensitivity: "High drought tolerance",
+      createdAt: "2024-01-01"
+    },
+    {
+      id: "4",
+      name: "Tomatoes",
+      category: "vegetable",
+      growthCycle: 85,
+      perennial: false,
+      yieldRange: { min: 10.0, max: 20.0 },
+      marketPrice: 600,
+      soilPreference: "Rich loam",
+      climateSensitivity: "Requires consistent moisture",
+      createdAt: "2024-01-01"
+    },
+    {
+      id: "5",
+      name: "Rice",
+      category: "grain",
+      growthCycle: 120,
+      perennial: false,
+      yieldRange: { min: 2.5, max: 4.5 },
+      marketPrice: 1200,
+      soilPreference: "Clay, requires flooding",
+      climateSensitivity: "Requires consistent water",
+      createdAt: "2024-01-01"
     }
   ]);
 
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newCrop, setNewCrop] = useState("");
-  const [newAcres, setNewAcres] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  // Crop yield database (tons/acre) and price (TZS/kg)
-  const cropDatabase: Record<string, { yield: number; price: number }> = {
-    "Maize": { yield: 2.5, price: 800 },
-    "Beans": { yield: 1.8, price: 2000 },
-    "Rice": { yield: 3.0, price: 1200 },
-    "Sunflower": { yield: 1.2, price: 1500 },
-    "Coffee": { yield: 0.8, price: 5000 },
-    "Cashews": { yield: 0.6, price: 4000 },
-    "Tomatoes": { yield: 15.0, price: 600 },
-    "Onions": { yield: 12.0, price: 700 },
-    "Wheat": { yield: 2.0, price: 900 },
-  };
-
-  const availableCrops = Object.keys(cropDatabase);
-
-  const allocatedAcres = allocations.reduce((sum, a) => sum + a.acres, 0);
-  const unallocatedAcres = totalFarmSize - allocatedAcres;
-  const totalExpectedRevenue = allocations.reduce((sum, a) => sum + a.estimatedRevenue, 0);
-
-  const handleAddAllocation = () => {
-    if (!newCrop || !newAcres) {
-      toast.error("Please select a crop and enter acreage");
-      return;
+  // Layer 2: Growing Templates (How you farm)
+  const [growingTemplates, setGrowingTemplates] = useState<GrowingTemplate[]>([
+    {
+      id: "t1",
+      cropId: "1", // Maize
+      name: "Rainfed Standard",
+      plantingMethod: "Rows",
+      spacing: "75cm × 25cm",
+      expectedYield: 2.5,
+      growthStages: [
+        { name: "Germination", days: 10 },
+        { name: "Vegetative", days: 40 },
+        { name: "Flowering", days: 30 },
+        { name: "Grain Fill", days: 40 }
+      ],
+      inputs: [
+        { name: "DAP Fertilizer", quantity: "50kg/acre", timing: "At planting" },
+        { name: "Urea", quantity: "50kg/acre", timing: "35 days after planting" }
+      ],
+      isDefault: true,
+      createdAt: "2024-01-01"
+    },
+    {
+      id: "t2",
+      cropId: "1", // Maize
+      name: "Irrigated High Density",
+      plantingMethod: "Rows",
+      spacing: "60cm × 20cm",
+      expectedYield: 3.5,
+      growthStages: [
+        { name: "Germination", days: 10 },
+        { name: "Vegetative", days: 40 },
+        { name: "Flowering", days: 30 },
+        { name: "Grain Fill", days: 40 }
+      ],
+      inputs: [
+        { name: "DAP Fertilizer", quantity: "75kg/acre", timing: "At planting" },
+        { name: "Urea", quantity: "75kg/acre", timing: "35 days after planting" },
+        { name: "Irrigation", quantity: "Regular", timing: "Throughout season" }
+      ],
+      isDefault: false,
+      createdAt: "2024-01-01"
+    },
+    {
+      id: "t3",
+      cropId: "2", // Beans
+      name: "Standard Planting",
+      plantingMethod: "Rows",
+      spacing: "50cm × 10cm",
+      expectedYield: 1.8,
+      growthStages: [
+        { name: "Germination", days: 7 },
+        { name: "Vegetative", days: 35 },
+        { name: "Flowering", days: 25 },
+        { name: "Pod Fill", days: 23 }
+      ],
+      inputs: [
+        { name: "Rhizobium Inoculant", quantity: "As per seed", timing: "At planting" },
+        { name: "TSP", quantity: "20kg/acre", timing: "At planting" }
+      ],
+      isDefault: true,
+      createdAt: "2024-01-01"
+    },
+    {
+      id: "t4",
+      cropId: "3", // Sunflower
+      name: "Dryland Farming",
+      plantingMethod: "Rows",
+      spacing: "70cm × 30cm",
+      expectedYield: 1.2,
+      growthStages: [
+        { name: "Germination", days: 8 },
+        { name: "Vegetative", days: 40 },
+        { name: "Flowering", days: 30 },
+        { name: "Maturation", days: 32 }
+      ],
+      inputs: [
+        { name: "Compound Fertilizer", quantity: "30kg/acre", timing: "At planting" }
+      ],
+      isDefault: true,
+      createdAt: "2024-01-01"
     }
+  ]);
 
-    const acres = parseFloat(newAcres);
-    if (acres <= 0) {
-      toast.error("Acreage must be greater than 0");
-      return;
+  // Layer 3: Crop Plan (What you plant this season)
+  const [cropPlan, setCropPlan] = useState<CropPlanEntry[]>([
+    {
+      id: "p1",
+      cropId: "1",
+      templateId: "t1",
+      acres: 40,
+      plantingDate: "2024-02-15",
+      harvestDate: "2024-06-30",
+      status: "planted",
+      expectedYield: 2.5,
+      estimatedRevenue: 8000000
+    },
+    {
+      id: "p2",
+      cropId: "2",
+      templateId: "t3",
+      acres: 25,
+      plantingDate: "2024-02-20",
+      harvestDate: "2024-05-20",
+      status: "planted",
+      expectedYield: 1.8,
+      estimatedRevenue: 4500000
     }
+  ]);
 
-    if (acres > unallocatedAcres) {
-      toast.error(`Only ${unallocatedAcres.toFixed(1)} acres available`);
-      return;
-    }
+  // UI State
+  const [activeTab, setActiveTab] = useState("plan");
+  const [showAddCropDialog, setShowAddCropDialog] = useState(false);
+  const [showAddTemplateDialog, setShowAddTemplateDialog] = useState(false);
+  const [showAddPlanDialog, setShowAddPlanDialog] = useState(false);
+  const [selectedCropId, setSelectedCropId] = useState<string | null>(null);
 
-    const cropData = cropDatabase[newCrop];
-    const expectedYield = cropData.yield;
-    const estimatedRevenue = acres * expectedYield * 1000 * cropData.price; // Convert tons to kg
+  // ==========================================
+  // CALCULATIONS
+  // ==========================================
 
-    const newAllocation: CropAllocation = {
-      id: Date.now().toString(),
-      crop: newCrop,
-      acres,
-      expectedYield,
-      estimatedRevenue,
-      status: "planned"
-    };
+  const allocatedAcres = cropPlan.reduce((sum, entry) => sum + entry.acres, 0);
+  const availableAcres = totalFarmSize - allocatedAcres;
+  const totalRevenue = cropPlan.reduce((sum, entry) => sum + entry.estimatedRevenue, 0);
 
-    setAllocations([...allocations, newAllocation]);
-    setNewCrop("");
-    setNewAcres("");
-    setShowAddForm(false);
-    toast.success(`${acres} acres allocated to ${newCrop}`);
+  const getCropName = (cropId: string) => {
+    return cropProfiles.find(c => c.id === cropId)?.name || "Unknown";
   };
 
-  const handleRemoveAllocation = (id: string) => {
-    const allocation = allocations.find(a => a.id === id);
-    setAllocations(allocations.filter(a => a.id !== id));
-    toast.success(`${allocation?.crop} allocation removed`);
+  const getTemplateName = (templateId: string) => {
+    return growingTemplates.find(t => t.id === templateId)?.name || "Unknown";
   };
 
-  const handleUpdateStatus = (id: string, newStatus: CropAllocation["status"]) => {
-    setAllocations(allocations.map(a => 
-      a.id === id ? { ...a, status: newStatus } : a
-    ));
-    toast.success("Status updated");
-  };
+  // ==========================================
+  // TAB 1: CROP LIBRARY
+  // ==========================================
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "planned":
-        return "bg-gray-100 text-gray-700";
-      case "planted":
-        return "bg-blue-100 text-blue-700";
-      case "growing":
-        return "bg-green-100 text-green-700";
-      case "harvesting":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+  const CropLibraryView = () => (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {language === "sw" ? "Maktaba ya Mazao" : "Crop Library"}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {language === "sw" 
+              ? "Profaili za mazao zinazoweza kutumiwa tena" 
+              : "Reusable crop profiles with cultivation knowledge"}
+          </p>
+        </div>
+        <Button 
+          onClick={() => setShowAddCropDialog(true)}
+          className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          {language === "sw" ? "Ongeza" : "Add Crop"}
+        </Button>
+      </div>
 
-  const getCropColor = (index: number) => {
-    const colors = [
-      "bg-green-500",
-      "bg-blue-500",
-      "bg-yellow-500",
-      "bg-purple-500",
-      "bg-red-500",
-      "bg-indigo-500",
-      "bg-pink-500",
-      "bg-orange-500"
-    ];
-    return colors[index % colors.length];
-  };
+      {/* AI Info Banner */}
+      <Card className="bg-gray-50 border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-gray-900 mb-1">
+                {language === "sw" ? "Ujuzi wa Mazao Unaoweza Kutumiwa Tena" : "Reusable Crop Knowledge"}
+              </p>
+              <p className="text-xs text-gray-600">
+                {language === "sw" 
+                  ? "Unda profaili mara moja, tumia misimu yote. Violezo vya kilimo vitaleta kiotomatiki data ya mazao kwenye mipango yako."
+                  : "Create once, use every season. Growing templates automatically apply crop data to your plans."}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-  return (
-    <div className="space-y-6 pb-6">
-      {/* Overview Card */}
-      <Card className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white">
-        <CardContent className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Farm Land Distribution</h2>
+      {/* Crop Cards */}
+      <div className="grid gap-3">
+        {cropProfiles.map((crop) => {
+          const templates = growingTemplates.filter(t => t.cropId === crop.id);
+          const plansCount = cropPlan.filter(p => p.cropId === crop.id).length;
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <p className="text-sm text-green-100">Total Farm Size</p>
-              <p className="text-3xl font-bold">{totalFarmSize}</p>
-              <p className="text-sm text-green-100">acres</p>
-            </div>
-            <div>
-              <p className="text-sm text-green-100">Allocated</p>
-              <p className="text-3xl font-bold">{allocatedAcres.toFixed(1)}</p>
-              <p className="text-sm text-green-100">acres</p>
-            </div>
-            <div>
-              <p className="text-sm text-green-100">Available</p>
-              <p className="text-3xl font-bold">{unallocatedAcres.toFixed(1)}</p>
-              <p className="text-sm text-green-100">acres</p>
-            </div>
-            <div>
-              <p className="text-sm text-green-100">Est. Revenue</p>
-              <p className="text-2xl font-bold">TZS {(totalExpectedRevenue / 1000000).toFixed(1)}M</p>
-              <p className="text-sm text-green-100">this season</p>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <div className="flex justify-between text-sm mb-2">
-              <span>Farm Utilization</span>
-              <span>{((allocatedAcres / totalFarmSize) * 100).toFixed(1)}%</span>
-            </div>
-            <Progress 
-              value={(allocatedAcres / totalFarmSize) * 100} 
-              className="h-3 bg-white/20"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Visual Land Distribution */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PieChart className="h-5 w-5" />
-            Land Distribution by Crop
-          </CardTitle>
-          <CardDescription>Visual representation of your farm allocation</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {allocations.map((allocation, idx) => (
-              <div key={allocation.id}>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-medium">{allocation.crop}</span>
-                  <span className="text-gray-600">
-                    {allocation.acres} acres ({((allocation.acres / totalFarmSize) * 100).toFixed(1)}%)
-                  </span>
-                </div>
-                <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
-                  <div 
-                    className={`absolute left-0 top-0 h-full ${getCropColor(idx)} flex items-center px-3 text-white text-sm font-medium transition-all`}
-                    style={{ width: `${(allocation.acres / totalFarmSize) * 100}%` }}
-                  >
-                    {allocation.acres} acres
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            {unallocatedAcres > 0 && (
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-medium text-gray-500">Unallocated</span>
-                  <span className="text-gray-600">
-                    {unallocatedAcres.toFixed(1)} acres ({((unallocatedAcres / totalFarmSize) * 100).toFixed(1)}%)
-                  </span>
-                </div>
-                <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
-                  <div 
-                    className="absolute left-0 top-0 h-full bg-gray-200 flex items-center px-3 text-gray-600 text-sm font-medium"
-                    style={{ width: `${(unallocatedAcres / totalFarmSize) * 100}%` }}
-                  >
-                    Available
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Crop Allocations Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Crop Allocations</CardTitle>
-              <CardDescription>Manage your farm's crop distribution</CardDescription>
-            </div>
-            <Button 
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Add Crop
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {/* Add Form */}
-          {showAddForm && (
-            <div className="mb-6 p-4 border rounded-lg bg-blue-50">
-              <h4 className="font-medium mb-3">Allocate New Crop</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                  <Label>Crop Type</Label>
-                  <select
-                    value={newCrop}
-                    onChange={(e) => setNewCrop(e.target.value)}
-                    className="w-full mt-1 p-2 border rounded-lg"
-                  >
-                    <option value="">Select crop...</option>
-                    {availableCrops.map(crop => (
-                      <option key={crop} value={crop}>{crop}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Acreage</Label>
-                  <Input
-                    type="number"
-                    placeholder="Enter acres"
-                    value={newAcres}
-                    onChange={(e) => setNewAcres(e.target.value)}
-                    className="mt-1"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Available: {unallocatedAcres.toFixed(1)} acres
-                  </p>
-                </div>
-                <div className="flex items-end gap-2">
-                  <Button onClick={handleAddAllocation} className="flex-1">
-                    Add
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAddForm(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-
-              {newCrop && newAcres && (
-                <div className="mt-3 p-3 bg-white border rounded-lg">
-                  <p className="text-sm font-medium mb-1">Projected Performance:</p>
-                  <div className="grid grid-cols-3 gap-2 text-sm">
-                    <div>
-                      <p className="text-gray-600">Expected Yield</p>
-                      <p className="font-bold">{(parseFloat(newAcres) * cropDatabase[newCrop].yield).toFixed(1)} tons</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Market Price</p>
-                      <p className="font-bold">TZS {cropDatabase[newCrop].price}/kg</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Est. Revenue</p>
-                      <p className="font-bold text-green-600">
-                        TZS {((parseFloat(newAcres) * cropDatabase[newCrop].yield * 1000 * cropDatabase[newCrop].price) / 1000000).toFixed(2)}M
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Allocations List */}
-          <div className="space-y-3">
-            {allocations.map((allocation) => (
-              <div 
-                key={allocation.id}
-                className="p-4 border rounded-lg hover:bg-gray-50 transition-all"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-bold text-lg">{allocation.crop}</h4>
-                      <Badge className={getStatusColor(allocation.status)}>
-                        {allocation.status}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      {allocation.acres} acres • {(allocation.acres * allocation.expectedYield).toFixed(1)} tons expected yield
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveAllocation(allocation.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-gray-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Acreage</p>
-                      <p className="font-medium">{allocation.acres} acres</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-gray-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Yield/Acre</p>
-                      <p className="font-medium">{allocation.expectedYield} tons</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Est. Revenue</p>
-                      <p className="font-medium text-green-600">
-                        TZS {(allocation.estimatedRevenue / 1000000).toFixed(2)}M
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calculator className="h-4 w-4 text-gray-500" />
-                    <div>
-                      <p className="text-xs text-gray-500">Revenue/Acre</p>
-                      <p className="font-medium">
-                        TZS {(allocation.estimatedRevenue / allocation.acres / 1000).toFixed(0)}K
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {allocation.plantingDate && (
-                  <div className="mt-3 pt-3 border-t flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4">
-                      <span className="text-gray-600">
-                        Planted: {new Date(allocation.plantingDate).toLocaleDateString()}
-                      </span>
-                      {allocation.harvestDate && (
-                        <span className="text-gray-600">
-                          Harvest: {new Date(allocation.harvestDate).toLocaleDateString()}
-                        </span>
+          return (
+            <Card key={crop.id} className="border border-gray-200 hover:border-[#2E7D32] transition-colors">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <Sprout className="h-5 w-5 text-[#2E7D32]" />
+                      <h4 className="font-semibold text-gray-900">{crop.name}</h4>
+                      {crop.variety && (
+                        <Badge variant="outline" className="text-xs">
+                          {crop.variety}
+                        </Badge>
                       )}
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleUpdateStatus(allocation.id, "growing")}
-                      >
-                        Update Status
-                      </Button>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                      <div>
+                        <p className="text-gray-500 text-xs">
+                          {language === "sw" ? "Mzunguko" : "Cycle"}
+                        </p>
+                        <p className="font-medium text-gray-900">{crop.growthCycle} days</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-xs">
+                          {language === "sw" ? "Mavuno" : "Yield Range"}
+                        </p>
+                        <p className="font-medium text-gray-900">
+                          {crop.yieldRange.min}-{crop.yieldRange.max} t/acre
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-xs">
+                          {language === "sw" ? "Bei" : "Market Price"}
+                        </p>
+                        <p className="font-medium text-gray-900">TZS {crop.marketPrice}/kg</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-xs">
+                          {language === "sw" ? "Violezo" : "Templates"}
+                        </p>
+                        <p className="font-medium text-[#2E7D32]">{templates.length} available</p>
+                      </div>
                     </div>
+
+                    {plansCount > 0 && (
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <p className="text-xs text-gray-600">
+                          <CheckCircle2 className="h-3 w-3 inline mr-1 text-[#2E7D32]" />
+                          {language === "sw" 
+                            ? `Imepangwa kwa msimu huu (ekari ${cropPlan.filter(p => p.cropId === crop.id).reduce((s, p) => s + p.acres, 0)})`
+                            : `In this season's plan (${cropPlan.filter(p => p.cropId === crop.id).reduce((s, p) => s + p.acres, 0)} acres)`}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setSelectedCropId(crop.id);
+                      setActiveTab("templates");
+                    }}
+                    className="text-[#2E7D32] hover:text-[#1B5E20] hover:bg-gray-50"
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-      {/* Optimization Tips */}
-      {unallocatedAcres > 5 && (
-        <Card className="bg-yellow-50 border-yellow-200">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-yellow-600 mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-yellow-900">Optimization Opportunity</p>
-                <p className="text-sm text-yellow-800 mt-1">
-                  You have {unallocatedAcres.toFixed(1)} acres unallocated. Consider planting a high-value crop like Tomatoes or Onions to maximize revenue.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {allocatedAcres === totalFarmSize && (
-        <Card className="bg-green-50 border-green-200">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-green-900">Fully Allocated!</p>
-                <p className="text-sm text-green-800 mt-1">
-                  Your entire farm is allocated. Expected total revenue: TZS {(totalExpectedRevenue / 1000000).toFixed(2)}M this season.
-                </p>
-              </div>
-            </div>
+      {cropProfiles.length === 0 && (
+        <Card className="border-2 border-dashed border-gray-300">
+          <CardContent className="p-12 text-center">
+            <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">
+              {language === "sw" 
+                ? "Hakuna profaili za mazao bado. Anza kujenga maktaba yako."
+                : "No crop profiles yet. Start building your library."}
+            </p>
+            <Button 
+              onClick={() => setShowAddCropDialog(true)}
+              className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {language === "sw" ? "Ongeza Zao" : "Add First Crop"}
+            </Button>
           </CardContent>
         </Card>
       )}
     </div>
   );
+
+  // ==========================================
+  // TAB 2: GROWING TEMPLATES
+  // ==========================================
+
+  const GrowingTemplatesView = () => {
+    const templatesForCrop = selectedCropId 
+      ? growingTemplates.filter(t => t.cropId === selectedCropId)
+      : growingTemplates;
+
+    const cropName = selectedCropId 
+      ? getCropName(selectedCropId)
+      : language === "sw" ? "Zote" : "All Crops";
+
+    return (
+      <div className="space-y-4">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {language === "sw" ? "Violezo vya Kilimo" : "Growing Templates"}
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              {language === "sw" 
+                ? `Michoro ya kilimo kwa ${cropName}` 
+                : `Cultivation blueprints for ${cropName}`}
+            </p>
+          </div>
+          <Button 
+            onClick={() => setShowAddTemplateDialog(true)}
+            className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white"
+            disabled={cropProfiles.length === 0}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {language === "sw" ? "Ongeza" : "New Template"}
+          </Button>
+        </div>
+
+        {/* AI Info Banner */}
+        <Card className="bg-gray-50 border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  {language === "sw" ? "Mifumo ya Kilimo Inayoweza Kutumiwa Tena" : "Reusable Growing Methods"}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {language === "sw" 
+                    ? "Tengeneza violezo vingi kwa zao moja. Chagua kiolezo unapopanga msimu."
+                    : "Create multiple templates per crop. Select a template when planning your season."}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Crop Filter */}
+        {!selectedCropId && cropProfiles.length > 0 && (
+          <div className="flex gap-2 flex-wrap">
+            {cropProfiles.map(crop => {
+              const templateCount = growingTemplates.filter(t => t.cropId === crop.id).length;
+              return (
+                <Button
+                  key={crop.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedCropId(crop.id)}
+                  className="text-sm"
+                >
+                  {crop.name} ({templateCount})
+                </Button>
+              );
+            })}
+          </div>
+        )}
+
+        {selectedCropId && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setSelectedCropId(null)}
+          >
+            ← {language === "sw" ? "Rudi kwenye zote" : "Back to all templates"}
+          </Button>
+        )}
+
+        {/* Template Cards */}
+        <div className="grid gap-3">
+          {templatesForCrop.map((template) => {
+            const crop = cropProfiles.find(c => c.id === template.cropId);
+            const usedInPlan = cropPlan.filter(p => p.templateId === template.id).length > 0;
+            
+            return (
+              <Card 
+                key={template.id} 
+                className={`border ${template.isDefault ? 'border-[#2E7D32]' : 'border-gray-200'} hover:border-[#2E7D32] transition-colors`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h4 className="font-semibold text-gray-900">{template.name}</h4>
+                        {template.isDefault && (
+                          <Badge className="bg-[#2E7D32] text-white text-xs">
+                            {language === "sw" ? "Msingi" : "Default"}
+                          </Badge>
+                        )}
+                        {usedInPlan && (
+                          <Badge variant="outline" className="text-xs">
+                            {language === "sw" ? "Inatumika" : "In use"}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600">{crop?.name}</p>
+                    </div>
+                    
+                    <div className="flex gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          toast.success(language === "sw" ? "Kiolezo kilinakolewa" : "Template cloned");
+                        }}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-3">
+                    <div>
+                      <p className="text-gray-500 text-xs">
+                        {language === "sw" ? "Njia" : "Method"}
+                      </p>
+                      <p className="font-medium text-gray-900">{template.plantingMethod}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs">
+                        {language === "sw" ? "Nafasi" : "Spacing"}
+                      </p>
+                      <p className="font-medium text-gray-900">{template.spacing}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs">
+                        {language === "sw" ? "Mavuno" : "Expected Yield"}
+                      </p>
+                      <p className="font-medium text-[#2E7D32]">{template.expectedYield} t/acre</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs">
+                        {language === "sw" ? "Muda" : "Duration"}
+                      </p>
+                      <p className="font-medium text-gray-900">
+                        {template.growthStages.reduce((sum, stage) => sum + stage.days, 0)} days
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Growth Stages */}
+                  <div className="mb-3">
+                    <p className="text-xs font-medium text-gray-700 mb-2">
+                      {language === "sw" ? "Hatua za Ukuaji" : "Growth Stages"}
+                    </p>
+                    <div className="flex gap-1">
+                      {template.growthStages.map((stage, idx) => (
+                        <div 
+                          key={idx}
+                          className="flex-1 h-2 bg-gray-200 rounded-full relative group"
+                          style={{ 
+                            backgroundColor: idx === 0 ? '#2E7D32' : 'rgb(229 231 235)'
+                          }}
+                        >
+                          <div className="hidden group-hover:block absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+                            {stage.name} ({stage.days}d)
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Inputs */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-700 mb-2">
+                      {language === "sw" ? "Pembejeo" : "Key Inputs"}
+                    </p>
+                    <div className="space-y-1">
+                      {template.inputs.slice(0, 2).map((input, idx) => (
+                        <p key={idx} className="text-xs text-gray-600">
+                          • {input.name}: {input.quantity} ({input.timing})
+                        </p>
+                      ))}
+                      {template.inputs.length > 2 && (
+                        <p className="text-xs text-gray-500">
+                          +{template.inputs.length - 2} more
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {templatesForCrop.length === 0 && (
+          <Card className="border-2 border-dashed border-gray-300">
+            <CardContent className="p-12 text-center">
+              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">
+                {language === "sw" 
+                  ? `Hakuna violezo kwa ${cropName} bado.`
+                  : `No templates for ${cropName} yet.`}
+              </p>
+              <Button 
+                onClick={() => setShowAddTemplateDialog(true)}
+                className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white"
+                disabled={cropProfiles.length === 0}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {language === "sw" ? "Ongeza Kiolezo" : "Create Template"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  };
+
+  // ==========================================
+  // TAB 3: SEASON PLAN (CROP PLAN)
+  // ==========================================
+
+  const SeasonPlanView = () => (
+    <div className="space-y-4">
+      {/* Summary Card */}
+      <Card className="border-[#2E7D32] bg-white">
+        <CardContent className="p-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">
+            {language === "sw" ? "Muhtasari wa Msimu" : "Season Summary"}
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <p className="text-xs text-gray-500">
+                {language === "sw" ? "Jumla" : "Total Farm"}
+              </p>
+              <p className="text-2xl font-bold text-gray-900">{totalFarmSize}</p>
+              <p className="text-xs text-gray-500">acres</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">
+                {language === "sw" ? "Imepangwa" : "Allocated"}
+              </p>
+              <p className="text-2xl font-bold text-gray-900">{allocatedAcres.toFixed(1)}</p>
+              <p className="text-xs text-gray-500">acres</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">
+                {language === "sw" ? "Inayopatikana" : "Available"}
+              </p>
+              <p className="text-2xl font-bold text-[#2E7D32]">{availableAcres.toFixed(1)}</p>
+              <p className="text-xs text-gray-500">acres</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">
+                {language === "sw" ? "Mapato" : "Est. Revenue"}
+              </p>
+              <p className="text-xl font-bold text-gray-900">
+                {(totalRevenue / 1000000).toFixed(1)}M
+              </p>
+              <p className="text-xs text-gray-500">TZS</p>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between text-xs mb-2">
+              <span className="text-gray-600">
+                {language === "sw" ? "Matumizi ya Shamba" : "Farm Utilization"}
+              </span>
+              <span className="font-medium text-gray-900">
+                {((allocatedAcres / totalFarmSize) * 100).toFixed(1)}%
+              </span>
+            </div>
+            <Progress 
+              value={(allocatedAcres / totalFarmSize) * 100} 
+              className="h-2"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action Button */}
+      <div className="flex justify-between items-center gap-4 flex-wrap">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {language === "sw" ? "Mpango wa Msimu" : "Season Plan"}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {language === "sw" 
+              ? "Tumia violezo kupanga msimu wako" 
+              : "Apply templates to plan your season"}
+          </p>
+        </div>
+        <Button 
+          onClick={() => setShowAddPlanDialog(true)}
+          className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white"
+          disabled={growingTemplates.length === 0 || availableAcres <= 0}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          {language === "sw" ? "Ongeza" : "Add to Plan"}
+        </Button>
+      </div>
+
+      {/* AI Info Banner */}
+      {cropPlan.length > 0 && (
+        <Card className="bg-gray-50 border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  {language === "sw" ? "Mipango Inajenga Kazi Kiotomatiki" : "Plans Generate Tasks Automatically"}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {language === "sw" 
+                    ? "Kila zao katika mpango wako litaunda kazi, makadirio ya pembejeo, na utabiri wa mapato."
+                    : "Each crop in your plan creates tasks, input estimates, and revenue forecasts automatically."}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Plan Entries */}
+      <div className="space-y-3">
+        {cropPlan.map((entry) => {
+          const crop = cropProfiles.find(c => c.id === entry.cropId);
+          const template = growingTemplates.find(t => t.id === entry.templateId);
+          
+          return (
+            <Card key={entry.id} className="border border-gray-200 hover:border-[#2E7D32] transition-colors">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <h4 className="font-semibold text-gray-900">{crop?.name}</h4>
+                      <Badge variant="outline" className="text-xs">
+                        {getStatusLabel(entry.status, language)}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {template?.name} • {entry.acres} acres
+                    </p>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setCropPlan(cropPlan.filter(p => p.id !== entry.id));
+                      toast.success(language === "sw" ? "Imeondolewa" : "Removed from plan");
+                    }}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div>
+                    <p className="text-gray-500 text-xs">
+                      {language === "sw" ? "Mavuno" : "Yield"}
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {(entry.acres * entry.expectedYield).toFixed(1)} tons
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">
+                      {language === "sw" ? "Mapato" : "Revenue"}
+                    </p>
+                    <p className="font-medium text-[#2E7D32]">
+                      TZS {(entry.estimatedRevenue / 1000000).toFixed(2)}M
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">
+                      {language === "sw" ? "Kupanda" : "Planting"}
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {entry.plantingDate ? new Date(entry.plantingDate).toLocaleDateString() : "-"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">
+                      {language === "sw" ? "Mavuno" : "Harvest"}
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {entry.harvestDate ? new Date(entry.harvestDate).toLocaleDateString() : "-"}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {cropPlan.length === 0 && (
+        <Card className="border-2 border-dashed border-gray-300">
+          <CardContent className="p-12 text-center">
+            <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">
+              {language === "sw" 
+                ? "Mpango wa msimu upo wazi. Anza kuongeza mazao."
+                : "Season plan is empty. Start adding crops."}
+            </p>
+            <Button 
+              onClick={() => setShowAddPlanDialog(true)}
+              className="bg-[#2E7D32] hover:bg-[#1B5E20] text-white"
+              disabled={growingTemplates.length === 0}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {language === "sw" ? "Ongeza Zao" : "Add First Crop"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+
+  // ==========================================
+  // TAB 4: REVENUE FORECAST
+  // ==========================================
+
+  const RevenueView = () => {
+    const cropRevenues = cropPlan.map(entry => {
+      const crop = cropProfiles.find(c => c.id === entry.cropId);
+      return {
+        crop: crop?.name || "Unknown",
+        acres: entry.acres,
+        revenue: entry.estimatedRevenue,
+        revenuePerAcre: entry.estimatedRevenue / entry.acres
+      };
+    }).sort((a, b) => b.revenue - a.revenue);
+
+    return (
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {language === "sw" ? "Utabiri wa Mapato" : "Revenue Forecast"}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {language === "sw" 
+              ? "Makadirio ya mapato kwa msimu huu" 
+              : "Projected revenue for this season"}
+          </p>
+        </div>
+
+        {/* Total Revenue Card */}
+        <Card className="bg-[#2E7D32] text-white">
+          <CardContent className="p-6">
+            <p className="text-sm opacity-90 mb-2">
+              {language === "sw" ? "Jumla ya Mapato Yanayotarajiwa" : "Total Expected Revenue"}
+            </p>
+            <p className="text-4xl font-bold mb-1">
+              TZS {(totalRevenue / 1000000).toFixed(2)}M
+            </p>
+            <p className="text-sm opacity-90">
+              {language === "sw" ? `Kutoka ekari ${allocatedAcres.toFixed(1)}` : `From ${allocatedAcres.toFixed(1)} acres`}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Revenue Breakdown */}
+        {cropRevenues.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                {language === "sw" ? "Mgawanyiko wa Mapato" : "Revenue Breakdown"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {cropRevenues.map((item, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="font-medium text-gray-900">{item.crop}</span>
+                    <span className="text-gray-600">
+                      TZS {(item.revenue / 1000000).toFixed(2)}M ({((item.revenue / totalRevenue) * 100).toFixed(1)}%)
+                    </span>
+                  </div>
+                  <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div 
+                      className="absolute left-0 top-0 h-full bg-[#2E7D32]"
+                      style={{ width: `${(item.revenue / totalRevenue) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {item.acres} acres • TZS {(item.revenuePerAcre / 1000).toFixed(0)}K per acre
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {cropRevenues.length === 0 && (
+          <Card className="border-2 border-dashed border-gray-300">
+            <CardContent className="p-12 text-center">
+              <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">
+                {language === "sw" 
+                  ? "Hakuna data ya mapato. Ongeza mazao kwenye mpango."
+                  : "No revenue data. Add crops to your plan."}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  };
+
+  // ==========================================
+  // RENDER MAIN COMPONENT
+  // ==========================================
+
+  return (
+    <div className="space-y-6 pb-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 bg-gray-100">
+          <TabsTrigger value="library" className="data-[state=active]:bg-white data-[state=active]:text-[#2E7D32]">
+            <BookOpen className="h-4 w-4 mr-2" />
+            <span className="hidden md:inline">
+              {language === "sw" ? "Maktaba" : "Library"}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="templates" className="data-[state=active]:bg-white data-[state=active]:text-[#2E7D32]">
+            <FileText className="h-4 w-4 mr-2" />
+            <span className="hidden md:inline">
+              {language === "sw" ? "Violezo" : "Templates"}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="plan" className="data-[state=active]:bg-white data-[state=active]:text-[#2E7D32]">
+            <Calendar className="h-4 w-4 mr-2" />
+            <span className="hidden md:inline">
+              {language === "sw" ? "Mpango" : "Plan"}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="revenue" className="data-[state=active]:bg-white data-[state=active]:text-[#2E7D32]">
+            <DollarSign className="h-4 w-4 mr-2" />
+            <span className="hidden md:inline">
+              {language === "sw" ? "Mapato" : "Revenue"}
+            </span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="library" className="mt-6">
+          <CropLibraryView />
+        </TabsContent>
+
+        <TabsContent value="templates" className="mt-6">
+          <GrowingTemplatesView />
+        </TabsContent>
+
+        <TabsContent value="plan" className="mt-6">
+          <SeasonPlanView />
+        </TabsContent>
+
+        <TabsContent value="revenue" className="mt-6">
+          <RevenueView />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
+
+function getStatusLabel(status: string, language: "en" | "sw"): string {
+  const labels = {
+    planned: { en: "Planned", sw: "Imepangwa" },
+    planted: { en: "Planted", sw: "Imepandwa" },
+    growing: { en: "Growing", sw: "Inakua" },
+    harvesting: { en: "Harvesting", sw: "Inavunwa" }
+  };
+  return labels[status as keyof typeof labels]?.[language] || status;
+}
+
+// ==========================================
+// TASK GENERATION INTEGRATION
+// ==========================================
+
+async function autoGenerateTasksForPlan(
+  planEntry: CropPlanEntry,
+  template: GrowingTemplate,
+  crop: CropProfile,
+  userId: string,
+  language: "en" | "sw"
+) {
+  try {
+    // Convert local template to TaskGeneration format
+    const templateForGen: TemplateForTaskGen = {
+      id: template.id,
+      cropId: template.cropId,
+      name: template.name,
+      growthStages: template.growthStages,
+      inputs: template.inputs,
+      expectedYield: template.expectedYield
+    };
+
+    // Create plan entry for task generation
+    const planForGen = {
+      ...planEntry,
+      cropName: crop.name,
+      templateName: template.name,
+      harvestDate: planEntry.harvestDate || undefined
+    };
+
+    // Generate tasks
+    const generatedTasks = generateTasksFromTemplate(
+      planForGen,
+      templateForGen
+    );
+
+    // Convert tasks to serializable format (Date -> string)
+    const tasksToSave = generatedTasks.map(task => ({
+      ...task,
+      dueDate: task.dueDate.toISOString()
+    }));
+
+    // Save tasks to backend (batch)
+    const response = await fetch(
+      `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7/tasks/batch`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`
+        },
+        body: JSON.stringify({
+          tasks: tasksToSave,
+          userId
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to save tasks');
+    }
+
+    // Success notification
+    toast.success(
+      language === "sw" 
+        ? `✨ ${crop.name} imeongezwa! Kazi ${generatedTasks.length} zimeundwa kiotomatiki.`
+        : `✨ ${crop.name} added! ${generatedTasks.length} tasks auto-generated.`,
+      {
+        description: language === "sw"
+          ? "Angalia Usimamizi wa Kazi kuona kazi zako."
+          : "Check Task Management to see your tasks."
+      }
+    );
+
+    console.log(`✅ Auto-generated ${generatedTasks.length} tasks for ${crop.name}:`, generatedTasks);
+    
+    return generatedTasks;
+  } catch (error) {
+    console.error('Task generation error:', error);
+    toast.error(
+      language === "sw"
+        ? "Imeshindwa kuunda kazi"
+        : "Failed to generate tasks",
+      {
+        description: language === "sw"
+          ? "Zao limeongezwa lakini kazi hazikuundwa."
+          : "Crop added but tasks were not generated."
+      }
+    );
+    return [];
+  }
 }
