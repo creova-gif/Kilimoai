@@ -40,6 +40,44 @@ import { projectId, publicAnonKey } from "../utils/supabase/info";
  * ✅ Interactive tasks
  */
 
+// Constants
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
+const REFRESH_INTERVAL_MS = 30000; // 30 seconds
+
+// Types
+interface DashboardData {
+  stats: {
+    activeCrops: number;
+    pendingTasks: number;
+    revenue: string;
+    soilHealth: string;
+  };
+  weather: {
+    temp: number;
+    condition: string;
+    humidity: number;
+    rainfall: number;
+    wind: number;
+  };
+  tasks: Array<{
+    id: number;
+    title: string;
+    priority: string;
+    completed: boolean;
+  }>;
+  marketTrends: Array<{
+    crop: string;
+    price: number;
+    trend: string;
+    change: number;
+  }>;
+  farmStats: {
+    revenueTarget: number;
+    currentProgress: number;
+    daysLeft: number;
+  };
+}
+
 interface DashboardHomeProps {
   user: {
     id: string;
@@ -49,20 +87,20 @@ interface DashboardHomeProps {
     crops?: string[];
     tier?: string;
     role?: string;
-  };
-  language: "en" | "sw";
+  } | null; // ✅ Allow null to handle loading states
   onNavigate?: (tab: string) => void;
+  language: string;
 }
 
-// Constants
-const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
-
-export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps) {
+export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps) {
   const { reportError, reportNetworkError } = useErrorReporting();
 
+  // ✅ CRITICAL: Log user state immediately
+  console.log('🏠 [DashboardHome] Component rendered with user:', user ? user.id : 'NULL');
+  console.log('🏠 [DashboardHome] User object:', user);
+
   // Consolidated state
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -123,6 +161,13 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
 
   // Fetch dashboard data
   const fetchDashboardData = async () => {
+    // ✅ Guard: Don't fetch if user is null
+    if (!user || !user.id) {
+      console.warn('[DashboardHome] Cannot fetch data: user is null or missing id');
+      setLoading(false);
+      return;
+    }
+
     const requestId = aiTelemetry.startRequest(
       user.id,
       "dashboard_load",
@@ -170,9 +215,15 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
       
       reportNetworkError(`${API_BASE}/dashboard/${user.id}`, err.message);
       
-      // Use fallback mock data
+      // ✅ PRODUCTION: Show empty state instead of mock data
       aiTelemetry.fallbackUsed(user.id, "dashboard_load", user.role || "farmer", "backend");
-      setDashboardData(getMockDashboardData());
+      setDashboardData(null); // Empty state - no fake data
+      
+      toast.error(
+        language === "en"
+          ? "Unable to load dashboard data. Please check your connection."
+          : "Imeshindwa kupakia data ya dashibodi. Tafadhali angalia mtandao wako."
+      );
       
     } finally {
       setLoading(false);
@@ -180,56 +231,9 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
     }
   };
 
-  // Mock data fallback
-  const getMockDashboardData = () => ({
-    stats: {
-      activeCrops: 5,
-      pendingTasks: 12,
-      revenue: "8.2M",
-      soilHealth: text.good
-    },
-    weather: {
-      temp: 28,
-      condition: "Partly Cloudy",
-      humidity: 65,
-      rainfall: 12,
-      wind: 15
-    },
-    tasks: [
-      { 
-        id: 1, 
-        title: language === "en" ? "Apply fertilizer to maize field" : "Weka mbolea kwa shamba la mahindi",
-        priority: "high", 
-        completed: false 
-      },
-      { 
-        id: 2, 
-        title: language === "en" ? "Check irrigation system" : "Angalia mfumo wa umwagiliaji",
-        priority: "medium", 
-        completed: true 
-      },
-      { 
-        id: 3, 
-        title: language === "en" ? "Scout for pests in section A" : "Tafuta wadudu sehemu A",
-        priority: "high", 
-        completed: false 
-      },
-    ],
-    marketTrends: [
-      { crop: language === "en" ? "Maize" : "Mahindi", price: 850000, change: 5.2, trend: "up" },
-      { crop: language === "en" ? "Rice" : "Mchele", price: 1200000, change: -2.1, trend: "down" },
-      { crop: language === "en" ? "Beans" : "Maharagwe", price: 950000, change: 3.8, trend: "up" },
-    ],
-    farmStats: {
-      revenueTarget: 15000000,
-      currentProgress: 65,
-      daysLeft: 89
-    }
-  });
-
   // Handle task toggle
   const handleToggleTask = async (taskId: number) => {
-    if (!dashboardData) return;
+    if (!dashboardData || !user?.id) return;
 
     try {
       // Optimistically update UI
@@ -263,17 +267,42 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
 
   // Handle refresh
   const handleRefresh = () => {
+    if (!user?.id) return; // ✅ Guard against null user
     setRefreshing(true);
     fetchDashboardData();
   };
 
   // Initial load + auto-refresh
   useEffect(() => {
+    if (!user || !user.id) {
+      // Don't fetch if user is null or missing id
+      setLoading(false);
+      return;
+    }
+    
     fetchDashboardData();
 
     const interval = setInterval(fetchDashboardData, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [user.id]);
+  }, [user?.id]); // ✅ Use optional chaining to safely access user.id
+
+  // ✅ CRITICAL: Early return AFTER all hooks have been called
+  // This prevents the "Rendered more hooks than during the previous render" error
+  if (!user || !user.id) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[600px] text-center px-4">
+        <Activity className="h-16 w-16 text-gray-400 mb-4" />
+        <h3 className="text-xl font-bold text-gray-900 mb-2">
+          {language === "en" ? "User Not Found" : "Mtumiaji Hajapatikana"}
+        </h3>
+        <p className="text-gray-600 mb-6 max-w-md">
+          {language === "en" 
+            ? "Please log in again to access your dashboard."
+            : "Tafadhali ingia tena ili kufikia dashibodi yako."}
+        </p>
+      </div>
+    );
+  }
 
   // Loading state
   if (loading) {
@@ -281,6 +310,29 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
       <div className="flex flex-col items-center justify-center min-h-[600px]">
         <Loader2 className="h-12 w-12 text-[#2E7D32] animate-spin mb-4" />
         <p className="text-gray-600">{text.loading}</p>
+      </div>
+    );
+  }
+
+  // ✅ PRODUCTION: Empty state when no data available
+  if (!dashboardData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[600px] text-center px-4">
+        <Activity className="h-16 w-16 text-gray-400 mb-4" />
+        <h3 className="text-xl font-bold text-gray-900 mb-2">
+          {language === "en" ? "Unable to Load Dashboard" : "Imeshindwa Kupakia Dashibodi"}
+        </h3>
+        <p className="text-gray-600 mb-6 max-w-md">
+          {language === "en" 
+            ? "We couldn't fetch your dashboard data. Please check your internet connection and try again."
+            : "Hatukuweza kupata data yako. Tafadhali angalia mtandao wako na ujaribu tena."}
+        </p>
+        <button
+          onClick={handleRefresh}
+          className="px-6 py-3 bg-[#2E7D32] text-white rounded-xl font-semibold hover:bg-[#1B5E20] transition-colors"
+        >
+          {language === "en" ? "Try Again" : "Jaribu Tena"}
+        </button>
       </div>
     );
   }
@@ -308,6 +360,9 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
   if (!dashboardData) return null;
 
   const { stats, weather, tasks, marketTrends, farmStats } = dashboardData;
+
+  // ✅ Extra safety check - if user becomes null after data loads (shouldn't happen but defensive)
+  if (!user) return null;
 
   return (
     <div className="space-y-4 md:space-y-6 pb-6">

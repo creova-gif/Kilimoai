@@ -32,12 +32,10 @@ import { UnifiedDualAuth } from "./components/auth/UnifiedDualAuth"; // ✅ PROD
 import { supabase } from "./utils/supabase/client"; // ✅ Singleton Supabase client
 import { InlinePersonalizationCard } from "./components/InlinePersonalizationCard"; // ✅ Non-blocking personalization
 import { OnboardingV3WorldClass } from "./components/onboarding-v3/OnboardingV3WorldClass"; // ✅ Legacy onboarding (if needed)
-import { DemoModeControlPanel } from "./components/DemoModeControlPanel";
+// ❌ REMOVED: Demo mode - production only
 import logo from "figma:asset/59f0b6f20637b554072039bc3a2caa41a72f5af6.png";
 import circleLogo from "figma:asset/9ef1fbe0081cc013ac53d20ae90d325e9b280b39.png";
 import { hasFeatureAccess, filterFeaturesByRole, getRoleDisplayName, getRoleFeatures, FeatureId } from "./utils/roleBasedAccess";
-import { isDemoMode, getDemoUser, demoModeFeatureAccess, getDemoModeState } from "./utils/demoMode";
-import type { DemoModeState } from "./utils/demoMode";
 import { analytics } from "./utils/analytics"; // ✅ Analytics tracking
 import { useSessionTimeout } from "./hooks/useSessionTimeout"; // ✅ Session security
 import { crashReporter, ErrorBoundary } from "./utils/crash-reporting"; // ✅ Crash reporting & error boundaries
@@ -149,25 +147,12 @@ interface User {
 }
 
 export default function App() {
-  const [isRegistered, setIsRegistered] = useState(true); // ✅ TEMP: Skip auth for testing
+  const [isRegistered, setIsRegistered] = useState(false); // ✅ CRITICAL: Start with false to require login when no user
   const [showLogin, setShowLogin] = useState(true);
-  const [loading, setLoading] = useState(false); // ✅ TEMP: Disable loading screen
-  const [currentUser, setCurrentUser] = useState<User | null>({
-    id: "demo-user-123",
-    name: "Demo Farmer",
-    email: "demo@kilimo.tz",
-    phoneNumber: "+255712345678",
-    role: "farmer",
-    region: "Arusha",
-    crops: ["Maize", "Beans", "Coffee"],
-    farmSize: "5 acres",
-    language: "sw",
-    verified: true,
-    onboardingCompleted: true,
-    tier: "premium"
-  } as User); // ✅ TEMP: Demo user for testing
+  const [loading, setLoading] = useState(true); // ✅ CRITICAL: Start with true to show loading screen while checking session
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // ✅ PRODUCTION: No demo user - force real authentication
   const [activeTab, setActiveTab] = useState("home");
-  const [notificationCount, setNotificationCount] = useState(3);
+  const [notificationCount, setNotificationCount] = useState(0); // ✅ PRODUCTION: Real notification count from backend
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -175,8 +160,7 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showInlinePersonalization, setShowInlinePersonalization] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
-  const [showDemoControl, setShowDemoControl] = useState(false);
-  const [demoModeActive, setDemoModeActive] = useState(false);
+  // ❌ REMOVED: Demo mode state variables - production only
 
   const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
   
@@ -196,6 +180,9 @@ export default function App() {
   // ✅ SESSION RESTORATION - Check for active session on load
   useEffect(() => {
     const restoreSession = async () => {
+      console.log('🔍 [SESSION v2] Starting session restoration...');
+      console.log('🔍 [SESSION v2] Initial state:', { loading, isRegistered, hasUser: !!currentUser });
+      
       try {
         // Check for active Supabase session
         const { data: { session } } = await supabase.auth.getSession();
@@ -216,27 +203,40 @@ export default function App() {
           setIsRegistered(true);
           localStorage.setItem("kilimoUser", JSON.stringify(userData));
           
-          console.log("✅ Session restored:", userData.email || userData.phone);
+          console.log("✅ [SESSION v2] Session restored:", userData.email || userData.phone);
+          console.log("✅ [SESSION v2] User state set:", { id: userData.id, role: userData.role });
         } else {
           // No session - check localStorage fallback
+          console.log("⚠️ [SESSION v2] No Supabase session, checking localStorage...");
           const savedUser = localStorage.getItem("kilimoUser");
           if (savedUser) {
             const user = JSON.parse(savedUser);
             setCurrentUser(user);
             setIsRegistered(true);
+            console.log("✅ [SESSION v2] User restored from localStorage:", user.email || user.phone);
+          } else {
+            console.log("❌ [SESSION v2] No user found in localStorage");
           }
         }
       } catch (error) {
-        console.error("Session restoration error:", error);
+        console.error("❌ [SESSION v2] Session restoration error:", error);
         // Fallback to localStorage
         const savedUser = localStorage.getItem("kilimoUser");
         if (savedUser) {
           const user = JSON.parse(savedUser);
           setCurrentUser(user);
           setIsRegistered(true);
+          console.log("✅ [SESSION v2] User restored from localStorage (after error):", user.email || user.phone);
+        } else {
+          console.log("❌ [SESSION v2] No fallback user in localStorage");
         }
       } finally {
         setLoading(false);
+        console.log("🏁 [SESSION v2] Session restoration complete. Final state:", { 
+          loading: false, 
+          isRegistered, 
+          hasUser: !!currentUser 
+        });
       }
     };
 
@@ -256,7 +256,7 @@ export default function App() {
   useSessionTimeout({
     timeout: 15 * 60 * 1000, // 15 minutes
     warningTime: 60 * 1000, // 1 minute warning
-    enabled: isRegistered && !demoModeActive, // Only for logged-in users, not demo
+    enabled: isRegistered, // ✅ PRODUCTION: Session timeout for all logged-in users
     onWarning: () => {
       toast.warning(
         language === 'en'
@@ -276,34 +276,8 @@ export default function App() {
     }
   });
 
-  // Check if user is already registered OR if demo mode is active
+  // ✅ PRODUCTION: Check for existing user session
   useEffect(() => {
-    // Check for demo mode query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const demoParam = urlParams.get("demo");
-    
-    if (demoParam === "control" || demoParam === "true") {
-      setShowDemoControl(true);
-      return;
-    }
-    
-    // Check if demo mode is active from session
-    if (isDemoMode()) {
-      setDemoModeActive(true);
-      const demoState = getDemoModeState();
-      if (demoState) {
-        setLanguage(demoState.language);
-        // Create virtual demo user
-        const demoUser = getDemoUser();
-        if (demoUser) {
-          setCurrentUser(demoUser);
-          setIsRegistered(true);
-          setShowOnboarding(false);
-        }
-      }
-      return;
-    }
-    
     const savedUser = localStorage.getItem("kilimoUser");
     const hasSeenWelcome = localStorage.getItem("kilimoSeenWelcome");
     const savedLanguage = localStorage.getItem("kilimoLanguage");
@@ -440,24 +414,7 @@ export default function App() {
     );
   };
 
-  const handleLaunchDemo = (demoState: DemoModeState) => {
-    // Close control panel and launch main app in demo mode
-    setShowDemoControl(false);
-    setDemoModeActive(true);
-    setLanguage(demoState.language);
-    
-    // Create virtual demo user from demo state
-    const demoUser = getDemoUser();
-    if (demoUser) {
-      setCurrentUser(demoUser);
-      setIsRegistered(true);
-      setShowOnboarding(false);
-      toast.success("Demo Mode Launched!", {
-        description: `Role: ${demoState.active_role.replace(/_/g, " ")}`,
-        duration: 3000,
-      });
-    }
-  };
+  // ❌ REMOVED: handleLaunchDemo - production mode only
 
   const handleFABAction = (action: string) => {
     switch (action) {
@@ -707,18 +664,11 @@ export default function App() {
     { id: "support", label: "Support", icon: HelpCircle },
   ];
 
-  // Demo Mode Control Panel (Pre-Auth)
-  if (showDemoControl) {
-    return (
-      <>
-        <Toaster position="top-center" richColors />
-        <DemoModeControlPanel onLaunchDemo={handleLaunchDemo} language={language} />
-      </>
-    );
-  }
+  // ❌ REMOVED: Demo Mode Control Panel - production only
 
   // Loading screen while checking session
   if (loading) {
+    console.log("⏳ [RENDER] Showing loading screen");
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -733,6 +683,7 @@ export default function App() {
 
   // Login/Register Screen - UNIFIED DUAL AUTH
   if (!isRegistered) {
+    console.log("🔐 [RENDER] Showing auth screen (isRegistered=false)");
     return (
       <>
         <Toaster position="top-center" richColors />
@@ -782,7 +733,62 @@ export default function App() {
     );
   }
 
-  // Main Dashboard
+  // ✅ CRITICAL: Show login screen if no user (even if isRegistered was set to true)
+  // This handles edge cases like localStorage cleared or session expired
+  if (!currentUser) {
+    console.log("❌ [RENDER] No user found - showing auth screen");
+    console.log("❌ [RENDER] State:", { loading, isRegistered, currentUser });
+    return (
+      <>
+        <Toaster position="top-center" richColors />
+        <UnifiedDualAuth
+          onSuccess={(userData) => {
+            setCurrentUser(userData);
+            setIsRegistered(true);
+            
+            // ✅ Track successful authentication
+            analytics.identify(userData.id, {
+              role: userData.role,
+              language: language,
+              verified: userData.verified,
+              tier: userData.tier || 'free'
+            });
+            
+            analytics.track('auth_success', {
+              method: userData.email ? 'email_password' : 'phone_otp',
+              role: userData.role,
+              isNewUser: !userData.onboardingCompleted
+            });
+            
+            // Store user (already done in component, but ensure it's set)
+            localStorage.setItem("kilimoUser", JSON.stringify(userData));
+            
+            // Welcome message
+            const roleDisplayName = getRoleDisplayName(userData.role, language);
+            const featureCount = getRoleFeatures(userData.role).length;
+            toast.success(
+              language === "en"
+                ? `Welcome to KILIMO, ${userData.name}! 🌾`
+                : `Karibu KILIMO, ${userData.name}! 🌾`,
+              {
+                description: `${roleDisplayName} • ${featureCount} ${language === "en" ? "features" : "vipengele"}`,
+                duration: 3000
+              }
+            );
+            
+            // Show inline personalization for new users
+            if (!userData.onboardingCompleted) {
+              setTimeout(() => setShowInlinePersonalization(true), 2000);
+            }
+          }}
+          language={language}
+        />
+      </>
+    );
+  }
+
+  // Main Dashboard (only renders when currentUser exists)
+  console.log("✅ [RENDER] Rendering dashboard with user:", currentUser?.id);
   return (
     <GlobalErrorBoundary>
       <OfflineBanner />
@@ -795,13 +801,7 @@ export default function App() {
         {/* Offline Indicator - Shows when user loses connection */}
         <OfflineIndicator />
 
-        {/* Demo Mode Indicator */}
-        {demoModeActive && (
-        <div className="fixed top-4 right-4 z-[100] bg-yellow-500 text-yellow-950 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-pulse">
-          <Zap className="h-4 w-4" />
-          <span className="font-semibold text-sm">DEMO MODE ACTIVE</span>
-        </div>
-      )}
+        {/* ❌ REMOVED: Demo Mode Indicator - production only */}
 
       {/* Modern Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
@@ -1163,26 +1163,26 @@ export default function App() {
                         {/* Tab Content with Transition System */}
                         <div className="relative">
                           {/* ========== HOME/DASHBOARD ========== */}
-                          {activeTab === "home" && (
+                          {activeTab === "home" && currentUser && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                               <ErrorBoundary componentName="DashboardHome">
-                                <DashboardHome user={currentUser!} onNavigate={setActiveTab} language={language} />
+                                <DashboardHome user={currentUser} onNavigate={setActiveTab} language={language} />
                               </ErrorBoundary>
                             </div>
                           )}
 
                           {/* ========== UNIFIED AI ADVISOR ========== */}
                           {/* Consolidates: ai-chat, workflows, diagnosis, voice, ai-training, predictions, digital-twin, ai-farm-plan, personalized, ai-recommendations, ai-advisory */}
-                          {activeTab === "ai-chat" && (
+                          {activeTab === "ai-chat" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedAIAdvisor">
                                 <UnifiedAIAdvisor
-                                  userId={currentUser?.id!}
-                                  userRole={currentUser?.role || "smallholder_farmer"}
-                                  userTier={currentUser?.tier || "free"}
-                                  region={currentUser?.region || "Unknown"}
-                                  crops={currentUser?.crops || []}
-                                  farmSize={currentUser?.farmSize || "0"}
+                                  userId={currentUser.id}
+                                  userRole={currentUser.role || "smallholder_farmer"}
+                                  userTier={currentUser.tier || "free"}
+                                  region={currentUser.region || "Unknown"}
+                                  crops={currentUser.crops || []}
+                                  farmSize={currentUser.farmSize || "0"}
                                   language={language}
                                   apiBase={API_BASE}
                                   authToken={publicAnonKey}
@@ -1195,12 +1195,12 @@ export default function App() {
 
                           {/* ========== UNIFIED CROP PLANNING ========== */}
                           {/* Execution Layer: Current season plans, field allocation, yield forecasts, task timelines */}
-                          {activeTab === "land-allocation" && (
+                          {activeTab === "land-allocation" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedCropPlanning">
                                 <UnifiedCropPlanning
-                                  userId={currentUser?.id!}
-                                  totalFarmSize={parseFloat(currentUser?.farmSize || "0")}
+                                  userId={currentUser.id}
+                                  totalFarmSize={parseFloat(currentUser.farmSize || "0")}
                                   language={language}
                                   apiBase={API_BASE}
                                   authToken={publicAnonKey}
@@ -1213,12 +1213,12 @@ export default function App() {
 
                           {/* ========== UNIFIED CROP INTELLIGENCE ========== */}
                           {/* Knowledge Layer: Crop library, growing tips, templates, historical performance */}
-                          {(activeTab === "crop-tips" || activeTab === "crop-library") && (
+                          {(activeTab === "crop-tips" || activeTab === "crop-library") && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedCropIntelligence">
                                 <UnifiedCropIntelligence
-                                  userId={currentUser?.id!}
-                                  totalFarmSize={parseFloat(currentUser?.farmSize || "0")}
+                                  userId={currentUser.id}
+                                  totalFarmSize={parseFloat(currentUser.farmSize || "0")}
                                   language={language}
                                   apiBase={API_BASE}
                                   authToken={publicAnonKey}
@@ -1234,19 +1234,19 @@ export default function App() {
                           )}
 
                           {/* ========== FARM MAP (Standalone) ========== */}
-                          {activeTab === "farm-mapping" && (
+                          {activeTab === "farm-mapping" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="FarmMappingRedesign">
-                                <FarmMappingRedesign userId={currentUser?.id!} language={language} />
+                                <FarmMappingRedesign userId={currentUser.id} language={language} />
                               </ErrorBoundary>
                             </div>
                           )}
 
                           {/* ========== TASKS & SCHEDULE (Standalone) ========== */}
-                          {activeTab === "tasks" && (
+                          {activeTab === "tasks" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="TaskManagementRedesign">
-                                <TaskManagementRedesign userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
+                                <TaskManagementRedesign userId={currentUser.id} onNavigate={setActiveTab} language={language} />
                               </ErrorBoundary>
                             </div>
                           )}
@@ -1260,13 +1260,13 @@ export default function App() {
 
                           {/* ========== UNIFIED INVENTORY & INPUTS ========== */}
                           {/* Consolidates: inventory, input-supply */}
-                          {activeTab === "inventory" && (
+                          {activeTab === "inventory" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedInventory">
                                 <UnifiedInventory
-                                  userId={currentUser?.id!}
-                                  region={currentUser?.region || "Unknown"}
-                                  crops={currentUser?.crops}
+                                  userId={currentUser.id}
+                                  region={currentUser.region || "Unknown"}
+                                  crops={currentUser.crops}
                                   language={language}
                                   onNavigate={setActiveTab}
                                   initialTab={getDeepLinkTab("inventory")}
@@ -1277,12 +1277,12 @@ export default function App() {
 
                           {/* ========== UNIFIED MARKET ========== */}
                           {/* Consolidates: orders, marketplace, market */}
-                          {activeTab === "orders" && (
+                          {activeTab === "orders" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedMarket">
                                 <UnifiedMarket
-                                  userId={currentUser?.id!}
-                                  region={currentUser?.region || "Unknown"}
+                                  userId={currentUser.id}
+                                  region={currentUser.region || "Unknown"}
                                   language={language}
                                   onNavigate={setActiveTab}
                                   initialTab={getDeepLinkTab("orders")}
@@ -1293,12 +1293,12 @@ export default function App() {
 
                           {/* ========== UNIFIED FINANCE ========== */}
                           {/* Consolidates: finance, mobile-money, reporting, contracts, insurance, wallet-admin */}
-                          {activeTab === "finance" && (
+                          {activeTab === "finance" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedFinance">
                                 <UnifiedFinance
-                                  userId={currentUser?.id!}
-                                  userRole={currentUser?.role}
+                                  userId={currentUser.id}
+                                  userRole={currentUser.role}
                                   language={language}
                                   user={currentUser}
                                   initialTab={getDeepLinkTab("finance")}
@@ -1308,21 +1308,21 @@ export default function App() {
                           )}
 
                           {/* ========== LIVESTOCK (Standalone) ========== */}
-                          {activeTab === "livestock" && (
+                          {activeTab === "livestock" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="AdvancedLivestockManagement">
-                                <AdvancedLivestockManagement userId={currentUser?.id!} language={language} />
+                                <AdvancedLivestockManagement userId={currentUser.id} language={language} />
                               </ErrorBoundary>
                             </div>
                           )}
 
                           {/* ========== UNIFIED COMMUNITY ========== */}
                           {/* Consolidates: discussions, experts, soil-test */}
-                          {activeTab === "discussions" && (
+                          {activeTab === "discussions" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedCommunity">
                                 <UnifiedCommunity
-                                  userId={currentUser?.id!}
+                                  userId={currentUser.id}
                                   language={language}
                                   onNavigate={setActiveTab}
                                   initialTab={getDeepLinkTab("discussions")}
@@ -1333,11 +1333,11 @@ export default function App() {
 
                           {/* ========== UNIFIED LEARNING & SUPPORT ========== */}
                           {/* Consolidates: support, videos, knowledge, contact, faq, training */}
-                          {activeTab === "support" && (
+                          {activeTab === "support" && currentUser && (
                             <div className="animate-fadeIn">
                               <ErrorBoundary componentName="UnifiedLearning">
                                 <UnifiedLearning
-                                  userId={currentUser?.id!}
+                                  userId={currentUser.id}
                                   language={language}
                                   onNavigate={setActiveTab}
                                   initialTab={getDeepLinkTab("support")}
@@ -1365,12 +1365,12 @@ export default function App() {
       </div>
 
       {/* Notifications Drawer */}
-      {showNotifications && (
+      {showNotifications && currentUser && (
         <div className="fixed inset-0 z-50 lg:inset-auto lg:right-0 lg:top-16 lg:w-96 lg:h-[calc(100vh-4rem)]">
           <div className="lg:hidden absolute inset-0 bg-black/50" onClick={() => setShowNotifications(false)} />
           <div className="relative h-full bg-white lg:border-l lg:shadow-2xl overflow-y-auto">
             <NotificationPanel 
-              userId={currentUser?.id!}
+              userId={currentUser.id}
               onClose={() => setShowNotifications(false)}
               language={language}
             />

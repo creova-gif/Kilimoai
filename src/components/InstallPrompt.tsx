@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Download, Share, Plus } from 'lucide-react';
+import { X, Download, Share, Plus, Sprout, Zap, Smartphone, Lock } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 
@@ -87,7 +87,7 @@ export function InstallPrompt() {
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                <span className="text-2xl">🌾</span>
+                <Sprout className="h-7 w-7 text-[#2E7D32]" />
               </div>
               <div>
                 <h3 className="font-semibold">Install KILIMO</h3>
@@ -151,15 +151,21 @@ export function InstallPrompt() {
           <div className="mt-3 pt-3 border-t border-white/20">
             <div className="grid grid-cols-3 gap-2 text-xs text-green-50">
               <div className="text-center">
-                <div className="font-semibold">⚡ Fast</div>
+                <div className="font-semibold flex items-center justify-center gap-1">
+                  <Zap className="h-3 w-3" /> Fast
+                </div>
                 <div>Quick Load</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold">📱 Native</div>
+                <div className="font-semibold flex items-center justify-center gap-1">
+                  <Smartphone className="h-3 w-3" /> Native
+                </div>
                 <div>App Feel</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold">🔒 Offline</div>
+                <div className="font-semibold flex items-center justify-center gap-1">
+                  <Lock className="h-3 w-3" /> Offline
+                </div>
                 <div>Works Offline</div>
               </div>
             </div>

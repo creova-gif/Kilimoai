@@ -804,6 +804,26 @@ async function generateCropImage(crop: Crop, stage: string): Promise<{ url: stri
   console.log(`Generating image for ${crop.name_en} (${stage})...`);
 
   try {
+    // ❌ DISABLED: OpenRouter doesn't support image generation API
+    // The endpoint https://openrouter.ai/api/v1/images/generations does not exist
+    // OpenRouter only supports chat completions API, not DALL-E images
+    
+    console.log(`⚠️  Image generation disabled for ${crop.name_en} (${stage})`);
+    console.log(`   OpenRouter does not support DALL-E image generation API`);
+    
+    // Return a placeholder image URL instead
+    // In production, you would use:
+    // - OpenAI API directly (requires OPENAI_API_KEY)
+    // - Pre-generated images stored in Supabase Storage
+    // - Unsplash API for stock images
+    // - Local placeholder images
+    
+    const placeholderUrl = `https://via.placeholder.com/1024x1024/2E7D32/FFFFFF?text=${encodeURIComponent(crop.name_en)}`;
+    const confidence = 0.5; // Low confidence for placeholder
+    
+    return { url: placeholderUrl, confidence };
+
+    /* ORIGINAL CODE - DISABLED
     // Call OpenRouter API with DALL-E model
     const response = await fetch("https://openrouter.ai/api/v1/images/generations", {
       method: "POST",
@@ -839,6 +859,7 @@ async function generateCropImage(crop: Crop, stage: string): Promise<{ url: stri
     const confidence = 0.85 + Math.random() * 0.1; // 0.85-0.95 for DALL-E
 
     return { url: imageUrl, confidence };
+    */
   } catch (error) {
     console.error(`Error generating image for ${crop.name_en}:`, error);
     throw error;

@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { X, Sparkles, Check } from 'lucide-react';
+import { X, Sparkles, Check, Wheat, Beef, Sprout, Briefcase, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 
 interface InlinePersonalizationCardProps {
@@ -23,11 +23,11 @@ export function InlinePersonalizationCard({ onComplete, onDismiss, language }: I
       title: "Quick question",
       subtitle: "What do you mainly farm or sell?",
       options: [
-        { value: 'crops', label: '🌾 Crops', description: 'Maize, rice, vegetables' },
-        { value: 'livestock', label: '🐄 Livestock', description: 'Cattle, poultry, goats' },
-        { value: 'inputs', label: '🌱 Inputs', description: 'Seeds, fertilizer, tools' },
-        { value: 'trading', label: '💼 Trading', description: 'Buy and sell produce' },
-        { value: 'mixed', label: '🔄 Mixed', description: 'Multiple activities' }
+        { value: 'crops', label: 'Crops', description: 'Maize, rice, vegetables', icon: Wheat },
+        { value: 'livestock', label: 'Livestock', description: 'Cattle, poultry, goats', icon: Beef },
+        { value: 'inputs', label: 'Inputs', description: 'Seeds, fertilizer, tools', icon: Sprout },
+        { value: 'trading', label: 'Trading', description: 'Buy and sell produce', icon: Briefcase },
+        { value: 'mixed', label: 'Mixed', description: 'Multiple activities', icon: RefreshCw }
       ],
       dismiss: "Maybe later",
       helpText: "This helps us personalize your experience"
@@ -36,11 +36,11 @@ export function InlinePersonalizationCard({ onComplete, onDismiss, language }: I
       title: "Swali moja",
       subtitle: "Unalima au unauza nini zaidi?",
       options: [
-        { value: 'crops', label: '🌾 Mazao', description: 'Mahindi, mchele, mboga' },
-        { value: 'livestock', label: '🐄 Mifugo', description: 'Ng\'ombe, kuku, mbuzi' },
-        { value: 'inputs', label: '🌱 Pembejeo', description: 'Mbegu, mbolea, zana' },
-        { value: 'trading', label: '💼 Biashara', description: 'Nunua na uza mazao' },
-        { value: 'mixed', label: '🔄 Mchanganyiko', description: 'Shughuli nyingi' }
+        { value: 'crops', label: 'Mazao', description: 'Mahindi, mchele, mboga', icon: Wheat },
+        { value: 'livestock', label: 'Mifugo', description: 'Ng\'ombe, kuku, mbuzi', icon: Beef },
+        { value: 'inputs', label: 'Pembejeo', description: 'Mbegu, mbolea, zana', icon: Sprout },
+        { value: 'trading', label: 'Biashara', description: 'Nunua na uza mazao', icon: Briefcase },
+        { value: 'mixed', label: 'Mchanganyiko', description: 'Shughuli nyingi', icon: RefreshCw }
       ],
       dismiss: "Labda baadaye",
       helpText: "Hii inatusaidia kukupa huduma bora"
@@ -95,6 +95,7 @@ export function InlinePersonalizationCard({ onComplete, onDismiss, language }: I
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
         {t.options.map((option) => {
           const isSelected = selected === option.value;
+          const Icon = option.icon;
           return (
             <button
               key={option.value}
@@ -106,9 +107,12 @@ export function InlinePersonalizationCard({ onComplete, onDismiss, language }: I
               }`}
             >
               <div className="flex items-start justify-between mb-2">
-                <span className="text-base font-semibold text-gray-900">
-                  {option.label}
-                </span>
+                <div className="flex items-center gap-2">
+                  <Icon className="w-5 h-5 text-[#2E7D32]" />
+                  <span className="text-base font-semibold text-gray-900">
+                    {option.label}
+                  </span>
+                </div>
                 {isSelected && (
                   <Check className="w-5 h-5 text-[#2E7D32] flex-shrink-0" />
                 )}

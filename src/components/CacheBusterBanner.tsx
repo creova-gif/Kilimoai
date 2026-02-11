@@ -18,7 +18,7 @@ export function CacheBusterBanner() {
 
   useEffect(() => {
     // Check if running the latest version
-    const EXPECTED_VERSION = "v20260210-180000-FETCH-WRAPPER"; // MUST MATCH index.html
+    const EXPECTED_VERSION = "v20260211-NULL-SAFETY-ALL-COMPONENTS"; // MUST MATCH index.html
     const storedVersion = localStorage.getItem("KILIMO_CACHE_VERSION");
     
     console.log("🔍 [CACHE CHECK v7] Expected:", EXPECTED_VERSION);

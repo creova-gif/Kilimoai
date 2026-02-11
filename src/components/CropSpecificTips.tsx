@@ -18,7 +18,6 @@ interface CropSpecificTipsProps {
 interface Crop {
   id: string;
   name: string;
-  icon: string;
   color: string;
 }
 
@@ -46,12 +45,12 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
   const [selectedSeason, setSelectedSeason] = useState<string>("current");
 
   const crops: Crop[] = [
-    { id: "maize", name: language === "en" ? "Maize" : "Mahindi", icon: "🌽", color: "yellow" },
-    { id: "rice", name: language === "en" ? "Rice" : "Mchele", icon: "🌾", color: "green" },
-    { id: "beans", name: language === "en" ? "Beans" : "Maharagwe", icon: "🫘", color: "red" },
-    { id: "tomatoes", name: language === "en" ? "Tomatoes" : "Nyanya", icon: "🍅", color: "red" },
-    { id: "cassava", name: language === "en" ? "Cassava" : "Muhogo", icon: "🥔", color: "orange" },
-    { id: "sunflower", name: language === "en" ? "Sunflower" : "Alizeti", icon: "🌻", color: "yellow" }
+    { id: "maize", name: language === "en" ? "Maize" : "Mahindi", color: "yellow" },
+    { id: "rice", name: language === "en" ? "Rice" : "Mchele", color: "green" },
+    { id: "beans", name: language === "en" ? "Beans" : "Maharagwe", color: "red" },
+    { id: "tomatoes", name: language === "en" ? "Tomatoes" : "Nyanya", color: "red" },
+    { id: "cassava", name: language === "en" ? "Cassava" : "Muhogo", color: "orange" },
+    { id: "sunflower", name: language === "en" ? "Sunflower" : "Alizeti", color: "yellow" }
   ];
 
   const seasons = [
@@ -210,7 +209,9 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                       : "bg-white/10 border-white/20 hover:bg-white/15"
                   }`}
                 >
-                  <div className="text-3xl mb-2">{crop.icon}</div>
+                  <div className="mb-2">
+                    <Sprout className="h-8 w-8 mx-auto" />
+                  </div>
                   <div className="text-xs font-medium">{crop.name}</div>
                 </button>
               ))}

@@ -50,7 +50,7 @@ interface SavingsGoal {
   name: string;
   targetAmount: number;
   currentAmount: number;
-  icon: string;
+  category: "inputs" | "education" | "livestock";
   color: string;
   deadline?: Date;
 }
@@ -138,7 +138,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       description: language === "en" ? "NPK Fertilizer - 1 bag" : "Mbolea ya NPK - Gunia 1",
       status: "completed",
       date: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      icon: "🌱",
+      category: "input_purchase",
       linkedTo: {
         type: "input",
         id: "inp-123",
@@ -154,7 +154,6 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       description: language === "en" ? "Contract advance - Maize delivery" : "Mkopo wa mkataba - Utoaji mahindi",
       status: "completed",
       date: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      icon: "🌾",
       linkedTo: {
         type: "contract",
         id: "con-456",
@@ -170,7 +169,6 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       description: language === "en" ? "Sale: Tomatoes (3 crates)" : "Mauzo: Nyanya (masanduku 3)",
       status: "pending",
       date: new Date(Date.now() - 48 * 60 * 60 * 1000),
-      icon: "🍅",
       linkedTo: {
         type: "listing",
         id: "lst-789",
@@ -186,7 +184,6 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       description: language === "en" ? "Monthly auto-save" : "Akiba ya kila mwezi",
       status: "completed",
       date: new Date(Date.now() - 72 * 60 * 60 * 1000),
-      icon: "🏦"
     }
   ];
 
@@ -196,7 +193,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       name: language === "en" ? "Next Season Inputs" : "Pembejeo za Msimu Ujao",
       targetAmount: 2000000,
       currentAmount: 850000,
-      icon: "🌱",
+      category: "inputs",
       color: "green",
       deadline: new Date("2026-03-01")
     },
@@ -205,7 +202,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       name: language === "en" ? "School Fees" : "Ada za Shule",
       targetAmount: 1200000,
       currentAmount: 650000,
-      icon: "🎓",
+      category: "education",
       color: "blue",
       deadline: new Date("2026-01-15")
     },
@@ -214,7 +211,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       name: language === "en" ? "Dairy Cow" : "Ng'ombe wa Maziwa",
       targetAmount: 3000000,
       currentAmount: 0,
-      icon: "🐄",
+      category: "livestock",
       color: "amber"
     }
   ];
@@ -228,6 +225,15 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
       case "withdrawal": return <ArrowUpRight className="h-5 w-5" />;
       case "transfer": return <Send className="h-5 w-5" />;
       default: return <Circle className="h-5 w-5" />;
+    }
+  };
+
+  const getSavingsGoalIcon = (category: "inputs" | "education" | "livestock") => {
+    switch (category) {
+      case "inputs": return <Sprout className="h-7 w-7 text-green-600" />;
+      case "education": return <School className="h-7 w-7 text-blue-600" />;
+      case "livestock": return <Beef className="h-7 w-7 text-amber-600" />;
+      default: return <Target className="h-7 w-7 text-gray-600" />;
     }
   };
 
@@ -610,7 +616,9 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                 <div key={goal.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`text-3xl`}>{goal.icon}</div>
+                      <div className="h-12 w-12 bg-gray-100 rounded-xl flex items-center justify-center">
+                        {getSavingsGoalIcon(goal.category)}
+                      </div>
                       <div>
                         <h4 className="font-bold text-gray-900">{goal.name}</h4>
                         {goal.deadline && (
