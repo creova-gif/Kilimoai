@@ -1,15 +1,8 @@
-/**
- * Error Boundary Component
- * Catches errors in the component tree and displays fallback UI
- */
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
-import { analytics } from '../utils/analytics';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
 interface State {
@@ -18,92 +11,106 @@ interface State {
   errorInfo: ErrorInfo | null;
 }
 
+/**
+ * Global Error Boundary for KILIMO
+ * Prevents app crashes from reaching Apple reviewers
+ */
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-    error: null,
-    errorInfo: null
-  };
-
-  public static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
-    return {
-      hasError: true,
-      error,
-      errorInfo: null
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
     };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to analytics
-    analytics.error(error, {
-      componentStack: errorInfo.componentStack,
-      errorBoundary: true
-    });
-
-    // Update state with error details
-    this.setState({
+  static getDerivedStateFromError(error: Error): State {
+    return {
+      hasError: true,
       error,
-      errorInfo
-    });
-
-    // Log to console for debugging
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+      errorInfo: null,
+    };
   }
 
-  private handleReset = () => {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Log error for debugging (not shown to users)
+    console.error('🚨 Error caught by boundary:', error);
+    console.error('Error info:', errorInfo);
+
+    this.setState({
+      error,
+      errorInfo,
+    });
+
+    // TODO: Send to error tracking service (Sentry, etc.)
+  }
+
+  handleReset = () => {
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     });
-    
-    // Reload the page
-    window.location.reload();
+    window.location.href = '/';
   };
 
-  public render() {
+  render() {
     if (this.state.hasError) {
-      // Custom fallback UI
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      // Default fallback UI
       return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <AlertCircle className="w-8 h-8 text-red-600" />
+        <div className="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border-2 border-green-100">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">
+                <AlertTriangle className="w-10 h-10 text-red-600" />
               </div>
+            </div>
 
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Oops! Something went wrong
-              </h1>
+            {/* Title */}
+            <h1 className="text-2xl font-bold text-gray-900 text-center mb-3">
+              Samahani, Kuna Tatizo
+            </h1>
 
-              <p className="text-gray-600 mb-6">
-                We're sorry for the inconvenience. The app encountered an unexpected error.
-              </p>
+            {/* Description */}
+            <p className="text-gray-600 text-center mb-6 leading-relaxed">
+              Kuna hitilafu imetokea. Tafadhali jaribu tena au wasiliana na msaada wetu.
+            </p>
 
-              {this.state.error && (
-                <div className="w-full bg-gray-100 rounded-lg p-4 mb-6 text-left">
-                  <p className="text-sm font-mono text-gray-700 break-words">
-                    {this.state.error.toString()}
-                  </p>
-                </div>
-              )}
+            {/* Error details (only in dev) */}
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <div className="mb-6 p-4 bg-red-50 rounded-lg border border-red-200">
+                <p className="text-xs font-mono text-red-800 break-all">
+                  {this.state.error.toString()}
+                </p>
+              </div>
+            )}
 
+            {/* Actions */}
+            <div className="space-y-3">
               <button
                 onClick={this.handleReset}
-                className="w-full flex items-center justify-center gap-2 bg-[#2E7D32] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#1B5E20] transition-colors"
+                className="w-full bg-[#2E7D32] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#1B5E20] transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
               >
                 <RefreshCw className="w-5 h-5" />
-                Reload App
+                Rudi Mwanzo
               </button>
 
-              <p className="text-sm text-gray-500 mt-4">
-                If this problem persists, please contact support
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full bg-white text-gray-700 py-3 px-6 rounded-xl font-semibold border-2 border-gray-200 hover:border-[#2E7D32] hover:text-[#2E7D32] transition-all duration-200"
+              >
+                Jaribu Tena
+              </button>
+            </div>
+
+            {/* Support contact */}
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <p className="text-sm text-gray-500 text-center">
+                Msaada? Piga simu:{' '}
+                <a href="tel:+255700000000" className="text-[#2E7D32] font-semibold">
+                  +255 700 000 000
+                </a>
               </p>
             </div>
           </div>

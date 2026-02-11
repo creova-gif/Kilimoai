@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix Cache Warning - KILIMO App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 30px;
+      opacity: 0.95;
+    }
+    
+    .warning-box {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 30px;
+      color: #1f2937;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .alert-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .icon {
+      font-size: 48px;
+    }
+    
+    .alert-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #dc2626;
+    }
+    
+    .alert-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #374151;
+      margin-bottom: 20px;
+    }
+    
+    .big-button {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    }
+    
+    .big-button:hover {
+      background: #b91c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+    }
+    
+    .big-button:active {
+      transform: translateY(0);
+    }
+    
+    .steps {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 30px;
+      color: #1f2937;
+      margin-bottom: 20px;
+    }
+    
+    .step {
+      margin-bottom: 25px;
+      padding-bottom: 25px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .step-number {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background: #dc2626;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 40px;
+      font-weight: 700;
+      font-size: 20px;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+    
+    .step-content {
+      flex: 1;
+    }
+    
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .step-description {
+      font-size: 15px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .code-box {
+      background: #1f2937;
+      color: #10b981;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    
+    .success-box {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    
+    .success-title {
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 5px;
+    }
+    
+    .success-text {
+      color: #047857;
+      font-size: 14px;
+    }
+    
+    .tip-box {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    
+    .tip-title {
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 5px;
+    }
+    
+    .tip-text {
+      color: #b45309;
+      font-size: 14px;
+    }
+    
+    .button-secondary {
+      background: #6b7280;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+    
+    .button-secondary:hover {
+      background: #4b5563;
+    }
+    
+    .browser-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .browser-tab {
+      background: #f3f4f6;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 14px;
+      color: #1f2937;
+      border: 2px solid #e5e7eb;
+    }
+    
+    .keyboard-key {
+      display: inline-block;
+      background: #374151;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      margin: 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚨 Cache Warning Fix Guide</h1>
+    <p class="subtitle">Your browser is using old cached code - here's how to fix it in 3 seconds</p>
+    
+    <!-- Main Warning -->
+    <div class="warning-box">
+      <div class="alert-header">
+        <div class="icon">⚠️</div>
+        <div>
+          <div class="alert-title">Running Old Cached Code</div>
+        </div>
+      </div>
+      <p class="alert-text">
+        Your browser cached the old version of the JavaScript files. This can cause API errors 
+        (like seeing <code style="background: #fee2e2; padding: 2px 6px; border-radius: 4px; color: #dc2626;">http://</code> 
+        instead of <code style="background: #d1fae5; padding: 2px 6px; border-radius: 4px; color: #10b981;">https://</code>).
+      </p>
+      <button class="big-button" onclick="forceCacheClear()">
+        <span style="font-size: 24px;">🔄</span>
+        <span>Clear Cache & Reload Now</span>
+      </button>
+      <p style="margin-top: 15px; text-align: center; color: #6b7280; font-size: 14px;">
+        ⚡ Fastest fix - Click this button!
+      </p>
+    </div>
+    
+    <!-- Alternative Methods -->
+    <div class="steps">
+      <h2 style="margin-bottom: 20px; color: #1f2937;">Alternative Methods (if button doesn't work)</h2>
+      
+      <!-- Method 1 -->
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">1</span>
+          <span class="step-content">Hard Reload (10 seconds)</span>
+        </div>
+        <div style="margin-left: 55px;">
+          <p class="step-description">
+            Force your browser to fetch fresh files by doing a hard reload.
+          </p>
+          
+          <div class="browser-tabs">
+            <div class="browser-tab">
+              <strong>Chrome/Edge</strong><br>
+              <span class="keyboard-key">F12</span> then right-click reload
+            </div>
+            <div class="browser-tab">
+              <strong>Firefox</strong><br>
+              <span class="keyboard-key">Ctrl</span><span class="keyboard-key">Shift</span><span class="keyboard-key">R</span>
+            </div>
+            <div class="browser-tab">
+              <strong>Safari</strong><br>
+              <span class="keyboard-key">Cmd</span><span class="keyboard-key">Shift</span><span class="keyboard-key">R</span>
+            </div>
+          </div>
+          
+          <div class="success-box">
+            <div class="success-title">✅ Expected Result:</div>
+            <div class="success-text">Red banner disappears, green "Running Latest Version" badge shows</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Method 2 -->
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">2</span>
+          <span class="step-content">Manual Cache Clear (30 seconds)</span>
+        </div>
+        <div style="margin-left: 55px;">
+          <p class="step-description">
+            Manually clear all site data from DevTools.
+          </p>
+          <ol style="margin-left: 20px; color: #374151;">
+            <li>Press <span class="keyboard-key">F12</span> to open DevTools</li>
+            <li>Click <strong>Application</strong> tab</li>
+            <li>Click <strong>Storage</strong> in left sidebar</li>
+            <li>Click <strong>Clear site data</strong> button</li>
+            <li>Close DevTools and press <span class="keyboard-key">Ctrl</span><span class="keyboard-key">Shift</span><span class="keyboard-key">R</span></li>
+          </ol>
+          
+          <div class="tip-box">
+            <div class="tip-title">💡 Pro Tip:</div>
+            <div class="tip-text">If you can't find "Application" tab, click the ">>" arrows in DevTools menu</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Method 3 -->
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">3</span>
+          <span class="step-content">Incognito Mode (Always Works)</span>
+        </div>
+        <div style="margin-left: 55px;">
+          <p class="step-description">
+            Incognito mode has no cache, so it always loads fresh code.
+          </p>
+          
+          <div class="browser-tabs">
+            <div class="browser-tab">
+              <strong>Chrome/Edge</strong><br>
+              <span class="keyboard-key">Ctrl</span><span class="keyboard-key">Shift</span><span class="keyboard-key">N</span>
+            </div>
+            <div class="browser-tab">
+              <strong>Firefox</strong><br>
+              <span class="keyboard-key">Ctrl</span><span class="keyboard-key">Shift</span><span class="keyboard-key">P</span>
+            </div>
+            <div class="browser-tab">
+              <strong>Safari</strong><br>
+              <span class="keyboard-key">Cmd</span><span class="keyboard-key">Shift</span><span class="keyboard-key">N</span>
+            </div>
+          </div>
+          
+          <p style="margin-top: 15px; color: #6b7280; font-size: 14px;">
+            Then navigate to: <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">http://localhost:3000</code>
+          </p>
+          
+          <div class="success-box">
+            <div class="success-title">✅ Guaranteed to Work:</div>
+            <div class="success-text">Incognito has no cache, so you'll always see the latest code</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- How to Verify -->
+    <div class="steps">
+      <h2 style="margin-bottom: 20px; color: #1f2937;">How to Verify It Worked</h2>
+      
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #dc2626; font-size: 18px;">❌ Before (Broken):</strong>
+        <div class="code-box" style="background: #fee2e2; color: #991b1b;">
+🔴 Red banner: "⚠️ Running Old Cached Code"
+❌ Console: "OLD VERSION DETECTED"
+        </div>
+      </div>
+      
+      <div>
+        <strong style="color: #10b981; font-size: 18px;">✅ After (Fixed):</strong>
+        <div class="code-box" style="background: #d1fae5; color: #065f46;">
+🟢 Green badge: "✅ Running Latest Version" (auto-hides)
+✅ Console: "Running correct version"
+✅ Console: "CACHE KEY: APP_20260210_002"
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="steps">
+      <h2 style="margin-bottom: 20px; color: #1f2937;">Quick Actions</h2>
+      <button class="button-secondary" onclick="openIncognito()">Open Incognito Instructions</button>
+      <button class="button-secondary" onclick="openDiagnostic()">Open Diagnostic Tool</button>
+      <button class="button-secondary" onclick="copyInstructions()">Copy Fix Instructions</button>
+    </div>
+    
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 30px; opacity: 0.9;">
+      <p style="font-size: 14px;">
+        💡 The red banner is working correctly - it's protecting you from broken code!
+      </p>
+      <p style="font-size: 14px; margin-top: 5px;">
+        Once you clear the cache, everything will work perfectly.
+      </p>
+    </div>
+  </div>
+  
+  <script>
+    function forceCacheClear() {
+      console.log('🔄 [MANUAL] User clicked force clear button');
+      console.log('🔄 [MANUAL] Clearing localStorage...');
+      localStorage.clear();
+      
+      console.log('🔄 [MANUAL] Clearing sessionStorage...');
+      sessionStorage.clear();
+      
+      console.log('🔄 [MANUAL] Setting reload flag...');
+      sessionStorage.setItem('KILIMO_RELOADING', 'true');
+      
+      console.log('💥 [MANUAL] Forcing hard reload...');
+      alert('Cache cleared! The page will now reload with fresh code.\n\nThe red banner should disappear.');
+      
+      // Try multiple reload methods
+      setTimeout(() => {
+        window.location.reload(true);
+      }, 100);
+      
+      setTimeout(() => {
+        if (window.location.reload) {
+          window.location.href = window.location.href.split('?')[0] + '?cachebust=' + Date.now();
+        }
+      }, 500);
+    }
+    
+    function openIncognito() {
+      const instructions = {
+        'Chrome/Edge/Brave': 'Press Ctrl+Shift+N (Cmd+Shift+N on Mac)',
+        'Firefox': 'Press Ctrl+Shift+P (Cmd+Shift+P on Mac)',
+        'Safari': 'Press Cmd+Shift+N'
+      };
+      
+      let message = 'Open Incognito/Private Window:\n\n';
+      for (const [browser, shortcut] of Object.entries(instructions)) {
+        message += `${browser}:\n  ${shortcut}\n\n`;
+      }
+      message += 'Then navigate to: http://localhost:3000';
+      
+      alert(message);
+    }
+    
+    function openDiagnostic() {
+      window.open('/diagnostic.html', '_blank');
+    }
+    
+    function copyInstructions() {
+      const text = `
+FIX KILIMO CACHE WARNING:
+
+FASTEST FIX:
+1. Click the red "Clear Cache & Reload Now" button
+
+ALTERNATIVE:
+1. Press F12
+2. Right-click reload button
+3. Select "Empty Cache and Hard Reload"
+
+OR USE INCOGNITO:
+Chrome/Edge: Ctrl+Shift+N
+Firefox: Ctrl+Shift+P
+Safari: Cmd+Shift+N
+Then open: http://localhost:3000
+
+VERIFY IT WORKED:
+✅ Red banner should be gone
+✅ Green "Running Latest Version" badge appears
+✅ Console shows: "Running correct version"
+      `.trim();
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Instructions copied to clipboard!');
+      }).catch(() => {
+        prompt('Copy these instructions:', text);
+      });
+    }
+  </script>
+</body>
+</html>

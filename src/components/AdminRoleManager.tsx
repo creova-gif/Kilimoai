@@ -206,7 +206,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
 
   const getRoleBadgeColor = (role: string) => {
     const colors: Record<string, string> = {
-      farmer: "bg-green-100 text-green-700",
+      farmer: "bg-[#2E7D32]/10 text-[#1B5E20]",
       farm_manager: "bg-gray-100 text-gray-700",
       commercial_farm_admin: "bg-gray-100 text-gray-700",
       admin: "bg-orange-100 text-orange-700",

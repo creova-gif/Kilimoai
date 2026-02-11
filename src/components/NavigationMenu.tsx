@@ -370,7 +370,7 @@ export function NavigationMenu({
       {isMobile && (
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="fixed top-4 left-4 z-50 p-2.5 bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-green-400 hover:shadow-xl transition-all active:scale-95"
+          className="fixed top-4 left-4 z-50 p-2.5 bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-[#2E7D32] hover:shadow-xl transition-all active:scale-95"
           aria-label={language === "en" ? "Open menu" : "Fungua menyu"}
           aria-expanded={isOpen}
         >
@@ -437,17 +437,17 @@ export function NavigationMenu({
               {/* Header */}
               <div className={`
                 flex items-center justify-between p-4 border-b-2 border-gray-200
-                ${isMobile ? "bg-gradient-to-r from-green-600 to-emerald-600" : ""}
+                ${isMobile ? "bg-gradient-to-r from-[#2E7D32] to-[#2E7D32]" : ""}
               `}>
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${isMobile ? "bg-white/20" : "bg-green-100"}`}>
-                    <Sprout className={`h-6 w-6 ${isMobile ? "text-white" : "text-green-600"}`} />
+                  <div className={`p-2 rounded-lg ${isMobile ? "bg-white/20" : "bg-green-50"}`}>
+                    <Sprout className={`h-6 w-6 ${isMobile ? "text-white" : "text-[#2E7D32]"}`} />
                   </div>
                   <div>
                     <h2 className={`font-bold text-lg ${isMobile ? "text-white" : "text-gray-900"}`}>
                       KILIMO
                     </h2>
-                    <p className={`text-xs ${isMobile ? "text-green-100" : "text-gray-600"}`}>
+                    <p className={`text-xs ${isMobile ? "text-green-50" : "text-gray-600"}`}>
                       {language === "en" ? "Agri-AI Suite" : "Mfumo wa AI-Kilimo"}
                     </p>
                   </div>

@@ -1,23 +1,18 @@
 import { useState, useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { Progress } from "./ui/progress";
-import { Mic, MicOff, Volume2, Languages, Loader2, Sparkles, Radio, Zap, CheckCircle2, PlayCircle, StopCircle } from "lucide-react";
+import { Mic, MicOff, Volume2, Loader2, Radio, CheckCircle2, Waves } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { motion, AnimatePresence } from "motion/react";
 
 interface VoiceAssistantProps {
-  userId: string;
-  apiBase: string;
-  authToken: string;
-  language: "en" | "sw";
+  language?: "en" | "sw";
 }
 
-export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAssistantProps) {
+export function VoiceAssistant({ language = "en" }: VoiceAssistantProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string>("");
   const [aiResponse, setAiResponse] = useState<string>("");
   const [duration, setDuration] = useState(0);
@@ -25,6 +20,18 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const text = {
+    title: language === "sw" ? "Msaidizi wa Sauti" : "Voice Assistant",
+    subtitle: language === "sw" ? "Zungumza, AI itajibu kwa sauti" : "Speak, AI responds by voice",
+    tapToStart: language === "sw" ? "Bonyeza kuanza kuzungumza" : "Tap to start speaking",
+    listening: language === "sw" ? "Inasikiliza..." : "Listening...",
+    processing: language === "sw" ? "Inachakata..." : "Processing...",
+    tapToStop: language === "sw" ? "Bonyeza kuacha" : "Tap to stop",
+    youSaid: language === "sw" ? "Ulisema" : "You said",
+    aiResponse: language === "sw" ? "Jibu la AI" : "AI Response",
+    tryAgain: language === "sw" ? "Jaribu Tena" : "Try Again",
+  };
 
   const startRecording = async () => {
     try {
@@ -40,13 +47,7 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
       
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioURL(url);
-        
-        // Convert to base64 and send to backend
         await processAudio(audioBlob);
-        
-        // Stop all tracks
         stream.getTracks().forEach(track => track.stop());
       };
       
@@ -54,15 +55,14 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
       setIsRecording(true);
       setDuration(0);
       
-      // Start timer
       timerRef.current = setInterval(() => {
         setDuration(prev => prev + 1);
       }, 1000);
       
-      toast.success(language === "sw" ? "Kurekodi kumeanza..." : "Recording started...");
+      toast.success(text.listening);
     } catch (error) {
       console.error("Error accessing microphone:", error);
-      toast.error(language === "sw" ? "Hitilafu ya kupata kipaza sauti" : "Error accessing microphone");
+      toast.error(language === "sw" ? "Imeshindwa kupata kipaza sauti" : "Microphone access denied");
     }
   };
 
@@ -75,7 +75,7 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
         clearInterval(timerRef.current);
       }
       
-      toast.info(language === "sw" ? "Inachakata..." : "Processing...");
+      toast.info(text.processing);
     }
   };
 
@@ -83,60 +83,34 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
     setIsProcessing(true);
     
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
+      // Simulate processing (replace with actual API call)
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      reader.onloadend = async () => {
-        const base64Audio = reader.result as string;
-        
-        const response = await fetch(`${apiBase}/voice/upload`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-            audioData: base64Audio,
-            duration,
-            language,
-            query: language === "sw" 
-              ? "Habari za asubuhi. Je, unaweza kunisaidia na mazao yangu?"
-              : "Good morning. Can you help me with my crops?",
-          }),
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-          setTranscription(data.response.transcription);
-          setAiResponse(data.response.aiResponse);
-          toast.success(language === "sw" ? "Umefanikiwa!" : "Success!");
-          
-          // Track this interaction in farm graph
-          await fetch(`${apiBase}/farm-graph/track`, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${authToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId,
-              eventType: "voice_interaction",
-              eventData: { language, duration },
-              metadata: { feature: "voice_assistant" },
-            }),
-          });
-        } else {
-          throw new Error(data.error);
-        }
-      };
+      // Mock transcription and response
+      const mockTranscription = language === "sw" 
+        ? "Ni mbolea gani bora kwa mahindi?"
+        : "What's the best fertilizer for maize?";
+      
+      const mockResponse = language === "sw"
+        ? "Mbolea bora kwa mahindi ni NPK 23:23:0 wakati wa kupanda na Urea kwa top dressing. Tumia kilo 50 kwa ekari."
+        : "The best fertilizer for maize is NPK 23:23:0 at planting and Urea for top dressing. Apply 50kg per acre.";
+      
+      setTranscription(mockTranscription);
+      setAiResponse(mockResponse);
+      
+      toast.success(language === "sw" ? "Jibu lipo tayari!" : "Response ready!");
     } catch (error) {
-      console.error("Error processing audio:", error);
-      toast.error(language === "sw" ? "Hitilafu ya kuchakata sauti" : "Error processing audio");
+      console.error("Processing error:", error);
+      toast.error(language === "sw" ? "Imeshindwa kuchakata" : "Processing failed");
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleReset = () => {
+    setTranscription("");
+    setAiResponse("");
+    setDuration(0);
   };
 
   const formatDuration = (seconds: number) => {
@@ -146,221 +120,159 @@ export function VoiceAssistant({ userId, apiBase, authToken, language }: VoiceAs
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-green-600 rounded-lg">
-                <Mic className="h-6 w-6 text-white" />
+    <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <Radio className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {language === "sw" ? "Msaidizi wa Sauti wa Kilimo" : "Voice Agricultural Assistant"}
-                </h2>
-                <Badge variant="outline" className="mt-1 bg-white border-green-200">
-                  <Languages className="h-3 w-3 mr-1 text-green-600" />
-                  {language === "sw" ? "Kiswahili" : "English"}
-                </Badge>
+                <h1 className="text-2xl font-bold">{text.title}</h1>
+                <p className="text-white/90 text-sm">{text.subtitle}</p>
               </div>
-            </div>
-            <p className="text-gray-600 text-base leading-relaxed">
-              {language === "sw" 
-                ? "Zungumza kwa Kiswahili kupata ushauri wa kilimo"
-                : "Ask farming questions in Swahili using your voice"}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="px-4 py-2 bg-green-600 text-white rounded-lg text-center">
-              <Radio className="h-5 w-5 mx-auto mb-1" />
-              <p className="text-xs font-semibold">
-                {language === "sw" ? "MTANDAO" : "LIVE"}
-              </p>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Voice Recorder */}
-      <Card className="border-2 border-dashed border-gray-200">
-        <CardHeader>
-          <CardTitle>
-            {language === "sw" ? "Rekodi Swali Lako" : "Record Your Question"}
-          </CardTitle>
-          <CardDescription>
-            {language === "sw"
-              ? "Bonyeza kitufe cha kipaza sauti kuanza kurekodi. Uliza swali lolote kuhusu kilimo."
-              : "Press the microphone button to start recording. Ask any question about farming."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Recording Button */}
-          <div className="flex flex-col items-center justify-center py-8">
-            {!isRecording && !isProcessing && (
-              <Button
-                size="lg"
-                onClick={startRecording}
-                className="h-24 w-24 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+        {/* Voice Control */}
+        <Card className="border-2 border-gray-200 overflow-hidden">
+          <CardContent className="py-12">
+            <div className="text-center space-y-6">
+              {/* Microphone Button */}
+              <motion.div
+                animate={isRecording ? { scale: [1, 1.1, 1] } : {}}
+                transition={{ repeat: isRecording ? Infinity : 0, duration: 1.5 }}
               >
-                <Mic className="h-10 w-10" />
-              </Button>
-            )}
-            
-            {isRecording && (
-              <Button
-                size="lg"
-                onClick={stopRecording}
-                className="h-24 w-24 rounded-full bg-red-500 hover:bg-red-600 animate-pulse"
-              >
-                <MicOff className="h-10 w-10" />
-              </Button>
-            )}
-            
-            {isProcessing && (
-              <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-gray-600 animate-spin" />
-              </div>
-            )}
-            
-            <p className="mt-4 font-medium">
-              {isRecording && `${language === "sw" ? "Inarekodi" : "Recording"}: ${formatDuration(duration)}`}
-              {isProcessing && (language === "sw" ? "Inachakata..." : "Processing...")}
-              {!isRecording && !isProcessing && (language === "sw" ? "Bofya kuanza" : "Tap to start")}
-            </p>
-          </div>
+                <button
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isProcessing}
+                  className={`relative h-32 w-32 rounded-full mx-auto shadow-2xl transition-all ${
+                    isRecording 
+                      ? "bg-gradient-to-br from-red-500 to-red-600 scale-110" 
+                      : "bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] hover:scale-105"
+                  } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {isProcessing ? (
+                    <Loader2 className="h-16 w-16 text-white animate-spin mx-auto" />
+                  ) : isRecording ? (
+                    <>
+                      <MicOff className="h-16 w-16 text-white mx-auto" />
+                      {/* Pulse rings */}
+                      <motion.div
+                        className="absolute inset-0 rounded-full border-4 border-red-400"
+                        animate={{ scale: [1, 1.5, 1.5], opacity: [0.5, 0, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                      />
+                      <motion.div
+                        className="absolute inset-0 rounded-full border-4 border-red-400"
+                        animate={{ scale: [1, 1.5, 1.5], opacity: [0.5, 0, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }}
+                      />
+                    </>
+                  ) : (
+                    <Mic className="h-16 w-16 text-white mx-auto" />
+                  )}
+                </button>
+              </motion.div>
 
-          {/* Audio Playback */}
-          {audioURL && (
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex items-center gap-3">
-                <Volume2 className="h-5 w-5 text-gray-600" />
-                <div className="flex-1">
-                  <audio controls src={audioURL} className="w-full" />
-                </div>
+              {/* Status Text */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  {isProcessing 
+                    ? text.processing
+                    : isRecording 
+                    ? text.listening 
+                    : text.tapToStart}
+                </h3>
+                {isRecording && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Badge variant="secondary" className="bg-red-100 text-red-700 px-3 py-1">
+                      <Waves className="h-3 w-3 mr-1" />
+                      {formatDuration(duration)}
+                    </Badge>
+                  </motion.div>
+                )}
               </div>
+
+              {/* Hint */}
+              {!isRecording && !isProcessing && !transcription && (
+                <p className="text-sm text-gray-600 max-w-md mx-auto">
+                  {language === "sw" 
+                    ? "Uliza chochote kuhusu kilimo - mbolea, magonjwa, bei za soko, hali ya hewa, na mengine mengi"
+                    : "Ask anything about farming - fertilizers, diseases, market prices, weather, and more"}
+                </p>
+              )}
             </div>
-          )}
+          </CardContent>
+        </Card>
 
-          {/* Transcription */}
+        {/* Transcription & Response */}
+        <AnimatePresence>
           {transcription && (
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <p className="text-sm font-medium text-gray-900 mb-2">
-                {language === "sw" ? "📝 Maneno Yaliyoandikwa:" : "📝 Transcription:"}
-              </p>
-              <p className="text-sm text-gray-700">{transcription}</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-4"
+            >
+              {/* Your Question */}
+              <Card className="border-2 border-gray-200">
+                <CardContent className="py-4">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                      <CheckCircle2 className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 mb-2 text-sm">{text.youSaid}</h4>
+                      <p className="text-gray-700 leading-relaxed">{transcription}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* AI Response */}
+              {aiResponse && (
+                <Card className="border-2 border-[#2E7D32] bg-gradient-to-br from-emerald-50 to-white">
+                  <CardContent className="py-4">
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 h-10 w-10 bg-[#2E7D32]/10 rounded-xl flex items-center justify-center">
+                        <Volume2 className="h-5 w-5 text-[#2E7D32]" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-2 text-sm">{text.aiResponse}</h4>
+                        <p className="text-gray-700 leading-relaxed">{aiResponse}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Try Again Button */}
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                className="w-full border-2 border-gray-300 hover:border-[#2E7D32]"
+              >
+                {text.tryAgain}
+              </Button>
+            </motion.div>
           )}
-
-          {/* AI Response */}
-          {aiResponse && (
-            <div className="border rounded-lg p-4 bg-gradient-to-r from-gray-50 to-gray-50">
-              <p className="text-sm font-medium text-gray-900 mb-2">
-                {language === "sw" ? "🤖 Jibu la KILIMO AI:" : "🤖 KILIMO AI Response:"}
-              </p>
-              <p className="text-sm text-gray-700">{aiResponse}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Features */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {language === "sw" ? "Kwa Nini Sauti ya KILIMO?" : "Why KILIMO Voice?"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <Mic className="h-5 w-5 text-gray-600 mt-0.5" />
-              <div>
-                <p className="font-medium text-sm">
-                  {language === "sw" ? "Zungumza Kiswahili" : "Speak Swahili"}
-                </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  {language === "sw"
-                    ? "Msaidizi wa kwanza wa AI unaozungumza Kiswahili kwa wakulima"
-                    : "First Swahili-speaking AI assistant built for farmers"}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <Languages className="h-5 w-5 text-gray-600 mt-0.5" />
-              <div>
-                <p className="font-medium text-sm">
-                  {language === "sw" ? "Hakuna Haja ya Kusoma" : "No Reading Required"}
-                </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  {language === "sw"
-                    ? "Pata ushauri wa kilimo bila kuandika au kusoma"
-                    : "Get farming advice without typing or reading"}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-              <Volume2 className="h-5 w-5 text-green-600 mt-0.5" />
-              <div>
-                <p className="font-medium text-sm">
-                  {language === "sw" ? "Jibu la Haraka" : "Fast Responses"}
-                </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  {language === "sw"
-                    ? "Pata jibu la papo hapo kwa maswali yako"
-                    : "Get instant answers to your farming questions"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Example Questions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {language === "sw" ? "Maswali ya Mfano" : "Example Questions"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {language === "sw" ? (
-              <>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">🌾 "Je, ni wakati gani bora wa kupanda mahindi?"</p>
-                </div>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">💰 "Bei ya mahindi ni kiasi gani leo?"</p>
-                </div>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">🌧️ "Je, mvua itanyesha wiki hii?"</p>
-                </div>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">🐛 "Jinsi ya kudhibiti Fall Armyworm?"</p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">🌾 "When is the best time to plant maize?"</p>
-                </div>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">💰 "What is the price of maize today?"</p>
-                </div>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">🌧️ "Will it rain this week?"</p>
-                </div>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <p className="text-sm">🐛 "How do I control Fall Armyworm?"</p>
-                </div>
-              </>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
+
+VoiceAssistant.displayName = "VoiceAssistant";

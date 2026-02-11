@@ -46,7 +46,7 @@ export function RoleSelection({ onSelect, language }: RoleSelectionProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-green-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#2E7D32]/5 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <motion.div

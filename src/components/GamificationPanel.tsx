@@ -113,9 +113,9 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
 
   // Categories
   const categories = [
-    { id: "all", label: "All", icon: Sparkles, color: "text-green-600" },
-    { id: "crop", label: "Farming", icon: Target, color: "text-green-600" },
-    { id: "market", label: "Trading", icon: TrendingUp, color: "text-green-600" },
+    { id: "all", label: "All", icon: Sparkles, color: "text-[#2E7D32]" },
+    { id: "crop", label: "Farming", icon: Target, color: "text-[#2E7D32]" },
+    { id: "market", label: "Trading", icon: TrendingUp, color: "text-[#2E7D32]" },
     { id: "learning", label: "Learning", icon: Award, color: "text-orange-600" },
     { id: "social", label: "Community", icon: Star, color: "text-gray-600" },
     { id: "milestone", label: "Milestones", icon: Trophy, color: "text-yellow-600" },
@@ -138,7 +138,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
 
   const getCategoryColor = (category?: string) => {
     switch (category) {
-      case "crop": return { bg: "bg-green-50", border: "border-green-200", text: "text-green-700", icon: "text-green-600" };
+      case "crop": return { bg: "bg-[#2E7D32]/5", border: "border-[#2E7D32]/30", text: "text-[#1B5E20]", icon: "text-[#2E7D32]" };
       case "market": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
       case "learning": return { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", icon: "text-orange-600" };
       case "social": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
@@ -157,7 +157,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 border-0 text-white overflow-hidden relative">
+          <Card className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-[#1B5E20] border-0 text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 opacity-10">
               <Crown className="h-32 w-32 -mt-8 -mr-8" />
             </div>

@@ -31,7 +31,8 @@ import {
   Camera,
   MessageCircle,
   Share2,
-  Download
+  Download,
+  AlertTriangle
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -58,7 +59,7 @@ interface ProfileProps {
 
 export function Profile({ user, onClose, onUpdate }: ProfileProps) {
   const [editing, setEditing] = useState(false);
-  const [activeSection, setActiveSection] = useState<"profile" | "stats" | "settings">("profile");
+  const [activeSection, setActiveSection] = useState<"profile" | "stats" | "id" | "achievements" | "settings">("profile");
   const [formData, setFormData] = useState({
     name: user.name,
     phone: user.phone,
@@ -111,112 +112,52 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
   const levelProgress = (stats.points / stats.nextLevelPoints) * 100;
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Enhanced Header */}
-      <div className={`relative overflow-hidden bg-gradient-to-br ${getTierColor(user.tier)}`}>
-        {/* Decorative background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -ml-24 -mb-24"></div>
-          <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-white/5 rounded-full blur-xl"></div>
+    <div className="flex flex-col h-full bg-white">
+      {/* Clean Header - No decoration */}
+      <div className="border-b border-gray-200">
+        {/* Header bar */}
+        <div className="flex items-center justify-between px-4 py-3">
+          <h2 className="text-base font-semibold text-gray-900">Profile</h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <X className="h-5 w-5 text-gray-700" />
+          </button>
         </div>
 
-        {/* Header content */}
-        <div className="relative p-6 pb-20">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
-                <User className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">Your Profile</h2>
-                <p className="text-white/80 text-xs">Account & Settings</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl transition-all"
-            >
-              <X className="h-5 w-5 text-white" />
-            </button>
-          </div>
-
-          {/* Profile Avatar Section */}
-          <div className="flex flex-col items-center">
-            <div className="relative group">
-              <div className="p-1 bg-white rounded-2xl shadow-xl">
-                <div className="p-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
-                  <User className="h-16 w-16 text-white" />
-                </div>
-              </div>
-              <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="h-4 w-4 text-gray-700" />
-              </button>
-            </div>
-
-            <h3 className="text-xl font-bold text-white mt-4">{user.name}</h3>
-            <p className="text-white/80 text-sm mt-1">
-              {user.role?.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()) || "Smallholder Farmer"}
-            </p>
-
-            {/* Tier Badge */}
-            <div className="mt-3">
-              <Badge className={`${getTierBadge(user.tier)} px-4 py-2 text-sm font-bold border-2`}>
-                <Crown className="h-4 w-4 mr-1.5 inline" />
-                {user.tier?.toUpperCase() || "FREE"} TIER
-              </Badge>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="relative">
-          <div className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md">
-            <div className="flex">
-              <button
-                onClick={() => setActiveSection("profile")}
-                className={`flex-1 py-4 text-sm font-medium transition-all relative ${
-                  activeSection === "profile"
-                    ? "text-white"
-                    : "text-white/60 hover:text-white/80"
-                }`}
-              >
-                <User className="h-5 w-5 mx-auto mb-1" />
-                Profile
-                {activeSection === "profile" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-white"></div>
-                )}
-              </button>
-              <button
-                onClick={() => setActiveSection("stats")}
-                className={`flex-1 py-4 text-sm font-medium transition-all relative ${
-                  activeSection === "stats"
-                    ? "text-white"
-                    : "text-white/60 hover:text-white/80"
-                }`}
-              >
-                <BarChart3 className="h-5 w-5 mx-auto mb-1" />
-                Stats
-                {activeSection === "stats" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-white"></div>
-                )}
-              </button>
-              <button
-                onClick={() => setActiveSection("settings")}
-                className={`flex-1 py-4 text-sm font-medium transition-all relative ${
-                  activeSection === "settings"
-                    ? "text-white"
-                    : "text-white/60 hover:text-white/80"
-                }`}
-              >
-                <Settings className="h-5 w-5 mx-auto mb-1" />
-                Settings
-                {activeSection === "settings" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-white"></div>
-                )}
-              </button>
-            </div>
-          </div>
+        {/* Tabs - Simple and flat */}
+        <div className="flex border-t border-gray-100">
+          <button
+            onClick={() => setActiveSection("profile")}
+            className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+              activeSection === "profile"
+                ? "border-[#2E7D32] text-gray-900"
+                : "border-transparent text-gray-500"
+            }`}
+          >
+            Info
+          </button>
+          <button
+            onClick={() => setActiveSection("stats")}
+            className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+              activeSection === "stats"
+                ? "border-[#2E7D32] text-gray-900"
+                : "border-transparent text-gray-500"
+            }`}
+          >
+            Stats
+          </button>
+          <button
+            onClick={() => setActiveSection("settings")}
+            className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+              activeSection === "settings"
+                ? "border-[#2E7D32] text-gray-900"
+                : "border-transparent text-gray-500"
+            }`}
+          >
+            Settings
+          </button>
         </div>
       </div>
 
@@ -720,6 +661,3 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
     </div>
   );
 }
-
-// Missing import
-import { AlertTriangle } from "lucide-react";

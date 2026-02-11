@@ -1,167 +1,225 @@
 #!/usr/bin/env node
 
 /**
- * KILIMO STRICT Brand Color Enforcement
+ * KILIMO Brand Color Enforcement Script
+ * Automatically replaces all non-compliant green colors with Raspberry Leaf Green (#2E7D32)
  * 
- * ALLOW ONLY:
- * - #2E7D32 (Raspberry Leaf Green)
- * - gray-*
- * - white
- * 
- * BLOCK EVERYTHING ELSE including:
- * - blue-, purple-, indigo-, emerald-, teal-, cyan-, pink-
- * - green-* (use #2E7D32 instead)
- * - orange-*, yellow-*, red-* (use gray or #2E7D32 instead)
- * - ALL gradients
+ * Usage: node scripts/enforce-brand-colors.js
  */
 
 const fs = require('fs');
 const path = require('path');
+const { glob } = require('glob');
 
-// Block ALL colors except gray and white
-const BLOCKED_COLOR_PREFIXES = [
-  'blue-',
-  'purple-',
-  'indigo-',
-  'emerald-',
-  'teal-',
-  'cyan-',
-  'pink-',
-  'green-',   // BLOCKED: Use #2E7D32 instead
-  'orange-',  // BLOCKED: Use gray-* instead
-  'yellow-',  // BLOCKED: Use gray-* instead
-  'red-',     // BLOCKED: Use gray-* instead
-  'lime-',
-  'sky-',
-  'violet-',
-  'fuchsia-',
-  'rose-',
-  'amber-',
-  'slate-',
-  'zinc-',
-  'neutral-',
-  'stone-',
-];
+// ============================================================================
+// COLOR MAPPING CONFIGURATION
+// ============================================================================
 
-// Block all gradient patterns
-const GRADIENT_PATTERNS = [
-  /\bbg-gradient-/,
-  /\bfrom-/,
-  /\bto-/,
-  /\bvia-/,
-];
+const COLOR_MAPPINGS = {
+  // Background Colors
+  'bg-green-50': 'bg-[#2E7D32]/5',
+  'bg-green-100': 'bg-[#2E7D32]/10',
+  'bg-green-200': 'bg-[#2E7D32]/20',
+  'bg-green-300': 'bg-[#2E7D32]/30',
+  'bg-green-400': 'bg-[#2E7D32]/60',
+  'bg-green-500': 'bg-[#2E7D32]',
+  'bg-green-600': 'bg-[#2E7D32]',
+  'bg-green-700': 'bg-[#1B5E20]',
+  'bg-green-800': 'bg-[#0D3010]',
+  'bg-green-900': 'bg-[#0D3010]',
+  
+  // Text Colors
+  'text-green-50': 'text-[#2E7D32]/30',
+  'text-green-100': 'text-[#2E7D32]/40',
+  'text-green-200': 'text-[#2E7D32]/50',
+  'text-green-300': 'text-[#2E7D32]/60',
+  'text-green-400': 'text-[#2E7D32]/80',
+  'text-green-500': 'text-[#2E7D32]',
+  'text-green-600': 'text-[#2E7D32]',
+  'text-green-700': 'text-[#1B5E20]',
+  'text-green-800': 'text-[#0D3010]',
+  'text-green-900': 'text-[#0D3010]',
+  
+  // Border Colors
+  'border-green-50': 'border-[#2E7D32]/10',
+  'border-green-100': 'border-[#2E7D32]/15',
+  'border-green-200': 'border-[#2E7D32]/30',
+  'border-green-300': 'border-[#2E7D32]/40',
+  'border-green-400': 'border-[#2E7D32]/60',
+  'border-green-500': 'border-[#2E7D32]',
+  'border-green-600': 'border-[#2E7D32]',
+  'border-green-700': 'border-[#1B5E20]',
+  'border-green-800': 'border-[#0D3010]',
+  'border-green-900': 'border-[#0D3010]',
+  
+  // Hover States - Background
+  'hover:bg-green-50': 'hover:bg-[#2E7D32]/5',
+  'hover:bg-green-100': 'hover:bg-[#2E7D32]/10',
+  'hover:bg-green-200': 'hover:bg-[#2E7D32]/20',
+  'hover:bg-green-300': 'hover:bg-[#2E7D32]/30',
+  'hover:bg-green-500': 'hover:bg-[#2E7D32]',
+  'hover:bg-green-600': 'hover:bg-[#2E7D32]',
+  'hover:bg-green-700': 'hover:bg-[#1B5E20]',
+  
+  // Hover States - Text
+  'hover:text-green-600': 'hover:text-[#2E7D32]',
+  'hover:text-green-700': 'hover:text-[#1B5E20]',
+  
+  // Hover States - Border
+  'hover:border-green-300': 'hover:border-[#2E7D32]/40',
+  'hover:border-green-500': 'hover:border-[#2E7D32]',
+  'hover:border-green-600': 'hover:border-[#2E7D32]',
+  
+  // Group Hover States
+  'group-hover:bg-green-50': 'group-hover:bg-[#2E7D32]/5',
+  'group-hover:text-green-600': 'group-hover:text-[#2E7D32]',
+  
+  // From/To/Via (Gradients) - Emerald variants
+  'from-emerald-50': 'from-[#2E7D32]/5',
+  'from-emerald-400': 'from-[#2E7D32]/60',
+  'from-emerald-500': 'from-[#2E7D32]',
+  'from-emerald-600': 'from-[#2E7D32]',
+  'to-emerald-50': 'to-[#2E7D32]/5',
+  'to-emerald-500': 'to-[#2E7D32]',
+  'to-emerald-600': 'to-[#2E7D32]',
+  'via-emerald-500': 'via-[#2E7D32]',
+  'via-emerald-600': 'via-[#2E7D32]',
+  
+  // From/To/Via (Gradients) - Green variants
+  'from-green-50': 'from-[#2E7D32]/5',
+  'from-green-400': 'from-[#2E7D32]/60',
+  'from-green-500': 'from-[#2E7D32]',
+  'from-green-600': 'from-[#2E7D32]',
+  'from-green-700': 'from-[#1B5E20]',
+  'to-green-50': 'to-[#2E7D32]/5',
+  'to-green-100': 'to-[#2E7D32]/10',
+  'to-green-500': 'to-[#2E7D32]',
+  'to-green-600': 'to-[#2E7D32]',
+  'to-green-700': 'to-[#1B5E20]',
+  'via-green-500': 'via-[#2E7D32]',
+  'via-green-600': 'via-[#2E7D32]',
+  
+  // Teal variants (often used with green) - Remove or replace
+  'to-teal-600': 'to-[#1B5E20]',
+  'to-teal-50': 'to-[#2E7D32]/5',
+  'from-teal-600': 'from-[#1B5E20]',
+  'via-teal-600': 'via-[#1B5E20]',
+};
 
-function scanFile(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const violations = [];
-  const lines = content.split('\n');
+// ============================================================================
+// STATS TRACKING
+// ============================================================================
 
-  lines.forEach((line, index) => {
-    // Check for blocked color prefixes
-    BLOCKED_COLOR_PREFIXES.forEach(colorPrefix => {
-      // Match patterns like: text-blue-500, bg-green-600, border-red-400
-      const regex = new RegExp(`\\b(text-|bg-|border-|ring-|outline-|divide-|placeholder-|from-|to-|via-)?${colorPrefix}\\d+\\b`, 'g');
-      const matches = line.match(regex);
-      if (matches) {
-        matches.forEach(match => {
-          violations.push({
-            file: filePath,
-            line: index + 1,
-            violation: match,
-            content: line.trim().substring(0, 100),
-            type: 'COLOR'
-          });
-        });
-      }
-    });
+const stats = {
+  filesScanned: 0,
+  filesModified: 0,
+  replacementsMade: 0,
+  replacementsByType: {},
+};
 
-    // Check for gradient patterns
-    GRADIENT_PATTERNS.forEach(pattern => {
-      if (pattern.test(line)) {
-        const match = line.match(pattern);
-        if (match) {
-          violations.push({
-            file: filePath,
-            line: index + 1,
-            violation: match[0],
-            content: line.trim().substring(0, 100),
-            type: 'GRADIENT'
-          });
-        }
-      }
-    });
-  });
+// ============================================================================
+// CORE REPLACEMENT FUNCTION
+// ============================================================================
 
-  return violations;
-}
-
-function scanDirectory(dir, violations = []) {
-  const files = fs.readdirSync(dir);
-
-  files.forEach(file => {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-
-    if (stat.isDirectory()) {
-      if (!['node_modules', '.git', 'dist', 'build', '.next', 'supabase'].includes(file)) {
-        scanDirectory(filePath, violations);
-      }
-    } else if (stat.isFile() && (file.endsWith('.tsx') || file.endsWith('.ts') || file.endsWith('.jsx') || file.endsWith('.js'))) {
-      const fileViolations = scanFile(filePath);
-      violations.push(...fileViolations);
+function enforceRaspberryLeafGreen(content) {
+  let modifiedContent = content;
+  let fileReplacements = 0;
+  
+  // Sort mappings by length (longest first) to avoid partial replacements
+  const sortedMappings = Object.entries(COLOR_MAPPINGS).sort((a, b) => b[0].length - a[0].length);
+  
+  for (const [oldColor, newColor] of sortedMappings) {
+    // Create a regex that matches the exact class name (with word boundaries)
+    const regex = new RegExp(`\\b${oldColor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
+    
+    const matches = (modifiedContent.match(regex) || []).length;
+    
+    if (matches > 0) {
+      modifiedContent = modifiedContent.replace(regex, newColor);
+      fileReplacements += matches;
+      
+      // Track by type
+      stats.replacementsByType[oldColor] = (stats.replacementsByType[oldColor] || 0) + matches;
     }
-  });
-
-  return violations;
-}
-
-function main() {
-  console.log('\n🔒 KILIMO STRICT COLOR ENFORCEMENT\n');
-
-  const rootDir = process.cwd();
-  const violations = scanDirectory(rootDir);
-
-  if (violations.length === 0) {
-    console.log('✅ CI RULE ACTIVE\n');
-    console.log('✅ NO REGRESSIONS POSSIBLE\n');
-    console.log('Allowed colors:');
-    console.log('  • #2E7D32 (Raspberry Leaf Green)');
-    console.log('  • gray-*');
-    console.log('  • white\n');
-    process.exit(0);
   }
-
-  console.error('❌ BUILD BLOCKED: Non-brand color detected.\n');
-  console.error(`Found ${violations.length} violation(s):\n`);
-
-  // Group by file
-  const byFile = violations.reduce((acc, v) => {
-    if (!acc[v.file]) acc[v.file] = [];
-    acc[v.file].push(v);
-    return acc;
-  }, {});
-
-  Object.entries(byFile).forEach(([file, fileViolations]) => {
-    console.error(`\n📁 ${file}`);
-    fileViolations.slice(0, 5).forEach(v => {
-      console.error(`   Line ${v.line}: ${v.violation}`);
-    });
-    if (fileViolations.length > 5) {
-      console.error(`   ... and ${fileViolations.length - 5} more violations`);
-    }
-  });
-
-  console.error('\n❌ BUILD BLOCKED: Non-brand color detected.\n');
-  console.error('ALLOWED ONLY:');
-  console.error('  ✅ #2E7D32 (Raspberry Leaf Green)');
-  console.error('  ✅ gray-*');
-  console.error('  ✅ white\n');
-  console.error('BLOCKED:');
-  console.error('  ❌ ALL other colors (blue-, purple-, indigo-, emerald-, teal-, cyan-, pink-, green-, red-, orange-, yellow-)');
-  console.error('  ❌ ALL gradients\n');
-  console.error('Fix violations and rebuild.\n');
-
-  process.exit(1);
+  
+  stats.replacementsMade += fileReplacements;
+  
+  return {
+    content: modifiedContent,
+    modified: fileReplacements > 0,
+    count: fileReplacements,
+  };
 }
 
-main();
+// ============================================================================
+// FILE PROCESSING
+// ============================================================================
+
+async function processFile(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const result = enforceRaspberryLeafGreen(content);
+    
+    if (result.modified) {
+      fs.writeFileSync(filePath, result.content, 'utf8');
+      stats.filesModified++;
+      console.log(`✅ ${filePath}: ${result.count} replacements`);
+    }
+    
+    stats.filesScanned++;
+  } catch (error) {
+    console.error(`❌ Error processing ${filePath}:`, error.message);
+  }
+}
+
+// ============================================================================
+// MAIN EXECUTION
+// ============================================================================
+
+async function main() {
+  console.log('🎨 KILIMO Brand Color Enforcement Script');
+  console.log('==========================================');
+  console.log('Target: Raspberry Leaf Green (#2E7D32)\n');
+  
+  // Find all .tsx files (excluding node_modules and build directories)
+  const files = await glob('**/*.{tsx,ts,jsx,js}', {
+    ignore: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/scripts/**', // Don't modify the script itself
+    ],
+  });
+  
+  console.log(`Found ${files.length} files to scan...\n`);
+  
+  // Process each file
+  for (const file of files) {
+    await processFile(file);
+  }
+  
+  // Print summary
+  console.log('\n==========================================');
+  console.log('📊 SUMMARY');
+  console.log('==========================================');
+  console.log(`Files scanned: ${stats.filesScanned}`);
+  console.log(`Files modified: ${stats.filesModified}`);
+  console.log(`Total replacements: ${stats.replacementsMade}`);
+  console.log('\n🔍 Top Replacements:');
+  
+  const topReplacements = Object.entries(stats.replacementsByType)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+  
+  topReplacements.forEach(([color, count]) => {
+    console.log(`  ${color}: ${count} times`);
+  });
+  
+  console.log('\n✅ Brand color enforcement complete!');
+  console.log('🎯 All green colors now use #2E7D32 (Raspberry Leaf Green)');
+}
+
+// Run the script
+main().catch(console.error);

@@ -1,5 +1,21 @@
 import image_e26027fb3aabd00c928ba655f087af31ac20983e from 'figma:asset/e26027fb3aabd00c928ba655f087af31ac20983e.png';
 import image_258b5db2e38846cbee79c22a5c47ff1d8ec47802 from 'figma:asset/258b5db2e38846cbee79c22a5c47ff1d8ec47802.png';
+
+// 🔥 EMERGENCY: Import fetch wrapper FIRST to intercept ALL fetch calls
+import './emergency-fetch-wrapper';
+
+// 🔥 CACHE BUSTER v5.0.6 - FETCH WRAPPER INSTALLED
+// TIMESTAMP: 2026-02-10T18:00:00.000Z - FORCED HTTPS FIX
+// If you see old version numbers, do a HARD REFRESH (Ctrl+Shift+R)
+console.clear();
+console.log('═══════════════════════════════════════════════════');
+console.log('🔥 KILIMO v5.0.6 - FETCH WRAPPER ACTIVE');
+console.log('✅ ALL http:// requests auto-upgraded to https://');
+console.log('✅ Missing /functions/v1/ auto-added');
+console.log('✅ Build timestamp:', new Date().toISOString());
+console.log('✅ CACHE KEY: APP_20260210_006_FETCH_WRAPPER');
+console.log('═══════════════════════════════════════════════════');
+
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "sonner@2.0.3";
 import { 
@@ -25,6 +41,8 @@ import type { DemoModeState } from "./utils/demoMode";
 import { analytics } from "./utils/analytics"; // ✅ Analytics tracking
 import { useSessionTimeout } from "./hooks/useSessionTimeout"; // ✅ Session security
 import { crashReporter, ErrorBoundary } from "./utils/crash-reporting"; // ✅ Crash reporting & error boundaries
+import { ErrorBoundary as GlobalErrorBoundary } from "./components/ErrorBoundary"; // ✅ Global error boundary for App Store compliance
+import { OfflineBanner } from "./components/NetworkHandling"; // ✅ Offline detection
 
 // Component imports
 import { DashboardHome } from "./components/DashboardHome";
@@ -43,6 +61,8 @@ import { KnowledgeRepository } from "./components/KnowledgeRepository";
 import { PeerDiscussionGroups } from "./components/PeerDiscussionGroups";
 import { TaskManagement } from "./components/TaskManagement";
 import { TaskManagementRedesign } from "./components/TaskManagementRedesign";
+import { URLDebugPage } from "./components/URLDebugPage";
+import { CacheBusterBanner } from "./components/CacheBusterBanner";
 import { VisualCropPlanner } from "./components/VisualCropPlanner";
 import { VisualCropPlannerEnhanced } from "./components/VisualCropPlannerEnhanced";
 import { CropPlanningManagement } from "./components/CropPlanningManagement";
@@ -99,6 +119,17 @@ import { AutoAIInsights } from "./components/AutoAIInsights";
 import { SystemDiagnostics } from "./components/SystemDiagnostics";
 import { OfflineIndicator } from "./components/OfflineIndicator"; // ✅ Added offline detection
 import WalletAdminDashboard from "./components/WalletAdminDashboard";
+
+// ✅ UNIFIED COMPONENTS - Phase 2 Merge Architecture
+import { UnifiedAIAdvisor } from "./components/UnifiedAIAdvisor";
+import { UnifiedCropIntelligence } from "./components/UnifiedCropIntelligence"; // ✅ Knowledge Layer
+import { UnifiedCropPlanning } from "./components/UnifiedCropPlanning"; // ✅ Execution Layer
+import { UnifiedMarket } from "./components/UnifiedMarket";
+import { UnifiedFinance } from "./components/UnifiedFinance";
+import { UnifiedCommunity } from "./components/UnifiedCommunity";
+import { UnifiedLearning } from "./components/UnifiedLearning";
+import { UnifiedInventory } from "./components/UnifiedInventory";
+
 import { CollapsibleNavCategory } from "./components/CollapsibleNavCategory";
 import { projectId, publicAnonKey } from "./utils/supabase/info";
 
@@ -151,6 +182,16 @@ export default function App() {
   
   // Supabase client (singleton from utils/supabase/client.ts)
   // Already imported at top: import { supabase } from "./utils/supabase/client";
+
+  // ✅ DEEP LINK SUPPORT - Parse URL query params for tab routing
+  const getDeepLinkTab = (pageId: string): string | undefined => {
+    if (typeof window === "undefined") return undefined;
+    const params = new URLSearchParams(window.location.search);
+    const urlTab = params.get("tab");
+    const urlView = params.get("view");
+    if (urlTab === pageId && urlView) return urlView;
+    return undefined;
+  };
 
   // ✅ SESSION RESTORATION - Check for active session on load
   useEffect(() => {
@@ -560,18 +601,25 @@ export default function App() {
     { id: "ai-chat", label: "AI Advisor", icon: Brain, category: "ai-advisor" },
     
     // ========================================
-    // 3. CROP PLANNING - Plan → Yield → Revenue
-    // MERGES: Crop Planning + Land Allocation + Crop Dashboard + Yield Forecasting
-    // Farmer Question: "What crops should I plant and when?"
+    // 3. CROP PLANNING - Execution Layer
+    // MERGES: Current Season Plans + Field Allocation + Yield Forecasting + Timeline
+    // Farmer Question: "What am I planting THIS season?"
     // ========================================
     { id: "land-allocation", label: "Crop Planning", icon: Sprout, category: "planning" },
     
     // ========================================
-    // 4. CROP INTELLIGENCE - Crop Library + Templates
-    // MERGES: Crop Library + Growing Templates + Crop Tips
-    // Farmer Question: "How do I grow this crop?"
+    // 4. CROP INTELLIGENCE - Knowledge Layer
+    // MERGES: Crop Library + Growing Tips + Templates + Historical Performance
+    // Farmer Question: "How SHOULD I grow this crop?"
     // ========================================
     { id: "crop-tips", label: "Crop Intelligence", icon: Leaf, category: "planning" },
+    
+    // ========================================
+    // 4B. CROP LIBRARY - Direct Access (also in Intelligence)
+    // Quick access to crop database
+    // Farmer Question: "What crops can I grow?"
+    // ========================================
+    { id: "crop-library", label: "Crop Library", icon: BookOpen, category: "planning" },
     
     // ========================================
     // 5. FARM MAP - Mapping + Allocation
@@ -736,14 +784,19 @@ export default function App() {
 
   // Main Dashboard
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Toaster position="top-center" richColors />
+    <GlobalErrorBoundary>
+      <OfflineBanner />
+      <div className="min-h-screen bg-gray-50">
+        <Toaster position="top-center" richColors />
+        
+        {/* Cache Buster Banner - Shows if running old cached code */}
+        <CacheBusterBanner />
 
-      {/* Offline Indicator - Shows when user loses connection */}
-      <OfflineIndicator />
+        {/* Offline Indicator - Shows when user loses connection */}
+        <OfflineIndicator />
 
-      {/* Demo Mode Indicator */}
-      {demoModeActive && (
+        {/* Demo Mode Indicator */}
+        {demoModeActive && (
         <div className="fixed top-4 right-4 z-[100] bg-yellow-500 text-yellow-950 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-pulse">
           <Zap className="h-4 w-4" />
           <span className="font-semibold text-sm">DEMO MODE ACTIVE</span>
@@ -758,55 +811,66 @@ export default function App() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="lg:hidden relative p-2.5 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50 rounded-xl transition-all duration-300 group overflow-hidden"
                 aria-label="Toggle mobile menu"
               >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+                
                 {showMobileMenu ? (
-                  <X className="h-6 w-6 text-gray-700" />
+                  <X className="relative h-6 w-6 text-gray-700 group-hover:text-gray-900 transition-colors" />
                 ) : (
-                  <Menu className="h-6 w-6 text-gray-700" />
+                  <Menu className="relative h-6 w-6 text-gray-700 group-hover:text-gray-900 transition-colors" />
                 )}
               </button>
               
               <button
                 onClick={() => setActiveTab("home")}
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                className="relative flex items-center gap-2 hover:scale-105 transition-all duration-300 group"
               >
+                {/* Subtle glow on hover */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#2E7D32]/0 via-[#2E7D32]/5 to-[#2E7D32]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+                
                 <img 
                   src={logo}
                   alt="KILIMO Logo" 
-                  className="h-10 w-auto object-contain"
+                  className="relative h-10 w-auto object-contain"
                 />
               </button>
             </div>
 
             {/* Search Bar (Desktop) */}
             <div className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <div className="relative w-full group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#2E7D32] transition-colors duration-300" />
                 <input
                   type="text"
                   placeholder={language === "en" ? "Search..." : "Tafuta..."}
-                  className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
+                  className="w-full pl-11 pr-4 py-2.5 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/20 focus:border-[#2E7D32] focus:bg-white transition-all duration-300 shadow-sm hover:shadow-md"
                 />
+                {/* Search field glow effect */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#2E7D32]/0 via-[#2E7D32]/10 to-[#2E7D32]/0 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
               </div>
             </div>
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
               {/* Role Badge */}
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
-                <Briefcase className="h-4 w-4 text-gray-600" />
-                <span className="text-xs font-medium text-gray-700">
+              <div className="hidden lg:flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-300 group">
+                <Briefcase className="h-4 w-4 text-gray-600 group-hover:text-gray-700 transition-colors" />
+                <span className="text-xs font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">
                   {getRoleDisplayName(currentUser?.role || "smallholder_farmer", language)}
                 </span>
               </div>
 
               {/* Tier Badge */}
               {currentUser?.tier && currentUser.tier !== "free" && (
-                <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-lg border border-gray-300">
-                  <Award className="h-3.5 w-3.5 text-[#2E7D32]" />
-                  <span className="text-xs font-semibold text-gray-700 uppercase">{currentUser.tier}</span>
+                <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-[#2E7D32]/10 via-green-50 to-[#2E7D32]/5 rounded-xl border border-[#2E7D32]/30 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 group relative overflow-hidden">
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                  
+                  <Award className="relative h-4 w-4 text-[#2E7D32] drop-shadow-sm" />
+                  <span className="relative text-xs font-bold text-[#2E7D32] uppercase tracking-wide">{currentUser.tier}</span>
                 </div>
               )}
 
@@ -822,13 +886,16 @@ export default function App() {
                       : "Lugha imebadilishwa kuwa Kiswahili"
                   );
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+                className="relative flex items-center gap-2 px-3.5 py-2 bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-gray-100 rounded-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md group overflow-hidden"
               >
-                <span className={`text-xs font-medium ${language === "en" ? "text-gray-900" : "text-gray-400"}`}>
+                {/* Shimmer */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+                
+                <span className={`relative text-xs font-bold transition-all duration-300 ${language === "en" ? "text-[#2E7D32] scale-110" : "text-gray-400 group-hover:text-gray-600"}`}>
                   EN
                 </span>
-                <span className="text-gray-300">|</span>
-                <span className={`text-xs font-medium ${language === "sw" ? "text-gray-900" : "text-gray-400"}`}>
+                <span className="relative text-gray-300 group-hover:text-gray-400 transition-colors">|</span>
+                <span className={`relative text-xs font-bold transition-all duration-300 ${language === "sw" ? "text-[#2E7D32] scale-110" : "text-gray-400 group-hover:text-gray-600"}`}>
                   SW
                 </span>
               </button>
@@ -836,11 +903,11 @@ export default function App() {
               {/* Notifications */}
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2.5 hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50 rounded-xl transition-all duration-300 group"
               >
-                <Bell className="h-5 w-5 text-gray-700" />
+                <Bell className={`h-5 w-5 transition-all duration-300 ${notificationCount > 0 ? 'text-[#2E7D32] animate-pulse' : 'text-gray-700 group-hover:text-gray-900'}`} />
                 {notificationCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-gradient-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg shadow-red-500/50 animate-bounce border-2 border-white">
                     {notificationCount > 9 ? '9+' : notificationCount}
                   </span>
                 )}
@@ -849,24 +916,30 @@ export default function App() {
               {/* Profile */}
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                className={`flex items-center gap-2.5 p-2 rounded-xl transition-all duration-300 group relative overflow-hidden ${showProfile ? 'bg-gradient-to-br from-[#2E7D32]/10 to-green-50 border-2 border-[#2E7D32]/30' : 'hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50'}`}
               >
-                <div className="p-1.5 bg-[#2E7D32] rounded-lg">
+                {/* Shimmer */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                
+                <div className={`relative p-2 bg-gradient-to-br from-[#2E7D32] to-[#245a27] rounded-xl shadow-md shadow-[#2E7D32]/20 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#2E7D32]/30 transition-all duration-300`}>
                   <User className="h-4 w-4 text-white" />
                 </div>
-                <div className="hidden md:block text-left">
-                  <p className="text-xs font-medium text-gray-900">{currentUser?.name}</p>
-                  <p className="text-[10px] text-gray-500">{currentUser?.region}</p>
+                <div className="hidden md:block text-left relative">
+                  <p className="text-xs font-semibold text-gray-900 group-hover:text-[#2E7D32] transition-colors">{currentUser?.name}</p>
+                  <p className="text-[10px] text-gray-500 group-hover:text-gray-600 transition-colors">{currentUser?.region}</p>
                 </div>
               </button>
 
               {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2.5 hover:bg-gradient-to-br hover:from-red-50 hover:to-red-100/50 rounded-xl transition-all duration-300 group overflow-hidden border border-transparent hover:border-red-200"
                 title={language === "en" ? "Logout" : "Ondoka"}
               >
-                <LogOut className="h-5 w-5 text-gray-600" />
+                {/* Subtle danger glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/5 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+                
+                <LogOut className="relative h-5 w-5 text-gray-600 group-hover:text-red-600 group-hover:scale-110 transition-all duration-300" />
               </button>
             </div>
           </div>
@@ -903,20 +976,22 @@ export default function App() {
               
               return (
                 <div key={category.id} className="space-y-2">
-                  {/* Category Header */}
-                  <div className="relative group">
-                    <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
-                      <div className="p-1.5 bg-white rounded-lg">
-                        <CategoryIcon className="h-4 w-4 text-gray-600" />
+                  {/* Category Header - Only show if multiple items */}
+                  {categoryItems.length > 1 && (
+                    <div className="relative group">
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
+                        <div className="p-1.5 bg-white rounded-lg">
+                          <CategoryIcon className="h-4 w-4 text-gray-600" />
+                        </div>
+                        <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          {category.label}
+                        </h3>
                       </div>
-                      <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
-                        {category.label}
-                      </h3>
                     </div>
-                  </div>
+                  )}
 
                   {/* Navigation Items */}
-                  <nav className="space-y-1.5 pl-1">
+                  <nav className={`space-y-1.5 ${categoryItems.length > 1 ? 'pl-1' : ''}`}>
                     {categoryItems.map((item) => {
                       const Icon = item.icon;
                       const isActive = activeTab === item.id;
@@ -1028,28 +1103,37 @@ export default function App() {
                     {/* Content Layer */}
                     <div className="relative">
                       {/* Status Bar - Shows connection, sync, and data freshness */}
-                      <div className="mb-4 flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3">
+                      <div className="mb-5 flex items-center justify-between px-3 py-2.5 bg-gradient-to-r from-white via-gray-50/50 to-white rounded-xl border border-gray-200/80 shadow-sm backdrop-blur-sm">
+                        <div className="flex items-center gap-4">
                           {/* Data Freshness Indicator */}
-                          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                            <div className="h-1.5 w-1.5 bg-[#2E7D32] rounded-full animate-pulse"></div>
-                            <span className="hidden sm:inline">Live</span>
+                          <div className="flex items-center gap-2 text-xs font-medium text-gray-600 bg-white/80 px-3 py-1.5 rounded-lg border border-gray-200/50 shadow-sm">
+                            <div className="relative">
+                              <div className="h-2 w-2 bg-[#2E7D32] rounded-full animate-pulse"></div>
+                              <div className="absolute inset-0 h-2 w-2 bg-[#2E7D32] rounded-full animate-ping opacity-75"></div>
+                            </div>
+                            <span className="hidden sm:inline font-semibold text-[#2E7D32]">Live</span>
                           </div>
                           
                           {/* Last Sync Time */}
-                          <div className="hidden md:flex items-center gap-1.5 text-xs text-gray-500">
-                            <Activity className="h-3 w-3" />
-                            <span>Synced {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                          <div className="hidden md:flex items-center gap-2 text-xs text-gray-500 bg-white/60 px-3 py-1.5 rounded-lg border border-gray-200/30 group hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-300">
+                            <Activity className="h-3.5 w-3.5 text-gray-400 group-hover:text-[#2E7D32] transition-colors" />
+                            <span className="font-medium group-hover:text-gray-700 transition-colors">Synced {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
                         </div>
                         
                         {/* Quick Actions */}
                         <div className="flex items-center gap-2">
                           <button 
-                            className="text-xs text-gray-500 hover:text-gray-700 transition-colors hidden sm:block"
+                            className="relative text-xs font-semibold text-gray-600 hover:text-[#2E7D32] transition-all duration-300 hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white rounded-lg border border-gray-200/50 hover:border-[#2E7D32]/30 hover:shadow-md group overflow-hidden"
                             onClick={() => window.location.reload()}
                           >
-                            Refresh
+                            {/* Shimmer effect */}
+                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+                            
+                            <svg className="relative h-3.5 w-3.5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span className="relative">Refresh</span>
                           </button>
                         </div>
                       </div>
@@ -1069,9 +1153,16 @@ export default function App() {
                       )}
 
                       {/* Content Container with Smart Loading */}
-                      <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm overflow-hidden">
+                      <div className="relative bg-gradient-to-br from-white via-gray-50/30 to-white backdrop-blur-md rounded-2xl border border-gray-200/80 shadow-lg shadow-gray-200/50 overflow-hidden group">
+                        {/* Subtle top gradient accent */}
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2E7D32]/20 to-transparent"></div>
+                        
+                        {/* Ambient glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#2E7D32]/[0.02] via-transparent to-green-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                        
                         {/* Tab Content with Transition System */}
                         <div className="relative">
+                          {/* ========== HOME/DASHBOARD ========== */}
                           {activeTab === "home" && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                               <ErrorBoundary componentName="DashboardHome">
@@ -1079,382 +1170,184 @@ export default function App() {
                               </ErrorBoundary>
                             </div>
                           )}
-                      {activeTab === "workflows" && (
-                        <div className="animate-fadeIn">
-                          <AIWorkflowHub userId={currentUser?.id!} userRole={currentUser?.role || "smallholder_farmer"} userTier={currentUser?.tier || "free"} onNavigate={setActiveTab} language={language} />
-                      </div>
-                    )}
-                      {activeTab === "ai-chat" && (
-                        <div className="animate-fadeIn">
-                          <AISupport 
-                            userId={currentUser?.id!} 
-                            language={language}
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "diagnosis" && (
-                        <div className="animate-fadeIn">
-                          <PhotoCropDiagnosis 
-                            onAnalyzePhoto={handlePhotoAnalysis} 
-                            language={language} 
-                          />
-                        </div>
-                      )}
-                      {activeTab === "voice" && (
-                        <div className="animate-fadeIn">
-                          <VoiceAssistant language={language} />
-                        </div>
-                      )}
-                      {activeTab === "ai-training" && (
-                        <div className="animate-fadeIn">
-                          <AITrainingHub userId={currentUser?.id!} userRole={currentUser?.role || "smallholder_farmer"} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "market" && (
-                        <div className="animate-fadeIn">
-                          <MarketPrices region={currentUser?.region!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "weather" && (
-                        <div className="animate-fadeIn">
-                          <WeatherCard userId={currentUser?.id!} region={currentUser?.region!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "marketplace" && (
-                        <div className="animate-fadeIn">
-                          <NextGenMarketplace userId={currentUser?.id!} region={currentUser?.region!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "experts" && (
-                        <div className="animate-fadeIn">
-                          <ExpertConsultations userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "soil-test" && (
-                        <div className="animate-fadeIn">
-                          <SoilTestingService userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "videos" && (
-                        <div className="animate-fadeIn">
-                          <VideoTutorials language={language} onNavigate={setActiveTab} />
-                        </div>
-                      )}
-                      {activeTab === "knowledge" && (
-                        <div className="animate-fadeIn">
-                          <KnowledgeRepository language={language} onNavigate={setActiveTab} />
-                        </div>
-                      )}
-                      {activeTab === "discussions" && (
-                        <div className="animate-fadeIn">
-                          <PeerDiscussionGroups userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "tasks" && (
-                        <div className="animate-fadeIn">
-                          <TaskManagementRedesign userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "crop-planning" && (
-                        <div className="animate-fadeIn">
-                          <CropPlanningManagement userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "crop-planning-ai" && (
-                        <div className="animate-fadeIn">
-                          <CropPlanningManagementRedesign userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "crop-dashboard" && (
-                        <div className="animate-fadeIn">
-                          <CropPlanningDashboard userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "livestock" && (
-                        <div className="animate-fadeIn">
-                          <AdvancedLivestockManagement userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "farm-map" && (
-                        <div className="animate-fadeIn">
-                          <FarmMappingRedesign userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "land-allocation" && (
-                        <div className="animate-fadeIn">
-                          <VisualCropPlannerEnhanced 
-                            totalFarmSize={currentUser?.farmSize || 100}
-                            userId={currentUser?.id!} 
-                            language={language} 
-                          />
-                        </div>
-                      )}
-                      {activeTab === "inventory" && (
-                        <div className="animate-fadeIn">
-                          <ResourceInventoryManagement userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "finance" && (
-                        <div className="animate-fadeIn">
-                          <FarmFinance userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "mobile-money" && (
-                        <div className="animate-fadeIn">
-                          <FinancialCommandCenter userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "wallet-admin" && (
-                        <div className="animate-fadeIn">
-                          <WalletAdminDashboard language={language} user={currentUser} />
-                        </div>
-                      )}
-                      {activeTab === "orders" && (
-                        <div className="animate-fadeIn">
-                          <OrdersSalesEcommerce userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "input-supply" && (
-                        <div className="animate-fadeIn">
-                          <IntelligentInputMarketplace userId={currentUser?.id!} region={currentUser?.region!} language={language} crops={currentUser?.crops} onNavigate={setActiveTab} />
-                        </div>
-                      )}
-                      {(activeTab === "contract-farming" || activeTab === "contracts") && (
-                        <div className="animate-fadeIn">
-                          <FairContractFarming userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "insurance" && (
-                        <div className="animate-fadeIn">
-                          <InsuranceHub userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "agro-id" && (
-                        <div className="animate-fadeIn">
-                          <CreovaAgroID userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "agribusiness" && (
-                        <div className="animate-fadeIn">
-                          <AgribusinessDashboard 
-                            companyName={currentUser?.name || "Agribusiness"}
-                            onLogout={handleLogout}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "analytics" && (
-                        <div className="animate-fadeIn">
-                          <AnalyticsDashboard userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "reporting" && (
-                        <div className="animate-fadeIn">
-                          <ComprehensiveReporting userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "farm-graph" && (
-                        <div className="animate-fadeIn">
-                          <FarmGraphDashboard 
-                            userId={currentUser?.id!} 
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                            language={language} 
-                          />
-                        </div>
-                      )}
-                      {activeTab === "predictions" && (
-                        <div className="animate-fadeIn">
-                          <PredictiveModels 
-                            userId={currentUser?.id!}
-                            region={currentUser?.region || "Unknown"}
-                            crops={currentUser?.crops || []}
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "digital-twin" && (
-                        <div className="animate-fadeIn">
-                          <DigitalFarmTwin userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {/* AI Recommendation Engine - Supports All Agricultural Seasons */}
-                      {/* Planting Season | Growing Season | Harvest Season | Dry Season */}
-                      {activeTab === "ai-recommendations" && (
-                        <div className="animate-fadeIn">
-                          <AIRecommendationEngine 
-                            userId={currentUser?.id!} 
-                            region={currentUser?.region || "Unknown"}
-                            crops={currentUser?.crops || []}
-                            farmSize={currentUser?.farmSize || "0"}
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {/* AI Advisory - Bilingual Recommendations System */}
-                      {activeTab === "ai-advisory" && (
-                        <div className="animate-fadeIn">
-                          <AIRecommendations language={language} />
-                        </div>
-                      )}
-                      {activeTab === "ai-farm-plan" && (
-                        <div className="animate-fadeIn">
-                          <AIFarmPlanGenerator 
-                            userId={currentUser?.id!}
-                            region={currentUser?.region || "Unknown"}
-                            crops={currentUser?.crops || []}
-                            farmSize={currentUser?.farmSize || "0"}
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "livestock-health" && (
-                        <div className="animate-fadeIn">
-                          <LivestockHealthMonitor userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "personalized" && (
-                        <div className="animate-fadeIn">
-                          <PersonalizedRecommendations 
-                            userId={currentUser?.id!} 
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                            onNavigate={setActiveTab}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "crop-tips" && (
-                        <div className="animate-fadeIn">
-                          <CropSpecificTips userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "family-planner" && (
-                        <div className="animate-fadeIn">
-                          <FamilyFarmPlanner 
-                            userId={currentUser?.id!} 
-                            apiBase={API_BASE}
-                            authToken={publicAnonKey}
-                            language={language} 
-                          />
-                        </div>
-                      )}
-                      {activeTab === "farmer-lab" && (
-                        <div className="animate-fadeIn">
-                          <FarmerLabDashboard userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "gamification" && (
-                        <div className="animate-fadeIn">
-                          <GamificationPanel userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "extension-officer" && (
-                        <div className="animate-fadeIn">
-                          <ExtensionOfficerDashboard language={language} />
-                        </div>
-                      )}
-                      {activeTab === "institutional" && (
-                        <div className="animate-fadeIn">
-                          <InstitutionalDashboard language={language} />
-                        </div>
-                      )}
-                      {activeTab === "support" && (
-                        <div className="animate-fadeIn">
-                          <SupportHelpdesk userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "contact" && (
-                        <div className="animate-fadeIn">
-                          <ContactSupport language={language} />
-                        </div>
-                      )}
-                      {activeTab === "faq" && (
-                        <div className="animate-fadeIn">
-                          <FAQ language={language} />
-                        </div>
-                      )}
-                      {activeTab === "privacy" && (
-                        <div className="animate-fadeIn">
-                          <DataPrivacyConsent userId={currentUser?.id!} language={language} />
-                        </div>
-                      )}
-                      {activeTab === "training" && (
-                        <div className="animate-fadeIn">
-                          <VideoTutorials language={language} onNavigate={setActiveTab} />
-                        </div>
-                      )}
-                      {activeTab === "master-audit" && (
-                        <div className="animate-fadeIn">
-                          <MasterPromptAudit language={language} />
-                        </div>
-                      )}
-                      {activeTab === "master-validator" && (
-                        <div className="animate-fadeIn">
-                          <MasterPromptValidator language={language} />
-                        </div>
-                      )}
-                      {activeTab === "system-diagnostics" && (
-                        <div className="animate-fadeIn">
-                          <SystemDiagnostics language={language} />
-                        </div>
-                      )}
-                      {activeTab === "agribusiness-dashboard" && (
-                        <div className="animate-fadeIn">
-                          <AgribusinessDashboard 
-                            companyName={currentUser?.name || "Agribusiness"}
-                            onLogout={handleLogout}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "cooperative-dashboard" && (
-                        <div className="animate-fadeIn">
-                          <CooperativeDashboard 
-                            cooperativeName={currentUser?.name || "Cooperative"}
-                            onLogout={handleLogout}
-                            language={language}
-                          />
-                        </div>
-                      )}
-                      {activeTab === "role-dashboard" && (
-                        <div className="animate-fadeIn">
-                          <RoleBasedDashboard 
-                            role={{
-                              id: currentUser?.role || "smallholder_farmer",
-                              displayName: currentUser?.role?.replace(/_/g, ' ') || "Smallholder Farmer",
-                              tier: currentUser?.tier || "free",
-                              limits: {
-                                maxAIQueries: currentUser?.tier === "premium" ? 1000 : currentUser?.tier === "basic" ? 100 : 20,
-                                maxExpertConsultations: currentUser?.tier === "premium" ? 10 : currentUser?.tier === "basic" ? 3 : 1,
-                                maxFarmSize: null,
-                                maxTeamMembers: currentUser?.tier === "premium" ? 50 : currentUser?.tier === "basic" ? 10 : null,
-                                aiModelTier: currentUser?.tier === "premium" ? "Advanced" : currentUser?.tier === "basic" ? "Standard" : "Basic"
-                              },
-                              dashboardConfig: {
-                                sections: ["analytics", "farm-management", "marketplace"],
-                                analytics: ["yield", "revenue", "expenses"],
-                                widgets: ["weather", "market-prices", "tasks"]
-                              }
-                            }}
-                            usage={{
-                              aiQueriesUsed: 15,
-                              consultationsUsed: 0,
-                              farmSizeUsed: Number(currentUser?.farmSize || 0),
-                              teamMembersUsed: 1
-                            }}
-                            language={language}
-                          />
-                        </div>
-                      )}
+
+                          {/* ========== UNIFIED AI ADVISOR ========== */}
+                          {/* Consolidates: ai-chat, workflows, diagnosis, voice, ai-training, predictions, digital-twin, ai-farm-plan, personalized, ai-recommendations, ai-advisory */}
+                          {activeTab === "ai-chat" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedAIAdvisor">
+                                <UnifiedAIAdvisor
+                                  userId={currentUser?.id!}
+                                  userRole={currentUser?.role || "smallholder_farmer"}
+                                  userTier={currentUser?.tier || "free"}
+                                  region={currentUser?.region || "Unknown"}
+                                  crops={currentUser?.crops || []}
+                                  farmSize={currentUser?.farmSize || "0"}
+                                  language={language}
+                                  apiBase={API_BASE}
+                                  authToken={publicAnonKey}
+                                  onNavigate={setActiveTab}
+                                  initialTab={getDeepLinkTab("ai-chat")}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED CROP PLANNING ========== */}
+                          {/* Execution Layer: Current season plans, field allocation, yield forecasts, task timelines */}
+                          {activeTab === "land-allocation" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedCropPlanning">
+                                <UnifiedCropPlanning
+                                  userId={currentUser?.id!}
+                                  totalFarmSize={parseFloat(currentUser?.farmSize || "0")}
+                                  language={language}
+                                  apiBase={API_BASE}
+                                  authToken={publicAnonKey}
+                                  initialTab="overview"
+                                  onNavigate={setActiveTab}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED CROP INTELLIGENCE ========== */}
+                          {/* Knowledge Layer: Crop library, growing tips, templates, historical performance */}
+                          {(activeTab === "crop-tips" || activeTab === "crop-library") && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedCropIntelligence">
+                                <UnifiedCropIntelligence
+                                  userId={currentUser?.id!}
+                                  totalFarmSize={parseFloat(currentUser?.farmSize || "0")}
+                                  language={language}
+                                  apiBase={API_BASE}
+                                  authToken={publicAnonKey}
+                                  initialTab={
+                                    activeTab === "crop-library" 
+                                      ? "library"  // Direct to library when coming from nav
+                                      : getDeepLinkTab("crop-tips")
+                                  }
+                                  onNavigate={setActiveTab}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== FARM MAP (Standalone) ========== */}
+                          {activeTab === "farm-mapping" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="FarmMappingRedesign">
+                                <FarmMappingRedesign userId={currentUser?.id!} language={language} />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== TASKS & SCHEDULE (Standalone) ========== */}
+                          {activeTab === "tasks" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="TaskManagementRedesign">
+                                <TaskManagementRedesign userId={currentUser?.id!} onNavigate={setActiveTab} language={language} />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== DEBUG PAGE (TEMPORARY) ========== */}
+                          {activeTab === "url-debug" && (
+                            <div className="animate-fadeIn">
+                              <URLDebugPage />
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED INVENTORY & INPUTS ========== */}
+                          {/* Consolidates: inventory, input-supply */}
+                          {activeTab === "inventory" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedInventory">
+                                <UnifiedInventory
+                                  userId={currentUser?.id!}
+                                  region={currentUser?.region || "Unknown"}
+                                  crops={currentUser?.crops}
+                                  language={language}
+                                  onNavigate={setActiveTab}
+                                  initialTab={getDeepLinkTab("inventory")}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED MARKET ========== */}
+                          {/* Consolidates: orders, marketplace, market */}
+                          {activeTab === "orders" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedMarket">
+                                <UnifiedMarket
+                                  userId={currentUser?.id!}
+                                  region={currentUser?.region || "Unknown"}
+                                  language={language}
+                                  onNavigate={setActiveTab}
+                                  initialTab={getDeepLinkTab("orders")}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED FINANCE ========== */}
+                          {/* Consolidates: finance, mobile-money, reporting, contracts, insurance, wallet-admin */}
+                          {activeTab === "finance" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedFinance">
+                                <UnifiedFinance
+                                  userId={currentUser?.id!}
+                                  userRole={currentUser?.role}
+                                  language={language}
+                                  user={currentUser}
+                                  initialTab={getDeepLinkTab("finance")}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== LIVESTOCK (Standalone) ========== */}
+                          {activeTab === "livestock" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="AdvancedLivestockManagement">
+                                <AdvancedLivestockManagement userId={currentUser?.id!} language={language} />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED COMMUNITY ========== */}
+                          {/* Consolidates: discussions, experts, soil-test */}
+                          {activeTab === "discussions" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedCommunity">
+                                <UnifiedCommunity
+                                  userId={currentUser?.id!}
+                                  language={language}
+                                  onNavigate={setActiveTab}
+                                  initialTab={getDeepLinkTab("discussions")}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== UNIFIED LEARNING & SUPPORT ========== */}
+                          {/* Consolidates: support, videos, knowledge, contact, faq, training */}
+                          {activeTab === "support" && (
+                            <div className="animate-fadeIn">
+                              <ErrorBoundary componentName="UnifiedLearning">
+                                <UnifiedLearning
+                                  userId={currentUser?.id!}
+                                  language={language}
+                                  onNavigate={setActiveTab}
+                                  initialTab={getDeepLinkTab("support")}
+                                />
+                              </ErrorBoundary>
+                            </div>
+                          )}
+
+                          {/* ========== LEGACY ROUTES (for backwards compatibility) ========== */}
+                          {/* These will be auto-redirected by useEffect above */}
                         </div>
                       </div>
                     </div>
@@ -1537,5 +1430,6 @@ export default function App() {
         />
       )}
     </div>
+    </GlobalErrorBoundary>
   );
 }

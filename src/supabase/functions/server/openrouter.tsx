@@ -180,7 +180,7 @@ export async function queryAIWithVision(
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://kilimo.com",
+        "HTTP-Referer": "https://kilimo.tz",
         "X-Title": "KILIMO Agri-AI Suite",
       },
       body: JSON.stringify({
@@ -245,7 +245,7 @@ export async function queryAI(
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://kilimo.com",
+        "HTTP-Referer": "https://kilimo.tz",
         "X-Title": "KILIMO Agri-AI Suite",
       },
       body: JSON.stringify({
@@ -315,7 +315,7 @@ export async function callOpenRouterAI(
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://kilimo.com",
+        "HTTP-Referer": "https://kilimo.tz",
         "X-Title": "KILIMO Agri-AI Suite",
       },
       body: JSON.stringify({

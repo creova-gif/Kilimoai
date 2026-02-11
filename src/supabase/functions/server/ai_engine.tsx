@@ -5,10 +5,12 @@
  * Single endpoint for ALL AI interactions
  * Role-aware, context-aware, language-consistent
  * Returns structured JSON responses
+ * Philosophy: "AI must feel helpful, not loud"
  * ============================================================================
  */
 
 import { Hono } from "npm:hono";
+import { generateMasterPrompt } from "./ai_feature_prompts.tsx";
 
 const aiEngine = new Hono();
 
@@ -22,26 +24,48 @@ aiEngine.post("/engine", async (c) => {
     const {
       role,
       feature,
-      language = "en",
+      language = "EN",
       context = {},
       query = "",
     } = await c.req.json();
 
     // Validate required fields
-    if (!role || !feature) {
+    if (!feature) {
       return c.json(
         {
-          error: "Missing required fields",
-          message: "role and feature are required",
+          error: "Missing required field",
+          message: "feature is required",
         },
         400
       );
     }
 
-    // Generate role-specific system prompt
-    const systemPrompt = generateSystemPrompt(role, feature, language, context);
+    // Map legacy feature names to new system
+    const featureMap: { [key: string]: string } = {
+      crop_planning: "crop_planning",
+      yield_forecast: "yield_revenue",
+      soil_health: "crop_intelligence",
+      ai_chat: "unified_advisor",
+      task_management: "crop_planning",
+      livestock_management: "livestock",
+      market_prices: "marketplace",
+      weather: "weather_advice",
+    };
 
-    // Call AI provider (OpenAI, Claude, etc.)
+    const mappedFeature = featureMap[feature] || feature;
+
+    // Generate feature-specific prompt using the master system
+    const systemPrompt = generateMasterPrompt({
+      feature: mappedFeature,
+      context: {
+        ...context,
+        language: language.toUpperCase(),
+        user_role: role,
+      },
+      language: language.toUpperCase() as "EN" | "SW",
+    });
+
+    // Call AI provider (OpenRouter with Claude)
     const aiResponse = await callAIProvider(systemPrompt, query, language);
 
     // Parse and structure response
@@ -50,7 +74,7 @@ aiEngine.post("/engine", async (c) => {
     return c.json({
       success: true,
       role,
-      feature,
+      feature: mappedFeature,
       language,
       response: structuredResponse,
       timestamp: new Date().toISOString(),
@@ -68,143 +92,7 @@ aiEngine.post("/engine", async (c) => {
 });
 
 /**
- * Generate role-specific, feature-specific system prompt
- */
-function generateSystemPrompt(
-  role: string,
-  feature: string,
-  language: string,
-  context: any
-): string {
-  // Base system identity
-  let prompt = language === "sw"
-    ? "Wewe ni CREOVA Agri-AI, msaidizi wa kilimo wa akili bandia kwa wakulima wa Tanzania."
-    : "You are CREOVA Agri-AI, an intelligent agricultural assistant for Tanzanian farmers.";
-
-  // Add role-specific context
-  prompt += `\n\nUser Role: ${role}`;
-  prompt += `\nFeature: ${feature}`;
-  prompt += `\nLanguage: ${language}`;
-
-  // Add role-specific expertise
-  prompt += `\n\n${getRoleExpertise(role, language)}`;
-
-  // Add feature-specific instructions
-  prompt += `\n\n${getFeatureInstructions(feature, language)}`;
-
-  // Add user context
-  if (Object.keys(context).length > 0) {
-    prompt += `\n\nUser Context:`;
-    if (context.farm_size) prompt += `\n- Farm size: ${context.farm_size} acres`;
-    if (context.crop) prompt += `\n- Crop: ${context.crop}`;
-    if (context.season) prompt += `\n- Season: ${context.season}`;
-    if (context.region) prompt += `\n- Region: ${context.region}`;
-  }
-
-  // Add response format rules
-  prompt += `\n\nRULES:`;
-  prompt += `\n- Respond ONLY in ${language === "sw" ? "Swahili" : "English"}`;
-  prompt += `\n- Keep advice relevant to ${role} role`;
-  prompt += `\n- Use practical, local Tanzanian context`;
-  prompt += `\n- Return response in JSON format`;
-  prompt += `\n- No mixed languages`;
-
-  // Add JSON structure
-  prompt += `\n\nResponse Format:`;
-  prompt += `\n{`;
-  prompt += `\n  "recommendations": ["string array of actionable recommendations"],`;
-  prompt += `\n  "alerts": ["string array of warnings or urgent notices"],`;
-  prompt += `\n  "actions": ["string array of specific next steps"],`;
-  prompt += `\n  "explanation": "detailed explanation as string"`;
-  prompt += `\n}`;
-
-  return prompt;
-}
-
-/**
- * Get role-specific expertise description
- */
-function getRoleExpertise(role: string, language: string): string {
-  const expertise: Record<string, { en: string; sw: string }> = {
-    smallholder_farmer: {
-      en: "EXPERTISE: You specialize in helping smallholder farmers (0-5 acres) with practical, low-cost solutions for subsistence and small-scale commercial farming.",
-      sw: "UTAALAMU: Unafanya kazi na wakulima wadogo (ekari 0-5) na kutoa suluhisho za bei nafuu za kilimo cha kujikimu na biashara ndogo.",
-    },
-    farmer_manager: {
-      en: "EXPERTISE: You help independent farmers (5+ acres) optimize productivity, diversify crops, and manage resources efficiently.",
-      sw: "UTAALAMU: Unasaidia wakulima huru (ekari 5+) kuboresha uzalishaji, kutofautisha mazao, na kusimamia rasilimali kwa ufanisi.",
-    },
-    farm_manager: {
-      en: "EXPERTISE: You provide strategic advice for farm managers overseeing multi-field operations, team coordination, and performance optimization.",
-      sw: "UTAALAMU: Unatoa ushauri wa kimkakati kwa wasimamizi wa mashamba wanaosimamia shughuli za mashamba mengi, uratibu wa timu, na uboreshaji wa utendaji.",
-    },
-    commercial_farm_admin: {
-      en: "EXPERTISE: You support enterprise-level agricultural operations with financial planning, export management, and business intelligence.",
-      sw: "UTAALAMU: Unasaidia shughuli za kilimo za kiwango cha biashara na mipango ya kifedha, usimamizi wa usafirishaji, na akili ya biashara.",
-    },
-    agribusiness_ops: {
-      en: "EXPERTISE: You assist agribusiness professionals with supply chain optimization, procurement strategies, and market intelligence.",
-      sw: "UTAALAMU: Unasaidia wataalamu wa biashara za kilimo na uboreshaji wa mnyororo wa usambazaji, mikakati ya ununuzi, na habari za soko.",
-    },
-    extension_officer: {
-      en: "EXPERTISE: You support extension officers with farmer training, impact assessment, and best practice dissemination.",
-      sw: "UTAALAMU: Unasaidia maafisa wa ugani na mafunzo ya wakulima, tathmini ya athari, na usambazaji wa mbinu bora.",
-    },
-    cooperative_leader: {
-      en: "EXPERTISE: You help cooperative leaders with group management, collective marketing, and member engagement strategies.",
-      sw: "UTAALAMU: Unasaidia viongozi wa ushirika na usimamizi wa kikundi, masoko ya pamoja, na mikakati ya ushiriki wa wanachama.",
-    },
-  };
-
-  const roleExpertise = expertise[role] || expertise.smallholder_farmer;
-  return roleExpertise[language as "en" | "sw"];
-}
-
-/**
- * Get feature-specific instructions
- */
-function getFeatureInstructions(feature: string, language: string): string {
-  const instructions: Record<string, { en: string; sw: string }> = {
-    crop_planning: {
-      en: "FEATURE: CROP PLANNING - Provide practical crop selection, planting calendars, rotation strategies, and yield expectations.",
-      sw: "KIPENGELE: MIPANGO YA MAZAO - Toa uteuzi wa mazao wa vitendo, kalenda ya kupanda, mikakati ya mzunguko, na matarajio ya mavuno.",
-    },
-    yield_forecast: {
-      en: "FEATURE: YIELD FORECAST - Provide data-driven yield predictions based on crop type, farm conditions, and regional averages.",
-      sw: "KIPENGELE: UTABIRI WA MAVUNO - Toa utabiri wa mavuno kulingana na data ya aina ya zao, hali ya shamba, na wastani wa mkoa.",
-    },
-    soil_health: {
-      en: "FEATURE: SOIL HEALTH - Advise on soil testing, nutrient management, pH balance, and organic matter improvement.",
-      sw: "KIPENGELE: AFYA YA UDONGO - Shauri kuhusu upimaji wa udongo, usimamizi wa virutubishi, usawa wa pH, na uboreshaji wa vitu vilivyooza.",
-    },
-    ai_chat: {
-      en: "FEATURE: AI CHAT - Answer general agricultural questions with practical, context-specific advice.",
-      sw: "KIPENGELE: AI CHAT - Jibu maswali ya jumla ya kilimo kwa ushauri wa vitendo, mahususi kwa muktadha.",
-    },
-    task_management: {
-      en: "FEATURE: TASK MANAGEMENT - Help prioritize tasks, allocate resources, and optimize farm operations scheduling.",
-      sw: "KIPENGELE: USIMAMIZI WA KAZI - Saidia kuweka vipaumbele vya kazi, kugawa rasilimali, na kuboresha ratiba ya shughuli za shamba.",
-    },
-    livestock_management: {
-      en: "FEATURE: LIVESTOCK MANAGEMENT - Provide advice on animal health, feeding, breeding, and disease prevention.",
-      sw: "KIPENGELE: USIMAMIZI WA MIFUGO - Toa ushauri kuhusu afya ya wanyama, kulisha, uzazi, na kuzuia magonjwa.",
-    },
-    market_prices: {
-      en: "FEATURE: MARKET INTELLIGENCE - Analyze market trends, optimal selling times, and price forecasts.",
-      sw: "KIPENGELE: HABARI ZA SOKO - Chambuza mwenendo wa soko, muda bora wa kuuza, na utabiri wa bei.",
-    },
-    weather: {
-      en: "FEATURE: WEATHER ADVICE - Provide weather-informed recommendations for planting, irrigation, and crop protection.",
-      sw: "KIPENGELE: USHAURI WA HALI YA HEWA - Toa mapendekezo yanayotegemea hali ya hewa kwa kupanda, umwagiliaji, na ulinzi wa mazao.",
-    },
-  };
-
-  const featureInstr = instructions[feature] || instructions.ai_chat;
-  return featureInstr[language as "en" | "sw"];
-}
-
-/**
- * Call AI provider (OpenAI, Claude, Gemini, etc.)
+ * Call AI provider (OpenRouter with Claude)
  */
 async function callAIProvider(
   systemPrompt: string,

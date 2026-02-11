@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Worker Fix - KILIMO</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: white;
+    }
+    .container {
+      background: white;
+      color: #333;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 {
+      color: #16a34a;
+      margin-top: 0;
+    }
+    .status {
+      background: #f0f0f0;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 14px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .status div {
+      margin: 5px 0;
+    }
+    .success { color: #16a34a; font-weight: bold; }
+    .error { color: #dc2626; font-weight: bold; }
+    .warning { color: #f59e0b; font-weight: bold; }
+    button {
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px 10px 10px 0;
+    }
+    button:hover {
+      background: #15803d;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Service Worker URL Fixer</h1>
+    <p><strong>This page will install a service worker that automatically fixes http:// URLs to https://</strong></p>
+    
+    <p>Click the button below to register the service worker. It will intercept ALL network requests and fix malformed URLs automatically.</p>
+    
+    <button id="registerBtn" onclick="registerServiceWorker()">Register Service Worker</button>
+    <button id="unregisterBtn" onclick="unregisterAll()">Unregister All</button>
+    <button id="reloadBtn" onclick="window.location.href='/'" disabled>Go to App</button>
+    
+    <div class="status" id="status">
+      <div>Waiting for action...</div>
+    </div>
+  </div>
+
+  <script>
+    const statusDiv = document.getElementById('status');
+    const reloadBtn = document.getElementById('reloadBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    
+    function log(message, type = 'info') {
+      const div = document.createElement('div');
+      div.textContent = message;
+      if (type === 'success') div.className = 'success';
+      if (type === 'error') div.className = 'error';
+      if (type === 'warning') div.className = 'warning';
+      statusDiv.appendChild(div);
+      statusDiv.scrollTop = statusDiv.scrollHeight;
+    }
+    
+    async function registerServiceWorker() {
+      statusDiv.innerHTML = '';
+      log('Starting service worker registration...');
+      
+      if (!('serviceWorker' in navigator)) {
+        log('❌ Service workers not supported in this browser', 'error');
+        return;
+      }
+      
+      try {
+        log('Checking for existing service workers...');
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        log(`Found ${registrations.length} existing service worker(s)`);
+        
+        if (registrations.length > 0) {
+          log('Unregistering old service workers...', 'warning');
+          for (const registration of registrations) {
+            await registration.unregister();
+            log(`✅ Unregistered: ${registration.scope}`, 'success');
+          }
+        }
+        
+        log('Registering new URL-fixing service worker...');
+        const registration = await navigator.serviceWorker.register('/sw-url-fixer.js', {
+          scope: '/'
+        });
+        
+        log(`✅ Service worker registered!`, 'success');
+        log(`   Scope: ${registration.scope}`, 'success');
+        
+        // Wait for it to activate
+        await navigator.serviceWorker.ready;
+        log('✅ Service worker is ACTIVE and ready!', 'success');
+        log('');
+        log('The service worker will now intercept ALL fetch requests', 'success');
+        log('and automatically fix:', 'success');
+        log('  1. http:// → https://', 'success');
+        log('  2. Add missing /functions/v1/', 'success');
+        log('');
+        log('✅ You can now go back to the app!', 'success');
+        
+        reloadBtn.disabled = false;
+        registerBtn.disabled = true;
+        
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    }
+    
+    async function unregisterAll() {
+      statusDiv.innerHTML = '';
+      log('Unregistering all service workers...');
+      
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        
+        if (registrations.length === 0) {
+          log('No service workers found', 'warning');
+          return;
+        }
+        
+        for (const registration of registrations) {
+          await registration.unregister();
+          log(`✅ Unregistered: ${registration.scope}`, 'success');
+        }
+        
+        log('✅ All service workers removed!', 'success');
+        registerBtn.disabled = false;
+        reloadBtn.disabled = true;
+        
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    // Check on page load
+    window.addEventListener('load', async function() {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        if (registrations.length > 0) {
+          statusDiv.innerHTML = '';
+          log(`Found ${registrations.length} registered service worker(s):`, 'warning');
+          registrations.forEach(reg => {
+            log(`  - ${reg.scope}`, 'warning');
+          });
+          log('');
+          log('Click "Unregister All" to remove old workers, then "Register Service Worker" to install the new one.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

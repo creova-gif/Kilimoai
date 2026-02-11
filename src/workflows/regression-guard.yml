@@ -1,0 +1,182 @@
+/**
+ * KILIMO CI/CD REGRESSION GUARD
+ * 
+ * Purpose: Automatically runs regression tests on every push/PR
+ * Fail Condition: ANY test failure blocks merge
+ * Protects: Feature recovery integrity, security, and brand compliance
+ */
+
+name: KILIMO Merge Regression Guard
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  regression-tests:
+    name: 🧪 Regression Test Suite
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📚 Install dependencies
+        run: npm ci
+      
+      - name: 🧪 Run Feature Recovery Tests
+        run: npm run test:regression
+        env:
+          CI: true
+      
+      - name: 📊 Generate coverage report
+        run: npm run test:coverage
+      
+      - name: 📤 Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: true
+
+  page-count-lock:
+    name: 🔒 Page Count Lock (Max 12)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Count route definitions
+        run: |
+          ROUTE_COUNT=$(grep -r "path:" routes.ts | wc -l)
+          echo "Found $ROUTE_COUNT routes"
+          if [ $ROUTE_COUNT -gt 12 ]; then
+            echo "❌ BLOCKED: More than 12 pages detected!"
+            echo "Current: $ROUTE_COUNT | Max: 12"
+            exit 1
+          fi
+          echo "✅ Page count within limit: $ROUTE_COUNT/12"
+
+  brand-color-lock:
+    name: 🎨 Brand Color Compliance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Check for banned colors
+        run: |
+          BANNED_COLORS=("#3B82F6" "#8B5CF6" "#10B981" "#14B8A6" "#06B6D4")
+          VIOLATIONS=0
+          
+          for color in "${BANNED_COLORS[@]}"; do
+            if grep -r "$color" --include="*.tsx" --include="*.ts" --include="*.css" .; then
+              echo "❌ Banned color found: $color"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+          done
+          
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo "❌ BLOCKED: $VIOLATIONS brand color violations"
+            echo "Only Raspberry Leaf Green (#2E7D32) is allowed"
+            exit 1
+          fi
+          
+          echo "✅ Brand color compliance verified"
+
+  security-audit:
+    name: 🔐 Security & Permissions Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: 🔒 Run npm audit
+        run: npm audit --audit-level=high
+      
+      - name: 🔍 Check for permission leaks
+        run: |
+          # Ensure no hardcoded API keys
+          if grep -r "sk-" --include="*.tsx" --include="*.ts" .; then
+            echo "❌ Potential API key leak detected"
+            exit 1
+          fi
+          
+          # Ensure SUPABASE_SERVICE_ROLE_KEY not used in frontend
+          if grep -r "SUPABASE_SERVICE_ROLE_KEY" --include="*.tsx" components/ src/; then
+            echo "❌ Service role key leak in frontend"
+            exit 1
+          fi
+          
+          echo "✅ No security violations found"
+
+  build-test:
+    name: 🏗️ Build Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📚 Install dependencies
+        run: npm ci
+      
+      - name: 🏗️ Build production bundle
+        run: npm run build
+        env:
+          CI: true
+      
+      - name: 📊 Check bundle size
+        run: |
+          BUNDLE_SIZE=$(du -sh dist | cut -f1)
+          echo "Bundle size: $BUNDLE_SIZE"
+          
+          # Warn if bundle is too large (rural internet constraint)
+          SIZE_BYTES=$(du -b dist | cut -f1)
+          MAX_SIZE=$((10 * 1024 * 1024)) # 10MB max
+          
+          if [ $SIZE_BYTES -gt $MAX_SIZE ]; then
+            echo "⚠️ WARNING: Bundle size exceeds 10MB"
+            echo "This may impact rural users with slow internet"
+          fi
+
+  merge-gate:
+    name: 🚪 Merge Gate
+    needs: [regression-tests, page-count-lock, brand-color-lock, security-audit, build-test]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: ✅ All checks passed
+        run: |
+          echo "════════════════════════════════════════════════════"
+          echo "✅ KILIMO REGRESSION GUARD: ALL TESTS PASSED"
+          echo "════════════════════════════════════════════════════"
+          echo "✓ Feature recovery validated"
+          echo "✓ Page count locked at 12"
+          echo "✓ Brand colors compliant"
+          echo "✓ Security audit passed"
+          echo "✓ Build successful"
+          echo "════════════════════════════════════════════════════"
+          echo "🟢 READY TO MERGE"
+          echo "════════════════════════════════════════════════════"

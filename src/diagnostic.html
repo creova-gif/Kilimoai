@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KILIMO App - Runtime Diagnostic</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #2E7D32 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 20px;
+      color: #1f2937;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2E7D32;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .status.pass {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status.warn {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .icon {
+      font-size: 20px;
+    }
+    
+    .code {
+      background: #1f2937;
+      color: #10b981;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    
+    button {
+      background: #2E7D32;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    
+    button:hover {
+      background: #1B5E20;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    
+    button.secondary {
+      background: #6b7280;
+    }
+    
+    button.secondary:hover {
+      background: #4b5563;
+    }
+    
+    button.danger {
+      background: #dc2626;
+    }
+    
+    button.danger:hover {
+      background: #b91c1c;
+    }
+    
+    .actions {
+      margin-top: 20px;
+    }
+    
+    .console {
+      background: #1f2937;
+      color: #10b981;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    
+    .console-line {
+      margin-bottom: 4px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <span>🔧</span>
+      <span>KILIMO Runtime Diagnostic</span>
+    </h1>
+    <p class="subtitle">Real-time health check & debugging tool</p>
+    
+    <div class="grid">
+      <!-- System Status -->
+      <div class="card">
+        <h2>🖥️ System Status</h2>
+        <div id="system-checks"></div>
+      </div>
+      
+      <!-- API Status -->
+      <div class="card">
+        <h2>🌐 API Status</h2>
+        <div id="api-checks"></div>
+      </div>
+      
+      <!-- Storage Status -->
+      <div class="card">
+        <h2>💾 Storage Status</h2>
+        <div id="storage-checks"></div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>🛠️ Quick Actions</h2>
+      <div class="actions">
+        <button onclick="clearCache()">Clear Cache</button>
+        <button onclick="clearLocalStorage()">Clear Local Storage</button>
+        <button onclick="hardReload()" class="danger">Hard Reload</button>
+        <button onclick="runTests()" class="secondary">Run All Tests</button>
+        <button onclick="downloadReport()" class="secondary">Download Report</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>📊 Diagnostic Console</h2>
+      <div id="console" class="console"></div>
+    </div>
+  </div>
+  
+  <script>
+    let diagnosticLog = [];
+    
+    function log(message, type = 'info') {
+      const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
+      const line = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+      diagnosticLog.push(line);
+      
+      const consoleEl = document.getElementById('console');
+      const lineEl = document.createElement('div');
+      lineEl.className = 'console-line';
+      lineEl.textContent = line;
+      consoleEl.appendChild(lineEl);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+    
+    function createStatus(label, pass, details = '') {
+      const status = document.createElement('div');
+      status.className = `status ${pass ? 'pass' : 'fail'}`;
+      status.innerHTML = `
+        <span class="icon">${pass ? '✅' : '❌'}</span>
+        <span>${label}</span>
+      `;
+      if (details) {
+        status.title = details;
+      }
+      return status;
+    }
+    
+    // System Checks
+    function runSystemChecks() {
+      const container = document.getElementById('system-checks');
+      container.innerHTML = '';
+      
+      // Check if React is loaded
+      const reactLoaded = typeof window.React !== 'undefined';
+      container.appendChild(createStatus('React Loaded', reactLoaded));
+      log(`React loaded: ${reactLoaded}`);
+      
+      // Check if main app is mounted
+      const appMounted = document.getElementById('root')?.children.length > 0;
+      container.appendChild(createStatus('App Mounted', appMounted));
+      log(`App mounted: ${appMounted}`);
+      
+      // Check cache version
+      const cacheVersion = localStorage.getItem('KILIMO_CACHE_VERSION');
+      const cacheOk = cacheVersion === 'v20260210-1600';
+      container.appendChild(createStatus('Cache Version OK', cacheOk, `Version: ${cacheVersion || 'none'}`));
+      log(`Cache version: ${cacheVersion || 'none'} (expected: v20260210-1600)`);
+      
+      // Check if service worker is active
+      const swActive = navigator.serviceWorker?.controller !== null;
+      container.appendChild(createStatus('Service Worker', swActive));
+      log(`Service worker active: ${swActive}`);
+    }
+    
+    // API Checks
+    async function runAPIChecks() {
+      const container = document.getElementById('api-checks');
+      container.innerHTML = '<div class="status warn"><span class="icon">⏳</span><span>Testing APIs...</span></div>';
+      log('Starting API tests...');
+      
+      container.innerHTML = '';
+      
+      try {
+        // Check Supabase connection
+        const supabaseUrl = localStorage.getItem('supabaseUrl') || 'Not configured';
+        const urlValid = supabaseUrl.includes('.supabase.co');
+        container.appendChild(createStatus('Supabase URL', urlValid, supabaseUrl));
+        log(`Supabase URL: ${supabaseUrl}`);
+        
+        // Check if we can reach Supabase
+        if (urlValid) {
+          try {
+            const response = await fetch(supabaseUrl, { method: 'HEAD' });
+            const reachable = response.ok || response.status === 404; // 404 is ok, means server is up
+            container.appendChild(createStatus('Supabase Reachable', reachable));
+            log(`Supabase reachable: ${reachable} (status: ${response.status})`);
+          } catch (err) {
+            container.appendChild(createStatus('Supabase Reachable', false, err.message));
+            log(`Supabase reachable: false (${err.message})`, 'error');
+          }
+        }
+        
+        // Check API endpoint format
+        const apiBase = window.API_BASE || 'Not initialized';
+        const apiFormatOk = apiBase.startsWith('https://') && apiBase.includes('/functions/v1/');
+        container.appendChild(createStatus('API Format', apiFormatOk, apiBase));
+        log(`API Base: ${apiBase}`);
+        
+      } catch (err) {
+        log(`API check error: ${err.message}`, 'error');
+      }
+    }
+    
+    // Storage Checks
+    function runStorageChecks() {
+      const container = document.getElementById('storage-checks');
+      container.innerHTML = '';
+      log('Checking storage...');
+      
+      // Check localStorage
+      try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        container.appendChild(createStatus('Local Storage', true));
+        log('LocalStorage: OK');
+      } catch (err) {
+        container.appendChild(createStatus('Local Storage', false, err.message));
+        log(`LocalStorage error: ${err.message}`, 'error');
+      }
+      
+      // Check user data
+      const userData = localStorage.getItem('kilimoUser');
+      const hasUser = !!userData;
+      container.appendChild(createStatus('User Data', hasUser, hasUser ? 'User logged in' : 'No user'));
+      log(`User data present: ${hasUser}`);
+      
+      // Check cache size
+      let cacheSize = 0;
+      for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+          cacheSize += localStorage[key].length + key.length;
+        }
+      }
+      const cacheSizeMB = (cacheSize / 1024 / 1024).toFixed(2);
+      const sizeOk = cacheSizeMB < 5; // Less than 5MB
+      container.appendChild(createStatus('Cache Size', sizeOk, `${cacheSizeMB} MB`));
+      log(`Cache size: ${cacheSizeMB} MB`);
+      
+      // Check session storage
+      const sessionActive = !!sessionStorage.length;
+      container.appendChild(createStatus('Session Active', sessionActive));
+      log(`Session storage items: ${sessionStorage.length}`);
+    }
+    
+    // Actions
+    function clearCache() {
+      log('Clearing cache...', 'action');
+      if ('caches' in window) {
+        caches.keys().then(keys => {
+          keys.forEach(key => caches.delete(key));
+          log(`Cleared ${keys.length} caches`, 'success');
+          alert(`Cleared ${keys.length} caches. Reload the page.`);
+        });
+      } else {
+        log('Cache API not supported', 'warn');
+        alert('Cache API not supported in this browser.');
+      }
+    }
+    
+    function clearLocalStorage() {
+      log('Clearing local storage...', 'action');
+      const itemCount = localStorage.length;
+      localStorage.clear();
+      log(`Cleared ${itemCount} localStorage items`, 'success');
+      alert(`Cleared ${itemCount} items from localStorage. Reload the page.`);
+      runStorageChecks();
+    }
+    
+    function hardReload() {
+      log('Performing hard reload...', 'action');
+      sessionStorage.setItem('KILIMO_FORCE_RELOAD', 'true');
+      window.location.reload(true);
+    }
+    
+    async function runTests() {
+      log('Running all diagnostic tests...', 'action');
+      runSystemChecks();
+      await runAPIChecks();
+      runStorageChecks();
+      log('All tests complete!', 'success');
+    }
+    
+    function downloadReport() {
+      log('Generating diagnostic report...', 'action');
+      const report = diagnosticLog.join('\n');
+      const blob = new Blob([report], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kilimo-diagnostic-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      log('Report downloaded', 'success');
+    }
+    
+    // Auto-run on load
+    document.addEventListener('DOMContentLoaded', () => {
+      log('KILIMO Runtime Diagnostic started', 'info');
+      log('System: ' + navigator.userAgent, 'info');
+      runTests();
+    });
+  </script>
+</body>
+</html>

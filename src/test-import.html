@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Import Test</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #00ff00;
+    }
+    .success { color: #00ff00; }
+    .error { color: #ff0000; }
+    pre {
+      background: #000;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Import Diagnostics</h1>
+  <div id="output"></div>
+  
+  <script type="module">
+    const output = document.getElementById('output');
+    
+    function log(message, isError = false) {
+      const div = document.createElement('div');
+      div.className = isError ? 'error' : 'success';
+      div.textContent = message;
+      output.appendChild(div);
+    }
+    
+    log('Starting import test...');
+    
+    try {
+      log('✅ Script is running');
+      
+      // Try to import App
+      log('Attempting to import App.tsx...');
+      const module = await import('./App.tsx');
+      
+      log('✅ App.tsx imported successfully!');
+      log(`✅ Default export exists: ${!!module.default}`);
+      
+      if (module.default) {
+        log('✅ IMPORTS ARE WORKING! The issue is in your browser cache.');
+        log('');
+        log('SOLUTION: Hard refresh your browser:');
+        log('  - Windows/Linux: Ctrl + Shift + R');
+        log('  - Mac: Cmd + Shift + R');
+      }
+      
+    } catch (error) {
+      log('❌ IMPORT FAILED:', true);
+      log(error.message, true);
+      log('', true);
+      log('Error stack:', true);
+      log(error.stack, true);
+    }
+  </script>
+</body>
+</html>

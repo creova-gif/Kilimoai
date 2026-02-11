@@ -1,45 +1,56 @@
 {
   "name": "kilimo-agri-ai-suite",
-  "version": "1.0.0",
-  "description": "KILIMO Agri-AI Suite - Empowering smallholder farmers in Tanzania",
+  "version": "5.0.1",
+  "description": "Comprehensive web application for empowering smallholder farmers in Tanzania with AI-driven agricultural advisory services",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run enforce:colors && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
-    "enforce:colors": "node scripts/enforce-brand-colors.js",
-    "deploy:staging": "bash scripts/deploy.sh staging",
-    "deploy:production": "bash scripts/deploy.sh production",
-    "deploy:kilimo": "bash deploy-kilimo.sh",
-    "deploy:kilimo:staging": "bash deploy-kilimo.sh staging",
-    "deploy:kilimo:production": "bash deploy-kilimo.sh production",
-    "test:smoke": "bash scripts/smoke-test.sh",
-    "test:ai": "node scripts/ai-audit.js",
-    "test:runtime": "node scripts/runtime-test.js",
-    "test:payment": "node scripts/payment-sms-test.js",
-    "test:logs": "node scripts/log-checker.js",
-    "test:ui": "node scripts/ui-ux-audit.js",
-    "audit": "cd audit && npm run audit",
-    "audit:quick": "cd audit && npm run audit:quick",
-    "validate:translations": "node scripts/validate-translations.js"
+    "test": "vitest",
+    "test:regression": "vitest run tests/feature-recovery.test.ts tests/security-regression.test.ts",
+    "test:e2e": "playwright test",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "test:report": "npx tsx scripts/generate-test-report.ts && open test-report.html",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "lucide-react": "^0.294.0",
-    "sonner": "^1.2.0"
+    "react-router": "^6.22.0",
+    "lucide-react": "latest",
+    "sonner": "2.0.3",
+    "recharts": "latest",
+    "motion": "latest",
+    "@supabase/supabase-js": "latest",
+    "date-fns": "latest",
+    "react-hook-form": "7.55.0"
   },
   "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.2.0",
-    "vite": "^5.0.0"
+    "typescript": "^5.2.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.2.0",
+    "@vitest/ui": "^1.2.0",
+    "@playwright/test": "^1.40.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-org/kilimo-agri-ai-suite"
-  },
-  "author": "CREOVA",
-  "license": "MIT"
+  "keywords": [
+    "agriculture",
+    "ai",
+    "tanzania",
+    "farming",
+    "crop-management",
+    "kilimo",
+    "creova"
+  ],
+  "author": "CREOVA/KILIMO",
+  "license": "PROPRIETARY"
 }

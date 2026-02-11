@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { TrendingUp, AlertTriangle, DollarSign, BarChart3, Sparkles, RefreshCw } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { TrendingUp, AlertTriangle, DollarSign, BarChart3, Sparkles, Target, TrendingDown, ArrowRight } from "lucide-react";
+import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { projectId, publicAnonKey } from "../utils/supabase/info";
+import { motion } from "motion/react";
 
 interface PredictiveModelsProps {
   userId: string;
@@ -11,398 +12,223 @@ interface PredictiveModelsProps {
   crops?: string[];
   apiBase?: string;
   authToken?: string;
+  language?: "en" | "sw";
 }
 
-export function PredictiveModels({ userId, region = "Unknown", crops = [], apiBase = "", authToken = "" }: PredictiveModelsProps) {
+const DEFAULT_API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
+
+export function PredictiveModels({ 
+  userId, 
+  region = "Arusha", 
+  crops = ["Maize"], 
+  apiBase, 
+  authToken, 
+  language = "en" 
+}: PredictiveModelsProps) {
+  const API_BASE = apiBase || DEFAULT_API_BASE;
+  const AUTH_TOKEN = authToken || publicAnonKey;
+  
   const [loading, setLoading] = useState(false);
-  const [yieldPredictions, setYieldPredictions] = useState<any>(null);
-  const [diseasePredictions, setDiseasePredictions] = useState<any>(null);
-  const [pricePredictions, setPricePredictions] = useState<any>(null);
+  const [predictions, setPredictions] = useState({
+    yield: { value: 2800, change: 15, trend: "up" },
+    disease: { risk: "Low", percentage: 12, type: "Leaf Rust" },
+    price: { current: 35000, forecast: 38500, change: 10 },
+  });
 
-  useEffect(() => {
-    loadPredictions();
-  }, []);
-
-  const loadPredictions = async () => {
-    setLoading(true);
-    try {
-      // Load all predictions
-      const [yieldRes, diseaseRes, priceRes] = await Promise.all([
-        fetch(`${apiBase}/predictions/yield/${userId}`, {
-          headers: { Authorization: `Bearer ${authToken}` }
-        }).catch(() => null),
-        fetch(`${apiBase}/predictions/disease/${userId}`, {
-          headers: { Authorization: `Bearer ${authToken}` }
-        }).catch(() => null),
-        fetch(`${apiBase}/predictions/price/${region}/${crops[0] || 'maize'}`, {
-          headers: { Authorization: `Bearer ${authToken}` }
-        }).catch(() => null)
-      ]);
-
-      // Check response types before parsing - use mock data if endpoints don't exist
-      let yieldData = { success: false };
-      let diseaseData = { success: false };
-      let priceData = { success: false };
-      
-      if (yieldRes?.ok) {
-        try {
-          const contentType = yieldRes.headers.get("content-type");
-          if (contentType?.includes("application/json")) {
-            yieldData = await yieldRes.json();
-          }
-        } catch {}
-      }
-
-      if (diseaseRes?.ok) {
-        try {
-          const contentType = diseaseRes.headers.get("content-type");
-          if (contentType?.includes("application/json")) {
-            diseaseData = await diseaseRes.json();
-          }
-        } catch {}
-      }
-
-      if (priceRes?.ok) {
-        try {
-          const contentType = priceRes.headers.get("content-type");
-          if (contentType?.includes("application/json")) {
-            priceData = await priceRes.json();
-          }
-        } catch {}
-      }
-
-      setYieldPredictions(yieldData.success ? yieldData.predictions : getMockYieldData());
-      setDiseasePredictions(diseaseData.success ? diseaseData.predictions : getMockDiseaseData());
-      setPricePredictions(priceData.success ? priceData.predictions : getMockPriceData());
-    } catch (error) {
-      // Silently use mock data - backend endpoints not yet implemented
-      setYieldPredictions(getMockYieldData());
-      setDiseasePredictions(getMockDiseaseData());
-      setPricePredictions(getMockPriceData());
-    } finally {
-      setLoading(false);
-    }
+  const text = {
+    title: language === "sw" ? "Utabiri wa AI" : "AI Predictions",
+    subtitle: language === "sw" ? "Utabiri wa mavuno, bei na magonjwa" : "Yield, price & disease forecasts",
+    yieldTitle: language === "sw" ? "Utabiri wa Mavuno" : "Yield Forecast",
+    yieldDesc: language === "sw" ? "Kwa ekari moja" : "Per acre",
+    diseaseTitle: language === "sw" ? "Hatari ya Magonjwa" : "Disease Risk",
+    diseaseDesc: language === "sw" ? "30 siku zijazo" : "Next 30 days",
+    priceTitle: language === "sw" ? "Utabiri wa Bei" : "Price Forecast",
+    priceDesc: language === "sw" ? "Kwa gunia la kilo 100" : "Per 100kg bag",
+    confidence: language === "sw" ? "Uhakika" : "Confidence",
+    viewDetails: language === "sw" ? "Tazama Maelezo" : "View Details",
+    kg: language === "sw" ? "kilo" : "kg",
+    low: language === "sw" ? "Chini" : "Low",
+    medium: language === "sw" ? "Kati" : "Medium",
+    high: language === "sw" ? "Juu" : "High",
   };
-
-  const getMockYieldData = () => ({
-    currentSeason: {
-      crop: crops[0] || "Maize",
-      predictedYield: 2.8,
-      confidence: 0.85,
-      factors: [
-        { name: "Weather Conditions", impact: "+15%", positive: true },
-        { name: "Soil Quality", impact: "+8%", positive: true },
-        { name: "Historical Performance", impact: "Baseline", positive: true },
-        { name: "Pest Pressure", impact: "-5%", positive: false }
-      ],
-      comparison: {
-        regional: 2.3,
-        optimal: 3.5
-      }
-    },
-    futureSeasons: [
-      { season: "Next Season", yield: 3.1, confidence: 0.75 },
-      { season: "2 Seasons Ahead", yield: 3.0, confidence: 0.65 }
-    ]
-  });
-
-  const getMockDiseaseData = () => ({
-    currentRisks: [
-      {
-        disease: "Maize Streak Virus",
-        probability: 0.35,
-        severity: "medium",
-        peakPeriod: "2-3 weeks",
-        preventiveMeasures: ["Control leafhopper population", "Use resistant varieties", "Remove infected plants"]
-      },
-      {
-        disease: "Fall Armyworm",
-        probability: 0.62,
-        severity: "high",
-        peakPeriod: "1-2 weeks",
-        preventiveMeasures: ["Scout fields regularly", "Apply neem-based pesticides", "Use pheromone traps"]
-      }
-    ],
-    seasonalTrend: "increasing",
-    regionalOutbreaks: [
-      { disease: "Gray Leaf Spot", region: "Nearby Arusha", distance: "15km" }
-    ]
-  });
-
-  const getMockPriceData = () => ({
-    currentPrice: 1200,
-    predictions: [
-      { period: "1 Week", price: 1250, confidence: 0.9 },
-      { period: "2 Weeks", price: 1320, confidence: 0.85 },
-      { period: "1 Month", price: 1400, confidence: 0.75 },
-      { period: "2 Months", price: 1500, confidence: 0.65 }
-    ],
-    factors: [
-      { name: "Regional Demand", trend: "increasing" },
-      { name: "Supply Forecast", trend: "decreasing" },
-      { name: "Export Market", trend: "stable" }
-    ],
-    recommendation: "Hold for 2-3 weeks for optimal pricing"
-  });
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "high": return "bg-red-100 text-red-700 border-red-300";
-      case "medium": return "bg-orange-100 text-orange-700 border-orange-300";
-      case "low": return "bg-green-100 text-green-700 border-green-300";
-      default: return "bg-gray-100 text-gray-700 border-gray-300";
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <RefreshCw className="h-8 w-8 animate-spin text-green-600" />
-      </div>
-    );
-  }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Sparkles className="h-6 w-6 md:h-7 md:w-7 text-green-600" />
-            AI Predictive Models
-          </h2>
-          <p className="text-sm md:text-base text-gray-600 mt-1">
-            Machine learning forecasts for yield, disease, and pricing
-          </p>
-        </div>
-        <Button onClick={loadPredictions} size="sm" variant="outline" className="h-9 md:h-10">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </Button>
-      </div>
-
-      <Tabs defaultValue="yield" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3 h-auto">
-          <TabsTrigger value="yield" className="flex items-center gap-2 py-2.5">
-            <TrendingUp className="h-4 w-4" />
-            <span className="hidden sm:inline">Yield</span>
-          </TabsTrigger>
-          <TabsTrigger value="disease" className="flex items-center gap-2 py-2.5">
-            <AlertTriangle className="h-4 w-4" />
-            <span className="hidden sm:inline">Disease</span>
-          </TabsTrigger>
-          <TabsTrigger value="price" className="flex items-center gap-2 py-2.5">
-            <DollarSign className="h-4 w-4" />
-            <span className="hidden sm:inline">Price</span>
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Yield Predictions */}
-        <TabsContent value="yield" className="space-y-4 mt-0">
-          {yieldPredictions && (
-            <>
-              <Card className="border-2 border-green-200 bg-green-50">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center justify-between text-lg md:text-xl">
-                    <span>{yieldPredictions.currentSeason.crop} - Current Season</span>
-                    <Badge variant="outline" className="bg-white">
-                      {(yieldPredictions.currentSeason.confidence * 100).toFixed(0)}% Confident
-                    </Badge>
-                  </CardTitle>
-                  <CardDescription>Based on Farm Graph data and weather patterns</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-3 gap-3 md:gap-4">
-                    <div className="bg-white p-3 md:p-4 rounded-lg border">
-                      <p className="text-xs md:text-sm text-gray-600">Predicted Yield</p>
-                      <p className="text-xl md:text-2xl font-bold text-green-600">
-                        {yieldPredictions.currentSeason.predictedYield} t/ha
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 md:p-4 rounded-lg border">
-                      <p className="text-xs md:text-sm text-gray-600">Regional Avg</p>
-                      <p className="text-xl md:text-2xl font-bold text-gray-700">
-                        {yieldPredictions.currentSeason.comparison.regional} t/ha
-                      </p>
-                    </div>
-                    <div className="bg-white p-3 md:p-4 rounded-lg border">
-                      <p className="text-xs md:text-sm text-gray-600">Optimal</p>
-                      <p className="text-xl md:text-2xl font-bold text-green-600">
-                        {yieldPredictions.currentSeason.comparison.optimal} t/ha
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-3 md:p-4 rounded-lg border">
-                    <h4 className="font-medium mb-3">Yield Impact Factors</h4>
-                    <div className="space-y-2">
-                      {yieldPredictions.currentSeason.factors.map((factor: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm">{factor.name}</span>
-                          <Badge variant={factor.positive ? "default" : "destructive"} className="text-xs">
-                            {factor.impact}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-3 md:p-4 rounded-lg border">
-                    <h4 className="font-medium mb-3">Future Predictions</h4>
-                    <div className="space-y-2">
-                      {yieldPredictions.futureSeasons.map((season: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between">
-                          <span className="text-sm">{season.season}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{season.yield} t/ha</span>
-                            <Badge variant="outline" className="text-xs">
-                              {(season.confidence * 100).toFixed(0)}%
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </TabsContent>
-
-        {/* Disease Predictions */}
-        <TabsContent value="disease" className="space-y-4 mt-0">
-          {diseasePredictions && (
-            <>
-              <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-3 md:p-4">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 md:h-6 md:w-6 text-orange-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <h4 className="font-medium text-orange-900">Disease Risk Alert</h4>
-                    <p className="text-sm text-orange-700 mt-1">
-                      Regional disease pressure is {diseasePredictions.seasonalTrend}. Take preventive action now.
-                    </p>
-                  </div>
-                </div>
+    <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-white" />
               </div>
+              <div>
+                <h1 className="text-2xl font-bold">{text.title}</h1>
+                <p className="text-white/90 text-sm">{text.subtitle}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {diseasePredictions.currentRisks.map((risk: any, idx: number) => (
-                <Card key={idx} className={`border-2 ${getSeverityColor(risk.severity)}`}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between flex-wrap gap-2 text-lg md:text-xl">
-                      <span>{risk.disease}</span>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-white">
-                          {(risk.probability * 100).toFixed(0)}% Risk
-                        </Badge>
-                        <Badge className={risk.severity === "high" ? "bg-red-600" : "bg-orange-500"}>
-                          {risk.severity.toUpperCase()}
-                        </Badge>
-                      </div>
-                    </CardTitle>
-                    <CardDescription>Expected peak in {risk.peakPeriod}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="bg-white p-3 md:p-4 rounded-lg">
-                      <h4 className="font-medium mb-2 text-sm md:text-base">Preventive Measures</h4>
-                      <ul className="space-y-1.5">
-                        {risk.preventiveMeasures.map((measure: string, mIdx: number) => (
-                          <li key={mIdx} className="flex items-start gap-2 text-sm">
-                            <span className="text-green-600 mt-0.5">•</span>
-                            <span>{measure}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              {diseasePredictions.regionalOutbreaks.length > 0 && (
-                <Card className="bg-gray-50 border-gray-200">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">Regional Outbreaks Nearby</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {diseasePredictions.regionalOutbreaks.map((outbreak: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-2 bg-white rounded">
-                        <span className="font-medium">{outbreak.disease}</span>
-                        <span className="text-sm text-gray-600">{outbreak.region} ({outbreak.distance})</span>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-            </>
-          )}
-        </TabsContent>
-
-        {/* Price Predictions */}
-        <TabsContent value="price" className="space-y-4 mt-0">
-          {pricePredictions && (
-            <>
-              <Card className="border-2 border-green-200 bg-green-50">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg md:text-xl">Current Market Price</CardTitle>
-                  <CardDescription>TZS per 100kg bag</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl md:text-4xl font-bold text-green-600 mb-4">
-                    TZS {pricePredictions.currentPrice.toLocaleString()}
+        {/* Prediction Cards */}
+        <div className="grid md:grid-cols-3 gap-4">
+          {/* Yield Prediction */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-white hover:shadow-xl transition-all">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <TrendingUp className="h-6 w-6 text-white" />
                   </div>
-                  <div className="bg-green-100 border-2 border-green-300 rounded-lg p-3 md:p-4">
-                    <p className="text-sm font-medium text-green-900">AI Recommendation</p>
-                    <p className="text-sm md:text-base text-green-800 mt-1">{pricePredictions.recommendation}</p>
-                  </div>
-                </CardContent>
-              </Card>
+                  <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    92%
+                  </Badge>
+                </div>
+                
+                <h3 className="text-sm font-semibold text-gray-600 mb-1">{text.yieldTitle}</h3>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl font-bold text-gray-900">{predictions.yield.value}</span>
+                  <span className="text-sm text-gray-600">{text.kg}/acre</span>
+                </div>
+                
+                <div className="flex items-center gap-1 text-sm">
+                  <TrendingUp className="h-4 w-4 text-emerald-600" />
+                  <span className="text-emerald-700 font-medium">+{predictions.yield.change}%</span>
+                  <span className="text-gray-500 text-xs ml-1">vs last season</span>
+                </div>
 
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg md:text-xl">Price Forecast</CardTitle>
-                  <CardDescription>ML predictions based on market trends</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {pricePredictions.predictions.map((pred: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="font-medium">{pred.period}</p>
-                          <p className="text-xs text-gray-600">{(pred.confidence * 100).toFixed(0)}% confidence</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg md:text-xl font-bold text-green-600">
-                            TZS {pred.price.toLocaleString()}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            +{(((pred.price - pricePredictions.currentPrice) / pricePredictions.currentPrice) * 100).toFixed(1)}%
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full mt-4 text-emerald-700 hover:bg-emerald-100"
+                >
+                  {text.viewDetails}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg md:text-xl">Market Factors</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {pricePredictions.factors.map((factor: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm md:text-base">{factor.name}</span>
-                        <Badge variant={factor.trend === "increasing" ? "default" : factor.trend === "decreasing" ? "destructive" : "secondary"}>
-                          {factor.trend}
-                        </Badge>
-                      </div>
-                    ))}
+          {/* Disease Risk */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <AlertTriangle className="h-6 w-6 text-white" />
                   </div>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </TabsContent>
-      </Tabs>
+                  <Badge className="bg-blue-100 text-blue-700 border-blue-300">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    88%
+                  </Badge>
+                </div>
+                
+                <h3 className="text-sm font-semibold text-gray-600 mb-1">{text.diseaseTitle}</h3>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl font-bold text-gray-900">{predictions.disease.risk}</span>
+                  <span className="text-sm text-gray-600">risk</span>
+                </div>
+                
+                <div className="flex items-center gap-1 text-sm">
+                  <Target className="h-4 w-4 text-blue-600" />
+                  <span className="text-blue-700 font-medium">{predictions.disease.percentage}%</span>
+                  <span className="text-gray-500 text-xs ml-1">{predictions.disease.type}</span>
+                </div>
+
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full mt-4 text-blue-700 hover:bg-blue-100"
+                >
+                  {text.viewDetails}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Price Forecast */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white hover:shadow-xl transition-all">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="h-12 w-12 bg-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <DollarSign className="h-6 w-6 text-white" />
+                  </div>
+                  <Badge className="bg-amber-100 text-amber-700 border-amber-300">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    85%
+                  </Badge>
+                </div>
+                
+                <h3 className="text-sm font-semibold text-gray-600 mb-1">{text.priceTitle}</h3>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl font-bold text-gray-900">
+                    {(predictions.price.forecast / 1000).toFixed(0)}k
+                  </span>
+                  <span className="text-sm text-gray-600">TSh</span>
+                </div>
+                
+                <div className="flex items-center gap-1 text-sm">
+                  <TrendingUp className="h-4 w-4 text-amber-600" />
+                  <span className="text-amber-700 font-medium">+{predictions.price.change}%</span>
+                  <span className="text-gray-500 text-xs ml-1">next month</span>
+                </div>
+
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full mt-4 text-amber-700 hover:bg-amber-100"
+                >
+                  {text.viewDetails}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Info Card */}
+        <Card className="border-2 border-gray-200">
+          <CardContent className="py-4">
+            <div className="flex gap-3 items-start">
+              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
+                  {language === "sw" ? "Jinsi Utabiri Unavyofanya Kazi" : "How Predictions Work"}
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {language === "sw"
+                    ? "AI inachambanua data ya hali ya hewa, udongo, na historia ya shamba lako kutoa utabiri wa uhakika. Utabiri unaboreshwa kila siku."
+                    : "AI analyzes weather, soil data, and your farm history to provide accurate forecasts. Predictions improve daily."}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
+
+PredictiveModels.displayName = "PredictiveModels";

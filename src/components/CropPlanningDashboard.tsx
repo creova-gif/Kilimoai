@@ -960,3 +960,5 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
     </div>
   );
 }
+
+CropPlanningDashboard.displayName = "CropPlanningDashboard";

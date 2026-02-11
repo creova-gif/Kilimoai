@@ -112,14 +112,14 @@ export function OnboardingTest() {
                 key={index}
                 className={`flex items-start gap-3 p-4 rounded-lg ${
                   result.status === 'pass'
-                    ? 'bg-green-50 border border-green-200'
+                    ? 'bg-[#2E7D32]/5 border border-[#2E7D32]/30'
                     : result.status === 'warn'
                     ? 'bg-yellow-50 border border-yellow-200'
                     : 'bg-red-50 border border-red-200'
                 }`}
               >
                 {result.status === 'pass' ? (
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                 ) : (
                   <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                 )}
@@ -182,7 +182,7 @@ export function OnboardingTest() {
             <summary className="cursor-pointer text-sm font-semibold text-[#2E7D32] hover:underline">
               View Full JSON
             </summary>
-            <pre className="mt-2 p-4 bg-gray-900 text-green-400 rounded-lg text-xs overflow-x-auto">
+            <pre className="mt-2 p-4 bg-gray-900 text-[#2E7D32]/80 rounded-lg text-xs overflow-x-auto">
               {JSON.stringify(completedUser, null, 2)}
             </pre>
           </details>
@@ -196,7 +196,7 @@ export function OnboardingTest() {
               <span className="text-sm font-mono text-gray-700">kilimoUser</span>
               <span className={`text-xs px-2 py-1 rounded ${
                 localStorage.getItem('kilimoUser')
-                  ? 'bg-green-100 text-green-700'
+                  ? 'bg-[#2E7D32]/10 text-[#1B5E20]'
                   : 'bg-red-100 text-red-700'
               }`}>
                 {localStorage.getItem('kilimoUser') ? 'SET' : 'NOT SET'}
@@ -206,7 +206,7 @@ export function OnboardingTest() {
               <span className="text-sm font-mono text-gray-700">kilimoLanguage</span>
               <span className={`text-xs px-2 py-1 rounded ${
                 localStorage.getItem('kilimoLanguage')
-                  ? 'bg-green-100 text-green-700'
+                  ? 'bg-[#2E7D32]/10 text-[#1B5E20]'
                   : 'bg-red-100 text-red-700'
               }`}>
                 {localStorage.getItem('kilimoLanguage') ? 'SET' : 'NOT SET'}
@@ -216,7 +216,7 @@ export function OnboardingTest() {
               <span className="text-sm font-mono text-gray-700">kilimoSeenWelcome</span>
               <span className={`text-xs px-2 py-1 rounded ${
                 localStorage.getItem('kilimoSeenWelcome')
-                  ? 'bg-green-100 text-green-700'
+                  ? 'bg-[#2E7D32]/10 text-[#1B5E20]'
                   : 'bg-red-100 text-red-700'
               }`}>
                 {localStorage.getItem('kilimoSeenWelcome') ? 'SET' : 'NOT SET'}
@@ -238,7 +238,7 @@ export function OnboardingTest() {
               console.log('Test Results:', testResults);
               console.log('User Data:', completedUser);
             }}
-            className="px-6 py-4 border-2 border-[#2E7D32] text-[#2E7D32] font-semibold rounded-xl hover:bg-green-50 transition-colors"
+            className="px-6 py-4 border-2 border-[#2E7D32] text-[#2E7D32] font-semibold rounded-xl hover:bg-[#2E7D32]/5 transition-colors"
           >
             Log to Console
           </button>

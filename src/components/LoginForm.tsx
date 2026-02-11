@@ -37,7 +37,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
     >
       <Card className="w-full shadow-2xl border-0 overflow-hidden backdrop-blur-lg">
         {/* Animated Header with Gradient */}
-        <div className="relative bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 p-8 md:p-10 text-white overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-[#1B5E20] p-8 md:p-10 text-white overflow-hidden">
           {/* Animated background blobs */}
           <motion.div
             animate={{
@@ -105,7 +105,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
               <TabsList className="grid w-full grid-cols-2 h-12 mb-6 bg-gray-100 rounded-xl p-1">
                 <TabsTrigger 
                   value="phone" 
-                  className="flex items-center gap-2 rounded-lg data-[state=active]:bg-green-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all"
+                  className="flex items-center gap-2 rounded-lg data-[state=active]:bg-[#2E7D32] data-[state=active]:text-white data-[state=active]:shadow-md transition-all"
                 >
                   <Phone className="h-4 w-4" />
                   <span className="hidden sm:inline">Phone Number</span>
@@ -113,7 +113,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="email" 
-                  className="flex items-center gap-2 rounded-lg data-[state=active]:bg-green-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all"
+                  className="flex items-center gap-2 rounded-lg data-[state=active]:bg-[#2E7D32] data-[state=active]:text-white data-[state=active]:shadow-md transition-all"
                 >
                   <Mail className="h-4 w-4" />
                   Email
@@ -137,7 +137,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
                       placeholder="+255 XXX XXX XXX"
                       value={formData.phone}
                       onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="pl-12 h-12 text-base border-2 border-gray-200 focus:border-green-500 rounded-xl transition-all"
+                      className="pl-12 h-12 text-base border-2 border-gray-200 focus:border-[#2E7D32] rounded-xl transition-all"
                       required={loginMethod === "phone"}
                     />
                   </div>
@@ -167,7 +167,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
                       placeholder="farmer@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="pl-12 h-12 text-base border-2 border-gray-200 focus:border-green-500 rounded-xl transition-all"
+                      className="pl-12 h-12 text-base border-2 border-gray-200 focus:border-[#2E7D32] rounded-xl transition-all"
                       required={loginMethod === "email"}
                     />
                   </div>
@@ -190,7 +190,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  className="pl-12 pr-12 h-12 text-base border-2 border-gray-200 focus:border-green-500 rounded-xl transition-all"
+                  className="pl-12 pr-12 h-12 text-base border-2 border-gray-200 focus:border-[#2E7D32] rounded-xl transition-all"
                   required
                 />
                 <button
@@ -208,7 +208,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
               <div className="flex justify-end">
                 <button
                   type="button"
-                  className="text-xs text-green-600 hover:text-green-700 font-semibold"
+                  className="text-xs text-[#2E7D32] hover:text-[#1B5E20] font-semibold"
                 >
                   Forgot password?
                 </button>
@@ -221,7 +221,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
             >
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-13 rounded-xl shadow-lg text-base font-bold"
+                className="w-full bg-gradient-to-r from-[#2E7D32] to-[#2E7D32] hover:from-[#1B5E20] hover:to-[#1B5E20] h-13 rounded-xl shadow-lg text-base font-bold"
                 disabled={loading}
               >
                 {loading ? (

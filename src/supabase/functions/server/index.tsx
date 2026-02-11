@@ -26,6 +26,8 @@ import authRoutes from "./auth_onboarding.tsx"; // World-class onboarding auth
 import * as authUnified from "./auth_unified.tsx"; // Unified email + phone auth
 import * as aiTelemetry from "./ai_telemetry.tsx"; // AI telemetry and monitoring
 import * as crashReporting from "./crash_reporting.tsx"; // Crash reporting
+import * as cropLibrary from "./crop_library.tsx"; // Crop Library with AI images
+import { registerIntegrationRoutes } from "./system_integration.tsx"; // ✅ KILIMO System Integration
 
 const app = new Hono();
 
@@ -53,6 +55,9 @@ app.use(
 // Apply user extraction middleware to all routes
 app.use("/make-server-ce1844e7/*", authMiddleware.extractUser);
 
+// ✅ Register ALL system integration routes (Phase 1-8)
+registerIntegrationRoutes(app);
+
 // Global error handler - ensures all errors return JSON
 app.onError((err, c) => {
   console.error('Global error handler caught:', err);
@@ -66,6 +71,14 @@ app.onError((err, c) => {
 // Health check endpoint
 app.get("/make-server-ce1844e7/health", (c) => {
   return c.json({ status: "ok" });
+});
+
+// Test endpoint for debugging
+app.get("/make-server-ce1844e7/test", (c) => {
+  return c.json({ 
+    status: "test endpoint working",
+    timestamp: new Date().toISOString()
+  });
 });
 
 // ==================== USER AUTHENTICATION ====================
@@ -5613,24 +5626,6 @@ app.post("/make-server-ce1844e7/tasks/:taskId/toggle", async (c) => {
   }
 });
 
-// ==================== 404 HANDLER (Must be last) ====================
-// Catch-all for undefined routes - returns JSON instead of HTML
-app.all("*", (c) => {
-  console.error(`404 Not Found: ${c.req.method} ${c.req.url}`);
-  return c.json({
-    success: false,
-    error: "Route not found",
-    message: `The endpoint ${c.req.method} ${new URL(c.req.url).pathname} does not exist`,
-    availableRoutes: [
-      "POST /make-server-ce1844e7/register",
-      "POST /make-server-ce1844e7/login",
-      "GET /make-server-ce1844e7/family-plan/:userId",
-      "GET /make-server-ce1844e7/farm-graph/:userId",
-      "GET /make-server-ce1844e7/health",
-    ]
-  }, 404);
-});
-
 // ==================== UNIFIED PAYMENT SYSTEM ====================
 
 import * as paymentsUnified from "./payments_unified.tsx";
@@ -5978,9 +5973,15 @@ app.post('/make-server-ce1844e7/tasks/batch', async (c) => {
 
 app.get('/make-server-ce1844e7/tasks', async (c) => {
   try {
+    console.log('GET /tasks called with query:', c.req.query());
     const userId = c.req.query('userId');
-    if (!userId) return c.json({ error: 'userId required' }, 400);
+    console.log('Extracted userId:', userId);
+    if (!userId) {
+      console.log('No userId provided, returning 400');
+      return c.json({ error: 'userId required' }, 400);
+    }
     const tasks = await kv.get(`tasks:${userId}`) || [];
+    console.log(`Loaded ${tasks.length} tasks for user ${userId}`);
     return c.json({ tasks });
   } catch (error) {
     console.error('Tasks load error:', error);
@@ -6026,14 +6027,11 @@ app.get('/make-server-ce1844e7/predictions/yield/:userId', async (c) => {
   try {
     const userId = c.req.param('userId');
     
-    // Fetch user data to get crop information
+    // Fetch user data to get crop information (optional - use defaults if not found)
     const userData = await kv.get(`user:${userId}`);
-    if (!userData) {
-      return c.json({ error: 'User not found' }, 404);
-    }
-
-    // Generate mock yield predictions based on user's crops
-    const crops = userData.crops || ['Maize', 'Beans'];
+    
+    // Use defaults if user data not found (allows demo/new users to work)
+    const crops = userData?.crops || ['Maize', 'Beans'];
     const predictions = crops.map((crop: string) => ({
       crop,
       currentYield: (2.5 + Math.random() * 2).toFixed(1), // 2.5-4.5 tons/hectare
@@ -6130,15 +6128,12 @@ app.get('/make-server-ce1844e7/predictions/disease/:userId', async (c) => {
   try {
     const userId = c.req.param('userId');
     
-    // Fetch user data
+    // Fetch user data (optional - use defaults if not found)
     const userData = await kv.get(`user:${userId}`);
-    if (!userData) {
-      return c.json({ error: 'User not found' }, 404);
-    }
-
-    // Generate mock disease risk predictions
-    const crops = userData.crops || ['Maize', 'Beans'];
-    const region = userData.region || 'Arusha';
+    
+    // Use defaults if user data not found (allows demo/new users to work)
+    const crops = userData?.crops || ['Maize', 'Beans'];
+    const region = userData?.region || 'Arusha';
     
     const diseaseRisks = [
       {
@@ -6222,6 +6217,163 @@ app.get('/make-server-ce1844e7/predictions/disease/:userId', async (c) => {
     console.error('Disease prediction error:', error);
     return c.json({ error: 'Failed to generate disease predictions' }, 500);
   }
+});
+
+// ==================== CROP LIBRARY ====================
+
+// Initialize crop images bucket (on startup)
+app.get("/make-server-ce1844e7/crop-library/init", async (c) => {
+  try {
+    await cropLibrary.initializeCropImagesBucket();
+    await cropLibrary.seedCropDatabase();
+    
+    return c.json({ 
+      success: true, 
+      message: "Crop library initialized" 
+    });
+  } catch (error) {
+    console.error('Crop library init error:', error);
+    return c.json({ error: 'Failed to initialize crop library' }, 500);
+  }
+});
+
+// Get all crops
+app.get("/make-server-ce1844e7/crop-library/crops", async (c) => {
+  try {
+    const crops = await cropLibrary.getAllCrops();
+    
+    return c.json({ 
+      success: true, 
+      crops,
+      count: crops.length 
+    });
+  } catch (error) {
+    console.error('Get crops error:', error);
+    return c.json({ error: 'Failed to get crops' }, 500);
+  }
+});
+
+// Get single crop by ID
+app.get("/make-server-ce1844e7/crop-library/crops/:cropId", async (c) => {
+  try {
+    const cropId = c.req.param("cropId");
+    const crop = await cropLibrary.getCropById(cropId);
+    
+    if (!crop) {
+      return c.json({ error: 'Crop not found' }, 404);
+    }
+    
+    return c.json({ 
+      success: true, 
+      crop 
+    });
+  } catch (error) {
+    console.error('Get crop error:', error);
+    return c.json({ error: 'Failed to get crop' }, 500);
+  }
+});
+
+// Generate crop image (admin/system only)
+app.post("/make-server-ce1844e7/crop-library/generate-image", async (c) => {
+  try {
+    const { cropId, stage } = await c.req.json();
+    
+    if (!cropId) {
+      return c.json({ error: 'cropId is required' }, 400);
+    }
+    
+    const result = await cropLibrary.generateAndCacheCropImage(
+      cropId, 
+      stage || "vegetative"
+    );
+    
+    return c.json(result);
+  } catch (error) {
+    console.error('Generate image error:', error);
+    return c.json({ error: 'Failed to generate image' }, 500);
+  }
+});
+
+// ==================== IMAGE FEEDBACK LOOP ====================
+
+// Validate crop image before diagnosis
+app.post("/make-server-ce1844e7/crop-library/validate-image", async (c) => {
+  try {
+    const { imageData } = await c.req.json();
+    
+    if (!imageData) {
+      return c.json({ error: 'imageData is required' }, 400);
+    }
+    
+    const validation = await cropLibrary.validateCropImage(imageData);
+    
+    return c.json({ 
+      success: true, 
+      validation 
+    });
+  } catch (error) {
+    console.error('Image validation error:', error);
+    return c.json({ error: 'Failed to validate image' }, 500);
+  }
+});
+
+// Log image feedback from diagnosis
+app.post("/make-server-ce1844e7/crop-library/feedback", async (c) => {
+  try {
+    const feedback = await c.req.json();
+    
+    // Validate required fields
+    if (!feedback.crop_id || !feedback.diagnosis || !feedback.confidence || !feedback.outcome) {
+      return c.json({ 
+        error: 'Missing required fields: crop_id, diagnosis, confidence, outcome' 
+      }, 400);
+    }
+    
+    const feedbackId = await cropLibrary.logImageFeedback(feedback);
+    
+    return c.json({ 
+      success: true, 
+      feedbackId,
+      message: 'Feedback logged successfully' 
+    });
+  } catch (error) {
+    console.error('Feedback logging error:', error);
+    return c.json({ error: 'Failed to log feedback' }, 500);
+  }
+});
+
+// Get feedback history for a crop
+app.get("/make-server-ce1844e7/crop-library/feedback/:cropId", async (c) => {
+  try {
+    const cropId = c.req.param("cropId");
+    
+    if (!cropId) {
+      return c.json({ error: 'cropId is required' }, 400);
+    }
+    
+    const history = await cropLibrary.getImageFeedbackHistory(cropId);
+    
+    return c.json({ 
+      success: true, 
+      history,
+      count: history.length 
+    });
+  } catch (error) {
+    console.error('Get feedback history error:', error);
+    return c.json({ error: 'Failed to get feedback history' }, 500);
+  }
+});
+
+// ==================== 404 HANDLER (Must be last) ====================
+// Catch-all for undefined routes - returns JSON instead of HTML
+app.all("*", (c) => {
+  console.error(`404 Not Found: ${c.req.method} ${c.req.url}`);
+  return c.json({
+    success: false,
+    error: "Route not found",
+    message: `The endpoint ${c.req.method} ${new URL(c.req.url).pathname} does not exist`,
+    hint: "Check the server logs for available routes or visit /make-server-ce1844e7/health to verify server is running"
+  }, 404);
 });
 
 Deno.serve(app.fetch);

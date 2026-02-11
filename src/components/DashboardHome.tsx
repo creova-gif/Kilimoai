@@ -316,13 +316,13 @@ export function DashboardHome({ user, language, onNavigate }: DashboardHomeProps
         <div className="relative z-10">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 md:p-3 bg-white/20 rounded-xl md:rounded-2xl">
+              <div className="flex items-center gap-2 md:gap-3 mb-2">
+                <div className="p-1.5 md:p-3 bg-white/20 rounded-xl md:rounded-2xl flex-shrink-0">
                   <Brain className="h-5 w-5 md:h-6 md:w-6 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-xl md:text-2xl font-black">{text.welcomeBack}, {user.name}!</h1>
-                  <p className="text-white/90 text-xs md:text-sm">{text.overview}</p>
+                <div className="flex flex-col">
+                  <h1 className="text-xl md:text-2xl font-black leading-tight">{text.welcomeBack}, {user.name}!</h1>
+                  <p className="text-white/90 text-xs md:text-sm mt-0.5">{text.overview}</p>
                 </div>
               </div>
             </div>

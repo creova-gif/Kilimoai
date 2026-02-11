@@ -56,7 +56,7 @@ export function AIFarmingInsights({ insights, language }: Props) {
                   ? "bg-red-50 border-red-200" 
                   : insight.priority === "medium"
                   ? "bg-orange-50 border-orange-200"
-                  : "bg-green-50 border-green-200"
+                  : "bg-[#2E7D32]/5 border-[#2E7D32]/30"
               }`}
             >
               <div className="flex items-start gap-3">
@@ -65,14 +65,14 @@ export function AIFarmingInsights({ insights, language }: Props) {
                     ? "bg-red-100"
                     : insight.priority === "medium"
                     ? "bg-orange-100"
-                    : "bg-green-100"
+                    : "bg-[#2E7D32]/10"
                 }`}>
                   <CheckCircle className={`h-4 w-4 ${
                     insight.priority === "high"
                       ? "text-red-600"
                       : insight.priority === "medium"
                       ? "text-orange-600"
-                      : "text-green-600"
+                      : "text-[#2E7D32]"
                   }`} />
                 </div>
                 <p className="text-sm text-gray-700 flex-1">

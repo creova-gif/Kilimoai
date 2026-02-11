@@ -156,9 +156,69 @@
   <!-- App Root -->
   <div id="root"></div>
   
-  <script type="module" src="/src/main.tsx"></script>
+  <script type="module" src="/src/main.tsx?v=20260210-1630"></script>
   
   <script>
+    // ============================================================================
+    // STEP 1: REGISTER URL-FIXING SERVICE WORKER
+    // ============================================================================
+    (async function() {
+      if ('serviceWorker' in navigator) {
+        console.log('🔧 [SERVICE WORKER] Registering URL-fixing service worker...');
+        try {
+          const registration = await navigator.serviceWorker.register('/sw-url-fixer.js', {
+            scope: '/'
+          });
+          console.log('✅ [SERVICE WORKER] URL fixer registered!', registration.scope);
+          console.log('✅ [SERVICE WORKER] Will intercept and fix http:// URLs automatically');
+          
+          // Wait for service worker to be ready
+          await navigator.serviceWorker.ready;
+          console.log('✅ [SERVICE WORKER] URL fixer is ACTIVE and ready');
+        } catch (error) {
+          console.error('❌ [SERVICE WORKER] Registration failed:', error);
+        }
+      }
+    })();
+    
+    // ============================================================================
+    // STEP 2: EMERGENCY CACHE BUSTER - Forces browser to reload if using cached code
+    // ============================================================================
+    (function() {
+      const CACHE_VERSION = 'v20260210-204500-IMPORT-FIX'; // NEW VERSION - Import fix
+      
+      console.log('🔍 [CACHE BUSTER v8] Checking version...');
+      console.log('   Expected:', CACHE_VERSION);
+      
+      const stored = localStorage.getItem('KILIMO_CACHE_VERSION');
+      console.log('   Stored:', stored || 'NONE');
+      
+      // AGGRESSIVE FIX: Force reload if version doesn't match
+      if (stored !== CACHE_VERSION) {
+        console.warn('⚠️ [CACHE BUSTER] VERSION MISMATCH! Forcing hard reload...');
+        console.warn('   Fixed AITrainingHub import path');
+        console.warn('   All components should load properly now');
+        
+        // Set new version BEFORE reload
+        localStorage.setItem('KILIMO_CACHE_VERSION', CACHE_VERSION);
+        
+        // Add timestamp to URL to bypass ALL caches
+        const timestamp = Date.now();
+        console.log('🔄 [CACHE BUSTER] Adding cache-busting timestamp:', timestamp);
+        
+        // Force hard reload with cache bypass
+        window.location.href = window.location.href.split('?')[0] + '?cachebust=' + timestamp;
+        
+        // Stop execution
+        throw new Error('Cache reload in progress...');
+      }
+      
+      console.log('✅ [CACHE BUSTER v8] Running correct version!');
+      console.log('🔥 KILIMO v5.0.8 - IMPORT FIXED');
+      console.log('✅ AITrainingHub import path corrected');
+      console.log('📊 BUILD:', new Date().toISOString());
+    })();
+    
     // Hide loading screen when app loads
     window.addEventListener('load', function() {
       setTimeout(function() {

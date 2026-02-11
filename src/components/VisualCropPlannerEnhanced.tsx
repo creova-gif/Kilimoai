@@ -1583,3 +1583,5 @@ export function VisualCropPlannerEnhanced({
     </div>
   );
 }
+
+VisualCropPlannerEnhanced.displayName = "VisualCropPlannerEnhanced";

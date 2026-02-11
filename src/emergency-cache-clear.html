@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚨 EMERGENCY CACHE CLEAR 🚨</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      color: #1f2937;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      color: #dc2626;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .warning {
+      background: #fef2f2;
+      border: 3px solid #dc2626;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .button {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      margin: 10px 0;
+      transition: all 0.3s;
+    }
+    .button:hover {
+      background: #991b1b;
+      transform: scale(1.05);
+    }
+    .button:active {
+      transform: scale(0.95);
+    }
+    .steps {
+      background: #f3f4f6;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .steps ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .steps li {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    code {
+      background: #1f2937;
+      color: #10b981;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    .success {
+      background: #d1fae5;
+      border: 3px solid #10b981;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      display: none;
+    }
+    .log {
+      background: #1f2937;
+      color: #10b981;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 20px 0;
+    }
+    .log-line {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚨 EMERGENCY CACHE CLEAR</h1>
+    <p style="font-size: 18px; margin: 10px 0;">Your browser is stuck on old cached code. Let's fix this NOW.</p>
+    
+    <div class="warning">
+      <strong>⚠️ Problem Detected:</strong><br>
+      Your browser is using <code>http://</code> instead of <code>https://</code><br>
+      This means it's running OLD JavaScript code from cache.
+    </div>
+
+    <div class="steps">
+      <strong>🎯 NUCLEAR OPTION - Guaranteed to Work:</strong>
+      <ol>
+        <li>Click the BIG RED BUTTON below</li>
+        <li>Watch the console log</li>
+        <li>Browser will reload automatically (2-3 times)</li>
+        <li>You'll see "✅ SUCCESS" when done</li>
+      </ol>
+    </div>
+
+    <button class="button" onclick="nuclearCacheClear()">
+      💥 NUCLEAR CACHE CLEAR 💥<br>
+      <small style="font-size: 14px; opacity: 0.9;">Click to force browser reload</small>
+    </button>
+
+    <div class="log" id="log">
+      <div class="log-line">🔧 Ready to clear cache...</div>
+      <div class="log-line">👇 Click the button above to start</div>
+    </div>
+
+    <div class="success" id="success">
+      <strong>✅ SUCCESS!</strong><br>
+      Cache cleared successfully. Redirecting to app in <span id="countdown">3</span> seconds...
+    </div>
+
+    <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e5e7eb;">
+      <strong>📋 Manual Steps (if button doesn't work):</strong>
+      <div class="steps">
+        <ol>
+          <li><strong>Windows:</strong> Press <code>Ctrl + Shift + Delete</code></li>
+          <li><strong>Mac:</strong> Press <code>Cmd + Shift + Delete</code></li>
+          <li>Select "Cached images and files"</li>
+          <li>Click "Clear data"</li>
+          <li>Close ALL tabs</li>
+          <li>Restart browser</li>
+          <li>Navigate back to app</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let logElement = document.getElementById('log');
+    let successElement = document.getElementById('success');
+    let reloadCount = 0;
+    
+    function log(message, type = 'info') {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      
+      if (type === 'error') {
+        line.style.color = '#ef4444';
+      } else if (type === 'success') {
+        line.style.color = '#10b981';
+      } else if (type === 'warning') {
+        line.style.color = '#f59e0b';
+      }
+      
+      line.textContent = message;
+      logElement.appendChild(line);
+      logElement.scrollTop = logElement.scrollHeight;
+      
+      console.log(message);
+    }
+    
+    async function nuclearCacheClear() {
+      log('💥 NUCLEAR CACHE CLEAR INITIATED', 'warning');
+      log('');
+      
+      // Step 1: Clear localStorage
+      log('🗑️  Step 1: Clearing localStorage...');
+      try {
+        localStorage.clear();
+        log('✅ localStorage cleared', 'success');
+      } catch (e) {
+        log('❌ Error clearing localStorage: ' + e.message, 'error');
+      }
+      
+      // Step 2: Clear sessionStorage
+      log('🗑️  Step 2: Clearing sessionStorage...');
+      try {
+        sessionStorage.clear();
+        log('✅ sessionStorage cleared', 'success');
+      } catch (e) {
+        log('❌ Error clearing sessionStorage: ' + e.message, 'error');
+      }
+      
+      // Step 3: Clear IndexedDB
+      log('🗑️  Step 3: Clearing IndexedDB...');
+      try {
+        const databases = await indexedDB.databases();
+        for (const db of databases) {
+          indexedDB.deleteDatabase(db.name);
+          log('  ✓ Deleted database: ' + db.name);
+        }
+        log('✅ IndexedDB cleared', 'success');
+      } catch (e) {
+        log('⚠️  Could not clear IndexedDB: ' + e.message, 'warning');
+      }
+      
+      // Step 4: Unregister service workers
+      log('🗑️  Step 4: Unregistering service workers...');
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+            log('  ✓ Unregistered service worker: ' + registration.scope);
+          }
+          log('✅ Service workers unregistered', 'success');
+        } else {
+          log('  ℹ️  No service workers found');
+        }
+      } catch (e) {
+        log('⚠️  Error unregistering service workers: ' + e.message, 'warning');
+      }
+      
+      // Step 5: Clear cache storage
+      log('🗑️  Step 5: Clearing cache storage...');
+      try {
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          for (const cacheName of cacheNames) {
+            await caches.delete(cacheName);
+            log('  ✓ Deleted cache: ' + cacheName);
+          }
+          log('✅ Cache storage cleared', 'success');
+        } else {
+          log('  ℹ️  No cache storage found');
+        }
+      } catch (e) {
+        log('⚠️  Error clearing cache storage: ' + e.message, 'warning');
+      }
+      
+      // Step 6: Set reload flag
+      log('🗑️  Step 6: Setting reload flag...');
+      try {
+        sessionStorage.setItem('KILIMO_RELOADING', 'true');
+        sessionStorage.setItem('KILIMO_RELOAD_COUNT', '1');
+        log('✅ Reload flag set', 'success');
+      } catch (e) {
+        log('❌ Error setting reload flag: ' + e.message, 'error');
+      }
+      
+      log('');
+      log('✅ ALL CACHES CLEARED!', 'success');
+      log('');
+      log('💥 FORCING HARD RELOAD IN 2 SECONDS...', 'warning');
+      log('⏰ 2...', 'warning');
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      log('⏰ 1...', 'warning');
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      log('🚀 RELOADING NOW!', 'warning');
+      
+      // Try multiple reload methods
+      setTimeout(() => {
+        try {
+          window.location.reload(true);
+        } catch (e) {
+          window.location.href = window.location.origin + '/?cachebust=' + Date.now();
+        }
+      }, 500);
+    }
+    
+    // Check if we just reloaded
+    window.addEventListener('load', function() {
+      const reloading = sessionStorage.getItem('KILIMO_RELOADING');
+      const reloadCount = parseInt(sessionStorage.getItem('KILIMO_RELOAD_COUNT') || '0');
+      
+      if (reloading === 'true') {
+        log('✅ RELOAD DETECTED! (Reload #' + reloadCount + ')', 'success');
+        
+        if (reloadCount < 3) {
+          log('⚠️  Need one more reload to ensure all caches are clear...', 'warning');
+          log('💥 Reloading again in 2 seconds...', 'warning');
+          
+          sessionStorage.setItem('KILIMO_RELOAD_COUNT', (reloadCount + 1).toString());
+          
+          setTimeout(() => {
+            window.location.reload(true);
+          }, 2000);
+        } else {
+          log('');
+          log('🎉 ALL RELOADS COMPLETE!', 'success');
+          log('✅ Cache should now be completely clear', 'success');
+          log('');
+          
+          sessionStorage.removeItem('KILIMO_RELOADING');
+          sessionStorage.removeItem('KILIMO_RELOAD_COUNT');
+          
+          successElement.style.display = 'block';
+          
+          let countdown = 3;
+          const countdownElement = document.getElementById('countdown');
+          const interval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            if (countdown === 0) {
+              clearInterval(interval);
+              log('🚀 Redirecting to main app...', 'success');
+              window.location.href = '/';
+            }
+          }, 1000);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

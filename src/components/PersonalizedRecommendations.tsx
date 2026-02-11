@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { 
@@ -7,15 +7,15 @@ import {
   AlertCircle, 
   TrendingUp, 
   Calendar,
-  BookOpen,
   CheckCircle2,
   ChevronRight,
-  Lightbulb,
   Flame,
   ShoppingCart,
-  Leaf
+  Leaf,
+  Clock,
+  ArrowRight,
+  Zap
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { toast } from "sonner@2.0.3";
 
 interface PersonalizedRecommendationsProps {
@@ -23,11 +23,19 @@ interface PersonalizedRecommendationsProps {
   apiBase: string;
   authToken: string;
   onNavigate?: (tab: string) => void;
+  language?: "en" | "sw";
 }
 
-export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavigate }: PersonalizedRecommendationsProps) {
+export function PersonalizedRecommendations({ 
+  userId, 
+  apiBase, 
+  authToken, 
+  onNavigate,
+  language = "en" 
+}: PersonalizedRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
 
   useEffect(() => {
     loadRecommendations();
@@ -48,17 +56,14 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
         body: JSON.stringify({ userId }),
       });
 
-      // Get response as text first to check if it's HTML
       const responseText = await response.text();
 
-      // Check if response is HTML (error page) - silently use fallback
       if (responseText.includes('<!DOCTYPE') || responseText.includes('<html')) {
         setRecommendations(getMockRecommendations());
         setLoading(false);
         return;
       }
 
-      // Try to parse as JSON
       let data;
       try {
         data = JSON.parse(responseText);
@@ -74,14 +79,12 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
         setRecommendations(getMockRecommendations());
       }
     } catch (error) {
-      // Silently use mock data on any error
       setRecommendations(getMockRecommendations());
     } finally {
       setLoading(false);
     }
   };
 
-  // Mock data fallback
   const getMockRecommendations = () => {
     return {
       urgent: [
@@ -92,6 +95,7 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           category: "Crop Care",
           actionable: true,
           dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          impact: "High yield boost expected",
         },
         {
           title: "Pest Alert: Fall Armyworm Detected",
@@ -100,6 +104,7 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           category: "Pest Control",
           actionable: true,
           dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+          impact: "Prevent 30% yield loss",
         }
       ],
       seasonal: [
@@ -109,6 +114,7 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           priority: "medium",
           category: "Planning",
           actionable: true,
+          impact: "Better soil preparation",
         },
         {
           title: "Soil Testing Recommended",
@@ -116,6 +122,7 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           priority: "medium",
           category: "Soil Health",
           actionable: true,
+          impact: "Save 20% on fertilizer costs",
         }
       ],
       market: [
@@ -125,6 +132,7 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           priority: "medium",
           category: "Market Opportunity",
           actionable: true,
+          impact: "+8% profit opportunity",
         },
         {
           title: "High Demand for Beans",
@@ -132,82 +140,12 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
           priority: "low",
           category: "Market Insight",
           actionable: false,
-        }
-      ],
-      learning: [
-        {
-          title: "New Training: Fall Armyworm Management",
-          description: "Learn about early detection and control of Fall Armyworm",
-          priority: "low",
-          category: "Education",
-          actionable: false,
-        },
-        {
-          title: "Video Tutorial: Drip Irrigation Setup",
-          description: "Save water and increase yields with proper irrigation techniques",
-          priority: "low",
-          category: "Education",
-          actionable: false,
-        }
-      ],
-      personalized: [
-        {
-          title: "Follow-up on Recent Diagnosis",
-          description: "Check on the treatment applied 7 days ago and upload new photos",
-          priority: "medium",
-          category: "Health Monitoring",
-          actionable: true,
+          impact: "Diversification benefit",
         }
       ],
     };
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Generating personalized recommendations...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const allRecommendations = [
-    ...(recommendations?.urgent || []),
-    ...(recommendations?.seasonal || []),
-    ...(recommendations?.market || []),
-    ...(recommendations?.learning || []),
-    ...(recommendations?.personalized || []),
-  ];
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-700 border-red-200";
-      case "medium":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
-      case "low":
-        return "bg-gray-100 text-gray-700 border-gray-200";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return <AlertCircle className="h-5 w-5" />;
-      case "medium":
-        return <TrendingUp className="h-5 w-5" />;
-      case "low":
-        return <BookOpen className="h-5 w-5" />;
-      default:
-        return <Sparkles className="h-5 w-5" />;
-    }
-  };
-
-  // Smart navigation based on recommendation type
   const handleAction = (recommendation: any) => {
     if (!onNavigate) {
       toast.info("Navigation not available");
@@ -216,7 +154,6 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
 
     const { title, category, description } = recommendation;
 
-    // Intelligent routing based on category and keywords
     if (category === "Pest Control" || title.toLowerCase().includes("pest") || title.toLowerCase().includes("disease")) {
       toast.success("Opening Crop Diagnosis Tool...");
       onNavigate("diagnosis");
@@ -235,478 +172,315 @@ export function PersonalizedRecommendations({ userId, apiBase, authToken, onNavi
     } else if (category === "Soil Health" || title.toLowerCase().includes("soil")) {
       toast.success("Opening Soil Testing Service...");
       onNavigate("soil-test");
-    } else if (category === "Education" || title.toLowerCase().includes("training") || title.toLowerCase().includes("tutorial")) {
-      if (title.toLowerCase().includes("video")) {
-        toast.success("Opening Video Tutorials...");
-        onNavigate("videos");
-      } else {
-        toast.success("Opening Knowledge Repository...");
-        onNavigate("knowledge");
-      }
-    } else if (category === "Health Monitoring" || title.toLowerCase().includes("follow-up")) {
-      toast.success("Opening Photo Diagnosis...");
-      onNavigate("diagnosis");
     } else {
-      // Default fallback to AI Chat
       toast.success("Opening AI Assistant for guidance...");
       onNavigate("ai-chat");
     }
   };
 
+  // Translations
+  const text = {
+    title: language === "en" ? "Your Action Plan" : "Mpango Wako wa Vitendo",
+    subtitle: language === "en" ? "AI-powered tasks, sorted by priority" : "Kazi zinazotumia AI, zimepangwa kwa kipaumbele",
+    urgent: language === "en" ? "Urgent" : "Ya Haraka",
+    seasonal: language === "en" ? "Seasonal" : "Msimu",
+    market: language === "en" ? "Market" : "Soko",
+    all: language === "en" ? "All" : "Zote",
+    takeAction: language === "en" ? "Take Action" : "Chukua Hatua",
+    viewDetails: language === "en" ? "View Details" : "Tazama Maelezo",
+    daysLeft: language === "en" ? "days left" : "siku zimesalia",
+    impact: language === "en" ? "Impact" : "Athari",
+    nothingUrgent: language === "en" ? "All caught up!" : "Umefanikiwa!",
+    nothingUrgentDesc: language === "en" ? "No urgent actions needed" : "Hakuna hatua za haraka zinazohitajika",
+    loading: language === "en" ? "Loading your recommendations..." : "Inapakia mapendekezo yako...",
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="h-12 w-12 border-4 border-[#2E7D32] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">{text.loading}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const allRecommendations = [
+    ...(recommendations?.urgent || []).map((r: any) => ({ ...r, type: "urgent" })),
+    ...(recommendations?.seasonal || []).map((r: any) => ({ ...r, type: "seasonal" })),
+    ...(recommendations?.market || []).map((r: any) => ({ ...r, type: "market" })),
+  ].sort((a, b) => {
+    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    return priorityOrder[a.priority as keyof typeof priorityOrder] - priorityOrder[b.priority as keyof typeof priorityOrder];
+  });
+
+  const filteredRecommendations = activeFilter === "all" 
+    ? allRecommendations 
+    : allRecommendations.filter(r => r.type === activeFilter);
+
+  const urgentCount = recommendations?.urgent?.length || 0;
+  const seasonalCount = recommendations?.seasonal?.length || 0;
+  const marketCount = recommendations?.market?.length || 0;
+
+  const getTimeLeft = (dueDate: string) => {
+    const days = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const getIconForType = (type: string) => {
+    switch (type) {
+      case "urgent": return Flame;
+      case "seasonal": return Leaf;
+      case "market": return TrendingUp;
+      default: return Sparkles;
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="relative">
-          {/* Decorative Background Glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-teal-500/10 blur-2xl -z-10"></div>
-          
-          <h2 className="text-3xl lg:text-4xl font-bold flex items-center gap-3 group">
-            {/* Premium Icon Badge */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl blur-md opacity-60 group-hover:opacity-80 transition-opacity"></div>
-              <div className="relative bg-gradient-to-br from-green-500 to-emerald-600 p-2.5 rounded-xl shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                <Lightbulb className="h-7 w-7 text-white" />
+      {/* Hero Section - Task-Driven Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 md:p-8 text-white shadow-xl">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">{text.title}</h1>
+              <p className="text-white/90 text-sm mt-1">{text.subtitle}</p>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-3 gap-3 mt-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Flame className="h-4 w-4 text-red-300" />
+                <span className="text-xs text-white/80 uppercase tracking-wider">{text.urgent}</span>
               </div>
+              <p className="text-2xl font-bold">{urgentCount}</p>
             </div>
-            
-            {/* Premium Text with Gradient */}
-            <span className="bg-gradient-to-r from-green-700 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              Personalized AI Recommendations
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="h-4 w-4 text-emerald-300" />
+                <span className="text-xs text-white/80 uppercase tracking-wider">{text.market}</span>
+              </div>
+              <p className="text-2xl font-bold">{marketCount}</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Leaf className="h-4 w-4 text-amber-300" />
+                <span className="text-xs text-white/80 uppercase tracking-wider">{text.seasonal}</span>
+              </div>
+              <p className="text-2xl font-bold">{seasonalCount}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Pills - Mobile First */}
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <button
+          onClick={() => setActiveFilter("all")}
+          className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
+            activeFilter === "all"
+              ? "bg-[#2E7D32] text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 border-2 border-gray-200 hover:border-[#2E7D32]"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            {text.all}
+            <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+              activeFilter === "all" ? "bg-white/20" : "bg-gray-100"
+            }`}>
+              {allRecommendations.length}
             </span>
-            
-            {/* Animated Badge */}
-            <Badge className="ml-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 px-3 py-1 shadow-md animate-pulse">
-              AI-Powered
-            </Badge>
-          </h2>
-          
-          {/* Decorative Underline */}
-          <div className="mt-3 h-1 w-32 bg-gradient-to-r from-green-500 via-emerald-500 to-transparent rounded-full"></div>
-        </div>
-        <p className="text-gray-600 mt-2">
-          Smart recommendations powered by your Farm Graph data - the more you use KILIMO, the smarter it gets
-        </p>
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveFilter("urgent")}
+          className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
+            activeFilter === "urgent"
+              ? "bg-red-600 text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 border-2 border-red-200 hover:border-red-400"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <Flame className="h-4 w-4" />
+            {text.urgent}
+            <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+              activeFilter === "urgent" ? "bg-white/20" : "bg-red-100 text-red-700"
+            }`}>
+              {urgentCount}
+            </span>
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveFilter("market")}
+          className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
+            activeFilter === "market"
+              ? "bg-[#2E7D32] text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 border-2 border-emerald-200 hover:border-emerald-400"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            {text.market}
+            <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+              activeFilter === "market" ? "bg-white/20" : "bg-emerald-100 text-emerald-700"
+            }`}>
+              {marketCount}
+            </span>
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveFilter("seasonal")}
+          className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
+            activeFilter === "seasonal"
+              ? "bg-amber-600 text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 border-2 border-amber-200 hover:border-amber-400"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <Leaf className="h-4 w-4" />
+            {text.seasonal}
+            <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+              activeFilter === "seasonal" ? "bg-white/20" : "bg-amber-100 text-amber-700"
+            }`}>
+              {seasonalCount}
+            </span>
+          </span>
+        </button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-2 border-red-200 bg-red-50">
-          <CardHeader className="pb-2">
-            <CardDescription>Urgent Actions</CardDescription>
-            <CardTitle className="text-3xl text-red-700">
-              {recommendations?.urgent?.length || 0}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-red-600">Needs attention this week</p>
-          </CardContent>
-        </Card>
+      {/* Recommendations List - Clean & Scannable */}
+      <div className="space-y-3">
+        {filteredRecommendations.length === 0 ? (
+          <Card className="border-2 border-dashed border-gray-200">
+            <CardContent className="py-12 text-center">
+              <div className="h-16 w-16 bg-[#2E7D32]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="h-8 w-8 text-[#2E7D32]" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{text.nothingUrgent}</h3>
+              <p className="text-sm text-gray-600">{text.nothingUrgentDesc}</p>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredRecommendations.map((rec, index) => {
+            const Icon = getIconForType(rec.type);
+            const isUrgent = rec.priority === "high";
+            const daysLeft = rec.dueDate ? getTimeLeft(rec.dueDate) : null;
 
-        <Card className="border-2 border-yellow-200 bg-yellow-50">
-          <CardHeader className="pb-2">
-            <CardDescription>Seasonal Tips</CardDescription>
-            <CardTitle className="text-3xl text-yellow-700">
-              {recommendations?.seasonal?.length || 0}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-yellow-600">Planning opportunities</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-2 border-green-200 bg-green-50">
-          <CardHeader className="pb-2">
-            <CardDescription>Market Insights</CardDescription>
-            <CardTitle className="text-3xl text-green-700">
-              {recommendations?.market?.length || 0}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-green-600">Selling opportunities</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-2 border-gray-200 bg-gray-50">
-          <CardHeader className="pb-2">
-            <CardDescription>Learning Resources</CardDescription>
-            <CardTitle className="text-3xl text-gray-700">
-              {recommendations?.learning?.length || 0}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-gray-600">Knowledge expansion</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recommendations Tabs */}
-      <Tabs defaultValue="all" className="space-y-6">
-        {/* Premium Filter Pills - Mobile: Horizontal Scroll, Desktop: Grid */}
-        <div className="relative">
-          {/* Mobile: Horizontal Scrollable */}
-          <div className="md:hidden">
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
-              <TabsList className="inline-flex gap-2 bg-transparent p-0">
-                <TabsTrigger 
-                  value="all" 
-                  className="flex-shrink-0 snap-start group data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-700 data-[state=active]:to-gray-900 data-[state=active]:text-white data-[state=active]:shadow-xl rounded-full px-4 py-2.5 transition-all duration-300 bg-white border-2 border-gray-200 hover:border-gray-300"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Sparkles className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-semibold text-sm whitespace-nowrap">All</span>
-                    <div className="ml-1 bg-gray-200 group-data-[state=active]:bg-white/20 text-gray-700 group-data-[state=active]:text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {allRecommendations.length}
+            return (
+              <Card 
+                key={index} 
+                className={`border-2 transition-all hover:shadow-xl hover:scale-[1.01] ${
+                  isUrgent 
+                    ? "border-red-200 bg-gradient-to-br from-red-50 to-white" 
+                    : rec.type === "market"
+                    ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-white"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <CardContent className="p-5">
+                  <div className="flex gap-4">
+                    {/* Icon */}
+                    <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center ${
+                      isUrgent 
+                        ? "bg-red-100" 
+                        : rec.type === "market"
+                        ? "bg-emerald-100"
+                        : "bg-gray-100"
+                    }`}>
+                      <Icon className={`h-6 w-6 ${
+                        isUrgent 
+                          ? "text-red-600" 
+                          : rec.type === "market"
+                          ? "text-emerald-600"
+                          : "text-gray-600"
+                      }`} />
                     </div>
-                  </div>
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="urgent" 
-                  className="flex-shrink-0 snap-start group data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-xl rounded-full px-4 py-2.5 transition-all duration-300 bg-white border-2 border-red-200 hover:border-red-300"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Flame className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-semibold text-sm whitespace-nowrap">Urgent</span>
-                    <div className="ml-1 bg-red-200 group-data-[state=active]:bg-white/20 text-red-700 group-data-[state=active]:text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {recommendations?.urgent?.length || 0}
-                    </div>
-                  </div>
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="market" 
-                  className="flex-shrink-0 snap-start group data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-xl rounded-full px-4 py-2.5 transition-all duration-300 bg-white border-2 border-green-200 hover:border-green-300"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <ShoppingCart className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-semibold text-sm whitespace-nowrap">Market</span>
-                    <div className="ml-1 bg-green-200 group-data-[state=active]:bg-white/20 text-green-700 group-data-[state=active]:text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {recommendations?.market?.length || 0}
-                    </div>
-                  </div>
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="seasonal" 
-                  className="flex-shrink-0 snap-start group data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-xl rounded-full px-4 py-2.5 transition-all duration-300 bg-white border-2 border-yellow-200 hover:border-yellow-300"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Leaf className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-semibold text-sm whitespace-nowrap">Seasonal</span>
-                    <div className="ml-1 bg-yellow-200 group-data-[state=active]:bg-white/20 text-yellow-700 group-data-[state=active]:text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {recommendations?.seasonal?.length || 0}
-                    </div>
-                  </div>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            {/* Scroll Indicator */}
-            <div className="flex justify-center gap-1 mt-2">
-              <div className="h-1 w-8 bg-gray-300 rounded-full"></div>
-              <div className="h-1 w-8 bg-gray-200 rounded-full"></div>
-              <div className="h-1 w-8 bg-gray-200 rounded-full"></div>
-            </div>
-          </div>
 
-          {/* Desktop: Grid Layout */}
-          <div className="hidden md:block">
-            <div className="bg-white rounded-lg border border-gray-200 p-2">
-              <TabsList className="grid w-full grid-cols-4 gap-2 bg-transparent p-0">
-                <TabsTrigger 
-                  value="all" 
-                  className="data-[state=active]:bg-green-700 data-[state=active]:text-white rounded-lg px-4 py-3 transition-colors border border-transparent data-[state=active]:border-green-700"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Sparkles className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-medium">All</span>
-                    <Badge variant="outline" className="ml-1 text-xs px-2 py-0.5">
-                      {allRecommendations.length}
-                    </Badge>
-                  </div>
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="urgent" 
-                  className="data-[state=active]:bg-red-600 data-[state=active]:text-white rounded-lg px-4 py-3 transition-colors border border-transparent data-[state=active]:border-red-600"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Flame className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-medium">Urgent</span>
-                    <Badge variant="outline" className="ml-1 text-xs px-2 py-0.5">
-                      {recommendations?.urgent?.length || 0}
-                    </Badge>
-                  </div>
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="market" 
-                  className="data-[state=active]:bg-green-700 data-[state=active]:text-white rounded-lg px-4 py-3 transition-colors border border-transparent data-[state=active]:border-green-700"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <ShoppingCart className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-medium">Market</span>
-                    <Badge variant="outline" className="ml-1 text-xs px-2 py-0.5">
-                      {recommendations?.market?.length || 0}
-                    </Badge>
-                  </div>
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="seasonal" 
-                  className="data-[state=active]:bg-green-700 data-[state=active]:text-white rounded-lg px-4 py-3 transition-colors border border-transparent data-[state=active]:border-green-700"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Leaf className="h-4 w-4 flex-shrink-0" />
-                    <span className="font-medium">Seasonal</span>
-                    <Badge variant="outline" className="ml-1 text-xs px-2 py-0.5">
-                      {recommendations?.seasonal?.length || 0}
-                    </Badge>
-                  </div>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-          </div>
-        </div>
-
-        <TabsContent value="all" className="space-y-4">
-          {allRecommendations.length > 0 ? (
-            <div className="space-y-3">
-              {allRecommendations.map((rec, index) => (
-                <Card key={index} className={`border-2 ${getPriorityColor(rec.priority)}`}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-lg ${getPriorityColor(rec.priority)}`}>
-                          {getPriorityIcon(rec.priority)}
-                        </div>
-                        <div>
-                          <CardTitle className="text-lg">{rec.title}</CardTitle>
-                          <CardDescription className="mt-1">
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 text-base mb-1 leading-tight">
+                            {rec.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 leading-relaxed">
                             {rec.description}
-                          </CardDescription>
+                          </p>
                         </div>
-                      </div>
-                      <Badge variant="outline">{rec.category}</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span className="flex items-center gap-1">
-                          <Badge variant={rec.priority === "high" ? "destructive" : "secondary"}>
-                            {rec.priority.toUpperCase()}
+                        {daysLeft !== null && daysLeft <= 5 && (
+                          <Badge 
+                            variant="secondary" 
+                            className={`flex-shrink-0 ${
+                              daysLeft <= 2 
+                                ? "bg-red-100 text-red-700 border-red-300" 
+                                : "bg-amber-100 text-amber-700 border-amber-300"
+                            }`}
+                          >
+                            <Clock className="h-3 w-3 mr-1" />
+                            {daysLeft}d
                           </Badge>
-                        </span>
-                        {rec.dueDate && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            Due: {new Date(rec.dueDate).toLocaleDateString()}
-                          </span>
                         )}
                       </div>
-                      {rec.actionable && (
-                        <Button size="sm" onClick={() => handleAction(rec)}>
-                          Take Action
-                          <ChevronRight className="h-4 w-4 ml-1" />
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">
-                  No recommendations yet. Keep using KILIMO to receive personalized advice!
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
 
-        <TabsContent value="urgent" className="space-y-4">
-          {recommendations?.urgent && recommendations.urgent.length > 0 ? (
-            <div className="space-y-3">
-              {recommendations.urgent.map((rec: any, index: number) => (
-                <Card key={index} className="border-2 border-red-200 bg-red-50">
-                  <CardHeader>
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="h-6 w-6 text-red-600 mt-1" />
-                      <div className="flex-1">
-                        <CardTitle className="text-lg text-red-900">{rec.title}</CardTitle>
-                        <CardDescription className="mt-1 text-red-700">
-                          {rec.description}
-                        </CardDescription>
+                      {/* Meta Info */}
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center gap-3">
+                          {rec.impact && (
+                            <div className="flex items-center gap-1.5 text-xs">
+                              <Sparkles className="h-3.5 w-3.5 text-[#2E7D32]" />
+                              <span className="text-gray-700 font-medium">{rec.impact}</span>
+                            </div>
+                          )}
+                          {rec.category && (
+                            <Badge variant="outline" className="text-xs font-normal">
+                              {rec.category}
+                            </Badge>
+                          )}
+                        </div>
+
+                        {rec.actionable && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleAction(rec)}
+                            className={`${
+                              isUrgent 
+                                ? "bg-red-600 hover:bg-red-700" 
+                                : "bg-[#2E7D32] hover:bg-[#1B5E20]"
+                            } shadow-md`}
+                          >
+                            {text.takeAction}
+                            <ArrowRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        )}
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      {rec.dueDate && (
-                        <span className="text-sm text-red-600 flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          Due: {new Date(rec.dueDate).toLocaleDateString()}
-                        </span>
-                      )}
-                      <Button variant="destructive" size="sm" onClick={() => handleAction(rec)}>
-                        Take Action Now
-                        <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                <p className="text-gray-600 font-medium">All caught up!</p>
-                <p className="text-sm text-gray-500 mt-2">No urgent actions at the moment</p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="market" className="space-y-4">
-          {recommendations?.market && recommendations.market.length > 0 ? (
-            <div className="space-y-3">
-              {recommendations.market.map((rec: any, index: number) => (
-                <Card key={index} className="border-2 border-green-200 bg-green-50">
-                  <CardHeader>
-                    <div className="flex items-start gap-3">
-                      <TrendingUp className="h-6 w-6 text-green-600 mt-1" />
-                      <div className="flex-1">
-                        <CardTitle className="text-lg text-green-900">{rec.title}</CardTitle>
-                        <CardDescription className="mt-1 text-green-700">
-                          {rec.description}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Button variant="outline" size="sm" className="border-green-600 text-green-600" onClick={() => handleAction(rec)}>
-                      View Market Details
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">
-                  No market opportunities at the moment. Check back later!
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="seasonal" className="space-y-4">
-          {recommendations?.seasonal && recommendations.seasonal.length > 0 ? (
-            <div className="space-y-3">
-              {recommendations.seasonal.map((rec: any, index: number) => (
-                <Card key={index} className="border-2 border-yellow-200 bg-yellow-50">
-                  <CardHeader>
-                    <div className="flex items-start gap-3">
-                      <Calendar className="h-6 w-6 text-yellow-600 mt-1" />
-                      <div className="flex-1">
-                        <CardTitle className="text-lg text-yellow-900">{rec.title}</CardTitle>
-                        <CardDescription className="mt-1 text-yellow-700">
-                          {rec.description}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Button variant="outline" size="sm" className="border-yellow-600 text-yellow-600" onClick={() => handleAction(rec)}>
-                      Learn More
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">
-                  No seasonal recommendations at the moment.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-      </Tabs>
-
-      {/* How It Works */}
-      <Card>
-        <CardHeader>
-          <CardTitle>How AI Recommendations Work</CardTitle>
-          <CardDescription>
-            KILIMO learns from your Farm Graph to provide increasingly accurate advice
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className="h-8 w-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold">
-                1
-              </div>
-              <div>
-                <p className="font-medium text-sm">Data Collection</p>
-                <p className="text-xs text-gray-600 mt-1">
-                  Every interaction you have with KILIMO is tracked in your Farm Graph
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className="h-8 w-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold">
-                2
-              </div>
-              <div>
-                <p className="font-medium text-sm">Pattern Recognition</p>
-                <p className="text-xs text-gray-600 mt-1">
-                  AI analyzes your behavior, crops, location, and historical data
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-              <div className="h-8 w-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
-                3
-              </div>
-              <div>
-                <p className="font-medium text-sm">Personalized Advice</p>
-                <p className="text-xs text-gray-600 mt-1">
-                  Recommendations are tailored specifically to YOUR farm, not generic advice
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
-              <div className="h-8 w-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold">
-                4
-              </div>
-              <div>
-                <p className="font-medium text-sm">Continuous Learning</p>
-                <p className="text-xs text-gray-600 mt-1">
-                  The more you use KILIMO, the better recommendations become
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }
+
+PersonalizedRecommendations.displayName = "PersonalizedRecommendations";

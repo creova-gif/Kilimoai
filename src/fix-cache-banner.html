@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One-Click Cache Fix</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      font-size: 32px;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+    
+    .big-button {
+      background: #2E7D32;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+      margin-bottom: 20px;
+    }
+    
+    .big-button:hover {
+      background: #1B5E20;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.5);
+    }
+    
+    .big-button:active {
+      transform: translateY(0);
+    }
+    
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    .status {
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    
+    .status.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .small-button {
+      background: #6b7280;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 5px;
+      transition: all 0.2s;
+    }
+    
+    .small-button:hover {
+      background: #4b5563;
+    }
+    
+    pre {
+      background: #1f2937;
+      color: #10b981;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 12px;
+      text-align: left;
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🔧</div>
+    <h1>Fix Cache Banner</h1>
+    <p class="subtitle">One-click solution to stop the banner from coming back</p>
+    
+    <button class="big-button" onclick="fixCache()">
+      🚀 Fix Cache Now
+    </button>
+    
+    <div id="status" class="status info">
+      Click the button above to permanently fix the cache banner issue.
+    </div>
+    
+    <div style="margin-top: 30px;">
+      <p style="font-size: 14px; color: #6b7280; margin-bottom: 10px;">
+        Other Options:
+      </p>
+      <button class="small-button" onclick="checkVersion()">Check Version</button>
+      <button class="small-button" onclick="clearAll()">Clear Everything</button>
+      <button class="small-button" onclick="openIncognito()">Incognito Instructions</button>
+    </div>
+    
+    <div id="output"></div>
+  </div>
+  
+  <script>
+    function log(message, type = 'info') {
+      const status = document.getElementById('status');
+      status.className = `status ${type}`;
+      status.textContent = message;
+      console.log(message);
+    }
+    
+    function fixCache() {
+      log('🔄 Applying fix...', 'info');
+      
+      try {
+        // Set the correct version
+        const EXPECTED_VERSION = 'v20260210-1600';
+        localStorage.setItem('KILIMO_CACHE_VERSION', EXPECTED_VERSION);
+        console.log('✅ Version set to:', EXPECTED_VERSION);
+        
+        // Set reload flag
+        sessionStorage.setItem('KILIMO_RELOADING', 'true');
+        console.log('✅ Reload flag set');
+        
+        log('✅ Fix applied! Reloading in 2 seconds...', 'success');
+        
+        setTimeout(() => {
+          // Redirect to main app
+          window.location.href = '/';
+        }, 2000);
+        
+      } catch (error) {
+        log('❌ Error: ' + error.message, 'error');
+        console.error(error);
+      }
+    }
+    
+    function checkVersion() {
+      const output = document.getElementById('output');
+      const stored = localStorage.getItem('KILIMO_CACHE_VERSION');
+      const expected = 'v20260210-1600';
+      
+      const isCorrect = stored === expected;
+      
+      output.innerHTML = `
+        <pre>
+Current Version: ${stored || 'NOT SET'}
+Expected Version: ${expected}
+
+Status: ${isCorrect ? '✅ CORRECT' : '❌ MISMATCH'}
+
+${isCorrect ? 
+  'Banner should NOT show in main app.' : 
+  'Banner WILL show in main app. Click "Fix Cache Now" to fix it.'
+}
+        </pre>
+      `;
+      
+      log(isCorrect ? '✅ Version is correct!' : '⚠️ Version mismatch detected', isCorrect ? 'success' : 'error');
+    }
+    
+    function clearAll() {
+      if (confirm('This will clear ALL localStorage and sessionStorage. Are you sure?')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        log('✅ Cleared all data! Reloading...', 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    }
+    
+    function openIncognito() {
+      const output = document.getElementById('output');
+      output.innerHTML = `
+        <pre>
+OPEN INCOGNITO MODE:
+
+Chrome/Edge/Brave:
+  Press: Ctrl+Shift+N (Windows/Linux)
+  Press: Cmd+Shift+N (Mac)
+
+Firefox:
+  Press: Ctrl+Shift+P (Windows/Linux)
+  Press: Cmd+Shift+P (Mac)
+
+Safari:
+  Press: Cmd+Shift+N
+
+Then navigate to:
+  http://localhost:3000
+
+Why this works:
+  • Incognito has NO cache
+  • Incognito has NO localStorage
+  • Banner will NEVER show
+  • 100% guaranteed to work
+        </pre>
+      `;
+      log('📖 Incognito instructions shown above', 'info');
+    }
+    
+    // Auto-check on load
+    window.addEventListener('load', () => {
+      const stored = localStorage.getItem('KILIMO_CACHE_VERSION');
+      const expected = 'v20260210-1600';
+      
+      if (stored === expected) {
+        log('✅ Version is already correct! Banner should not show.', 'success');
+      } else {
+        log(`⚠️ Version mismatch: ${stored || 'NOT SET'} !== ${expected}`, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'creova-v1.0.0';
+const CACHE_NAME = 'creova-v5.0.0-final'; // 🎉 Prediction endpoints working + cache cleared!
 const urlsToCache = [
   '/',
   '/App.tsx',

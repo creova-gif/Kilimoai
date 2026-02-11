@@ -376,15 +376,15 @@ export function AgribusinessDashboard({
                       dataKey="historical" 
                       stackId="1"
                       stroke="#9ca3af" 
-                      fill="#d1d5db" 
+                      fill="#e5e7eb" 
                       name="Historical"
                     />
                     <Area 
                       type="monotone" 
                       dataKey="actual" 
                       stackId="2"
-                      stroke="#10b981" 
-                      fill="#10b981" 
+                      stroke="#2E7D32" 
+                      fill="#2E7D32" 
                       fillOpacity={0.6}
                       name="Actual"
                     />
@@ -392,8 +392,8 @@ export function AgribusinessDashboard({
                       type="monotone" 
                       dataKey="predicted" 
                       stackId="3"
-                      stroke="#f97316" 
-                      fill="#f97316" 
+                      stroke="#6b7280" 
+                      fill="#6b7280" 
                       fillOpacity={0.4}
                       name="AI Predicted"
                     />

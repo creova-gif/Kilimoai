@@ -75,19 +75,19 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
 
   const quickActions: QuickAction[] = language === "sw" 
     ? [
-        { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
         { icon: Bug, label: "Magonjwa ya Nyanya", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100 border-red-200" },
         { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi na maharagwe", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
-        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
         { icon: TrendingUp, label: "Uzalishaji Bora", prompt: "Jinsi ya kuongeza mavuno ya mahindi", category: "general", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
       ]
     : [
-        { icon: Sprout, label: "Maize Fertilizer", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: Sprout, label: "Maize Fertilizer", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
         { icon: Bug, label: "Tomato Diseases", prompt: "How to control tomato diseases", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100 border-red-200" },
         { icon: DollarSign, label: "Market Prices", prompt: "Current prices for maize and beans", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: Cloud, label: "Weather Forecast", prompt: "Weather forecast for next week", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
-        { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-[#2E7D32] bg-green-50 hover:bg-green-100 border-[#2E7D32]" },
+        { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
         { icon: TrendingUp, label: "Yield Boost", prompt: "How to increase maize yield", category: "general", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
       ];
 
@@ -246,7 +246,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xl">Sankofa AI</span>
-                <Badge className="bg-green-100 text-[#2E7D32] border-[#2E7D32]">
+                <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]">
                   <span className="animate-pulse">●</span>
                   <span className="ml-1">{language === "sw" ? "Mtandaoni" : "Online"}</span>
                 </Badge>
@@ -260,7 +260,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
             variant="outline"
             size="sm"
             onClick={handleLanguageToggle}
-            className="flex items-center gap-2 hover:bg-green-50 transition-colors"
+            className="flex items-center gap-2 hover:bg-[#2E7D32]/5 transition-colors"
           >
             <Languages className="h-4 w-4" />
             <span className="hidden sm:inline">{language === "sw" ? "Kiswahili" : "English"}</span>

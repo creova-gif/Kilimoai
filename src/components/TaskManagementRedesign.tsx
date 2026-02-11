@@ -33,7 +33,7 @@ import {
   calculateTaskStats,
   type Task as GeneratedTask
 } from "./TaskGenerationEngine";
-import { projectId, publicAnonKey } from "../utils/supabase/info";
+import { TasksAPI } from "../utils/apiUtils";
 
 // ==========================================
 // TYPE DEFINITIONS
@@ -124,23 +124,24 @@ export function TaskManagementRedesign({
 
   const loadTasksFromBackend = async () => {
     try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7/tasks?userId=${userId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${publicAnonKey}`
-          }
-        }
-      );
+      console.log("🔵 [TASKS] About to call TasksAPI.getTasks with userId:", userId);
+      console.log("🔵 [TASKS] TasksAPI object:", TasksAPI);
+      console.log("🔵 [TASKS] TasksAPI.getTasks function:", typeof TasksAPI.getTasks);
+      
+      const data = await TasksAPI.getTasks(userId);
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.tasks && data.tasks.length > 0) {
-          setTasks(data.tasks);
-        }
+      if (data && data.tasks) {
+        console.log('✅ Tasks loaded from backend:', data.tasks.length);
+        setTasks(data.tasks);
       }
-    } catch (error) {
-      console.error('Error loading tasks:', error);
+    } catch (error: any) {
+      if (error.message.includes('404')) {
+        console.warn('⚠️ Tasks endpoint not deployed (404). Using local-only mode.');
+      } else {
+        console.error('❌ Error loading tasks:', error);
+      }
+      // Continue with empty tasks - graceful degradation
+      setTasks([]);
     }
   };
 
@@ -213,17 +214,10 @@ export function TaskManagementRedesign({
 
     // Save to backend
     try {
-      await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7/tasks/${taskId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${publicAnonKey}`
-          },
-          body: JSON.stringify({ status: 'completed', completedAt: new Date().toISOString() })
-        }
-      );
+      await TasksAPI.updateTask(taskId, { 
+        status: 'completed', 
+        completedAt: new Date().toISOString() 
+      }, userId);
 
       toast.success(language === "sw" ? "Kazi imekamilika" : "Task completed");
     } catch (error) {
@@ -237,15 +231,7 @@ export function TaskManagementRedesign({
     setTasks(tasks.filter(t => t.id !== taskId));
 
     try {
-      await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7/tasks/${taskId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${publicAnonKey}`
-          }
-        }
-      );
+      await TasksAPI.deleteTask(taskId, userId);
 
       toast.success(language === "sw" ? `${task?.title} imeondolewa` : `${task?.title} removed`);
     } catch (error) {

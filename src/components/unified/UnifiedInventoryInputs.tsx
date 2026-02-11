@@ -1,36 +1,25 @@
 /**
- * UNIFIED INVENTORY & INPUTS
+ * UNIFIED INVENTORY & INPUTS - WORLD-CLASS REDESIGN
  * 
  * Farmer Question: "What do I have and what do I need?"
  * 
- * MERGES 3 LEGACY PAGES:
- * - Inventory Management (stock tracking)
- * - Input Supply Chain (purchase inputs)
- * - Seed Lists (seed inventory)
- * 
- * TABS:
- * 1. My Stock - Current inventory levels
- * 2. Purchase Inputs - Buy seeds, fertilizer, etc.
- * 3. Usage History - Track consumption over time
- * 
  * DESIGN PHILOSOPHY:
- * - One farmer job = one page
- * - Tabs for different aspects of inventory
- * - Offline-capable with sync
- * - Speed > beauty > completeness
+ * - Clear stock visibility
+ * - Low stock alerts
+ * - Quick purchase flow
+ * - Usage tracking
  */
 
 import { useState } from "react";
 import { 
-  Warehouse, ShoppingCart, TrendingDown, Package, AlertCircle, Plus, Download
+  Package, ShoppingCart, AlertTriangle, TrendingDown, Plus, Sparkles
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
-import { ResourceInventoryManagement } from "../ResourceInventoryManagement";
-import { IntelligentInputMarketplace } from "../IntelligentInputMarketplace";
+import { motion } from "motion/react";
+import { toast } from "sonner@2.0.3";
 
 interface UnifiedInventoryInputsProps {
   userId: string;
@@ -40,292 +29,260 @@ interface UnifiedInventoryInputsProps {
   language: "en" | "sw";
 }
 
+interface InventoryItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  minLevel: number;
+  category: string;
+  lastPurchase?: string;
+}
+
 export function UnifiedInventoryInputs({
   userId,
-  region = "Unknown",
+  region = "Arusha",
   crops = [],
   onNavigate,
   language
 }: UnifiedInventoryInputsProps) {
-  const [activeTab, setActiveTab] = useState("stock");
-
-  const tabs = [
-    {
-      id: "stock",
-      label: language === "en" ? "My Stock" : "Hifadhi Yangu",
-      icon: Warehouse,
-      description: language === "en" ? "Current inventory" : "Hifadhi ya sasa"
-    },
-    {
-      id: "purchase",
-      label: language === "en" ? "Purchase Inputs" : "Nunua Vifaa",
-      icon: ShoppingCart,
-      description: language === "en" ? "Buy seeds & fertilizer" : "Nunua mbegu na mbolea"
-    },
-    {
-      id: "history",
-      label: language === "en" ? "Usage History" : "Historia ya Matumizi",
-      icon: TrendingDown,
-      description: language === "en" ? "Track consumption" : "Fuatilia matumizi"
-    },
-  ];
-
-  // Sample inventory data (would come from API)
-  const inventoryItems = [
+  const [inventory, setInventory] = useState<InventoryItem[]>([
     {
       id: "1",
       name: language === "en" ? "Maize Seeds" : "Mbegu za Mahindi",
       quantity: 25,
       unit: "kg",
       minLevel: 50,
-      status: "low",
-      lastUpdated: "2 days ago"
+      category: language === "en" ? "Seeds" : "Mbegu",
+      lastPurchase: "2024-01-15"
     },
     {
       id: "2",
       name: language === "en" ? "NPK Fertilizer" : "Mbolea ya NPK",
-      quantity: 150,
+      quantity: 120,
       unit: "kg",
       minLevel: 100,
-      status: "good",
-      lastUpdated: "1 week ago"
+      category: language === "en" ? "Fertilizer" : "Mbolea",
+      lastPurchase: "2024-02-01"
     },
     {
       id: "3",
-      name: language === "en" ? "Bean Seeds" : "Mbegu za Maharagwe",
+      name: language === "en" ? "Pesticide" : "Dawa ya Mdudu",
       quantity: 5,
-      unit: "kg",
-      minLevel: 20,
-      status: "critical",
-      lastUpdated: "3 days ago"
+      unit: "L",
+      minLevel: 10,
+      category: language === "en" ? "Pesticide" : "Dawa",
+      lastPurchase: "2024-01-20"
     },
     {
       id: "4",
-      name: language === "en" ? "Pesticide" : "Dawa ya Wadudu",
-      quantity: 8,
-      unit: "L",
-      minLevel: 5,
-      status: "good",
-      lastUpdated: "1 day ago"
-    },
-  ];
+      name: language === "en" ? "Bean Seeds" : "Mbegu za Maharagwe",
+      quantity: 85,
+      unit: "kg",
+      minLevel: 30,
+      category: language === "en" ? "Seeds" : "Mbegu",
+      lastPurchase: "2024-02-05"
+    }
+  ]);
 
-  const getStatusBadge = (status: string) => {
-    if (status === "critical") {
-      return <Badge variant="destructive">{language === "en" ? "Critical" : "Hatari"}</Badge>;
-    }
-    if (status === "low") {
-      return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{language === "en" ? "Low" : "Chini"}</Badge>;
-    }
-    return <Badge variant="default" className="bg-[#2E7D32]">{language === "en" ? "Good" : "Nzuri"}</Badge>;
+  const text = {
+    title: language === "en" ? "Inventory & Inputs" : "Hifadhi na Vifaa",
+    subtitle: language === "en" ? "Track stock and purchase supplies" : "Fuatilia hifadhi na nunua vifaa",
+    myStock: language === "en" ? "My Stock" : "Hifadhi Yangu",
+    lowStock: language === "en" ? "Low Stock" : "Hifadhi Chache",
+    goodStock: language === "en" ? "Good Stock" : "Hifadhi Nzuri",
+    purchase: language === "en" ? "Purchase" : "Nunua",
+    addItem: language === "en" ? "Add Item" : "Ongeza Kitu",
+    viewMarket: language === "en" ? "View Market" : "Tazama Soko",
+    lastPurchased: language === "en" ? "Last purchased" : "Iliununuliwa mwisho",
+    reorder: language === "en" ? "Reorder" : "Nunua Tena",
+    stockLevel: language === "en" ? "Stock Level" : "Kiwango cha Hifadhi",
+  };
+
+  const lowStockItems = inventory.filter(item => item.quantity < item.minLevel);
+  const goodStockItems = inventory.filter(item => item.quantity >= item.minLevel);
+
+  const categoryColors: Record<string, any> = {
+    [language === "en" ? "Seeds" : "Mbegu"]: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", icon: "bg-emerald-500" },
+    [language === "en" ? "Fertilizer" : "Mbolea"]: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", icon: "bg-amber-500" },
+    [language === "en" ? "Pesticide" : "Dawa"]: { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", icon: "bg-red-500" },
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#2E7D32] rounded-lg">
-            <Warehouse className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {language === "en" ? "Inventory & Inputs" : "Hifadhi na Vifaa"}
-            </h1>
-            <p className="text-sm text-gray-600">
-              {language === "en" 
-                ? "Track what you have, buy what you need" 
-                : "Fuatilia unayo, nunua unahitaji"}
-            </p>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden bg-[#2E7D32] rounded-2xl p-6 text-white shadow-lg">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
           </div>
           
-          {/* Quick Actions */}
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              {language === "en" ? "Export" : "Hamisha"}
-            </Button>
-            <Button size="sm" className="bg-[#2E7D32] hover:bg-[#2E7D32]/90">
-              <Plus className="h-4 w-4 mr-2" />
-              {language === "en" ? "Add Item" : "Ongeza Kitu"}
-            </Button>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <Package className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold">{text.title}</h1>
+                  <p className="text-white/90 text-sm">{text.subtitle}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => toast.success(language === "en" ? "Opening marketplace..." : "Inafungua soko...")}
+                  className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border-0"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  {text.viewMarket}
+                </Button>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <p className="text-xs text-white/80 mb-1">{language === "en" ? "Total Items" : "Vitu Vyote"}</p>
+                <p className="text-2xl font-bold">{inventory.length}</p>
+                <p className="text-xs text-white/80">{language === "en" ? "in stock" : "kwenye hifadhi"}</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <p className="text-xs text-white/80 mb-1">{text.lowStock}</p>
+                <p className="text-2xl font-bold">{lowStockItems.length}</p>
+                <p className="text-xs text-white/80">{language === "en" ? "need reorder" : "zinahitaji kuununuliwa"}</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <p className="text-xs text-white/80 mb-1">{text.goodStock}</p>
+                <p className="text-2xl font-bold">{goodStockItems.length}</p>
+                <p className="text-xs text-white/80">{language === "en" ? "sufficient" : "ya kutosha"}</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Unified Tabs Interface */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {/* Tab List */}
-        <TabsList className="w-full justify-start overflow-x-auto bg-white border border-gray-200 p-1 rounded-lg">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <TabsTrigger
-                key={tab.id}
-                value={tab.id}
-                className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-[#2E7D32] data-[state=active]:text-white transition-colors whitespace-nowrap"
-              >
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">{tab.label}</span>
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
-
-        {/* Tab Contents */}
-        <div className="mt-6">
-          {/* My Stock */}
-          <TabsContent value="stock" className="mt-0 space-y-4">
-            {/* Low Stock Alert */}
-            <Card className="border-yellow-500 bg-yellow-50">
-              <CardContent className="flex items-start gap-3 pt-6">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+        {/* Low Stock Alert */}
+        {lowStockItems.length > 0 && (
+          <Card className="border-2 border-red-200 bg-red-50">
+            <CardContent className="py-4">
+              <div className="flex gap-3 items-start">
+                <div className="flex-shrink-0 h-10 w-10 bg-red-100 rounded-xl flex items-center justify-center">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-yellow-900">
-                    {language === "en" ? "Low Stock Alert" : "Tahadhari ya Hifadhi Chini"}
-                  </h3>
-                  <p className="text-sm text-yellow-800 mt-1">
-                    {language === "en" 
-                      ? "2 items are running low. Consider restocking soon."
-                      : "Vitu 2 vinaisha. Fikiria kujaza upya hivi karibuni."}
+                  <h4 className="font-semibold text-red-900 mb-1 text-sm">
+                    {language === "en" ? "Low Stock Alert" : "Onyo la Hifadhi Chache"}
+                  </h4>
+                  <p className="text-sm text-red-700 leading-relaxed">
+                    {language === "en"
+                      ? `${lowStockItems.length} items are below minimum levels. Consider restocking soon.`
+                      : `Vitu ${lowStockItems.length} viko chini ya kiwango cha chini. Fikiria kuongeza hifadhi hivi karibuni.`}
                   </p>
                 </div>
-              </CardContent>
-            </Card>
+                <Button 
+                  size="sm"
+                  onClick={() => toast.success(language === "en" ? "Opening marketplace..." : "Inafungua soko...")}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {text.purchase}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-            {/* Inventory Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {inventoryItems.map((item) => (
-                <Card key={item.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <Package className="h-5 w-5 text-gray-400" />
-                        <div>
-                          <CardTitle className="text-base">{item.name}</CardTitle>
-                          <CardDescription>{language === "en" ? "Updated" : "Imeboresha"} {item.lastUpdated}</CardDescription>
+        {/* Inventory Grid */}
+        <div className="grid md:grid-cols-2 gap-4">
+          {inventory.map((item, index) => {
+            const categoryStyle = categoryColors[item.category] || categoryColors["Seeds"];
+            const isLowStock = item.quantity < item.minLevel;
+            const stockPercent = (item.quantity / item.minLevel) * 100;
+            
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Card className={`border-2 ${isLowStock ? "border-red-200 bg-red-50/30" : categoryStyle.border} hover:shadow-xl transition-all`}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`h-12 w-12 ${categoryStyle.icon} rounded-xl flex items-center justify-center shadow-lg`}>
+                        <Package className="h-6 w-6 text-white" />
+                      </div>
+                      <Badge className={`${categoryStyle.bg} ${categoryStyle.text} border ${categoryStyle.border}`}>
+                        {item.category}
+                      </Badge>
+                    </div>
+
+                    <h3 className="font-bold text-gray-900 text-lg mb-3">{item.name}</h3>
+
+                    <div className="space-y-3">
+                      {/* Stock Level */}
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-gray-600">{text.stockLevel}:</span>
+                          <span className="font-semibold text-gray-900">
+                            {item.quantity} {item.unit}
+                          </span>
                         </div>
+                        <Progress 
+                          value={Math.min(stockPercent, 100)} 
+                          className={`h-2 ${isLowStock ? "[&>div]:bg-red-500" : "[&>div]:bg-emerald-500"}`}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {language === "en" ? "Min" : "Chini"}: {item.minLevel} {item.unit}
+                        </p>
                       </div>
-                      {getStatusBadge(item.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-600">{language === "en" ? "Current Stock" : "Hifadhi ya Sasa"}</span>
-                        <span className="font-semibold">{item.quantity} {item.unit}</span>
-                      </div>
-                      <Progress 
-                        value={(item.quantity / item.minLevel) * 100} 
-                        className="h-2"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        {language === "en" ? "Min level:" : "Kiwango cha chini:"} {item.minLevel} {item.unit}
-                      </p>
-                    </div>
-                    {item.status !== "good" && (
+
+                      {/* Last Purchase */}
+                      {item.lastPurchase && (
+                        <p className="text-xs text-gray-600">
+                          {text.lastPurchased}: {new Date(item.lastPurchase).toLocaleDateString()}
+                        </p>
+                      )}
+
+                      {/* Action Button */}
                       <Button 
-                        variant="outline" 
                         size="sm" 
-                        className="w-full"
-                        onClick={() => setActiveTab("purchase")}
+                        className={`w-full ${isLowStock ? "bg-red-600 hover:bg-red-700" : "bg-[#2E7D32] hover:bg-[#1B5E20]"}`}
+                        onClick={() => toast.success(`${text.reorder}: ${item.name}`)}
                       >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        {language === "en" ? "Restock Now" : "Jaza Upya Sasa"}
+                        {isLowStock ? <AlertTriangle className="h-3.5 w-3.5 mr-2" /> : <ShoppingCart className="h-3.5 w-3.5 mr-2" />}
+                        {text.reorder}
                       </Button>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-
-            {/* Alternative: Use existing component */}
-            <div className="mt-6">
-              <ResourceInventoryManagement userId={userId} language={language} />
-            </div>
-          </TabsContent>
-
-          {/* Purchase Inputs */}
-          <TabsContent value="purchase" className="mt-0">
-            <IntelligentInputMarketplace 
-              userId={userId}
-              region={region}
-              crops={crops}
-              language={language}
-              onNavigate={onNavigate}
-            />
-          </TabsContent>
-
-          {/* Usage History */}
-          <TabsContent value="history" className="mt-0">
-            <Card>
-              <CardHeader>
-                <CardTitle>{language === "en" ? "Usage History" : "Historia ya Matumizi"}</CardTitle>
-                <CardDescription>
-                  {language === "en" 
-                    ? "Track how you've used your inputs over time"
-                    : "Fuatilia jinsi ulivyotumia vifaa vyako kwa muda"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between py-3 border-b">
-                    <div>
-                      <p className="font-medium">{language === "en" ? "Maize Seeds" : "Mbegu za Mahindi"}</p>
-                      <p className="text-sm text-gray-500">
-                        {language === "en" ? "Used for North Field planting" : "Imetumika kupanda Shamba la Kaskazini"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-red-600">-10 kg</p>
-                      <p className="text-xs text-gray-500">2 days ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between py-3 border-b">
-                    <div>
-                      <p className="font-medium">{language === "en" ? "NPK Fertilizer" : "Mbolea ya NPK"}</p>
-                      <p className="text-sm text-gray-500">
-                        {language === "en" ? "Applied to all fields" : "Imetumika mashamba yote"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-red-600">-50 kg</p>
-                      <p className="text-xs text-gray-500">1 week ago</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between py-3 border-b">
-                    <div>
-                      <p className="font-medium">{language === "en" ? "Bean Seeds" : "Mbegu za Maharagwe"}</p>
-                      <p className="text-sm text-gray-500">
-                        {language === "en" ? "Used for South Field planting" : "Imetumika kupanda Shamba la Kusini"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-red-600">-15 kg</p>
-                      <p className="text-xs text-gray-500">3 days ago</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="font-medium">{language === "en" ? "Pesticide" : "Dawa ya Wadudu"}</p>
-                      <p className="text-sm text-gray-500">
-                        {language === "en" ? "Pest control application" : "Kudhibiti wadudu"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-red-600">-2 L</p>
-                      <p className="text-xs text-gray-500">1 day ago</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </motion.div>
+            );
+          })}
         </div>
-      </Tabs>
+
+        {/* Info Card */}
+        <Card className="border-2 border-blue-100 bg-blue-50/50">
+          <CardContent className="py-4">
+            <div className="flex gap-3 items-start">
+              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-blue-900 mb-1 text-sm">
+                  {language === "en" ? "Smart Inventory Management" : "Usimamizi Mahiri wa Hifadhi"}
+                </h4>
+                <p className="text-sm text-blue-700 leading-relaxed">
+                  {language === "en"
+                    ? "KILIMO tracks your input usage and sends alerts when stock runs low. Connect with verified suppliers for direct purchasing."
+                    : "KILIMO inafuatilia matumizi yako ya vifaa na kutuma tahadhari wakati hifadhi inapungua. Unganisha na wauzaji walioidhinishwa kwa ununuzi wa moja kwa moja."}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
+
+UnifiedInventoryInputs.displayName = "UnifiedInventoryInputs";

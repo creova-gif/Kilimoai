@@ -132,13 +132,39 @@ export function PeerDiscussionGroups() {
     <div className="space-y-6">
       {/* Header */}
       <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white border-0">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Users className="h-6 w-6" />
-            Farmer Discussion Groups
+        <CardHeader className="relative overflow-hidden">
+          {/* Animated background patterns */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+          </div>
+          
+          {/* Subtle grid pattern overlay */}
+          <div className="absolute inset-0 opacity-5" style={{
+            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+            backgroundSize: '24px 24px'
+          }}></div>
+          
+          <CardTitle className="relative text-white flex items-center gap-3 text-2xl font-bold">
+            {/* Icon with enhanced styling */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-white/20 rounded-xl blur-xl"></div>
+              <div className="relative p-2.5 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30 shadow-lg">
+                <Users className="h-6 w-6 drop-shadow-md" />
+              </div>
+            </div>
+            
+            {/* Title with enhanced typography */}
+            <span className="bg-gradient-to-r from-white via-green-50 to-white bg-clip-text text-transparent drop-shadow-sm">
+              Farmer Discussion Groups
+            </span>
           </CardTitle>
-          <CardDescription className="text-green-100">
+          
+          <CardDescription className="relative text-green-50 text-base font-medium mt-3 leading-relaxed max-w-2xl">
             Connect with other farmers, share experiences, and learn from experts
+            
+            {/* Decorative underline accent */}
+            <span className="block mt-3 h-1 w-20 bg-gradient-to-r from-white/60 via-white/30 to-transparent rounded-full"></span>
           </CardDescription>
         </CardHeader>
       </Card>

@@ -247,14 +247,14 @@ export function CooperativeDashboard({
                       <Line 
                         type="monotone" 
                         dataKey="predicted" 
-                        stroke="#3b82f6" 
+                        stroke="#2E7D32" 
                         strokeWidth={2}
                         name="Predicted (tons)"
                       />
                       <Line 
                         type="monotone" 
                         dataKey="actual" 
-                        stroke="#10b981" 
+                        stroke="#6b7280" 
                         strokeWidth={2}
                         name="Actual (tons)"
                       />

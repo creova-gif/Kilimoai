@@ -265,7 +265,7 @@ export function PhoneVerification({ onVerified, language, apiBase, apiKey }: Pho
             </button>
 
             {/* Trust indicators */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+            <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/30 rounded-xl p-4">
               <div className="flex items-start gap-3">
                 <Shield className="w-5 h-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-gray-800">

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔥 EMERGENCY CACHE CLEAR 🔥</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .icon {
+      font-size: 64px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #dc2626;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+    
+    .warning {
+      background: #fef2f2;
+      border: 2px solid #fca5a5;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .warning-title {
+      color: #dc2626;
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    
+    .warning-text {
+      color: #7f1d1d;
+      line-height: 1.6;
+    }
+    
+    .button {
+      width: 100%;
+      padding: 20px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+    }
+    
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+    }
+    
+    .button:active {
+      transform: translateY(0);
+    }
+    
+    .steps {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .step {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: flex-start;
+    }
+    
+    .step:last-child {
+      margin-bottom: 0;
+    }
+    
+    .step-number {
+      background: #16a34a;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .step-text {
+      flex: 1;
+      color: #374151;
+      line-height: 1.6;
+    }
+    
+    .log {
+      background: #1f2937;
+      color: #10b981;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .log.active {
+      display: block;
+    }
+    
+    .log-line {
+      margin-bottom: 4px;
+    }
+    
+    .success {
+      background: #dcfce7;
+      border: 2px solid #86efac;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      color: #166534;
+      font-weight: 600;
+      display: none;
+    }
+    
+    .success.active {
+      display: block;
+    }
+    
+    .countdown {
+      font-size: 48px;
+      font-weight: 700;
+      color: #16a34a;
+      text-align: center;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🔥</div>
+    <h1>EMERGENCY CACHE CLEAR</h1>
+    <p class="subtitle">Nuclear option - clears ALL cached data and forces fresh reload</p>
+    
+    <div class="warning">
+      <div class="warning-title">⚠️ You're seeing this page because:</div>
+      <div class="warning-text">
+        Your browser is serving OLD cached JavaScript files that use incorrect API URLs (missing <strong>https://</strong> and <strong>/functions/v1/</strong>). This page will forcefully clear ALL caches and reload with fresh code.
+      </div>
+    </div>
+    
+    <button class="button" id="clearBtn" onclick="clearEverything()">
+      🗑️ CLEAR ALL CACHES & RELOAD
+    </button>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-text">
+          <strong>Clears localStorage</strong> - Removes all stored settings
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-text">
+          <strong>Clears sessionStorage</strong> - Removes session data
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-text">
+          <strong>Unregisters Service Workers</strong> - Removes PWA caches
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-text">
+          <strong>Clears Cache API</strong> - Removes all cached responses
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-text">
+          <strong>Forces Hard Reload</strong> - Bypasses browser cache
+        </div>
+      </div>
+    </div>
+    
+    <div id="log" class="log"></div>
+    
+    <div id="success" class="success">
+      ✅ Cache cleared successfully!<br>
+      <div class="countdown" id="countdown">3</div>
+      Reloading app...
+    </div>
+  </div>
+
+  <script>
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      logDiv.classList.add('active');
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logDiv.appendChild(line);
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(message);
+    }
+
+    async function clearEverything() {
+      const btn = document.getElementById('clearBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ CLEARING...';
+      
+      try {
+        // Step 1: Clear localStorage
+        log('🗑️  Step 1: Clearing localStorage...');
+        localStorage.clear();
+        log('  ✓ localStorage cleared');
+        
+        // Step 2: Clear sessionStorage
+        log('🗑️  Step 2: Clearing sessionStorage...');
+        sessionStorage.clear();
+        log('  ✓ sessionStorage cleared');
+        
+        // Step 3: Unregister service workers
+        log('🗑️  Step 3: Unregistering service workers...');
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+            log('  ✓ Unregistered service worker: ' + registration.scope);
+          }
+        }
+        log('  ✓ All service workers unregistered');
+        
+        // Step 4: Clear Cache API
+        log('🗑️  Step 4: Clearing Cache API...');
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          for (const cacheName of cacheNames) {
+            await caches.delete(cacheName);
+            log('  ✓ Deleted cache: ' + cacheName);
+          }
+        }
+        log('  ✓ All caches cleared');
+        
+        // Step 5: Set new cache version
+        log('🗑️  Step 5: Setting new cache version...');
+        localStorage.setItem('KILIMO_CACHE_VERSION', 'v20260210-180000-EMERGENCY-CLEAR');
+        log('  ✓ New cache version set');
+        
+        // Show success
+        log('');
+        log('✅ SUCCESS! All caches cleared.');
+        log('🔄 Reloading app in 3 seconds...');
+        
+        document.getElementById('success').classList.add('active');
+        
+        // Countdown
+        let count = 3;
+        const countdownEl = document.getElementById('countdown');
+        const countdown = setInterval(() => {
+          count--;
+          countdownEl.textContent = count;
+          if (count === 0) {
+            clearInterval(countdown);
+            // Force reload with cache bypass
+            window.location.href = '/?' + 'cachebust=' + Date.now();
+          }
+        }, 1000);
+        
+      } catch (error) {
+        log('❌ ERROR: ' + error.message);
+        btn.disabled = false;
+        btn.textContent = '🔄 TRY AGAIN';
+      }
+    }
+    
+    // Auto-run on load if URL has ?auto=1
+    window.addEventListener('load', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('auto') === '1') {
+        log('🤖 AUTO-RUN MODE DETECTED');
+        setTimeout(() => clearEverything(), 1000);
+      }
+    });
+  </script>
+</body>
+</html>
