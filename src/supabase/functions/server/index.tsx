@@ -5446,17 +5446,11 @@ app.get("/make-server-ce1844e7/dashboard/:userId", async (c) => {
     // Fetch user data
     const user = await kv.get(`user:${userId}`);
     
-    // Handle demo users - they may not exist in database
-    const isDemoUser = userId.includes("demo-user");
-    
-    if (!user && !isDemoUser) {
-      return c.json({ error: "User not found" }, 404);
-    }
-
-    // Use demo user data if user doesn't exist in DB
+    // Use stored data if available, otherwise provide sensible defaults
+    // This allows new users to see the dashboard before completing full profile
     const userData = user || {
       id: userId,
-      name: "Demo Farmer",
+      name: "New Farmer",
       region: "Morogoro",
       role: "smallholder_farmer"
     };
@@ -5474,7 +5468,7 @@ app.get("/make-server-ce1844e7/dashboard/:userId", async (c) => {
       // Try to get real weather if region is available
       if (userData.region) {
         const weatherResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=${user.region},TZ&units=metric&appid=${Deno.env.get("OPENWEATHER_API_KEY")}`
+          `https://api.openweathermap.org/data/2.5/weather?q=${userData.region},TZ&units=metric&appid=${Deno.env.get("OPENWEATHER_API_KEY")}`
         );
         if (weatherResponse.ok) {
           const weather = await weatherResponse.json();

@@ -13,6 +13,7 @@ export type UserRole =
   | "farm_manager"
   | "commercial_farm_admin"
   | "agribusiness_ops"
+  | "agribusiness"  // Alias for agribusiness_ops
   | "extension_officer"
   | "cooperative_leader";
 
@@ -124,6 +125,13 @@ const ROLE_FEATURES: Record<UserRole, FeatureId[]> = {
     "gamification", "diagnostics"
   ],
   agribusiness_ops: [
+    "home", "workflows", "ai-chat", "ai-recommendations", "ai-insights",
+    "market", "marketplace", "agribusiness", "orders", "finance",
+    "mobile-money", "contracts", "input-supply", "weather", "analytics",
+    "reports", "predictive", "knowledge", "videos", "institutional",
+    "support", "contact", "faq", "privacy", "diagnostics"
+  ],
+  agribusiness: [  // Alias for agribusiness_ops
     "home", "workflows", "ai-chat", "ai-recommendations", "ai-insights",
     "market", "marketplace", "agribusiness", "orders", "finance",
     "mobile-money", "contracts", "input-supply", "weather", "analytics",

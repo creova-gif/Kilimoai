@@ -10,6 +10,7 @@ export type UserRole =
   | "farm_manager"
   | "commercial_farm_admin"
   | "agribusiness_ops"
+  | "agribusiness"  // Alias for agribusiness_ops
   | "extension_officer"
   | "cooperative_leader";
 
@@ -384,6 +385,39 @@ export const ROLE_FEATURES: Record<UserRole, FeatureId[]> = {
   ],
 
   /**
+   * AGRIBUSINESS (Alias for agribusiness_ops)
+   * Same features as agribusiness_ops
+   */
+  agribusiness: [
+    "home",
+    "workflows",
+    "ai-chat",
+    "ai-recommendations",
+    "ai-insights",
+    "market",
+    "marketplace",
+    "agribusiness",
+    "orders",
+    "finance",
+    "mobile-money",
+    "wallet-admin",
+    "contracts",
+    "input-supply",
+    "weather",
+    "analytics",
+    "reports",
+    "predictive",
+    "knowledge",
+    "videos",
+    "institutional",
+    "support",
+    "contact",
+    "faq",
+    "privacy",
+    "diagnostics",
+  ],
+
+  /**
    * EXTENSION OFFICER / NGO (External advisor)
    * Focus: Farmer monitoring, training, impact assessment
    */
@@ -530,6 +564,10 @@ export function getRoleDisplayName(
       en: "Agribusiness Operations",
       sw: "Operesheni za Kilimo Biashara",
     },
+    agribusiness: {
+      en: "Agribusiness Operations",
+      sw: "Operesheni za Kilimo Biashara",
+    },
     extension_officer: {
       en: "Extension Officer / NGO",
       sw: "Afisa wa Ugani / NGO",
@@ -577,6 +615,10 @@ export function getRoleDescription(
       sw: "Operesheni za mashamba ya kiwango cha biashara",
     },
     agribusiness_ops: {
+      en: "Buyer/supplier marketplace operations",
+      sw: "Operesheni za soko za wanunuzi/wasambazaji",
+    },
+    agribusiness: {
       en: "Buyer/supplier marketplace operations",
       sw: "Operesheni za soko za wanunuzi/wasambazaji",
     },
