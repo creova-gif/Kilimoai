@@ -127,7 +127,7 @@ export function LegalDocuments({ language, onBack, type }: LegalDocumentsProps) 
 
       <div className="p-6 space-y-8 max-w-2xl mx-auto">
         <div className="flex justify-center py-4">
-          <div className="p-4 bg-green-50 rounded-full">
+          <div className="p-4 bg-[#2E7D32]/5 rounded-full">
             {type === 'privacy' ? <Shield className="h-10 w-10 text-[#2E7D32]" /> : <FileText className="h-10 w-10 text-[#2E7D32]" />}
           </div>
         </div>

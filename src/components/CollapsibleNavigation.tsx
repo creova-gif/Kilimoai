@@ -117,19 +117,19 @@ export function CollapsibleNavigation({
               <button
                 onClick={() => toggleCategory(category.id)}
                 className={`w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors ${
-                  hasActiveItem ? "bg-green-50" : ""
+                  hasActiveItem ? "bg-[#2E7D32]/5" : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`p-1.5 rounded-lg ${
-                    hasActiveItem ? "bg-green-600" : "bg-gray-100"
+                    hasActiveItem ? "bg-[#2E7D32]" : "bg-gray-100"
                   }`}>
                     <CategoryIcon className={`h-4 w-4 ${
                       hasActiveItem ? "text-white" : "text-gray-600"
                     }`} />
                   </div>
                   <span className={`text-sm font-semibold ${
-                    hasActiveItem ? "text-green-700" : "text-gray-700"
+                    hasActiveItem ? "text-[#2E7D32]" : "text-gray-700"
                   }`}>
                     {getCategoryLabel(category.id)}
                   </span>
@@ -168,29 +168,29 @@ export function CollapsibleNavigation({
                             }}
                             className={`w-full flex items-center gap-3 px-4 pl-12 py-2.5 hover:bg-white transition-all ${
                               isActive 
-                                ? "bg-green-50 border-l-4 border-green-600" 
+                                ? "bg-[#2E7D32]/5 border-l-4 border-[#2E7D32]/20" 
                                 : "border-l-4 border-transparent"
                             }`}
                           >
                             <div className={`p-1.5 rounded-lg ${
-                              isActive ? "bg-green-600" : "bg-white"
+                              isActive ? "bg-[#2E7D32]" : "bg-white"
                             }`}>
                               <ItemIcon className={`h-3.5 w-3.5 ${
                                 isActive ? "text-white" : item.color
                               }`} />
                             </div>
                             <span className={`text-sm flex-1 text-left ${
-                              isActive ? "font-bold text-green-700" : "font-medium text-gray-700"
+                              isActive ? "font-bold text-[#2E7D32]" : "font-medium text-gray-700"
                             }`}>
                               {getItemLabel(item.id, item.label)}
                             </span>
                             {item.badge && (
-                              <Badge className="bg-green-600 text-white text-xs">
+                              <Badge className="bg-[#2E7D32] text-white text-xs">
                                 {item.badge}
                               </Badge>
                             )}
                             {isActive && (
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                              <div className="w-2 h-2 bg-[#2E7D32] rounded-full animate-pulse"></div>
                             )}
                           </button>
                         );

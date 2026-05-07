@@ -77,7 +77,7 @@ export function TabWrapper({
             </div>
             
             {badge && (
-              <Badge className={badge.color || "bg-yellow-500 text-yellow-950 border-0"}>
+              <Badge className={badge.color || "bg-gray-600 text-gray-900 border-0"}>
                 {badge.icon && <badge.icon className="h-3 w-3 mr-1" />}
                 {badge.text}
               </Badge>

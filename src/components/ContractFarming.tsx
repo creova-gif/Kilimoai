@@ -92,9 +92,9 @@ export function ContractFarming() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-100 text-green-700 border-green-300">Active</Badge>;
+        return <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">Active</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">Pending Approval</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Pending Approval</Badge>;
       case "completed":
         return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Completed</Badge>;
       case "disputed":
@@ -113,7 +113,7 @@ export function ContractFarming() {
             <FileText className="h-6 w-6" />
             Contract Farming
           </CardTitle>
-          <CardDescription className="text-green-100">
+          <CardDescription className="text-[#2E7D32]">
             Secure guaranteed markets and prices through digital contracts
           </CardDescription>
         </CardHeader>
@@ -158,7 +158,7 @@ export function ContractFarming() {
             </div>
             <Button 
               onClick={() => setShowNewContract(true)}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-[#2E7D32] hover:bg-[#2E7D32]"
             >
               Browse Contracts
             </Button>
@@ -169,7 +169,7 @@ export function ContractFarming() {
             <Card 
               key={contract.id}
               className={`cursor-pointer transition-all hover:shadow-md ${
-                selectedContract === contract.id ? 'border-green-500 border-2' : ''
+                selectedContract === contract.id ? 'border-[#2E7D32]/20 border-2' : ''
               }`}
               onClick={() => setSelectedContract(selectedContract === contract.id ? null : contract.id)}
             >
@@ -180,7 +180,7 @@ export function ContractFarming() {
                       <h3 className="font-medium">Contract #{contract.id}</h3>
                       {getStatusBadge(contract.status)}
                       {contract.verified && (
-                        <Badge className="bg-green-100 text-green-700 border-green-300">
+                        <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           Verified Buyer
                         </Badge>
@@ -188,7 +188,7 @@ export function ContractFarming() {
                     </div>
                     <p className="text-sm text-gray-600">{contract.buyer}</p>
                     {contract.verified && (
-                      <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                      <p className="text-xs text-[#2E7D32] mt-1 flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" />
                         Legally binding contract registered with KILIMO
                       </p>
@@ -207,11 +207,11 @@ export function ContractFarming() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Price/kg</p>
-                    <p className="font-medium text-green-600">{contract.pricePerKg}</p>
+                    <p className="font-medium text-[#2E7D32]">{contract.pricePerKg}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Total Value</p>
-                    <p className="font-medium text-green-600">{contract.totalValue}</p>
+                    <p className="font-medium text-[#2E7D32]">{contract.totalValue}</p>
                   </div>
                 </div>
 
@@ -223,7 +223,7 @@ export function ContractFarming() {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-green-600 h-2 rounded-full transition-all"
+                        className="bg-[#2E7D32] h-2 rounded-full transition-all"
                         style={{ width: `${contract.progress}%` }}
                       />
                     </div>
@@ -267,7 +267,7 @@ export function ContractFarming() {
                       <ul className="space-y-1">
                         {contract.qualitySpecs.map((spec, idx) => (
                           <li key={idx} className="text-sm text-gray-700 flex items-center gap-2">
-                            <span className="text-green-600">✓</span>
+                            <span className="text-[#2E7D32]">✓</span>
                             {spec}
                           </li>
                         ))}
@@ -280,13 +280,13 @@ export function ContractFarming() {
                         Download Contract
                       </Button>
                       {contract.status === "active" && (
-                        <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                        <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                           Update Progress
                         </Button>
                       )}
                       {contract.status === "pending" && (
                         <>
-                          <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                          <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                             Accept Contract
                           </Button>
                           <Button variant="outline" className="flex-1 border-red-300 text-red-600">
@@ -318,7 +318,7 @@ export function ContractFarming() {
                     <h4 className="font-medium mb-1">{contract.buyer}</h4>
                     <p className="text-sm text-gray-600">Looking for {contract.crop} farmers</p>
                   </div>
-                  <Badge className="bg-green-100 text-green-700 border-green-300">New</Badge>
+                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">New</Badge>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-4">
@@ -328,7 +328,7 @@ export function ContractFarming() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Price Offered</p>
-                    <p className="font-medium text-green-600">{contract.pricePerKg}</p>
+                    <p className="font-medium text-[#2E7D32]">{contract.pricePerKg}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Delivery</p>
@@ -337,7 +337,7 @@ export function ContractFarming() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button className="flex-1 bg-[#2E7D32] hover:bg-green-700">
+                  <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                     Apply for Contract
                   </Button>
                   <Button variant="outline">View Details</Button>
@@ -349,18 +349,18 @@ export function ContractFarming() {
       )}
 
       {/* Dispute Resolution */}
-      <Card className="border-orange-200 bg-orange-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardHeader>
-          <CardTitle className="text-orange-900 flex items-center gap-2">
+          <CardTitle className="text-gray-900 flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
             Contract Support & Dispute Resolution
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-orange-800 mb-4">
+          <p className="text-sm text-gray-800 mb-4">
             Having issues with a contract? Our mediation team can help resolve disputes fairly and quickly.
           </p>
-          <Button variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
+          <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100">
             Report Contract Issue
           </Button>
         </CardContent>

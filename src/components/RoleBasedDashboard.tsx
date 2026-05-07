@@ -56,7 +56,7 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
       case "premium":
         return "bg-gray-100 text-gray-800";
       case "enterprise":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-gray-100 text-gray-800";
       case "agribusiness_ops":
         return "bg-gray-100 text-gray-800";
       default:
@@ -92,7 +92,7 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
   return (
     <div className="space-y-4">
       {/* Role Header */}
-      <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+      <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -282,7 +282,7 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
 
       {/* Upgrade CTA - Only show for non-enterprise tiers */}
       {role.tier !== "enterprise" && role.tier !== "premium" && onUpgrade && (
-        <Card className="bg-gradient-to-r from-green-50 to-green-50 border-green-200">
+        <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 border-[#2E7D32]/20">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
@@ -292,22 +292,22 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
                 </p>
                 <ul className="text-sm space-y-1 text-gray-600">
                   <li className="flex items-center gap-2">
-                    <ArrowUp className="h-3 w-3 text-green-600" />
+                    <ArrowUp className="h-3 w-3 text-[#2E7D32]" />
                     <span>Advanced AI (GPT-4) for better recommendations</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <ArrowUp className="h-3 w-3 text-green-600" />
+                    <ArrowUp className="h-3 w-3 text-[#2E7D32]" />
                     <span>Unlimited AI queries and farm size</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <ArrowUp className="h-3 w-3 text-green-600" />
+                    <ArrowUp className="h-3 w-3 text-[#2E7D32]" />
                     <span>Access to all dashboard sections and analytics</span>
                   </li>
                 </ul>
               </div>
               <Button
                 onClick={onUpgrade}
-                className="bg-gradient-to-r from-green-600 to-green-600 ml-4"
+                className="bg-gradient-to-r from-[#2E7D32] to-gray-100 ml-4"
               >
                 <Crown className="h-4 w-4 mr-2" />
                 Upgrade Now
@@ -322,8 +322,8 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Sprout className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                <Sprout className="h-5 w-5 text-[#2E7D32]" />
               </div>
               <div>
                 <p className="text-xs text-gray-600">Active Crops</p>
@@ -355,7 +355,7 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
               </div>
               <div>
                 <p className="text-xs text-gray-600">Yield Trend</p>
-                <p className="text-xl font-bold text-green-600">+23%</p>
+                <p className="text-xl font-bold text-[#2E7D32]">+23%</p>
               </div>
             </div>
           </CardContent>
@@ -364,8 +364,8 @@ export function RoleBasedDashboard({ role, usage, onUpgrade }: RoleBasedDashboar
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <DollarSign className="h-5 w-5 text-yellow-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <DollarSign className="h-5 w-5 text-gray-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-600">Revenue</p>

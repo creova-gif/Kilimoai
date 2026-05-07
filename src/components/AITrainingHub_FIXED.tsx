@@ -161,7 +161,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
       status: "optimizing",
       lastTrained: "1 hour ago",
       interactions: 9876,
-      color: "text-orange-600"
+      color: "text-gray-600"
     }
   ];
 
@@ -313,13 +313,13 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
     <div className="space-y-6">
       {/* Demo Data Warning Banner */}
       {isDemoMode && (
-        <Card className="border-2 border-orange-200 bg-orange-50">
+        <Card className="border-2 border-gray-200 bg-gray-50">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-bold text-orange-900 mb-1">Demo Data Mode</p>
-                <p className="text-sm text-orange-800">
+                <p className="text-sm font-bold text-gray-900 mb-1">Demo Data Mode</p>
+                <p className="text-sm text-gray-800">
                   You're viewing sample AI training metrics. Connect your production AI system for real data.
                 </p>
               </div>
@@ -444,7 +444,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                     className={`
                       relative border-2 transition-all hover:shadow-lg
                       ${model.status === 'optimizing' 
-                        ? 'border-yellow-200 hover:border-yellow-400 bg-yellow-50/30' 
+                        ? 'border-gray-200 hover:border-gray-300 bg-gray-50/30' 
                         : 'border-gray-200 hover:border-[#2E7D32] bg-white'
                       }
                     `}
@@ -455,8 +455,8 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                         <div className={`
                           px-2 py-1 rounded-full text-xs font-bold border-2
                           ${model.status === 'optimizing' 
-                            ? 'bg-yellow-100 border-yellow-300 text-yellow-700' 
-                            : 'bg-green-100 border-green-300 text-green-700'
+                            ? 'bg-gray-100 border-gray-300 text-gray-700' 
+                            : 'bg-[#2E7D32]/10 border-[#2E7D32]/20 text-[#2E7D32]'
                           }
                         `}>
                           {model.status === 'optimizing' ? 'Training' : 'Active'}
@@ -467,8 +467,8 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                       <div className={`
                         inline-flex p-3 rounded-xl mb-3 border-2
                         ${model.status === 'optimizing' 
-                          ? 'bg-yellow-50 border-yellow-200' 
-                          : 'bg-green-50 border-gray-200'
+                          ? 'bg-gray-50 border-gray-200' 
+                          : 'bg-[#2E7D32]/5 border-gray-200'
                         }
                       `}>
                         <model.icon className={`h-6 w-6 ${model.color}`} />
@@ -489,7 +489,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                           <div 
                             className={`h-2 rounded-full transition-all ${
                               model.status === 'optimizing' 
-                                ? 'bg-yellow-500' 
+                                ? 'bg-gray-600' 
                                 : 'bg-[#2E7D32]'
                             }`}
                             style={{ width: `${model.accuracy}%` }}
@@ -542,7 +542,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
             <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-xl bg-green-100 border-2 border-gray-300 ${trainingStatus.isTraining ? 'animate-pulse' : ''}`}>
+                  <div className={`p-3 rounded-xl bg-[#2E7D32]/10 border-2 border-gray-300 ${trainingStatus.isTraining ? 'animate-pulse' : ''}`}>
                     <RefreshCw className={`h-7 w-7 text-[#2E7D32] ${trainingStatus.isTraining ? 'animate-spin' : ''}`} />
                   </div>
                   <div>
@@ -576,8 +576,8 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                     key={idx}
                     className={`
                       flex items-center gap-4 p-4 rounded-xl transition-all duration-300 border-2
-                      ${stage.status === 'active' ? 'bg-green-50 border-green-200 shadow-md' : ''}
-                      ${stage.status === 'processing' ? 'bg-yellow-50 border-yellow-200 shadow-lg' : ''}
+                      ${stage.status === 'active' ? 'bg-[#2E7D32]/5 border-[#2E7D32]/20 shadow-md' : ''}
+                      ${stage.status === 'processing' ? 'bg-gray-50 border-gray-200 shadow-lg' : ''}
                       ${stage.status === 'pending' ? 'bg-gray-50 border-gray-200' : ''}
                     `}
                   >
@@ -585,7 +585,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                     <div className={`
                       flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg border-2
                       ${stage.status === 'active' ? 'bg-[#2E7D32] text-white border-[#2E7D32]' : ''}
-                      ${stage.status === 'processing' ? 'bg-yellow-500 text-white border-yellow-400' : ''}
+                      ${stage.status === 'processing' ? 'bg-gray-600 text-white border-gray-300' : ''}
                       ${stage.status === 'pending' ? 'bg-gray-200 text-gray-600 border-gray-300' : ''}
                     `}>
                       {idx + 1}
@@ -606,7 +606,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                         <div 
                           className={`h-3 rounded-full transition-all duration-500 ${
                             stage.status === 'active' ? 'bg-[#2E7D32]' : 
-                            stage.status === 'processing' ? 'bg-yellow-500' : 
+                            stage.status === 'processing' ? 'bg-gray-600' : 
                             'bg-gray-400'
                           }`}
                           style={{ width: `${stage.progress}%` }}
@@ -620,7 +620,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                         <CheckCircle className="h-6 w-6 text-[#2E7D32]" />
                       )}
                       {stage.status === 'processing' && (
-                        <RefreshCw className="h-6 w-6 text-yellow-600 animate-spin" />
+                        <RefreshCw className="h-6 w-6 text-gray-600 animate-spin" />
                       )}
                       {stage.status === 'pending' && (
                         <Clock className="h-6 w-6 text-gray-400" />
@@ -727,7 +727,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
               <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-100 rounded-xl border-2 border-gray-300 shadow-lg">
+                    <div className="p-3 bg-[#2E7D32]/10 rounded-xl border-2 border-gray-300 shadow-lg">
                       <MessageSquare className="h-6 w-6 text-[#2E7D32]" />
                     </div>
                     <div>
@@ -750,9 +750,9 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                       className={`
                         relative border-2 transition-all hover:shadow-lg
                         ${item.rating >= 4 
-                          ? 'border-green-200 bg-green-50/30 hover:border-[#2E7D32]' 
+                          ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5/30 hover:border-[#2E7D32]' 
                           : item.rating >= 3 
-                          ? 'border-yellow-200 bg-yellow-50/30 hover:border-yellow-400' 
+                          ? 'border-gray-200 bg-gray-50/30 hover:border-gray-300' 
                           : 'border-red-200 bg-red-50/30 hover:border-red-400'
                         }
                       `}
@@ -761,7 +761,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                         {/* Rating Indicator Bar */}
                         <div className={`absolute left-0 top-0 bottom-0 w-2 rounded-l-2xl ${
                           item.rating >= 4 ? 'bg-[#2E7D32]' : 
-                          item.rating >= 3 ? 'bg-yellow-500' : 
+                          item.rating >= 3 ? 'bg-gray-600' : 
                           'bg-red-500'
                         }`}></div>
 
@@ -771,9 +771,9 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                             <div className={`
                               px-3 py-1 rounded-full text-xs font-bold border-2 flex items-center gap-1
                               ${item.rating >= 4 
-                                ? 'bg-green-100 text-[#2E7D32] border-green-300' 
+                                ? 'bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20' 
                                 : item.rating >= 3 
-                                ? 'bg-yellow-100 text-yellow-700 border-yellow-300' 
+                                ? 'bg-gray-100 text-gray-700 border-gray-300' 
                                 : 'bg-red-100 text-red-700 border-red-300'
                               }
                             `}>
@@ -799,9 +799,9 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                           <div className={`
                             p-4 rounded-lg border-2
                             ${item.rating >= 4 
-                              ? 'bg-white border-green-200' 
+                              ? 'bg-white border-[#2E7D32]/20' 
                               : item.rating >= 3 
-                              ? 'bg-white border-yellow-200' 
+                              ? 'bg-white border-gray-200' 
                               : 'bg-white border-red-200'
                             }
                           `}>
@@ -821,7 +821,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                             {/* Response */}
                             <div className="mb-4">
                               <div className="flex items-center gap-2 mb-3">
-                                <div className="p-2 bg-green-100 rounded-lg border border-green-300">
+                                <div className="p-2 bg-[#2E7D32]/10 rounded-lg border border-[#2E7D32]/20">
                                   <Brain className="h-4 w-4 text-[#2E7D32]" />
                                 </div>
                                 <p className="text-xs font-bold text-[#2E7D32] uppercase tracking-wide">AI Response</p>
@@ -888,7 +888,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                     className={`
                       relative border-4 border-dashed rounded-2xl p-12 text-center transition-all
                       ${dragActive 
-                        ? 'border-[#2E7D32] bg-green-50' 
+                        ? 'border-[#2E7D32] bg-[#2E7D32]/5' 
                         : 'border-gray-300 bg-gray-50 hover:border-gray-400'
                       }
                     `}
@@ -896,7 +896,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                     <div className={`
                       inline-flex items-center justify-center
                       p-6 rounded-full mb-6 transition-all
-                      ${dragActive ? 'bg-[#2E7D32]' : 'bg-green-100'}
+                      ${dragActive ? 'bg-[#2E7D32]' : 'bg-[#2E7D32]/10'}
                     `}>
                       <Upload className={`h-12 w-12 ${dragActive ? 'text-white' : 'text-[#2E7D32]'}`} />
                     </div>
@@ -938,7 +938,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
 
                   {/* Uploaded File Preview */}
                   {uploadedFile && (
-                    <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                    <div className="bg-[#2E7D32]/5 rounded-xl p-6 border-2 border-[#2E7D32]/20">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
                           <div className="p-3 bg-[#2E7D32] rounded-lg">
@@ -1018,7 +1018,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
           <Card className="border-2 border-gray-200 shadow-xl overflow-hidden">
             <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 rounded-xl border-2 border-gray-300 shadow-lg">
+                <div className="p-3 bg-[#2E7D32]/10 rounded-xl border-2 border-gray-300 shadow-lg">
                   <Settings className="h-6 w-6 text-[#2E7D32]" />
                 </div>
                 <div>
@@ -1037,7 +1037,7 @@ export function AITrainingHub({ userId, userRole }: AITrainingHubProps) {
                 <div className={`
                   p-6 rounded-xl border-2 transition-all
                   ${autoLearnEnabled 
-                    ? 'bg-green-50 border-green-200' 
+                    ? 'bg-[#2E7D32]/5 border-[#2E7D32]/20' 
                     : 'bg-gray-50 border-gray-200'
                   }
                 `}>

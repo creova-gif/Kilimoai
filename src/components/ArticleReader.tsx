@@ -19,7 +19,7 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
         <div className="flex items-center justify-between p-6 border-b sticky top-0 bg-white z-10">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className="bg-green-50 text-green-700">
+              <Badge variant="outline" className="bg-[#2E7D32]/5 text-[#2E7D32]">
                 {category}
               </Badge>
               <Badge variant="outline">{language}</Badge>
@@ -40,8 +40,8 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
           {/* Author & Date */}
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-green-600" />
+              <div className="h-10 w-10 rounded-full bg-[#2E7D32]/10 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-[#2E7D32]" />
               </div>
               <div>
                 <p className="font-medium text-gray-900">Dr. Amina Hassan</p>
@@ -108,8 +108,8 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
               authorized dealers to ensure good germination rates and disease resistance.
             </p>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-900">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <p className="text-sm text-gray-900">
                 <strong>Recommended Varieties for Tanzania:</strong> SC627, H614, H628 (hybrid varieties 
                 suitable for medium to high rainfall areas). For drought-prone areas, consider Staha, 
                 Lishe H1, or TMV1.
@@ -157,9 +157,9 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
             </p>
 
             <div className="space-y-3">
-              <Card className="border-green-200">
+              <Card className="border-[#2E7D32]/20">
                 <CardContent className="pt-4">
-                  <h5 className="font-medium text-green-900 mb-2">Basal Fertilizer (At Planting)</h5>
+                  <h5 className="font-medium text-[#2E7D32] mb-2">Basal Fertilizer (At Planting)</h5>
                   <p className="text-sm text-gray-700">
                     Apply 200kg/hectare of DAP (Diammonium Phosphate) or NPK 23:23:0 at planting time, 
                     placing it 5cm to the side and 5cm below the seed.
@@ -167,9 +167,9 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
                 </CardContent>
               </Card>
 
-              <Card className="border-green-200">
+              <Card className="border-[#2E7D32]/20">
                 <CardContent className="pt-4">
-                  <h5 className="font-medium text-green-900 mb-2">Top-Dressing (3-4 weeks after planting)</h5>
+                  <h5 className="font-medium text-[#2E7D32] mb-2">Top-Dressing (3-4 weeks after planting)</h5>
                   <p className="text-sm text-gray-700">
                     Apply 150kg/hectare of Urea (46% N) when maize is knee-high. Apply along the rows, 
                     10cm from plant base, and cover with soil.
@@ -249,13 +249,13 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
           </div>
 
           {/* Expert Verification */}
-          <Card className="border-green-200 bg-green-50">
+          <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
             <CardContent className="pt-4">
               <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-green-900 mb-1">Expert Verified</h4>
-                  <p className="text-sm text-green-800">
+                  <h4 className="font-medium text-[#2E7D32] mb-1">Expert Verified</h4>
+                  <p className="text-sm text-[#2E7D32]">
                     This guide has been reviewed and approved by the <strong>Tanzania Agricultural 
                     Research Institute (TARI)</strong> and follows best practices for Tanzanian 
                     growing conditions.
@@ -267,7 +267,7 @@ export function ArticleReader({ title, category, readTime, language, onClose }: 
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3 pt-4 border-t">
-            <Button className="bg-green-600 hover:bg-green-700">
+            <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
               <Download className="h-4 w-4 mr-2" />
               Download PDF
             </Button>

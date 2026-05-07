@@ -145,7 +145,7 @@ export function ContactSupport() {
             <Headphones className="h-8 w-8" />
             <h1 className="text-2xl font-bold">Contact Support</h1>
           </div>
-          <p className="text-green-100">
+          <p className="text-[#2E7D32]">
             We're here to help! Reach out through any channel that works best for you
           </p>
           <div className="flex items-center gap-2 mt-4 p-3 bg-white/20 rounded-lg backdrop-blur-sm">
@@ -248,8 +248,8 @@ export function ContactSupport() {
                         ? priority === "urgent"
                           ? "bg-red-600 text-white border-red-600"
                           : priority === "high"
-                          ? "bg-orange-600 text-white border-orange-600"
-                          : "bg-green-600 text-white border-green-600"
+                          ? "bg-gray-700 text-white border-gray-400"
+                          : "bg-[#2E7D32] text-white border-[#2E7D32]/20"
                         : "bg-white hover:bg-gray-50 border-gray-200"
                     }`}
                   >
@@ -354,7 +354,7 @@ export function ContactSupport() {
             {officeLocations.map((location, index) => (
               <div key={index} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                  <MapPin className="h-5 w-5 text-[#2E7D32] mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">{location.city}</h3>
                     <p className="text-sm text-gray-600 mb-2">{location.address}</p>
@@ -413,21 +413,21 @@ export function ContactSupport() {
             <CheckCircle2 className="h-6 w-6" />
             <h3 className="text-xl font-bold">We're Here for You</h3>
           </div>
-          <p className="text-green-100 mb-4">
+          <p className="text-[#2E7D32] mb-4">
             Over 50,000 farmers trust CREOVA support. Our team has helped resolve 98% of issues within 24 hours with an average satisfaction rating of 4.8/5.
           </p>
           <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/20">
             <div>
               <p className="text-3xl font-bold">50K+</p>
-              <p className="text-sm text-green-100">Farmers Supported</p>
+              <p className="text-sm text-[#2E7D32]">Farmers Supported</p>
             </div>
             <div>
               <p className="text-3xl font-bold">98%</p>
-              <p className="text-sm text-green-100">Resolution Rate</p>
+              <p className="text-sm text-[#2E7D32]">Resolution Rate</p>
             </div>
             <div>
               <p className="text-3xl font-bold">4.8/5</p>
-              <p className="text-sm text-green-100">Satisfaction Score</p>
+              <p className="text-sm text-[#2E7D32]">Satisfaction Score</p>
             </div>
           </div>
         </CardContent>

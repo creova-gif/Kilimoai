@@ -354,7 +354,7 @@ export function MobileMoneyHub({
   return (
     <div className="space-y-6 pb-6">
       {/* Wallet Balance Card */}
-      <Card className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white">
+      <Card className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -415,7 +415,7 @@ export function MobileMoneyHub({
                   <div 
                     key={provider.id}
                     className={`p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-all ${
-                      provider.featured ? 'border-green-500 bg-green-50' : ''
+                      provider.featured ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5' : ''
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -427,7 +427,7 @@ export function MobileMoneyHub({
                         </div>
                       </div>
                       {provider.featured && (
-                        <Badge className="bg-green-600">Lowest Fee</Badge>
+                        <Badge className="bg-[#2E7D32]">Lowest Fee</Badge>
                       )}
                     </div>
                     <Button 
@@ -491,8 +491,8 @@ export function MobileMoneyHub({
                       <button
                         key={provider.id}
                         onClick={() => setDepositProvider(provider.name)}
-                        className={`p-3 border rounded-lg hover:border-green-500 transition-all ${
-                          depositProvider === provider.name ? 'border-green-500 bg-green-50' : ''
+                        className={`p-3 border rounded-lg hover:border-[#2E7D32]/20 transition-all ${
+                          depositProvider === provider.name ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5' : ''
                         }`}
                       >
                         <div className="text-2xl mb-1">{provider.logo}</div>
@@ -541,10 +541,10 @@ export function MobileMoneyHub({
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+          <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white">
             <CardContent className="p-6">
               <h3 className="text-lg font-bold mb-2">💚 GoPay - Lowest Fees!</h3>
-              <p className="text-sm text-green-100 mb-3">
+              <p className="text-sm text-[#2E7D32] mb-3">
                 Save money on every transaction with GoPay. Only 0.5% fee compared to 1.5-1.8% on other platforms.
               </p>
               <Button variant="secondary">Learn More</Button>
@@ -573,8 +573,8 @@ export function MobileMoneyHub({
                       <button
                         key={provider.id}
                         onClick={() => setSelectedProvider(provider.name)}
-                        className={`p-3 border rounded-lg hover:border-green-500 transition-all ${
-                          selectedProvider === provider.name ? 'border-green-500 bg-green-50' : ''
+                        className={`p-3 border rounded-lg hover:border-[#2E7D32]/20 transition-all ${
+                          selectedProvider === provider.name ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5' : ''
                         }`}
                       >
                         <div className="text-2xl mb-1">{provider.logo}</div>
@@ -638,10 +638,10 @@ export function MobileMoneyHub({
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+          <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white">
             <CardContent className="p-6">
               <h3 className="text-lg font-bold mb-2">💚 GoPay - Lowest Fees!</h3>
-              <p className="text-sm text-green-100 mb-3">
+              <p className="text-sm text-[#2E7D32] mb-3">
                 Save money on every transaction with GoPay. Only 0.5% fee compared to 1.5-1.8% on other platforms.
               </p>
               <Button variant="secondary">Learn More</Button>
@@ -669,7 +669,7 @@ export function MobileMoneyHub({
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${
                         txn.type === "incoming" 
-                          ? "bg-green-100 text-green-600" 
+                          ? "bg-[#2E7D32]/10 text-[#2E7D32]" 
                           : "bg-red-100 text-red-600"
                       }`}>
                         {txn.type === "incoming" ? (
@@ -690,20 +690,20 @@ export function MobileMoneyHub({
                     </div>
                     <div className="text-right">
                       <p className={`font-bold ${
-                        txn.type === "incoming" ? "text-green-600" : "text-red-600"
+                        txn.type === "incoming" ? "text-[#2E7D32]" : "text-red-600"
                       }`}>
                         {txn.type === "incoming" ? "+" : "-"}TZS {txn.amount.toLocaleString()}
                       </p>
                       <div className="flex items-center gap-1 mt-1">
                         {txn.status === "completed" ? (
                           <>
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
-                            <span className="text-sm text-green-600">Completed</span>
+                            <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
+                            <span className="text-sm text-[#2E7D32]">Completed</span>
                           </>
                         ) : txn.status === "pending" ? (
                           <>
-                            <Clock className="h-4 w-4 text-yellow-600" />
-                            <span className="text-sm text-yellow-600">Pending</span>
+                            <Clock className="h-4 w-4 text-gray-600" />
+                            <span className="text-sm text-gray-600">Pending</span>
                           </>
                         ) : (
                           <>
@@ -729,15 +729,15 @@ export function MobileMoneyHub({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="p-4 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <ArrowDownLeft className="h-5 w-5 text-green-600" />
-                    <p className="font-medium text-green-900">Income</p>
+                    <ArrowDownLeft className="h-5 w-5 text-[#2E7D32]" />
+                    <p className="font-medium text-[#2E7D32]">Income</p>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-[#2E7D32]">
                     TZS {walletData.totalEarned.toLocaleString()}
                   </p>
-                  <p className="text-sm text-green-700 mt-1">This month</p>
+                  <p className="text-sm text-[#2E7D32] mt-1">This month</p>
                 </div>
 
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -757,7 +757,7 @@ export function MobileMoneyHub({
       </Tabs>
 
       {/* Benefits Banner */}
-      <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+      <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white">
         <CardContent className="p-6">
           <h3 className="text-xl font-bold mb-3">Why Use CREOVA Wallet?</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

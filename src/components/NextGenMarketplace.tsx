@@ -380,9 +380,9 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
   const getVerificationBadge = (level: string) => {
     switch (level) {
       case "premium":
-        return <BadgeCheck className="h-5 w-5 text-green-600" />;
+        return <BadgeCheck className="h-5 w-5 text-[#2E7D32]" />;
       case "business":
-        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
+        return <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />;
       case "basic":
         return <Shield className="h-5 w-5 text-gray-600" />;
       default:
@@ -391,9 +391,9 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50/10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100/10">
       {/* SECTION 1: MARKET PULSE - HERO */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white">
+      <div className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 text-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -441,7 +441,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
               <div className="flex items-center gap-2 mb-2">
                 {marketPulse.sentiment === "rising" ? (
-                  <TrendingUp className="h-5 w-5 text-green-300" />
+                  <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
                 ) : marketPulse.sentiment === "falling" ? (
                   <TrendingDown className="h-5 w-5 text-red-300" />
                 ) : (
@@ -456,7 +456,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
           {/* Live Price Ticker */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
             <div className="flex items-center gap-2 mb-3">
-              <Flame className="h-5 w-5 text-orange-300" />
+              <Flame className="h-5 w-5 text-gray-400" />
               <span className="font-semibold">{language === "en" ? "Top Movers" : "Mabadiliko Makubwa"}</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -467,7 +467,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
                     <div className="text-xs text-white/80">TZS {mover.price.toLocaleString()}/kg</div>
                   </div>
                   <div className={`flex items-center gap-1 font-bold ${
-                    mover.change > 0 ? "text-green-300" : "text-red-300"
+                    mover.change > 0 ? "text-[#2E7D32]" : "text-red-300"
                   }`}>
                     {mover.change > 0 ? (
                       <ArrowUpRight className="h-4 w-4" />
@@ -491,7 +491,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
             onClick={() => setActiveTab("marketplace")}
             className={`px-4 py-3 font-medium transition-colors relative ${
               activeTab === "marketplace"
-                ? "text-green-600 border-b-2 border-green-600"
+                ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -501,7 +501,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
             onClick={() => setActiveTab("my-listings")}
             className={`px-4 py-3 font-medium transition-colors relative ${
               activeTab === "my-listings"
-                ? "text-green-600 border-b-2 border-green-600"
+                ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -511,7 +511,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
             onClick={() => setActiveTab("orders")}
             className={`px-4 py-3 font-medium transition-colors relative ${
               activeTab === "orders"
-                ? "text-green-600 border-b-2 border-green-600"
+                ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -530,12 +530,12 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
                   <input
                     type="text"
                     placeholder={language === "en" ? "Search crops, inputs, equipment..." : "Tafuta mazao, pembejeo, vifaa..."}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D32]/30 focus:border-transparent"
                   />
                 </div>
 
                 {/* Category Filter */}
-                <select className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <select className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E7D32]/30 focus:border-transparent">
                   <option value="all">{language === "en" ? "All Categories" : "Aina Zote"}</option>
                   <option value="crops">{language === "en" ? "Crops" : "Mazao"}</option>
                   <option value="livestock">{language === "en" ? "Livestock" : "Mifugo"}</option>
@@ -635,7 +635,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
 
                       {/* Expires Soon Badge */}
                       {listing.expiresIn && listing.expiresIn < 24 && (
-                        <div className="absolute top-3 right-3 px-2 py-1 bg-orange-500 text-white text-xs font-medium rounded">
+                        <div className="absolute top-3 right-3 px-2 py-1 bg-gray-600 text-white text-xs font-medium rounded">
                           <Timer className="h-3 w-3 inline mr-1" />
                           {listing.expiresIn}h
                         </div>
@@ -643,7 +643,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
 
                       {/* Quality Badge */}
                       {listing.quality === "premium" && (
-                        <div className="absolute bottom-3 left-3 px-2 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold rounded flex items-center gap-1">
+                        <div className="absolute bottom-3 left-3 px-2 py-1 bg-gradient-to-r from-gray-50 to-gray-100 text-white text-xs font-bold rounded flex items-center gap-1">
                           <Sparkles className="h-3 w-3" />
                           {language === "en" ? "PREMIUM" : "UBORA WA JUU"}
                         </div>
@@ -651,7 +651,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
 
                       {/* Organic Badge */}
                       {listing.organic && (
-                        <div className="absolute bottom-3 right-3 px-2 py-1 bg-green-600 text-white text-xs font-medium rounded flex items-center gap-1">
+                        <div className="absolute bottom-3 right-3 px-2 py-1 bg-[#2E7D32] text-white text-xs font-medium rounded flex items-center gap-1">
                           <Leaf className="h-3 w-3" />
                           {language === "en" ? "ORGANIC" : "KIKABONI"}
                         </div>
@@ -663,7 +663,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
                       {/* Seller Info */}
                       {seller && (
                         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-100">
-                          <div className="h-8 w-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          <div className="h-8 w-8 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-full flex items-center justify-center text-white font-bold text-sm">
                             {seller.name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -673,7 +673,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
                             </div>
                             <div className="flex items-center gap-2 text-xs text-gray-500">
                               <div className="flex items-center gap-1">
-                                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                <Star className="h-3 w-3 fill-gray-600 text-gray-500" />
                                 <span>{seller.trustScore}%</span>
                               </div>
                               <span>•</span>
@@ -688,7 +688,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
 
                       {/* Price */}
                       <div className="flex items-baseline gap-2 mb-3">
-                        <span className="text-2xl font-bold text-green-600">
+                        <span className="text-2xl font-bold text-[#2E7D32]">
                           TZS {listing.price.toLocaleString()}
                         </span>
                         <span className="text-sm text-gray-500">/{listing.unit}</span>
@@ -708,7 +708,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
 
                       {/* Actions */}
                       <div className="flex items-center gap-2">
-                        <button className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2">
+                        <button className="flex-1 px-4 py-2 bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white font-medium rounded-lg hover:from-[#2E7D32] hover:to-gray-100 transition-all flex items-center justify-center gap-2">
                           <ShoppingCart className="h-4 w-4" />
                           {language === "en" ? "Buy Now" : "Nunua Sasa"}
                         </button>
@@ -754,7 +754,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
                 ? "Start selling your products to thousands of verified buyers"
                 : "Anza kuuza bidhaa zako kwa maelfu ya wanunuzi waliothibitishwa"}
             </p>
-            <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all flex items-center gap-2 mx-auto">
+            <button className="px-6 py-3 bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white font-medium rounded-lg hover:from-[#2E7D32] hover:to-gray-100 transition-all flex items-center gap-2 mx-auto">
               <PlusCircle className="h-5 w-5" />
               {language === "en" ? "Create Listing" : "Tengeneza Tangazo"}
             </button>
@@ -775,7 +775,7 @@ export function NextGenMarketplace({ userId, region, language, onNavigate }: Nex
             </p>
             <button 
               onClick={() => setActiveTab("marketplace")}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all flex items-center gap-2 mx-auto"
+              className="px-6 py-3 bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white font-medium rounded-lg hover:from-[#2E7D32] hover:to-gray-100 transition-all flex items-center gap-2 mx-auto"
             >
               <Store className="h-5 w-5" />
               {language === "en" ? "Browse Marketplace" : "Vinjari Soko"}
@@ -847,27 +847,27 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
           {/* Content */}
           <div className="p-6">
             {/* Seller Brand Card */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 mb-6 border border-green-200">
+            <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-xl p-4 mb-6 border border-[#2E7D32]/20">
               <div className="flex items-start gap-4">
-                <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                <div className="h-16 w-16 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-xl flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
                   {seller.name.charAt(0)}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-lg font-bold text-gray-900">{seller.name}</h3>
                     {seller.verificationLevel === "premium" && (
-                      <BadgeCheck className="h-5 w-5 text-green-600" />
+                      <BadgeCheck className="h-5 w-5 text-[#2E7D32]" />
                     )}
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{seller.story}</p>
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star className="h-4 w-4 fill-gray-600 text-gray-500" />
                       <span className="font-semibold">{seller.trustScore}%</span>
                       <span className="text-gray-600">{language === "en" ? "trust" : "uaminifu"}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
                       <span className="font-semibold">{seller.successRate}%</span>
                       <span className="text-gray-600">{language === "en" ? "success" : "mafanikio"}</span>
                     </div>
@@ -875,7 +875,7 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
                   {seller.certifications.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-3">
                       {seller.certifications.map((cert, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-white text-xs font-medium text-green-700 rounded border border-green-300">
+                        <span key={idx} className="px-2 py-1 bg-white text-xs font-medium text-[#2E7D32] rounded border border-[#2E7D32]/20">
                           <Award className="h-3 w-3 inline mr-1" />
                           {cert}
                         </span>
@@ -894,7 +894,7 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="text-sm text-gray-600 mb-1">{language === "en" ? "Price per unit" : "Bei kwa kila kipimo"}</div>
-                <div className="text-3xl font-bold text-green-600">
+                <div className="text-3xl font-bold text-[#2E7D32]">
                   TZS {listing.price.toLocaleString()}
                   <span className="text-sm text-gray-500">/{listing.unit}</span>
                 </div>
@@ -935,7 +935,7 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
               </div>
               <div className="text-right mt-2">
                 <span className="text-sm text-gray-600">{language === "en" ? "Total:" : "Jumla:"} </span>
-                <span className="text-xl font-bold text-green-600">
+                <span className="text-xl font-bold text-[#2E7D32]">
                   TZS {(listing.price * quantity).toLocaleString()}
                 </span>
               </div>
@@ -945,7 +945,7 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
             <div className="flex gap-3">
               <button
                 onClick={() => handlePurchase(listing, quantity)}
-                className="flex-1 px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg"
+                className="flex-1 px-6 py-4 bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white font-bold rounded-xl hover:from-[#2E7D32] hover:to-gray-100 transition-all flex items-center justify-center gap-2 shadow-lg"
                 disabled={purchasing}
               >
                 <ShoppingCart className="h-5 w-5" />
@@ -953,7 +953,7 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
               </button>
               <button
                 onClick={() => setShowChat(!showChat)}
-                className="px-6 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all flex items-center gap-2"
+                className="px-6 py-4 bg-[#2E7D32] text-white font-bold rounded-xl hover:bg-[#2E7D32] transition-all flex items-center gap-2"
               >
                 <MessageCircle className="h-5 w-5" />
                 {language === "en" ? "Chat" : "Ongea"}
@@ -968,8 +968,8 @@ function ListingDetailModal({ listing, seller, language, onClose, handlePurchase
 
             {/* Trust Features */}
             <div className="mt-6 grid grid-cols-3 gap-3">
-              <div className="text-center p-3 bg-green-50 rounded-lg">
-                <ShieldCheck className="h-6 w-6 text-green-600 mx-auto mb-1" />
+              <div className="text-center p-3 bg-[#2E7D32]/5 rounded-lg">
+                <ShieldCheck className="h-6 w-6 text-[#2E7D32] mx-auto mb-1" />
                 <div className="text-xs font-medium text-gray-700">{language === "en" ? "Escrow Protected" : "Ulinzi wa Escrow"}</div>
               </div>
               <div className="text-center p-3 bg-gray-50 rounded-lg">

@@ -102,8 +102,8 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
-      case "in-progress": return { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-200", dot: "bg-yellow-500" };
-      case "resolved": return { bg: "bg-green-100", text: "text-green-700", border: "border-green-200", dot: "bg-green-500" };
+      case "in-progress": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-600" };
+      case "resolved": return { bg: "bg-[#2E7D32]/10", text: "text-[#2E7D32]", border: "border-[#2E7D32]/20", dot: "bg-[#2E7D32]" };
       case "closed": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
       default: return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
     }
@@ -112,7 +112,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high": return "text-red-600";
-      case "medium": return "text-yellow-600";
+      case "medium": return "text-gray-600";
       case "low": return "text-gray-600";
       default: return "text-gray-600";
     }
@@ -133,9 +133,9 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -145,7 +145,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Support Center" : "Kituo cha Msaada"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Track your support requests"
                   : "Fuatilia maombi yako ya msaada"}
@@ -183,9 +183,9 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <button
                 onClick={() => setShowCreateTicket(true)}
-                className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-xl border-2 border-green-200 transition-all group"
+                className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100 rounded-xl border-2 border-[#2E7D32]/20 transition-all group"
               >
-                <Plus className="h-6 w-6 text-green-600" />
+                <Plus className="h-6 w-6 text-[#2E7D32]" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900">{language === "en" ? "New Ticket" : "Tiketi Mpya"}</div>
                   <div className="text-xs text-gray-600">{language === "en" ? "Report an issue" : "Ripoti tatizo"}</div>
@@ -193,7 +193,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
               </button>
 
               <button className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl border-2 border-gray-200 transition-all group">
-                <Phone className="h-6 w-6 text-green-600" />
+                <Phone className="h-6 w-6 text-[#2E7D32]" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900">{language === "en" ? "Call Support" : "Piga Msaada"}</div>
                   <div className="text-xs text-gray-600">+255 123 456 789</div>
@@ -201,7 +201,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
               </button>
 
               <button className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl border-2 border-gray-200 transition-all group">
-                <Book className="h-6 w-6 text-green-600" />
+                <Book className="h-6 w-6 text-[#2E7D32]" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900">{language === "en" ? "Help Center" : "Kituo cha Msaada"}</div>
                   <div className="text-xs text-gray-600">{language === "en" ? "FAQs & guides" : "Maswali & miongozo"}</div>
@@ -286,7 +286,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
                   <div className="flex gap-2">
                     <Button
                       onClick={handleCreateTicket}
-                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]"
                       disabled={!newTicket.title || !newTicket.description}
                     >
                       <Send className="h-4 w-4 mr-2" />
@@ -325,7 +325,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
                     onClick={() => setFilterStatus(status.id)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                       isActive
-                        ? "bg-green-600 text-white"
+                        ? "bg-[#2E7D32] text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
@@ -366,7 +366,7 @@ export function SupportTickets({ language, userId }: SupportTicketsProps) {
                   const CategoryIcon = category?.icon || HelpCircle;
 
                   return (
-                    <Card key={ticket.id} className="border-2 hover:border-green-300 hover:shadow-md transition-all cursor-pointer">
+                    <Card key={ticket.id} className="border-2 hover:border-[#2E7D32]/20 hover:shadow-md transition-all cursor-pointer">
                       <CardContent className="p-5">
                         <div className="flex items-start gap-4">
                           <div className={`p-3 bg-${category?.color}-100 rounded-xl flex-shrink-0`}>

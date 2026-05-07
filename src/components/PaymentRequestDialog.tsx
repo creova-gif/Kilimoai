@@ -227,8 +227,8 @@ export function PaymentRequestDialog({ open, onOpenChange, userName, userId }: P
         ) : (
           <div className="space-y-4">
             <div className="text-center py-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2E7D32]/10 rounded-full mb-4">
+                <CheckCircle2 className="h-8 w-8 text-[#2E7D32]" />
               </div>
               <h3 className="font-bold text-lg mb-1">Payment Request Created!</h3>
               <p className="text-sm text-gray-600">Request ID: {requestId}</p>

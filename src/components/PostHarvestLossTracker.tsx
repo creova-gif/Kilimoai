@@ -111,43 +111,43 @@ export function PostHarvestLossTracker({
           </CardContent>
         </Card>
 
-        <Card className="border-orange-100 bg-orange-50/30">
+        <Card className="border-gray-200 bg-gray-50/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-orange-600">
+                <p className="text-sm font-medium text-gray-600">
                   {language === "en" ? "Financial Impact" : "Hasara ya Kifedha"}
                 </p>
-                <h3 className="text-2xl font-bold text-orange-700">
+                <h3 className="text-2xl font-bold text-gray-700">
                   {calculateFinancialImpact().toLocaleString()} TZS
                 </h3>
               </div>
-              <div className="p-3 bg-orange-100 rounded-full">
-                <AlertTriangle className="h-6 w-6 text-orange-600" />
+              <div className="p-3 bg-gray-100 rounded-full">
+                <AlertTriangle className="h-6 w-6 text-gray-600" />
               </div>
             </div>
-            <p className="text-xs text-orange-500 mt-2">
+            <p className="text-xs text-gray-600 mt-2">
               {language === "en" ? "Equivalent to 2 bags of fertilizer" : "Sawa na mifuko 2 ya mbolea"}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-green-100 bg-green-50/30 md:col-span-2 lg:col-span-1">
+        <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5/30 md:col-span-2 lg:col-span-1">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">
+                <p className="text-sm font-medium text-[#2E7D32]">
                   {language === "en" ? "Insurance Recovery" : "Fidia ya Bima"}
                 </p>
-                <h3 className="text-2xl font-bold text-green-700">
+                <h3 className="text-2xl font-bold text-[#2E7D32]">
                   {records.filter(r => r.status === "claimed").length} Claims
                 </h3>
               </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <ShieldCheck className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-[#2E7D32]/10 rounded-full">
+                <ShieldCheck className="h-6 w-6 text-[#2E7D32]" />
               </div>
             </div>
-            <p className="text-xs text-green-500 mt-2">
+            <p className="text-xs text-[#2E7D32] mt-2">
               {language === "en" ? "Linked to Pula Insurance" : "Imeunganishwa na Bima ya Pula"}
             </p>
           </CardContent>
@@ -155,22 +155,22 @@ export function PostHarvestLossTracker({
       </div>
 
       {/* AI Advice Banner */}
-      <Card className="border-blue-100 bg-blue-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardContent className="p-4 flex gap-4">
-          <div className="p-2 bg-blue-600 rounded-lg h-fit">
+          <div className="p-2 bg-gray-700 rounded-lg h-fit">
             <Warehouse className="h-5 w-5 text-white" />
           </div>
           <div className="space-y-1">
-            <h4 className="font-bold text-blue-900 flex items-center gap-2">
+            <h4 className="font-bold text-gray-900 flex items-center gap-2">
               {language === "en" ? "Sankofa AI Tip: Storage Optimization" : "Ushauri wa Sankofa: Hifadhi Bora"}
-              <Badge variant="secondary" className="bg-blue-200 text-blue-800 text-[10px] uppercase">New</Badge>
+              <Badge variant="secondary" className="bg-gray-200 text-gray-800 text-[10px] uppercase">New</Badge>
             </h4>
-            <p className="text-sm text-blue-800">
+            <p className="text-sm text-gray-800">
               {language === "en" 
                 ? "Switching to PICS bags for your Maize could reduce pest loss by 95% without chemicals." 
                 : "Kutumia mifuko ya PICS kwa Mahindi yako kunaweza kupunguza uharibifu wa wadudu kwa 95% bila kemikali."}
             </p>
-            <Button variant="link" className="p-0 h-auto text-blue-700 font-semibold text-xs flex items-center gap-1">
+            <Button variant="link" className="p-0 h-auto text-gray-700 font-semibold text-xs flex items-center gap-1">
               {language === "en" ? "View recommended suppliers" : "Angalia wasambazaji"} <ChevronRight className="h-3 w-3" />
             </Button>
           </div>
@@ -204,8 +204,8 @@ export function PostHarvestLossTracker({
               records.map((record) => (
                 <div key={record.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="flex gap-3 items-center">
-                    <div className={`p-2 rounded-full ${record.lossReason === 'pests' ? 'bg-orange-100' : 'bg-blue-100'}`}>
-                      {record.lossReason === 'transport' ? <Truck className="h-4 w-4 text-blue-600" /> : <Warehouse className="h-4 w-4 text-orange-600" />}
+                    <div className={`p-2 rounded-full ${record.lossReason === 'pests' ? 'bg-gray-100' : 'bg-gray-100'}`}>
+                      {record.lossReason === 'transport' ? <Truck className="h-4 w-4 text-gray-600" /> : <Warehouse className="h-4 w-4 text-gray-600" />}
                     </div>
                     <div>
                       <h5 className="font-semibold text-gray-900">{record.crop}</h5>
@@ -219,7 +219,7 @@ export function PostHarvestLossTracker({
                   <div className="text-right">
                     <p className="font-bold text-gray-900">-{record.totalHarvested - record.totalStored} KG</p>
                     <Badge variant="outline" className={
-                      record.status === 'claimed' ? "text-green-600 border-green-200 bg-green-50" : "text-gray-500"
+                      record.status === 'claimed' ? "text-[#2E7D32] border-[#2E7D32]/20 bg-[#2E7D32]/5" : "text-gray-500"
                     }>
                       {record.status === 'claimed' 
                         ? (language === 'en' ? 'Claimed' : 'Imelipwa') 
@@ -264,7 +264,7 @@ export function PostHarvestLossTracker({
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600">{language === "en" ? "Policy Active" : "Bima Inafanya Kazi"}</span>
-              <Badge className="bg-green-600">YES</Badge>
+              <Badge className="bg-[#2E7D32]">YES</Badge>
             </div>
             <p className="text-xs text-gray-500">
               {language === "en" 

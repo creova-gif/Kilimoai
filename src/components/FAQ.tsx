@@ -193,7 +193,7 @@ export function FAQ() {
             <HelpCircle className="h-8 w-8" />
             <h1 className="text-2xl font-bold">Frequently Asked Questions</h1>
           </div>
-          <p className="text-green-100">
+          <p className="text-[#2E7D32]">
             Find answers to common questions about CREOVA features and services
           </p>
         </CardContent>
@@ -226,7 +226,7 @@ export function FAQ() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${
                     selectedCategory === category.id
-                      ? "bg-green-600 text-white border-green-600"
+                      ? "bg-[#2E7D32] text-white border-[#2E7D32]/20"
                       : "bg-white hover:bg-gray-50 border-gray-200"
                   }`}
                 >
@@ -288,10 +288,10 @@ export function FAQ() {
       </div>
 
       {/* Still Need Help */}
-      <Card className="bg-green-50 border-green-200">
+      <Card className="bg-[#2E7D32]/5 border-[#2E7D32]/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-green-600" />
+            <MessageSquare className="h-5 w-5 text-[#2E7D32]" />
             Still Need Help?
           </CardTitle>
           <CardDescription>
@@ -300,10 +300,10 @@ export function FAQ() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <button className="p-4 bg-white border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-left">
+            <button className="p-4 bg-white border border-[#2E7D32]/20 rounded-lg hover:bg-[#2E7D32]/10 transition-colors text-left">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <MessageSquare className="h-5 w-5 text-green-600" />
+                <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                  <MessageSquare className="h-5 w-5 text-[#2E7D32]" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Chat with AI</p>
@@ -311,10 +311,10 @@ export function FAQ() {
                 </div>
               </div>
             </button>
-            <button className="p-4 bg-white border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-left">
+            <button className="p-4 bg-white border border-[#2E7D32]/20 rounded-lg hover:bg-[#2E7D32]/10 transition-colors text-left">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Smartphone className="h-5 w-5 text-green-600" />
+                <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                  <Smartphone className="h-5 w-5 text-[#2E7D32]" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Contact Support</p>

@@ -196,8 +196,8 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <div className="h-16 w-16 rounded-full border-4 border-green-200 border-t-green-600"></div>
-            <Database className="h-8 w-8 text-green-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            <div className="h-16 w-16 rounded-full border-4 border-[#2E7D32]/20 border-t-green-600"></div>
+            <Database className="h-8 w-8 text-[#2E7D32] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </motion.div>
           <p className="mt-4 text-gray-600">Loading your Farm Graph...</p>
           <p className="text-sm text-gray-500 mt-1">Building behavioral insights</p>
@@ -306,29 +306,29 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                 </motion.div>
                 <div>
                   <h1 className="text-4xl font-bold">KILIMO Farm Graph</h1>
-                  <p className="text-green-100 mt-1">Your Proprietary Agricultural Data Intelligence</p>
+                  <p className="text-[#2E7D32] mt-1">Your Proprietary Agricultural Data Intelligence</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <p className="text-sm text-green-100 mb-2">{language === "sw" ? "Pointi za Data" : "Data Points"}</p>
+                  <p className="text-sm text-[#2E7D32] mb-2">{language === "sw" ? "Pointi za Data" : "Data Points"}</p>
                   <p className="text-3xl font-bold">{analytics.totalInteractions || 0}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <p className="text-sm text-green-100 mb-2">{language === "sw" ? "Ukamilifu" : "Completeness"}</p>
+                  <p className="text-sm text-[#2E7D32] mb-2">{language === "sw" ? "Ukamilifu" : "Completeness"}</p>
                   <p className="text-3xl font-bold">{completenessScore}%</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <p className="text-sm text-green-100 mb-2">{language === "sw" ? "Data ya Picha" : "Image Data"}</p>
+                  <p className="text-sm text-[#2E7D32] mb-2">{language === "sw" ? "Data ya Picha" : "Image Data"}</p>
                   <p className="text-3xl font-bold">{analytics.imageUploads || 0}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <p className="text-sm text-green-100 mb-2">{language === "sw" ? "Data ya Sauti" : "Voice Data"}</p>
+                  <p className="text-sm text-[#2E7D32] mb-2">{language === "sw" ? "Data ya Sauti" : "Voice Data"}</p>
                   <p className="text-3xl font-bold">{analytics.voiceInteractions || 0}</p>
                 </div>
               </div>
             </div>
-            <Badge className="bg-yellow-500 text-yellow-950 border-0 text-sm">
+            <Badge className="bg-gray-600 text-gray-900 border-0 text-sm">
               <Shield className="h-3 w-3 mr-1" />
               Proprietary Asset
             </Badge>
@@ -343,18 +343,18 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="border-2 hover:border-green-300 transition-colors">
+          <Card className="border-2 hover:border-[#2E7D32]/20 transition-colors">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="p-3 bg-gray-100 rounded-xl">
                   <Activity className="h-6 w-6 text-gray-700" />
                 </div>
-                <TrendingUp className="h-5 w-5 text-green-600" />
+                <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Interactions</p>
                 <h3 className="text-3xl font-bold">{analytics.totalInteractions || 0}</h3>
-                <p className="text-xs text-green-600 mt-2">+12% from last month</p>
+                <p className="text-xs text-[#2E7D32] mt-2">+12% from last month</p>
               </div>
             </CardContent>
           </Card>
@@ -409,13 +409,13 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="border-2 hover:border-green-300 transition-colors">
+          <Card className="border-2 hover:border-[#2E7D32]/20 transition-colors">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-green-100 rounded-xl">
-                  <Leaf className="h-6 w-6 text-green-600" />
+                <div className="p-3 bg-[#2E7D32]/10 rounded-xl">
+                  <Leaf className="h-6 w-6 text-[#2E7D32]" />
                 </div>
-                <Star className="h-5 w-5 text-green-600" />
+                <Star className="h-5 w-5 text-[#2E7D32]" />
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Crops</p>
@@ -433,7 +433,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Brain className="h-6 w-6 text-green-600" />
+                <Brain className="h-6 w-6 text-[#2E7D32]" />
                 Farm Graph Intelligence
               </CardTitle>
               <CardDescription className="mt-2">
@@ -466,10 +466,10 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-4">
               {/* Profile Completeness */}
-              <Card className="border-2 bg-gradient-to-br from-blue-50 to-purple-50">
+              <Card className="border-2 bg-gradient-to-br from-gray-50 to-gray-100">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-green-600" />
+                    <Target className="h-5 w-5 text-[#2E7D32]" />
                     Farm Profile Completeness
                   </CardTitle>
                   <CardDescription>
@@ -513,28 +513,28 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
                       <div className="flex items-center gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                         <div>
                           <p className="text-sm font-medium">Basic Information</p>
                           <p className="text-xs text-gray-500">Name, region, farm size</p>
                         </div>
                       </div>
-                      <Badge className="bg-green-100 text-green-700 border-0">100%</Badge>
+                      <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-0">100%</Badge>
                     </div>
 
                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
                       <div className="flex items-center gap-3">
                         {(analytics.topCrops?.length || 0) > 0 ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                         ) : (
-                          <AlertCircle className="h-5 w-5 text-orange-600" />
+                          <AlertCircle className="h-5 w-5 text-gray-600" />
                         )}
                         <div>
                           <p className="text-sm font-medium">Crop Portfolio</p>
                           <p className="text-xs text-gray-500">{analytics.topCrops?.length || 0} crops tracked</p>
                         </div>
                       </div>
-                      <Badge className={(analytics.topCrops?.length || 0) > 0 ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}>
+                      <Badge className={(analytics.topCrops?.length || 0) > 0 ? "bg-[#2E7D32]/10 text-[#2E7D32]" : "bg-gray-100 text-gray-700"}>
                         {(analytics.topCrops?.length || 0) > 0 ? "75%" : "0%"}
                       </Badge>
                     </div>
@@ -542,16 +542,16 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
                       <div className="flex items-center gap-3">
                         {(analytics.imageUploads || 0) > 0 ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                         ) : (
-                          <AlertCircle className="h-5 w-5 text-orange-600" />
+                          <AlertCircle className="h-5 w-5 text-gray-600" />
                         )}
                         <div>
                           <p className="text-sm font-medium">Image Diagnostics</p>
                           <p className="text-xs text-gray-500">{analytics.imageUploads || 0} images uploaded</p>
                         </div>
                       </div>
-                      <Badge className={(analytics.imageUploads || 0) > 0 ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}>
+                      <Badge className={(analytics.imageUploads || 0) > 0 ? "bg-[#2E7D32]/10 text-[#2E7D32]" : "bg-gray-100 text-gray-700"}>
                         {Math.min((analytics.imageUploads || 0) * 10, 100)}%
                       </Badge>
                     </div>
@@ -559,16 +559,16 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
                       <div className="flex items-center gap-3">
                         {(analytics.voiceInteractions || 0) > 0 ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                         ) : (
-                          <AlertCircle className="h-5 w-5 text-orange-600" />
+                          <AlertCircle className="h-5 w-5 text-gray-600" />
                         )}
                         <div>
                           <p className="text-sm font-medium">Voice Interactions</p>
                           <p className="text-xs text-gray-500">{analytics.voiceInteractions || 0} voice sessions</p>
                         </div>
                       </div>
-                      <Badge className={(analytics.voiceInteractions || 0) > 0 ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}>
+                      <Badge className={(analytics.voiceInteractions || 0) > 0 ? "bg-[#2E7D32]/10 text-[#2E7D32]" : "bg-gray-100 text-gray-700"}>
                         {Math.min((analytics.voiceInteractions || 0) * 20, 100)}%
                       </Badge>
                     </div>
@@ -580,7 +580,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
               <Card className="border-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Leaf className="h-5 w-5 text-green-600" />
+                    <Leaf className="h-5 w-5 text-[#2E7D32]" />
                     Your Crop Portfolio
                   </CardTitle>
                   <CardDescription>
@@ -598,17 +598,17 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                           transition={{ delay: index * 0.1 }}
                           whileHover={{ scale: 1.02 }}
                         >
-                          <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+                          <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-[#2E7D32] to-gray-100">
                             <CardContent className="p-4">
                               <div className="flex items-center gap-3">
-                                <div className="h-12 w-12 rounded-xl bg-green-100 flex items-center justify-center">
-                                  <Leaf className="h-6 w-6 text-green-600" />
+                                <div className="h-12 w-12 rounded-xl bg-[#2E7D32]/10 flex items-center justify-center">
+                                  <Leaf className="h-6 w-6 text-[#2E7D32]" />
                                 </div>
                                 <div className="flex-1">
-                                  <p className="font-semibold text-green-900">{crop}</p>
-                                  <p className="text-xs text-green-700">Primary Crop #{index + 1}</p>
+                                  <p className="font-semibold text-[#2E7D32]">{crop}</p>
+                                  <p className="text-xs text-[#2E7D32]">Primary Crop #{index + 1}</p>
                                 </div>
-                                <Badge className="bg-green-100 text-green-700 border-0">
+                                <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-0">
                                   <Activity className="h-3 w-3 mr-1" />
                                   Active
                                 </Badge>
@@ -741,7 +741,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                 <Card className="border-2">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="h-5 w-5 text-green-600" />
+                      <BarChart3 className="h-5 w-5 text-[#2E7D32]" />
                       Engagement Metrics
                     </CardTitle>
                   </CardHeader>
@@ -763,7 +763,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
               <Card className="border-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-orange-600" />
+                    <Clock className="h-5 w-5 text-gray-600" />
                     Recent Activity Feed
                   </CardTitle>
                   <CardDescription>
@@ -785,7 +785,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                             className="cursor-pointer"
                             onClick={() => setSelectedEvent(event)}
                           >
-                            <div className="flex items-start gap-3 p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-2 border-gray-100 hover:border-green-300 transition-colors">
+                            <div className="flex items-start gap-3 p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border-2 border-gray-100 hover:border-[#2E7D32]/20 transition-colors">
                               <div className="p-2 bg-gray-100 rounded-lg">
                                 <EventIcon className="h-4 w-4 text-gray-700" />
                               </div>
@@ -818,29 +818,29 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
             <TabsContent value="behavior" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-3">
                 {/* Peak Activity Time */}
-                <Card className="border-2 bg-gradient-to-br from-orange-50 to-amber-50">
+                <Card className="border-2 bg-gradient-to-br from-gray-50 to-gray-100">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-orange-100 rounded-xl">
-                        <Clock className="h-6 w-6 text-orange-600" />
+                      <div className="p-3 bg-gray-100 rounded-xl">
+                        <Clock className="h-6 w-6 text-gray-600" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Peak Time</p>
-                        <p className="text-xl font-bold text-orange-900">6-9 AM</p>
+                        <p className="text-xl font-bold text-gray-900">6-9 AM</p>
                       </div>
                     </div>
-                    <p className="text-xs text-orange-700">
+                    <p className="text-xs text-gray-700">
                       You're most active in the morning
                     </p>
                   </CardContent>
                 </Card>
 
                 {/* Favorite Feature */}
-                <Card className="border-2 bg-gradient-to-br from-blue-50 to-cyan-50">
+                <Card className="border-2 bg-gradient-to-br from-gray-50 to-gray-100">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-orange-100 rounded-xl">
-                        <Heart className="h-6 w-6 text-orange-600" />
+                      <div className="p-3 bg-gray-100 rounded-xl">
+                        <Heart className="h-6 w-6 text-gray-600" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Most Used</p>
@@ -854,11 +854,11 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                 </Card>
 
                 {/* Data Contribution Rank */}
-                <Card className="border-2 bg-gradient-to-br from-purple-50 to-pink-50">
+                <Card className="border-2 bg-gradient-to-br from-gray-50 to-gray-100">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-orange-100 rounded-xl">
-                        <Award className="h-6 w-6 text-orange-600" />
+                      <div className="p-3 bg-gray-100 rounded-xl">
+                        <Award className="h-6 w-6 text-gray-600" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Contributor</p>
@@ -876,55 +876,55 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
               <Card className="border-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
                     Usage Patterns & Trends
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
+                  <div className="p-4 bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg border-2 border-[#2E7D32]/20">
                     <div className="flex items-start gap-3">
-                      <Target className="h-5 w-5 text-green-600 mt-1" />
+                      <Target className="h-5 w-5 text-[#2E7D32] mt-1" />
                       <div className="flex-1">
-                        <h4 className="font-semibold text-green-900 mb-1">Consistent User</h4>
-                        <p className="text-sm text-green-700">
+                        <h4 className="font-semibold text-[#2E7D32] mb-1">Consistent User</h4>
+                        <p className="text-sm text-[#2E7D32]">
                           You check the app {Math.floor(Math.random() * 3) + 3} times per day on average
                         </p>
                         <div className="mt-2">
                           <Progress value={85} className="h-2" />
-                          <p className="text-xs text-green-600 mt-1">85% consistency score</p>
+                          <p className="text-xs text-[#2E7D32] mt-1">85% consistency score</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
+                  <div className="p-4 bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg border-2 border-[#2E7D32]/20">
                     <div className="flex items-start gap-3">
-                      <Zap className="h-5 w-5 text-green-600 mt-1" />
+                      <Zap className="h-5 w-5 text-[#2E7D32] mt-1" />
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900 mb-1">Power User Features</h4>
                         <p className="text-sm text-gray-700">
                           Advanced features: Image diagnostics, Voice AI, Market analytics
                         </p>
                         <div className="flex gap-2 mt-2">
-                          <Badge className="bg-green-100 text-green-700 text-xs">AI Chat</Badge>
-                          <Badge className="bg-green-100 text-green-700 text-xs">Image Upload</Badge>
-                          <Badge className="bg-green-100 text-green-700 text-xs">Voice</Badge>
+                          <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] text-xs">AI Chat</Badge>
+                          <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] text-xs">Image Upload</Badge>
+                          <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] text-xs">Voice</Badge>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg border-2 border-orange-200">
+                  <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">
                     <div className="flex items-start gap-3">
-                      <LineChart className="h-5 w-5 text-orange-600 mt-1" />
+                      <LineChart className="h-5 w-5 text-gray-600 mt-1" />
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900 mb-1">Growth Trajectory</h4>
                         <p className="text-sm text-gray-700">
                           Your engagement has increased 45% over the last month
                         </p>
                         <div className="flex items-center gap-2 mt-2">
-                          <TrendingUp className="h-4 w-4 text-orange-600" />
-                          <span className="text-xs text-orange-600 font-semibold">+45% growth</span>
+                          <TrendingUp className="h-4 w-4 text-gray-600" />
+                          <span className="text-xs text-gray-600 font-semibold">+45% growth</span>
                         </div>
                       </div>
                     </div>
@@ -935,10 +935,10 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
 
             {/* AI Insights Tab */}
             <TabsContent value="insights" className="space-y-4">
-              <Card className="border-2 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+              <Card className="border-2 bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Brain className="h-6 w-6 text-green-600" />
+                    <Brain className="h-6 w-6 text-[#2E7D32]" />
                     AI-Powered Behavioral Insights
                   </CardTitle>
                   <CardDescription>
@@ -987,11 +987,11 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="p-4 bg-white rounded-lg border-2 border-green-200"
+                    className="p-4 bg-white rounded-lg border-2 border-[#2E7D32]/20"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <TrendingUp className="h-5 w-5 text-green-600" />
+                      <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                        <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
                       </div>
                       <div className="flex-1">
                         <h4 className="font-semibold mb-1">Predictive Insight</h4>
@@ -1006,11 +1006,11 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="p-4 bg-white rounded-lg border-2 border-orange-200"
+                    className="p-4 bg-white rounded-lg border-2 border-gray-200"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-orange-100 rounded-lg">
-                        <Fingerprint className="h-5 w-5 text-orange-600" />
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <Fingerprint className="h-5 w-5 text-gray-600" />
                       </div>
                       <div className="flex-1">
                         <h4 className="font-semibold mb-1">Unique Farmer Profile</h4>
@@ -1060,10 +1060,10 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
 
             {/* Data Value Tab */}
             <TabsContent value="value" className="space-y-4">
-              <Card className="border-2 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
+              <Card className="border-2 bg-gradient-to-br from-gray-50 via-gray-50 to-red-50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-6 w-6 text-yellow-600" />
+                    <Shield className="h-6 w-6 text-gray-600" />
                     Your Data is KILIMO's Competitive Moat
                   </CardTitle>
                   <CardDescription>
@@ -1072,15 +1072,15 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-3">
-                    <div className="p-4 bg-white rounded-lg border-2 border-yellow-200">
-                      <Lock className="h-8 w-8 text-yellow-600 mb-3" />
+                    <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
+                      <Lock className="h-8 w-8 text-gray-600 mb-3" />
                       <h4 className="font-semibold mb-2">Proprietary Dataset</h4>
                       <p className="text-sm text-gray-700">
                         Your unique farm data cannot be replicated by competitors
                       </p>
                     </div>
-                    <div className="p-4 bg-white rounded-lg border-2 border-orange-200">
-                      <Network className="h-8 w-8 text-orange-600 mb-3" />
+                    <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
+                      <Network className="h-8 w-8 text-gray-600 mb-3" />
                       <h4 className="font-semibold mb-2">Network Effects</h4>
                       <p className="text-sm text-gray-700">
                         More farmers = Better AI for everyone
@@ -1132,16 +1132,16 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
               </Card>
 
               {/* Why This Matters */}
-              <Card className="border-2 bg-gradient-to-r from-green-50 to-emerald-50">
+              <Card className="border-2 bg-gradient-to-r from-[#2E7D32] to-gray-100">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Info className="h-5 w-5 text-green-600" />
+                    <Info className="h-5 w-5 text-[#2E7D32]" />
                     Why Your Farm Graph Matters
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg">
-                    <Database className="h-5 w-5 text-green-600 mt-0.5" />
+                    <Database className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                     <div>
                       <p className="font-medium text-sm">Unique & Irreplaceable</p>
                       <p className="text-xs text-gray-600 mt-1">
@@ -1151,7 +1151,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                   </div>
 
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg">
-                    <Brain className="h-5 w-5 text-green-600 mt-0.5" />
+                    <Brain className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                     <div>
                       <p className="font-medium text-sm">Powers Better AI</p>
                       <p className="text-xs text-gray-600 mt-1">
@@ -1161,7 +1161,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                   </div>
 
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg">
-                    <Users className="h-5 w-5 text-green-600 mt-0.5" />
+                    <Users className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                     <div>
                       <p className="font-medium text-sm">Collective Intelligence</p>
                       <p className="text-xs text-gray-600 mt-1">
@@ -1171,7 +1171,7 @@ export function FarmGraphDashboard({ userId, apiBase, authToken, language = "en"
                   </div>
 
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg">
-                    <Lock className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <Lock className="h-5 w-5 text-gray-600 mt-0.5" />
                     <div>
                       <p className="font-medium text-sm">Creates Switching Costs</p>
                       <p className="text-xs text-gray-600 mt-1">

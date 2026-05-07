@@ -24,24 +24,24 @@ export function ActionCard({
 }: ActionCardProps) {
   const colorMap = {
     green: {
-      bg: "from-green-500 to-emerald-600",
-      hover: "hover:from-green-600 hover:to-emerald-700"
+      bg: "from-[#2E7D32] to-gray-100",
+      hover: "hover:from-[#2E7D32] hover:to-gray-100"
     },
     blue: {
-      bg: "from-blue-500 to-cyan-600",
-      hover: "hover:from-blue-600 hover:to-cyan-700"
+      bg: "from-gray-50 to-gray-100",
+      hover: "hover:from-gray-50 hover:to-gray-100"
     },
     orange: {
-      bg: "from-orange-500 to-amber-600",
-      hover: "hover:from-orange-600 hover:to-amber-700"
+      bg: "from-gray-50 to-gray-100",
+      hover: "hover:from-gray-50 hover:to-gray-100"
     },
     purple: {
-      bg: "from-purple-500 to-pink-600",
-      hover: "hover:from-purple-600 hover:to-pink-700"
+      bg: "from-gray-50 to-gray-100",
+      hover: "hover:from-gray-50 hover:to-gray-100"
     },
     teal: {
-      bg: "from-teal-500 to-cyan-600",
-      hover: "hover:from-teal-600 hover:to-cyan-700"
+      bg: "from-gray-50 to-gray-100",
+      hover: "hover:from-gray-50 hover:to-gray-100"
     }
   };
 

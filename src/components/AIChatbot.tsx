@@ -76,7 +76,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
   const quickActions: QuickAction[] = language === "sw" 
     ? [
         { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
-        { icon: Bug, label: "Magonjwa ya Nyanya", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100 border-red-200" },
+        { icon: Bug, label: "Magonjwa ya Nyanya", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi na maharagwe", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
@@ -84,7 +84,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
       ]
     : [
         { icon: Sprout, label: "Maize Fertilizer", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
-        { icon: Bug, label: "Tomato Diseases", prompt: "How to control tomato diseases", category: "pest", color: "text-red-600 bg-red-50 hover:bg-red-100 border-red-200" },
+        { icon: Bug, label: "Tomato Diseases", prompt: "How to control tomato diseases", category: "pest", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: DollarSign, label: "Market Prices", prompt: "Current prices for maize and beans", category: "market", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: Cloud, label: "Weather Forecast", prompt: "Weather forecast for next week", category: "weather", color: "text-gray-700 bg-gray-50 hover:bg-gray-100 border-gray-200" },
         { icon: Droplet, label: "Irrigation", prompt: "How often should I water my maize?", category: "irrigation", color: "text-[#2E7D32] bg-[#2E7D32]/5 hover:bg-[#2E7D32]/10 border-[#2E7D32]" },
@@ -205,7 +205,7 @@ export function AIChatbot({ userId, onSendMessage }: AIChatbotProps) {
     switch (category) {
       case "weather": return "text-gray-700";
       case "market": return "text-gray-700";
-      case "pest": return "text-red-600";
+      case "pest": return "text-gray-700";
       case "fertilizer": return "text-[#2E7D32]";
       case "irrigation": return "text-[#2E7D32]";
       default: return "text-gray-600";

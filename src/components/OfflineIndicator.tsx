@@ -33,19 +33,19 @@ export function OfflineIndicator() {
   return (
     <Alert 
       variant={isOnline ? "default" : "destructive"} 
-      className={`mb-4 ${isOnline ? "bg-green-50 border-green-200" : ""}`}
+      className={`mb-4 ${isOnline ? "bg-[#2E7D32]/5 border-[#2E7D32]/20" : ""}`}
     >
       <div className="flex items-start gap-3">
         {isOnline ? (
-          <Wifi className="h-5 w-5 text-green-600 mt-0.5" />
+          <Wifi className="h-5 w-5 text-[#2E7D32] mt-0.5" />
         ) : (
           <WifiOff className="h-5 w-5 mt-0.5" />
         )}
         <AlertDescription>
           {isOnline ? (
             <div>
-              <p className="font-medium text-green-900">Back online!</p>
-              <p className="text-sm text-green-700">You can now access all features.</p>
+              <p className="font-medium text-[#2E7D32]">Back online!</p>
+              <p className="text-sm text-[#2E7D32]">You can now access all features.</p>
             </div>
           ) : (
             <div>

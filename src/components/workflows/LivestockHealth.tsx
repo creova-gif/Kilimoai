@@ -170,8 +170,8 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "low": return "bg-gray-100 text-gray-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "high": return "bg-orange-100 text-orange-800";
+      case "medium": return "bg-gray-100 text-gray-800";
+      case "high": return "bg-gray-100 text-gray-800";
       case "critical": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
@@ -179,9 +179,9 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
 
   const getHealthStatusColor = (status: string) => {
     switch (status) {
-      case "healthy": return "bg-green-100 text-green-800";
+      case "healthy": return "bg-[#2E7D32]/10 text-[#2E7D32]";
       case "recovering": return "bg-gray-100 text-gray-800";
-      case "sick": return "bg-orange-100 text-orange-800";
+      case "sick": return "bg-gray-100 text-gray-800";
       case "critical": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
@@ -231,10 +231,10 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Healthy</p>
-                <p className="text-2xl font-bold text-green-600">{healthyCount}</p>
+                <p className="text-2xl font-bold text-[#2E7D32]">{healthyCount}</p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <div className="p-3 bg-[#2E7D32]/10 rounded-lg">
+                <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
               </div>
             </div>
           </CardContent>
@@ -245,10 +245,10 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Need Attention</p>
-                <p className="text-2xl font-bold text-orange-600">{sickCount}</p>
+                <p className="text-2xl font-bold text-gray-600">{sickCount}</p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -428,11 +428,11 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                 {animal.healthAlerts.length > 0 && (
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-orange-600" />
+                      <AlertTriangle className="h-4 w-4 text-gray-600" />
                       Health Alerts ({animal.healthAlerts.length})
                     </h4>
                     {animal.healthAlerts.map(alert => (
-                      <div key={alert.id} className="border-l-4 border-orange-500 bg-orange-50 p-3 rounded">
+                      <div key={alert.id} className="border-l-4 border-gray-400 bg-gray-50 p-3 rounded">
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <p className="font-medium text-sm">{alert.symptom}</p>
@@ -515,7 +515,7 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                         </div>
                         <div>
                           <p className="text-xs text-gray-600">Prognosis</p>
-                          <p className="text-sm font-semibold text-green-600">
+                          <p className="text-sm font-semibold text-[#2E7D32]">
                             {animal.treatmentPlan.prognosis}
                           </p>
                         </div>
@@ -541,8 +541,8 @@ export function LivestockHealth({ userId, userRole }: LivestockHealthProps) {
                             </p>
                             <Badge className={
                               vac.status === "due" ? "bg-red-100 text-red-800" :
-                              vac.status === "upcoming" ? "bg-yellow-100 text-yellow-800" :
-                              "bg-green-100 text-green-800"
+                              vac.status === "upcoming" ? "bg-gray-100 text-gray-800" :
+                              "bg-[#2E7D32]/10 text-[#2E7D32]"
                             }>
                               {vac.status === "due" ? `Due: ${vac.nextDue}` : vac.status}
                             </Badge>

@@ -54,7 +54,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E7D32]/20 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading KILIMO...</p>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function App() {
               </div>
               <div>
                 <span className="text-gray-500">Verified:</span>
-                <span className="ml-2 font-medium text-green-600">✓ Yes</span>
+                <span className="ml-2 font-medium text-[#2E7D32]">✓ Yes</span>
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function App() {
               <p className="text-sm opacity-80">
                 Linked: {currentUser?.wallet?.linkedPhone || currentUser?.phone}
               </p>
-              <button className="mt-4 w-full bg-white text-green-600 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100">
+              <button className="mt-4 w-full bg-white text-[#2E7D32] font-semibold py-2 px-4 rounded-lg hover:bg-gray-100">
                 Deposit Money
               </button>
             </div>
@@ -148,7 +148,7 @@ export default function App() {
                   <span className="text-gray-500">Products:</span>
                   <div className="mt-1 flex flex-wrap gap-2">
                     {currentUser.personalization.products?.map((product) => (
-                      <span key={product} className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+                      <span key={product} className="px-2 py-1 bg-[#2E7D32]/10 text-[#2E7D32] rounded text-xs">
                         {product}
                       </span>
                     ))}
@@ -175,19 +175,19 @@ export default function App() {
         <div className="mt-8 bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-colors">
               <span className="text-2xl mb-2 block">🌾</span>
               <span className="text-sm font-medium">My Crops</span>
             </button>
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-colors">
               <span className="text-2xl mb-2 block">📊</span>
               <span className="text-sm font-medium">Market Prices</span>
             </button>
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-colors">
               <span className="text-2xl mb-2 block">🤖</span>
               <span className="text-sm font-medium">Ask Sankofa</span>
             </button>
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-colors">
               <span className="text-2xl mb-2 block">📱</span>
               <span className="text-sm font-medium">Send Money</span>
             </button>

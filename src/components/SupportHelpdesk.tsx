@@ -62,11 +62,11 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "open":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">Open</Badge>;
+        return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">Open</Badge>;
       case "in-progress":
         return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">In Progress</Badge>;
       case "resolved":
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">Resolved</Badge>;
+        return <Badge variant="outline" className="bg-[#2E7D32]/5 text-[#2E7D32] border-[#2E7D32]/20">Resolved</Badge>;
       default:
         return null;
     }
@@ -76,46 +76,46 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
     <div className="space-y-6">
       {/* Quick Support Options */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-green-200 hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="border-[#2E7D32]/20 hover:shadow-lg transition-shadow cursor-pointer">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                <MessageCircle className="h-6 w-6 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2E7D32]/10">
+                <MessageCircle className="h-6 w-6 text-[#2E7D32]" />
               </div>
               <div>
                 <h3 className="font-medium">WhatsApp Support</h3>
                 <p className="text-sm text-gray-500">Chat with us 24/7</p>
-                <p className="text-sm text-green-600 mt-1">+255 XXX XXX XXX</p>
+                <p className="text-sm text-[#2E7D32] mt-1">+255 XXX XXX XXX</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="border-[#2E7D32]/20 hover:shadow-lg transition-shadow cursor-pointer">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                <Phone className="h-6 w-6 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2E7D32]/10">
+                <Phone className="h-6 w-6 text-[#2E7D32]" />
               </div>
               <div>
                 <h3 className="font-medium">SMS Helpline</h3>
                 <p className="text-sm text-gray-500">Send HELP to</p>
-                <p className="text-sm text-green-600 mt-1">15050</p>
+                <p className="text-sm text-[#2E7D32] mt-1">15050</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="border-[#2E7D32]/20 hover:shadow-lg transition-shadow cursor-pointer">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                <Clock className="h-6 w-6 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2E7D32]/10">
+                <Clock className="h-6 w-6 text-[#2E7D32]" />
               </div>
               <div>
                 <h3 className="font-medium">Request Callback</h3>
                 <p className="text-sm text-gray-500">We'll call you back</p>
-                <p className="text-sm text-green-600 mt-1">Within 2 hours</p>
+                <p className="text-sm text-[#2E7D32] mt-1">Within 2 hours</p>
               </div>
             </div>
           </CardContent>
@@ -126,7 +126,7 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
       {!showNewTicket && (
         <Button 
           onClick={() => setShowNewTicket(true)}
-          className="w-full bg-green-600 hover:bg-green-700"
+          className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]"
         >
           <Send className="mr-2 h-4 w-4" />
           Submit New Support Ticket
@@ -135,7 +135,7 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
 
       {/* New Ticket Form */}
       {showNewTicket && (
-        <Card className="border-green-200">
+        <Card className="border-[#2E7D32]/20">
           <CardHeader>
             <CardTitle>New Support Ticket</CardTitle>
             <CardDescription>Describe your issue and we'll help you resolve it</CardDescription>
@@ -148,7 +148,7 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
                 value={newTicket.subject}
                 onChange={(e) => setNewTicket({ ...newTicket, subject: e.target.value })}
                 placeholder="Brief description of your issue"
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#2E7D32]/30 focus:border-transparent"
               />
             </div>
             <div>
@@ -158,13 +158,13 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
                 onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
                 placeholder="Provide more details about your issue..."
                 rows={4}
-                className="focus:ring-2 focus:ring-green-500"
+                className="focus:ring-2 focus:ring-[#2E7D32]/30"
               />
             </div>
             <div className="flex gap-2">
               <Button 
                 onClick={handleSubmitTicket}
-                className="flex-1 bg-green-600 hover:bg-green-700"
+                className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]"
               >
                 Submit Ticket
               </Button>
@@ -201,17 +201,17 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
                 </div>
                 <div className="ml-4">
                   {ticket.status === "resolved" ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                   ) : (
-                    <AlertCircle className="h-5 w-5 text-yellow-600" />
+                    <AlertCircle className="h-5 w-5 text-gray-600" />
                   )}
                 </div>
               </div>
               
               {ticket.response && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
-                  <p className="text-sm font-medium text-green-900 mb-1">Response:</p>
-                  <p className="text-sm text-green-800">{ticket.response}</p>
+                <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg p-3 mt-3">
+                  <p className="text-sm font-medium text-[#2E7D32] mb-1">Response:</p>
+                  <p className="text-sm text-[#2E7D32]">{ticket.response}</p>
                 </div>
               )}
             </div>
@@ -220,26 +220,26 @@ export function SupportHelpdesk({ userType }: SupportHelpdeskProps) {
       </Card>
 
       {/* FAQ Quick Links */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardHeader>
           <CardTitle>Common Questions</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
             <li className="flex items-center gap-2 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
               <span>How do I receive marketplace payments?</span>
             </li>
             <li className="flex items-center gap-2 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
               <span>How to upload crop photos for diagnosis?</span>
             </li>
             <li className="flex items-center gap-2 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
               <span>How to join a farmer discussion group?</span>
             </li>
             <li className="flex items-center gap-2 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
               <span>How to enable weather SMS alerts?</span>
             </li>
           </ul>

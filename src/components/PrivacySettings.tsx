@@ -215,32 +215,32 @@ export function PrivacySettings({ userId, userEmail, userPhone, onClose, languag
 
           {/* Data Collection */}
           <div className="space-y-4">
-            <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200">
-              <Database className="w-5 h-5 text-blue-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <Database className="w-5 h-5 text-gray-600 mt-0.5" />
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">{content.dataCollection}</h3>
                 <p className="text-sm text-gray-600">{content.dataCollectionDesc}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-green-50 rounded-xl border border-green-200">
-              <Eye className="w-5 h-5 text-green-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-[#2E7D32]/5 rounded-xl border border-[#2E7D32]/20">
+              <Eye className="w-5 h-5 text-[#2E7D32] mt-0.5" />
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">{content.dataUsage}</h3>
                 <p className="text-sm text-gray-600">{content.dataUsageDesc}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-xl border border-purple-200">
-              <Users className="w-5 h-5 text-purple-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <Users className="w-5 h-5 text-gray-600 mt-0.5" />
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">{content.dataSharing}</h3>
                 <p className="text-sm text-gray-600">{content.dataSharingDesc}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-              <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <Shield className="w-5 h-5 text-gray-600 mt-0.5" />
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">{content.yourRights}</h3>
                 <p className="text-sm text-gray-600">{content.yourRightsDesc}</p>

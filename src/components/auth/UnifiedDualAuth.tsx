@@ -20,7 +20,8 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2, Chrome, Apple } from "lucide-react";
+import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { GoogleLogo, AppleLogo } from "../icons/BrandLogos";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -591,9 +592,9 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
 
                 {/* DEV MODE: Show OTP */}
                 {debugOTP && (
-                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-xs font-semibold text-yellow-800 mb-1">🔓 DEV MODE - OTP:</p>
-                    <p className="text-2xl font-bold text-yellow-900 font-mono">{debugOTP}</p>
+                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-xs font-semibold text-gray-800 mb-1">🔓 DEV MODE - OTP:</p>
+                    <p className="text-2xl font-bold text-gray-900 font-mono">{debugOTP}</p>
                   </div>
                 )}
               </div>
@@ -730,7 +731,7 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                         disabled={loading}
                         className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
                       >
-                        <Chrome className="h-5 w-5 text-red-500" />
+                        <GoogleLogo width={20} height={20} />
                         <span className="text-sm font-medium">Google</span>
                       </Button>
                       <Button
@@ -739,7 +740,7 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                         disabled={loading}
                         className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
                       >
-                        <Apple className="h-5 w-5 text-black" />
+                        <AppleLogo width={20} height={20} />
                         <span className="text-sm font-medium">Apple</span>
                       </Button>
                     </div>
@@ -885,7 +886,7 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                         disabled={loading}
                         className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
                       >
-                        <Chrome className="h-5 w-5 text-red-500" />
+                        <GoogleLogo width={20} height={20} />
                         <span className="text-sm font-medium">Google</span>
                       </Button>
                       <Button
@@ -894,7 +895,7 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                         disabled={loading}
                         className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
                       >
-                        <Apple className="h-5 w-5 text-black" />
+                        <AppleLogo width={20} height={20} />
                         <span className="text-sm font-medium">Apple</span>
                       </Button>
                     </div>

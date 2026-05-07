@@ -230,9 +230,9 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
 
   const getSavingsGoalIcon = (category: "inputs" | "education" | "livestock") => {
     switch (category) {
-      case "inputs": return <Sprout className="h-7 w-7 text-green-600" />;
-      case "education": return <School className="h-7 w-7 text-blue-600" />;
-      case "livestock": return <Beef className="h-7 w-7 text-amber-600" />;
+      case "inputs": return <Sprout className="h-7 w-7 text-[#2E7D32]" />;
+      case "education": return <School className="h-7 w-7 text-gray-600" />;
+      case "livestock": return <Beef className="h-7 w-7 text-gray-600" />;
       default: return <Target className="h-7 w-7 text-gray-600" />;
     }
   };
@@ -242,9 +242,9 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/10 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100/10 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white px-4 lg:px-6 py-6">
+      <div className="bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 text-white px-4 lg:px-6 py-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -252,7 +252,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                 <Wallet className="h-7 w-7" />
                 {language === "en" ? "My Wallet" : "Mkoba Wangu"}
               </h1>
-              <p className="text-green-100 text-sm mt-1">
+              <p className="text-[#2E7D32] text-sm mt-1">
                 {language === "en" ? "Your financial command center" : "Kituo chako cha kifedha"}
               </p>
             </div>
@@ -269,7 +269,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
           {/* Total Balance Card */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-green-100 text-sm">
+              <span className="text-[#2E7D32] text-sm">
                 {language === "en" ? "Total Balance" : "Jumla ya Salio"}
               </span>
               <button 
@@ -287,8 +287,8 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Unlock className="h-4 w-4 text-green-300" />
-                  <span className="text-xs text-green-100">
+                  <Unlock className="h-4 w-4 text-[#2E7D32]" />
+                  <span className="text-xs text-[#2E7D32]">
                     {language === "en" ? "Available" : "Inapatikana"}
                   </span>
                 </div>
@@ -299,8 +299,8 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
 
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Lock className="h-4 w-4 text-amber-300" />
-                  <span className="text-xs text-green-100">
+                  <Lock className="h-4 w-4 text-gray-400" />
+                  <span className="text-xs text-[#2E7D32]">
                     {language === "en" ? "In Escrow" : "Katika Escrow"}
                   </span>
                 </div>
@@ -311,8 +311,8 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
 
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Clock className="h-4 w-4 text-orange-300" />
-                  <span className="text-xs text-green-100">
+                  <Clock className="h-4 w-4 text-gray-400" />
+                  <span className="text-xs text-[#2E7D32]">
                     {language === "en" ? "Pending" : "Inasubiri"}
                   </span>
                 </div>
@@ -323,8 +323,8 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
 
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <PiggyBank className="h-4 w-4 text-green-300" />
-                  <span className="text-xs text-green-100">
+                  <PiggyBank className="h-4 w-4 text-[#2E7D32]" />
+                  <span className="text-xs text-[#2E7D32]">
                     {language === "en" ? "Savings" : "Akiba"}
                   </span>
                 </div>
@@ -338,7 +338,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
           {/* Quick Actions */}
           <div className="grid grid-cols-4 gap-3 mt-4">
             <button className="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-3 flex flex-col items-center gap-2 transition-colors border border-white/10">
-              <div className="h-10 w-10 bg-green-500 rounded-full flex items-center justify-center">
+              <div className="h-10 w-10 bg-[#2E7D32] rounded-full flex items-center justify-center">
                 <ArrowDownRight className="h-5 w-5 text-white" />
               </div>
               <span className="text-xs font-medium">{language === "en" ? "Add Money" : "Ongeza Pesa"}</span>
@@ -359,7 +359,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
             </button>
 
             <button className="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl p-3 flex flex-col items-center gap-2 transition-colors border border-white/10">
-              <div className="h-10 w-10 bg-amber-500 rounded-full flex items-center justify-center">
+              <div className="h-10 w-10 bg-gray-600 rounded-full flex items-center justify-center">
                 <QrCode className="h-5 w-5 text-white" />
               </div>
               <span className="text-xs font-medium">{language === "en" ? "Scan" : "Changanua"}</span>
@@ -377,7 +377,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
               onClick={() => setActiveTab("overview")}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === "overview"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -387,7 +387,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
               onClick={() => setActiveTab("transactions")}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === "transactions"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -397,7 +397,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
               onClick={() => setActiveTab("savings")}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === "savings"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -407,7 +407,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
               onClick={() => setActiveTab("security")}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === "security"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -440,13 +440,13 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 bg-green-500 rounded-full"></div>
+                      <div className="h-3 w-3 bg-[#2E7D32] rounded-full"></div>
                       <span className="text-gray-700">{language === "en" ? "Farm Inputs" : "Pembejeo za Shamba"}</span>
                     </div>
                     <span className="font-semibold text-gray-900">TZS 785,000</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: "65%" }}></div>
+                    <div className="h-full bg-[#2E7D32] rounded-full" style={{ width: "65%" }}></div>
                   </div>
                 </div>
 
@@ -479,7 +479,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
 
               <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-start gap-3">
-                  <Lightbulb className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <Lightbulb className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                   <div>
                     <div className="font-semibold text-gray-900 mb-1">
                       {language === "en" ? "Smart Insight" : "Ufahamu Mwerevu"}
@@ -504,7 +504,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                   <div key={txn.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                     <div className="flex items-center gap-3">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                        txn.type === "credit" ? "bg-green-100" : "bg-red-100"
+                        txn.type === "credit" ? "bg-[#2E7D32]/10" : "bg-red-100"
                       }`}>
                         {getTransactionIcon(txn.category)}
                       </div>
@@ -516,11 +516,11 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className={`font-bold ${txn.type === "credit" ? "text-green-600" : "text-red-600"}`}>
+                      <div className={`font-bold ${txn.type === "credit" ? "text-[#2E7D32]" : "text-red-600"}`}>
                         {txn.type === "credit" ? "+" : "-"}{formatCurrency(txn.amount)}
                       </div>
                       {txn.status === "pending" && (
-                        <span className="text-xs text-amber-600">{language === "en" ? "Pending" : "Inasubiri"}</span>
+                        <span className="text-xs text-gray-600">{language === "en" ? "Pending" : "Inasubiri"}</span>
                       )}
                     </div>
                   </div>
@@ -545,11 +545,11 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
 
             <div className="space-y-2">
               {transactions.map((txn) => (
-                <div key={txn.id} className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors cursor-pointer">
+                <div key={txn.id} className="border border-gray-200 rounded-lg p-4 hover:border-[#2E7D32]/20 transition-colors cursor-pointer">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${
-                        txn.type === "credit" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                        txn.type === "credit" ? "bg-[#2E7D32]/10 text-[#2E7D32]" : "bg-red-100 text-red-600"
                       }`}>
                         {getTransactionIcon(txn.category)}
                       </div>
@@ -568,19 +568,19 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className={`text-xl font-bold ${txn.type === "credit" ? "text-green-600" : "text-red-600"}`}>
+                      <div className={`text-xl font-bold ${txn.type === "credit" ? "text-[#2E7D32]" : "text-red-600"}`}>
                         {txn.type === "credit" ? "+" : "-"}{formatCurrency(txn.amount)}
                       </div>
                       <div className="text-sm text-gray-500 mt-1">
                         {language === "en" ? "Balance" : "Salio"}: {formatCurrency(txn.balance)}
                       </div>
                       {txn.status === "pending" ? (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded mt-2">
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded mt-2">
                           <Clock className="h-3 w-3" />
                           {language === "en" ? "Pending" : "Inasubiri"}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-green-100 text-green-700 rounded mt-2">
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-[#2E7D32]/10 text-[#2E7D32] rounded mt-2">
                           <CheckCircle2 className="h-3 w-3" />
                           {language === "en" ? "Completed" : "Imekamilika"}
                         </span>
@@ -596,7 +596,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
         {/* SAVINGS TAB */}
         {activeTab === "savings" && (
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 text-white rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">
                   {language === "en" ? "Total Savings" : "Jumla ya Akiba"}
@@ -604,7 +604,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                 <PiggyBank className="h-8 w-8" />
               </div>
               <div className="text-4xl font-bold mb-2">{formatCurrency(balance.savings)}</div>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" ? "Keep growing your future!" : "Endelea kukuza mustakabali wako!"}
               </p>
             </div>
@@ -650,7 +650,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                   </div>
 
                   <div className="flex gap-3">
-                    <button className="flex-1 px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
+                    <button className="flex-1 px-4 py-2 bg-[#2E7D32] text-white font-medium rounded-lg hover:bg-[#2E7D32] transition-colors">
                       {language === "en" ? "Add Funds" : "Ongeza Pesa"}
                     </button>
                     <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
@@ -661,7 +661,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
               );
             })}
 
-            <button className="w-full px-6 py-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-green-400 hover:bg-green-50 transition-colors flex items-center justify-center gap-2 text-gray-600 hover:text-green-600">
+            <button className="w-full px-6 py-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-colors flex items-center justify-center gap-2 text-gray-600 hover:text-[#2E7D32]">
               <Plus className="h-5 w-5" />
               <span className="font-medium">{language === "en" ? "Create New Savings Goal" : "Tengeneza Lengo Jipya la Akiba"}</span>
             </button>
@@ -679,8 +679,8 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <Fingerprint className="h-5 w-5 text-green-600" />
+                    <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-full flex items-center justify-center">
+                      <Fingerprint className="h-5 w-5 text-[#2E7D32]" />
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">
@@ -691,7 +691,7 @@ export function FinancialCommandCenter({ userId, language }: FinancialCommandCen
                       </div>
                     </div>
                   </div>
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+                  <CheckCircle className="h-6 w-6 text-[#2E7D32]" />
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">

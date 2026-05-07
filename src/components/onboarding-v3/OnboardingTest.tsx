@@ -114,7 +114,7 @@ export function OnboardingTest() {
                   result.status === 'pass'
                     ? 'bg-[#2E7D32]/5 border border-[#2E7D32]/30'
                     : result.status === 'warn'
-                    ? 'bg-yellow-50 border border-yellow-200'
+                    ? 'bg-gray-50 border border-gray-200'
                     : 'bg-red-50 border border-red-200'
                 }`}
               >

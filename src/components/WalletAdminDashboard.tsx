@@ -347,11 +347,11 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">{text.totalBalance}</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-[#2E7D32]">
                   {platformStats ? formatCurrency(platformStats.totalBalance) : '...'}
                 </p>
               </div>
-              <Wallet className="w-10 h-10 text-green-500" />
+              <Wallet className="w-10 h-10 text-[#2E7D32]" />
             </div>
             <p className="text-xs text-gray-500 mt-2">
               {platformStats?.totalWallets || 0} {text.activeWallets}
@@ -362,11 +362,11 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">{text.escrowHoldings}</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-[#2E7D32]">
                   {platformStats ? formatCurrency(platformStats.totalEscrow) : '...'}
                 </p>
               </div>
-              <Shield className="w-10 h-10 text-green-600" />
+              <Shield className="w-10 h-10 text-[#2E7D32]" />
             </div>
             <p className="text-xs text-gray-500 mt-2">
               {escrowReport?.orderCount || 0} {text.ordersInEscrow}
@@ -377,11 +377,11 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">{text.totalRevenue}</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-[#2E7D32]">
                   {platformStats ? formatCurrency(platformStats.totalRevenue) : '...'}
                 </p>
               </div>
-              <TrendingUp className="w-10 h-10 text-green-600" />
+              <TrendingUp className="w-10 h-10 text-[#2E7D32]" />
             </div>
             <p className="text-xs text-gray-500 mt-2">
               {platformStats ? formatCurrency(platformStats.totalFees) : '0'} {text.inFees}
@@ -392,11 +392,11 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">{text.volume24h}</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-[#2E7D32]">
                   {platformStats ? formatCurrency(platformStats.transactionVolume24h) : '...'}
                 </p>
               </div>
-              <DollarSign className="w-10 h-10 text-green-600" />
+              <DollarSign className="w-10 h-10 text-[#2E7D32]" />
             </div>
             <p className="text-xs text-gray-500 mt-2">
               {platformStats?.activeUsersToday || 0} {text.activeUsers}
@@ -441,7 +441,7 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                     </div>
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <ArrowUpRight className="w-4 h-4 text-green-500" />
+                        <ArrowUpRight className="w-4 h-4 text-[#2E7D32]" />
                         <span>{text.deposits}: {formatCurrency(trend.deposits)}</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -464,7 +464,7 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">{text.totalDeposits}</p>
-                    <p className="text-xl font-bold text-green-600">
+                    <p className="text-xl font-bold text-[#2E7D32]">
                       {formatCurrency(financialReport.totalDeposits)}
                     </p>
                   </div>
@@ -500,7 +500,7 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     <div>
                       <p className="text-sm text-gray-600">{text.totalHeld}</p>
-                      <p className="text-2xl font-bold text-green-600">
+                      <p className="text-2xl font-bold text-[#2E7D32]">
                         {formatCurrency(escrowReport.totalHeld)}
                       </p>
                     </div>
@@ -547,8 +547,8 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                     className="flex items-center justify-between p-3 bg-gray-50 rounded"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                        <span className="text-sm font-bold text-green-700">{index + 1}</span>
+                      <div className="w-8 h-8 rounded-full bg-[#2E7D32]/10 flex items-center justify-center">
+                        <span className="text-sm font-bold text-[#2E7D32]">{index + 1}</span>
                       </div>
                       <div>
                         <p className="font-medium text-sm">{user.userId.substring(0, 12)}...</p>
@@ -557,7 +557,7 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                         </p>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-700">
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">
                       {formatCurrency(user.balance)}
                     </Badge>
                   </div>
@@ -585,16 +585,16 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                 <div className="space-y-4">
                   <div
                     className={`p-4 rounded ${
-                      integrity.valid ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                      integrity.valid ? 'bg-[#2E7D32]/5 border border-[#2E7D32]/20' : 'bg-red-50 border border-red-200'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       {integrity.valid ? (
-                        <CheckCircle2 className="w-5 h-5 text-green-600" />
+                        <CheckCircle2 className="w-5 h-5 text-[#2E7D32]" />
                       ) : (
                         <AlertTriangle className="w-5 h-5 text-red-600" />
                       )}
-                      <p className={`font-semibold ${integrity.valid ? 'text-green-700' : 'text-red-700'}`}>
+                      <p className={`font-semibold ${integrity.valid ? 'text-[#2E7D32]' : 'text-red-700'}`}>
                         {integrity.valid ? text.systemIntegrityPassed : text.systemIntegrityIssues}
                       </p>
                     </div>
@@ -611,7 +611,7 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">{text.balanced}</p>
-                      <p className="text-xl font-bold text-green-600">
+                      <p className="text-xl font-bold text-[#2E7D32]">
                         {integrity.stats.balancedTransactions}
                       </p>
                     </div>
@@ -636,9 +636,9 @@ export default function WalletAdminDashboard({ language, user }: WalletAdminDash
 
                   {integrity.warnings.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className="font-medium text-orange-700">{text.warnings}</h4>
+                      <h4 className="font-medium text-gray-700">{text.warnings}</h4>
                       {integrity.warnings.map((warning, index) => (
-                        <div key={index} className="p-2 bg-orange-50 rounded text-sm text-orange-700">
+                        <div key={index} className="p-2 bg-gray-50 rounded text-sm text-gray-700">
                           {warning}
                         </div>
                       ))}

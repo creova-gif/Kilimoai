@@ -169,7 +169,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "critical": return "bg-red-50 border-red-200 text-red-900";
-      case "warning": return "bg-amber-50 border-amber-200 text-amber-900";
+      case "warning": return "bg-gray-50 border-gray-200 text-gray-900";
       case "info": return "bg-gray-50 border-gray-200 text-gray-900";
       default: return "bg-gray-50 border-gray-200 text-gray-900";
     }
@@ -178,7 +178,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case "critical": return <AlertCircle className="h-5 w-5 text-red-600" />;
-      case "warning": return <AlertTriangle className="h-5 w-5 text-amber-600" />;
+      case "warning": return <AlertTriangle className="h-5 w-5 text-gray-600" />;
       case "info": return <Info className="h-5 w-5 text-gray-600" />;
       default: return <Bell className="h-5 w-5 text-gray-600" />;
     }
@@ -209,8 +209,8 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
             <div className="flex items-center gap-3">
               <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ${
                 isOffline 
-                  ? "bg-amber-50 text-amber-700 border border-amber-200" 
-                  : "bg-green-50 text-[#2E7D32] border border-[#2E7D32]/20"
+                  ? "bg-gray-50 text-gray-700 border border-gray-200" 
+                  : "bg-[#2E7D32]/5 text-[#2E7D32] border border-[#2E7D32]/20"
               }`}>
                 {isOffline ? <WifiOff className="h-3.5 w-3.5" /> : <Wifi className="h-3.5 w-3.5" />}
                 <span>{isOffline ? (language === "en" ? "Offline Mode" : "Hali ya Nje") : (language === "en" ? "Live" : "Moja kwa Moja")}</span>
@@ -297,7 +297,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
               </div>
 
               {/* Health Risk Index */}
-              <div className="bg-green-50 rounded-lg p-4 border border-[#2E7D32]/20">
+              <div className="bg-[#2E7D32]/5 rounded-lg p-4 border border-[#2E7D32]/20">
                 <div className="flex items-center justify-between mb-2">
                   <Heart className="h-8 w-8 text-[#2E7D32]" />
                   <div className="text-right">
@@ -312,7 +312,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
                     <span className="text-[#2E7D32]">{language === "en" ? "Excellent" : "Bora"}</span>
                     <span className="text-[#2E7D32] font-medium">{herdStats.healthIndex}/100</span>
                   </div>
-                  <div className="w-full bg-green-200 rounded-full h-2">
+                  <div className="w-full bg-[#2E7D32]/20 rounded-full h-2">
                     <div 
                       className="bg-[#2E7D32] h-2 rounded-full transition-all duration-500"
                       style={{ width: `${herdStats.healthIndex}%` }}
@@ -341,7 +341,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
               {/* Financial Status */}
               <div className={`bg-gradient-to-br rounded-lg p-4 border ${
                 herdStats.profitTrend === "up" 
-                  ? "bg-green-50 border-[#2E7D32]/20" 
+                  ? "bg-[#2E7D32]/5 border-[#2E7D32]/20" 
                   : "from-red-50 to-red-100/50 border-red-200"
               }`}>
                 <div className="flex items-center justify-between mb-2">
@@ -371,12 +371,12 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
 
         {/* 2. ALERTS & RISK CENTER */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-1"></div>
+          <div className="bg-gradient-to-r from-gray-50 via-gray-50 to-red-500 h-1"></div>
           
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-600" />
+                <AlertTriangle className="h-5 w-5 text-gray-600" />
                 {language === "en" ? "Alerts & Risk Center" : "Kituo cha Tahadhari na Hatari"}
               </h2>
               <button className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1">
@@ -541,7 +541,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
                           rec.impact === "high" 
                             ? "bg-red-100 text-red-700" 
                             : rec.impact === "medium"
-                            ? "bg-amber-100 text-amber-700"
+                            ? "bg-gray-100 text-gray-700"
                             : "bg-gray-100 text-gray-700"
                         }`}>
                           {language === "en" ? `${rec.impact} Impact` : `Athari ${rec.impact === "high" ? "Kubwa" : rec.impact === "medium" ? "Ya Kati" : "Ndogo"}`}
@@ -581,7 +581,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
             </h3>
             
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-green-50 border border-[#2E7D32]/20 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg">
                 <div>
                   <div className="font-medium text-gray-900">{language === "en" ? "Cattle (Live)" : "Ng'ombe (Hai)"}</div>
                   <div className="text-sm text-gray-600 mt-0.5">TZS 850,000/head</div>
@@ -630,7 +630,7 @@ export function AdvancedLivestockManagement({ userId, language }: AdvancedLivest
               </button>
               
               <button className="w-full flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                <div className="p-2 bg-green-50 rounded-lg">
+                <div className="p-2 bg-[#2E7D32]/5 rounded-lg">
                   <MessageSquare className="h-5 w-5 text-[#2E7D32]" />
                 </div>
                 <div className="flex-1">
@@ -734,14 +734,14 @@ function ModuleCard({ icon, title, description, stats, onClick, isActive, langua
   return (
     <div 
       className={`bg-white rounded-xl border shadow-sm overflow-hidden transition-all cursor-pointer hover:shadow-md ${
-        isActive ? "border-[#2E7D32] ring-2 ring-green-200" : "border-gray-200"
+        isActive ? "border-[#2E7D32] ring-2 ring-[#2E7D32]/30" : "border-gray-200"
       }`}
       onClick={onClick}
     >
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${isActive ? "bg-green-50" : "bg-gray-100"}`}>
+            <div className={`p-2 rounded-lg ${isActive ? "bg-[#2E7D32]/5" : "bg-gray-100"}`}>
               <div className={isActive ? "text-[#2E7D32]" : "text-gray-600"}>{icon}</div>
             </div>
             <div>
@@ -756,8 +756,8 @@ function ModuleCard({ icon, title, description, stats, onClick, isActive, langua
           {stats.map((stat, idx) => (
             <div key={idx} className="text-center">
               <div className={`text-lg font-bold ${
-                stat.trend === "success" ? "text-green-600" :
-                stat.trend === "warning" ? "text-amber-600" :
+                stat.trend === "success" ? "text-[#2E7D32]" :
+                stat.trend === "warning" ? "text-gray-600" :
                 "text-gray-700"
               }`}>
                 {stat.value}
@@ -793,13 +793,13 @@ function TaskItem({ title, dueDate, priority, language }: TaskItemProps) {
   
   return (
     <div className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-      <input type="checkbox" className="h-4 w-4 text-green-600 rounded" />
+      <input type="checkbox" className="h-4 w-4 text-[#2E7D32] rounded" />
       <div className="flex-1 min-w-0">
         <div className="font-medium text-gray-900 text-sm">{title}</div>
         <div className="flex items-center gap-2 mt-1">
           <div className={`text-xs px-2 py-0.5 rounded ${
             priority === "high" ? "bg-red-100 text-red-700" :
-            priority === "medium" ? "bg-amber-100 text-amber-700" :
+            priority === "medium" ? "bg-gray-100 text-gray-700" :
             "bg-gray-100 text-gray-700"
           }`}>
             {priority === "high" ? (language === "en" ? "High" : "Juu") :

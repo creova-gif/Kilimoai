@@ -144,8 +144,8 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "high": return "bg-red-100 text-red-700 border-red-300";
-      case "medium": return "bg-orange-100 text-orange-700 border-orange-300";
-      case "low": return "bg-green-100 text-green-700 border-green-300";
+      case "medium": return "bg-gray-100 text-gray-700 border-gray-300";
+      case "low": return "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20";
       default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
   };
@@ -154,7 +154,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
     <div className="space-y-4 md:space-y-6">
       <div>
         <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-          <Activity className="h-6 w-6 md:h-7 md:w-7 text-green-600" />
+          <Activity className="h-6 w-6 md:h-7 md:w-7 text-[#2E7D32]" />
           Livestock Health Monitor
         </h2>
         <p className="text-sm md:text-base text-gray-600 mt-1">
@@ -164,12 +164,12 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
 
       {/* Upload Section */}
       {!image && (
-        <Card className="border-2 border-dashed border-gray-300 hover:border-green-500 transition-colors">
+        <Card className="border-2 border-dashed border-gray-300 hover:border-[#2E7D32]/20 transition-colors">
           <CardContent className="p-6 md:p-8">
             <div className="text-center space-y-4">
               <div className="flex justify-center">
-                <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-green-100 flex items-center justify-center">
-                  <Camera className="h-10 w-10 md:h-12 md:w-12 text-green-600" />
+                <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-[#2E7D32]/10 flex items-center justify-center">
+                  <Camera className="h-10 w-10 md:h-12 md:w-12 text-[#2E7D32]" />
                 </div>
               </div>
               <div>
@@ -243,7 +243,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
           {diagnosis && !analyzing && (
             <>
               {/* Animal Info */}
-              <Card className="bg-gradient-to-br from-gray-50 to-green-50 border-2 border-gray-200">
+              <Card className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg md:text-xl">Animal Identification</CardTitle>
                 </CardHeader>
@@ -300,8 +300,8 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
                         </Badge>
                         <Badge className={
                           condition.severity === "high" ? "bg-red-600" :
-                          condition.severity === "medium" ? "bg-orange-500" :
-                          "bg-green-500"
+                          condition.severity === "medium" ? "bg-gray-600" :
+                          "bg-[#2E7D32]"
                         }>
                           {condition.severity.toUpperCase()}
                         </Badge>
@@ -319,7 +319,7 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
                       <ul className="space-y-1">
                         {condition.symptoms.map((symptom: string, sIdx: number) => (
                           <li key={sIdx} className="flex items-start gap-2 text-sm">
-                            <span className="text-orange-600 mt-1">•</span>
+                            <span className="text-gray-600 mt-1">•</span>
                             <span>{symptom}</span>
                           </li>
                         ))}
@@ -407,26 +407,26 @@ export function LivestockHealthMonitor({ userId, apiBase, authToken }: Livestock
 
       {/* Info Card (when no image) */}
       {!image && (
-        <Card className="bg-green-50 border-green-200">
+        <Card className="bg-[#2E7D32]/5 border-[#2E7D32]/20">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg md:text-xl">How It Works</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">1.</span>
+                <span className="text-[#2E7D32] font-bold">1.</span>
                 <span>Take a clear, well-lit photo of your animal</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">2.</span>
+                <span className="text-[#2E7D32] font-bold">2.</span>
                 <span>AI analyzes body condition, visible symptoms, and health indicators</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">3.</span>
+                <span className="text-[#2E7D32] font-bold">3.</span>
                 <span>Receive instant diagnosis with treatment recommendations</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">4.</span>
+                <span className="text-[#2E7D32] font-bold">4.</span>
                 <span>Get contacts for nearby veterinarians if needed</span>
               </li>
             </ul>

@@ -107,9 +107,9 @@ export function UnifiedLearningSupport({
   const inProgressCount = courses.filter(c => !c.completed).length;
 
   const levelColors = {
-    beginner: { bg: "bg-emerald-100", text: "text-emerald-700" },
-    intermediate: { bg: "bg-blue-100", text: "text-blue-700" },
-    advanced: { bg: "bg-purple-100", text: "text-purple-700" },
+    beginner: { bg: "bg-[#2E7D32]/10", text: "text-[#2E7D32]" },
+    intermediate: { bg: "bg-gray-100", text: "text-gray-700" },
+    advanced: { bg: "bg-gray-100", text: "text-gray-700" },
   };
 
   return (
@@ -186,11 +186,11 @@ export function UnifiedLearningSupport({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className={`border-2 ${course.completed ? "border-emerald-200 bg-emerald-50/30" : "border-gray-200"} hover:shadow-xl transition-all`}>
+                <Card className={`border-2 ${course.completed ? "border-[#2E7D32]/20 bg-[#2E7D32]/5/30" : "border-gray-200"} hover:shadow-xl transition-all`}>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className={`h-12 w-12 rounded-xl flex items-center justify-center shadow-lg ${
-                        course.type === "video" ? "bg-red-500" : "bg-blue-500"
+                        course.type === "video" ? "bg-red-500" : "bg-gray-600"
                       }`}>
                         {course.type === "video" ? (
                           <PlayCircle className="h-6 w-6 text-white" />
@@ -203,7 +203,7 @@ export function UnifiedLearningSupport({
                           {text.level[course.level]}
                         </Badge>
                         {course.completed && (
-                          <Badge className="bg-emerald-100 text-emerald-700">
+                          <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">
                             ✓ {text.completed}
                           </Badge>
                         )}
@@ -280,17 +280,17 @@ export function UnifiedLearningSupport({
         </Card>
 
         {/* Info Card */}
-        <Card className="border-2 border-blue-100 bg-blue-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-blue-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "en" ? "Learn at Your Own Pace" : "Jifunze kwa Kasi Yako"}
                 </h4>
-                <p className="text-sm text-blue-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "en"
                     ? "Access 50+ video tutorials and articles in English and Swahili. Learn modern farming techniques from expert agronomists and successful farmers."
                     : "Pata video 50+ za mafunzo na makala kwa Kiingereza na Kiswahili. Jifunze mbinu za kisasa za kilimo kutoka kwa wataalam wa kilimo na wakulima mafanikio."}

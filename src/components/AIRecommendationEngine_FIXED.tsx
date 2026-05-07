@@ -235,13 +235,13 @@ export function AIRecommendationEngine({
     <div className="space-y-4 md:space-y-6">
       {/* Demo Data Warning Banner */}
       {usingMockData && (
-        <Card className="border-2 border-orange-200 bg-orange-50">
+        <Card className="border-2 border-gray-200 bg-gray-50">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-bold text-orange-900 mb-1">Demo Data Mode</p>
-                <p className="text-sm text-orange-800">
+                <p className="text-sm font-bold text-gray-900 mb-1">Demo Data Mode</p>
+                <p className="text-sm text-gray-800">
                   You're viewing sample recommendations. Connect your farm data for personalized AI insights.
                 </p>
               </div>
@@ -336,7 +336,7 @@ export function AIRecommendationEngine({
                     {/* Efficiency */}
                     <div className="bg-white hover:bg-gray-50 p-4 rounded-xl border-2 border-gray-200 hover:border-[#2E7D32] shadow-md hover:shadow-lg transition-all">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="p-1.5 bg-green-100 rounded-lg">
+                        <div className="p-1.5 bg-[#2E7D32]/10 rounded-lg">
                           <Target className="h-3.5 w-3.5 text-[#2E7D32]" />
                         </div>
                         <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Efficiency</p>
@@ -347,7 +347,7 @@ export function AIRecommendationEngine({
                     {/* Savings */}
                     <div className="bg-white hover:bg-gray-50 p-4 rounded-xl border-2 border-gray-200 hover:border-[#2E7D32] shadow-md hover:shadow-lg transition-all">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="p-1.5 bg-green-100 rounded-lg">
+                        <div className="p-1.5 bg-[#2E7D32]/10 rounded-lg">
                           <TrendingUp className="h-3.5 w-3.5 text-[#2E7D32]" />
                         </div>
                         <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Savings</p>
@@ -421,7 +421,7 @@ export function AIRecommendationEngine({
                         irrigationPlan.soilMoisture.current >= irrigationPlan.soilMoisture.optimal
                           ? 'bg-[#2E7D32] text-white'
                           : irrigationPlan.soilMoisture.current >= irrigationPlan.soilMoisture.critical
-                          ? 'bg-orange-600 text-white'
+                          ? 'bg-gray-700 text-white'
                           : 'bg-red-600 text-white'
                       }`}>
                         {irrigationPlan.soilMoisture.current >= irrigationPlan.soilMoisture.optimal
@@ -438,7 +438,7 @@ export function AIRecommendationEngine({
               {/* Alerts */}
               {irrigationPlan.alerts.map((alert: any, idx: number) => (
                 <Card key={idx} className={
-                  alert.severity === "info" ? "bg-gray-50 border-gray-300" : "bg-green-50 border-[#2E7D32]"
+                  alert.severity === "info" ? "bg-gray-50 border-gray-300" : "bg-[#2E7D32]/5 border-[#2E7D32]"
                 }>
                   <CardContent className="p-4 md:p-5">
                     <div className="flex items-start gap-4">
@@ -544,7 +544,7 @@ export function AIRecommendationEngine({
                     {/* Yield Increase */}
                     <div className="bg-white hover:bg-gray-50 p-4 rounded-xl border-2 border-gray-200 hover:border-[#2E7D32] shadow-md hover:shadow-lg transition-all">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="p-1.5 bg-green-100 rounded-lg">
+                        <div className="p-1.5 bg-[#2E7D32]/10 rounded-lg">
                           <BarChart3 className="h-3.5 w-3.5 text-[#2E7D32]" />
                         </div>
                         <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Yield Increase</p>
@@ -555,7 +555,7 @@ export function AIRecommendationEngine({
                     {/* ROI */}
                     <div className="bg-white hover:bg-gray-50 p-4 rounded-xl border-2 border-gray-200 hover:border-[#2E7D32] shadow-md hover:shadow-lg transition-all">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="p-1.5 bg-green-100 rounded-lg">
+                        <div className="p-1.5 bg-[#2E7D32]/10 rounded-lg">
                           <TrendingUp className="h-3.5 w-3.5 text-[#2E7D32]" />
                         </div>
                         <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">ROI</p>
@@ -589,7 +589,7 @@ export function AIRecommendationEngine({
                   <div className="space-y-3">
                     {fertilizerPlan.schedule.map((item: any, idx: number) => (
                       <div key={idx} className={`p-4 rounded-lg border-2 ${
-                        item.completed ? "border-gray-200 bg-gray-50" : "border-[#2E7D32] bg-green-50"
+                        item.completed ? "border-gray-200 bg-gray-50" : "border-[#2E7D32] bg-[#2E7D32]/5"
                       }`}>
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1">
@@ -606,7 +606,7 @@ export function AIRecommendationEngine({
                             <p className="text-lg font-bold text-gray-900">{item.amount}</p>
                             <p className="text-sm text-gray-600">{item.cost}</p>
                             {!item.completed && item.daysUntil && (
-                              <Badge className="mt-2 bg-orange-600 text-white">
+                              <Badge className="mt-2 bg-gray-700 text-white">
                                 {item.daysUntil} days
                               </Badge>
                             )}

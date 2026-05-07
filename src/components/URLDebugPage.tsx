@@ -102,21 +102,21 @@ export function URLDebugPage() {
           <div className="space-y-3">
             {testResults.map((result, idx) => (
               <Card key={idx} className={`border-2 ${
-                result.status === "pass" ? "border-green-500 bg-green-50" :
-                result.status === "warning" ? "border-yellow-500 bg-yellow-50" :
+                result.status === "pass" ? "border-[#2E7D32]/20 bg-[#2E7D32]/5" :
+                result.status === "warning" ? "border-gray-400 bg-gray-50" :
                 "border-red-500 bg-red-50"
               }`}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    {result.status === "pass" && <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />}
-                    {result.status === "warning" && <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />}
+                    {result.status === "pass" && <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5" />}
+                    {result.status === "warning" && <AlertCircle className="h-5 w-5 text-gray-600 mt-0.5" />}
                     {result.status === "fail" && <XCircle className="h-5 w-5 text-red-600 mt-0.5" />}
                     
                     <div className="flex-1">
                       <h4 className="font-semibold text-sm mb-1">{result.name}</h4>
                       <Badge className={
-                        result.status === "pass" ? "bg-green-600" :
-                        result.status === "warning" ? "bg-yellow-600" :
+                        result.status === "pass" ? "bg-[#2E7D32]" :
+                        result.status === "warning" ? "bg-gray-700" :
                         "bg-red-600"
                       }>
                         {result.status.toUpperCase()}
@@ -138,7 +138,7 @@ export function URLDebugPage() {
             <CardContent className="p-4">
               <h4 className="font-semibold text-sm mb-2">What to Check:</h4>
               <ul className="text-xs space-y-1 text-gray-700">
-                <li>1. All tests should show <Badge className="bg-green-600 text-white">PASS</Badge></li>
+                <li>1. All tests should show <Badge className="bg-[#2E7D32] text-white">PASS</Badge></li>
                 <li>2. URLs should start with <code className="bg-white px-1 py-0.5 rounded">https://</code></li>
                 <li>3. URLs should contain <code className="bg-white px-1 py-0.5 rounded">/functions/v1</code></li>
                 <li>4. Open DevTools → Network tab → Look for the /tasks request</li>
@@ -148,20 +148,20 @@ export function URLDebugPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-blue-50 border-blue-200">
+          <Card className="bg-gray-50 border-gray-200">
             <CardContent className="p-4">
-              <h4 className="font-semibold text-sm mb-2 text-blue-900">Console Logs to Check:</h4>
-              <p className="text-xs text-blue-800 mb-2">
+              <h4 className="font-semibold text-sm mb-2 text-gray-900">Console Logs to Check:</h4>
+              <p className="text-xs text-gray-800 mb-2">
                 Open DevTools Console (F12) and look for these logs:
               </p>
-              <ul className="text-xs space-y-1 text-blue-700 font-mono">
+              <ul className="text-xs space-y-1 text-gray-700 font-mono">
                 <li>🔧 [API UTILS] Module imported!</li>
                 <li>✅ [API UTILS] API_BASE_URL successfully set to: https://...</li>
                 <li>🎉 [API UTILS] Initialization complete!</li>
                 <li>🔵 [TASKS] About to call TasksAPI.getTasks...</li>
                 <li>[KILIMO API] GET https://...</li>
               </ul>
-              <p className="text-xs text-blue-800 mt-2">
+              <p className="text-xs text-gray-800 mt-2">
                 If you DON'T see these logs, your browser is running OLD cached JavaScript!
               </p>
             </CardContent>

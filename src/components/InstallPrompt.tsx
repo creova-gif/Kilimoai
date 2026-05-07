@@ -82,7 +82,7 @@ export function InstallPrompt() {
 
   return (
     <div className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 animate-in slide-in-from-bottom-5">
-      <Card className="bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-xl">
+      <Card className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white border-none shadow-xl">
         <div className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ export function InstallPrompt() {
               </div>
               <div>
                 <h3 className="font-semibold">Install KILIMO</h3>
-                <p className="text-sm text-green-100">Add to your home screen</p>
+                <p className="text-sm text-[#2E7D32]">Add to your home screen</p>
               </div>
             </div>
             <Button
@@ -106,10 +106,10 @@ export function InstallPrompt() {
 
           {isIOS ? (
             <div className="space-y-3">
-              <p className="text-sm text-green-50">
+              <p className="text-sm text-[#2E7D32]">
                 Install KILIMO for quick access and offline features:
               </p>
-              <ol className="text-sm space-y-2 text-green-50">
+              <ol className="text-sm space-y-2 text-[#2E7D32]">
                 <li className="flex items-start gap-2">
                   <span className="font-semibold">1.</span>
                   <span>Tap the <Share className="inline h-4 w-4 mx-1" /> Share button below</span>
@@ -126,12 +126,12 @@ export function InstallPrompt() {
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-green-50">
+              <p className="text-sm text-[#2E7D32]">
                 Get faster access and work offline. Install KILIMO on your device!
               </p>
               <div className="flex gap-2">
                 <Button
-                  className="flex-1 bg-white text-green-700 hover:bg-green-50"
+                  className="flex-1 bg-white text-[#2E7D32] hover:bg-[#2E7D32]/5"
                   onClick={handleInstallClick}
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -149,7 +149,7 @@ export function InstallPrompt() {
           )}
 
           <div className="mt-3 pt-3 border-t border-white/20">
-            <div className="grid grid-cols-3 gap-2 text-xs text-green-50">
+            <div className="grid grid-cols-3 gap-2 text-xs text-[#2E7D32]">
               <div className="text-center">
                 <div className="font-semibold flex items-center justify-center gap-1">
                   <Zap className="h-3 w-3" /> Fast

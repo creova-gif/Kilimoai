@@ -20,18 +20,18 @@ export function NotificationBadge({
 }: NotificationBadgeProps) {
   const typeStyles = {
     success: {
-      bg: "bg-green-50",
-      border: "border-green-200",
-      icon: "text-green-600",
-      title: "text-green-900",
-      message: "text-green-700"
+      bg: "bg-[#2E7D32]/5",
+      border: "border-[#2E7D32]/20",
+      icon: "text-[#2E7D32]",
+      title: "text-[#2E7D32]",
+      message: "text-[#2E7D32]"
     },
     warning: {
-      bg: "bg-orange-50",
-      border: "border-orange-200",
-      icon: "text-orange-600",
-      title: "text-orange-900",
-      message: "text-orange-700"
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "text-gray-600",
+      title: "text-gray-900",
+      message: "text-gray-700"
     },
     error: {
       bg: "bg-red-50",

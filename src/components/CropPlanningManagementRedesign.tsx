@@ -171,7 +171,7 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
 
   const getHealthColor = (confidence: string) => {
     if (confidence === "high") return "text-gray-900 bg-gray-100";
-    if (confidence === "medium") return "text-yellow-800 bg-yellow-50";
+    if (confidence === "medium") return "text-gray-800 bg-gray-50";
     return "text-red-800 bg-red-50";
   };
 
@@ -315,16 +315,16 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
 
                       {/* Risks */}
                       {plan.ai_plan.risks.length > 0 && (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-5">
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-5">
                           <div className="flex items-start gap-3">
-                            <AlertTriangle className="h-5 w-5 text-yellow-700 flex-shrink-0 mt-0.5" />
+                            <AlertTriangle className="h-5 w-5 text-gray-700 flex-shrink-0 mt-0.5" />
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-yellow-900 mb-1.5">
+                              <div className="text-sm font-medium text-gray-900 mb-1.5">
                                 {language === "en" ? "Risk Factors" : "Hatari"}
                               </div>
                               <div className="space-y-1">
                                 {plan.ai_plan.risks.map((risk, idx) => (
-                                  <p key={idx} className="text-sm text-yellow-800">{risk}</p>
+                                  <p key={idx} className="text-sm text-gray-800">{risk}</p>
                                 ))}
                               </div>
                             </div>
@@ -353,14 +353,14 @@ export function CropPlanningManagementRedesign({ userId, language = "en" }: Crop
                     
                     <div className="space-y-3">
                       {/* Warning */}
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                         <div className="flex gap-2.5">
-                          <AlertTriangle className="h-4 w-4 text-yellow-700 flex-shrink-0 mt-0.5" />
+                          <AlertTriangle className="h-4 w-4 text-gray-700 flex-shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-yellow-900 mb-1">
+                            <p className="text-sm font-medium text-gray-900 mb-1">
                               {language === "en" ? "Nitrogen Deficit" : "Upungufu wa Nitrojeni"}
                             </p>
-                            <p className="text-sm text-yellow-800">
+                            <p className="text-sm text-gray-800">
                               {language === "en" 
                                 ? "Field B may see 8-12% yield reduction" 
                                 : "Shamba B linaweza kupunguza mavuno 8-12%"}

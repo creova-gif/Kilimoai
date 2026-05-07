@@ -35,7 +35,7 @@ export function PageHeader({
       transition={{ duration: 0.5 }}
       className={`rounded-2xl md:rounded-3xl p-6 md:p-8 ${
         gradient
-          ? "bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 text-white"
+          ? "bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 text-white"
           : "bg-white border border-gray-200 text-gray-900"
       }`}
     >
@@ -57,9 +57,9 @@ export function PageHeader({
             <div className={`p-3 rounded-2xl ${
               gradient
                 ? "bg-white/20 backdrop-blur-md"
-                : "bg-green-50"
+                : "bg-[#2E7D32]/5"
             }`}>
-              <Icon className={`h-7 w-7 ${gradient ? "text-white" : "text-green-600"}`} />
+              <Icon className={`h-7 w-7 ${gradient ? "text-white" : "text-[#2E7D32]"}`} />
             </div>
           )}
           
@@ -85,7 +85,7 @@ export function PageHeader({
             className={
               gradient
                 ? "bg-white/20 backdrop-blur-md hover:bg-white/30 text-white"
-                : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                : "bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100"
             }
           >
             {ActionIcon && <ActionIcon className="h-4 w-4 mr-2" />}

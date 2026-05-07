@@ -105,9 +105,9 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
 
   const getFactorColor = (value: string) => {
     if (value === "positive" || value === "good" || value === "low" || value === "high") {
-      return "text-green-600 bg-green-100";
+      return "text-[#2E7D32] bg-[#2E7D32]/10";
     } else if (value === "neutral" || value === "fair" || value === "medium") {
-      return "text-yellow-600 bg-yellow-100";
+      return "text-gray-600 bg-gray-100";
     } else {
       return "text-red-600 bg-red-100";
     }
@@ -153,12 +153,12 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Total Forecasted Revenue</p>
-                <p className="text-xl font-bold text-green-600">
+                <p className="text-xl font-bold text-[#2E7D32]">
                   TZS {totalRevenue.toLocaleString()}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <DollarSign className="h-5 w-5 text-green-600" />
+              <div className="p-3 bg-[#2E7D32]/10 rounded-lg">
+                <DollarSign className="h-5 w-5 text-[#2E7D32]" />
               </div>
             </div>
           </CardContent>
@@ -276,7 +276,7 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Improvement</p>
                     <p className={`text-2xl font-bold flex items-center gap-1 ${
-                      forecast.yieldImprovement > 0 ? "text-green-600" : "text-red-600"
+                      forecast.yieldImprovement > 0 ? "text-[#2E7D32]" : "text-red-600"
                     }`}>
                       {forecast.yieldImprovement > 0 ? (
                         <TrendingUp className="h-5 w-5" />
@@ -320,9 +320,9 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                 </div>
 
                 {/* Revenue Scenarios */}
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 p-4 rounded-lg border border-[#2E7D32]/20">
                   <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-green-600" />
+                    <DollarSign className="h-4 w-4 text-[#2E7D32]" />
                     Revenue Projections (@ TZS {forecast.revenue.estimatedPrice.toLocaleString()}/ton)
                   </h4>
                   <div className="grid md:grid-cols-3 gap-4">
@@ -333,9 +333,9 @@ export function YieldForecasting({ userId, userRole }: YieldForecastingProps) {
                       </p>
                       <p className="text-xs text-gray-500 mt-1">70% probability</p>
                     </div>
-                    <div className="bg-white p-3 rounded border-2 border-green-300">
+                    <div className="bg-white p-3 rounded border-2 border-[#2E7D32]/20">
                       <p className="text-xs text-gray-600 mb-1">Most Likely</p>
-                      <p className="text-lg font-bold text-green-600">
+                      <p className="text-lg font-bold text-[#2E7D32]">
                         TZS {forecast.revenue.realistic.toLocaleString()}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">Expected outcome</p>

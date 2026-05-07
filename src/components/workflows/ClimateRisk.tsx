@@ -114,8 +114,8 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "low": return "bg-gray-100 text-gray-800 border-gray-300";
-      case "moderate": return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "high": return "bg-orange-100 text-orange-800 border-orange-300";
+      case "moderate": return "bg-gray-100 text-gray-800 border-gray-300";
+      case "high": return "bg-gray-100 text-gray-800 border-gray-300";
       case "critical": return "bg-red-100 text-red-800 border-red-300";
       default: return "bg-gray-100 text-gray-800 border-gray-300";
     }
@@ -124,8 +124,8 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active": return "bg-red-100 text-red-800";
-      case "monitoring": return "bg-yellow-100 text-yellow-800";
-      case "resolved": return "bg-green-100 text-green-800";
+      case "monitoring": return "bg-gray-100 text-gray-800";
+      case "resolved": return "bg-[#2E7D32]/10 text-[#2E7D32]";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -178,15 +178,15 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
           </CardContent>
         </Card>
 
-        <Card className={highAlerts.length > 0 ? "border-orange-300 bg-orange-50" : ""}>
+        <Card className={highAlerts.length > 0 ? "border-gray-300 bg-gray-50" : ""}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">High Severity</p>
-                <p className="text-2xl font-bold text-orange-600">{highAlerts.length}</p>
+                <p className="text-2xl font-bold text-gray-600">{highAlerts.length}</p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-gray-600" />
               </div>
             </div>
           </CardContent>
@@ -223,7 +223,7 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
 
       {/* Critical Alerts Banner */}
       {criticalAlerts.length > 0 && (
-        <Card className="border-red-300 bg-gradient-to-r from-red-50 to-orange-50">
+        <Card className="border-red-300 bg-gradient-to-r from-red-50 to-gray-100">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-red-100 rounded-lg">
@@ -250,8 +250,8 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
       ) : alerts.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <CheckCircle2 className="h-12 w-12 mx-auto text-green-500 mb-4" />
-            <h3 className="font-semibold mb-2 text-green-700">No Active Climate Risks</h3>
+            <CheckCircle2 className="h-12 w-12 mx-auto text-[#2E7D32] mb-4" />
+            <h3 className="font-semibold mb-2 text-[#2E7D32]">No Active Climate Risks</h3>
             <p className="text-sm text-gray-600">
               Your crops are currently safe from major climate threats
             </p>
@@ -266,7 +266,7 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
                 key={alert.id} 
                 className={`hover:shadow-lg transition-shadow border-2 ${
                   alert.severity === "critical" ? "border-red-300" :
-                  alert.severity === "high" ? "border-orange-300" : ""
+                  alert.severity === "high" ? "border-gray-300" : ""
                 }`}
               >
                 <CardHeader>
@@ -274,13 +274,13 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
                     <div className="flex items-start gap-3">
                       <div className={`p-2 rounded-lg ${
                         alert.severity === "critical" ? "bg-red-100" :
-                        alert.severity === "high" ? "bg-orange-100" :
-                        alert.severity === "moderate" ? "bg-yellow-100" : "bg-gray-100"
+                        alert.severity === "high" ? "bg-gray-100" :
+                        alert.severity === "moderate" ? "bg-gray-100" : "bg-gray-100"
                       }`}>
                         <AlertIcon className={`h-5 w-5 ${
                           alert.severity === "critical" ? "text-red-600" :
-                          alert.severity === "high" ? "text-orange-600" :
-                          alert.severity === "moderate" ? "text-yellow-600" : "text-gray-600"
+                          alert.severity === "high" ? "text-gray-600" :
+                          alert.severity === "moderate" ? "text-gray-600" : "text-gray-600"
                         }`} />
                       </div>
                       <div className="flex-1">
@@ -315,7 +315,7 @@ export function ClimateRisk({ userId, userRole }: ClimateRiskProps) {
 
                   {/* Impact */}
                   <div className={`p-3 rounded-lg border-l-4 ${
-                    alert.impact.actionRequired ? "border-red-500 bg-red-50" : "border-yellow-500 bg-yellow-50"
+                    alert.impact.actionRequired ? "border-red-500 bg-red-50" : "border-gray-400 bg-gray-50"
                   }`}>
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-semibold text-sm flex items-center gap-2">

@@ -58,8 +58,8 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border-2 border-green-100">
+        <div className="min-h-screen bg-gradient-to-br from-[#2E7D32] to-white flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border-2 border-[#2E7D32]/20">
             {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">

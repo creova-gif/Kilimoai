@@ -179,17 +179,17 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
 
   const getLevelBadge = (level: string) => {
     switch (level) {
-      case "beginner": return { bg: "bg-green-100", text: "text-green-700", border: "border-green-200" };
-      case "intermediate": return { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-200" };
+      case "beginner": return { bg: "bg-[#2E7D32]/10", text: "text-[#2E7D32]", border: "border-[#2E7D32]/20" };
+      case "intermediate": return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200" };
       case "advanced": return { bg: "bg-red-100", text: "text-red-700", border: "border-red-200" };
       default: return { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-200" };
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -199,7 +199,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Video Tutorials" : "Mafunzo ya Video"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Learn farming techniques through video"
                   : "Jifunze mbinu za kilimo kupitia video"}
@@ -231,7 +231,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
                 </span>
               </div>
               <div className={`w-12 h-6 rounded-full transition-all ${lowBandwidthMode ? 'bg-white' : 'bg-white/30'}`}>
-                <div className={`w-5 h-5 bg-green-600 rounded-full transition-all transform ${lowBandwidthMode ? 'translate-x-6 mt-0.5' : 'translate-x-0.5 mt-0.5'}`}></div>
+                <div className={`w-5 h-5 bg-[#2E7D32] rounded-full transition-all transform ${lowBandwidthMode ? 'translate-x-6 mt-0.5' : 'translate-x-0.5 mt-0.5'}`}></div>
               </div>
             </div>
           </div>
@@ -245,25 +245,25 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <PlayCircle className="h-5 w-5 text-green-600" />
+                  <PlayCircle className="h-5 w-5 text-[#2E7D32]" />
                   {language === "en" ? "Continue Watching" : "Endelea Kutazama"}
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {continueWatching.map((video) => (
-                  <div key={video.id} className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200 hover:border-green-300 transition-all cursor-pointer group">
+                  <div key={video.id} className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200 hover:border-[#2E7D32]/20 transition-all cursor-pointer group">
                     <div className="flex gap-4">
-                      <div className="relative w-32 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
+                      <div className="relative w-32 h-20 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
                         <span className="text-3xl">{video.thumbnail}</span>
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="p-2 bg-white/90 rounded-full">
-                            <Play className="h-5 w-5 text-green-600" />
+                            <Play className="h-5 w-5 text-[#2E7D32]" />
                           </div>
                         </div>
                         {video.progress && (
                           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-300">
                             <div 
-                              className="h-full bg-green-600"
+                              className="h-full bg-[#2E7D32]"
                               style={{ width: `${video.progress}%` }}
                             ></div>
                           </div>
@@ -277,7 +277,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
                           <span>•</span>
                           <span>{video.progress}% {language === "en" ? "complete" : "imekamilika"}</span>
                         </div>
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                        <Button size="sm" className="bg-[#2E7D32] hover:bg-[#2E7D32] text-white">
                           <Play className="h-3 w-3 mr-1" />
                           {language === "en" ? "Resume" : "Endelea"}
                         </Button>
@@ -324,7 +324,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
                     onClick={() => setSelectedLevel(level.id)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                       isActive
-                        ? "bg-green-600 text-white"
+                        ? "bg-[#2E7D32] text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
@@ -371,13 +371,13 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
                   const categoryColor = getCategoryColor(video.category);
                   
                   return (
-                    <div key={video.id} className="bg-gray-50 rounded-xl overflow-hidden border border-gray-200 hover:border-green-300 hover:shadow-md transition-all cursor-pointer group">
+                    <div key={video.id} className="bg-gray-50 rounded-xl overflow-hidden border border-gray-200 hover:border-[#2E7D32]/20 hover:shadow-md transition-all cursor-pointer group">
                       {/* Thumbnail */}
                       <div className={`relative h-40 bg-gradient-to-br from-${categoryColor}-100 to-${categoryColor}-200 flex items-center justify-center overflow-hidden`}>
                         <span className="text-5xl">{video.thumbnail}</span>
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="p-4 bg-white rounded-full">
-                            <Play className="h-8 w-8 text-green-600" />
+                            <Play className="h-8 w-8 text-[#2E7D32]" />
                           </div>
                         </div>
                         
@@ -403,7 +403,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
 
                         {/* Completed Badge */}
                         {video.completed && (
-                          <div className="absolute top-2 right-2 p-2 bg-green-500 rounded-full">
+                          <div className="absolute top-2 right-2 p-2 bg-[#2E7D32] rounded-full">
                             <CheckCircle className="h-4 w-4 text-white" />
                           </div>
                         )}
@@ -442,7 +442,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
 
                         {/* Actions */}
                         <div className="flex items-center gap-2">
-                          <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white" size="sm">
+                          <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32] text-white" size="sm">
                             <Play className="h-4 w-4 mr-1" />
                             {video.progress ? (language === "en" ? "Continue" : "Endelea") : (language === "en" ? "Watch" : "Tazama")}
                           </Button>
@@ -458,7 +458,7 @@ export function VideoTutorials({ language, userId }: VideoTutorialsProps) {
 
                         {/* Low Bandwidth Indicator */}
                         {video.lowBandwidth && (
-                          <div className="mt-2 flex items-center gap-1 text-xs text-green-600">
+                          <div className="mt-2 flex items-center gap-1 text-xs text-[#2E7D32]">
                             <WifiOff className="h-3 w-3" />
                             <span>{language === "en" ? "Low bandwidth available" : "Mtandao mdogo unapatikana"}</span>
                           </div>

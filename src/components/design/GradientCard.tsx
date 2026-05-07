@@ -18,7 +18,7 @@ export function GradientCard({
   description,
   icon: Icon,
   children,
-  gradient = "from-green-500 to-emerald-600",
+  gradient = "from-[#2E7D32] to-gray-100",
   onClick,
   className = "",
   delay = 0

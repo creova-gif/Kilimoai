@@ -509,9 +509,9 @@ export function MasterPromptValidator() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pass": return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case "pass": return <CheckCircle className="h-5 w-5 text-[#2E7D32]" />;
       case "fail": return <XCircle className="h-5 w-5 text-red-600" />;
-      case "warning": return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
+      case "warning": return <AlertTriangle className="h-5 w-5 text-gray-600" />;
       default: return null;
     }
   };
@@ -530,7 +530,7 @@ export function MasterPromptValidator() {
           <Button
             variant="outline"
             onClick={() => setCurrentView(currentView === "web" ? "mobile" : "web")}
-            className="border-green-600 text-green-600 hover:bg-green-50"
+            className="border-[#2E7D32]/20 text-[#2E7D32] hover:bg-[#2E7D32]/5"
           >
             {currentView === "web" ? (
               <><Monitor className="h-4 w-4 mr-2" /> Web View</>
@@ -549,7 +549,7 @@ export function MasterPromptValidator() {
           <Button
             onClick={runAllTests}
             disabled={testing}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-[#2E7D32] hover:bg-[#2E7D32]"
           >
             {testing ? (
               <><RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Testing...</>
@@ -654,9 +654,9 @@ export function MasterPromptValidator() {
           <TabsContent value="all" className="space-y-3">
             {testResults.map((result, idx) => (
               <Card key={idx} className={`border-l-4 ${
-                result.status === "pass" ? "border-green-500 bg-green-50" :
+                result.status === "pass" ? "border-[#2E7D32]/20 bg-[#2E7D32]/5" :
                 result.status === "fail" ? "border-red-500 bg-red-50" :
-                "border-yellow-500 bg-yellow-50"
+                "border-gray-400 bg-gray-50"
               }`}>
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
@@ -690,7 +690,7 @@ export function MasterPromptValidator() {
           {["view_switch", "data_change", "language_toggle"].map(category => (
             <TabsContent key={category} value={category} className="space-y-3">
               {testResults.filter(r => r.category === category).map((result, idx) => (
-                <Card key={idx} className="border-l-4 border-green-500 bg-green-50">
+                <Card key={idx} className="border-l-4 border-[#2E7D32]/20 bg-[#2E7D32]/5">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
                       {getStatusIcon(result.status)}
@@ -722,7 +722,7 @@ export function MasterPromptValidator() {
           </div>
         </CardHeader>
         <CardContent>
-          <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-xs max-h-96">
+          <pre className="bg-gray-900 text-[#2E7D32] p-4 rounded-lg overflow-x-auto text-xs max-h-96">
             {JSON.stringify(generateMasterPromptJSON(), null, 2)}
           </pre>
         </CardContent>

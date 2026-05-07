@@ -339,8 +339,8 @@ export function DesktopNavigation({
             onClick={() => onNavigate("home")}
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Sprout className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+              <Sprout className="h-6 w-6 text-[#2E7D32]" />
             </div>
             <div>
               <h1 className="font-bold text-lg text-gray-900">KILIMO</h1>
@@ -376,7 +376,7 @@ export function DesktopNavigation({
                     className={`
                       flex items-center gap-2 px-4 py-2 rounded-lg transition-all relative
                       ${isItemActive 
-                        ? "bg-green-50 text-green-700 font-semibold shadow-sm" 
+                        ? "bg-[#2E7D32]/5 text-[#2E7D32] font-semibold shadow-sm" 
                         : "text-gray-700 hover:bg-gray-100"
                       }
                     `}
@@ -386,11 +386,11 @@ export function DesktopNavigation({
                     {isItemActive && (
                       <motion.div
                         layoutId="desktopActiveIndicator"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E7D32]"
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
                     )}
-                    <ItemIcon className={`h-4 w-4 ${isItemActive ? "text-green-600" : ""}`} />
+                    <ItemIcon className={`h-4 w-4 ${isItemActive ? "text-[#2E7D32]" : ""}`} />
                     <span className="text-sm">{getLabel(item)}</span>
                     {hasSubItems && (
                       <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${isHovered ? "rotate-180" : ""}`} />
@@ -414,9 +414,9 @@ export function DesktopNavigation({
                         role="menu"
                       >
                         {/* Dropdown Header */}
-                        <div className="p-3 bg-green-50 border-b-2 border-green-100">
+                        <div className="p-3 bg-[#2E7D32]/5 border-b-2 border-[#2E7D32]/20">
                           <div className="flex items-center gap-2">
-                            <ItemIcon className="h-5 w-5 text-green-600" />
+                            <ItemIcon className="h-5 w-5 text-[#2E7D32]" />
                             <span className="font-semibold text-gray-900">{getLabel(item)}</span>
                           </div>
                         </div>
@@ -440,7 +440,7 @@ export function DesktopNavigation({
                                 className={`
                                   w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left group
                                   ${isSubActive 
-                                    ? "bg-green-50 border-2 border-green-200" 
+                                    ? "bg-[#2E7D32]/5 border-2 border-[#2E7D32]/20" 
                                     : "hover:bg-gray-50 border-2 border-transparent"
                                   }
                                 `}
@@ -448,13 +448,13 @@ export function DesktopNavigation({
                               >
                                 <div className={`
                                   p-2 rounded-lg flex-shrink-0 transition-all
-                                  ${isSubActive ? "bg-green-600 shadow-md" : "bg-gray-100 group-hover:bg-green-100"}
+                                  ${isSubActive ? "bg-[#2E7D32] shadow-md" : "bg-gray-100 group-hover:bg-[#2E7D32]/10"}
                                 `}>
-                                  <SubIcon className={`h-4 w-4 ${isSubActive ? "text-white" : "text-gray-600 group-hover:text-green-600"}`} />
+                                  <SubIcon className={`h-4 w-4 ${isSubActive ? "text-white" : "text-gray-600 group-hover:text-[#2E7D32]"}`} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-2 mb-1">
-                                    <span className={`text-sm font-semibold ${isSubActive ? "text-green-700" : "text-gray-900"}`}>
+                                    <span className={`text-sm font-semibold ${isSubActive ? "text-[#2E7D32]" : "text-gray-900"}`}>
                                       {getLabel(subItem)}
                                     </span>
                                     {subItem.badge && (
@@ -508,8 +508,8 @@ export function DesktopNavigation({
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg transition-all"
               >
-                <div className="p-1.5 bg-green-100 rounded-full">
-                  <User className="h-4 w-4 text-green-600" />
+                <div className="p-1.5 bg-[#2E7D32]/10 rounded-full">
+                  <User className="h-4 w-4 text-[#2E7D32]" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">{userName}</span>
                 <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`} />
@@ -525,7 +525,7 @@ export function DesktopNavigation({
                     transition={{ duration: 0.15 }}
                     className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border-2 border-gray-200 overflow-hidden"
                   >
-                    <div className="p-3 bg-green-50 border-b-2 border-green-100">
+                    <div className="p-3 bg-[#2E7D32]/5 border-b-2 border-[#2E7D32]/20">
                       <p className="text-sm font-semibold text-gray-900">{userName}</p>
                       <p className="text-xs text-gray-600">{userRole}</p>
                     </div>
@@ -584,7 +584,7 @@ export function DesktopNavigation({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={language === "en" ? "Search pages, features... (⌘K)" : "Tafuta kurasa, huduma... (⌘K)"}
-                    className="pl-10 bg-gray-50 focus:border-green-400 focus:ring-green-400"
+                    className="pl-10 bg-gray-50 focus:border-[#2E7D32]/20 focus:ring-[#2E7D32]/30"
                   />
                 </div>
               </div>

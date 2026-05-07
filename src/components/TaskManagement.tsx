@@ -111,8 +111,8 @@ export function TaskManagement({ userId }: TaskManagementProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "urgent": return "bg-red-100 text-red-700 border-red-300";
-      case "high": return "bg-orange-100 text-orange-700 border-orange-300";
-      case "medium": return "bg-yellow-100 text-yellow-700 border-yellow-300";
+      case "high": return "bg-gray-100 text-gray-700 border-gray-300";
+      case "medium": return "bg-gray-100 text-gray-700 border-gray-300";
       default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
   };
@@ -128,8 +128,8 @@ export function TaskManagement({ userId }: TaskManagementProps) {
   const getStatusColumns = () => {
     return [
       { id: "todo", label: "To Do", icon: Circle, color: "text-gray-600", count: tasks.filter(t => t.status === "todo").length },
-      { id: "in-progress", label: "In Progress", icon: Clock, color: "text-yellow-600", count: tasks.filter(t => t.status === "in-progress").length },
-      { id: "completed", label: "Completed", icon: CheckCircle, color: "text-green-600", count: tasks.filter(t => t.status === "completed").length },
+      { id: "in-progress", label: "In Progress", icon: Clock, color: "text-gray-600", count: tasks.filter(t => t.status === "in-progress").length },
+      { id: "completed", label: "Completed", icon: CheckCircle, color: "text-[#2E7D32]", count: tasks.filter(t => t.status === "completed").length },
     ];
   };
 
@@ -147,7 +147,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
   return (
     <div className="space-y-4 md:space-y-6 pb-6">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 rounded-2xl md:rounded-3xl p-4 md:p-6 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 rounded-2xl md:rounded-3xl p-4 md:p-6 text-white">
         <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-white/10 rounded-full blur-3xl"></div>
         
@@ -166,7 +166,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
             </div>
             <Button
               onClick={() => setShowAddTask(true)}
-              className="bg-white text-orange-600 hover:bg-white/90"
+              className="bg-white text-gray-600 hover:bg-white/90"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Task
@@ -203,8 +203,8 @@ export function TaskManagement({ userId }: TaskManagementProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap
               ${filterStatus === "all"
-                ? "bg-orange-600 text-white shadow-lg"
-                : "bg-white text-gray-700 border border-gray-200 hover:border-orange-300"
+                ? "bg-gray-700 text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-gray-300"
               }
             `}
           >
@@ -219,8 +219,8 @@ export function TaskManagement({ userId }: TaskManagementProps) {
                 className={`
                   flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap
                   ${filterStatus === col.id
-                    ? "bg-orange-600 text-white shadow-lg"
-                    : "bg-white text-gray-700 border border-gray-200 hover:border-orange-300"
+                    ? "bg-gray-700 text-white shadow-lg"
+                    : "bg-white text-gray-700 border border-gray-200 hover:border-gray-300"
                   }
                 `}
               >
@@ -259,7 +259,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
               {/* Task Cards */}
               <div className="space-y-3">
                 {columnTasks.map((task) => (
-                  <Card key={task.id} className="hover:shadow-lg transition-all border-2 hover:border-orange-300 cursor-pointer">
+                  <Card key={task.id} className="hover:shadow-lg transition-all border-2 hover:border-gray-300 cursor-pointer">
                     <CardContent className="p-4 space-y-3">
                       {/* Priority Badge */}
                       <div className="flex items-start justify-between">
@@ -328,7 +328,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
                           Edit
                         </Button>
                         {task.status !== "completed" && (
-                          <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700 text-xs">
+                          <Button size="sm" className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32] text-xs">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Complete
                           </Button>
@@ -339,7 +339,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
                 ))}
 
                 {/* Add Task to Column */}
-                <button className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-600 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-all">
+                <button className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-600 hover:border-gray-300 hover:text-gray-600 hover:bg-gray-50 transition-all">
                   <Plus className="h-4 w-4 inline mr-2" />
                   Add task to {column.label}
                 </button>
@@ -350,10 +350,10 @@ export function TaskManagement({ userId }: TaskManagementProps) {
       </div>
 
       {/* Productivity Insights */}
-      <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+      <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-[#2E7D32] to-gray-100">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-green-600" />
+            <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
             Productivity Insights
           </CardTitle>
         </CardHeader>
@@ -361,12 +361,12 @@ export function TaskManagement({ userId }: TaskManagementProps) {
           <div className="grid md:grid-cols-3 gap-4">
             <div className="p-4 bg-white rounded-xl">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Target className="h-4 w-4 text-green-600" />
+                <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                  <Target className="h-4 w-4 text-[#2E7D32]" />
                 </div>
                 <h4 className="font-semibold text-sm">Completion Rate</h4>
               </div>
-              <p className="text-3xl font-black text-green-600">
+              <p className="text-3xl font-black text-[#2E7D32]">
                 {((stats.completed / stats.total) * 100).toFixed(0)}%
               </p>
               <p className="text-xs text-gray-600 mt-1">
@@ -376,23 +376,23 @@ export function TaskManagement({ userId }: TaskManagementProps) {
 
             <div className="p-4 bg-white rounded-xl">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <Activity className="h-4 w-4 text-yellow-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Activity className="h-4 w-4 text-gray-600" />
                 </div>
                 <h4 className="font-semibold text-sm">Active Tasks</h4>
               </div>
-              <p className="text-3xl font-black text-yellow-600">{stats.inProgress}</p>
+              <p className="text-3xl font-black text-gray-600">{stats.inProgress}</p>
               <p className="text-xs text-gray-600 mt-1">Currently being worked on</p>
             </div>
 
             <div className="p-4 bg-white rounded-xl">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <AlertTriangle className="h-4 w-4 text-orange-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <AlertTriangle className="h-4 w-4 text-gray-600" />
                 </div>
                 <h4 className="font-semibold text-sm">Overdue</h4>
               </div>
-              <p className="text-3xl font-black text-orange-600">{stats.overdue}</p>
+              <p className="text-3xl font-black text-gray-600">{stats.overdue}</p>
               <p className="text-xs text-gray-600 mt-1">Need immediate attention</p>
             </div>
           </div>
@@ -440,7 +440,7 @@ export function TaskManagement({ userId }: TaskManagementProps) {
                 <Input placeholder="e.g., Section A" />
               </div>
               <div className="flex gap-2">
-                <Button className="flex-1 bg-orange-600 hover:bg-orange-700">
+                <Button className="flex-1 bg-gray-700 hover:bg-gray-800">
                   Create Task
                 </Button>
                 <Button variant="outline" onClick={() => setShowAddTask(false)}>

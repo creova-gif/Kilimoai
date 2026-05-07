@@ -118,13 +118,13 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         {product.verified && (
-                          <Badge className="bg-green-100 text-green-700 border-green-300">
+                          <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             TFRA Verified
                           </Badge>
                         )}
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <Star className="h-4 w-4 fill-gray-600 text-gray-500" />
                           <span className="font-medium text-sm">{product.rating}</span>
                         </div>
                       </div>
@@ -135,11 +135,11 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                     {/* Price & Stock */}
                     <div className="flex items-center gap-4 mb-4">
                       <div>
-                        <p className="text-2xl font-bold text-green-600">{product.price}</p>
+                        <p className="text-2xl font-bold text-[#2E7D32]">{product.price}</p>
                       </div>
                       <div>
                         {product.inStock ? (
-                          <Badge className="bg-green-100 text-green-700">In Stock</Badge>
+                          <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">In Stock</Badge>
                         ) : (
                           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-300">
                             Out of Stock
@@ -154,7 +154,7 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                       <ul className="space-y-1 text-sm text-gray-800">
                         {product.specifications.map((spec, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="h-4 w-4 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                             <span>{spec}</span>
                           </li>
                         ))}
@@ -162,9 +162,9 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                     </div>
 
                     {/* Usage Guide */}
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                      <h5 className="font-medium text-green-900 mb-2">Application Guide:</h5>
-                      <p className="text-sm text-green-800">{product.usage}</p>
+                    <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg p-4 mb-4">
+                      <h5 className="font-medium text-[#2E7D32] mb-2">Application Guide:</h5>
+                      <p className="text-sm text-[#2E7D32]">{product.usage}</p>
                     </div>
 
                     {/* Dealer Info */}
@@ -177,7 +177,7 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                               <MapPin className="h-4 w-4" />
                               {product.location}
                             </span>
-                            <span className="text-green-600">{product.distance} away</span>
+                            <span className="text-[#2E7D32]">{product.distance} away</span>
                           </div>
                         </div>
                       </div>
@@ -185,7 +185,7 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
                       {/* Action Buttons */}
                       <div className="flex gap-2">
                         <Button 
-                          className="flex-1 bg-green-600 hover:bg-green-700"
+                          className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]"
                           disabled={!product.inStock}
                         >
                           <ShoppingCart className="h-4 w-4 mr-2" />
@@ -204,28 +204,28 @@ export function ProductCatalog({ category, onClose }: ProductCatalogProps) {
           ))}
 
           {/* Safety Information */}
-          <Card className="border-orange-200 bg-orange-50">
+          <Card className="border-gray-200 bg-gray-50">
             <CardContent className="pt-4">
-              <h4 className="font-medium text-orange-900 mb-3">⚠️ Safety & Storage Information</h4>
-              <ul className="space-y-2 text-sm text-orange-800">
+              <h4 className="font-medium text-gray-900 mb-3">⚠️ Safety & Storage Information</h4>
+              <ul className="space-y-2 text-sm text-gray-800">
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Always wear gloves and protective clothing when handling fertilizers</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Store in a cool, dry place away from direct sunlight</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Keep out of reach of children and animals</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Do not mix different fertilizer types without expert advice</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Report counterfeit products immediately to protect the farming community</span>
                 </li>
               </ul>

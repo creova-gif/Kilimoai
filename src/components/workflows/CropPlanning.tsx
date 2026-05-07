@@ -149,8 +149,8 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
     switch (status) {
       case "planning": return "bg-gray-100 text-gray-800";
       case "scheduled": return "bg-gray-100 text-gray-800";
-      case "planted": return "bg-green-100 text-green-800";
-      case "growing": return "bg-yellow-100 text-yellow-800";
+      case "planted": return "bg-[#2E7D32]/10 text-[#2E7D32]";
+      case "growing": return "bg-gray-100 text-gray-800";
       case "harvested": return "bg-gray-100 text-gray-800";
       default: return "bg-gray-100 text-gray-800";
     }
@@ -185,7 +185,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
 
       {/* New Plan Form */}
       {showNewPlan && (
-        <Card className="border-green-200 bg-green-50/50">
+        <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5/50">
           <CardHeader>
             <CardTitle>Create AI-Powered Crop Plan</CardTitle>
             <CardDescription>
@@ -443,7 +443,7 @@ export function CropPlanning({ userId, userRole }: CropPlanningProps) {
                       <p className="text-xs font-medium text-gray-600 mb-2">Risk Factors</p>
                       <div className="space-y-1">
                         {plan.aiRecommendations.riskFactors.map((risk, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-sm text-orange-700">
+                          <div key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                             <AlertCircle className="h-4 w-4 mt-0.5" />
                             <span>{risk}</span>
                           </div>

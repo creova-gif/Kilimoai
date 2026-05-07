@@ -202,7 +202,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
     switch (priority) {
       case "low": return "bg-gray-100 text-gray-800";
       case "medium": return "bg-gray-100 text-gray-800";
-      case "high": return "bg-orange-100 text-orange-800";
+      case "high": return "bg-gray-100 text-gray-800";
       case "urgent": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
@@ -212,7 +212,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
     switch (status) {
       case "pending": return "bg-gray-100 text-gray-800";
       case "in_progress": return "bg-gray-100 text-gray-800";
-      case "completed": return "bg-green-100 text-green-800";
+      case "completed": return "bg-[#2E7D32]/10 text-[#2E7D32]";
       case "overdue": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
@@ -281,10 +281,10 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-green-600">{completedTasks}</p>
+                <p className="text-2xl font-bold text-[#2E7D32]">{completedTasks}</p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <div className="p-3 bg-[#2E7D32]/10 rounded-lg">
+                <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
               </div>
             </div>
           </CardContent>
@@ -351,7 +351,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
                     </div>
                     <div>
                       <p className="text-gray-600">Done</p>
-                      <p className="font-semibold text-green-600">{worker.completedTasks}</p>
+                      <p className="font-semibold text-[#2E7D32]">{worker.completedTasks}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Hours</p>
@@ -652,7 +652,7 @@ export function TaskManagement({ userId, userRole }: TaskManagementProps) {
                           <Button
                             size="sm"
                             onClick={() => updateTaskStatus(task.id, "completed")}
-                            className="bg-green-600 text-xs h-7"
+                            className="bg-[#2E7D32] text-xs h-7"
                           >
                             <CheckCircle2 className="h-3 w-3 mr-1" />
                             Mark Complete

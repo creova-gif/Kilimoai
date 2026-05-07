@@ -155,7 +155,7 @@ export function UnifiedFinance({
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
                 <p className="text-xs text-white/80 mb-1">{text.income}</p>
-                <p className="text-xl font-bold text-emerald-400">
+                <p className="text-xl font-bold text-[#2E7D32]">
                   +{(totalIncome / 1000).toFixed(0)}k
                 </p>
                 <p className="text-xs text-white/80">{language === "en" ? "this month" : "mwezi huu"}</p>
@@ -198,11 +198,11 @@ export function UnifiedFinance({
                       <div className="flex items-center gap-3">
                         <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${
                           transaction.type === "income" 
-                            ? "bg-emerald-100" 
+                            ? "bg-[#2E7D32]/10" 
                             : "bg-red-100"
                         }`}>
                           {transaction.type === "income" ? (
-                            <ArrowDownLeft className="h-5 w-5 text-emerald-600" />
+                            <ArrowDownLeft className="h-5 w-5 text-[#2E7D32]" />
                           ) : (
                             <ArrowUpRight className="h-5 w-5 text-red-600" />
                           )}
@@ -221,7 +221,7 @@ export function UnifiedFinance({
                       </div>
                       <p className={`text-lg font-bold ${
                         transaction.type === "income" 
-                          ? "text-emerald-600" 
+                          ? "text-[#2E7D32]" 
                           : "text-red-600"
                       }`}>
                         {transaction.type === "income" ? "+" : "-"}
@@ -242,17 +242,17 @@ export function UnifiedFinance({
         </div>
 
         {/* Info Card */}
-        <Card className="border-2 border-purple-100 bg-purple-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                <CreditCard className="h-5 w-5 text-purple-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <CreditCard className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-purple-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "en" ? "Mobile Money Integration" : "Muunganisho wa Fedha za Simu"}
                 </h4>
-                <p className="text-sm text-purple-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "en"
                     ? "Connect M-Pesa, Tigo Pesa, Airtel Money. Send/receive payments directly. Track all farm finances in one place."
                     : "Unganisha M-Pesa, Tigo Pesa, Airtel Money. Tuma/pokea malipo moja kwa moja. Fuatilia fedha zote za shamba mahali pamoja."}

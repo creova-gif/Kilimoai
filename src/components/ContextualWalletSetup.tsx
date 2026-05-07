@@ -191,7 +191,7 @@ export function ContextualWalletSetup({
                 </div>
 
                 {/* Note */}
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="p-4 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg">
                   <p className="text-sm text-gray-700 text-center">
                     💡 {t.note}
                   </p>

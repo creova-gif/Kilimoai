@@ -68,8 +68,8 @@ export function UnifiedInventory({
       label: text.inputs,
       description: text.inputsDesc,
       icon: ShoppingBag,
-      color: "text-blue-600",
-      bgColor: "bg-blue-600"
+      color: "text-gray-600",
+      bgColor: "bg-gray-700"
     }
   ];
 
@@ -118,11 +118,11 @@ export function UnifiedInventory({
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl">
+                <AlertTriangle className="h-4 w-4 text-gray-600" />
                 <div className="flex flex-col">
-                  <span className="text-xs text-amber-600 font-medium">Expiring Soon</span>
-                  <span className="text-lg font-bold text-amber-700">2</span>
+                  <span className="text-xs text-gray-600 font-medium">Expiring Soon</span>
+                  <span className="text-lg font-bold text-gray-700">2</span>
                 </div>
               </div>
             </div>

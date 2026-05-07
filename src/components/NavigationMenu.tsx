@@ -437,17 +437,17 @@ export function NavigationMenu({
               {/* Header */}
               <div className={`
                 flex items-center justify-between p-4 border-b-2 border-gray-200
-                ${isMobile ? "bg-gradient-to-r from-[#2E7D32] to-[#2E7D32]" : ""}
+                ${isMobile ? "bg-[#2E7D32]" : ""}
               `}>
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${isMobile ? "bg-white/20" : "bg-green-50"}`}>
+                  <div className={`p-2 rounded-lg ${isMobile ? "bg-white/20" : "bg-[#2E7D32]/5"}`}>
                     <Sprout className={`h-6 w-6 ${isMobile ? "text-white" : "text-[#2E7D32]"}`} />
                   </div>
                   <div>
                     <h2 className={`font-bold text-lg ${isMobile ? "text-white" : "text-gray-900"}`}>
                       KILIMO
                     </h2>
-                    <p className={`text-xs ${isMobile ? "text-green-50" : "text-gray-600"}`}>
+                    <p className={`text-xs ${isMobile ? "text-[#2E7D32]" : "text-gray-600"}`}>
                       {language === "en" ? "Agri-AI Suite" : "Mfumo wa AI-Kilimo"}
                     </p>
                   </div>
@@ -471,7 +471,7 @@ export function NavigationMenu({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={language === "en" ? "Search menu..." : "Tafuta menyu..."}
-                    className="pl-9 bg-gray-50 border-gray-200 focus:border-green-400 focus:ring-green-400"
+                    className="pl-9 bg-gray-50 border-gray-200 focus:border-[#2E7D32]/20 focus:ring-[#2E7D32]/30"
                     aria-label={language === "en" ? "Search navigation" : "Tafuta urambazaji"}
                   />
                 </div>
@@ -487,9 +487,9 @@ export function NavigationMenu({
                       <button
                         key={idx}
                         onClick={() => handleNavigate(subPage?.page || item.page || "")}
-                        className="w-full flex items-center gap-3 p-3 hover:bg-green-50 transition-all text-left border-b border-gray-100 last:border-0 group"
+                        className="w-full flex items-center gap-3 p-3 hover:bg-[#2E7D32]/5 transition-all text-left border-b border-gray-100 last:border-0 group"
                       >
-                        <item.icon className="h-4 w-4 text-green-600 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                        <item.icon className="h-4 w-4 text-[#2E7D32] flex-shrink-0 group-hover:scale-110 transition-transform" />
                         <div className="flex-1 min-w-0">
                           {subPage ? (
                             <>
@@ -541,7 +541,7 @@ export function NavigationMenu({
                             w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl
                             transition-all group relative
                             ${isItemActive 
-                              ? "bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 shadow-sm" 
+                              ? "bg-gradient-to-r from-[#2E7D32] to-gray-100 border-2 border-[#2E7D32]/20 shadow-sm" 
                               : "hover:bg-gray-50 border-2 border-transparent hover:border-gray-200"
                             }
                           `}
@@ -553,7 +553,7 @@ export function NavigationMenu({
                           {isItemActive && (
                             <motion.div
                               layoutId="activeIndicator"
-                              className="absolute left-0 top-0 bottom-0 w-1 bg-green-600 rounded-r-full"
+                              className="absolute left-0 top-0 bottom-0 w-1 bg-[#2E7D32] rounded-r-full"
                               transition={{ type: "spring", stiffness: 300, damping: 30 }}
                             />
                           )}
@@ -562,15 +562,15 @@ export function NavigationMenu({
                             <div className={`
                               p-2 rounded-lg transition-all
                               ${isItemActive 
-                                ? "bg-green-600 text-white shadow-md" 
-                                : "bg-gray-100 text-gray-600 group-hover:bg-green-100 group-hover:text-green-600"
+                                ? "bg-[#2E7D32] text-white shadow-md" 
+                                : "bg-gray-100 text-gray-600 group-hover:bg-[#2E7D32]/10 group-hover:text-[#2E7D32]"
                               }
                             `}>
                               <ItemIcon className="h-5 w-5" />
                             </div>
                             <span className={`
                               text-sm font-medium
-                              ${isItemActive ? "text-green-700 font-semibold" : "text-gray-700"}
+                              ${isItemActive ? "text-[#2E7D32] font-semibold" : "text-gray-700"}
                             `}>
                               {getLabel(item)}
                             </span>
@@ -583,7 +583,7 @@ export function NavigationMenu({
                               </Badge>
                             )}
                             {item.newFeature && (
-                              <Badge className="bg-green-500 text-white text-xs px-2 py-0.5">
+                              <Badge className="bg-[#2E7D32] text-white text-xs px-2 py-0.5">
                                 {language === "en" ? "New" : "Mpya"}
                               </Badge>
                             )}
@@ -607,7 +607,7 @@ export function NavigationMenu({
                               className="overflow-hidden"
                               role="menu"
                             >
-                              <div className="ml-6 mt-1 space-y-1 border-l-2 border-green-200 pl-2">
+                              <div className="ml-6 mt-1 space-y-1 border-l-2 border-[#2E7D32]/20 pl-2">
                                 {item.subPages!.map((subPage) => {
                                   const isSubActive = isActive(subPage.page);
                                   const SubIcon = subPage.icon || ChevronRight;
@@ -623,7 +623,7 @@ export function NavigationMenu({
                                         w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg
                                         transition-all text-left group
                                         ${isSubActive 
-                                          ? "bg-green-50 border-2 border-green-200 text-green-700 shadow-sm" 
+                                          ? "bg-[#2E7D32]/5 border-2 border-[#2E7D32]/20 text-[#2E7D32] shadow-sm" 
                                           : "hover:bg-gray-50 border-2 border-transparent text-gray-600 hover:border-gray-200"
                                         }
                                       `}
@@ -632,7 +632,7 @@ export function NavigationMenu({
                                       <div className="flex items-center gap-2 flex-1">
                                         <SubIcon className={`
                                           h-4 w-4 transition-colors
-                                          ${isSubActive ? "text-green-600" : "text-gray-400 group-hover:text-green-500"}
+                                          ${isSubActive ? "text-[#2E7D32]" : "text-gray-400 group-hover:text-[#2E7D32]"}
                                         `} />
                                         <span className="text-sm font-medium">{getLabel(subPage)}</span>
                                       </div>
@@ -642,7 +642,7 @@ export function NavigationMenu({
                                         </Badge>
                                       )}
                                       {subPage.newFeature && (
-                                        <Badge className="bg-green-500 text-white text-xs px-2 py-0.5">
+                                        <Badge className="bg-[#2E7D32] text-white text-xs px-2 py-0.5">
                                           {language === "en" ? "New" : "Mpya"}
                                         </Badge>
                                       )}
@@ -665,7 +665,7 @@ export function NavigationMenu({
                   <Button
                     onClick={() => handleNavigate("profile")}
                     variant="outline"
-                    className="w-full justify-start gap-3 border-2 hover:border-green-300 hover:bg-green-50 transition-all"
+                    className="w-full justify-start gap-3 border-2 hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-all"
                   >
                     <User className="h-4 w-4" />
                     {language === "en" ? "My Profile" : "Wasifu Wangu"}
@@ -673,7 +673,7 @@ export function NavigationMenu({
                   <Button
                     onClick={() => handleNavigate("notifications")}
                     variant="outline"
-                    className="w-full justify-start gap-3 border-2 hover:border-green-300 hover:bg-green-50 transition-all"
+                    className="w-full justify-start gap-3 border-2 hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 transition-all"
                   >
                     <Bell className="h-4 w-4" />
                     {language === "en" ? "Notifications" : "Arifa"}

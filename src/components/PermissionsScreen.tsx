@@ -25,7 +25,7 @@ export function PermissionsScreen({ language, onComplete }: PermissionsScreenPro
       titleSw: "Tunahitaji kamera",
       descEn: "To take photos of crops for disease identification",
       descSw: "Kupiga picha ya mazao ili kutambua magonjwa",
-      color: "from-blue-500 to-cyan-600",
+      color: "from-gray-50 to-gray-100",
       required: true
     },
     {
@@ -35,7 +35,7 @@ export function PermissionsScreen({ language, onComplete }: PermissionsScreenPro
       titleSw: "Tunahitaji eneo lako",
       descEn: "To give you weather forecasts and local farming advice",
       descSw: "Kukupa ushauri wa hali ya hewa na kilimo cha eneo lako",
-      color: "from-green-500 to-emerald-600",
+      color: "from-[#2E7D32] to-gray-100",
       required: false
     },
     {
@@ -45,7 +45,7 @@ export function PermissionsScreen({ language, onComplete }: PermissionsScreenPro
       titleSw: "Pata tahadhari muhimu",
       descEn: "Rain forecasts, disease alerts, and quick farming tips",
       descSw: "Mvua, magonjwa, na ushauri wa haraka",
-      color: "from-purple-500 to-indigo-600",
+      color: "from-gray-50 to-gray-100",
       required: false
     }
   ];
@@ -99,7 +99,7 @@ export function PermissionsScreen({ language, onComplete }: PermissionsScreenPro
             {/* Visual explanation */}
             <div className="bg-gray-50 rounded-2xl p-6 mb-8">
               <div className="flex items-start gap-3">
-                <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                <CheckCircle className="h-6 w-6 text-[#2E7D32] flex-shrink-0 mt-1" />
                 <div className="text-sm text-gray-700">
                   {language === "sw" 
                     ? "Tunatumia hii kukuletea huduma bora zaidi. Taarifa zako ni salama."
@@ -137,9 +137,9 @@ export function PermissionsScreen({ language, onComplete }: PermissionsScreenPro
                   key={idx}
                   className={`h-1.5 w-8 rounded-full transition-all ${
                     idx === currentStep 
-                      ? 'bg-green-600' 
+                      ? 'bg-[#2E7D32]' 
                       : idx < currentStep 
-                        ? 'bg-green-400'
+                        ? 'bg-[#2E7D32]/30'
                         : 'bg-gray-300'
                   }`}
                 />

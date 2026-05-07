@@ -34,14 +34,14 @@ export function BottomNavigation({
               onClick={() => onTabChange(item.id)}
               className={`flex flex-col items-center justify-center flex-1 h-full relative transition-all duration-200 active:scale-95 min-w-[60px] ${
                 isActive 
-                  ? "text-green-600" 
+                  ? "text-[#2E7D32]" 
                   : "text-gray-500 hover:text-gray-700 active:text-gray-900"
               }`}
               aria-label={`Navigate to ${item.label}`}
               aria-current={isActive ? "page" : undefined}
             >
               <div className="relative">
-                <Icon className={`h-6 w-6 ${isActive ? "fill-green-100" : ""}`} />
+                <Icon className={`h-6 w-6 ${isActive ? "fill-[#2E7D32]" : ""}`} />
                 {item.id === "ai-chat" && notificationCount > 0 && (
                   <Badge 
                     className="absolute -right-2 -top-2 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px]"
@@ -55,7 +55,7 @@ export function BottomNavigation({
                 {item.label}
               </span>
               {isActive && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-green-600 rounded-t-full" />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-[#2E7D32] rounded-t-full" />
               )}
             </button>
           );

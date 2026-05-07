@@ -299,9 +299,9 @@ export function CropPlanningManagement() {
   const getStatusIndicator = (status: TabDataState["status"]) => {
     switch (status) {
       case "live":
-        return <div className="h-1.5 w-1.5 bg-green-500 rounded-full animate-pulse" />;
+        return <div className="h-1.5 w-1.5 bg-[#2E7D32] rounded-full animate-pulse" />;
       case "cached":
-        return <WifiOff className="h-3 w-3 text-amber-500" />;
+        return <WifiOff className="h-3 w-3 text-gray-600" />;
       case "loading":
         return <Loader2 className="h-3 w-3 text-gray-500 animate-spin" />;
       case "error":
@@ -331,7 +331,7 @@ export function CropPlanningManagement() {
             <option value="2024B">2024B (Aug-Dec)</option>
             <option value="2025A">2025A (Mar-Jul)</option>
           </select>
-          <Button className="bg-green-700 hover:bg-green-800">
+          <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
             <PlusCircle className="h-4 w-4 mr-2" />
             New Plan
           </Button>
@@ -348,7 +348,7 @@ export function CropPlanningManagement() {
                 <p className="text-3xl font-bold">{stats.totalAcresPlanned}</p>
                 <p className="text-sm text-gray-600 mt-1">{stats.cropTypesThisSeason} crops</p>
               </div>
-              <MapPin className="h-10 w-10 text-green-700" />
+              <MapPin className="h-10 w-10 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -361,7 +361,7 @@ export function CropPlanningManagement() {
                 <p className="text-2xl font-bold">TZS {(stats.expectedRevenue / 1000000).toFixed(1)}M</p>
                 <p className="text-sm text-gray-600 mt-1">{stats.avgYieldTrend} vs last season</p>
               </div>
-              <DollarSign className="h-10 w-10 text-green-700" />
+              <DollarSign className="h-10 w-10 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -374,7 +374,7 @@ export function CropPlanningManagement() {
                 <p className="text-3xl font-bold">{stats.tasksPending}</p>
                 <p className="text-sm text-gray-600 mt-1">{stats.tasksCompleted} completed</p>
               </div>
-              <CheckCircle2 className="h-10 w-10 text-amber-600" />
+              <CheckCircle2 className="h-10 w-10 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -387,7 +387,7 @@ export function CropPlanningManagement() {
                 <p className="text-3xl font-bold">92%</p>
                 <p className="text-sm text-gray-600 mt-1">All fields</p>
               </div>
-              <Activity className="h-10 w-10 text-green-700" />
+              <Activity className="h-10 w-10 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -409,11 +409,11 @@ export function CropPlanningManagement() {
                   className={`
                     relative p-3 rounded-md transition-all duration-200
                     ${isActive 
-                      ? 'bg-green-700 text-white shadow-md' 
+                      ? 'bg-[#2E7D32] text-white shadow-md' 
                       : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                     }
                     ${!tab.dataState.enabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                    focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                    focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/30 focus:ring-offset-2
                   `}
                 >
                   {/* Tab Header with Icon & Label */}
@@ -437,9 +437,9 @@ export function CropPlanningManagement() {
                         ${isActive 
                           ? 'text-white/90' 
                           : tab.insightType === 'success' 
-                            ? 'text-green-600' 
+                            ? 'text-[#2E7D32]' 
                             : tab.insightType === 'warning' 
-                              ? 'text-amber-600' 
+                              ? 'text-gray-600' 
                               : tab.insightType === 'error' 
                                 ? 'text-red-600' 
                                 : 'text-gray-600'
@@ -459,7 +459,7 @@ export function CropPlanningManagement() {
                           ${isActive 
                             ? 'bg-white/20 text-white border-white/30' 
                             : tab.insightType === 'warning' 
-                              ? 'bg-amber-100 text-amber-700 border-amber-200' 
+                              ? 'bg-gray-100 text-gray-700 border-gray-200' 
                               : 'bg-gray-100 text-gray-700 border-gray-200'
                           }
                         `}
@@ -482,9 +482,9 @@ export function CropPlanningManagement() {
           
           {/* Connection Status Bar (Bottom) */}
           {!isOnline && (
-            <div className="mt-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-md flex items-center gap-2">
-              <WifiOff className="h-3.5 w-3.5 text-amber-600" />
-              <span className="text-xs text-amber-700 font-medium">Offline Mode - Showing cached data</span>
+            <div className="mt-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-md flex items-center gap-2">
+              <WifiOff className="h-3.5 w-3.5 text-gray-600" />
+              <span className="text-xs text-gray-700 font-medium">Offline Mode - Showing cached data</span>
             </div>
           )}
         </div>
@@ -515,7 +515,7 @@ export function CropPlanningManagement() {
                   size="sm"
                   variant={statusFilter === "all" ? "default" : "outline"}
                   onClick={() => setStatusFilter("all")}
-                  className={statusFilter === "all" ? "bg-green-700 hover:bg-green-800" : ""}
+                  className={statusFilter === "all" ? "bg-[#2E7D32] hover:bg-[#2E7D32]" : ""}
                 >
                   All
                 </Button>
@@ -523,7 +523,7 @@ export function CropPlanningManagement() {
                   size="sm"
                   variant={statusFilter === "growing" ? "default" : "outline"}
                   onClick={() => setStatusFilter("growing")}
-                  className={statusFilter === "growing" ? "bg-green-700 hover:bg-green-800" : ""}
+                  className={statusFilter === "growing" ? "bg-[#2E7D32] hover:bg-[#2E7D32]" : ""}
                 >
                   Growing
                 </Button>
@@ -531,7 +531,7 @@ export function CropPlanningManagement() {
                   size="sm"
                   variant={statusFilter === "harvested" ? "default" : "outline"}
                   onClick={() => setStatusFilter("harvested")}
-                  className={statusFilter === "harvested" ? "bg-green-700 hover:bg-green-800" : ""}
+                  className={statusFilter === "harvested" ? "bg-[#2E7D32] hover:bg-[#2E7D32]" : ""}
                 >
                   Harvested
                 </Button>
@@ -539,7 +539,7 @@ export function CropPlanningManagement() {
                   size="sm"
                   variant={statusFilter === "planned" ? "default" : "outline"}
                   onClick={() => setStatusFilter("planned")}
-                  className={statusFilter === "planned" ? "bg-green-700 hover:bg-green-800" : ""}
+                  className={statusFilter === "planned" ? "bg-[#2E7D32] hover:bg-[#2E7D32]" : ""}
                 >
                   Planned
                 </Button>
@@ -559,8 +559,8 @@ export function CropPlanningManagement() {
                     <div key={plan.id} className="p-4 border rounded-lg">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className={`h-12 w-12 ${plan.status === 'growing' ? 'bg-green-100' : plan.status === 'harvested' ? 'bg-gray-100' : 'bg-gray-100'} rounded-lg flex items-center justify-center`}>
-                            <Sprout className={`h-6 w-6 ${plan.status === 'growing' ? 'text-green-600' : plan.status === 'harvested' ? 'text-gray-600' : 'text-gray-600'}`} />
+                          <div className={`h-12 w-12 ${plan.status === 'growing' ? 'bg-[#2E7D32]/10' : plan.status === 'harvested' ? 'bg-gray-100' : 'bg-gray-100'} rounded-lg flex items-center justify-center`}>
+                            <Sprout className={`h-6 w-6 ${plan.status === 'growing' ? 'text-[#2E7D32]' : plan.status === 'harvested' ? 'text-gray-600' : 'text-gray-600'}`} />
                           </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
@@ -575,7 +575,7 @@ export function CropPlanningManagement() {
                         <Badge
                           className={
                             plan.status === "growing"
-                              ? "bg-green-100 text-green-700"
+                              ? "bg-[#2E7D32]/10 text-[#2E7D32]"
                               : plan.status === "harvested"
                               ? "bg-gray-100 text-gray-700"
                               : "bg-gray-100 text-gray-700"
@@ -668,7 +668,7 @@ export function CropPlanningManagement() {
                             task.priority === "high"
                               ? "bg-red-100 text-red-700"
                               : task.priority === "medium"
-                              ? "bg-yellow-100 text-yellow-700"
+                              ? "bg-gray-100 text-gray-700"
                               : "bg-gray-100 text-gray-700"
                           }
                         >
@@ -695,9 +695,9 @@ export function CropPlanningManagement() {
                 {/* Timeline visualization */}
                 <div className="grid grid-cols-5 gap-2 text-center text-sm font-medium mb-4">
                   <div className="p-2 bg-gray-100 rounded">Mar</div>
-                  <div className="p-2 bg-green-100 rounded">Apr-May</div>
-                  <div className="p-2 bg-yellow-100 rounded">Jun</div>
-                  <div className="p-2 bg-orange-100 rounded">Jul</div>
+                  <div className="p-2 bg-[#2E7D32]/10 rounded">Apr-May</div>
+                  <div className="p-2 bg-gray-100 rounded">Jun</div>
+                  <div className="p-2 bg-gray-100 rounded">Jul</div>
                   <div className="p-2 bg-red-100 rounded">Aug</div>
                 </div>
 
@@ -713,7 +713,7 @@ export function CropPlanningManagement() {
 
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm">
-                        <Sun className="h-4 w-4 text-yellow-600" />
+                        <Sun className="h-4 w-4 text-gray-600" />
                         <span className="text-gray-600">Planting:</span>
                         <span className="font-medium">{plan.plantingDate}</span>
                       </div>
@@ -723,7 +723,7 @@ export function CropPlanningManagement() {
                         <span className="font-medium">Week 8-10</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <Scale className="h-4 w-4 text-orange-600" />
+                        <Scale className="h-4 w-4 text-gray-600" />
                         <span className="text-gray-600">Harvest:</span>
                         <span className="font-medium">{plan.expectedHarvestDate}</span>
                       </div>
@@ -820,7 +820,7 @@ export function CropPlanningManagement() {
                         <p className="text-xs text-gray-600 mb-1">Nitrogen (N)</p>
                         <p className="text-lg font-bold">{soil.nitrogen}</p>
                       </div>
-                      <div className="text-center p-3 bg-orange-50 rounded-lg">
+                      <div className="text-center p-3 bg-gray-50 rounded-lg">
                         <p className="text-xs text-gray-600 mb-1">Phosphorus (P)</p>
                         <p className="text-lg font-bold">{soil.phosphorus}</p>
                       </div>
@@ -828,7 +828,7 @@ export function CropPlanningManagement() {
                         <p className="text-xs text-gray-600 mb-1">Potassium (K)</p>
                         <p className="text-lg font-bold">{soil.potassium}</p>
                       </div>
-                      <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-center p-3 bg-[#2E7D32]/5 rounded-lg">
                         <p className="text-xs text-gray-600 mb-1">Organic Matter</p>
                         <p className="text-2xl font-bold">{soil.organicMatter}%</p>
                         <p className="text-xs text-gray-600">Target: &gt;3%</p>
@@ -875,7 +875,7 @@ export function CropPlanningManagement() {
                           <h4 className="text-lg font-medium">{plan.cropName} - {plan.field}</h4>
                           <p className="text-sm text-gray-600">{plan.variety} • {plan.fieldSize} acres</p>
                         </div>
-                        <Badge className="bg-green-100 text-green-700">
+                        <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">
                           {plan.status === "growing" ? "On Track" : plan.status}
                         </Badge>
                       </div>
@@ -894,7 +894,7 @@ export function CropPlanningManagement() {
                         <div>
                           <p className="text-sm text-gray-600 mb-1">Estimated Revenue</p>
                           <p className="text-xl font-bold">TZS {(estimatedRevenue / 1000000).toFixed(1)}M</p>
-                          <p className="text-xs text-green-600">+12% vs avg</p>
+                          <p className="text-xs text-[#2E7D32]">+12% vs avg</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600 mb-1">Confidence</p>
@@ -911,11 +911,11 @@ export function CropPlanningManagement() {
                             <span>Rainfall: Good</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Leaf className="h-4 w-4 text-green-600" />
+                            <Leaf className="h-4 w-4 text-[#2E7D32]" />
                             <span>Soil: Excellent</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Bug className="h-4 w-4 text-orange-600" />
+                            <Bug className="h-4 w-4 text-gray-600" />
                             <span>Pests: Low</span>
                           </div>
                         </div>
@@ -951,7 +951,7 @@ export function CropPlanningManagement() {
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span>2024A Season (Forecast)</span>
-                      <span className="font-medium text-green-600">3,000 bags/15ac</span>
+                      <span className="font-medium text-[#2E7D32]">3,000 bags/15ac</span>
                     </div>
                     <Progress value={100} className="h-2" />
                   </div>
@@ -968,12 +968,12 @@ export function CropPlanningManagement() {
                   <div className="p-3 border rounded-lg">
                     <p className="text-sm text-gray-600 mb-1">Maize (Current)</p>
                     <p className="text-2xl font-bold">TZS 85,000/bag</p>
-                    <p className="text-xs text-green-600">↑ 8% from last month</p>
+                    <p className="text-xs text-[#2E7D32]">↑ 8% from last month</p>
                   </div>
                   <div className="p-3 border rounded-lg">
                     <p className="text-sm text-gray-600 mb-1">Beans (Current)</p>
                     <p className="text-2xl font-bold">TZS 120,000/bag</p>
-                    <p className="text-xs text-green-600">↑ 12% from last month</p>
+                    <p className="text-xs text-[#2E7D32]">↑ 12% from last month</p>
                   </div>
                 </div>
               </CardContent>
@@ -997,7 +997,7 @@ export function CropPlanningManagement() {
 
             <Card>
               <CardContent className="pt-6">
-                <DollarSign className="h-10 w-10 mb-3 text-green-600" />
+                <DollarSign className="h-10 w-10 mb-3 text-[#2E7D32]" />
                 <h4 className="font-medium mb-2">Financial Summary</h4>
                 <p className="text-sm text-gray-600 mb-4">Revenue, costs, and profitability</p>
                 <Button size="sm" variant="outline" className="w-full">
@@ -1030,17 +1030,17 @@ export function CropPlanningManagement() {
                   <p className="text-sm text-gray-600 mb-1">Total Acres Cultivated</p>
                   <p className="text-3xl font-bold text-gray-900">{stats.totalAcresPlanned}</p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-center p-4 bg-[#2E7D32]/5 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Expected Revenue</p>
-                  <p className="text-3xl font-bold text-green-600">TZS {(stats.expectedRevenue / 1000000).toFixed(1)}M</p>
+                  <p className="text-3xl font-bold text-[#2E7D32]">TZS {(stats.expectedRevenue / 1000000).toFixed(1)}M</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Input Costs</p>
                   <p className="text-3xl font-bold text-gray-900">TZS 12.5M</p>
                 </div>
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600 mb-1">Net Profit (Est.)</p>
-                  <p className="text-3xl font-bold text-orange-600">TZS 32.5M</p>
+                  <p className="text-3xl font-bold text-gray-600">TZS 32.5M</p>
                 </div>
               </div>
             </CardContent>

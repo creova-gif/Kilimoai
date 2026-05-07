@@ -10,10 +10,10 @@ export function FloatingActionButton({ onAction }: FABProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const actions = [
-    { id: "ai-insight", label: "AI Insight", icon: Brain, color: "bg-green-600 hover:bg-green-700" },
-    { id: "new-task", label: "New Task", icon: ClipboardPlus, color: "bg-green-600 hover:bg-green-700" },
-    { id: "ask-sankofa", label: "Ask Sankofa", icon: MessageSquare, color: "bg-green-600 hover:bg-green-700" },
-    { id: "scan-crop", label: "Scan Crop", icon: Camera, color: "bg-orange-600 hover:bg-orange-700" }
+    { id: "ai-insight", label: "AI Insight", icon: Brain, color: "bg-[#2E7D32] hover:bg-[#2E7D32]" },
+    { id: "new-task", label: "New Task", icon: ClipboardPlus, color: "bg-[#2E7D32] hover:bg-[#2E7D32]" },
+    { id: "ask-sankofa", label: "Ask Sankofa", icon: MessageSquare, color: "bg-[#2E7D32] hover:bg-[#2E7D32]" },
+    { id: "scan-crop", label: "Scan Crop", icon: Camera, color: "bg-gray-700 hover:bg-gray-800" }
   ];
 
   const handleAction = (actionId: string) => {
@@ -55,7 +55,7 @@ export function FloatingActionButton({ onAction }: FABProps) {
         className={`h-14 w-14 rounded-full shadow-xl transition-all ${
           isOpen 
             ? "bg-red-600 hover:bg-red-700 rotate-45" 
-            : "bg-green-600 hover:bg-green-700"
+            : "bg-[#2E7D32] hover:bg-[#2E7D32]"
         }`}
       >
         {isOpen ? (

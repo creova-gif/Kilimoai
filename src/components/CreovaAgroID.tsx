@@ -218,7 +218,7 @@ export function CreovaAgroID({
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
-            <Button className="bg-green-600 hover:bg-green-700" onClick={downloadID}>
+            <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]" onClick={downloadID}>
               <Download className="h-4 w-4 mr-2" />
               Download
             </Button>
@@ -241,7 +241,7 @@ export function CreovaAgroID({
                 </div>
                 <div>
                   <h2 className="text-xl font-bold">CREOVA AGRO-ID</h2>
-                  <p className="text-green-100 text-sm">Digital Farmer Identity</p>
+                  <p className="text-[#2E7D32] text-sm">Digital Farmer Identity</p>
                 </div>
               </div>
               <Badge className="bg-white/20 text-white border-white/30">
@@ -257,7 +257,7 @@ export function CreovaAgroID({
               <>
                 <div className="grid grid-cols-2 gap-6 mb-6">
                   <div>
-                    <p className="text-green-100 text-sm mb-1">ID Number</p>
+                    <p className="text-[#2E7D32] text-sm mb-1">ID Number</p>
                     <p className="text-xl font-mono font-bold">{agroID}</p>
                   </div>
                   <div className="text-right">
@@ -267,19 +267,19 @@ export function CreovaAgroID({
 
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div>
-                    <p className="text-green-100 text-sm mb-1">Full Name</p>
+                    <p className="text-[#2E7D32] text-sm mb-1">Full Name</p>
                     <p className="font-semibold">{userName}</p>
                   </div>
                   <div>
-                    <p className="text-green-100 text-sm mb-1">Phone</p>
+                    <p className="text-[#2E7D32] text-sm mb-1">Phone</p>
                     <p className="font-semibold">{userPhone}</p>
                   </div>
                   <div>
-                    <p className="text-green-100 text-sm mb-1">Region</p>
+                    <p className="text-[#2E7D32] text-sm mb-1">Region</p>
                     <p className="font-semibold">{region}</p>
                   </div>
                   <div>
-                    <p className="text-green-100 text-sm mb-1">Farm Size</p>
+                    <p className="text-[#2E7D32] text-sm mb-1">Farm Size</p>
                     <p className="font-semibold">{farmSize} acres</p>
                   </div>
                 </div>
@@ -288,9 +288,9 @@ export function CreovaAgroID({
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100 text-sm mb-1">Credit Score</p>
+                      <p className="text-[#2E7D32] text-sm mb-1">Credit Score</p>
                       <p className="text-2xl font-bold">{creditScore.score}</p>
-                      <p className="text-sm text-green-100">{creditScore.rating} • {creditScore.tier} Tier</p>
+                      <p className="text-sm text-[#2E7D32]">{creditScore.rating} • {creditScore.tier} Tier</p>
                     </div>
                     <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center">
                       <TrendingUp className="h-8 w-8" />
@@ -298,7 +298,7 @@ export function CreovaAgroID({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 mt-6 text-xs text-green-100">
+                <div className="flex items-center gap-2 mt-6 text-xs text-[#2E7D32]">
                   <Lock className="h-3 w-3" />
                   <span>Secured with blockchain technology • Issued {new Date(registrationDate).toLocaleDateString()}</span>
                 </div>
@@ -307,7 +307,7 @@ export function CreovaAgroID({
               <div className="text-center py-8">
                 <Fingerprint className="h-16 w-16 mx-auto mb-4 text-white/40" />
                 <h3 className="text-xl font-bold mb-2">Verify Your Identity</h3>
-                <p className="text-green-100 mb-6">Enter your NIDA number to generate your CREOVA AGRO-ID</p>
+                <p className="text-[#2E7D32] mb-6">Enter your NIDA number to generate your CREOVA AGRO-ID</p>
                 
                 <div className="max-w-md mx-auto space-y-4">
                   <div className="space-y-2">
@@ -322,7 +322,7 @@ export function CreovaAgroID({
                   </div>
                   <Button 
                     onClick={handleVerifyNIDA}
-                    className="w-full bg-white text-green-700 hover:bg-green-50"
+                    className="w-full bg-white text-[#2E7D32] hover:bg-[#2E7D32]/5"
                   >
                     <UserCheck className="h-4 w-4 mr-2" />
                     Verify & Generate AGRO-ID
@@ -362,9 +362,9 @@ export function CreovaAgroID({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">AGRO-ID Status</p>
-                      <p className="text-2xl font-bold text-green-600">Active</p>
+                      <p className="text-2xl font-bold text-[#2E7D32]">Active</p>
                     </div>
-                    <CheckCircle2 className="h-10 w-10 text-green-600" />
+                    <CheckCircle2 className="h-10 w-10 text-[#2E7D32]" />
                   </div>
                 </CardContent>
               </Card>
@@ -402,7 +402,7 @@ export function CreovaAgroID({
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {crops.map((crop, index) => (
-                    <Badge key={index} variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    <Badge key={index} variant="outline" className="bg-[#2E7D32]/5 text-[#2E7D32] border-[#2E7D32]/20">
                       <TreePine className="h-3 w-3 mr-1" />
                       {crop}
                     </Badge>
@@ -420,13 +420,13 @@ export function CreovaAgroID({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <DollarSign className="h-5 w-5 text-green-600" />
+                      <DollarSign className="h-5 w-5 text-[#2E7D32]" />
                       <div>
                         <p className="font-medium">CREOVA Marketplace</p>
                         <p className="text-sm text-gray-600">Buyer verification & payment</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-green-100 text-green-700">Active</Badge>
+                    <Badge variant="outline" className="bg-[#2E7D32]/10 text-[#2E7D32]">Active</Badge>
                   </div>
 
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -540,10 +540,10 @@ export function CreovaAgroID({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Card className="bg-green-50 border-green-200">
+                  <Card className="bg-[#2E7D32]/5 border-[#2E7D32]/20">
                     <CardContent className="pt-6 text-center">
-                      <CircleDollarSign className="h-8 w-8 mx-auto mb-2 text-green-600" />
-                      <p className="text-2xl font-bold text-green-700">TZS 5.2M</p>
+                      <CircleDollarSign className="h-8 w-8 mx-auto mb-2 text-[#2E7D32]" />
+                      <p className="text-2xl font-bold text-[#2E7D32]">TZS 5.2M</p>
                       <p className="text-sm text-gray-600">Available Credit</p>
                     </CardContent>
                   </Card>
@@ -566,11 +566,11 @@ export function CreovaAgroID({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <Zap className="h-5 w-5 text-yellow-600 mt-0.5" />
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <Zap className="h-5 w-5 text-gray-600 mt-0.5" />
                     <div>
-                      <p className="font-medium text-yellow-900">Complete 3 more transactions</p>
-                      <p className="text-sm text-yellow-700">Increase market activity score by 15 points</p>
+                      <p className="font-medium text-gray-900">Complete 3 more transactions</p>
+                      <p className="text-sm text-gray-700">Increase market activity score by 15 points</p>
                     </div>
                   </div>
 
@@ -582,11 +582,11 @@ export function CreovaAgroID({
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />
+                  <div className="flex items-start gap-3 p-3 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg">
+                    <CheckCircle2 className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                     <div>
-                      <p className="font-medium text-green-900">Use mobile money regularly</p>
-                      <p className="text-sm text-green-700">Make 5 payments this month for +8 points</p>
+                      <p className="font-medium text-[#2E7D32]">Use mobile money regularly</p>
+                      <p className="text-sm text-[#2E7D32]">Make 5 payments this month for +8 points</p>
                     </div>
                   </div>
                 </div>
@@ -602,48 +602,48 @@ export function CreovaAgroID({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between p-4 bg-[#2E7D32]/5 rounded-lg border border-[#2E7D32]/20">
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <CheckCircle2 className="h-6 w-6 text-[#2E7D32]" />
                       <div>
                         <p className="font-medium">NIDA Verification</p>
                         <p className="text-sm text-gray-600">National ID verified via NIDA</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-700">Verified</Badge>
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Verified</Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between p-4 bg-[#2E7D32]/5 rounded-lg border border-[#2E7D32]/20">
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <CheckCircle2 className="h-6 w-6 text-[#2E7D32]" />
                       <div>
                         <p className="font-medium">Mobile Number</p>
                         <p className="text-sm text-gray-600">Phone verified with OTP</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-700">Verified</Badge>
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Verified</Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between p-4 bg-[#2E7D32]/5 rounded-lg border border-[#2E7D32]/20">
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <CheckCircle2 className="h-6 w-6 text-[#2E7D32]" />
                       <div>
                         <p className="font-medium">Farm Data</p>
                         <p className="text-sm text-gray-600">Location & size confirmed</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-700">Verified</Badge>
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Verified</Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between p-4 bg-[#2E7D32]/5 rounded-lg border border-[#2E7D32]/20">
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <CheckCircle2 className="h-6 w-6 text-[#2E7D32]" />
                       <div>
                         <p className="font-medium">Creditworthiness</p>
                         <p className="text-sm text-gray-600">Credit history established</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-700">Verified</Badge>
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Verified</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -669,7 +669,7 @@ export function CreovaAgroID({
                   </div>
                   <div>
                     <p className="text-gray-600">Status</p>
-                    <Badge className="bg-green-100 text-green-700">Active</Badge>
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Active</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -685,8 +685,8 @@ export function CreovaAgroID({
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 border rounded-lg">
-                    <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                      <CreditCard className="h-5 w-5 text-green-600" />
+                    <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-full flex items-center justify-center mb-3">
+                      <CreditCard className="h-5 w-5 text-[#2E7D32]" />
                     </div>
                     <h3 className="font-medium mb-2">Access to Credit</h3>
                     <p className="text-sm text-gray-600">
@@ -715,8 +715,8 @@ export function CreovaAgroID({
                   </div>
 
                   <div className="p-4 border rounded-lg">
-                    <div className="h-10 w-10 bg-orange-100 rounded-full flex items-center justify-center mb-3">
-                      <BarChart3 className="h-5 w-5 text-orange-600" />
+                    <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                      <BarChart3 className="h-5 w-5 text-gray-600" />
                     </div>
                     <h3 className="font-medium mb-2">Marketplace Priority</h3>
                     <p className="text-sm text-gray-600">

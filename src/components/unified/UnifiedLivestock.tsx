@@ -91,8 +91,8 @@ export function UnifiedLivestock({
   const needsAttentionCount = livestock.filter(a => a.health === "needs_attention").length;
 
   const healthColors = {
-    excellent: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", dot: "bg-emerald-500" },
-    good: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", dot: "bg-blue-500" },
+    excellent: { bg: "bg-[#2E7D32]/5", text: "text-[#2E7D32]", border: "border-[#2E7D32]/20", dot: "bg-[#2E7D32]" },
+    good: { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-600" },
     needs_attention: { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", dot: "bg-red-500" },
   };
 
@@ -239,17 +239,17 @@ export function UnifiedLivestock({
         </div>
 
         {/* Info Card */}
-        <Card className="border-2 border-blue-100 bg-blue-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <CalendarCheck className="h-5 w-5 text-blue-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <CalendarCheck className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "en" ? "Smart Livestock Tracking" : "Ufuatiliaji Mahiri wa Mifugo"}
                 </h4>
-                <p className="text-sm text-blue-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "en"
                     ? "Track individual animal health, breeding cycles, vaccinations, and production. Get reminders for checkups and treatments."
                     : "Fuatilia afya ya mnyama mmoja mmoja, mizunguko ya uzazi, chanjo, na uzalishaji. Pata vikumbusho vya ukaguzi na matibabu."}

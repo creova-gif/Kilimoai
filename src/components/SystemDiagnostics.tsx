@@ -156,9 +156,9 @@ export function SystemDiagnostics() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "success":
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return <CheckCircle className="w-5 h-5 text-[#2E7D32]" />;
       case "warning":
-        return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
+        return <AlertTriangle className="w-5 h-5 text-gray-600" />;
       case "error":
         return <XCircle className="w-5 h-5 text-red-600" />;
       case "pending":
@@ -169,9 +169,9 @@ export function SystemDiagnostics() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "success":
-        return <Badge className="bg-green-100 text-green-800">Pass</Badge>;
+        return <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Pass</Badge>;
       case "warning":
-        return <Badge className="bg-yellow-100 text-yellow-800">Warning</Badge>;
+        return <Badge className="bg-gray-100 text-gray-800">Warning</Badge>;
       case "error":
         return <Badge className="bg-red-100 text-red-800">Fail</Badge>;
       case "pending":
@@ -198,7 +198,7 @@ export function SystemDiagnostics() {
             <Button 
               onClick={runTests} 
               disabled={testing}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-[#2E7D32] hover:bg-[#2E7D32]"
             >
               {testing ? (
                 <>
@@ -216,7 +216,7 @@ export function SystemDiagnostics() {
             {results.length > 0 && (
               <div className="flex gap-4 items-center">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <CheckCircle className="w-4 h-4 text-[#2E7D32]" />
                   <span className="text-sm font-medium">{successCount} passed</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -278,25 +278,25 @@ export function SystemDiagnostics() {
       </Card>
 
       {/* Quick Fix Guide */}
-      <Card className="border-orange-200 bg-orange-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardHeader>
-          <CardTitle className="text-orange-800 text-sm">Common Issues & Fixes</CardTitle>
+          <CardTitle className="text-gray-800 text-sm">Common Issues & Fixes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div>
-            <p className="font-medium text-orange-900">❌ If Health Check fails:</p>
-            <p className="text-orange-700 ml-4">• Supabase Edge Function is not deployed</p>
-            <p className="text-orange-700 ml-4">• Check environment variables</p>
+            <p className="font-medium text-gray-900">❌ If Health Check fails:</p>
+            <p className="text-gray-700 ml-4">• Supabase Edge Function is not deployed</p>
+            <p className="text-gray-700 ml-4">• Check environment variables</p>
           </div>
           <div>
-            <p className="font-medium text-orange-900">❌ If AI endpoints fail:</p>
-            <p className="text-orange-700 ml-4">• OPENROUTER_API_KEY not set</p>
-            <p className="text-orange-700 ml-4">• Check AI credits</p>
+            <p className="font-medium text-gray-900">❌ If AI endpoints fail:</p>
+            <p className="text-gray-700 ml-4">• OPENROUTER_API_KEY not set</p>
+            <p className="text-gray-700 ml-4">• Check AI credits</p>
           </div>
           <div>
-            <p className="font-medium text-orange-900">❌ If Weather/Market fails:</p>
-            <p className="text-orange-700 ml-4">• OPENWEATHER_API_KEY not set</p>
-            <p className="text-orange-700 ml-4">• External API down</p>
+            <p className="font-medium text-gray-900">❌ If Weather/Market fails:</p>
+            <p className="text-gray-700 ml-4">• OPENWEATHER_API_KEY not set</p>
+            <p className="text-gray-700 ml-4">• External API down</p>
           </div>
         </CardContent>
       </Card>

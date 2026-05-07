@@ -115,9 +115,9 @@ export function ExtensionOfficerDashboard() {
       case "scheduled":
         return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Scheduled</Badge>;
       case "in-progress":
-        return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">In Progress</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">In Progress</Badge>;
       case "completed":
-        return <Badge className="bg-green-100 text-green-700 border-green-300">Completed</Badge>;
+        return <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">Completed</Badge>;
       case "cancelled":
         return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Cancelled</Badge>;
       default:
@@ -128,7 +128,7 @@ export function ExtensionOfficerDashboard() {
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case "progressive":
-        return <Badge className="bg-green-100 text-green-700">Progressive</Badge>;
+        return <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Progressive</Badge>;
       case "traditional":
         return <Badge className="bg-gray-100 text-gray-700">Traditional</Badge>;
       case "struggling":
@@ -147,9 +147,9 @@ export function ExtensionOfficerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Today's Visits</p>
-                <p className="text-2xl font-bold text-green-600">4</p>
+                <p className="text-2xl font-bold text-[#2E7D32]">4</p>
               </div>
-              <Calendar className="h-10 w-10 text-green-600 opacity-20" />
+              <Calendar className="h-10 w-10 text-[#2E7D32] opacity-20" />
             </div>
           </CardContent>
         </Card>
@@ -171,9 +171,9 @@ export function ExtensionOfficerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">This Week</p>
-                <p className="text-2xl font-bold text-orange-600">12</p>
+                <p className="text-2xl font-bold text-gray-600">12</p>
               </div>
-              <Clock className="h-10 w-10 text-orange-600 opacity-20" />
+              <Clock className="h-10 w-10 text-gray-600 opacity-20" />
             </div>
           </CardContent>
         </Card>
@@ -183,16 +183,16 @@ export function ExtensionOfficerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Avg. Adoption</p>
-                <p className="text-2xl font-bold text-orange-600">68%</p>
+                <p className="text-2xl font-bold text-gray-600">68%</p>
               </div>
-              <CheckCircle className="h-10 w-10 text-orange-600 opacity-20" />
+              <CheckCircle className="h-10 w-10 text-gray-600 opacity-20" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Schedule New Visit */}
-      <Button className="w-full bg-green-600 hover:bg-green-700">
+      <Button className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]">
         <Calendar className="h-4 w-4 mr-2" />
         Schedule New Field Visit
       </Button>
@@ -210,7 +210,7 @@ export function ExtensionOfficerDashboard() {
               onClick={() => setActiveTab("upcoming")}
               className={`px-4 py-2 border-b-2 transition-colors ${
                 activeTab === "upcoming"
-                  ? "border-green-600 text-green-600 font-medium"
+                  ? "border-[#2E7D32]/20 text-[#2E7D32] font-medium"
                   : "border-transparent text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -220,7 +220,7 @@ export function ExtensionOfficerDashboard() {
               onClick={() => setActiveTab("completed")}
               className={`px-4 py-2 border-b-2 transition-colors ${
                 activeTab === "completed"
-                  ? "border-green-600 text-green-600 font-medium"
+                  ? "border-[#2E7D32]/20 text-[#2E7D32] font-medium"
                   : "border-transparent text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -234,7 +234,7 @@ export function ExtensionOfficerDashboard() {
               <Card 
                 key={visit.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
-                  selectedVisit === visit.id ? 'border-green-500 border-2' : ''
+                  selectedVisit === visit.id ? 'border-[#2E7D32]/20 border-2' : ''
                 }`}
                 onClick={() => setSelectedVisit(selectedVisit === visit.id ? null : visit.id)}
               >
@@ -269,9 +269,9 @@ export function ExtensionOfficerDashboard() {
                       )}
 
                       {visit.notes && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                          <p className="text-sm font-medium text-green-900 mb-1">Visit Notes:</p>
-                          <p className="text-sm text-green-800">{visit.notes}</p>
+                        <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg p-3">
+                          <p className="text-sm font-medium text-[#2E7D32] mb-1">Visit Notes:</p>
+                          <p className="text-sm text-[#2E7D32]">{visit.notes}</p>
                         </div>
                       )}
 
@@ -285,7 +285,7 @@ export function ExtensionOfficerDashboard() {
                       <div className="flex gap-2">
                         {visit.status === "scheduled" && (
                           <>
-                            <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                            <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                               <Navigation className="h-4 w-4 mr-2" />
                               Navigate to Farm
                             </Button>
@@ -297,7 +297,7 @@ export function ExtensionOfficerDashboard() {
                         )}
                         {visit.status === "in-progress" && (
                           <>
-                            <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                            <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                               <Camera className="h-4 w-4 mr-2" />
                               Add Photos
                             </Button>
@@ -359,7 +359,7 @@ export function ExtensionOfficerDashboard() {
                 </div>
                 <div>
                   <p className="text-gray-500">Adoption Rate</p>
-                  <p className="font-medium text-green-600">{farmer.adoptionRate}%</p>
+                  <p className="font-medium text-[#2E7D32]">{farmer.adoptionRate}%</p>
                 </div>
               </div>
 
@@ -370,7 +370,7 @@ export function ExtensionOfficerDashboard() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-green-600 h-2 rounded-full transition-all"
+                    className="bg-[#2E7D32] h-2 rounded-full transition-all"
                     style={{ width: `${farmer.adoptionRate}%` }}
                   />
                 </div>
@@ -380,7 +380,7 @@ export function ExtensionOfficerDashboard() {
                 <Button size="sm" variant="outline" className="flex-1">
                   View Full Profile
                 </Button>
-                <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
+                <Button size="sm" className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                   Schedule Visit
                 </Button>
               </div>
@@ -390,10 +390,10 @@ export function ExtensionOfficerDashboard() {
       </Card>
 
       {/* Offline Sync Status */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5" />
             <div>
               <h4 className="font-medium text-gray-900">Offline Mode Active</h4>
               <p className="text-sm text-gray-700 mt-1">
@@ -418,7 +418,7 @@ export function ExtensionOfficerDashboard() {
                 <span className="font-medium">48/50 (96%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: "96%" }} />
+                <div className="bg-[#2E7D32] h-2 rounded-full" style={{ width: "96%" }} />
               </div>
             </div>
             <div>
@@ -427,7 +427,7 @@ export function ExtensionOfficerDashboard() {
                 <span className="font-medium">68/80 (85%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: "85%" }} />
+                <div className="bg-[#2E7D32] h-2 rounded-full" style={{ width: "85%" }} />
               </div>
             </div>
             <div>
@@ -436,7 +436,7 @@ export function ExtensionOfficerDashboard() {
                 <span className="font-medium">34/40 (85%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-orange-600 h-2 rounded-full" style={{ width: "85%" }} />
+                <div className="bg-gray-700 h-2 rounded-full" style={{ width: "85%" }} />
               </div>
             </div>
           </div>

@@ -157,7 +157,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high": return { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", dot: "bg-red-500" };
-      case "medium": return { bg: "bg-yellow-50", text: "text-yellow-700", border: "border-yellow-200", dot: "bg-yellow-500" };
+      case "medium": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-600" };
       case "low": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
       default: return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-500" };
     }
@@ -165,8 +165,8 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "good": return { bg: "bg-green-100", text: "text-green-700", icon: "text-green-600" };
-      case "warning": return { bg: "bg-yellow-100", text: "text-yellow-700", icon: "text-yellow-600" };
+      case "good": return { bg: "bg-[#2E7D32]/10", text: "text-[#2E7D32]", icon: "text-[#2E7D32]" };
+      case "warning": return { bg: "bg-gray-100", text: "text-gray-700", icon: "text-gray-600" };
       case "critical": return { bg: "bg-red-100", text: "text-red-700", icon: "text-red-600" };
       default: return { bg: "bg-gray-100", text: "text-gray-700", icon: "text-gray-600" };
     }
@@ -185,7 +185,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Crop-Specific Tips" : "Vidokezo vya Mazao"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Personalized guidance for your crops"
                   : "Mwongozo wa kibinafsi kwa mazao yako"}
@@ -256,7 +256,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                     onClick={() => setSelectedSeason(season.id)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       isActive
-                        ? "bg-green-600 text-white"
+                        ? "bg-[#2E7D32] text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
@@ -271,10 +271,10 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Target className="h-5 w-5 text-green-600" />
+                <Target className="h-5 w-5 text-[#2E7D32]" />
                 {language === "en" ? "Recommended Actions" : "Hatua Zinazopendekezwa"}
               </h2>
-              <Badge className="bg-green-100 text-green-700 border-green-200 border-2">
+              <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20 border-2">
                 {cropTips.length} {language === "en" ? "active tips" : "vidokezo vya sasa"}
               </Badge>
             </div>
@@ -321,7 +321,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                               {tip.linkedService === "inputs" && (
                                 <Button
                                   size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  className="bg-[#2E7D32] hover:bg-[#2E7D32] text-white"
                                   onClick={() => onNavigate && onNavigate("inputs")}
                                 >
                                   <ShoppingCart className="h-4 w-4 mr-2" />
@@ -331,7 +331,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                               {tip.linkedService === "diagnostics" && (
                                 <Button
                                   size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  className="bg-[#2E7D32] hover:bg-[#2E7D32] text-white"
                                   onClick={() => onNavigate && onNavigate("diagnostics")}
                                 >
                                   <FileText className="h-4 w-4 mr-2" />
@@ -367,15 +367,15 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
           </div>
 
           {/* Quick Links to Related Services */}
-          <div className="bg-green-50 rounded-xl border-2 border-green-200 p-6">
+          <div className="bg-[#2E7D32]/5 rounded-xl border-2 border-[#2E7D32]/20 p-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <ArrowRight className="h-5 w-5 text-green-600" />
+              <ArrowRight className="h-5 w-5 text-[#2E7D32]" />
               {language === "en" ? "Related Services" : "Huduma Zinazohusiana"}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <button
                 onClick={() => onNavigate && onNavigate("diagnostics")}
-                className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all group"
+                className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20 transition-all group"
               >
                 <FileText className="h-6 w-6 text-gray-700" />
                 <div className="flex-1 text-left">
@@ -386,14 +386,14 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                     {language === "en" ? "Identify issues" : "Tambua matatizo"}
                   </div>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-[#2E7D32] group-hover:translate-x-1 transition-all" />
               </button>
 
               <button
                 onClick={() => onNavigate && onNavigate("soil-testing")}
-                className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all group"
+                className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20 transition-all group"
               >
-                <Beaker className="h-6 w-6 text-orange-600" />
+                <Beaker className="h-6 w-6 text-gray-600" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900 text-sm">
                     {language === "en" ? "Soil Testing" : "Upimaji wa Udongo"}
@@ -402,14 +402,14 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                     {language === "en" ? "Test your soil" : "Pima udongo wako"}
                   </div>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-[#2E7D32] group-hover:translate-x-1 transition-all" />
               </button>
 
               <button
                 onClick={() => onNavigate && onNavigate("inputs")}
-                className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all group"
+                className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-xl border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20 transition-all group"
               >
-                <ShoppingCart className="h-6 w-6 text-green-600" />
+                <ShoppingCart className="h-6 w-6 text-[#2E7D32]" />
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-gray-900 text-sm">
                     {language === "en" ? "Input Marketplace" : "Soko la Vifaa"}
@@ -418,7 +418,7 @@ export function CropSpecificTips({ language, userId, onNavigate }: CropSpecificT
                     {language === "en" ? "Buy supplies" : "Nunua vifaa"}
                   </div>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-[#2E7D32] group-hover:translate-x-1 transition-all" />
               </button>
             </div>
           </div>

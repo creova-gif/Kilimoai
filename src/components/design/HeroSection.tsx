@@ -12,7 +12,7 @@ interface HeroSectionProps {
 export function HeroSection({
   title,
   subtitle,
-  gradient = "from-green-600 via-emerald-600 to-teal-700",
+  gradient = "from-[#2E7D32] via-[#2E7D32] to-gray-100",
   children,
   height = "auto"
 }: HeroSectionProps) {

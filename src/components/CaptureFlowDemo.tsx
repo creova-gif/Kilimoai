@@ -25,7 +25,7 @@ export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
       title: { en: "Crop Health Check", sw: "Ukaguzi wa Afya ya Zao" },
       description: { en: "Diagnose plant diseases and pests", sw: "Tambua magonjwa ya mimea na wadudu" },
       icon: <div className="text-3xl">🌱</div>,
-      color: "bg-green-500"
+      color: "bg-[#2E7D32]"
     },
     {
       id: "livestock" as const,
@@ -46,7 +46,7 @@ export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
       title: { en: "Get Advice", sw: "Pata Ushauri" },
       description: { en: "General farming assistance", sw: "Msaada wa jumla wa kilimo" },
       icon: <MessageSquare className="h-8 w-8" />,
-      color: "from-amber-500 to-orange-500"
+      color: "from-gray-50 to-gray-100"
     }
   ];
 
@@ -152,48 +152,48 @@ export function CaptureFlowDemo({ language }: CaptureFlowDemoProps) {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <div className="flex items-start gap-2">
-              <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="h-2 w-2 bg-green-600 rounded-full"></div>
+              <div className="h-5 w-5 bg-[#2E7D32]/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="h-2 w-2 bg-[#2E7D32] rounded-full"></div>
               </div>
               <span className="text-gray-700">
                 {language === "en" ? "Real-time quality checks" : "Ukaguzi wa ubora wa wakati halisi"}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="h-2 w-2 bg-green-600 rounded-full"></div>
+              <div className="h-5 w-5 bg-[#2E7D32]/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="h-2 w-2 bg-[#2E7D32] rounded-full"></div>
               </div>
               <span className="text-gray-700">
                 {language === "en" ? "Guided capture with overlays" : "Kupiga picha kwa mwongozo na vitando"}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="h-2 w-2 bg-green-600 rounded-full"></div>
+              <div className="h-5 w-5 bg-[#2E7D32]/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="h-2 w-2 bg-[#2E7D32] rounded-full"></div>
               </div>
               <span className="text-gray-700">
                 {language === "en" ? "Multi-modal input (photo + voice)" : "Ingizo la aina nyingi (picha + sauti)"}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="h-2 w-2 bg-green-600 rounded-full"></div>
+              <div className="h-5 w-5 bg-[#2E7D32]/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="h-2 w-2 bg-[#2E7D32] rounded-full"></div>
               </div>
               <span className="text-gray-700">
                 {language === "en" ? "Offline-capable architecture" : "Usanifu unaoweza kufanya kazi nje ya mtandao"}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="h-2 w-2 bg-green-600 rounded-full"></div>
+              <div className="h-5 w-5 bg-[#2E7D32]/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="h-2 w-2 bg-[#2E7D32] rounded-full"></div>
               </div>
               <span className="text-gray-700">
                 {language === "en" ? "Bilingual support (EN/SW)" : "Msaada wa lugha mbili (EN/SW)"}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="h-2 w-2 bg-green-600 rounded-full"></div>
+              <div className="h-5 w-5 bg-[#2E7D32]/10 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="h-2 w-2 bg-[#2E7D32] rounded-full"></div>
               </div>
               <span className="text-gray-700">
                 {language === "en" ? "Context-aware guidance" : "Mwongozo unaotambua muktadha"}

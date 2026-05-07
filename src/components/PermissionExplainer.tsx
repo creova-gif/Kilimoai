@@ -115,7 +115,7 @@ export function PermissionExplainer({ permission, onAllow, onDeny, language }: P
     <div className="fixed inset-0 bg-black/70 z-[200] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
         {/* Icon */}
-        <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
+        <div className="w-20 h-20 rounded-full bg-[#2E7D32]/5 flex items-center justify-center mx-auto mb-4">
           <Icon className="w-10 h-10 text-[#2E7D32]" />
         </div>
 
@@ -133,7 +133,7 @@ export function PermissionExplainer({ permission, onAllow, onDeny, language }: P
         <ul className="space-y-3 mb-6">
           {content.benefits.map((benefit, index) => (
             <li key={index} className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-[#2E7D32]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-[#2E7D32] font-bold text-sm">✓</span>
               </div>
               <span className="text-gray-700">{benefit}</span>
@@ -142,8 +142,8 @@ export function PermissionExplainer({ permission, onAllow, onDeny, language }: P
         </ul>
 
         {/* Privacy Note */}
-        <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200 mb-6">
-          <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6">
+          <AlertCircle className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-gray-700">{content.privacy}</p>
         </div>
 

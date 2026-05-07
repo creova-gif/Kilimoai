@@ -277,7 +277,7 @@ export function IntelligentInputMarketplace({
                     {text.basedOn} <span className="font-semibold text-[#2E7D32]">{crops.join(", ")}</span> crops • <span className="font-semibold text-[#2E7D32]">{soilType}</span> soil
                   </p>
                 </div>
-                <Badge className="bg-amber-100 text-amber-700 border-amber-200">
+                <Badge className="bg-gray-100 text-gray-700 border-gray-200">
                   <Award className="h-3 w-3 mr-1" />
                   AI Powered
                 </Badge>
@@ -314,13 +314,13 @@ export function IntelligentInputMarketplace({
                         
                         <div className="flex items-center gap-2 mb-2">
                           {product.yieldImpact && (
-                            <Badge className="bg-green-100 text-green-700 border-green-200">
+                            <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                               <TrendingUp className="h-3 w-3 mr-1" />
                               {product.yieldImpact}
                             </Badge>
                           )}
                           {product.roi && (
-                            <Badge className="bg-amber-100 text-amber-700 border-amber-200">
+                            <Badge className="bg-gray-100 text-gray-700 border-gray-200">
                               <BarChart3 className="h-3 w-3 mr-1" />
                               {product.roi} ROI
                             </Badge>
@@ -450,7 +450,7 @@ export function IntelligentInputMarketplace({
                       </Badge>
                     )}
                     {product.fastDelivery && (
-                      <Badge className="bg-amber-500 text-white border-amber-500 shadow-lg">
+                      <Badge className="bg-gray-600 text-white border-gray-400 shadow-lg">
                         <Zap className="h-3 w-3 mr-1" />
                         Fast
                       </Badge>
@@ -494,7 +494,7 @@ export function IntelligentInputMarketplace({
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-xs font-medium">
-                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <Star className="h-3.5 w-3.5 fill-gray-600 text-gray-500" />
                     <span className="text-gray-700">{product.supplier.rating}</span>
                   </div>
                 </div>
@@ -520,15 +520,15 @@ export function IntelligentInputMarketplace({
                 {(product.yieldImpact || product.roi) && (
                   <div className="grid grid-cols-2 gap-2 mb-4">
                     {product.yieldImpact && (
-                      <div className="text-center p-2.5 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="text-center p-2.5 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg">
                         <div className="text-xs text-gray-600 mb-1">{text.yield}</div>
-                        <div className="text-lg font-bold text-green-600">{product.yieldImpact}</div>
+                        <div className="text-lg font-bold text-[#2E7D32]">{product.yieldImpact}</div>
                       </div>
                     )}
                     {product.roi && (
-                      <div className="text-center p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+                      <div className="text-center p-2.5 bg-gray-50 border border-gray-200 rounded-lg">
                         <div className="text-xs text-gray-600 mb-1">ROI</div>
-                        <div className="text-lg font-bold text-amber-600">{product.roi}</div>
+                        <div className="text-lg font-bold text-gray-600">{product.roi}</div>
                       </div>
                     )}
                   </div>
@@ -662,7 +662,7 @@ function ProductDetailModal({ product, language, onClose, onBuyNow }: ProductDet
                 </Badge>
               )}
               {product.fastDelivery && (
-                <Badge className="bg-amber-500 text-white shadow-lg">
+                <Badge className="bg-gray-600 text-white shadow-lg">
                   <Zap className="h-4 w-4 mr-1" />
                   Fast Delivery
                 </Badge>
@@ -686,7 +686,7 @@ function ProductDetailModal({ product, language, onClose, onBuyNow }: ProductDet
                     )}
                   </div>
                   <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <Star className="h-4 w-4 fill-gray-600 text-gray-500" />
                     <span className="text-sm font-semibold text-gray-700">{product.rating}</span>
                     <span className="text-sm text-gray-500">({product.reviews})</span>
                   </div>

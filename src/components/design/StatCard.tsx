@@ -15,11 +15,11 @@ interface StatCardProps {
 
 export function StatCard({ label, value, icon, trend, color = "green", delay = 0 }: StatCardProps) {
   const colorClasses = {
-    green: "from-green-50 to-emerald-50 border-green-200 text-green-700",
+    green: "from-[#2E7D32] to-gray-100 border-[#2E7D32]/20 text-[#2E7D32]",
     blue: "from-gray-50 to-gray-100 border-gray-200 text-gray-700",
-    orange: "from-orange-50 to-amber-50 border-orange-200 text-orange-700",
+    orange: "from-gray-50 to-gray-100 border-gray-200 text-gray-700",
     purple: "from-gray-50 to-gray-100 border-gray-200 text-gray-700",
-    red: "from-red-50 to-rose-50 border-red-200 text-red-700"
+    red: "from-red-50 to-gray-100 border-red-200 text-red-700"
   }[color];
 
   return (
@@ -42,7 +42,7 @@ export function StatCard({ label, value, icon, trend, color = "green", delay = 0
       
       {trend && (
         <div className={`flex items-center text-sm font-medium ${
-          trend.direction === "up" ? "text-green-600" : "text-red-600"
+          trend.direction === "up" ? "text-[#2E7D32]" : "text-red-600"
         }`}>
           <span>{trend.direction === "up" ? "↑" : "↓"}</span>
           <span className="ml-1">{Math.abs(trend.value)}%</span>

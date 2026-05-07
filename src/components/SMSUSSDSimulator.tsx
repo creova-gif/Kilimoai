@@ -121,9 +121,9 @@ export function SMSUSSDSimulator() {
         <p className="text-gray-600">Offline-first farmer access - no smartphone needed!</p>
       </div>
 
-      <Alert className="bg-green-50 border-green-200">
-        <Smartphone className="h-4 w-4 text-green-600" />
-        <AlertDescription className="text-green-900">
+      <Alert className="bg-[#2E7D32]/5 border-[#2E7D32]/20">
+        <Smartphone className="h-4 w-4 text-[#2E7D32]" />
+        <AlertDescription className="text-[#2E7D32]">
           <strong>Tanzania Reality:</strong> 78% of smallholder farmers use feature phones. 
           CREOVA works on ANY phone - SMS, USSD, and voice calls for zero-literacy farmers.
         </AlertDescription>
@@ -155,7 +155,7 @@ export function SMSUSSDSimulator() {
                 <div className="bg-gray-100 rounded-2xl p-6 text-black">
                   <div className="bg-white rounded-lg p-4 shadow-inner min-h-[300px]">
                     <div className="text-center mb-4">
-                      <Badge className="bg-green-600">Session Active</Badge>
+                      <Badge className="bg-[#2E7D32]">Session Active</Badge>
                     </div>
                     
                     <div className="text-sm font-mono">
@@ -201,27 +201,27 @@ export function SMSUSSDSimulator() {
               <CardContent className="space-y-4">
                 {[
                   {
-                    icon: <MessageSquare className="h-5 w-5 text-green-600" />,
+                    icon: <MessageSquare className="h-5 w-5 text-[#2E7D32]" />,
                     title: "Crop Advisory",
                     description: "Get weekly crop care tips for your registered crops"
                   },
                   {
-                    icon: <DollarSign className="h-5 w-5 text-green-600" />,
+                    icon: <DollarSign className="h-5 w-5 text-[#2E7D32]" />,
                     title: "Market Prices",
                     description: "Real-time prices for crops in nearby markets"
                   },
                   {
-                    icon: <Phone className="h-5 w-5 text-orange-600" />,
+                    icon: <Phone className="h-5 w-5 text-gray-600" />,
                     title: "Wallet Balance",
                     description: "Check CREOVA wallet and loyalty points"
                   },
                   {
-                    icon: <Smartphone className="h-5 w-5 text-green-600" />,
+                    icon: <Smartphone className="h-5 w-5 text-[#2E7D32]" />,
                     title: "Sell Produce",
                     description: "List crops for sale to connected buyers"
                   },
                   {
-                    icon: <CheckCircle className="h-5 w-5 text-green-600" />,
+                    icon: <CheckCircle className="h-5 w-5 text-[#2E7D32]" />,
                     title: "Credit Score",
                     description: "View AI credit score and loan eligibility"
                   }
@@ -263,12 +263,12 @@ export function SMSUSSDSimulator() {
                     >
                       <div className={`inline-block max-w-[80%] ${
                         msg.from === 'You' 
-                          ? 'bg-green-600 text-white' 
+                          ? 'bg-[#2E7D32] text-white' 
                           : 'bg-white border'
                       } rounded-lg p-3`}>
                         <p className="text-sm whitespace-pre-line">{msg.message}</p>
                         <p className={`text-xs mt-1 ${
-                          msg.from === 'You' ? 'text-green-100' : 'text-gray-500'
+                          msg.from === 'You' ? 'text-[#2E7D32]' : 'text-gray-500'
                         }`}>
                           {msg.time}
                         </p>
@@ -285,7 +285,7 @@ export function SMSUSSDSimulator() {
                     placeholder="Type HELP to see commands..."
                     onKeyDown={(e) => e.key === 'Enter' && handleSendSMS()}
                   />
-                  <Button onClick={handleSendSMS} className="bg-green-600 hover:bg-green-700">
+                  <Button onClick={handleSendSMS} className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -319,7 +319,7 @@ export function SMSUSSDSimulator() {
                 </Alert>
 
                 <div className="space-y-3">
-                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                  <div className="border-l-4 border-[#2E7D32]/20 pl-4 py-2">
                     <p className="font-medium">Push Notifications</p>
                     <p className="text-sm text-gray-600">Weather alerts, market updates, farming tips</p>
                   </div>
@@ -334,7 +334,7 @@ export function SMSUSSDSimulator() {
                     <p className="text-sm text-gray-600">GoPay payments, marketplace sales</p>
                   </div>
 
-                  <div className="border-l-4 border-orange-500 pl-4 py-2">
+                  <div className="border-l-4 border-gray-400 pl-4 py-2">
                     <p className="font-medium">Multilingual Support</p>
                     <p className="text-sm text-gray-600">English & Swahili (Kiswahili)</p>
                   </div>
@@ -370,7 +370,7 @@ export function SMSUSSDSimulator() {
         <TabsContent value="voice">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Voice Simulator */}
-            <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white">
+            <Card className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Phone className="h-5 w-5" />
@@ -384,11 +384,11 @@ export function SMSUSSDSimulator() {
                 <div className="bg-white text-black rounded-lg p-6 text-center">
                   {voiceStatus === "idle" && (
                     <>
-                      <Phone className="h-16 w-16 mx-auto mb-4 text-green-600" />
+                      <Phone className="h-16 w-16 mx-auto mb-4 text-[#2E7D32]" />
                       <p className="mb-4">Press the button to call CREOVA Voice Assistant</p>
                       <Button 
                         onClick={handleVoiceCall}
-                        className="w-full bg-green-600 hover:bg-green-700 h-12"
+                        className="w-full bg-[#2E7D32] hover:bg-[#2E7D32] h-12"
                       >
                         <Phone className="h-5 w-5 mr-2" />
                         Call Now
@@ -398,7 +398,7 @@ export function SMSUSSDSimulator() {
 
                   {voiceStatus === "calling" && (
                     <>
-                      <div className="h-16 w-16 bg-green-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
+                      <div className="h-16 w-16 bg-[#2E7D32] rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
                         <Phone className="h-8 w-8 text-white" />
                       </div>
                       <p className="text-lg mb-2">Calling CREOVA...</p>
@@ -408,7 +408,7 @@ export function SMSUSSDSimulator() {
 
                   {voiceStatus === "playing" && (
                     <>
-                      <Volume2 className="h-16 w-16 mx-auto mb-4 text-green-600 animate-pulse" />
+                      <Volume2 className="h-16 w-16 mx-auto mb-4 text-[#2E7D32] animate-pulse" />
                       <p className="text-lg mb-2">🔊 Voice Message Playing</p>
                       <div className="text-left bg-gray-50 p-4 rounded-lg text-sm mb-4">
                         <p className="mb-2"><strong>English:</strong></p>
@@ -422,7 +422,7 @@ export function SMSUSSDSimulator() {
                           Kwa bei za soko, bonyeza 2. Kwa hali ya hewa, bonyeza 3..."
                         </p>
                       </div>
-                      <Badge className="bg-green-600">Call Active - Auto-disconnect in 5s</Badge>
+                      <Badge className="bg-[#2E7D32]">Call Active - Auto-disconnect in 5s</Badge>
                     </>
                   )}
                 </div>
@@ -443,9 +443,9 @@ export function SMSUSSDSimulator() {
                 <CardDescription>Audio-based farmer assistance</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Alert className="bg-orange-50 border-orange-200">
-                  <Volume2 className="h-4 w-4 text-orange-600" />
-                  <AlertDescription className="text-orange-900">
+                <Alert className="bg-gray-50 border-gray-200">
+                  <Volume2 className="h-4 w-4 text-gray-600" />
+                  <AlertDescription className="text-gray-900">
                     <strong>Zero Literacy Required:</strong> Voice IVR enables farmers who cannot read 
                     to access all CREOVA services through audio menus and voice commands.
                   </AlertDescription>
@@ -475,7 +475,7 @@ export function SMSUSSDSimulator() {
                     }
                   ].map((item) => (
                     <div key={item.step} className="flex gap-3 p-3 border rounded-lg">
-                      <div className="flex-shrink-0 h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center">
+                      <div className="flex-shrink-0 h-8 w-8 bg-[#2E7D32] text-white rounded-full flex items-center justify-center">
                         {item.step}
                       </div>
                       <div>
@@ -486,27 +486,27 @@ export function SMSUSSDSimulator() {
                   ))}
                 </div>
 
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border">
+                <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 p-4 rounded-lg border">
                   <p className="font-medium mb-3">📞 Voice Services Available:</p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       Weather forecast (3-day)
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       Market price announcements
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       Weekly crop care tips
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       Wallet balance inquiry
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       Agent/buyer connections
                     </li>
                   </ul>

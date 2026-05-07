@@ -25,10 +25,10 @@ export function ProgressCard({
 }: ProgressCardProps) {
   const colorSchemes = {
     green: {
-      bg: "from-green-50 to-emerald-50",
-      border: "border-green-200",
-      icon: "bg-green-100 text-green-600",
-      progress: "bg-green-600"
+      bg: "from-[#2E7D32] to-gray-100",
+      border: "border-[#2E7D32]/20",
+      icon: "bg-[#2E7D32]/10 text-[#2E7D32]",
+      progress: "bg-[#2E7D32]"
     },
     blue: {
       bg: "from-gray-50 to-gray-100",
@@ -37,10 +37,10 @@ export function ProgressCard({
       progress: "bg-gray-600"
     },
     orange: {
-      bg: "from-orange-50 to-amber-50",
-      border: "border-orange-200",
-      icon: "bg-orange-100 text-orange-600",
-      progress: "bg-orange-600"
+      bg: "from-gray-50 to-gray-100",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      progress: "bg-gray-700"
     },
     purple: {
       bg: "from-gray-50 to-gray-100",

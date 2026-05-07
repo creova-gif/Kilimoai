@@ -84,13 +84,13 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white border-0">
+      <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white border-0">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Store className="h-6 w-6" />
             Agro-Vet Network
           </CardTitle>
-          <CardDescription className="text-green-100">
+          <CardDescription className="text-[#2E7D32]">
             Find verified input dealers near you with quality-assured products
           </CardDescription>
         </CardHeader>
@@ -103,9 +103,9 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search for seeds, fertilizer, pesticides..."
-          className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2E7D32]/30 focus:border-transparent"
         />
-        <Button className="bg-green-600 hover:bg-green-700">
+        <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
           <Package className="h-4 w-4 mr-2" />
           Search
         </Button>
@@ -115,11 +115,11 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
       <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5" />
             <div>
               <h4 className="font-medium text-gray-900">Quality Verification System</h4>
               <p className="text-sm text-gray-700 mt-1">
-                Products marked with <CheckCircle className="h-3 w-3 inline text-green-600" /> are verified authentic by TFRA and TOSCI.
+                Products marked with <CheckCircle className="h-3 w-3 inline text-[#2E7D32]" /> are verified authentic by TFRA and TOSCI.
                 Report counterfeit products to protect your crops.
               </p>
             </div>
@@ -133,7 +133,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
           <Card 
             key={dealer.id}
             className={`cursor-pointer transition-all hover:shadow-lg ${
-              selectedDealer === dealer.id ? 'border-green-500 border-2' : 'border-gray-200'
+              selectedDealer === dealer.id ? 'border-[#2E7D32]/20 border-2' : 'border-gray-200'
             }`}
             onClick={() => setSelectedDealer(selectedDealer === dealer.id ? null : dealer.id)}
           >
@@ -143,7 +143,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-medium">{dealer.name}</h3>
                     {dealer.verified && (
-                      <Badge className="bg-green-100 text-green-700 border-green-300">
+                      <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Verified
                       </Badge>
@@ -155,11 +155,11 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                       <MapPin className="h-4 w-4" />
                       {dealer.location}
                     </span>
-                    <span className="text-green-600">{dealer.distance} away</span>
+                    <span className="text-[#2E7D32]">{dealer.distance} away</span>
                   </div>
                   
                   <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <Star className="h-4 w-4 fill-gray-600 text-gray-500" />
                     <span className="text-sm font-medium">{dealer.rating}</span>
                     <span className="text-sm text-gray-500 ml-1">(48 reviews)</span>
                   </div>
@@ -174,13 +174,13 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
               {/* Available Products */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {dealer.inventory.seeds && (
-                  <Badge variant="outline" className="bg-green-50">Seeds</Badge>
+                  <Badge variant="outline" className="bg-[#2E7D32]/5">Seeds</Badge>
                 )}
                 {dealer.inventory.fertilizer && (
                   <Badge variant="outline" className="bg-gray-50">Fertilizer</Badge>
                 )}
                 {dealer.inventory.pesticides && (
-                  <Badge variant="outline" className="bg-orange-50">Pesticides</Badge>
+                  <Badge variant="outline" className="bg-gray-50">Pesticides</Badge>
                 )}
                 {dealer.inventory.tools && (
                   <Badge variant="outline" className="bg-gray-50">Tools</Badge>
@@ -197,20 +197,20 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm">{product.name}</p>
                           {product.verified && (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                           )}
                           {!product.verified && (
-                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                            <AlertTriangle className="h-4 w-4 text-gray-600" />
                           )}
                         </div>
-                        <p className="text-sm text-green-600 font-medium mt-1">{product.price}</p>
+                        <p className="text-sm text-[#2E7D32] font-medium mt-1">{product.price}</p>
                         <p className="text-xs text-gray-500 mt-1">
                           {product.inStock ? "✓ In Stock" : "✗ Out of Stock"}
                         </p>
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-[#2E7D32] hover:bg-[#2E7D32]"
                         disabled={!product.inStock}
                       >
                         <ShoppingBag className="h-4 w-4 mr-1" />
@@ -223,7 +223,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                     <Button variant="outline" className="flex-1">
                       Request Delivery
                     </Button>
-                    <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                    <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
                       Visit Store
                     </Button>
                   </div>
@@ -249,7 +249,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                 <p className="font-medium">Maize Seeds Group Order</p>
                 <p className="text-sm text-gray-600">12/20 farmers joined • 15% discount</p>
               </div>
-              <Button size="sm" className="bg-green-600 hover:bg-green-700">
+              <Button size="sm" className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                 Join Group
               </Button>
             </div>
@@ -258,7 +258,7 @@ export function InputSupplyChain({ userLocation = "Morogoro" }: InputSupplyChain
                 <p className="font-medium">DAP Fertilizer Bulk Buy</p>
                 <p className="text-sm text-gray-600">8/15 farmers joined • 12% discount</p>
               </div>
-              <Button size="sm" className="bg-green-600 hover:bg-green-700">
+              <Button size="sm" className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                 Join Group
               </Button>
             </div>

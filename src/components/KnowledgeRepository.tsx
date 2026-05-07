@@ -176,8 +176,8 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "beginner": return "bg-green-100 text-green-700";
-      case "intermediate": return "bg-yellow-100 text-yellow-700";
+      case "beginner": return "bg-[#2E7D32]/10 text-[#2E7D32]";
+      case "intermediate": return "bg-gray-100 text-gray-700";
       case "advanced": return "bg-red-100 text-red-700";
       default: return "bg-gray-100 text-gray-700";
     }
@@ -195,7 +195,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 rounded-3xl p-6 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-gray-50 to-red-600 rounded-3xl p-6 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
         
@@ -248,8 +248,8 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
               className={`
                 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all whitespace-nowrap
                 ${isActive
-                  ? "bg-orange-600 text-white border-orange-600 shadow-lg"
-                  : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                  ? "bg-gray-700 text-white border-gray-400 shadow-lg"
+                  : "bg-white text-gray-700 border-gray-200 hover:border-gray-300"
                 }
               `}
             >
@@ -279,7 +279,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
               className={`
                 flex items-center gap-2 px-3 py-2 rounded-lg transition-all whitespace-nowrap text-sm
                 ${isActive
-                  ? "bg-orange-100 text-orange-700 border border-orange-300"
+                  ? "bg-gray-100 text-gray-700 border border-gray-300"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }
               `}
@@ -298,7 +298,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
           const TypeIcon = getTypeIcon(content.type);
           
           return (
-            <Card key={content.id} className="hover:shadow-xl transition-all border-2 hover:border-orange-300 group">
+            <Card key={content.id} className="hover:shadow-xl transition-all border-2 hover:border-gray-300 group">
               <CardHeader className="space-y-3">
                 {/* Type & Bookmark */}
                 <div className="flex items-center justify-between">
@@ -308,15 +308,15 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
                   </Badge>
                   <button className="p-1 hover:bg-gray-100 rounded">
                     <Bookmark 
-                      className={`h-4 w-4 ${content.bookmarked ? 'fill-orange-600 text-orange-600' : 'text-gray-400'}`}
+                      className={`h-4 w-4 ${content.bookmarked ? 'fill-gray-600 text-gray-600' : 'text-gray-400'}`}
                     />
                   </button>
                 </div>
 
                 {/* Icon & Category */}
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-orange-100 rounded-xl">
-                    <Icon className="h-6 w-6 text-orange-600" />
+                  <div className="p-3 bg-gray-100 rounded-xl">
+                    <Icon className="h-6 w-6 text-gray-600" />
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">{content.category}</p>
@@ -328,7 +328,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
 
                 {/* Title & Description */}
                 <div>
-                  <CardTitle className="text-base font-bold group-hover:text-orange-600 transition-colors">
+                  <CardTitle className="text-base font-bold group-hover:text-gray-600 transition-colors">
                     {content.title}
                   </CardTitle>
                   <CardDescription className="text-xs mt-2">
@@ -370,7 +370,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 text-gray-600 mb-1">
-                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      <Star className="h-3 w-3 fill-gray-600 text-gray-500" />
                     </div>
                     <p className="text-xs font-bold text-gray-900">
                       {content.rating}
@@ -392,7 +392,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <Button className="flex-1 bg-orange-600 hover:bg-orange-700" size="sm">
+                  <Button className="flex-1 bg-gray-700 hover:bg-gray-800" size="sm">
                     Read Now
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
@@ -412,7 +412,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-orange-600" />
+              <TrendingUp className="h-5 w-5 text-gray-600" />
               Trending Topics
             </CardTitle>
           </CardHeader>
@@ -424,7 +424,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 rounded-lg font-bold text-sm">
+                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-600 rounded-lg font-bold text-sm">
                       {idx + 1}
                     </div>
                     <div>
@@ -432,7 +432,7 @@ export function KnowledgeRepository({ language }: KnowledgeRepositoryProps) {
                       <p className="text-xs text-gray-600">{topic.count} articles</p>
                     </div>
                   </div>
-                  <Badge className="bg-green-100 text-green-700">
+                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">
                     {topic.trend}
                   </Badge>
                 </div>

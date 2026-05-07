@@ -294,15 +294,15 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50/10 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100/10 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white px-4 lg:px-6 py-6">
+      <div className="bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 text-white px-4 lg:px-6 py-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold flex items-center gap-2 mb-2">
             <Shield className="h-7 w-7" />
             {language === "en" ? "Agricultural Insurance" : "Bima ya Kilimo"}
           </h1>
-          <p className="text-green-100 text-sm">
+          <p className="text-[#2E7D32] text-sm">
             {language === "en" 
               ? "Fair protection against risks you can't control"
               : "Ulinzi wa haki dhidi ya hatari huwezi kudhibiti"}
@@ -317,7 +317,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
             onClick={() => setViewMode("learn")}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               viewMode === "learn"
-                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md"
+                ? "bg-gradient-to-r from-gray-50 to-gray-100 text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
@@ -328,14 +328,14 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
             onClick={() => setViewMode("products")}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               viewMode === "products"
-                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md"
+                ? "bg-gradient-to-r from-gray-50 to-gray-100 text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
             <Shield className="h-5 w-5" />
             {language === "en" ? "Browse Coverage" : "Tazama Ulinzi"}
             {myPolicies.length > 0 && (
-              <span className="px-2 py-0.5 bg-white text-green-600 text-xs font-bold rounded-full">
+              <span className="px-2 py-0.5 bg-white text-[#2E7D32] text-xs font-bold rounded-full">
                 {myPolicies.length}
               </span>
             )}
@@ -346,7 +346,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
         {viewMode === "learn" && (
           <div className="space-y-6">
             {/* Hero Banner */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                   <Umbrella className="h-8 w-8" />
@@ -364,7 +364,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   </p>
                   <button 
                     onClick={() => setViewMode("products")}
-                    className="px-6 py-2 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
+                    className="px-6 py-2 bg-white text-[#2E7D32] font-bold rounded-lg hover:bg-[#2E7D32]/5 transition-colors"
                   >
                     {language === "en" ? "Explore Insurance Products" : "Chunguza Bidhaa za Bima"}
                   </button>
@@ -391,12 +391,12 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
 
               {expandedSection === "why-insurance" && (
                 <div className="px-6 pb-6">
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-4">
-                    <h4 className="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-4">
+                    <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                       <AlertTriangle className="h-5 w-5" />
                       {language === "en" ? "The Reality of Farming" : "Ukweli wa Kilimo"}
                     </h4>
-                    <p className="text-sm text-amber-800 leading-relaxed">
+                    <p className="text-sm text-gray-800 leading-relaxed">
                       {language === "en"
                         ? "You can do everything right — plant on time, use quality inputs, work hard — and still lose your harvest to drought, floods, or disease. These risks are unpredictable and beyond your control. Insurance is your safety net."
                         : "Unaweza kufanya kila kitu vizuri — panda kwa wakati, tumia pembejeo bora, fanya kazi kwa bidii — na bado upoteze mavuno yako kwa ukame, mafuriko, au magonjwa. Hatari hizi haziwezi kutabiriwa na haziko chini ya udhibiti wako. Bima ni wavu wako wa usalama."}
@@ -406,14 +406,14 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       {
-                        icon: <Shield className="h-6 w-6 text-green-600" />,
+                        icon: <Shield className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Protect Your Investment" : "Linda Uwekezaji Wako",
                         desc: language === "en"
                           ? "You invest 200K+ in seeds, fertilizer, labor. Insurance ensures you're not left with nothing if disaster strikes."
                           : "Unawekeza TZS 200K+ kwenye mbegu, mbolea, kazi. Bima inahakikisha hajaachwa na kitu ikiwa janga litatokea."
                       },
                       {
-                        icon: <DollarSign className="h-6 w-6 text-green-600" />,
+                        icon: <DollarSign className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Maintain Cash Flow" : "Dhibiti Mtiririko wa Pesa",
                         desc: language === "en"
                           ? "Even if crop fails, insurance payout helps you replant, feed family, and stay financially stable."
@@ -456,8 +456,8 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Lightbulb className="h-6 w-6 text-green-600" />
+                  <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center">
+                    <Lightbulb className="h-6 w-6 text-[#2E7D32]" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "How Insurance Works (Simple Version)" : "Jinsi Bima Inavyofanya Kazi (Toleo Rahisi)"}
@@ -498,7 +498,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                         }
                       ].map((item) => (
                         <div key={item.step} className="flex items-start gap-4">
-                          <div className="h-8 w-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                          <div className="h-8 w-8 bg-[#2E7D32] text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
                             {item.step}
                           </div>
                           <div>
@@ -510,14 +510,14 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                     </div>
                   </div>
 
-                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="bg-[#2E7D32]/5 rounded-lg p-4 border border-[#2E7D32]/20">
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-bold text-green-900 text-sm mb-1">
+                        <h4 className="font-bold text-[#2E7D32] text-sm mb-1">
                           {language === "en" ? "Think of It Like This" : "Fikiri Hivi"}
                         </h4>
-                        <p className="text-xs text-green-800">
+                        <p className="text-xs text-[#2E7D32]">
                           {language === "en"
                             ? "You pay 35,000 TZS to protect 200,000 TZS. If nothing bad happens, you lose the 35K (but you had a good harvest!). If disaster strikes, you get up to 280,000 TZS back — saving you from total loss."
                             : "Unalipa TZS 35,000 kulinda TZS 200,000. Ikiwa hakuna baya litakalotokea, unapoteza TZS 35K (lakini ulikuwa na mavuno mazuri!). Ikiwa janga litatokea, utapata hadi TZS 280,000 — kukuokoa kutoka hasara kamili."}
@@ -550,30 +550,30 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                 <div className="px-6 pb-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Covered */}
-                    <div className="bg-green-50 rounded-xl p-5 border-2 border-green-200">
-                      <h4 className="font-bold text-green-900 mb-4 flex items-center gap-2">
+                    <div className="bg-[#2E7D32]/5 rounded-xl p-5 border-2 border-[#2E7D32]/20">
+                      <h4 className="font-bold text-[#2E7D32] mb-4 flex items-center gap-2">
                         <CheckCircle className="h-5 w-5" />
                         {language === "en" ? "✅ Covered (You Get Paid)" : "✅ Kinagharamiwa (Unalipwa)"}
                       </h4>
-                      <ul className="space-y-2 text-sm text-green-800">
+                      <ul className="space-y-2 text-sm text-[#2E7D32]">
                         <li className="flex items-start gap-2">
-                          <Droplet className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Droplet className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Drought (rainfall below threshold)" : "Ukame (mvua chini ya kiwango)"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <CloudRain className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <CloudRain className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Excess rainfall / flooding" : "Mvua nyingi / mafuriko"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Bug className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Bug className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Crop diseases (bacterial wilt, blight, etc.)" : "Magonjwa ya mazao (ugonjwa wa ubatari, blight, n.k.)"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Wind className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Wind className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Windstorms, hailstorms" : "Dhoruba za upepo, mvua za mvua"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Heart className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Heart className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Livestock death (disease, accident)" : "Kifo cha mifugo (ugonjwa, ajali)"}</span>
                         </li>
                       </ul>
@@ -636,8 +636,8 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-amber-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Clock className="h-6 w-6 text-gray-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "When & How You Get Paid" : "Lini na Jinsi Unavyolipwa"}
@@ -650,28 +650,28 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                 <div className="px-6 pb-6 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Weather Insurance (Fast) */}
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-5 border-2 border-green-200">
+                    <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-xl p-5 border-2 border-[#2E7D32]/20">
                       <div className="flex items-center gap-3 mb-4">
-                        <Zap className="h-6 w-6 text-green-600" />
-                        <h4 className="font-bold text-green-900">
+                        <Zap className="h-6 w-6 text-[#2E7D32]" />
+                        <h4 className="font-bold text-[#2E7D32]">
                           {language === "en" ? "Weather Insurance (Fastest)" : "Bima ya Hali ya Hewa (Haraka Zaidi)"}
                         </h4>
                       </div>
-                      <ul className="space-y-2 text-sm text-green-800">
+                      <ul className="space-y-2 text-sm text-[#2E7D32]">
                         <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <CheckCircle className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Satellite monitors rainfall automatically" : "Satellite hufuatilia mvua moja kwa moja"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <CheckCircle className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "If trigger met → payout automatic" : "Ikiwa kichocheo kimekidhi → malipo ya moja kwa moja"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <CheckCircle className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span className="font-bold">{language === "en" ? "Timeline: 2-3 weeks" : "Ratiba: Wiki 2-3"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <CheckCircle className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "No claim form needed" : "Hakuna fomu ya madai inayohitajika"}</span>
                         </li>
                       </ul>
@@ -734,8 +734,8 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <Play className="h-6 w-6 text-yellow-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Play className="h-6 w-6 text-gray-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "Real Scenarios: What Would Happen?" : "Hali Halisi: Nini Kingetokeaingekuwa?"}
@@ -745,8 +745,8 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
 
               <div className="p-6 space-y-4">
                 {products.slice(0, 2).map((product) => (
-                  <div key={product.id} className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-5 border-2 border-amber-200">
-                    <h4 className="font-bold text-amber-900 mb-3 flex items-center gap-2">
+                  <div key={product.id} className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-5 border-2 border-gray-200">
+                    <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                       <product.icon className="h-5 w-5" />
                       {product.name}
                     </h4>
@@ -766,12 +766,12 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                         <p className="text-sm text-gray-900">{product.scenario.whatHappens}</p>
                       </div>
 
-                      <div className="bg-green-100 rounded-lg p-4 border-2 border-green-300">
-                        <div className="text-xs text-green-600 font-semibold mb-1 flex items-center gap-1">
+                      <div className="bg-[#2E7D32]/10 rounded-lg p-4 border-2 border-[#2E7D32]/20">
+                        <div className="text-xs text-[#2E7D32] font-semibold mb-1 flex items-center gap-1">
                           <DollarSign className="h-3 w-3" />
                           {language === "en" ? "✓ YOUR PAYOUT" : "✓ MALIPO YAKO"}
                         </div>
-                        <p className="text-sm text-green-900 font-bold">{product.scenario.payout}</p>
+                        <p className="text-sm text-[#2E7D32] font-bold">{product.scenario.payout}</p>
                       </div>
                     </div>
                   </div>
@@ -780,7 +780,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
             </div>
 
             {/* CTA */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-6 text-center">
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 text-white rounded-xl p-6 text-center">
               <h3 className="text-xl font-bold mb-2">
                 {language === "en" ? "Ready to Protect Your Farm?" : "Tayari Kulinda Shamba Lako?"}
               </h3>
@@ -791,7 +791,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
               </p>
               <button
                 onClick={() => setViewMode("products")}
-                className="px-8 py-3 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
+                className="px-8 py-3 bg-white text-[#2E7D32] font-bold rounded-lg hover:bg-[#2E7D32]/5 transition-colors"
               >
                 {language === "en" ? "Explore Insurance Products" : "Chunguza Bidhaa za Bima"}
               </button>
@@ -830,7 +830,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   onClick={() => setActiveTab("available")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "available"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -840,13 +840,13 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   onClick={() => setActiveTab("my_policies")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "my_policies"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   {language === "en" ? "My Policies" : "Sera Zangu"}
                   {myPolicies.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">
+                    <span className="ml-2 px-2 py-0.5 bg-[#2E7D32] text-white text-xs rounded-full">
                       {myPolicies.length}
                     </span>
                   )}
@@ -862,7 +862,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent"
                   >
                     <option value="all">{language === "en" ? "All Insurance Types" : "Aina Zote za Bima"}</option>
                     <option value="weather">{language === "en" ? "Weather Insurance" : "Bima ya Hali ya Hewa"}</option>
@@ -886,14 +886,14 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="text-xl font-bold text-gray-900">{product.name}</h3>
                               {product.verified && (
-                                <BadgeCheck className="h-5 w-5 text-green-600" />
+                                <BadgeCheck className="h-5 w-5 text-[#2E7D32]" />
                               )}
                             </div>
                             <div className="text-sm text-gray-600">{product.provider}</div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-green-600">
+                          <div className="text-2xl font-bold text-[#2E7D32]">
                             {product.premium.toLocaleString()} <span className="text-sm">TZS</span>
                           </div>
                           <div className="text-xs text-gray-600">{product.premiumPer}</div>
@@ -914,9 +914,9 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                           <div className="text-xs text-gray-600 mb-1">{language === "en" ? "Trigger" : "Kichocheo"}</div>
                           <div className="text-sm text-gray-900 font-medium">{product.payout.trigger}</div>
                         </div>
-                        <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                          <div className="text-xs text-green-600 mb-1">{language === "en" ? "Max Payout" : "Malipo ya Juu"}</div>
-                          <div className="text-sm text-green-900 font-medium">{product.payout.amount}</div>
+                        <div className="bg-[#2E7D32]/5 rounded-lg p-3 border border-[#2E7D32]/20">
+                          <div className="text-xs text-[#2E7D32] mb-1">{language === "en" ? "Max Payout" : "Malipo ya Juu"}</div>
+                          <div className="text-sm text-[#2E7D32] font-medium">{product.payout.amount}</div>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                           <div className="text-xs text-gray-600 mb-1">{language === "en" ? "Payment Speed" : "Kasi ya Malipo"}</div>
@@ -932,7 +932,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                         <ul className="space-y-2">
                           {product.benefits.map((benefit, idx) => (
                             <li key={idx} className="flex items-start gap-2 text-sm">
-                              <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                              <CheckCircle className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                               <span className="text-gray-700">{benefit}</span>
                             </li>
                           ))}
@@ -957,7 +957,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                               ? "Enrollment request sent! An agent will contact you within 24 hours."
                               : "Ombi la usajili limetumwa! Wakala atawasiliana nawe ndani ya masaa 24.");
                           }}
-                          className="flex-1 px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 px-6 py-3 bg-[#2E7D32] text-white font-bold rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center justify-center gap-2"
                         >
                           <Shield className="h-5 w-5" />
                           {language === "en" ? "Enroll Now" : "Jisajili Sasa"}
@@ -980,11 +980,11 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                           <h3 className="font-bold text-gray-900">{policy.productName}</h3>
                           <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                             policy.status === "active"
-                              ? "bg-green-100 text-green-700"
+                              ? "bg-[#2E7D32]/10 text-[#2E7D32]"
                               : policy.status === "claimed"
                               ? "bg-gray-100 text-gray-700"
                               : policy.status === "pending_claim"
-                              ? "bg-amber-100 text-amber-700"
+                              ? "bg-gray-100 text-gray-700"
                               : "bg-gray-100 text-gray-700"
                           }`}>
                             {policy.status === "active" && (language === "en" ? "Active" : "Hai")}
@@ -1026,7 +1026,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                             </div>
                             <div className="text-sm text-gray-800">{policy.claimStatus}</div>
                             {policy.payoutReceived && (
-                              <div className="mt-2 font-bold text-green-600">
+                              <div className="mt-2 font-bold text-[#2E7D32]">
                                 {language === "en" ? "Payout:" : "Malipo:"} {policy.payoutReceived.toLocaleString()} TZS
                               </div>
                             )}
@@ -1041,7 +1041,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                         {language === "en" ? "Download Certificate" : "Pakua Cheti"}
                       </button>
                       {policy.status === "active" && (
-                        <button className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                        <button className="flex-1 px-4 py-2 bg-[#2E7D32] text-white rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center justify-center gap-2">
                           <FileText className="h-4 w-4" />
                           {language === "en" ? "File Claim" : "Wasilisha Madai"}
                         </button>
@@ -1073,11 +1073,11 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   {language === "en" ? "Example Scenario" : "Mfano wa Hali"}
                 </h3>
                 
-                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <div className="text-xs text-amber-600 font-semibold mb-2">
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="text-xs text-gray-600 font-semibold mb-2">
                     {language === "en" ? "SITUATION" : "HALI"}
                   </div>
-                  <p className="text-sm text-amber-900">{selectedProduct.scenario.situation}</p>
+                  <p className="text-sm text-gray-900">{selectedProduct.scenario.situation}</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -1087,12 +1087,12 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                   <p className="text-sm text-gray-900">{selectedProduct.scenario.whatHappens}</p>
                 </div>
 
-                <div className="bg-green-50 rounded-lg p-4 border-2 border-green-300">
-                  <div className="text-xs text-green-600 font-semibold mb-2 flex items-center gap-1">
+                <div className="bg-[#2E7D32]/5 rounded-lg p-4 border-2 border-[#2E7D32]/20">
+                  <div className="text-xs text-[#2E7D32] font-semibold mb-2 flex items-center gap-1">
                     <DollarSign className="h-4 w-4" />
                     {language === "en" ? "YOUR PAYOUT" : "MALIPO YAKO"}
                   </div>
-                  <p className="text-sm text-green-900 font-bold">{selectedProduct.scenario.payout}</p>
+                  <p className="text-sm text-[#2E7D32] font-bold">{selectedProduct.scenario.payout}</p>
                 </div>
               </div>
 
@@ -1104,7 +1104,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                 <ol className="space-y-2">
                   {selectedProduct.howItWorks.map((step, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <span className="h-6 w-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                      <span className="h-6 w-6 bg-[#2E7D32] text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                         {idx + 1}
                       </span>
                       <span className="text-sm text-gray-700">{step}</span>
@@ -1120,7 +1120,7 @@ export function InsuranceHub({ userId, language, onNavigate }: InsuranceHubProps
                     : "Ombi la usajili limetumwa!");
                   setShowProductDetail(false);
                 }}
-                className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+                className="w-full px-6 py-3 bg-[#2E7D32] text-white font-bold rounded-lg hover:bg-[#2E7D32] transition-colors"
               >
                 {language === "en" ? "Enroll in This Product" : "Jisajili katika Bidhaa Hii"}
               </button>

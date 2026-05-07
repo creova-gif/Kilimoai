@@ -349,9 +349,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
       title: "Heavy Rainfall Expected",
       message: "45mm of rain expected in next 48 hours. Delay irrigation activities.",
       icon: CloudRain,
-      color: "text-orange-600",
-      bg: "bg-orange-50",
-      border: "border-orange-200"
+      color: "text-gray-600",
+      bg: "bg-gray-50",
+      border: "border-gray-200"
     },
     {
       id: "high-temp",
@@ -369,9 +369,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
       title: "Perfect Planting Conditions",
       message: "Optimal soil moisture and temperature for planting maize this week.",
       icon: CheckCircle,
-      color: "text-green-600",
-      bg: "bg-green-50",
-      border: "border-green-200"
+      color: "text-[#2E7D32]",
+      bg: "bg-[#2E7D32]/5",
+      border: "border-[#2E7D32]/20"
     }
   ];
 
@@ -394,9 +394,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
 
   // Get UV Index severity
   const getUVSeverity = (index: number) => {
-    if (index <= 2) return { text: "Low", color: "text-green-600", bg: "bg-green-50" };
-    if (index <= 5) return { text: "Moderate", color: "text-yellow-600", bg: "bg-yellow-50" };
-    if (index <= 7) return { text: "High", color: "text-orange-600", bg: "bg-orange-50" };
+    if (index <= 2) return { text: "Low", color: "text-[#2E7D32]", bg: "bg-[#2E7D32]/5" };
+    if (index <= 5) return { text: "Moderate", color: "text-gray-600", bg: "bg-gray-50" };
+    if (index <= 7) return { text: "High", color: "text-gray-600", bg: "bg-gray-50" };
     if (index <= 10) return { text: "Very High", color: "text-red-600", bg: "bg-red-50" };
     return { text: "Extreme", color: "text-gray-600", bg: "bg-gray-50" };
   };
@@ -406,9 +406,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
   // Get comfort level based on temp and humidity
   const getComfortLevel = () => {
     const heatIndex = 25 + (0.5 * (Math.random() * 50 / 100) * (25 - 14.5));
-    if (heatIndex < 27) return { text: "Comfortable", color: "text-green-600", bg: "bg-green-50" };
-    if (heatIndex < 32) return { text: "Caution", color: "text-yellow-600", bg: "bg-yellow-50" };
-    if (heatIndex < 41) return { text: "Extreme Caution", color: "text-orange-600", bg: "bg-orange-50" };
+    if (heatIndex < 27) return { text: "Comfortable", color: "text-[#2E7D32]", bg: "bg-[#2E7D32]/5" };
+    if (heatIndex < 32) return { text: "Caution", color: "text-gray-600", bg: "bg-gray-50" };
+    if (heatIndex < 41) return { text: "Extreme Caution", color: "text-gray-600", bg: "bg-gray-50" };
     return { text: "Danger", color: "text-red-600", bg: "bg-red-50" };
   };
 
@@ -420,15 +420,15 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
     switch (condition) {
       case "sunny":
       case "clear":
-        return "bg-gradient-to-br from-orange-500 via-red-500 to-pink-500";
+        return "bg-gradient-to-br from-gray-50 via-red-500 to-gray-100";
       case "partly cloudy":
-        return "bg-gradient-to-br from-blue-500 via-cyan-600 to-teal-600";
+        return "bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100";
       case "cloudy":
-        return "bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600";
+        return "bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100";
       case "rainy":
-        return "bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600";
+        return "bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100";
       default:
-        return "bg-gradient-to-br from-orange-500 via-red-500 to-pink-500";
+        return "bg-gradient-to-br from-gray-50 via-red-500 to-gray-100";
     }
   };
 
@@ -471,7 +471,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 shadow-lg overflow-hidden relative">
+          <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 shadow-lg overflow-hidden relative">
             {/* Animated background pattern */}
             <div className="absolute inset-0 opacity-5">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(251,146,60,0.3)_0%,transparent_50%)]" />
@@ -483,7 +483,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 <div className="flex-1">
                   <CardTitle className="flex items-center gap-3 mb-2">
                     <motion.div 
-                      className="p-2.5 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-md"
+                      className="p-2.5 bg-gradient-to-br from-gray-50 to-red-500 rounded-xl shadow-md"
                       animate={{ 
                         boxShadow: [
                           "0 4px 6px rgba(251,146,60,0.3)",
@@ -496,24 +496,24 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                       <AlertTriangle className="h-6 w-6 text-white" />
                     </motion.div>
                     <div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-gray-50 to-red-600 bg-clip-text text-transparent">
                         {language === "sw" ? "Tahadhari za Hali ya Hewa" : "Weather Alerts & Recommendations"}
                       </h3>
-                      <p className="text-sm text-orange-700 font-medium mt-0.5">
+                      <p className="text-sm text-gray-700 font-medium mt-0.5">
                         {language === "sw" ? "Taarifa muhimu kwa shughuli za kilimo" : "Critical updates for farming activities"}
                       </p>
                     </div>
                   </CardTitle>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 shadow-md px-3 py-1">
+                  <Badge className="bg-gradient-to-r from-gray-50 to-red-500 text-white border-0 shadow-md px-3 py-1">
                     <Bell className="h-3 w-3 mr-1.5" />
                     {alerts.length} {language === "sw" ? "Arifa" : "Active"}
                   </Badge>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 px-3 text-orange-700 hover:bg-orange-100"
+                    className="h-8 px-3 text-gray-700 hover:bg-gray-100"
                     onClick={() => toast.success(language === "sw" ? "Tahadhari zimesasishwa" : "Alerts refreshed")}
                   >
                     <RefreshCw className="h-4 w-4" />
@@ -544,15 +544,15 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     >
                       <Card 
                         className={`border-2 ${alert.border} ${alert.bg} cursor-pointer transition-all duration-300 hover:shadow-xl relative overflow-hidden ${
-                          isActive ? "ring-2 ring-offset-2 ring-orange-400 shadow-2xl" : ""
+                          isActive ? "ring-2 ring-offset-2 ring-gray-300 shadow-2xl" : ""
                         }`}
                         onClick={() => setActiveAlert(isActive ? null : alert.id)}
                       >
                         {/* Severity indicator stripe */}
                         <div className={`absolute top-0 left-0 right-0 h-1.5 ${
-                          alert.type === "warning" ? "bg-gradient-to-r from-orange-500 to-red-500" :
-                          alert.type === "info" ? "bg-gradient-to-r from-blue-500 to-cyan-500" :
-                          "bg-gradient-to-r from-green-500 to-emerald-500"
+                          alert.type === "warning" ? "bg-gradient-to-r from-gray-50 to-red-500" :
+                          alert.type === "info" ? "bg-gradient-to-r from-gray-50 to-gray-100" :
+                          "bg-gradient-to-r from-[#2E7D32] to-gray-100"
                         }`} />
                         
                         <CardContent className="p-5 pt-6">
@@ -575,9 +575,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                                     <Badge 
                                       variant="outline" 
                                       className={`text-xs px-2 py-0.5 ${
-                                        alert.type === "warning" ? "bg-orange-100 text-orange-700 border-orange-300" :
+                                        alert.type === "warning" ? "bg-gray-100 text-gray-700 border-gray-300" :
                                         alert.type === "info" ? "bg-gray-100 text-gray-700 border-gray-300" :
-                                        "bg-green-100 text-green-700 border-green-300"
+                                        "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20"
                                       }`}
                                     >
                                       {alert.type === "warning" ? (language === "sw" ? "Tahadhari" : "Warning") :
@@ -616,9 +616,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                                   <Button
                                     size="sm"
                                     className={`flex-1 h-8 text-xs ${
-                                      alert.type === "warning" ? "bg-orange-600 hover:bg-orange-700" :
+                                      alert.type === "warning" ? "bg-gray-700 hover:bg-gray-800" :
                                       alert.type === "info" ? "bg-gray-600 hover:bg-gray-700" :
-                                      "bg-green-600 hover:bg-green-700"
+                                      "bg-[#2E7D32] hover:bg-[#2E7D32]"
                                     } text-white shadow-md`}
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -663,7 +663,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               >
                 <Button
                   variant="ghost"
-                  className="text-orange-700 hover:text-orange-800 hover:bg-orange-100 font-semibold"
+                  className="text-gray-700 hover:text-gray-800 hover:bg-gray-100 font-semibold"
                   onClick={() => toast.info(
                     language === "sw" ? "Tahadhari zote za hali ya hewa" : "All Weather Alerts",
                     { description: language === "sw" ? `Jumla ya tahadhari ${alerts.length}` : `${alerts.length} total alerts` }
@@ -679,7 +679,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
       )}
 
       {/* Main Weather Dashboard */}
-      <Card className="border-2 border-green-200">
+      <Card className="border-2 border-[#2E7D32]/20">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between flex-wrap gap-2">
             <div>
@@ -711,11 +711,11 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               {/* Current Conditions */}
               <div className="grid gap-4 md:grid-cols-2">
                 {/* Today's Forecast */}
-                <Card className="border-2 border-green-200">
+                <Card className="border-2 border-[#2E7D32]/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <div className="p-2 bg-orange-100 rounded-lg">
-                        <Sun className="h-5 w-5 text-orange-600" />
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <Sun className="h-5 w-5 text-gray-600" />
                       </div>
                       Today's Forecast
                     </CardTitle>
@@ -727,7 +727,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                         transition={{ duration: 3, repeat: Infinity }}
                         className="inline-block"
                       >
-                        <Sun className="h-24 w-24 text-orange-500 mx-auto" />
+                        <Sun className="h-24 w-24 text-gray-600 mx-auto" />
                       </motion.div>
                       <h3 className="text-3xl font-bold mt-4">25°C</h3>
                       <p className="text-gray-600 mt-2">Sunny</p>
@@ -752,19 +752,19 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 </Card>
 
                 {/* Additional Metrics */}
-                <Card className="border-2 border-green-200">
+                <Card className="border-2 border-[#2E7D32]/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <Activity className="h-5 w-5 text-green-600" />
+                      <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                        <Activity className="h-5 w-5 text-[#2E7D32]" />
                       </div>
                       Weather Metrics
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-200">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-red-50 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2">
-                        <ThermometerSun className="h-5 w-5 text-orange-600 flex-shrink-0" />
+                        <ThermometerSun className="h-5 w-5 text-gray-600 flex-shrink-0" />
                         <span className="text-sm font-medium">UV Index</span>
                       </div>
                       <Badge className={`${uvSeverity.bg} ${uvSeverity.color} border-0`}>
@@ -788,9 +788,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                       <span className="font-semibold">{visibility.toFixed(1)} km</span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg border border-[#2E7D32]/20">
                       <div className="flex items-center gap-2">
-                        <Droplets className="h-5 w-5 text-green-600 flex-shrink-0" />
+                        <Droplets className="h-5 w-5 text-[#2E7D32] flex-shrink-0" />
                         <span className="text-sm font-medium">Dew Point</span>
                       </div>
                       <span className="font-semibold">{dewPoint.toFixed(1)}°C</span>
@@ -800,12 +800,12 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               </div>
 
               {/* Sun Times */}
-              <Card className="border-2 border-green-200 bg-gradient-to-r from-orange-50 via-yellow-50 to-blue-50">
+              <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-r from-gray-50 via-gray-50 to-gray-100">
                 <CardContent className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Sunrise className="h-8 w-8 text-orange-600" />
+                      <div className="p-3 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Sunrise className="h-8 w-8 text-gray-600" />
                       </div>
                       <div className="flex flex-col justify-center">
                         <p className="text-sm text-gray-600">Sunrise</p>
@@ -844,7 +844,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 {/* First Week */}
                 <div className="mb-6">
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-3 flex items-center gap-2">
-                    <CheckCircle2 className="h-3 w-3 text-green-600" />
+                    <CheckCircle2 className="h-3 w-3 text-[#2E7D32]" />
                     Next 7 Days (High Confidence)
                   </p>
                   <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-7">
@@ -864,8 +864,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                         <Card 
                           className={`cursor-pointer transition-all ${
                             isSelected 
-                              ? "border-2 border-green-500 bg-green-50 shadow-lg" 
-                              : "border-2 border-green-200 hover:border-green-400"
+                              ? "border-2 border-[#2E7D32]/20 bg-[#2E7D32]/5 shadow-lg" 
+                              : "border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20"
                           }`}
                           onClick={() => setSelectedDay(isSelected ? null : index)}
                         >
@@ -876,7 +876,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                               transition={{ duration: 0.5 }}
                             >
                               <WeatherIcon className={`h-8 w-8 mx-auto ${
-                                day.condition.includes("Rain") ? "text-gray-600" : "text-orange-500"
+                                day.condition.includes("Rain") ? "text-gray-600" : "text-gray-600"
                               }`} />
                             </motion.div>
                             <p className="text-2xl font-bold mt-2">{Math.round(day.temp)}°</p>
@@ -918,8 +918,8 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                         <Card 
                           className={`cursor-pointer transition-all ${
                             isSelected 
-                              ? "border-2 border-green-500 bg-green-50 shadow-lg" 
-                              : "border-2 border-green-200 hover:border-green-400 opacity-80"
+                              ? "border-2 border-[#2E7D32]/20 bg-[#2E7D32]/5 shadow-lg" 
+                              : "border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20 opacity-80"
                           }`}
                           onClick={() => setSelectedDay(isSelected ? null : actualIndex)}
                         >
@@ -930,7 +930,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                               transition={{ duration: 0.5 }}
                             >
                               <WeatherIcon className={`h-8 w-8 mx-auto ${
-                                day.condition.includes("Rain") ? "text-gray-600" : "text-orange-500"
+                                day.condition.includes("Rain") ? "text-gray-600" : "text-gray-600"
                               }`} />
                             </motion.div>
                             <p className="text-2xl font-bold mt-2">{Math.round(day.temp + 25)}°</p>
@@ -950,11 +950,11 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               </div>
 
               {/* Hourly Temperature Chart */}
-              <Card className="border-2 border-green-200">
+              <Card className="border-2 border-[#2E7D32]/20">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                      <Activity className="h-5 w-5 text-orange-600" />
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <Activity className="h-5 w-5 text-gray-600" />
                     </div>
                     24-Hour Temperature Trend
                   </CardTitle>
@@ -997,7 +997,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               </Card>
 
               {/* Rainfall Forecast */}
-              <Card className="border-2 border-green-200">
+              <Card className="border-2 border-[#2E7D32]/20">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <div className="p-2 bg-gray-100 rounded-lg">
@@ -1039,11 +1039,11 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
             <TabsContent value="details" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-3">
                 {/* Temperature Details */}
-                <Card className="border-2 border-green-200">
+                <Card className="border-2 border-[#2E7D32]/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <div className="p-2 bg-orange-100 rounded-lg">
-                        <ThermometerSun className="h-5 w-5 text-orange-600" />
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <ThermometerSun className="h-5 w-5 text-gray-600" />
                       </div>
                       Temperature
                     </CardTitle>
@@ -1052,7 +1052,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Current</span>
-                        <span className="text-xl font-bold text-orange-600">25°C</span>
+                        <span className="text-xl font-bold text-gray-600">25°C</span>
                       </div>
                       <Progress value={(25 / 50) * 100} className="h-2" />
                     </div>
@@ -1068,7 +1068,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 </Card>
 
                 {/* Humidity Details */}
-                <Card className="border-2 border-green-200">
+                <Card className="border-2 border-[#2E7D32]/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <div className="p-2 bg-gray-100 rounded-lg">
@@ -1091,7 +1091,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Status:</span>
-                      <Badge className={Math.random() > 0.5 ? "bg-gray-100 text-gray-700 border-0" : "bg-yellow-100 text-yellow-700 border-0"}>
+                      <Badge className={Math.random() > 0.5 ? "bg-gray-100 text-gray-700 border-0" : "bg-gray-100 text-gray-700 border-0"}>
                         {Math.random() > 0.5 ? "High" : "Normal"}
                       </Badge>
                     </div>
@@ -1099,11 +1099,11 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 </Card>
 
                 {/* Wind Details */}
-                <Card className="border-2 border-green-200">
+                <Card className="border-2 border-[#2E7D32]/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <Wind className="h-5 w-5 text-green-600" />
+                      <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                        <Wind className="h-5 w-5 text-[#2E7D32]" />
                       </div>
                       Wind
                     </CardTitle>
@@ -1112,7 +1112,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Speed</span>
-                        <span className="text-xl font-bold text-green-600">{windSpeed.toFixed(1)} km/h</span>
+                        <span className="text-xl font-bold text-[#2E7D32]">{windSpeed.toFixed(1)} km/h</span>
                       </div>
                       <Progress value={(windSpeed / 50) * 100} className="h-2" />
                     </div>
@@ -1135,11 +1135,11 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
             {/* Farming Tab */}
             <TabsContent value="farming" className="space-y-4">
               {/* Planting Calendar */}
-              <Card className="border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+              <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-r from-[#2E7D32] to-gray-100">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2">
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <Calendar className="h-5 w-5 text-green-600" />
+                    <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                      <Calendar className="h-5 w-5 text-[#2E7D32]" />
                     </div>
                     Planting Calendar & Recommendations
                   </CardTitle>
@@ -1147,9 +1147,9 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-3">
-                    <div className="p-4 bg-white rounded-lg border-2 border-green-200">
+                    <div className="p-4 bg-white rounded-lg border-2 border-[#2E7D32]/20">
                       <p className="text-sm text-gray-600 mb-1">Current Season</p>
-                      <p className="text-xl font-bold text-green-700">Rainy Season</p>
+                      <p className="text-xl font-bold text-[#2E7D32]">Rainy Season</p>
                     </div>
                     <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
                       <p className="text-sm text-gray-600 mb-1">Next Planting Date</p>
@@ -1167,7 +1167,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
 
                   <div>
                     <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <Leaf className="h-4 w-4 text-green-600" />
+                      <Leaf className="h-4 w-4 text-[#2E7D32]" />
                       Recommended Crops for Current Season
                     </h4>
                     <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -1179,12 +1179,12 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                           transition={{ delay: index * 0.1 }}
                           whileHover={{ scale: 1.05 }}
                         >
-                          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-colors">
-                            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-                              <Sprout className="h-4 w-4 text-green-600" />
+                          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20 transition-colors">
+                            <div className="p-2 bg-[#2E7D32]/10 rounded-lg flex-shrink-0">
+                              <Sprout className="h-4 w-4 text-[#2E7D32]" />
                             </div>
-                            <span className="font-medium text-green-900 flex-1">{crop}</span>
-                            <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                            <span className="font-medium text-[#2E7D32] flex-1">{crop}</span>
+                            <CheckCircle2 className="h-4 w-4 text-[#2E7D32] flex-shrink-0" />
                           </div>
                         </motion.div>
                       ))}
@@ -1194,7 +1194,7 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
               </Card>
 
               {/* Farming Recommendations */}
-              <Card className="border-2 border-green-200">
+              <Card className="border-2 border-[#2E7D32]/20">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2">
                     <div className="p-2 bg-gray-100 rounded-lg">
@@ -1204,30 +1204,30 @@ export function WeatherCard({ userId, region, language = "en" }: { userId?: stri
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
-                    <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-                      <Droplets className="h-5 w-5 text-green-600" />
+                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg border-2 border-[#2E7D32]/20">
+                    <div className="p-2 bg-[#2E7D32]/10 rounded-lg flex-shrink-0">
+                      <Droplets className="h-5 w-5 text-[#2E7D32]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-green-900 mb-1">Irrigation Schedule</h4>
-                      <p className="text-sm text-green-700">
+                      <h4 className="font-semibold text-[#2E7D32] mb-1">Irrigation Schedule</h4>
+                      <p className="text-sm text-[#2E7D32]">
                         Current humidity at {(Math.random() * 30 + 60).toFixed(0)}%. Reduce irrigation frequency. Water early morning or late evening.
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-green-600 flex-shrink-0 mt-1" />
+                    <ArrowRight className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-1" />
                   </div>
 
-                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border-2 border-orange-200">
-                    <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
-                      <Sun className="h-5 w-5 text-orange-600" />
+                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">
+                    <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                      <Sun className="h-5 w-5 text-gray-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-orange-900 mb-1">Sun Protection</h4>
-                      <p className="text-sm text-orange-700">
+                      <h4 className="font-semibold text-gray-900 mb-1">Sun Protection</h4>
+                      <p className="text-sm text-gray-700">
                         UV Index at {uvIndex}. Provide shade for young plants. Apply mulch to retain soil moisture.
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-orange-600 flex-shrink-0 mt-1" />
+                    <ArrowRight className="h-5 w-5 text-gray-600 flex-shrink-0 mt-1" />
                   </div>
 
                   <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">

@@ -395,12 +395,12 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
         {steps.map((step, index) => (
           <div key={index} className="flex items-center gap-2">
             <div className={`flex items-center gap-2 ${
-              currentStep > index + 1 ? "text-green-600" : 
-              currentStep === index + 1 ? "text-green-600" : "text-gray-400"
+              currentStep > index + 1 ? "text-[#2E7D32]" : 
+              currentStep === index + 1 ? "text-[#2E7D32]" : "text-gray-400"
             }`}>
               <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                currentStep > index + 1 ? "bg-green-600 text-white" :
-                currentStep === index + 1 ? "bg-green-600 text-white" : "bg-gray-200 text-gray-600"
+                currentStep > index + 1 ? "bg-[#2E7D32] text-white" :
+                currentStep === index + 1 ? "bg-[#2E7D32] text-white" : "bg-gray-200 text-gray-600"
               }`}>
                 {currentStep > index + 1 ? <CheckCircle className="h-5 w-5" /> : index + 1}
               </div>
@@ -424,19 +424,19 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
           <div
             key={index}
             className={`flex items-start gap-2 p-3 rounded-xl border ${
-              assist.type === "warning" ? "bg-amber-50 border-amber-200" :
-              assist.type === "success" ? "bg-green-50 border-green-200" :
+              assist.type === "warning" ? "bg-gray-50 border-gray-200" :
+              assist.type === "success" ? "bg-[#2E7D32]/5 border-[#2E7D32]/20" :
               "bg-gray-50 border-gray-200"
             }`}
           >
             <Sparkles className={`h-4 w-4 flex-shrink-0 mt-0.5 ${
-              assist.type === "warning" ? "text-amber-600" :
-              assist.type === "success" ? "text-green-600" :
+              assist.type === "warning" ? "text-gray-600" :
+              assist.type === "success" ? "text-[#2E7D32]" :
               "text-gray-600"
             }`} />
             <p className={`text-xs font-medium ${
-              assist.type === "warning" ? "text-amber-800" :
-              assist.type === "success" ? "text-green-800" :
+              assist.type === "warning" ? "text-gray-800" :
+              assist.type === "success" ? "text-[#2E7D32]" :
               "text-gray-800"
             }`}>
               {assist.suggestion}
@@ -578,13 +578,13 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
           <SelectContent>
             <SelectItem value="smallholder_farmer">
               <div className="flex items-center gap-2">
-                <Wheat className="h-4 w-4 text-green-600" />
+                <Wheat className="h-4 w-4 text-[#2E7D32]" />
                 <span>Smallholder Farmer (0-5 acres)</span>
               </div>
             </SelectItem>
             <SelectItem value="farmer">
               <div className="flex items-center gap-2">
-                <Wheat className="h-4 w-4 text-green-600" />
+                <Wheat className="h-4 w-4 text-[#2E7D32]" />
                 <span>Farmer (&gt;5 acres)</span>
               </div>
             </SelectItem>
@@ -722,8 +722,8 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
               }}
               className={`h-12 rounded-xl border-2 transition-all font-medium text-sm ${
                 (formData.advisoryChannels || []).includes(channel)
-                  ? "border-green-500 bg-green-50 text-green-900"
-                  : "border-gray-200 bg-white text-gray-700 hover:border-green-200"
+                  ? "border-[#2E7D32]/20 bg-[#2E7D32]/5 text-[#2E7D32]"
+                  : "border-gray-200 bg-white text-gray-700 hover:border-[#2E7D32]/20"
               }`}
             >
               {channel}
@@ -1140,8 +1140,8 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
   const renderStep3 = () => (
     <div className="space-y-4">
       <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-          <CheckCircle className="h-8 w-8 text-green-600" />
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2E7D32]/10 rounded-full mb-4">
+          <CheckCircle className="h-8 w-8 text-[#2E7D32]" />
         </div>
         <h3 className="text-xl font-bold text-gray-900">Review Your Information</h3>
         <p className="text-sm text-gray-500 mt-1">Make sure everything looks correct</p>
@@ -1200,7 +1200,7 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
   return (
     <Card className="w-full shadow-2xl border-0 overflow-hidden">
       {/* Header */}
-      <div className="relative bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 p-6 md:p-8 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 p-6 md:p-8 text-white overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         
@@ -1245,7 +1245,7 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
               <Button
                 type="button"
                 onClick={handleNext}
-                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-12 rounded-xl font-semibold"
+                className="flex-1 bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100 h-12 rounded-xl font-semibold"
               >
                 Next
                 <ChevronRight className="h-5 w-5 ml-1" />
@@ -1254,7 +1254,7 @@ export function RoleBasedRegistrationForm({ onRegister, loading, language }: Reg
               <Button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-12 rounded-xl font-semibold"
+                className="flex-1 bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100 h-12 rounded-xl font-semibold"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">

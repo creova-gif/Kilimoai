@@ -210,17 +210,17 @@ export function OTPVerificationScreen({
   // Success state
   if (verificationSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 p-4">
         <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur">
           <CardContent className="p-8 text-center space-y-6">
-            <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-bounce">
-              <CheckCircle className="h-12 w-12 text-green-600" />
+            <div className="mx-auto w-20 h-20 bg-[#2E7D32]/10 rounded-full flex items-center justify-center animate-bounce">
+              <CheckCircle className="h-12 w-12 text-[#2E7D32]" />
             </div>
             <div className="space-y-2">
               <h3 className="text-2xl font-bold text-gray-900">{t.success}</h3>
               <p className="text-gray-600">{t.successDesc}</p>
             </div>
-            <div className="flex items-center justify-center gap-2 text-green-600">
+            <div className="flex items-center justify-center gap-2 text-[#2E7D32]">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span className="text-sm font-medium">
                 {language === "sw" ? "Inaingia..." : "Redirecting..."}
@@ -234,17 +234,17 @@ export function OTPVerificationScreen({
 
   // Verification form
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 p-4">
       <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur">
         <CardHeader className="text-center space-y-2 pb-6">
-          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <Phone className="h-8 w-8 text-green-600" />
+          <div className="mx-auto w-16 h-16 bg-[#2E7D32]/10 rounded-full flex items-center justify-center mb-4">
+            <Phone className="h-8 w-8 text-[#2E7D32]" />
           </div>
           <CardTitle className="text-2xl font-bold">{t.title}</CardTitle>
           <CardDescription className="text-base">
             {t.description}
             <br />
-            <span className="font-semibold text-green-600 text-lg mt-2 inline-block">
+            <span className="font-semibold text-[#2E7D32] text-lg mt-2 inline-block">
               {formatPhoneNumber(phoneNumber)}
             </span>
           </CardDescription>
@@ -269,7 +269,7 @@ export function OTPVerificationScreen({
                   <InputOTPSlot
                     key={index}
                     index={index}
-                    className="w-12 h-14 text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
+                    className="w-12 h-14 text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-[#2E7D32]/20 focus:ring-2 focus:ring-[#2E7D32]/30 transition-all"
                   />
                 ))}
               </InputOTPGroup>
@@ -277,7 +277,7 @@ export function OTPVerificationScreen({
 
             {/* Loading indicator */}
             {loading && (
-              <div className="flex items-center gap-2 text-green-600">
+              <div className="flex items-center gap-2 text-[#2E7D32]">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="text-sm font-medium">{t.verifying}</span>
               </div>
@@ -301,7 +301,7 @@ export function OTPVerificationScreen({
               onClick={handleResend}
               disabled={resendCooldown > 0 || loading}
               variant="outline"
-              className="w-full border-green-600 text-green-600 hover:bg-green-50 disabled:opacity-50"
+              className="w-full border-[#2E7D32]/20 text-[#2E7D32] hover:bg-[#2E7D32]/5 disabled:opacity-50"
             >
               {resendCooldown > 0 ? (
                 <>

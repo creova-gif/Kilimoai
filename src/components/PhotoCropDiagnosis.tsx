@@ -133,18 +133,18 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
 
   const severityConfig = {
     low: { 
-      color: "bg-emerald-500", 
-      textColor: "text-emerald-700",
-      bgColor: "bg-emerald-50",
-      borderColor: "border-emerald-200",
+      color: "bg-[#2E7D32]", 
+      textColor: "text-[#2E7D32]",
+      bgColor: "bg-[#2E7D32]/5",
+      borderColor: "border-[#2E7D32]/20",
       icon: CheckCircle,
       label: text.low
     },
     medium: { 
-      color: "bg-amber-500", 
-      textColor: "text-amber-700",
-      bgColor: "bg-amber-50",
-      borderColor: "border-amber-200",
+      color: "bg-gray-600", 
+      textColor: "text-gray-700",
+      bgColor: "bg-gray-50",
+      borderColor: "border-gray-200",
       icon: AlertCircle,
       label: text.medium
     },
@@ -162,7 +162,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
     <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
+        <div className="relative overflow-hidden bg-[#2E7D32] rounded-2xl p-6 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
@@ -190,7 +190,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
             <Card className="border-2 border-dashed border-gray-300 hover:border-[#2E7D32] transition-all">
               <CardContent className="py-12">
                 <div className="text-center space-y-6">
-                  <div className="h-20 w-20 bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl flex items-center justify-center mx-auto shadow-xl">
+                  <div className="h-20 w-20 bg-[#2E7D32] rounded-2xl flex items-center justify-center mx-auto shadow-xl">
                     <ImageIcon className="h-10 w-10 text-white" />
                   </div>
                   
@@ -233,25 +233,25 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
             </Card>
 
             {/* Tips */}
-            <Card className="border-2 border-blue-100 bg-blue-50/50">
+            <Card className="border-2 border-gray-200 bg-gray-50/50">
               <CardContent className="py-4">
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Info className="h-5 w-5 text-blue-600" />
+                  <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <Info className="h-5 w-5 text-gray-600" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-blue-900 mb-2">{text.tips}</h4>
-                    <ul className="space-y-1 text-sm text-blue-700">
+                    <h4 className="font-semibold text-gray-900 mb-2">{text.tips}</h4>
+                    <ul className="space-y-1 text-sm text-gray-700">
                       <li className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 bg-blue-600 rounded-full"></div>
+                        <div className="h-1.5 w-1.5 bg-gray-700 rounded-full"></div>
                         {text.tip1}
                       </li>
                       <li className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 bg-blue-600 rounded-full"></div>
+                        <div className="h-1.5 w-1.5 bg-gray-700 rounded-full"></div>
                         {text.tip2}
                       </li>
                       <li className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 bg-blue-600 rounded-full"></div>
+                        <div className="h-1.5 w-1.5 bg-gray-700 rounded-full"></div>
                         {text.tip3}
                       </li>
                     </ul>
@@ -292,7 +292,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
             {!diagnosis && !analyzing && (
               <Button
                 onClick={handleAnalyze}
-                className="w-full h-14 bg-gradient-to-r from-[#2E7D32] to-[#1B5E20] hover:from-[#1B5E20] hover:to-[#2E7D32] text-white shadow-xl"
+                className="w-full h-14 bg-[#2E7D32] hover:from-gray-50 hover:to-gray-100 text-white shadow-xl"
                 size="lg"
               >
                 <Sparkles className="h-5 w-5 mr-2" />
@@ -303,10 +303,10 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
 
             {/* Analyzing State */}
             {analyzing && (
-              <Card className="border-2 border-[#2E7D32] bg-gradient-to-br from-emerald-50 to-white">
+              <Card className="border-2 border-[#2E7D32] bg-gradient-to-br from-[#2E7D32] to-white">
                 <CardContent className="py-8">
                   <div className="text-center space-y-4">
-                    <div className="h-16 w-16 bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl flex items-center justify-center mx-auto shadow-xl animate-pulse">
+                    <div className="h-16 w-16 bg-[#2E7D32] rounded-2xl flex items-center justify-center mx-auto shadow-xl animate-pulse">
                       <Scan className="h-8 w-8 text-white" />
                     </div>
                     <div>
@@ -372,8 +372,8 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
                     <Card className="border-2 border-gray-200">
                       <CardContent className="py-4">
                         <div className="flex gap-3">
-                          <div className="flex-shrink-0 h-10 w-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                            <Store className="h-5 w-5 text-amber-600" />
+                          <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                            <Store className="h-5 w-5 text-gray-600" />
                           </div>
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900 mb-2">{text.dealers}</h4>

@@ -210,12 +210,12 @@ export const FUNCTIONAL = {
  * ❌ INCORRECT USAGE:
  * 
  * // Generic Tailwind greens
- * <div className="bg-green-600">...</div>  // BANNED
- * <div className="bg-emerald-500">...</div> // BANNED
- * <div className="text-teal-600">...</div>  // BANNED
+ * <div className="bg-[#2E7D32]">...</div>  // BANNED
+ * <div className="bg-[#2E7D32]">...</div> // BANNED
+ * <div className="text-gray-600">...</div>  // BANNED
  * 
  * // Multi-color gradients
- * <div className="bg-gradient-to-r from-green-500 to-emerald-600">...</div> // BANNED
+ * <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100">...</div> // BANNED
  * 
  * // Hardcoded hex values (other than #2E7D32)
  * <div style={{ backgroundColor: '#10B981' }}>...</div> // BANNED (emerald-500)

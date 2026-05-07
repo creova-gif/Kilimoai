@@ -26,7 +26,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
       titleSw: "Kutambua Magonjwa ya Mazao",
       descEn: "Take a photo (sample)",
       descSw: "Piga picha ya majani (mfano)",
-      color: "from-orange-500 to-red-600",
+      color: "from-gray-50 to-red-600",
       demoResult: {
         titleEn: "Possible Diagnosis: Fungal Disease",
         titleSw: "Inaweza kuwa: Ugonjwa wa Fangasi",
@@ -42,7 +42,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
       titleSw: "Hali ya Hewa na Ushauri wa Kupanda",
       descEn: "Weather forecast (your region)",
       descSw: "Hali ya hewa (mkoa wako)",
-      color: "from-blue-500 to-cyan-600",
+      color: "from-gray-50 to-gray-100",
       demoResult: {
         titleEn: "Rain expected in 3 days",
         titleSw: "Mvua inatarajiwa ndani ya siku 3",
@@ -59,7 +59,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
       titleSw: "Bei za Soko",
       descEn: "Live prices from markets",
       descSw: "Bei za soko za sasa",
-      color: "from-green-500 to-emerald-600",
+      color: "from-[#2E7D32] to-gray-100",
       demoResult: {
         crop: language === "sw" ? "Mahindi" : "Maize",
         markets: [
@@ -76,7 +76,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
       titleSw: "Mazungumzo na AI",
       descEn: "Ask farming questions",
       descSw: "Uliza maswali ya kilimo",
-      color: "from-purple-500 to-indigo-600",
+      color: "from-gray-50 to-gray-100",
       demoResult: {
         questionEn: "When should I plant maize?",
         questionSw: "Nipande mahindi lini?",
@@ -96,7 +96,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E7D32]/10 text-[#2E7D32] rounded-full text-sm font-semibold mb-4">
               <CheckCircle className="h-4 w-4" />
               {language === "sw" ? "Bila malipo" : "No payment required"}
             </div>
@@ -126,7 +126,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                   <Card 
                     className={`cursor-pointer transition-all duration-300 overflow-hidden ${
                       isActive 
-                        ? 'border-green-500 border-2 shadow-2xl ring-4 ring-green-100' 
+                        ? 'border-[#2E7D32]/20 border-2 shadow-2xl ring-4 ring-[#2E7D32]/30' 
                         : 'hover:shadow-lg hover:border-gray-300 border-gray-200'
                     }`}
                     onClick={() => setActiveDemo(isActive ? null : feature.id)}
@@ -173,21 +173,21 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                           {/* Disease Detection Demo */}
                           {feature.id === "disease" && (
                             <div className="space-y-4">
-                              <div className="bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-300 rounded-2xl p-5 shadow-lg">
+                              <div className="bg-gradient-to-br from-gray-50 to-red-50 border-2 border-gray-300 rounded-2xl p-5 shadow-lg">
                                 <div className="flex items-start gap-4">
-                                  <div className="p-3 bg-orange-500 rounded-xl shadow-md flex-shrink-0">
+                                  <div className="p-3 bg-gray-600 rounded-xl shadow-md flex-shrink-0">
                                     <AlertTriangle className="h-7 w-7 text-white" />
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-2">
-                                      <h4 className="font-bold text-orange-900 text-lg">
+                                      <h4 className="font-bold text-gray-900 text-lg">
                                         {language === "sw" ? feature.demoResult.titleSw : feature.demoResult.titleEn}
                                       </h4>
-                                      <span className="px-3 py-1 bg-orange-600 text-white text-xs font-bold rounded-full shadow-sm">
+                                      <span className="px-3 py-1 bg-gray-700 text-white text-xs font-bold rounded-full shadow-sm">
                                         {feature.demoResult.confidence}%
                                       </span>
                                     </div>
-                                    <p className="text-sm text-orange-800 leading-relaxed">
+                                    <p className="text-sm text-gray-800 leading-relaxed">
                                       <span className="font-bold">{language === "sw" ? "Ushauri:" : "Advice:"}</span>{" "}
                                       {language === "sw" ? feature.demoResult.adviceSw : feature.demoResult.adviceEn}
                                     </p>
@@ -202,7 +202,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                             <div className="space-y-4">
                               <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 rounded-2xl p-5 shadow-lg">
                                 <div className="flex items-center gap-4 mb-4">
-                                  <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg">
+                                  <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-lg">
                                     <CloudRain className="h-10 w-10 text-white" />
                                   </div>
                                   <div className="flex-1">
@@ -236,7 +236,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                                 <h4 className="font-bold text-gray-900 text-base">
                                   {language === "sw" ? "Bei ya " : "Price of "}{feature.demoResult.crop}
                                 </h4>
-                                <Badge className="bg-green-100 text-green-700 border-green-300 font-semibold">
+                                <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20 font-semibold">
                                   {language === "sw" ? "Leo" : "Today"}
                                 </Badge>
                               </div>
@@ -246,14 +246,14 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                                   initial={{ opacity: 0, x: -20 }}
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{ delay: idx * 0.1 }}
-                                  className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                                  className="flex items-center justify-between p-4 bg-gradient-to-r from-[#2E7D32] to-gray-100 border-2 border-[#2E7D32]/20 rounded-xl shadow-sm hover:shadow-md transition-shadow"
                                 >
                                   <span className="font-semibold text-gray-900">{market.name}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xl font-black text-green-700">
+                                    <span className="text-xl font-black text-[#2E7D32]">
                                       {market.price}
                                     </span>
-                                    <span className="text-sm text-green-600 font-medium">TZS/kg</span>
+                                    <span className="text-sm text-[#2E7D32] font-medium">TZS/kg</span>
                                   </div>
                                 </motion.div>
                               ))}
@@ -288,17 +288,17 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="mt-5 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-xl flex items-center gap-3 shadow-sm"
+                            className="mt-5 p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-300 rounded-xl flex items-center gap-3 shadow-sm"
                           >
-                            <div className="p-2 bg-amber-500 rounded-lg">
+                            <div className="p-2 bg-gray-600 rounded-lg">
                               <Lock className="h-5 w-5 text-white" />
                             </div>
-                            <p className="text-sm text-amber-900 font-semibold flex-1">
+                            <p className="text-sm text-gray-900 font-semibold flex-1">
                               {language === "sw" 
                                 ? "Fungua huduma zote kwa akaunti"
                                 : "Unlock all features with an account"}
                             </p>
-                            <ArrowRight className="h-5 w-5 text-amber-600" />
+                            <ArrowRight className="h-5 w-5 text-gray-600" />
                           </motion.div>
                         </CardContent>
                       </motion.div>
@@ -318,7 +318,7 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
           >
             <Button
               onClick={onCreateAccount}
-              className="w-full bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-700 hover:via-emerald-700 hover:to-teal-700 h-16 text-lg font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-[1.02] active:scale-[0.98] rounded-xl"
+              className="w-full bg-gradient-to-r from-[#2E7D32] via-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:via-[#2E7D32] hover:to-gray-100 h-16 text-lg font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-[1.02] active:scale-[0.98] rounded-xl"
             >
               <span className="flex items-center gap-2">
                 {language === "sw" ? "Fungua Akaunti Yako" : "Create Your Account"}
@@ -336,11 +336,11 @@ export function GuestDemoMode({ language, onCreateAccount, onContinueAsGuest }: 
 
             <div className="flex items-center justify-center gap-6 pt-2">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <CheckCircle className="h-4 w-4 text-green-600" />
+                <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                 <span className="font-medium">{language === "sw" ? "Bure kuanza" : "Free to start"}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <CheckCircle className="h-4 w-4 text-green-600" />
+                <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                 <span className="font-medium">{language === "sw" ? "Dakika 2 tu" : "Only 2 minutes"}</span>
               </div>
             </div>

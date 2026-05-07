@@ -198,7 +198,7 @@ export function DynamicRoleOnboarding({
               className={`w-full px-4 py-3 rounded-xl border-2 transition-all ${
                 hasError
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-200 focus:border-green-500"
+                  : "border-gray-200 focus:border-[#2E7D32]/20"
               } focus:outline-none`}
             />
             {hasError && (
@@ -226,7 +226,7 @@ export function DynamicRoleOnboarding({
               className={`w-full px-4 py-3 rounded-xl border-2 transition-all ${
                 hasError
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-200 focus:border-green-500"
+                  : "border-gray-200 focus:border-[#2E7D32]/20"
               } focus:outline-none`}
             />
             {hasError && (
@@ -246,9 +246,9 @@ export function DynamicRoleOnboarding({
                 type="checkbox"
                 checked={!!formData[field.field]}
                 onChange={(e) => handleChange(field.field, e.target.checked)}
-                className="w-5 h-5 rounded border-2 border-gray-300 text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+                className="w-5 h-5 rounded border-2 border-gray-300 text-[#2E7D32] focus:ring-2 focus:ring-[#2E7D32]/30 focus:ring-offset-2 transition-all"
               />
-              <span className="text-sm font-semibold text-gray-700 group-hover:text-green-600 transition-colors">
+              <span className="text-sm font-semibold text-gray-700 group-hover:text-[#2E7D32] transition-colors">
                 {label}
               </span>
             </label>
@@ -267,7 +267,7 @@ export function DynamicRoleOnboarding({
               className={`w-full px-4 py-3 rounded-xl border-2 transition-all bg-white ${
                 hasError
                   ? "border-red-300 focus:border-red-500"
-                  : "border-gray-200 focus:border-green-500"
+                  : "border-gray-200 focus:border-[#2E7D32]/20"
               } focus:outline-none`}
             >
               <option value="">Select an option</option>
@@ -308,8 +308,8 @@ export function DynamicRoleOnboarding({
                     }}
                     className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
                       isSelected
-                        ? "border-green-500 bg-green-50 text-green-700"
-                        : "border-gray-200 bg-white text-gray-700 hover:border-green-300"
+                        ? "border-[#2E7D32]/20 bg-[#2E7D32]/5 text-[#2E7D32]"
+                        : "border-gray-200 bg-white text-gray-700 hover:border-[#2E7D32]/20"
                     }`}
                   >
                     {option}
@@ -336,7 +336,7 @@ export function DynamicRoleOnboarding({
       <div className="fixed inset-0 z-50 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
         <Card className="p-12 bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-12 w-12 text-green-600 animate-spin" />
+            <Loader2 className="h-12 w-12 text-[#2E7D32] animate-spin" />
             <p className="text-gray-600 font-medium">Loading your onboarding form...</p>
           </div>
         </Card>
@@ -368,8 +368,8 @@ export function DynamicRoleOnboarding({
     <div className="fixed inset-0 z-50 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-20 left-20 w-96 h-96 bg-[#2E7D32] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#2E7D32] rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <Card className="relative max-w-2xl w-full bg-white/95 backdrop-blur-xl border-0 shadow-2xl overflow-hidden">
@@ -398,7 +398,7 @@ export function DynamicRoleOnboarding({
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
               {language === "sw" ? "Karibu" : "Welcome"}, {userName}!
             </h2>
-            <p className="text-lg text-green-600 font-semibold">
+            <p className="text-lg text-[#2E7D32] font-semibold">
               {language === "sw"
                 ? "Tuambie zaidi kukuhusu"
                 : "Tell us more about yourself"}
@@ -433,7 +433,7 @@ export function DynamicRoleOnboarding({
 
           {/* Completion Status */}
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-500">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
             <span>
               {Object.keys(formData).length} of {formSchema.filter(f => f.required).length} required fields completed
             </span>

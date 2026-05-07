@@ -512,17 +512,17 @@ export function UnifiedAccessScreen({ onSuccess, language = "sw" }: UnifiedAcces
                 
                 {/* DEV MODE: Show OTP on screen */}
                 {debugOTP && (
-                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex items-start gap-2">
-                      <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                      <AlertCircle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
                       <div className="flex-1">
-                        <p className="text-xs font-semibold text-yellow-800 mb-1">
+                        <p className="text-xs font-semibold text-gray-800 mb-1">
                           {language === "en" ? "🔓 DEV MODE - Your OTP:" : "🔓 MTINDO WA MAENDELEO - OTP yako:"}
                         </p>
-                        <p className="text-2xl font-bold text-yellow-900 tracking-wider font-mono">
+                        <p className="text-2xl font-bold text-gray-900 tracking-wider font-mono">
                           {debugOTP}
                         </p>
-                        <p className="text-xs text-yellow-700 mt-1">
+                        <p className="text-xs text-gray-700 mt-1">
                           {language === "en" 
                             ? "Check your email/phone or use this code above" 
                             : "Angalia barua pepe/simu au tumia nambari hii hapo juu"}

@@ -24,9 +24,9 @@ export function MetricCard({
 }: MetricCardProps) {
   const colorSchemes = {
     green: {
-      gradient: "from-green-500 to-emerald-600",
-      bg: "bg-green-50",
-      text: "text-green-700"
+      gradient: "from-[#2E7D32] to-gray-100",
+      bg: "bg-[#2E7D32]/5",
+      text: "text-[#2E7D32]"
     },
     blue: {
       gradient: "from-gray-500 to-slate-600",
@@ -39,9 +39,9 @@ export function MetricCard({
       text: "text-gray-700"
     },
     orange: {
-      gradient: "from-orange-500 to-amber-600",
-      bg: "bg-orange-50",
-      text: "text-orange-700"
+      gradient: "from-gray-50 to-gray-100",
+      bg: "bg-gray-50",
+      text: "text-gray-700"
     },
     gray: {
       gradient: "from-gray-500 to-slate-600",
@@ -72,7 +72,7 @@ export function MetricCard({
           {trend && (
             <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
               trend.direction === "up"
-                ? "bg-green-50 text-green-700"
+                ? "bg-[#2E7D32]/5 text-[#2E7D32]"
                 : "bg-red-50 text-red-700"
             }`}>
               {trend.direction === "up" ? (

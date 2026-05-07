@@ -45,14 +45,14 @@ export function RealTimeWeatherHero({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <Card className="border-2 border-green-200 bg-gradient-to-r from-blue-50 via-green-50 to-emerald-50">
+      <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-r from-gray-50 via-[#2E7D32] to-gray-100">
         <CardContent className="p-6">
           <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
             <div className="flex items-center gap-3">
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="p-3 bg-gradient-to-br from-orange-400 to-yellow-400 rounded-xl"
+                className="p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl"
               >
                 <Sun className="h-8 w-8 text-white" />
               </motion.div>
@@ -61,7 +61,7 @@ export function RealTimeWeatherHero({
                   <h2 className="text-4xl font-bold text-gray-900">
                     {weatherData?.temp.toFixed(1) || "25.0"}°C
                   </h2>
-                  <Badge className="bg-green-100 text-green-700 border-green-300">
+                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                     {language === "sw" ? "Sasa Hivi" : "Live"}
                   </Badge>
                 </div>
@@ -69,7 +69,7 @@ export function RealTimeWeatherHero({
                   {weatherData?.condition || "Sunny"} · {weatherData?.location || region || "Tanzania"}
                 </p>
                 <div className="flex items-center gap-4 mt-2 flex-wrap">
-                  <div className="flex items-center gap-1 text-sm text-green-600">
+                  <div className="flex items-center gap-1 text-sm text-[#2E7D32]">
                     <Droplets className="h-4 w-4" />
                     <span>{language === "sw" ? "Uwezekano" : "Rain"} {weatherData?.rainfallProb || 30}%</span>
                   </div>
@@ -84,7 +84,7 @@ export function RealTimeWeatherHero({
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-2 border-green-300 hover:bg-green-50"
+                className="gap-2 border-[#2E7D32]/20 hover:bg-[#2E7D32]/5"
                 onClick={onRefresh}
                 disabled={isLoading}
               >
@@ -94,7 +94,7 @@ export function RealTimeWeatherHero({
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-2 border-green-300 hover:bg-green-50"
+                className="gap-2 border-[#2E7D32]/20 hover:bg-[#2E7D32]/5"
                 onClick={onOpenNativeApp}
               >
                 <Smartphone className="h-4 w-4" />
@@ -105,17 +105,17 @@ export function RealTimeWeatherHero({
 
           {/* Quick Weather Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-green-200">
+            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-[#2E7D32]/20">
               <p className="text-xs text-gray-600 mb-1">{language === "sw" ? "Unyevu" : "Humidity"}</p>
-              <p className="text-lg font-bold text-green-600">{weatherData?.humidity.toFixed(0) || 75}%</p>
+              <p className="text-lg font-bold text-[#2E7D32]">{weatherData?.humidity.toFixed(0) || 75}%</p>
             </div>
-            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-green-200">
+            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-[#2E7D32]/20">
               <p className="text-xs text-gray-600 mb-1">{language === "sw" ? "Upepo" : "Wind"}</p>
-              <p className="text-lg font-bold text-green-600">{weatherData?.windSpeed.toFixed(1) || 12.5} km/h</p>
+              <p className="text-lg font-bold text-[#2E7D32]">{weatherData?.windSpeed.toFixed(1) || 12.5} km/h</p>
             </div>
-            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-green-200">
+            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-[#2E7D32]/20">
               <p className="text-xs text-gray-600 mb-1">{language === "sw" ? "Msimu" : "Season"}</p>
-              <p className="text-lg font-bold text-green-600">{language === "sw" ? currentSeason.name_sw : currentSeason.name}</p>
+              <p className="text-lg font-bold text-[#2E7D32]">{language === "sw" ? currentSeason.name_sw : currentSeason.name}</p>
             </div>
           </div>
         </CardContent>

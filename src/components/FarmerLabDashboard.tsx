@@ -298,7 +298,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E7D32]/20 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading Farmer Lab...</p>
         </div>
       </div>
@@ -311,7 +311,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 text-white p-8"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 text-white p-8"
       >
         <div className="absolute top-0 right-0 opacity-10">
           <Sparkles className="h-64 w-64 -mt-16 -mr-16" />
@@ -326,10 +326,10 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                 </div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold">KILIMO Farmer Lab</h1>
-                  <p className="text-green-100 text-sm">Shape the future of farming technology</p>
+                  <p className="text-[#2E7D32] text-sm">Shape the future of farming technology</p>
                 </div>
               </div>
-              <p className="text-green-100 max-w-2xl">
+              <p className="text-[#2E7D32] max-w-2xl">
                 Join 200+ pilot farmers testing new features, voting on improvements, and earning rewards for your contributions to the platform.
               </p>
             </div>
@@ -362,10 +362,10 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
       {userStats && (
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            { label: "Contributions", value: userStats.contributions, icon: MessageSquare, color: "text-green-600", bg: "bg-green-100" },
-            { label: "Feedback Given", value: userStats.feedbackSubmitted, icon: FileText, color: "text-green-600", bg: "bg-green-100" },
-            { label: "Polls Voted", value: userStats.pollsVoted, icon: Vote, color: "text-green-600", bg: "bg-green-100" },
-            { label: "Experiments", value: userStats.experimentsJoined, icon: Zap, color: "text-orange-600", bg: "bg-orange-100" }
+            { label: "Contributions", value: userStats.contributions, icon: MessageSquare, color: "text-[#2E7D32]", bg: "bg-[#2E7D32]/10" },
+            { label: "Feedback Given", value: userStats.feedbackSubmitted, icon: FileText, color: "text-[#2E7D32]", bg: "bg-[#2E7D32]/10" },
+            { label: "Polls Voted", value: userStats.pollsVoted, icon: Vote, color: "text-[#2E7D32]", bg: "bg-[#2E7D32]/10" },
+            { label: "Experiments", value: userStats.experimentsJoined, icon: Zap, color: "text-gray-600", bg: "bg-gray-100" }
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -421,7 +421,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className={`border-2 ${poll.userVoted ? 'border-green-200 bg-green-50' : 'border-gray-200'}`}>
+                <Card className={`border-2 ${poll.userVoted ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5' : 'border-gray-200'}`}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -438,7 +438,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                         </CardDescription>
                       </div>
                       {poll.userVoted && (
-                        <Badge className="bg-green-600">
+                        <Badge className="bg-[#2E7D32]">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
                           Voted
                         </Badge>
@@ -453,10 +453,10 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                           disabled={poll.userVoted}
                           className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                             poll.userVote === option.id
-                              ? 'border-green-500 bg-green-50'
+                              ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5'
                               : poll.userVoted
                               ? 'border-gray-200 cursor-not-allowed opacity-60'
-                              : 'border-gray-200 hover:border-green-400 hover:bg-green-50 cursor-pointer'
+                              : 'border-gray-200 hover:border-[#2E7D32]/20 hover:bg-[#2E7D32]/5 cursor-pointer'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
@@ -505,8 +505,8 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                           onClick={() => handleVoteFeature(feature.id)}
                           className={`p-3 rounded-xl transition-all ${
                             feature.userVoted
-                              ? 'bg-green-600 text-white'
-                              : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600'
+                              ? 'bg-[#2E7D32] text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-[#2E7D32]/10 hover:text-[#2E7D32]'
                           }`}
                         >
                           <ThumbsUp className="h-6 w-6" />
@@ -590,7 +590,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                   <CardContent className="p-5">
                     <div className="flex gap-4">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-full flex items-center justify-center text-white font-bold">
                           {discussion.avatar}
                         </div>
                       </div>
@@ -663,7 +663,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                       <div className="flex items-center gap-2 text-gray-600">
                         <Users className="h-4 w-4" />
                         <span>{experiment.participants} participants</span>
-                        <span className="text-green-600 font-semibold">• {experiment.spotsLeft} spots left</span>
+                        <span className="text-[#2E7D32] font-semibold">• {experiment.spotsLeft} spots left</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <Clock className="h-4 w-4" />
@@ -682,10 +682,10 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                       </div>
                     )}
 
-                    <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-3 mb-4">
+                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-lg p-3 mb-4">
                       <div className="flex items-center gap-2 text-sm">
-                        <Gift className="h-5 w-5 text-yellow-600" />
-                        <span className="font-semibold text-yellow-800">{experiment.rewards}</span>
+                        <Gift className="h-5 w-5 text-gray-600" />
+                        <span className="font-semibold text-gray-800">{experiment.rewards}</span>
                       </div>
                     </div>
 
@@ -707,7 +707,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
           <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-green-600" />
+                <Sparkles className="h-5 w-5 text-[#2E7D32]" />
                 Quick Feedback
               </CardTitle>
               <CardDescription>
@@ -744,13 +744,13 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className={`border-2 ${user.rank <= 3 ? 'border-yellow-300 bg-gradient-to-r from-yellow-50 to-orange-50' : 'border-gray-200'}`}>
+                <Card className={`border-2 ${user.rank <= 3 ? 'border-gray-300 bg-gradient-to-r from-gray-50 to-gray-100' : 'border-gray-200'}`}>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <div className="text-2xl font-bold w-8 text-center">
                         {user.badge || `#${user.rank}`}
                       </div>
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      <div className="w-12 h-12 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-full flex items-center justify-center text-white font-bold text-lg">
                         {user.avatar}
                       </div>
                       <div className="flex-1">
@@ -758,7 +758,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                         <p className="text-sm text-gray-600">{user.contributions} contributions</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-green-600">{user.points}</p>
+                        <p className="text-2xl font-bold text-[#2E7D32]">{user.points}</p>
                         <p className="text-xs text-gray-500">points</p>
                       </div>
                     </div>
@@ -775,7 +775,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                   <div className="text-xl font-bold w-8 text-center">
                     #{userStats.rank}
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center text-white font-bold text-lg">
                     YOU
                   </div>
                   <div className="flex-1">
@@ -783,7 +783,7 @@ export function FarmerLabDashboard({ userId, userType, apiBase, authToken }: Far
                     <p className="text-sm text-gray-600">{userStats.contributions} contributions</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-green-600">{userStats.points}</p>
+                    <p className="text-2xl font-bold text-[#2E7D32]">{userStats.points}</p>
                     <p className="text-xs text-gray-500">points</p>
                   </div>
                 </div>

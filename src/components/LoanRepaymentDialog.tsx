@@ -151,8 +151,8 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
 
         <div className="space-y-4">
           {/* Wallet Balance */}
-          <div className="p-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg">
-            <p className="text-sm text-green-200">Available Balance</p>
+          <div className="p-4 bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white rounded-lg">
+            <p className="text-sm text-[#2E7D32]">Available Balance</p>
             <p className="text-2xl font-bold">TZS {walletBalance.toLocaleString()}</p>
           </div>
 
@@ -167,7 +167,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
                 <div
                   key={loan.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    isSelected ? "border-green-500 bg-green-50" : "hover:bg-gray-50"
+                    isSelected ? "border-[#2E7D32]/20 bg-[#2E7D32]/5" : "hover:bg-gray-50"
                   }`}
                   onClick={() => setSelectedLoan(loan.id)}
                 >
@@ -181,7 +181,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
                     </div>
                     <Badge 
                       variant={loan.status === "overdue" ? "destructive" : "default"}
-                      className={loan.status === "active" ? "bg-green-600" : ""}
+                      className={loan.status === "active" ? "bg-[#2E7D32]" : ""}
                     >
                       {loan.status === "overdue" ? "Overdue" : "Active"}
                     </Badge>
@@ -282,7 +282,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
                     <span className={
                       walletBalance - parseFloat(paymentAmount) < 0 
                         ? "text-red-600 font-medium" 
-                        : "text-green-600 font-medium"
+                        : "text-[#2E7D32] font-medium"
                     }>
                       TZS {(walletBalance - parseFloat(paymentAmount)).toLocaleString()}
                     </span>
@@ -308,7 +308,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
           )}
 
           {/* Loan Summary */}
-          <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border rounded-lg">
+          <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 border rounded-lg">
             <h4 className="font-medium mb-3">Loan Portfolio Summary</h4>
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
@@ -319,7 +319,7 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
               </div>
               <div>
                 <p className="text-gray-600">Total Paid</p>
-                <p className="text-lg font-bold text-green-600">
+                <p className="text-lg font-bold text-[#2E7D32]">
                   TZS {loans.reduce((sum, loan) => sum + loan.paid, 0).toLocaleString()}
                 </p>
               </div>
@@ -333,12 +333,12 @@ export function LoanRepaymentDialog({ open, onOpenChange, walletBalance }: LoanR
           </div>
 
           {/* Tips */}
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm">
             <div className="flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-yellow-900 mb-1">Payment Tips</p>
-                <ul className="space-y-1 text-yellow-800">
+                <p className="font-medium text-gray-900 mb-1">Payment Tips</p>
+                <ul className="space-y-1 text-gray-800">
                   <li>• Pay on time to maintain good credit score</li>
                   <li>• Paying more than minimum reduces total interest</li>
                   <li>• Contact lender if you're having difficulty paying</li>

@@ -209,7 +209,7 @@ export function AdminRoleManager({ currentUser, language }: AdminRoleManagerProp
       farmer: "bg-[#2E7D32]/10 text-[#1B5E20]",
       farm_manager: "bg-gray-100 text-gray-700",
       commercial_farm_admin: "bg-gray-100 text-gray-700",
-      admin: "bg-orange-100 text-orange-700",
+      admin: "bg-gray-100 text-gray-700",
       extension_officer: "bg-gray-100 text-gray-700",
       cooperative_leader: "bg-gray-100 text-gray-700",
     };

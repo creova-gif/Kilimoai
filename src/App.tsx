@@ -832,7 +832,7 @@ export default function App() {
                 className="relative flex items-center gap-2 hover:scale-105 transition-all duration-300 group"
               >
                 {/* Subtle glow on hover */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#2E7D32]/0 via-[#2E7D32]/5 to-[#2E7D32]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#2E7D32]/0 via-[#2E7D32]/5 to-gray-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
                 
                 <img 
                   src={logo}
@@ -852,7 +852,7 @@ export default function App() {
                   className="w-full pl-11 pr-4 py-2.5 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/20 focus:border-[#2E7D32] focus:bg-white transition-all duration-300 shadow-sm hover:shadow-md"
                 />
                 {/* Search field glow effect */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#2E7D32]/0 via-[#2E7D32]/10 to-[#2E7D32]/0 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#2E7D32]/0 via-[#2E7D32]/10 to-gray-100/0 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
               </div>
             </div>
 
@@ -868,7 +868,7 @@ export default function App() {
 
               {/* Tier Badge */}
               {currentUser?.tier && currentUser.tier !== "free" && (
-                <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-[#2E7D32]/10 via-green-50 to-[#2E7D32]/5 rounded-xl border border-[#2E7D32]/30 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 group relative overflow-hidden">
+                <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-[#2E7D32]/10 via-[#2E7D32] to-gray-100/5 rounded-xl border border-[#2E7D32]/30 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 group relative overflow-hidden">
                   {/* Shine effect */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
                   
@@ -919,12 +919,12 @@ export default function App() {
               {/* Profile */}
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className={`flex items-center gap-2.5 p-2 rounded-xl transition-all duration-300 group relative overflow-hidden ${showProfile ? 'bg-gradient-to-br from-[#2E7D32]/10 to-green-50 border-2 border-[#2E7D32]/30' : 'hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50'}`}
+                className={`flex items-center gap-2.5 p-2 rounded-xl transition-all duration-300 group relative overflow-hidden ${showProfile ? 'bg-gradient-to-br from-[#2E7D32]/10 to-gray-100 border-2 border-[#2E7D32]/30' : 'hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50'}`}
               >
                 {/* Shimmer */}
                 <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
                 
-                <div className={`relative p-2 bg-gradient-to-br from-[#2E7D32] to-[#245a27] rounded-xl shadow-md shadow-[#2E7D32]/20 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#2E7D32]/30 transition-all duration-300`}>
+                <div className={`relative p-2 bg-[#2E7D32] rounded-xl shadow-md shadow-[#2E7D32]/20 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#2E7D32]/30 transition-all duration-300`}>
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div className="hidden md:block text-left relative">
@@ -1161,7 +1161,7 @@ export default function App() {
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2E7D32]/20 to-transparent"></div>
                         
                         {/* Ambient glow effect */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#2E7D32]/[0.02] via-transparent to-green-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#2E7D32]/[0.02] via-transparent to-gray-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
                         
                         {/* Tab Content with Transition System */}
                         <div className="relative">

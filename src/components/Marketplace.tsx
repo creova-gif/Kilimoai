@@ -144,7 +144,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white p-6 md:p-8"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 text-white p-6 md:p-8"
       >
         <div className="absolute top-0 right-0 opacity-10">
           <ShoppingCart className="h-64 w-64 -mt-16 -mr-16" />
@@ -186,7 +186,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
               </div>
             </div>
             
-            <Badge className="bg-green-500 text-white border-0">
+            <Badge className="bg-[#2E7D32] text-white border-0">
               <CheckCircle className="h-3 w-3 mr-1" />
               All Verified
             </Badge>
@@ -200,12 +200,12 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+        <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-[#2E7D32] to-gray-100">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-green-100 rounded-xl">
-                  <Plus className="h-6 w-6 text-green-600" />
+                <div className="p-3 bg-[#2E7D32]/10 rounded-xl">
+                  <Plus className="h-6 w-6 text-[#2E7D32]" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">List Your Crop for Sale</h3>
@@ -215,7 +215,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
               
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+                  <Button className="bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100">
                     <Plus className="h-4 w-4 mr-2" />
                     List Crop
                   </Button>
@@ -223,7 +223,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <ShoppingCart className="h-5 w-5 text-green-600" />
+                      <ShoppingCart className="h-5 w-5 text-[#2E7D32]" />
                       List Your Crop for Sale
                     </DialogTitle>
                     <DialogDescription>
@@ -263,7 +263,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+                    <Button type="submit" className="w-full bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100">
                       <CheckCircle className="h-4 w-4 mr-2" />
                       List Crop
                     </Button>
@@ -327,7 +327,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <Card className="border-2 hover:shadow-lg transition-all hover:border-green-300">
+                      <Card className="border-2 hover:shadow-lg transition-all hover:border-[#2E7D32]/20">
                         <CardContent className="p-4">
                           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div className="flex-1 w-full">
@@ -346,11 +346,11 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                                 </div>
                                 
                                 <div className="flex flex-col items-end gap-2">
-                                  <div className="flex items-center gap-1 text-yellow-500">
+                                  <div className="flex items-center gap-1 text-gray-600">
                                     <Star className="h-4 w-4 fill-current" />
                                     <span className="text-sm font-bold">{buyer.rating.toFixed(1)}</span>
                                   </div>
-                                  <Badge className="bg-green-100 text-green-700 border-green-300">
+                                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                                     <CheckCircle className="h-3 w-3 mr-1" />
                                     Verified
                                   </Badge>
@@ -361,7 +361,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                                 <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                                   {buyer.cropType}
                                 </Badge>
-                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                                <Badge variant="outline" className="bg-[#2E7D32]/5 text-[#2E7D32] border-[#2E7D32]/20">
                                   <DollarSign className="h-3 w-3 mr-1" />
                                   {buyer.priceRange}
                                 </Badge>
@@ -383,7 +383,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
 
                               <Button 
                                 variant="outline" 
-                                className="w-full border-2 hover:bg-gray-50 hover:border-green-500"
+                                className="w-full border-2 hover:bg-gray-50 hover:border-[#2E7D32]/20"
                                 onClick={() => {
                                   toast.success(`Contact: ${buyer.contact}`);
                                 }}
@@ -415,8 +415,8 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Package className="h-5 w-5 text-green-600" />
+                  <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                    <Package className="h-5 w-5 text-[#2E7D32]" />
                   </div>
                   Your Active Listings
                 </CardTitle>
@@ -424,7 +424,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                   All listings are verified and monitored for fair pricing
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+              <Badge variant="outline" className="bg-[#2E7D32]/5 text-[#2E7D32] border-[#2E7D32]/20">
                 {(sales?.filter(s => s.status === "active") || []).length} Active
               </Badge>
             </div>
@@ -447,7 +447,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                   </p>
                   <Button
                     onClick={() => setIsDialogOpen(true)}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600"
+                    className="bg-gradient-to-r from-[#2E7D32] to-gray-100"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     List Your First Crop
@@ -468,7 +468,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <h3 className="font-semibold text-lg">{sale.crop}</h3>
-                                <Badge className={sale.status === "active" ? "bg-green-100 text-green-700 border-green-300" : "bg-gray-100 text-gray-700"}>
+                                <Badge className={sale.status === "active" ? "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20" : "bg-gray-100 text-gray-700"}>
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   {sale.status}
                                 </Badge>
@@ -480,7 +480,7 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                                 </div>
                                 <div>
                                   <p className="text-xs text-gray-500">Price</p>
-                                  <p className="font-semibold text-green-600">TZS {sale.price.toLocaleString()}/kg</p>
+                                  <p className="font-semibold text-[#2E7D32]">TZS {sale.price.toLocaleString()}/kg</p>
                                 </div>
                               </div>
                               <div className="flex items-center justify-between text-xs">
@@ -522,19 +522,19 @@ export function Marketplace({ userId, region, onNavigate }: MarketplaceProps) {
                 <h3 className="font-semibold text-lg mb-2">Trust & Safety Guaranteed</h3>
                 <div className="grid gap-2 md:grid-cols-2">
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                     <span>All buyers KYC verified</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                     <span>Fair price monitoring</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                     <span>Secure transactions</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                     <span>Community ratings</span>
                   </div>
                 </div>

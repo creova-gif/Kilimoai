@@ -161,11 +161,11 @@ export function OrganizationDashboard({
               <p className="text-3xl font-bold">{value}</p>
               <div className="flex items-center gap-1 text-sm">
                 {isPositive ? (
-                  <ArrowUpRight className="h-4 w-4 text-green-600" />
+                  <ArrowUpRight className="h-4 w-4 text-[#2E7D32]" />
                 ) : (
                   <ArrowDownRight className="h-4 w-4 text-red-600" />
                 )}
-                <span className={isPositive ? "text-green-600" : "text-red-600"}>
+                <span className={isPositive ? "text-[#2E7D32]" : "text-red-600"}>
                   {Math.abs(change)}%
                 </span>
                 <span className="text-gray-500 ml-1">{description}</span>
@@ -192,7 +192,7 @@ export function OrganizationDashboard({
             >
               {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <Building2 className="h-8 w-8 text-green-600" />
+            <Building2 className="h-8 w-8 text-[#2E7D32]" />
             <div>
               <h1 className="text-xl font-bold">KILIMO Impact Dashboard</h1>
               <p className="text-sm text-gray-600">{organizationName}</p>
@@ -370,7 +370,7 @@ export function OrganizationDashboard({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-orange-600" />
+                  <AlertTriangle className="h-5 w-5 text-gray-600" />
                   Climate Risk Alerts
                 </CardTitle>
                 <CardDescription>Real-time environmental monitoring</CardDescription>
@@ -385,7 +385,7 @@ export function OrganizationDashboard({
                       <div className="flex items-center gap-3">
                         <div className={`w-2 h-2 rounded-full ${
                           alert.severity === 'critical' ? 'bg-red-600' :
-                          alert.severity === 'warning' ? 'bg-orange-600' : 'bg-green-600'
+                          alert.severity === 'warning' ? 'bg-gray-700' : 'bg-[#2E7D32]'
                         }`} />
                         <div>
                           <p className="font-medium">{alert.region} - {alert.issue}</p>
@@ -415,7 +415,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Sprout className="h-8 w-8 text-green-600" />
+                    <Sprout className="h-8 w-8 text-[#2E7D32]" />
                     <div>
                       <p className="text-sm text-gray-600">Average Yield</p>
                       <p className="text-2xl font-bold">{dashboardData.averageYield} t/ha</p>
@@ -429,7 +429,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Target className="h-8 w-8 text-green-600" />
+                    <Target className="h-8 w-8 text-[#2E7D32]" />
                     <div>
                       <p className="text-sm text-gray-600">Crops Diversified</p>
                       <p className="text-2xl font-bold">{dashboardData.cropsDiversified}</p>
@@ -443,7 +443,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <MapPin className="h-8 w-8 text-green-600" />
+                    <MapPin className="h-8 w-8 text-[#2E7D32]" />
                     <div>
                       <p className="text-sm text-gray-600">Districts Covered</p>
                       <p className="text-2xl font-bold">{dashboardData.areasServed}</p>
@@ -492,12 +492,12 @@ export function OrganizationDashboard({
             </Card>
 
             {/* M&E Cost Savings Banner */}
-            <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+            <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-xl font-bold mb-2">M&E Cost Savings</h3>
-                    <p className="text-green-100">
+                    <p className="text-[#2E7D32]">
                       Real-time data eliminates 6-12 month survey delays
                     </p>
                     <p className="text-2xl font-bold mt-2">40-60% Cost Reduction</p>
@@ -540,7 +540,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Male-Headed Households</p>
-                  <p className="text-3xl font-bold text-green-600">{dashboardData.maleHeaded.toLocaleString()}</p>
+                  <p className="text-3xl font-bold text-[#2E7D32]">{dashboardData.maleHeaded.toLocaleString()}</p>
                   <p className="text-sm text-gray-500 mt-1">57.8% of total farmers</p>
                 </CardContent>
               </Card>
@@ -548,7 +548,7 @@ export function OrganizationDashboard({
               <Card>
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Youth Engagement (18-35)</p>
-                  <p className="text-3xl font-bold text-green-600">{dashboardData.youthFarmers.toLocaleString()}</p>
+                  <p className="text-3xl font-bold text-[#2E7D32]">{dashboardData.youthFarmers.toLocaleString()}</p>
                   <p className="text-sm text-gray-500 mt-1">29.7% of total farmers</p>
                 </CardContent>
               </Card>
@@ -651,8 +651,8 @@ export function OrganizationDashboard({
                           <td className="p-3">{district.farmers.toLocaleString()}</td>
                           <td className="p-3">
                             <span className={`font-medium ${
-                              district.yield >= 2.5 ? 'text-green-600' :
-                              district.yield >= 2.0 ? 'text-yellow-600' : 'text-red-600'
+                              district.yield >= 2.5 ? 'text-[#2E7D32]' :
+                              district.yield >= 2.0 ? 'text-gray-600' : 'text-red-600'
                             }`}>
                               {district.yield}
                             </span>
@@ -666,9 +666,9 @@ export function OrganizationDashboard({
                           </td>
                           <td className="p-3">
                             {district.yield >= 2.5 ? (
-                              <CheckCircle2 className="h-5 w-5 text-green-600" />
+                              <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                             ) : (
-                              <AlertTriangle className="h-5 w-5 text-orange-600" />
+                              <AlertTriangle className="h-5 w-5 text-gray-600" />
                             )}
                           </td>
                         </tr>
@@ -731,29 +731,29 @@ export function OrganizationDashboard({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+            <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4">Scalable Interventions</h3>
-                <p className="text-green-50 mb-6">
+                <p className="text-[#2E7D32] mb-6">
                   KILIMO enables projects to scale from 500 → 50,000 farmers through USSD, 
                   voice assistant, AI chatbot, and offline mode. No laptops or field officers needed.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center">
                     <p className="text-3xl font-bold">12,847</p>
-                    <p className="text-sm text-green-100">Current Farmers</p>
+                    <p className="text-sm text-[#2E7D32]">Current Farmers</p>
                   </div>
                   <div className="text-center">
                     <p className="text-3xl font-bold">18</p>
-                    <p className="text-sm text-green-100">Districts</p>
+                    <p className="text-sm text-[#2E7D32]">Districts</p>
                   </div>
                   <div className="text-center">
                     <p className="text-3xl font-bold">2,560%</p>
-                    <p className="text-sm text-green-100">Growth Potential</p>
+                    <p className="text-sm text-[#2E7D32]">Growth Potential</p>
                   </div>
                   <div className="text-center">
                     <p className="text-3xl font-bold">50K+</p>
-                    <p className="text-sm text-green-100">Target Scale</p>
+                    <p className="text-sm text-[#2E7D32]">Target Scale</p>
                   </div>
                 </div>
               </CardContent>

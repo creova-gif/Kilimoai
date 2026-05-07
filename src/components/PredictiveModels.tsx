@@ -56,7 +56,7 @@ export function PredictiveModels({
     <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
+        <div className="relative overflow-hidden bg-[#2E7D32] rounded-2xl p-6 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
@@ -83,13 +83,13 @@ export function PredictiveModels({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-white hover:shadow-xl transition-all">
+            <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-[#2E7D32] to-white hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="h-12 w-12 bg-[#2E7D32] rounded-xl flex items-center justify-center shadow-lg">
                     <TrendingUp className="h-6 w-6 text-white" />
                   </div>
-                  <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300">
+                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                     <Sparkles className="h-3 w-3 mr-1" />
                     92%
                   </Badge>
@@ -102,15 +102,15 @@ export function PredictiveModels({
                 </div>
                 
                 <div className="flex items-center gap-1 text-sm">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
-                  <span className="text-emerald-700 font-medium">+{predictions.yield.change}%</span>
+                  <TrendingUp className="h-4 w-4 text-[#2E7D32]" />
+                  <span className="text-[#2E7D32] font-medium">+{predictions.yield.change}%</span>
                   <span className="text-gray-500 text-xs ml-1">vs last season</span>
                 </div>
 
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="w-full mt-4 text-emerald-700 hover:bg-emerald-100"
+                  className="w-full mt-4 text-[#2E7D32] hover:bg-[#2E7D32]/10"
                 >
                   {text.viewDetails}
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -125,13 +125,13 @@ export function PredictiveModels({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all">
+            <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="h-12 w-12 bg-gray-600 rounded-xl flex items-center justify-center shadow-lg">
                     <AlertTriangle className="h-6 w-6 text-white" />
                   </div>
-                  <Badge className="bg-blue-100 text-blue-700 border-blue-300">
+                  <Badge className="bg-gray-100 text-gray-700 border-gray-300">
                     <Sparkles className="h-3 w-3 mr-1" />
                     88%
                   </Badge>
@@ -144,15 +144,15 @@ export function PredictiveModels({
                 </div>
                 
                 <div className="flex items-center gap-1 text-sm">
-                  <Target className="h-4 w-4 text-blue-600" />
-                  <span className="text-blue-700 font-medium">{predictions.disease.percentage}%</span>
+                  <Target className="h-4 w-4 text-gray-600" />
+                  <span className="text-gray-700 font-medium">{predictions.disease.percentage}%</span>
                   <span className="text-gray-500 text-xs ml-1">{predictions.disease.type}</span>
                 </div>
 
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="w-full mt-4 text-blue-700 hover:bg-blue-100"
+                  className="w-full mt-4 text-gray-700 hover:bg-gray-100"
                 >
                   {text.viewDetails}
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -167,13 +167,13 @@ export function PredictiveModels({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white hover:shadow-xl transition-all">
+            <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="h-12 w-12 bg-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="h-12 w-12 bg-gray-600 rounded-xl flex items-center justify-center shadow-lg">
                     <DollarSign className="h-6 w-6 text-white" />
                   </div>
-                  <Badge className="bg-amber-100 text-amber-700 border-amber-300">
+                  <Badge className="bg-gray-100 text-gray-700 border-gray-300">
                     <Sparkles className="h-3 w-3 mr-1" />
                     85%
                   </Badge>
@@ -188,15 +188,15 @@ export function PredictiveModels({
                 </div>
                 
                 <div className="flex items-center gap-1 text-sm">
-                  <TrendingUp className="h-4 w-4 text-amber-600" />
-                  <span className="text-amber-700 font-medium">+{predictions.price.change}%</span>
+                  <TrendingUp className="h-4 w-4 text-gray-600" />
+                  <span className="text-gray-700 font-medium">+{predictions.price.change}%</span>
                   <span className="text-gray-500 text-xs ml-1">next month</span>
                 </div>
 
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="w-full mt-4 text-amber-700 hover:bg-amber-100"
+                  className="w-full mt-4 text-gray-700 hover:bg-gray-100"
                 >
                   {text.viewDetails}
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -210,8 +210,8 @@ export function PredictiveModels({
         <Card className="border-2 border-gray-200">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-blue-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 mb-1 text-sm">

@@ -98,9 +98,9 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-purple-600 to-indigo-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -110,7 +110,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Farmer Lab" : "Maabara ya Mkulima"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Experiment, learn, and share discoveries"
                   : "Jaribu, jifunze, na shiriki ugunduzi"}
@@ -134,9 +134,9 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
       <div className="max-w-7xl mx-auto px-4 lg:px-6 -mt-4">
         <div className="space-y-6">
           {/* Start Experiment CTA */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 p-6">
+          <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-xl border-2 border-[#2E7D32]/20 p-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-green-600 rounded-xl">
+              <div className="p-3 bg-[#2E7D32] rounded-xl">
                 <Lightbulb className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
@@ -148,7 +148,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
                     ? "Test new techniques, compare products, or share your findings with the community."
                     : "Jaribu mbinu mpya, linganisha bidhaa, au shiriki matokeo yako na jamii."}
                 </p>
-                <Button className="bg-green-600 hover:bg-green-700">
+                <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                   <Plus className="h-4 w-4 mr-2" />
                   {language === "en" ? "Create Experiment" : "Unda Jaribio"}
                 </Button>
@@ -193,9 +193,9 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
           </div>
 
           {/* Disclaimer */}
-          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-yellow-800">
+          <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-gray-800">
               <span className="font-bold">{language === "en" ? "Important:" : "Muhimu:"}</span>{" "}
               {language === "en"
                 ? "Farmer Lab experiments are community-driven. Results marked 'Verified' have been reviewed by agricultural experts. Always consult with experts before making major farming decisions."
@@ -209,7 +209,7 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
               const cat = categories.find(c => c.id === exp.category);
               
               return (
-                <Card key={exp.id} className="border-2 border-gray-200 hover:border-green-300 hover:shadow-md transition-all">
+                <Card key={exp.id} className="border-2 border-gray-200 hover:border-[#2E7D32]/20 hover:shadow-md transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -225,8 +225,8 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
                           )}
                           <Badge className={`${
                             exp.status === "completed"
-                              ? "bg-green-100 text-green-700 border-green-200"
-                              : "bg-yellow-100 text-yellow-700 border-yellow-200"
+                              ? "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20"
+                              : "bg-gray-100 text-gray-700 border-gray-200"
                           } border-2`}>
                             {exp.status === "completed" 
                               ? (language === "en" ? "Completed" : "Imekamilika")
@@ -238,10 +238,10 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
                         <p className="text-sm text-gray-600 mb-4">{exp.description}</p>
 
                         {exp.results && (
-                          <div className="p-4 bg-green-50 border-2 border-green-200 rounded-lg mb-4">
+                          <div className="p-4 bg-[#2E7D32]/5 border-2 border-[#2E7D32]/20 rounded-lg mb-4">
                             <div className="flex items-center gap-2 mb-2">
-                              <Target className="h-5 w-5 text-green-600" />
-                              <span className="font-bold text-green-900">
+                              <Target className="h-5 w-5 text-[#2E7D32]" />
+                              <span className="font-bold text-[#2E7D32]">
                                 {language === "en" ? "Results" : "Matokeo"}
                               </span>
                             </div>
@@ -279,15 +279,15 @@ export function FarmerLab({ language, userId }: FarmerLabProps) {
 
                     <div className="flex items-center justify-between pt-4 border-t-2 border-gray-200">
                       <div className="flex items-center gap-4 text-sm">
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
+                        <button className="flex items-center gap-2 text-gray-600 hover:text-[#2E7D32] transition-colors">
                           <ThumbsUp className="h-4 w-4" />
                           <span className="font-medium">{exp.likes}</span>
                         </button>
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
+                        <button className="flex items-center gap-2 text-gray-600 hover:text-[#2E7D32] transition-colors">
                           <MessageCircle className="h-4 w-4" />
                           <span className="font-medium">{exp.comments}</span>
                         </button>
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors">
+                        <button className="flex items-center gap-2 text-gray-600 hover:text-[#2E7D32] transition-colors">
                           <Share2 className="h-4 w-4" />
                           {language === "en" ? "Share" : "Shiriki"}
                         </button>

@@ -130,8 +130,8 @@ export function UnifiedTasksSchedule({
 
   const priorityColors = {
     high: { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", dot: "bg-red-500" },
-    medium: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", dot: "bg-amber-500" },
-    low: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", dot: "bg-blue-500" },
+    medium: { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-600" },
+    low: { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", dot: "bg-gray-600" },
   };
 
   return (
@@ -255,14 +255,14 @@ export function UnifiedTasksSchedule({
                             )}
 
                             {new Date(task.dueDate).toDateString() === new Date().toDateString() && !task.completed && (
-                              <Badge className="bg-amber-100 text-amber-700 border-amber-200">
+                              <Badge className="bg-gray-100 text-gray-700 border-gray-200">
                                 <Clock className="h-3 w-3 mr-1" />
                                 {text.dueToday}
                               </Badge>
                             )}
 
                             {task.aiGenerated && (
-                              <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                              <Badge className="bg-gray-100 text-gray-700 border-gray-200">
                                 <Sparkles className="h-3 w-3 mr-1" />
                                 {text.aiGenerated}
                               </Badge>
@@ -302,17 +302,17 @@ export function UnifiedTasksSchedule({
         </div>
 
         {/* Info Card */}
-        <Card className="border-2 border-purple-100 bg-purple-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-purple-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-purple-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "en" ? "AI Task Suggestions" : "Mapendekezo ya Kazi za AI"}
                 </h4>
-                <p className="text-sm text-purple-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "en"
                     ? "KILIMO AI analyzes your farm data and creates smart task recommendations based on weather, crop stages, and best practices."
                     : "KILIMO AI inachambanua data ya shamba lako na kuunda mapendekezo sahihi ya kazi kulingana na hali ya hewa, hatua za mazao, na mbinu bora."}

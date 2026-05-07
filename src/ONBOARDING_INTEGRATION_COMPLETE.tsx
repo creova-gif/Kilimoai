@@ -279,13 +279,13 @@ export default function App() {
               </div>
               <div className="flex justify-between py-2 border-b">
                 <span className="text-gray-600">Personalization:</span>
-                <span className={currentUser?.personalizationCompleted ? 'text-green-600' : 'text-yellow-600'}>
+                <span className={currentUser?.personalizationCompleted ? 'text-[#2E7D32]' : 'text-gray-600'}>
                   {currentUser?.personalizationCompleted ? '✓ Complete' : '⏳ Pending'}
                 </span>
               </div>
               <div className="flex justify-between py-2">
                 <span className="text-gray-600">Wallet:</span>
-                <span className={currentUser?.walletInitialized ? 'text-green-600' : 'text-gray-400'}>
+                <span className={currentUser?.walletInitialized ? 'text-[#2E7D32]' : 'text-gray-400'}>
                   {currentUser?.walletInitialized ? '✓ Active' : '○ Not set up'}
                 </span>
               </div>

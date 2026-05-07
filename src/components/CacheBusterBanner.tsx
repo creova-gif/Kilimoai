@@ -51,11 +51,11 @@ export function CacheBusterBanner() {
   if (showSuccess) {
     return (
       <div className="fixed top-4 right-4 z-[9999] animate-fadeIn">
-        <Card className="border-green-500 bg-green-50 shadow-lg">
+        <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5 shadow-lg">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <p className="text-sm font-medium text-green-900">
+              <CheckCircle className="h-5 w-5 text-[#2E7D32]" />
+              <p className="text-sm font-medium text-[#2E7D32]">
                 ✅ Cache Fixed Automatically
               </p>
             </div>

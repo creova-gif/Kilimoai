@@ -159,9 +159,9 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-full ${isPositive ? 'bg-green-100' : 'bg-red-100'}`}>
+          <div className={`flex h-12 w-12 items-center justify-center rounded-full ${isPositive ? 'bg-[#2E7D32]/10' : 'bg-red-100'}`}>
             {isPositive ? (
-              <TrendingUp className="h-6 w-6 text-green-600" />
+              <TrendingUp className="h-6 w-6 text-[#2E7D32]" />
             ) : (
               <TrendingDown className="h-6 w-6 text-red-600" />
             )}
@@ -177,14 +177,14 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
       </div>
 
       {/* Current Price Card */}
-      <Card className={`border-2 ${isPositive ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'}`}>
+      <Card className={`border-2 ${isPositive ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5' : 'border-red-300 bg-red-50'}`}>
         <CardContent className="pt-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm text-gray-600 mb-1">Current Price (per kg)</p>
               <p className="text-4xl font-bold">{currentPrice.toLocaleString()} TZS</p>
             </div>
-            <div className={`text-right ${isPositive ? 'text-green-700' : 'text-red-700'}`}>
+            <div className={`text-right ${isPositive ? 'text-[#2E7D32]' : 'text-red-700'}`}>
               <p className="text-sm mb-1">7-Day Change</p>
               <p className="text-2xl font-bold flex items-center gap-1">
                 {isPositive ? <TrendingUp className="h-6 w-6" /> : <TrendingDown className="h-6 w-6" />}
@@ -244,7 +244,7 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className={`h-2 rounded-full ${item.date === "Today" ? 'bg-green-600' : 'bg-gray-600'}`}
+                      className={`h-2 rounded-full ${item.date === "Today" ? 'bg-[#2E7D32]' : 'bg-gray-600'}`}
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -273,7 +273,7 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
               </div>
               <div className="text-right">
                 <p className="font-medium">{market.price.toLocaleString()} TZS</p>
-                <p className={`text-xs ${market.price > currentPrice ? 'text-green-600' : market.price < currentPrice ? 'text-red-600' : 'text-gray-600'}`}>
+                <p className={`text-xs ${market.price > currentPrice ? 'text-[#2E7D32]' : market.price < currentPrice ? 'text-red-600' : 'text-gray-600'}`}>
                   {market.price > currentPrice ? '+' : ''}{market.price - currentPrice} TZS
                 </p>
               </div>
@@ -283,17 +283,17 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
       </Card>
 
       {/* Selling Recommendations */}
-      <Card className="border-green-200">
+      <Card className="border-[#2E7D32]/20">
         <CardHeader>
-          <CardTitle className="text-green-900">Expert Selling Recommendations</CardTitle>
+          <CardTitle className="text-[#2E7D32]">Expert Selling Recommendations</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {marketData.recommendations.map((rec, idx) => (
-            <div key={idx} className="border-l-4 border-green-600 pl-4">
+            <div key={idx} className="border-l-4 border-[#2E7D32]/20 pl-4">
               <div className="flex items-center gap-2 mb-2">
                 <h4 className="font-medium">{rec.title}</h4>
                 {rec.priority === "high" && (
-                  <Badge className="bg-green-100 text-green-700">High Priority</Badge>
+                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">High Priority</Badge>
                 )}
               </div>
               <p className="text-sm text-gray-700">{rec.advice}</p>
@@ -333,12 +333,12 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
         <CardContent className="space-y-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-3 w-3 rounded-full bg-green-600" />
+              <div className="h-3 w-3 rounded-full bg-[#2E7D32]" />
               <h4 className="font-medium text-sm">High Demand</h4>
             </div>
             <div className="flex flex-wrap gap-2">
               {marketData.buyerDemand.high.map((buyer, idx) => (
-                <Badge key={idx} className="bg-green-100 text-green-700 border-green-300">
+                <Badge key={idx} className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                   {buyer}
                 </Badge>
               ))}
@@ -346,12 +346,12 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
           </div>
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-3 w-3 rounded-full bg-orange-600" />
+              <div className="h-3 w-3 rounded-full bg-gray-700" />
               <h4 className="font-medium text-sm">Medium Demand</h4>
             </div>
             <div className="flex flex-wrap gap-2">
               {marketData.buyerDemand.medium.map((buyer, idx) => (
-                <Badge key={idx} variant="outline" className="bg-orange-50 text-orange-700 border-orange-300">
+                <Badge key={idx} variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">
                   {buyer}
                 </Badge>
               ))}
@@ -381,7 +381,7 @@ export function MarketTrendDetails({ crop, currentPrice, priceChange, region }: 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3">
         <Button 
-          className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+          className="bg-[#2E7D32] hover:bg-[#2E7D32] flex items-center gap-2"
           onClick={handleListCrop}
         >
           <Package className="h-4 w-4" />

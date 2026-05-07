@@ -316,9 +316,9 @@ export function AutoAIInsights({
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "urgent": return <AlertTriangle className="h-5 w-5 text-red-600" />;
-      case "alert": return <AlertTriangle className="h-5 w-5 text-orange-600" />;
+      case "alert": return <AlertTriangle className="h-5 w-5 text-gray-600" />;
       case "recommendation": return <Brain className="h-5 w-5 text-gray-700" />;
-      case "optimization": return <TrendingUp className="h-5 w-5 text-green-600" />;
+      case "optimization": return <TrendingUp className="h-5 w-5 text-[#2E7D32]" />;
       default: return <Brain className="h-5 w-5 text-gray-600" />;
     }
   };
@@ -335,9 +335,9 @@ export function AutoAIInsights({
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "critical": return "bg-red-600 text-white";
-      case "high": return "bg-orange-600 text-white";
-      case "medium": return "bg-yellow-600 text-white";
-      case "low": return "bg-green-600 text-white";
+      case "high": return "bg-gray-700 text-white";
+      case "medium": return "bg-gray-700 text-white";
+      case "low": return "bg-[#2E7D32] text-white";
       default: return "bg-gray-600 text-white";
     }
   };
@@ -442,7 +442,7 @@ export function AutoAIInsights({
                       <Button
                         variant="link"
                         size="sm"
-                        className="text-green-600 p-0 h-auto mt-1 text-xs"
+                        className="text-[#2E7D32] p-0 h-auto mt-1 text-xs"
                       >
                         {language === "en" ? "Take Action" : "Chukua Hatua"}
                         <ChevronRight className="h-3 w-3 ml-1" />

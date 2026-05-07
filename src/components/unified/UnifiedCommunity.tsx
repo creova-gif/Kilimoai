@@ -102,9 +102,9 @@ export function UnifiedCommunity({
   );
 
   const categoryColors: Record<string, any> = {
-    [language === "en" ? "Success Story" : "Hadithi ya Mafanikio"]: { bg: "bg-emerald-100", text: "text-emerald-700" },
-    [language === "en" ? "Expert Advice" : "Ushauri wa Wataalamu"]: { bg: "bg-blue-100", text: "text-blue-700" },
-    [language === "en" ? "Cooperation" : "Ushirikiano"]: { bg: "bg-purple-100", text: "text-purple-700" },
+    [language === "en" ? "Success Story" : "Hadithi ya Mafanikio"]: { bg: "bg-[#2E7D32]/10", text: "text-[#2E7D32]" },
+    [language === "en" ? "Expert Advice" : "Ushauri wa Wataalamu"]: { bg: "bg-gray-100", text: "text-gray-700" },
+    [language === "en" ? "Cooperation" : "Ushirikiano"]: { bg: "bg-gray-100", text: "text-gray-700" },
   };
 
   return (
@@ -230,17 +230,17 @@ export function UnifiedCommunity({
         </div>
 
         {/* Info Card */}
-        <Card className="border-2 border-blue-100 bg-blue-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Award className="h-5 w-5 text-blue-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Award className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "en" ? "Learn from Peers" : "Jifunze kutoka Wenzako"}
                 </h4>
-                <p className="text-sm text-blue-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "en"
                     ? "Connect with 2000+ farmers in your region. Share experiences, ask questions, and learn best practices from experts and successful farmers."
                     : "Unganisha na wakulima 2000+ katika mkoa wako. Shiriki uzoefu, uliza maswali, na jifunze mbinu bora kutoka kwa wataalam na wakulima mafanikio."}

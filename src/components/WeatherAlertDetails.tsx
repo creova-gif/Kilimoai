@@ -161,7 +161,7 @@ export function WeatherAlertDetails({ condition, severity, region }: WeatherAler
       case "high":
         return <Badge className="bg-red-100 text-red-700 border-red-300">High Alert</Badge>;
       case "medium":
-        return <Badge className="bg-orange-100 text-orange-700 border-orange-300">Moderate</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Moderate</Badge>;
       case "low":
         return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Low Risk</Badge>;
     }
@@ -242,7 +242,7 @@ export function WeatherAlertDetails({ condition, severity, region }: WeatherAler
               <ul className="space-y-2">
                 {action.tasks.map((task, taskIdx) => (
                   <li key={taskIdx} className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                     <span className="text-gray-700">{task}</span>
                   </li>
                 ))}
@@ -273,15 +273,15 @@ export function WeatherAlertDetails({ condition, severity, region }: WeatherAler
       </Card>
 
       {/* Opportunities */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardHeader>
-          <CardTitle className="text-green-900">Opportunities</CardTitle>
+          <CardTitle className="text-[#2E7D32]">Opportunities</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
             {alertData.opportunities.map((opportunity, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-green-800">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <li key={idx} className="flex items-start gap-2 text-[#2E7D32]">
+                <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                 <span>{opportunity}</span>
               </li>
             ))}
@@ -308,7 +308,7 @@ export function WeatherAlertDetails({ condition, severity, region }: WeatherAler
 
       {/* Action Buttons */}
       <div className="flex gap-3">
-        <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setShowSMSModal(true)}>
+        <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]" onClick={() => setShowSMSModal(true)}>
           Enable SMS Alerts
         </Button>
         <Button variant="outline" className="flex-1">

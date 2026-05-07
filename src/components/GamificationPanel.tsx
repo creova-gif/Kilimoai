@@ -116,9 +116,9 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
     { id: "all", label: "All", icon: Sparkles, color: "text-[#2E7D32]" },
     { id: "crop", label: "Farming", icon: Target, color: "text-[#2E7D32]" },
     { id: "market", label: "Trading", icon: TrendingUp, color: "text-[#2E7D32]" },
-    { id: "learning", label: "Learning", icon: Award, color: "text-orange-600" },
+    { id: "learning", label: "Learning", icon: Award, color: "text-gray-600" },
     { id: "social", label: "Community", icon: Star, color: "text-gray-600" },
-    { id: "milestone", label: "Milestones", icon: Trophy, color: "text-yellow-600" },
+    { id: "milestone", label: "Milestones", icon: Trophy, color: "text-gray-600" },
   ];
 
   const filteredAchievements = selectedCategory === "all" 
@@ -140,9 +140,9 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
     switch (category) {
       case "crop": return { bg: "bg-[#2E7D32]/5", border: "border-[#2E7D32]/30", text: "text-[#1B5E20]", icon: "text-[#2E7D32]" };
       case "market": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
-      case "learning": return { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", icon: "text-orange-600" };
+      case "learning": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
       case "social": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
-      case "milestone": return { bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-700", icon: "text-yellow-600" };
+      case "milestone": return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
       default: return { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", icon: "text-gray-600" };
     }
   };
@@ -157,7 +157,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-[#1B5E20] border-0 text-white overflow-hidden relative">
+          <Card className="bg-[#2E7D32] border-0 text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 opacity-10">
               <Crown className="h-32 w-32 -mt-8 -mr-8" />
             </div>
@@ -200,7 +200,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <Card className="bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 border-0 text-white overflow-hidden relative">
+          <Card className="bg-gradient-to-br from-gray-50 via-gray-50 to-red-500 border-0 text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 opacity-10">
               <Flame className="h-32 w-32 -mt-8 -mr-8" />
             </div>
@@ -236,7 +236,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <Card className="bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 border-0 text-white overflow-hidden relative">
+          <Card className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 border-0 text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 opacity-10">
               <Gift className="h-32 w-32 -mt-8 -mr-8" />
             </div>
@@ -273,8 +273,8 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
         <Card className="border-2">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Target className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                <Target className="h-5 w-5 text-[#2E7D32]" />
               </div>
               Crop Growth Progress - {cropProgress.cropName}
             </CardTitle>
@@ -284,15 +284,15 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
             <div className="relative">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <span className="text-sm font-medium text-gray-900">Current Stage: <span className="text-green-600">{cropProgress.stage}</span></span>
+                  <span className="text-sm font-medium text-gray-900">Current Stage: <span className="text-[#2E7D32]">{cropProgress.stage}</span></span>
                 </div>
-                <Badge className="bg-green-100 text-green-700 border-green-200">
+                <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                   {cropProgress.progress}% Complete
                 </Badge>
               </div>
               <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+                  className="h-full bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${cropProgress.progress}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
@@ -324,14 +324,14 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
               onClick={() => setSelectedCategory(category.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all whitespace-nowrap ${
                 isActive 
-                  ? "bg-gradient-to-r from-green-50 to-blue-50 border-green-300 shadow-md" 
+                  ? "bg-gradient-to-r from-[#2E7D32] to-gray-100 border-[#2E7D32]/20 shadow-md" 
                   : "bg-white border-gray-200 hover:border-gray-300"
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Icon className={`h-4 w-4 ${isActive ? "text-green-600" : "text-gray-500"}`} />
-              <span className={`text-sm font-medium ${isActive ? "text-green-700" : "text-gray-600"}`}>
+              <Icon className={`h-4 w-4 ${isActive ? "text-[#2E7D32]" : "text-gray-500"}`} />
+              <span className={`text-sm font-medium ${isActive ? "text-[#2E7D32]" : "text-gray-600"}`}>
                 {category.label}
               </span>
               {category.id === "all" && (
@@ -350,7 +350,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
         {filteredAchievements.filter(a => a.unlocked).length > 0 && (
           <div>
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
               Unlocked ({filteredAchievements.filter(a => a.unlocked).length})
             </h3>
             <div className="grid gap-3 md:grid-cols-2">
@@ -386,7 +386,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2 mb-1">
                                 <h4 className={`font-semibold ${colors.text}`}>{achievement.title}</h4>
-                                <Badge className="bg-white/80 text-green-700 border-green-300 flex-shrink-0">
+                                <Badge className="bg-white/80 text-[#2E7D32] border-[#2E7D32]/20 flex-shrink-0">
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
                                   Done
                                 </Badge>
@@ -416,7 +416,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
         {filteredAchievements.filter(a => !a.unlocked && a.progress).length > 0 && (
           <div>
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-orange-600" />
+              <Sparkles className="h-5 w-5 text-gray-600" />
               In Progress ({filteredAchievements.filter(a => !a.unlocked && a.progress).length})
             </h3>
             <div className="grid gap-3 md:grid-cols-2">
@@ -442,7 +442,7 @@ export function GamificationPanel({ userId, language }: GamificationPanelProps) 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2 mb-1">
                                 <h4 className="font-semibold text-gray-900">{achievement.title}</h4>
-                                <Badge variant="outline" className="text-orange-700 border-orange-300">
+                                <Badge variant="outline" className="text-gray-700 border-gray-300">
                                   {achievement.progress}%
                                 </Badge>
                               </div>

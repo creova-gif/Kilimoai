@@ -230,7 +230,7 @@ export function UnifiedCropPlanning({
                   seasonStatus === "active"
                     ? "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20"
                     : seasonStatus === "planned"
-                    ? "bg-blue-50 text-blue-700 border-blue-200"
+                    ? "bg-gray-50 text-gray-700 border-gray-200"
                     : "bg-gray-100 text-gray-700 border-gray-200"
                 }`}
               >
@@ -390,7 +390,7 @@ export function UnifiedCropPlanning({
                       plan.yield_forecast.confidence === "high"
                         ? "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20"
                         : plan.yield_forecast.confidence === "medium"
-                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                        ? "bg-gray-50 text-gray-700 border-gray-200"
                         : "bg-gray-100 text-gray-600 border-gray-200"
                     }`}>
                       {text.confidence[plan.yield_forecast.confidence]}

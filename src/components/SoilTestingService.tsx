@@ -145,15 +145,15 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50/10 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100/10 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white px-4 lg:px-6 py-6">
+      <div className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 text-white px-4 lg:px-6 py-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold flex items-center gap-2 mb-2">
             <Beaker className="h-7 w-7" />
             {language === "en" ? "Soil Testing Service" : "Huduma ya Upimaji wa Udongo"}
           </h1>
-          <p className="text-green-100 text-sm">
+          <p className="text-[#2E7D32] text-sm">
             {language === "en" 
               ? "Understand your soil, maximize your yields"
               : "Elewa udongo wako, ongeza mavuno yako"}
@@ -168,7 +168,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
             onClick={() => setViewMode("learn")}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               viewMode === "learn"
-                ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-md"
+                ? "bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
@@ -179,14 +179,14 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
             onClick={() => setViewMode("test")}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               viewMode === "test"
-                ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-md"
+                ? "bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
             <Beaker className="h-5 w-5" />
             {language === "en" ? "Get Tested" : "Pima Udongo"}
             {testResults.length > 0 && (
-              <span className="px-2 py-0.5 bg-white text-green-600 text-xs font-bold rounded-full">
+              <span className="px-2 py-0.5 bg-white text-[#2E7D32] text-xs font-bold rounded-full">
                 {testResults.length}
               </span>
             )}
@@ -197,7 +197,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
         {viewMode === "learn" && (
           <div className="space-y-6">
             {/* Hero Banner */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                   <Microscope className="h-8 w-8" />
@@ -215,7 +215,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                   </p>
                   <button 
                     onClick={() => setViewMode("test")}
-                    className="px-6 py-2 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
+                    className="px-6 py-2 bg-white text-[#2E7D32] font-bold rounded-lg hover:bg-[#2E7D32]/5 transition-colors"
                   >
                     {language === "en" ? "Request Soil Test" : "Omba Upimaji wa Udongo"}
                   </button>
@@ -230,8 +230,8 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Lightbulb className="h-6 w-6 text-green-600" />
+                  <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center">
+                    <Lightbulb className="h-6 w-6 text-[#2E7D32]" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "Why Test Your Soil?" : "Kwa Nini Kupima Udongo Wako?"}
@@ -257,28 +257,28 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       {
-                        icon: <TrendingUp className="h-6 w-6 text-green-600" />,
+                        icon: <TrendingUp className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Stop Wasting Money" : "Acha Kupoteza Pesa",
                         desc: language === "en"
                           ? "Apply only what you need. Farmers save 20-30% on fertilizer costs by using soil-specific recommendations."
                           : "Tumia tu unachohitaji. Wakulima wanaokoa 20-30% kwa gharama za mbolea kwa kutumia mapendekezo maalum ya udongo."
                       },
                       {
-                        icon: <Sprout className="h-6 w-6 text-green-600" />,
+                        icon: <Sprout className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Increase Yields" : "Ongeza Mavuno",
                         desc: language === "en"
                           ? "Balanced nutrition = stronger plants. Expect 30-50% yield increase when you fix soil deficiencies."
                           : "Lishe kamilifu = mimea yenye nguvu. Tarajia ongezeko la mavuno la 30-50% unaporekebisha upungufu wa udongo."
                       },
                       {
-                        icon: <Activity className="h-6 w-6 text-green-600" />,
+                        icon: <Activity className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Prevent Problems" : "Zuia Matatizo",
                         desc: language === "en"
                           ? "Low pH causes stunted growth. Excess nitrogen invites pests. Know problems before they happen."
                           : "pH ya chini inasababisha ukuaji mdogo. Nitrojeni nyingi huita wadudu. Jua matatizo kabla hayajatokea."
                       },
                       {
-                        icon: <Target className="h-6 w-6 text-green-600" />,
+                        icon: <Target className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Long-Term Planning" : "Mpango wa Muda Mrefu",
                         desc: language === "en"
                           ? "Test once, plan for 3 years. Build soil health season by season with the right amendments."
@@ -297,14 +297,14 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                     ))}
                   </div>
 
-                  <div className="mt-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 border-2 border-amber-200">
+                  <div className="mt-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border-2 border-gray-200">
                     <div className="flex items-start gap-3">
-                      <Zap className="h-6 w-6 text-amber-600 flex-shrink-0" />
+                      <Zap className="h-6 w-6 text-gray-600 flex-shrink-0" />
                       <div>
-                        <h4 className="font-bold text-amber-900 mb-1">
+                        <h4 className="font-bold text-gray-900 mb-1">
                           {language === "en" ? "Real Example" : "Mfano Halisi"}
                         </h4>
-                        <p className="text-sm text-amber-800">
+                        <p className="text-sm text-gray-800">
                           {language === "en"
                             ? "Farmer in Dodoma spent 150,000 TZS/year on NPK fertilizer. Soil test revealed he had plenty of P and K, but lacked nitrogen. Switched to Urea only (80,000 TZS) and yields jumped 40%. Saved money + earned more."
                             : "Mkulima huko Dodoma alitumia TZS 150,000 kwa mwaka kwa mbolea ya NPK. Upimaji wa udongo ulidhihirisha alikuwa na P na K ya kutosha, lakini alipungukiwa na nitrojeni. Alibadilisha kwenda Urea tu (TZS 80,000) na mavuno yaliongezeka 40%. Aliokoa pesa + akapata zaidi."}
@@ -393,24 +393,24 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                         }
                       ].map((item) => (
                         <div key={item.step} className="relative pl-16">
-                          <div className="absolute left-0 h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+                          <div className="absolute left-0 h-12 w-12 bg-[#2E7D32] text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
                             {item.step}
                           </div>
                           
-                          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-5 border-2 border-green-200">
+                          <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-xl p-5 border-2 border-[#2E7D32]/20">
                             <div className="flex items-start gap-3 mb-3">
-                              <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                              <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center text-[#2E7D32]">
                                 {item.icon}
                               </div>
                               <div className="flex-1">
-                                <h4 className="font-bold text-green-900 mb-1">{item.title}</h4>
-                                <p className="text-sm text-green-800">{item.desc}</p>
+                                <h4 className="font-bold text-[#2E7D32] mb-1">{item.title}</h4>
+                                <p className="text-sm text-[#2E7D32]">{item.desc}</p>
                               </div>
                               <div className="text-right">
-                                <div className="text-xs text-green-600 font-bold">{item.time}</div>
+                                <div className="text-xs text-[#2E7D32] font-bold">{item.time}</div>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-green-700 bg-white rounded px-3 py-2">
+                            <div className="flex items-center gap-2 text-xs text-[#2E7D32] bg-white rounded px-3 py-2">
                               <Info className="h-3 w-3" />
                               {item.visual}
                             </div>
@@ -469,7 +469,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                         <div className="flex-1">
                           <div className="font-bold text-gray-900 mb-1">
                             {language === "en" ? "✓ Exact Solution" : "✓ Suluhisho Halisi"}
@@ -482,7 +482,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <TrendingUp className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <TrendingUp className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                         <div className="flex-1">
                           <div className="font-bold text-gray-900 mb-1">
                             {language === "en" ? "📈 Expected Impact" : "📈 Athari Inayotarajiwa"}
@@ -496,16 +496,16 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <ShoppingCart className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <ShoppingCart className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                         <div className="flex-1">
                           <div className="font-bold text-gray-900 mb-1">
                             {language === "en" ? "🛒 Buy Now (Linked)" : "🛒 Nunua Sasa (Imeunganishwa)"}
                           </div>
                           <div className="flex gap-2 flex-wrap">
-                            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                            <span className="px-3 py-1 bg-[#2E7D32]/10 text-[#2E7D32] text-xs rounded-full font-medium">
                               Urea 50kg → 45,000 TZS
                             </span>
-                            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                            <span className="px-3 py-1 bg-[#2E7D32]/10 text-[#2E7D32] text-xs rounded-full font-medium">
                               DAP 30kg → 38,000 TZS
                             </span>
                           </div>
@@ -514,14 +514,14 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                     </div>
                   </div>
 
-                  <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <div className="flex items-start gap-3">
-                      <Link2 className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <Link2 className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-bold text-amber-900 text-sm mb-1">
+                        <h4 className="font-bold text-gray-900 text-sm mb-1">
                           {language === "en" ? "Connected to Input Marketplace" : "Imeunganishwa na Soko la Pembejeo"}
                         </h4>
-                        <p className="text-xs text-amber-800">
+                        <p className="text-xs text-gray-800">
                           {language === "en"
                             ? "Every recommendation includes direct links to buy the exact products you need from verified sellers. No guesswork, no wasted trips."
                             : "Kila pendekezo linajumuisha viungo vya moja kwa moja vya kununua bidhaa hasa unazohitaji kutoka kwa wauzaji walioidhinishwa. Hakuna kukisia, hakuna safari za bure."}
@@ -534,7 +534,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
             </div>
 
             {/* CTA */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl p-6 text-center">
+            <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white rounded-xl p-6 text-center">
               <h3 className="text-xl font-bold mb-2">
                 {language === "en" ? "Ready to Test Your Soil?" : "Tayari Kupima Udongo Wako?"}
               </h3>
@@ -545,7 +545,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
               </p>
               <button
                 onClick={() => setViewMode("test")}
-                className="px-8 py-3 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
+                className="px-8 py-3 bg-white text-[#2E7D32] font-bold rounded-lg hover:bg-[#2E7D32]/5 transition-colors"
               >
                 {language === "en" ? "View Testing Packages" : "Angalia Vifurushi vya Upimaji"}
               </button>
@@ -557,18 +557,18 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
         {viewMode === "test" && (
           <div className="space-y-6">
             {/* Quick Learning Access */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+            <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <HelpCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <HelpCircle className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm text-green-800">
+                  <p className="text-sm text-[#2E7D32]">
                     {language === "en"
                       ? "First time testing? Learn why soil testing matters and how to collect a perfect sample."
                       : "Mara ya kwanza kupima? Jifunze kwa nini upimaji wa udongo ni muhimu na jinsi ya kukusanya sampuli kamili."}
                   </p>
                   <button
                     onClick={() => setViewMode("learn")}
-                    className="mt-2 text-sm font-bold text-green-600 hover:text-green-700 flex items-center gap-1"
+                    className="mt-2 text-sm font-bold text-[#2E7D32] hover:text-[#2E7D32] flex items-center gap-1"
                   >
                     {language === "en" ? "Learn About Soil Testing" : "Jifunze Kuhusu Upimaji wa Udongo"}
                     <ArrowRight className="h-4 w-4" />
@@ -584,7 +584,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                   onClick={() => setActiveTab("request")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "request"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -594,13 +594,13 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                   onClick={() => setActiveTab("my_tests")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "my_tests"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   {language === "en" ? "My Tests" : "Upimaji Wangu"}
                   {testResults.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">
+                    <span className="ml-2 px-2 py-0.5 bg-[#2E7D32] text-white text-xs rounded-full">
                       {testResults.length}
                     </span>
                   )}
@@ -619,19 +619,19 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       onClick={() => setSelectedPackage(pkg.id as any)}
                       className={`bg-white rounded-xl border-2 p-6 cursor-pointer transition-all ${
                         selectedPackage === pkg.id
-                          ? "border-green-500 shadow-lg scale-105"
+                          ? "border-[#2E7D32]/20 shadow-lg scale-105"
                           : "border-gray-200 hover:border-gray-300 hover:shadow-md"
                       } ${pkg.popular ? "relative" : ""}`}
                     >
                       {pkg.popular && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-xs font-bold rounded-full">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-gray-50 to-gray-100 text-white text-xs font-bold rounded-full">
                           {language === "en" ? "MOST POPULAR" : "MAARUFU ZAIDI"}
                         </div>
                       )}
                       
                       <div className="text-center mb-4">
                         <h3 className="font-bold text-gray-900 mb-2">{pkg.name}</h3>
-                        <div className="text-3xl font-bold text-green-600 mb-1">
+                        <div className="text-3xl font-bold text-[#2E7D32] mb-1">
                           {pkg.price.toLocaleString()} <span className="text-lg">TZS</span>
                         </div>
                         <div className="text-xs text-gray-600 flex items-center justify-center gap-1">
@@ -643,7 +643,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       <ul className="space-y-2 mb-4">
                         {pkg.features.map((feature, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                            <CheckCircle2 className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                             <span className="text-gray-700">{feature}</span>
                           </li>
                         ))}
@@ -669,9 +669,9 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           ? "Test kit request submitted! We'll deliver it within 2 days."
                           : "Ombi la kifaa cha upimaji limetumwa! Tutalituma ndani ya siku 2.");
                       }}
-                      className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 hover:border-green-400 transition-all text-left"
+                      className="p-6 bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-xl border-2 border-[#2E7D32]/20 hover:border-[#2E7D32]/20 transition-all text-left"
                     >
-                      <Package className="h-10 w-10 text-green-600 mb-3" />
+                      <Package className="h-10 w-10 text-[#2E7D32] mb-3" />
                       <h4 className="font-bold text-gray-900 mb-2">
                         {language === "en" ? "Request Test Kit" : "Omba Kifaa cha Upimaji"}
                       </h4>
@@ -680,7 +680,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           ? "We'll send you everything you need to collect a soil sample. Delivery in 1-2 days."
                           : "Tutakutumia kila kitu unachohitaji kukusanya sampuli ya udongo. Utoaji ndani ya siku 1-2."}
                       </p>
-                      <div className="text-xs text-green-600 font-bold flex items-center gap-1">
+                      <div className="text-xs text-[#2E7D32] font-bold flex items-center gap-1">
                         <ArrowRight className="h-4 w-4" />
                         {language === "en" ? "Recommended for first-time users" : "Inapendekezwa kwa watumiaji wa mara ya kwanza"}
                       </div>
@@ -714,7 +714,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
               <div className="space-y-4">
                 {testResults.map((result) => (
                   <div key={result.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className={`p-6 ${result.status === "completed" ? "bg-gradient-to-r from-green-50 to-emerald-50" : "bg-gray-50"}`}>
+                    <div className={`p-6 ${result.status === "completed" ? "bg-gradient-to-r from-[#2E7D32] to-gray-100" : "bg-gray-50"}`}>
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <h3 className="font-bold text-gray-900 mb-1">{result.fieldName}</h3>
@@ -734,7 +734,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                         <div>
                           <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                             result.status === "completed"
-                              ? "bg-green-100 text-green-700"
+                              ? "bg-[#2E7D32]/10 text-[#2E7D32]"
                               : result.status === "processing"
                               ? "bg-gray-100 text-gray-700"
                               : "bg-gray-200 text-gray-700"
@@ -749,14 +749,14 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                       {result.status === "completed" && result.results && (
                         <div className="space-y-4">
                           {/* Summary */}
-                          <div className="bg-white rounded-lg p-4 border-2 border-amber-200">
+                          <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
                             <div className="flex items-start gap-3">
-                              <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                              <AlertCircle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
                               <div>
-                                <h4 className="font-bold text-amber-900 mb-2">
+                                <h4 className="font-bold text-gray-900 mb-2">
                                   {language === "en" ? "Key Finding" : "Matokeo Muhimu"}
                                 </h4>
-                                <p className="text-sm text-amber-800 leading-relaxed">
+                                <p className="text-sm text-gray-800 leading-relaxed">
                                   {result.results.recommendations.summary}
                                 </p>
                               </div>
@@ -773,14 +773,14 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                             ].map((metric, idx) => (
                               <div key={idx} className={`rounded-lg p-3 border-2 ${
                                 metric.status === "low" ? "bg-red-50 border-red-200" :
-                                metric.status === "medium" ? "bg-yellow-50 border-yellow-200" :
-                                "bg-green-50 border-green-200"
+                                metric.status === "medium" ? "bg-gray-50 border-gray-200" :
+                                "bg-[#2E7D32]/5 border-[#2E7D32]/20"
                               }`}>
                                 <div className="text-xs text-gray-600 mb-1">{metric.label}</div>
                                 <div className={`font-bold ${
                                   metric.status === "low" ? "text-red-700" :
-                                  metric.status === "medium" ? "text-yellow-700" :
-                                  "text-green-700"
+                                  metric.status === "medium" ? "text-gray-700" :
+                                  "text-[#2E7D32]"
                                 }`}>
                                   {metric.value}
                                 </div>
@@ -797,7 +797,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                             <ul className="space-y-2">
                               {result.results.recommendations.actionable.map((action, idx) => (
                                 <li key={idx} className="flex items-start gap-2 text-sm">
-                                  <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                                  <CheckCircle2 className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                                   <span className="text-gray-800">{action}</span>
                                 </li>
                               ))}
@@ -805,14 +805,14 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           </div>
 
                           {/* Yield Impact */}
-                          <div className="bg-gradient-to-r from-green-50 to-green-50 rounded-lg p-4 border-2 border-green-200">
+                          <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg p-4 border-2 border-[#2E7D32]/20">
                             <div className="flex items-start gap-3">
-                              <TrendingUp className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                              <TrendingUp className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                               <div>
-                                <h4 className="font-bold text-green-900 mb-1">
+                                <h4 className="font-bold text-[#2E7D32] mb-1">
                                   {language === "en" ? "Expected Impact" : "Athari Inayotarajiwa"}
                                 </h4>
-                                <p className="text-sm text-green-800 font-medium">
+                                <p className="text-sm text-[#2E7D32] font-medium">
                                   {result.results.recommendations.yieldImpact}
                                 </p>
                               </div>
@@ -822,7 +822,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                           {/* Linked Products */}
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                              <ShoppingCart className="h-5 w-5 text-green-600" />
+                              <ShoppingCart className="h-5 w-5 text-[#2E7D32]" />
                               {language === "en" ? "Shop Recommended Inputs" : "Nunua Pembejeo Zinazopendekeza"}
                             </h4>
                             <div className="flex flex-wrap gap-2">
@@ -835,7 +835,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                                       : `Inafungua Soko la Pembejeo kwa ${product}...`);
                                     if (onNavigate) onNavigate("input-supply");
                                   }}
-                                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center gap-2"
+                                  className="px-4 py-2 bg-[#2E7D32] text-white rounded-lg hover:bg-[#2E7D32] transition-colors text-sm font-medium flex items-center gap-2"
                                 >
                                   <ShoppingCart className="h-4 w-4" />
                                   {product}
@@ -850,7 +850,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                               <Download className="h-4 w-4" />
                               {language === "en" ? "Download PDF" : "Pakua PDF"}
                             </button>
-                            <button className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                            <button className="flex-1 px-4 py-2 bg-[#2E7D32] text-white rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center justify-center gap-2">
                               <Users className="h-4 w-4" />
                               {language === "en" ? "Consult Expert" : "Shauriana na Mtaalamu"}
                             </button>
@@ -883,7 +883,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                               ? "Drop your sample at the nearest collection point to start testing."
                               : "Acha sampuli yako katika kituo cha ukusanyaji karibu nawe kuanza upimaji."}
                           </p>
-                          <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                          <button className="px-6 py-2 bg-[#2E7D32] text-white rounded-lg hover:bg-[#2E7D32] transition-colors">
                             {language === "en" ? "Find Collection Points" : "Tafuta Vituo vya Ukusanyaji"}
                           </button>
                         </div>
@@ -910,7 +910,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
               </button>
             </div>
 
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-green-400 cursor-pointer transition-colors">
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#2E7D32]/20 cursor-pointer transition-colors">
               <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-2">
                 {language === "en" ? "Take a photo or upload PDF" : "Chukua picha au pakia PDF"}
@@ -927,7 +927,7 @@ export function SoilTestingService({ userId, language, onNavigate }: SoilTesting
                   : "Matokeo yamepakiwa! Tunachakata mpango wako wa mbolea...");
                 setShowUploadModal(false);
               }}
-              className="w-full mt-4 px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+              className="w-full mt-4 px-6 py-3 bg-[#2E7D32] text-white font-bold rounded-lg hover:bg-[#2E7D32] transition-colors"
             >
               {language === "en" ? "Upload & Process" : "Pakia na Chakata"}
             </button>

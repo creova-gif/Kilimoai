@@ -23,10 +23,10 @@ export function QuickActionCard({
 }: QuickActionCardProps) {
   const colorSchemes = {
     green: {
-      bg: "bg-green-50",
-      border: "border-green-200",
-      icon: "bg-green-100 text-green-600",
-      hover: "hover:border-green-300 hover:shadow-green-100"
+      bg: "bg-[#2E7D32]/5",
+      border: "border-[#2E7D32]/20",
+      icon: "bg-[#2E7D32]/10 text-[#2E7D32]",
+      hover: "hover:border-[#2E7D32]/20 hover:shadow-gray-200"
     },
     blue: {
       bg: "bg-gray-50",
@@ -41,10 +41,10 @@ export function QuickActionCard({
       hover: "hover:border-gray-300 hover:shadow-gray-100"
     },
     orange: {
-      bg: "bg-orange-50",
-      border: "border-orange-200",
-      icon: "bg-orange-100 text-orange-600",
-      hover: "hover:border-orange-300 hover:shadow-orange-100"
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      icon: "bg-gray-100 text-gray-600",
+      hover: "hover:border-gray-300 hover:shadow-gray-200"
     },
     teal: {
       bg: "bg-gray-50",

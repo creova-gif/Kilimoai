@@ -36,9 +36,9 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
       label: text.soilMoisture,
       value: "65%",
       status: "good",
-      color: "bg-blue-500",
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-700",
+      color: "bg-gray-600",
+      bgColor: "bg-gray-50",
+      textColor: "text-gray-700",
     },
     {
       id: "temp",
@@ -46,9 +46,9 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
       label: text.temperature,
       value: "28°C",
       status: "optimal",
-      color: "bg-orange-500",
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-700",
+      color: "bg-gray-600",
+      bgColor: "bg-gray-50",
+      textColor: "text-gray-700",
     },
     {
       id: "health",
@@ -56,9 +56,9 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
       label: text.cropHealth,
       value: "92%",
       status: "optimal",
-      color: "bg-emerald-500",
-      bgColor: "bg-emerald-50",
-      textColor: "text-emerald-700",
+      color: "bg-[#2E7D32]",
+      bgColor: "bg-[#2E7D32]/5",
+      textColor: "text-[#2E7D32]",
     },
     {
       id: "yield",
@@ -66,9 +66,9 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
       label: text.yieldPotential,
       value: "2.8T",
       status: "good",
-      color: "bg-purple-500",
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-700",
+      color: "bg-gray-600",
+      bgColor: "bg-gray-50",
+      textColor: "text-gray-700",
     },
   ];
 
@@ -76,7 +76,7 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
     <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 text-white shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
@@ -93,7 +93,7 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
                   <p className="text-white/90 text-sm">{isPremium ? text.subtitle : text.demoMode}</p>
                 </div>
               </div>
-              <Badge className={`${isPremium ? "bg-emerald-500" : "bg-amber-500"} text-white border-0`}>
+              <Badge className={`${isPremium ? "bg-[#2E7D32]" : "bg-gray-600"} text-white border-0`}>
                 {isPremium ? (language === "sw" ? "Imekubaliwa" : "Active") : text.premium}
               </Badge>
             </div>
@@ -104,15 +104,15 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-4"
+            className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between gap-4"
           >
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+              <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
                 <AlertTriangle className="h-5 w-5" />
               </div>
-              <p className="text-sm font-medium text-amber-900">{text.upgradePrompt}</p>
+              <p className="text-sm font-medium text-gray-900">{text.upgradePrompt}</p>
             </div>
-            <Button size="sm" className="bg-amber-600 hover:bg-amber-700 whitespace-nowrap">
+            <Button size="sm" className="bg-gray-700 hover:bg-gray-800 whitespace-nowrap">
               {language === "sw" ? "Boresha Sasa" : "Upgrade Now"}
             </Button>
           </motion.div>
@@ -156,10 +156,10 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
         {/* Farm Map Preview */}
         <Card className="border-2 border-gray-200 overflow-hidden">
           <CardContent className="p-0">
-            <div className="aspect-video bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center relative">
+            <div className="aspect-video bg-gradient-to-br from-[#2E7D32] to-gray-100 flex items-center justify-center relative">
               {/* Placeholder for 3D farm visualization */}
               <div className="text-center">
-                <div className="h-20 w-20 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+                <div className="h-20 w-20 bg-[#2E7D32] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
                   <Target className="h-10 w-10 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -174,7 +174,7 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
               
               {/* Premium badge overlay */}
               <div className="absolute top-4 right-4">
-                <Badge className="bg-purple-600 text-white">
+                <Badge className="bg-gray-700 text-white">
                   {language === "sw" ? "Inapatikana Hivi Karibuni" : "Coming Soon"}
                 </Badge>
               </div>
@@ -183,17 +183,17 @@ export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: 
         </Card>
 
         {/* Info Card */}
-        <Card className="border-2 border-purple-100 bg-purple-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Zap className="h-5 w-5 text-purple-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Zap className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-purple-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "sw" ? "Pacha ya Dijiti ni Nini?" : "What is a Digital Twin?"}
                 </h4>
-                <p className="text-sm text-purple-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "sw"
                     ? "Nakala ya dijiti ya shamba lako ambayo inaboreshwa kwa wakati halisi kwa kutumia data ya sensors, hali ya hewa, na AI. Fanya maamuzi bora zaidi kwa taarifa kamili."
                     : "A real-time digital replica of your farm updated with sensor data, weather, and AI insights. Make better decisions with complete information."}

@@ -70,18 +70,18 @@ export function AISupport({ userId, language, apiBase, authToken }: AISupportPro
 
   const quickActions: QuickAction[] = language === "sw" 
     ? [
-        { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "bg-emerald-500" },
-        { icon: Bug, label: "Magonjwa", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "bg-red-500" },
-        { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi", category: "market", color: "bg-amber-500" },
-        { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "bg-blue-500" },
-        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "bg-cyan-500" },
+        { icon: Sprout, label: "Mbolea ya Mahindi", prompt: "Ni mbolea gani bora kwa mahindi?", category: "fertilizer", color: "bg-[#2E7D32]" },
+        { icon: Bug, label: "Magonjwa", prompt: "Jinsi ya kudhibiti magonjwa ya nyanya", category: "pest", color: "bg-gray-700" },
+        { icon: DollarSign, label: "Bei za Soko", prompt: "Bei za sasa za mahindi", category: "market", color: "bg-gray-600" },
+        { icon: Cloud, label: "Hali ya Hewa", prompt: "Hali ya hewa ya wiki ijayo", category: "weather", color: "bg-gray-600" },
+        { icon: Droplet, label: "Umwagiliaji", prompt: "Ni mara ngapi nimwagilie mahindi?", category: "irrigation", color: "bg-gray-600" },
       ]
     : [
-        { icon: Sprout, label: "Fertilizer Tips", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "bg-emerald-500" },
-        { icon: Bug, label: "Pest Control", prompt: "How to control tomato diseases", category: "pest", color: "bg-red-500" },
-        { icon: DollarSign, label: "Market Prices", prompt: "Current maize prices", category: "market", color: "bg-amber-500" },
-        { icon: Cloud, label: "Weather", prompt: "Next week's weather forecast", category: "weather", color: "bg-blue-500" },
-        { icon: Droplet, label: "Irrigation", prompt: "How often should I water maize?", category: "irrigation", color: "bg-cyan-500" },
+        { icon: Sprout, label: "Fertilizer Tips", prompt: "What's the best fertilizer for maize?", category: "fertilizer", color: "bg-[#2E7D32]" },
+        { icon: Bug, label: "Pest Control", prompt: "How to control tomato diseases", category: "pest", color: "bg-gray-700" },
+        { icon: DollarSign, label: "Market Prices", prompt: "Current maize prices", category: "market", color: "bg-gray-600" },
+        { icon: Cloud, label: "Weather", prompt: "Next week's weather forecast", category: "weather", color: "bg-gray-600" },
+        { icon: Droplet, label: "Irrigation", prompt: "How often should I water maize?", category: "irrigation", color: "bg-gray-600" },
       ];
 
   const text = {

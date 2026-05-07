@@ -306,7 +306,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
             <FileText className="h-7 w-7" />
             {language === "en" ? "Contract Farming" : "Ukulima wa Mikataba"}
           </h1>
-          <p className="text-green-100 text-sm">
+          <p className="text-[#2E7D32] text-sm">
             {language === "en" ? "Fair agreements, guaranteed markets, your protections" : "Makubaliano ya haki, masoko yaliyothibitishwa, ulinzi wako"}
           </p>
         </div>
@@ -337,7 +337,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
             <FileText className="h-5 w-5" />
             {language === "en" ? "My Contracts" : "Mikataba Yangu"}
             {hasActiveContracts && (
-              <span className="px-2 py-0.5 bg-white text-green-600 text-xs font-bold rounded-full">
+              <span className="px-2 py-0.5 bg-white text-[#2E7D32] text-xs font-bold rounded-full">
                 {contracts.length}
               </span>
             )}
@@ -364,7 +364,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   </p>
                   <button 
                     onClick={() => setExpandedSection("how-it-works")}
-                    className="px-6 py-2 bg-white text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
+                    className="px-6 py-2 bg-white text-[#2E7D32] font-bold rounded-lg hover:bg-[#2E7D32]/5 transition-colors"
                   >
                     {language === "en" ? "Start Learning" : "Anza Kujifunza"}
                   </button>
@@ -379,8 +379,8 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <GraduationCap className="h-6 w-6 text-green-600" />
+                  <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center">
+                    <GraduationCap className="h-6 w-6 text-[#2E7D32]" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "How Contract Farming Works" : "Jinsi Ukulima wa Mikataba Unavyofanya Kazi"}
@@ -420,12 +420,12 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                       }
                     ].map((item) => (
                       <div key={item.step} className="relative">
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                          <div className="h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center mb-3 mx-auto">
+                        <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-xl p-4 border border-[#2E7D32]/20">
+                          <div className="h-12 w-12 bg-[#2E7D32] text-white rounded-full flex items-center justify-center mb-3 mx-auto">
                             {item.icon}
                           </div>
                           <div className="text-center">
-                            <div className="text-xs text-green-600 font-bold mb-1">
+                            <div className="text-xs text-[#2E7D32] font-bold mb-1">
                               {language === "en" ? "STEP" : "HATUA"} {item.step}
                             </div>
                             <h4 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h4>
@@ -437,7 +437,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   </div>
 
                   {/* Plain Language Explanation */}
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+                  <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-xl p-5">
                     <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                       <Info className="h-5 w-5" />
                       {language === "en" ? "What Does This Mean For You?" : "Hii Inamaanisha Nini Kwako?"}
@@ -459,8 +459,8 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="h-6 w-6 text-green-600" />
+                  <div className="h-10 w-10 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-[#2E7D32]" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "Benefits & Advantages" : "Faida na Manufaa"}
@@ -474,7 +474,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       {
-                        icon: <DollarSign className="h-6 w-6 text-green-600" />,
+                        icon: <DollarSign className="h-6 w-6 text-[#2E7D32]" />,
                         title: language === "en" ? "Guaranteed Market" : "Soko Lililohakikishwa",
                         desc: language === "en" ? "No more searching for buyers or price negotiation stress. You know who will buy and at what price before planting." : "Hakuna tena kutafuta wanunuzi au mfadhaiko wa kupata bei. Unajua nani atanunua na kwa bei gani kabla ya kupanda."
                       },
@@ -484,7 +484,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                         desc: language === "en" ? "Many contracts include seeds, fertilizer, and pesticides provided upfront — paid from your harvest proceeds." : "Mikataba mingi inajumuisha mbegu, mbolea, na dawa za wadudu zinazotolewa mapema — zinalipiwa kutoka mapato ya mavuno yako."
                       },
                       {
-                        icon: <GraduationCap className="h-6 w-6 text-orange-600" />,
+                        icon: <GraduationCap className="h-6 w-6 text-gray-600" />,
                         title: language === "en" ? "Technical Training" : "Mafunzo ya Kiufundi",
                         desc: language === "en" ? "Buyers often provide agronomists and training to help you meet quality standards and maximize yields." : "Wanunuzi mara nyingi hutoa wataalamu wa kilimo na mafunzo kukusaidia kukidhi viwango vya ubora na kuongeza mavuno."
                       },
@@ -494,12 +494,12 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                         desc: language === "en" ? "Some contracts include crop insurance and protections against price drops or market changes." : "Mikataba mingine inajumuisha bima ya mazao na ulinzi dhidi ya kushuka kwa bei au mabadiliko ya soko."
                       },
                       {
-                        icon: <Truck className="h-6 w-6 text-orange-600" />,
+                        icon: <Truck className="h-6 w-6 text-gray-600" />,
                         title: language === "en" ? "Transport Arranged" : "Usafiri Umepangwa",
                         desc: language === "en" ? "Many buyers handle logistics — you deliver to a nearby collection center, not a distant market." : "Wanunuzi wengi wanashughulikia vifaa — unatoa katika kituo cha ukusanyaji karibu, si soko la mbali."
                       },
                       {
-                        icon: <Award className="h-6 w-6 text-yellow-600" />,
+                        icon: <Award className="h-6 w-6 text-gray-600" />,
                         title: language === "en" ? "Quality Premium" : "Malimbuko ya Ubora",
                         desc: language === "en" ? "Meet quality standards and earn bonus payments on top of the agreed price." : "Kufuata viwango vya ubora na pata malipo ya ziada juu ya bei iliyokubaliana."
                       }
@@ -539,21 +539,21 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
               {expandedSection === "protections" && (
                 <div className="px-6 pb-6 space-y-4">
                   {/* Escrow Protection */}
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-2 border-green-200">
+                  <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg p-5 border-2 border-[#2E7D32]/20">
                     <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="h-12 w-12 bg-[#2E7D32] text-white rounded-full flex items-center justify-center flex-shrink-0">
                         <Lock className="h-6 w-6" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-green-900 mb-2">
+                        <h4 className="font-bold text-[#2E7D32] mb-2">
                           {language === "en" ? "Escrow Payment Protection" : "Ulinzi wa Malipo ya Escrow"}
                         </h4>
-                        <p className="text-sm text-green-800 mb-3">
+                        <p className="text-sm text-[#2E7D32] mb-3">
                           {language === "en"
                             ? "Your payment is held in escrow (a secure account) until you deliver. This means the buyer's money is already set aside for you — they can't back out or claim they don't have funds."
                             : "Malipo yako yanashikiliwa kwenye escrow (akaunti salama) hadi utoe. Hii inamaanisha pesa za mnunuzi tayari zimewekwa kando kwa ajili yako — hawawezi kurudi nyuma au kudai hawana pesa."}
                         </p>
-                        <div className="text-xs text-green-700 font-medium">
+                        <div className="text-xs text-[#2E7D32] font-medium">
                           {language === "en" ? "💡 What this means: You're guaranteed to be paid once you meet the contract terms." : "💡 Hii inamaanisha: Unahakikishiwa kulipwa mara tu ukikidhi masharti ya mkataba."}
                         </div>
                       </div>
@@ -561,9 +561,9 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   </div>
 
                   {/* Verified Buyers Only */}
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-2 border-green-200">
+                  <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-lg p-5 border-2 border-[#2E7D32]/20">
                     <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="h-12 w-12 bg-[#2E7D32] text-white rounded-full flex items-center justify-center flex-shrink-0">
                         <CheckCircle2 className="h-6 w-6" />
                       </div>
                       <div>
@@ -576,8 +576,8 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                             : "Kila mnunuzi kwenye jukwaa hili amethimbithishwa na KILIMO. Tunakagua usajili wa biashara yao, uwezo wa kifedha, na kumbukumbu ya utendaji. Unaweza kuona ukadiriaji wao na ni mikataba mingapi wamekamilisha kwa mafanikio."}
                         </p>
                         <div className="flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-green-600" />
-                          <span className="text-xs text-green-700 font-medium">
+                          <Shield className="h-4 w-4 text-[#2E7D32]" />
+                          <span className="text-xs text-[#2E7D32] font-medium">
                             {language === "en" ? "All buyers are background-checked" : "Wanunuzi wote wamekaguliwa mandari"}
                           </span>
                         </div>
@@ -586,21 +586,21 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   </div>
 
                   {/* Dispute Resolution */}
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-5 border-2 border-amber-200">
+                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-5 border-2 border-gray-200">
                     <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 bg-amber-600 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="h-12 w-12 bg-gray-700 text-white rounded-full flex items-center justify-center flex-shrink-0">
                         <Users className="h-6 w-6" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-amber-900 mb-2">
+                        <h4 className="font-bold text-gray-900 mb-2">
                           {language === "en" ? "Fair Dispute Resolution" : "Utatuzi wa Haki wa Migogoro"}
                         </h4>
-                        <p className="text-sm text-amber-800 mb-3">
+                        <p className="text-sm text-gray-800 mb-3">
                           {language === "en"
                             ? "If there's a disagreement (quality, quantity, timing), there's a 3-step process to resolve it fairly:"
                             : "Ikiwa kuna kutokuelewana (ubora, kiasi, muda), kuna mchakato wa hatua 3 wa kutatua kwa haki:"}
                         </p>
-                        <div className="space-y-2 text-sm text-amber-900">
+                        <div className="space-y-2 text-sm text-gray-900">
                           <div className="flex items-start gap-2">
                             <span className="font-bold">1.</span>
                             <span>{language === "en" ? "Direct negotiation between you and the buyer" : "Mazungumzo ya moja kwa moja kati yako na mnunuzi"}</span>
@@ -619,9 +619,9 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   </div>
 
                   {/* Contract Transparency */}
-                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="bg-[#2E7D32]/5 rounded-lg p-4 border border-[#2E7D32]/20">
                     <div className="flex items-start gap-3">
-                      <Eye className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Eye className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                       <div>
                         <h4 className="font-bold text-gray-900 text-sm mb-1">
                           {language === "en" ? "Plain Language Contracts" : "Mikataba ya Lugha Rahisi"}
@@ -659,60 +659,60 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                 <div className="px-6 pb-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Farmer Responsibilities */}
-                    <div className="bg-green-50 rounded-xl p-5 border-2 border-green-200">
-                      <h4 className="font-bold text-green-900 mb-4 flex items-center gap-2">
+                    <div className="bg-[#2E7D32]/5 rounded-xl p-5 border-2 border-[#2E7D32]/20">
+                      <h4 className="font-bold text-[#2E7D32] mb-4 flex items-center gap-2">
                         <Sprout className="h-5 w-5" />
                         {language === "en" ? "Your Responsibilities (Farmer)" : "Wajibu Wako (Mkulima)"}
                       </h4>
-                      <ul className="space-y-2 text-sm text-green-800">
+                      <ul className="space-y-2 text-sm text-[#2E7D32]">
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Plant and grow the agreed crop variety" : "Panda na lima aina ya zao iliyokubaliana"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Meet quality standards (moisture, cleanliness, sorting)" : "Kufuata viwango vya ubora (unyevu, usafi, uchaguzi)"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Deliver the agreed quantity on time" : "Toa kiasi kilichokubaliana kwa wakati"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Allow buyer inspections during the season (if agreed)" : "Ruhusu ukaguzi wa mnunuzi wakati wa msimu (ikiwa imekubaliana)"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Follow farming practices recommended by the buyer" : "Fuata mazoea ya kilimo yanayopendekezwa na mnunuzi"}</span>
                         </li>
                       </ul>
                     </div>
 
                     {/* Buyer Responsibilities */}
-                    <div className="bg-green-50 rounded-xl p-5 border-2 border-green-200">
+                    <div className="bg-[#2E7D32]/5 rounded-xl p-5 border-2 border-[#2E7D32]/20">
                       <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Building2 className="h-5 w-5" />
                         {language === "en" ? "Buyer Responsibilities" : "Wajibu wa Mnunuzi"}
                       </h4>
                       <ul className="space-y-2 text-sm text-gray-700">
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Provide inputs (seeds, fertilizer) if agreed in contract" : "Kutoa pembejeo (mbegu, mbolea) ikiwa imekubaliana kwenye mkataba"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Offer technical support and training" : "Kutoa msaada wa kiufundi na mafunzo"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Purchase all produce that meets quality standards" : "Kununua mazao yote yanayokidhi viwango vya ubora"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Pay on time according to payment schedule" : "Kulipa kwa wakati kulingana na ratiba ya malipo"}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                           <span>{language === "en" ? "Arrange transport or provide collection center" : "Kupanga usafiri au kutoa kituo cha ukusanyaji"}</span>
                         </li>
                       </ul>
@@ -729,8 +729,8 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <AlertTriangle className="h-6 w-6 text-amber-600" />
+                  <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="h-6 w-6 text-gray-600" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">
                     {language === "en" ? "Potential Risks & How We Protect You" : "Hatari Zinazowezekana na Jinsi Tunavyokulinda"}
@@ -773,14 +773,14 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                         : "Gharama za mkopo wa pembejeo zinaelezwa wazi na zinatobolewa kwa uwazi kutoka malipo ya mwisho. Daima unajua unachodaiwa na utakachopokea jumla."
                     }
                   ].map((item, idx) => (
-                    <div key={idx} className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                    <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                       <div className="flex items-start gap-3">
-                        <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <h4 className="font-bold text-amber-900 text-sm mb-1">
+                          <h4 className="font-bold text-gray-900 text-sm mb-1">
                             {language === "en" ? "Risk:" : "Hatari:"} {item.risk}
                           </h4>
-                          <p className="text-xs text-amber-800">
+                          <p className="text-xs text-gray-800">
                             <span className="font-semibold">{language === "en" ? "Protection:" : "Ulinzi:"}</span> {item.protection}
                           </p>
                         </div>
@@ -861,7 +861,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
             </div>
 
             {/* CTA to View Contracts */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl p-6 text-center">
+            <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white rounded-xl p-6 text-center">
               <h3 className="text-xl font-bold mb-2">
                 {language === "en" ? "Ready to Start?" : "Tayari Kuanza?"}
               </h3>
@@ -872,7 +872,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
               </p>
               <button
                 onClick={() => setViewMode("contracts")}
-                className="px-8 py-3 bg-white text-green-600 font-bold rounded-lg hover:bg-gray-100 transition-colors"
+                className="px-8 py-3 bg-white text-[#2E7D32] font-bold rounded-lg hover:bg-gray-100 transition-colors"
               >
                 {language === "en" ? "View Available Contracts" : "Ona Mikataba Inayopatikana"}
               </button>
@@ -884,9 +884,9 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
         {viewMode === "contracts" && (
           <div className="space-y-6">
             {/* Quick access to learning */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+            <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <Lightbulb className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <Lightbulb className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm text-gray-700">
                     {language === "en"
@@ -895,7 +895,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   </p>
                   <button
                     onClick={() => setViewMode("learn")}
-                    className="mt-2 text-sm font-bold text-green-600 hover:text-green-700 flex items-center gap-1"
+                    className="mt-2 text-sm font-bold text-[#2E7D32] hover:text-[#2E7D32] flex items-center gap-1"
                   >
                     {language === "en" ? "Learn How It Works" : "Jifunze Jinsi Inavyofanya Kazi"}
                     <ArrowRight className="h-4 w-4" />
@@ -908,8 +908,8 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
+                  <div className="h-12 w-12 bg-[#2E7D32]/10 rounded-full flex items-center justify-center">
+                    <CheckCircle2 className="h-6 w-6 text-[#2E7D32]" />
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-gray-900">{contracts.length}</div>
@@ -936,8 +936,8 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
-                    <Award className="h-6 w-6 text-orange-600" />
+                  <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Award className="h-6 w-6 text-gray-600" />
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-gray-900">98%</div>
@@ -956,7 +956,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   onClick={() => setActiveTab("active")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "active"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -966,7 +966,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   onClick={() => setActiveTab("available")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors relative ${
                     activeTab === "available"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -979,7 +979,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   onClick={() => setActiveTab("history")}
                   className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                     activeTab === "history"
-                      ? "text-green-600 border-b-2 border-green-600"
+                      ? "text-[#2E7D32] border-b-2 border-[#2E7D32]/20"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -994,22 +994,22 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                 {contracts.map((contract) => (
                   <div key={contract.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     {/* Contract Header */}
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
+                    <div className="bg-gradient-to-r from-[#2E7D32] to-gray-100 p-6 border-b border-gray-200">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
-                          <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
+                          <div className="h-16 w-16 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
                             {contract.buyer.name.charAt(0)}
                           </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="text-xl font-bold text-gray-900">{contract.buyer.name}</h3>
                               {contract.buyer.verified && (
-                                <Shield className="h-5 w-5 text-green-600" />
+                                <Shield className="h-5 w-5 text-[#2E7D32]" />
                               )}
                             </div>
                             <div className="flex items-center gap-3 text-sm text-gray-600">
                               <span className="flex items-center gap-1">
-                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                <Star className="h-4 w-4 fill-gray-600 text-gray-500" />
                                 {contract.buyer.rating}
                               </span>
                               <span>•</span>
@@ -1022,7 +1022,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                             setSelectedContract(contract);
                             setShowContractDetail(true);
                           }}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                          className="px-4 py-2 bg-[#2E7D32] text-white rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center gap-2"
                         >
                           <Eye className="h-4 w-4" />
                           {language === "en" ? "View Details" : "Ona Maelezo"}
@@ -1032,10 +1032,10 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                       {/* Visual Contract Summary */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* What You Provide */}
-                        <div className="bg-white rounded-xl p-4 border-2 border-green-200">
+                        <div className="bg-white rounded-xl p-4 border-2 border-[#2E7D32]/20">
                           <div className="flex items-center gap-2 mb-3">
-                            <div className="h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center">
-                              <Package className="h-5 w-5 text-green-600" />
+                            <div className="h-8 w-8 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center">
+                              <Package className="h-5 w-5 text-[#2E7D32]" />
                             </div>
                             <h4 className="font-bold text-gray-900">
                               {language === "en" ? "What You Provide" : "Unachotoa"}
@@ -1064,7 +1064,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                         </div>
 
                         {/* What Buyer Provides */}
-                        <div className="bg-white rounded-xl p-4 border-2 border-green-200">
+                        <div className="bg-white rounded-xl p-4 border-2 border-[#2E7D32]/20">
                           <div className="flex items-center gap-2 mb-3">
                             <div className="h-8 w-8 bg-gray-100 rounded-lg flex items-center justify-center">
                               <DollarSign className="h-5 w-5 text-gray-700" />
@@ -1098,12 +1098,12 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                             )}
                             <div className="flex flex-wrap gap-2 pt-2">
                               {contract.buyerProvides.technicalSupport && (
-                                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
+                                <span className="px-2 py-1 bg-[#2E7D32]/10 text-[#2E7D32] text-xs rounded">
                                   ✓ {language === "en" ? "Tech Support" : "Msaada wa Kiufundi"}
                                 </span>
                               )}
                               {contract.buyerProvides.insurance && (
-                                <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">
+                                <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                                   ✓ {language === "en" ? "Insurance" : "Bima"}
                                 </span>
                               )}
@@ -1116,7 +1116,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                     {/* Milestones Progress */}
                     <div className="p-6">
                       <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <Target className="h-5 w-5 text-green-600" />
+                        <Target className="h-5 w-5 text-[#2E7D32]" />
                         {language === "en" ? "Progress Milestones" : "Malengo ya Maendeleo"}
                       </h4>
                       <div className="relative">
@@ -1128,7 +1128,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                             <div key={milestone.id} className="relative pl-12">
                               <div className={`absolute left-0 h-8 w-8 rounded-full flex items-center justify-center ${
                                 milestone.status === "completed" 
-                                  ? "bg-green-500 text-white" 
+                                  ? "bg-[#2E7D32] text-white" 
                                   : milestone.status === "in_progress"
                                   ? "bg-gray-500 text-white animate-pulse"
                                   : milestone.status === "overdue"
@@ -1153,7 +1153,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                                   {milestone.payment && (
                                     <div className="text-right">
                                       <div className="text-xs text-gray-600">{language === "en" ? "Payment" : "Malipo"}</div>
-                                      <div className="font-bold text-green-600">
+                                      <div className="font-bold text-[#2E7D32]">
                                         TZS {milestone.payment.toLocaleString()}
                                       </div>
                                     </div>
@@ -1166,7 +1166,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                                   </span>
                                   <span className={`px-2 py-1 rounded font-medium ${
                                     milestone.status === "completed"
-                                      ? "bg-green-100 text-green-700"
+                                      ? "bg-[#2E7D32]/10 text-[#2E7D32]"
                                       : milestone.status === "in_progress"
                                       ? "bg-gray-100 text-gray-700"
                                       : milestone.status === "overdue"
@@ -1192,17 +1192,17 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                         {contract.riskFlags.map((flag, idx) => (
                           <div key={idx} className={`p-4 rounded-lg border ${
                             flag.type === "warning" 
-                              ? "bg-amber-50 border-amber-200"
-                              : "bg-green-50 border-green-200"
+                              ? "bg-gray-50 border-gray-200"
+                              : "bg-[#2E7D32]/5 border-[#2E7D32]/20"
                           }`}>
                             <div className="flex items-start gap-3">
                               {flag.type === "warning" ? (
-                                <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                                <AlertTriangle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
                               ) : (
-                                <Info className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                                <Info className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                               )}
                               <p className={`text-sm ${
-                                flag.type === "warning" ? "text-amber-800" : "text-gray-700"
+                                flag.type === "warning" ? "text-gray-800" : "text-gray-700"
                               }`}>
                                 {flag.message}
                               </p>
@@ -1214,7 +1214,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
 
                     {/* Actions */}
                     <div className="px-6 pb-6 flex gap-3">
-                      <button className="flex-1 px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                      <button className="flex-1 px-4 py-3 bg-[#2E7D32] text-white font-medium rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center justify-center gap-2">
                         <MessageCircle className="h-5 w-5" />
                         {language === "en" ? "Contact Buyer" : "Wasiliana na Mnunuzi"}
                       </button>
@@ -1235,7 +1235,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                   <div key={contract.id} className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
+                        <div className="h-16 w-16 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
                           {contract.buyer!.name.charAt(0)}
                         </div>
                         <div>
@@ -1245,7 +1245,7 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                           </div>
                         </div>
                       </div>
-                      <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                      <span className="px-3 py-1 bg-[#2E7D32]/10 text-[#2E7D32] text-sm font-medium rounded-full">
                         {language === "en" ? "NEW" : "MPYA"}
                       </span>
                     </div>
@@ -1259,13 +1259,13 @@ export function FairContractFarming({ userId, language }: FairContractFarmingPro
                       </div>
                       <div>
                         <div className="text-sm text-gray-600 mb-1">{language === "en" ? "Offered Price" : "Bei Inayotolewa"}</div>
-                        <div className="font-bold text-green-600 text-lg">
+                        <div className="font-bold text-[#2E7D32] text-lg">
                           TZS {contract.buyerProvides!.pricePerUnit.toLocaleString()}/{contract.farmerProvides!.unit}
                         </div>
                       </div>
                     </div>
 
-                    <button className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                    <button className="w-full px-6 py-3 bg-[#2E7D32] text-white font-bold rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center justify-center gap-2">
                       {language === "en" ? "View Contract & Apply" : "Ona Mkataba na Omba"}
                       <ArrowRight className="h-5 w-5" />
                     </button>

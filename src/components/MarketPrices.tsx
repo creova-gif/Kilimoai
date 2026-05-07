@@ -167,7 +167,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
 
   const getTrendColor = (trend: string) => {
     switch (trend) {
-      case "up": return "text-[#2E7D32] bg-green-50 border-[#2E7D32]/20";
+      case "up": return "text-[#2E7D32] bg-[#2E7D32]/5 border-[#2E7D32]/20";
       case "down": return "text-red-600 bg-red-50 border-red-200";
       default: return "text-gray-600 bg-gray-50 border-gray-200";
     }
@@ -176,7 +176,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
   const getForecastBadge = (forecast: string) => {
     switch (forecast) {
       case "rising":
-        return <Badge className="bg-green-50 text-[#2E7D32] flex items-center gap-1"><TrendingUp className="h-3 w-3" />Rising</Badge>;
+        return <Badge className="bg-[#2E7D32]/5 text-[#2E7D32] flex items-center gap-1"><TrendingUp className="h-3 w-3" />Rising</Badge>;
       case "falling":
         return <Badge className="bg-red-100 text-red-700 flex items-center gap-1"><TrendingDown className="h-3 w-3" />Falling</Badge>;
       default:
@@ -225,7 +225,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
   return (
     <div className="space-y-4 md:space-y-6 pb-6">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-[#1B5E20] rounded-2xl md:rounded-3xl p-4 md:p-6 text-white">
+      <div className="relative overflow-hidden bg-[#2E7D32] rounded-2xl md:rounded-3xl p-4 md:p-6 text-white">
         <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-white/10 rounded-full blur-3xl"></div>
         
@@ -300,7 +300,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
             variant="outline" 
             size="sm" 
             onClick={handleFilterClick}
-            className="gap-2 h-11 rounded-xl border-2 hover:border-[#2E7D32] hover:bg-green-50 transition-all"
+            className="gap-2 h-11 rounded-xl border-2 hover:border-[#2E7D32] hover:bg-[#2E7D32]/5 transition-all"
           >
             <Filter className="h-4 w-4" />
             <span className="hidden sm:inline">Filters</span>
@@ -310,7 +310,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
             variant="outline" 
             size="sm" 
             onClick={() => handleSetAlert()}
-            className="gap-2 h-11 rounded-xl border-2 hover:border-[#2E7D32] hover:bg-green-50 transition-all"
+            className="gap-2 h-11 rounded-xl border-2 hover:border-[#2E7D32] hover:bg-[#2E7D32]/5 transition-all"
           >
             <Bell className="h-4 w-4" />
             <span className="hidden sm:inline">Set Alert</span>
@@ -439,7 +439,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
       </div>
 
       {/* Market Insights */}
-      <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-green-50 to-green-50">
+      <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-[#2E7D32] to-gray-100">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-[#2E7D32]" />
@@ -452,7 +452,7 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
               onClick={handleMarketplaceNavigation}
               className="flex items-start gap-3 p-3 bg-white rounded-xl hover:shadow-md transition-all cursor-pointer hover:scale-105"
             >
-              <div className="p-2 bg-green-50 rounded-lg">
+              <div className="p-2 bg-[#2E7D32]/5 rounded-lg">
                 <TrendingUp className="h-4 w-4 text-[#2E7D32]" />
               </div>
               <div>
@@ -482,8 +482,8 @@ export function MarketPrices({ region, onNavigate }: MarketPricesProps) {
               onClick={handleMarketplaceNavigation}
               className="flex items-start gap-3 p-3 bg-white rounded-xl hover:shadow-md transition-all cursor-pointer hover:scale-105"
             >
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <TrendingDown className="h-4 w-4 text-orange-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <TrendingDown className="h-4 w-4 text-gray-600" />
               </div>
               <div>
                 <p className="font-semibold text-sm text-gray-900">Seasonal Fruit Surplus</p>

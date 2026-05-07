@@ -87,7 +87,7 @@ export function CollapsibleNavCategory({
           relative w-full flex items-center gap-3 px-4 py-3 rounded-xl
           transition-all duration-300 ease-out group overflow-hidden
           ${isExpanded 
-            ? 'bg-gradient-to-r from-[#2E7D32]/10 via-green-50 to-transparent shadow-sm border-l-4 border-[#2E7D32]' 
+            ? 'bg-gradient-to-r from-[#2E7D32]/10 via-[#2E7D32] to-transparent shadow-sm border-l-4 border-[#2E7D32]' 
             : 'hover:bg-gradient-to-r hover:from-gray-50 hover:via-gray-50/50 hover:to-transparent hover:border-l-4 hover:border-gray-300'
           }
         `}

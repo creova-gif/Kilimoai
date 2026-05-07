@@ -47,7 +47,7 @@ export function OfflineBanner() {
   return (
     <div
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isOnline ? 'bg-green-600' : 'bg-red-600'
+        isOnline ? 'bg-[#2E7D32]' : 'bg-red-600'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-center gap-2 text-white">
@@ -187,7 +187,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center">
       {icon && (
-        <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-6">
+        <div className="w-20 h-20 rounded-full bg-[#2E7D32]/5 flex items-center justify-center mb-6">
           {icon}
         </div>
       )}

@@ -334,17 +334,17 @@ export function CropLibrary({ userId, language, onNavigate }: CropLibraryProps) 
   }
 
   const getLifecycleBadgeColor = (lifecycle: string) => {
-    return lifecycle === "annual" ? "bg-blue-100 text-blue-800" : "bg-[#2E7D32]/10 text-[#2E7D32]";
+    return lifecycle === "annual" ? "bg-gray-100 text-gray-800" : "bg-[#2E7D32]/10 text-[#2E7D32]";
   };
 
   const getTypeBadgeColor = (type: string) => {
     const colors: { [key: string]: string } = {
-      cereal: "bg-amber-100 text-amber-800",
-      legume: "bg-purple-100 text-purple-800",
+      cereal: "bg-gray-100 text-gray-800",
+      legume: "bg-gray-100 text-gray-800",
       vegetable: "bg-[#2E7D32]/10 text-[#2E7D32]",
       fruit: "bg-red-100 text-red-800",
-      cash_crop: "bg-emerald-100 text-emerald-800",
-      root_tuber: "bg-orange-100 text-orange-800",
+      cash_crop: "bg-[#2E7D32]/10 text-[#2E7D32]",
+      root_tuber: "bg-gray-100 text-gray-800",
     };
     return colors[type] || "bg-gray-100 text-gray-800";
   };
@@ -444,10 +444,10 @@ export function CropLibrary({ userId, language, onNavigate }: CropLibraryProps) 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Offline Indicator */}
         {isOffline && (
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-lg">
+          <div className="bg-gray-50 border-l-4 border-gray-300 p-4 mb-4 rounded-r-lg">
             <div className="flex items-center">
-              <CloudOff className="h-5 w-5 text-yellow-600 mr-3 flex-shrink-0" />
-              <p className="text-sm text-yellow-800">
+              <CloudOff className="h-5 w-5 text-gray-600 mr-3 flex-shrink-0" />
+              <p className="text-sm text-gray-800">
                 {language === "en" 
                   ? "You're offline. Using trusted reference images." 
                   : "Huna mtandao. Tunatumia picha za kumbukumbu."}
@@ -481,7 +481,7 @@ export function CropLibrary({ userId, language, onNavigate }: CropLibraryProps) 
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2E7D32]/10 to-[#2E7D32]/5">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2E7D32]/10 to-gray-100/5">
                       <Leaf className="h-16 w-16 text-[#2E7D32]/30" />
                     </div>
                   )}
@@ -609,12 +609,12 @@ export function CropLibrary({ userId, language, onNavigate }: CropLibraryProps) 
             {/* Common Risks */}
             <div className="mt-4">
               <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
+                <AlertTriangle className="h-5 w-5 text-gray-600" />
                 <h4 className="font-semibold text-gray-900">{text.commonRisks}</h4>
               </div>
               <div className="flex flex-wrap gap-2">
                 {selectedCrop.common_risks.map((risk, index) => (
-                  <Badge key={index} variant="secondary" className="bg-orange-50 text-orange-800">
+                  <Badge key={index} variant="secondary" className="bg-gray-50 text-gray-800">
                     {risk}
                   </Badge>
                 ))}

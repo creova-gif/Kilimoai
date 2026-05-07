@@ -86,7 +86,7 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
           <div className="flex items-center gap-2 mb-2">
             <h2 className="text-2xl font-bold">{currentTip.title}</h2>
             {currentTip.verified && (
-              <Badge className="bg-green-100 text-green-700 border-green-300">
+              <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Verified
               </Badge>
@@ -101,14 +101,14 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
         <CardContent className="p-4">
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <Leaf className="h-4 w-4 text-green-600" />
+              <Leaf className="h-4 w-4 text-[#2E7D32]" />
               <div>
                 <p className="text-gray-600">Crop</p>
                 <p className="font-medium text-gray-900">{crop}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-green-600" />
+              <Calendar className="h-4 w-4 text-[#2E7D32]" />
               <div>
                 <p className="text-gray-600">Best Timing</p>
                 <p className="font-medium text-gray-900">{currentTip.timing}</p>
@@ -137,7 +137,7 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
           <ol className="space-y-4">
             {currentTip.steps.map((step, index) => (
               <li key={index} className="flex items-start gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-700 font-medium text-sm flex-shrink-0">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2E7D32]/10 text-[#2E7D32] font-medium text-sm flex-shrink-0">
                   {index + 1}
                 </span>
                 <p className="text-gray-700 pt-1">{step}</p>
@@ -169,13 +169,13 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
       </Card>
 
       {/* Source & Verification */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5" />
             <div>
-              <h4 className="font-medium text-green-900 mb-1">Verified by Experts</h4>
-              <p className="text-sm text-green-800">
+              <h4 className="font-medium text-[#2E7D32] mb-1">Verified by Experts</h4>
+              <p className="text-sm text-[#2E7D32]">
                 This advice has been verified by <strong>{currentTip.source}</strong> and is 
                 recommended for Tanzanian farming conditions.
               </p>
@@ -206,27 +206,27 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
       </Card>
 
       {/* Important Notes */}
-      <Card className="border-orange-200 bg-orange-50">
+      <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-gray-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-orange-900 mb-2">Important Reminders</h4>
-              <ul className="space-y-1 text-sm text-orange-800">
+              <h4 className="font-medium text-gray-900 mb-2">Important Reminders</h4>
+              <ul className="space-y-1 text-sm text-gray-800">
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Always wear gloves when handling fertilizer</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Store fertilizer in a cool, dry place away from children</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Do not apply fertilizer on dry soil - water first or wait for rain</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-orange-600">•</span>
+                  <span className="text-gray-600">•</span>
                   <span>Buy fertilizer from verified dealers to avoid counterfeits</span>
                 </li>
               </ul>
@@ -237,7 +237,7 @@ export function FarmingTipDetails({ tip, crop = "Maize", stage = "Vegetative Gro
 
       {/* Action Buttons */}
       <div className="flex gap-3">
-        <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setReminderSet(true)}>
+        <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]" onClick={() => setReminderSet(true)}>
           {reminderSet ? "Reminder Set" : "Set Reminder"}
         </Button>
         <Button variant="outline" className="flex-1">

@@ -234,7 +234,7 @@ export function LivestockManagement() {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-green-600 hover:bg-green-700">
+          <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Animal
           </Button>
@@ -249,7 +249,7 @@ export function LivestockManagement() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Animals</p>
                 <p className="text-3xl font-bold">{stats.totalAnimals}</p>
-                <p className="text-sm text-green-600 mt-1">+3 this month</p>
+                <p className="text-sm text-[#2E7D32] mt-1">+3 this month</p>
               </div>
               <Users className="h-12 w-12 text-gray-600" />
             </div>
@@ -261,10 +261,10 @@ export function LivestockManagement() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Health Status</p>
-                <p className="text-3xl font-bold text-green-600">{stats.healthy}</p>
+                <p className="text-3xl font-bold text-[#2E7D32]">{stats.healthy}</p>
                 <p className="text-sm text-gray-600 mt-1">{stats.sick} need attention</p>
               </div>
-              <Heart className="h-12 w-12 text-green-600" />
+              <Heart className="h-12 w-12 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -275,7 +275,7 @@ export function LivestockManagement() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Milk Production</p>
                 <p className="text-3xl font-bold">{stats.milkProduction.daily}L</p>
-                <p className="text-sm text-green-600 mt-1">{stats.milkProduction.trend} vs last month</p>
+                <p className="text-sm text-[#2E7D32] mt-1">{stats.milkProduction.trend} vs last month</p>
               </div>
               <Milk className="h-12 w-12 text-gray-600" />
             </div>
@@ -287,10 +287,10 @@ export function LivestockManagement() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Upcoming Tasks</p>
-                <p className="text-3xl font-bold text-orange-600">{stats.upcomingVaccinations}</p>
+                <p className="text-3xl font-bold text-gray-600">{stats.upcomingVaccinations}</p>
                 <p className="text-sm text-gray-600 mt-1">Due this week</p>
               </div>
-              <Bell className="h-12 w-12 text-orange-600" />
+              <Bell className="h-12 w-12 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -298,13 +298,13 @@ export function LivestockManagement() {
 
       {/* Alerts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-gray-200 bg-gray-50">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-gray-600 mt-0.5" />
               <div>
-                <p className="font-medium text-orange-900">2 Animals Need Attention</p>
-                <p className="text-sm text-orange-700 mt-1">
+                <p className="font-medium text-gray-900">2 Animals Need Attention</p>
+                <p className="text-sm text-gray-700 mt-1">
                   TZ-DAIRY-002 - Treatment withdrawal period ends in 4 days
                 </p>
               </div>
@@ -369,7 +369,7 @@ export function LivestockManagement() {
                   <select
                     value={filterSpecies}
                     onChange={(e) => setFilterSpecies(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors min-w-[140px]"
+                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/30 focus:border-[#2E7D32]/20 transition-colors min-w-[140px]"
                   >
                     <option value="all">All Species</option>
                     <option value="cattle">Cattle</option>
@@ -421,9 +421,9 @@ export function LivestockManagement() {
                       <Badge
                         className={
                           animal.status === "healthy"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-[#2E7D32]/10 text-[#2E7D32]"
                             : animal.status === "treatment"
-                            ? "bg-orange-100 text-orange-700"
+                            ? "bg-gray-100 text-gray-700"
                             : "bg-red-100 text-red-700"
                         }
                       >
@@ -459,7 +459,7 @@ export function LivestockManagement() {
                         className={
                           task.priority === "high"
                             ? "bg-red-100 text-red-700"
-                            : "bg-yellow-100 text-yellow-700"
+                            : "bg-gray-100 text-gray-700"
                         }
                       >
                         {task.priority}
@@ -515,7 +515,7 @@ export function LivestockManagement() {
                         {record.withdrawalDate && (
                           <div>
                             <p className="text-gray-600">Withdrawal Date</p>
-                            <p className="font-medium text-orange-600">{record.withdrawalDate}</p>
+                            <p className="font-medium text-gray-600">{record.withdrawalDate}</p>
                           </div>
                         )}
                         {record.nextDue && (
@@ -538,20 +538,20 @@ export function LivestockManagement() {
           </Card>
 
           {/* Withdrawal Compliance */}
-          <Card className="border-orange-200">
+          <Card className="border-gray-200">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-orange-600" />
+                <AlertCircle className="h-5 w-5 text-gray-600" />
                 Withdrawal Period Compliance
               </CardTitle>
               <CardDescription>Animals with active treatment withdrawal periods</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-medium">TZ-DAIRY-002 (Daisy)</p>
-                    <Badge className="bg-orange-600 text-white">Active</Badge>
+                    <Badge className="bg-gray-700 text-white">Active</Badge>
                   </div>
                   <p className="text-sm text-gray-600 mb-3">
                     Antibiotic treatment - Milk withdrawal until Feb 24, 2024
@@ -579,7 +579,7 @@ export function LivestockManagement() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <TrendingUp className="h-10 w-10 mx-auto mb-3 text-green-600" />
+                  <TrendingUp className="h-10 w-10 mx-auto mb-3 text-[#2E7D32]" />
                   <p className="text-3xl font-bold">87%</p>
                   <p className="text-sm text-gray-600 mt-1">Conception Rate</p>
                 </div>
@@ -615,7 +615,7 @@ export function LivestockManagement() {
                           <Badge
                             className={
                               record.status === "successful"
-                                ? "bg-green-100 text-green-700"
+                                ? "bg-[#2E7D32]/10 text-[#2E7D32]"
                                 : record.status === "pending"
                                 ? "bg-gray-100 text-gray-700"
                                 : "bg-red-100 text-red-700"
@@ -684,8 +684,8 @@ export function LivestockManagement() {
                       </div>
                       <Progress value={74} className="h-2" />
                     </div>
-                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-sm text-green-700">
+                    <div className="p-3 bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg">
+                      <p className="text-sm text-[#2E7D32]">
                         <TrendingUp className="h-4 w-4 inline mr-1" />
                         Production up 8% vs last month
                       </p>
@@ -730,7 +730,7 @@ export function LivestockManagement() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 border rounded-lg">
-                  <Leaf className="h-8 w-8 text-green-600 mb-2" />
+                  <Leaf className="h-8 w-8 text-[#2E7D32] mb-2" />
                   <p className="text-2xl font-bold">{stats.feedConsumption.daily} kg</p>
                   <p className="text-sm text-gray-600">Daily Feed Consumption</p>
                 </div>
@@ -762,7 +762,7 @@ export function LivestockManagement() {
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium">Pasture A</h4>
-                    <Badge className="bg-green-100 text-green-700">Active</Badge>
+                    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Active</Badge>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
@@ -775,7 +775,7 @@ export function LivestockManagement() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Rotation Due</span>
-                      <span className="font-medium text-orange-600">Feb 15, 2024</span>
+                      <span className="font-medium text-gray-600">Feb 15, 2024</span>
                     </div>
                   </div>
                   <Progress value={70} className="h-2 mt-3" />
@@ -798,7 +798,7 @@ export function LivestockManagement() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Ready For Use</span>
-                      <span className="font-medium text-green-600">Feb 18, 2024</span>
+                      <span className="font-medium text-[#2E7D32]">Feb 18, 2024</span>
                     </div>
                   </div>
                   <Progress value={85} className="h-2 mt-3" />

@@ -21,8 +21,8 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
       icon: Smartphone,
       textEn: "Works even with low network",
       textSw: "Inafanya kazi hata mtandao ukiwa mdogo",
-      color: "text-green-600",
-      bg: "bg-green-50"
+      color: "text-[#2E7D32]",
+      bg: "bg-[#2E7D32]/5"
     },
     {
       icon: MapPin,
@@ -41,7 +41,7 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
         className="max-w-lg w-full"
       >
         <Card className="border-0 shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 p-8 text-white text-center">
+          <div className="bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 p-8 text-white text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -57,7 +57,7 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
                 ? "App hii imetengenezwa kwa wakulima wa Tanzania"
                 : "This app is built for Tanzanian farmers"}
             </h2>
-            <p className="text-green-100">
+            <p className="text-[#2E7D32]">
               🇹🇿 {language === "sw" 
                 ? "Tunajali mafanikio yako"
                 : "We care about your success"}
@@ -97,7 +97,7 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
             >
               <div className="text-center p-4 bg-gray-50 rounded-xl">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <Users className="h-5 w-5 text-green-600" />
+                  <Users className="h-5 w-5 text-[#2E7D32]" />
                   <p className="text-2xl font-bold text-gray-900">10,000+</p>
                 </div>
                 <p className="text-sm text-gray-600">
@@ -106,7 +106,7 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
               </div>
               <div className="text-center p-4 bg-gray-50 rounded-xl">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-[#2E7D32]" />
                   <p className="text-2xl font-bold text-gray-900">95%</p>
                 </div>
                 <p className="text-sm text-gray-600">
@@ -118,7 +118,7 @@ export function TrustCredibilityScreen({ language, onContinue }: TrustCredibilit
             {/* Continue Button */}
             <Button
               onClick={onContinue}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-14 text-lg font-bold shadow-lg"
+              className="w-full bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100 h-14 text-lg font-bold shadow-lg"
             >
               {language === "sw" ? "Endelea" : "Continue"}
             </Button>

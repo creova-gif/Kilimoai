@@ -153,8 +153,8 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
   const Icon = healthData.icon;
 
   const getScoreColor = () => {
-    if (healthData.score >= 80) return "text-green-600";
-    if (healthData.score >= 60) return "text-orange-600";
+    if (healthData.score >= 80) return "text-[#2E7D32]";
+    if (healthData.score >= 60) return "text-gray-600";
     return "text-red-600";
   };
 
@@ -163,9 +163,9 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
       case "high":
         return <Badge className="bg-red-100 text-red-700 border-red-300">High Severity</Badge>;
       case "medium":
-        return <Badge className="bg-orange-100 text-orange-700 border-orange-300">Medium</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Medium</Badge>;
       case "low":
-        return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">Low</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Low</Badge>;
       default:
         return null;
     }
@@ -221,9 +221,9 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
           
           {healthData.urgency && (
             <div className={`mt-4 p-3 rounded-lg border ${
-              status === "critical" ? 'bg-red-100 border-red-300' : 'bg-orange-100 border-orange-300'
+              status === "critical" ? 'bg-red-100 border-red-300' : 'bg-gray-100 border-gray-300'
             }`}>
-              <p className={`font-medium ${status === "critical" ? 'text-red-900' : 'text-orange-900'}`}>
+              <p className={`font-medium ${status === "critical" ? 'text-red-900' : 'text-gray-900'}`}>
                 ⏰ {healthData.urgency}
               </p>
             </div>
@@ -260,15 +260,15 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
                 </div>
 
                 {/* Immediate Actions */}
-                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                  <h4 className="font-medium text-orange-900 mb-3">Immediate Actions Required:</h4>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-3">Immediate Actions Required:</h4>
                   <ol className="space-y-2">
                     {issue.immediateActions.map((action, aIdx) => (
                       <li key={aIdx} className="flex items-start gap-2 text-sm">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-600 text-white text-xs font-medium flex-shrink-0">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 text-white text-xs font-medium flex-shrink-0">
                           {aIdx + 1}
                         </span>
-                        <span className="text-orange-900 pt-0.5">{action}</span>
+                        <span className="text-gray-900 pt-0.5">{action}</span>
                       </li>
                     ))}
                   </ol>
@@ -295,21 +295,21 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
       {healthData.strengths && (
         <div className="space-y-4">
           {healthData.strengths.map((strength, idx) => (
-            <Card key={idx} className="border-green-200 bg-green-50">
+            <Card key={idx} className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
               <CardContent className="pt-4">
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                  <CheckCircle className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h4 className="font-medium text-green-900">{strength.aspect}</h4>
-                      <Badge className="bg-green-600 text-white">{strength.status}</Badge>
+                      <h4 className="font-medium text-[#2E7D32]">{strength.aspect}</h4>
+                      <Badge className="bg-[#2E7D32] text-white">{strength.status}</Badge>
                     </div>
-                    <p className="text-sm text-green-800 mb-3">{strength.details}</p>
+                    <p className="text-sm text-[#2E7D32] mb-3">{strength.details}</p>
                     <div>
-                      <p className="text-sm font-medium text-green-900 mb-2">Continue doing:</p>
+                      <p className="text-sm font-medium text-[#2E7D32] mb-2">Continue doing:</p>
                       <ul className="space-y-1">
                         {strength.maintainActions.map((action, aIdx) => (
-                          <li key={aIdx} className="flex items-center gap-2 text-sm text-green-800">
+                          <li key={aIdx} className="flex items-center gap-2 text-sm text-[#2E7D32]">
                             <CheckCircle className="h-4 w-4" />
                             <span>{action}</span>
                           </li>
@@ -333,12 +333,12 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {healthData.nextSteps.map((step, idx) => (
-              <div key={idx} className="border-l-4 border-green-600 pl-4">
+              <div key={idx} className="border-l-4 border-[#2E7D32]/20 pl-4">
                 <h4 className="font-medium mb-2">{step.stage}</h4>
                 <ul className="space-y-1">
                   {step.actions.map((action, aIdx) => (
                     <li key={aIdx} className="flex items-center gap-2 text-sm text-gray-700">
-                      <div className="h-1.5 w-1.5 rounded-full bg-green-600" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#2E7D32]" />
                       <span>{action}</span>
                     </li>
                   ))}
@@ -366,8 +366,8 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100">
-                <Sun className="h-5 w-5 text-yellow-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <Sun className="h-5 w-5 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Sunlight</p>
@@ -375,8 +375,8 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                <Wind className="h-5 w-5 text-green-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2E7D32]/10">
+                <Wind className="h-5 w-5 text-[#2E7D32]" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Air Circulation</p>
@@ -411,7 +411,7 @@ export function CropHealthDetails({ status, crop }: CropHealthDetailsProps) {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3">
-        <Button className="bg-green-600 hover:bg-green-700">
+        <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
           <Camera className="h-4 w-4 mr-2" />
           Take Photo for AI Analysis
         </Button>

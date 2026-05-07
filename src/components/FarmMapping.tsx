@@ -146,7 +146,7 @@ export function FarmMapping() {
           </Button>
           <Dialog open={showAddField} onOpenChange={setShowAddField}>
             <DialogTrigger asChild>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Field
               </Button>
@@ -161,7 +161,7 @@ export function FarmMapping() {
               <div className="space-y-4">
                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <Navigation className="h-5 w-5 text-green-600 mt-0.5" />
+                    <Navigation className="h-5 w-5 text-[#2E7D32] mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-gray-900 mb-1">
                         GPS Boundary Marking
@@ -188,7 +188,7 @@ export function FarmMapping() {
                   <Input placeholder="e.g., Clay Loam" />
                 </div>
 
-                <Button onClick={handleAddField} className="w-full bg-green-600 hover:bg-green-700">
+                <Button onClick={handleAddField} className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]">
                   <Navigation className="h-4 w-4 mr-2" />
                   Start GPS Recording
                 </Button>
@@ -203,7 +203,7 @@ export function FarmMapping() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <Map className="h-8 w-8 mx-auto mb-2 text-green-600" />
+              <Map className="h-8 w-8 mx-auto mb-2 text-[#2E7D32]" />
               <p className="text-2xl font-bold">{totalFarmArea.toFixed(1)}</p>
               <p className="text-xs text-gray-600 mt-1">Total Acres</p>
             </div>
@@ -212,7 +212,7 @@ export function FarmMapping() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <Sprout className="h-8 w-8 mx-auto mb-2 text-green-600" />
+              <Sprout className="h-8 w-8 mx-auto mb-2 text-[#2E7D32]" />
               <p className="text-2xl font-bold">{activeFields}</p>
               <p className="text-xs text-gray-600 mt-1">Active Fields</p>
             </div>
@@ -266,7 +266,7 @@ export function FarmMapping() {
           </CardHeader>
           <CardContent>
             {/* Map Placeholder */}
-            <div className="relative h-96 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gradient-to-br from-green-50 to-blue-50">
+            <div className="relative h-96 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gradient-to-br from-[#2E7D32] to-gray-100">
               {/* Simulated map background */}
               <div className="absolute inset-0 opacity-20">
                 <div className="grid grid-cols-8 grid-rows-8 h-full">
@@ -280,7 +280,7 @@ export function FarmMapping() {
               <div className="absolute inset-0 p-8">
                 {/* Field A */}
                 <div 
-                  className="absolute top-1/4 left-1/4 w-32 h-32 rounded-lg opacity-70 border-4 border-green-600 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="absolute top-1/4 left-1/4 w-32 h-32 rounded-lg opacity-70 border-4 border-[#2E7D32]/20 cursor-pointer hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: fields[0].color }}
                   onClick={() => setSelectedField(fields[0].id)}
                 >
@@ -291,7 +291,7 @@ export function FarmMapping() {
 
                 {/* Field B */}
                 <div 
-                  className="absolute bottom-1/4 left-1/4 w-24 h-24 rounded-lg opacity-70 border-4 border-green-600 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="absolute bottom-1/4 left-1/4 w-24 h-24 rounded-lg opacity-70 border-4 border-[#2E7D32]/20 cursor-pointer hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: fields[1].color }}
                   onClick={() => setSelectedField(fields[1].id)}
                 >
@@ -357,10 +357,10 @@ export function FarmMapping() {
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
               <div className="flex items-start gap-2">
-                <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                <p className="text-sm text-yellow-800">
+                <AlertCircle className="h-4 w-4 text-gray-600 mt-0.5" />
+                <p className="text-sm text-gray-800">
                   <strong>Mobile GPS Feature:</strong> On mobile devices, use GPS to walk field boundaries for accurate mapping. Works offline and syncs when connected.
                 </p>
               </div>
@@ -381,7 +381,7 @@ export function FarmMapping() {
                   key={field.id}
                   className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
                     selectedField === field.id
-                      ? 'border-green-500 bg-green-50'
+                      ? 'border-[#2E7D32]/20 bg-[#2E7D32]/5'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => setSelectedField(field.id)}
@@ -412,7 +412,7 @@ export function FarmMapping() {
                         variant="outline" 
                         className={
                           field.status === "active" 
-                            ? "bg-green-100 text-green-800" 
+                            ? "bg-[#2E7D32]/10 text-[#2E7D32]" 
                             : "bg-gray-100 text-gray-800"
                         }
                       >

@@ -185,19 +185,19 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "crop": return { bg: "bg-green-50", text: "text-green-700", border: "border-green-200", icon: "text-green-600" };
+      case "crop": return { bg: "bg-[#2E7D32]/5", text: "text-[#2E7D32]", border: "border-[#2E7D32]/20", icon: "text-[#2E7D32]" };
       case "livestock": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
       case "finance": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
-      case "tools": return { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", icon: "text-orange-600" };
+      case "tools": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
       case "market": return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
       default: return { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "text-gray-600" };
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -207,7 +207,7 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Knowledge Base" : "Hifadhi ya Ujuzi"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Expert articles and farming guides"
                   : "Makala za wataalamu na miongozo ya kilimo"}
@@ -257,7 +257,7 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
           {/* Popular Topics */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-orange-600" />
+              <TrendingUp className="h-5 w-5 text-gray-600" />
               {language === "en" ? "Popular Topics" : "Mada Maarufu"}
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -265,7 +265,7 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
                 <button
                   key={topic}
                   onClick={() => setSearchQuery(topic)}
-                  className="px-3 py-2 bg-gray-100 hover:bg-green-100 text-gray-700 hover:text-green-700 rounded-lg text-sm font-medium transition-all border-2 border-transparent hover:border-green-200"
+                  className="px-3 py-2 bg-gray-100 hover:bg-[#2E7D32]/10 text-gray-700 hover:text-[#2E7D32] rounded-lg text-sm font-medium transition-all border-2 border-transparent hover:border-[#2E7D32]/20"
                 >
                   <Tag className="h-3 w-3 inline mr-1" />
                   {topic}
@@ -469,10 +469,10 @@ export function KnowledgeBase({ language, userId }: KnowledgeBaseProps) {
                                         onClick={() => setExpandedArticle(relatedId)}
                                         className="w-full text-left p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-all flex items-center justify-between group"
                                       >
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-green-600">
+                                        <span className="text-sm font-medium text-gray-700 group-hover:text-[#2E7D32]">
                                           {related.title}
                                         </span>
-                                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-[#2E7D32] group-hover:translate-x-1 transition-all" />
                                       </button>
                                     ) : null;
                                   })}

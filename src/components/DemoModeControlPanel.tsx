@@ -275,7 +275,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <Database className="h-12 w-12 text-green-600 mx-auto mb-4 animate-pulse" />
+          <Database className="h-12 w-12 text-[#2E7D32] mx-auto mb-4 animate-pulse" />
           <p>Initializing Demo Mode...</p>
         </div>
       </div>
@@ -301,11 +301,11 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
               </motion.div>
               <div>
                 <h1 className="text-3xl font-bold">KILIMO Demo Mode Control Panel</h1>
-                <p className="text-green-100 mt-1">Pre-Authentication Feature Sandbox</p>
+                <p className="text-[#2E7D32] mt-1">Pre-Authentication Feature Sandbox</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <Badge className="bg-yellow-500 text-yellow-950 border-0">
+              <Badge className="bg-gray-600 text-gray-900 border-0">
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 PRE-AUTH SANDBOX
               </Badge>
@@ -342,7 +342,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
               <button
                 onClick={() => handleLanguageChange("en")}
                 className={`px-3 py-1 rounded ${
-                  selectedLanguage === "en" ? "bg-green-600 text-white" : "text-gray-600"
+                  selectedLanguage === "en" ? "bg-[#2E7D32] text-white" : "text-gray-600"
                 }`}
               >
                 EN
@@ -350,7 +350,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
               <button
                 onClick={() => handleLanguageChange("sw")}
                 className={`px-3 py-1 rounded ${
-                  selectedLanguage === "sw" ? "bg-green-600 text-white" : "text-gray-600"
+                  selectedLanguage === "sw" ? "bg-[#2E7D32] text-white" : "text-gray-600"
                 }`}
               >
                 SW
@@ -380,7 +380,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
               <RefreshCw className="h-4 w-4 mr-2" />
               Reset
             </Button>
-            <Button onClick={handleLaunchDemo} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={handleLaunchDemo} className="bg-[#2E7D32] hover:bg-[#2E7D32]">
               <Play className="h-4 w-4 mr-2" />
               Launch Demo
             </Button>
@@ -404,7 +404,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                     {selectedRole.replace(/_/g, " ").toUpperCase()}
                   </p>
                 </div>
-                <Users className="h-8 w-8 text-green-600" />
+                <Users className="h-8 w-8 text-[#2E7D32]" />
               </div>
             </CardContent>
           </Card>
@@ -431,7 +431,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                   </p>
                 </div>
                 {demoState.mock_data.loaded ? (
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                  <CheckCircle2 className="h-8 w-8 text-[#2E7D32]" />
                 ) : (
                   <XCircle className="h-8 w-8 text-gray-400" />
                 )}
@@ -447,9 +447,9 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                   <p className="text-lg font-bold capitalize">{demoState.ui_status}</p>
                 </div>
                 {demoState.ui_status === "valid" ? (
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                  <CheckCircle2 className="h-8 w-8 text-[#2E7D32]" />
                 ) : demoState.ui_status === "warning" ? (
-                  <AlertTriangle className="h-8 w-8 text-yellow-600" />
+                  <AlertTriangle className="h-8 w-8 text-gray-600" />
                 ) : (
                   <XCircle className="h-8 w-8 text-red-600" />
                 )}
@@ -558,7 +558,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                           <Card
                             className={`border-2 transition-colors cursor-pointer ${
                               isEnabled
-                                ? "border-green-300 bg-green-50"
+                                ? "border-[#2E7D32]/20 bg-[#2E7D32]/5"
                                 : "border-gray-200 bg-white"
                             }`}
                             onClick={() => handleFeatureToggle(feature)}
@@ -725,7 +725,7 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                     <Separator />
                     
                     {/* User Info */}
-                    <Card className="border-2 bg-green-50">
+                    <Card className="border-2 bg-[#2E7D32]/5">
                       <CardHeader>
                         <CardTitle className="text-lg">Simulated User</CardTitle>
                       </CardHeader>
@@ -824,9 +824,9 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
                       <span
                         className={`font-medium ${
                           demoState.ui_status === "valid"
-                            ? "text-green-600"
+                            ? "text-[#2E7D32]"
                             : demoState.ui_status === "warning"
-                            ? "text-yellow-600"
+                            ? "text-gray-600"
                             : "text-red-600"
                         }`}
                       >
@@ -905,9 +905,9 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
         </Card>
 
         {/* Warning Footer */}
-        <Alert className="border-2 border-yellow-500 bg-yellow-50">
-          <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-yellow-900">
+        <Alert className="border-2 border-gray-400 bg-gray-50">
+          <AlertTriangle className="h-4 w-4 text-gray-600" />
+          <AlertDescription className="text-gray-900">
             <strong>Demo Mode Active:</strong> All changes are session-scoped and will not persist
             to production. No backend writes occur. Exit demo mode to return to normal operation.
           </AlertDescription>
@@ -920,13 +920,13 @@ export function DemoModeControlPanel({ onLaunchDemo, language = "en" }: DemoMode
 // Helper function to get feature icon
 function getFeatureIcon(feature: FeatureId) {
   const iconMap: Record<string, any> = {
-    crop_planning: <Leaf className="h-4 w-4 text-green-600" />,
+    crop_planning: <Leaf className="h-4 w-4 text-[#2E7D32]" />,
     livestock_management: <Sprout className="h-4 w-4 text-brown-600" />,
     farm_finance: <DollarSign className="h-4 w-4 text-gray-700" />,
-    marketplace: <ShoppingCart className="h-4 w-4 text-orange-600" />,
+    marketplace: <ShoppingCart className="h-4 w-4 text-gray-600" />,
     analytics_dashboard: <BarChart3 className="h-4 w-4 text-gray-700" />,
     ai_chatbot: <MessageSquare className="h-4 w-4 text-gray-600" />,
-    photo_diagnosis: <Camera className="h-4 w-4 text-orange-600" />,
+    photo_diagnosis: <Camera className="h-4 w-4 text-gray-600" />,
     voice_assistant: <Mic className="h-4 w-4 text-red-600" />,
     farm_mapping: <Map className="h-4 w-4 text-gray-600" />,
     knowledge_base: <BookOpen className="h-4 w-4 text-gray-600" />,

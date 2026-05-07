@@ -602,7 +602,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-xs">
+            <pre className="bg-gray-900 text-[#2E7D32] p-4 rounded-lg overflow-x-auto text-xs">
               {JSON.stringify(recommendations, null, 2)}
             </pre>
           </CardContent>

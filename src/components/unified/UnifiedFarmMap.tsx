@@ -186,15 +186,15 @@ export function UnifiedFarmMap({
   const avgNDVI = fields.reduce((sum, field) => sum + field.ndvi, 0) / fields.length;
 
   const statusColors = {
-    active: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-300", dot: "bg-emerald-500" },
-    fallow: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-300", dot: "bg-amber-500" },
-    preparing: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-300", dot: "bg-purple-500" },
+    active: { bg: "bg-[#2E7D32]/5", text: "text-[#2E7D32]", border: "border-[#2E7D32]/20", dot: "bg-[#2E7D32]" },
+    fallow: { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-300", dot: "bg-gray-600" },
+    preparing: { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-300", dot: "bg-gray-600" },
   };
 
   const getHealthColor = (health: number) => {
-    if (health >= 80) return { text: "text-emerald-600", bg: "bg-emerald-500" };
-    if (health >= 60) return { text: "text-blue-600", bg: "bg-blue-500" };
-    if (health >= 40) return { text: "text-amber-600", bg: "bg-amber-500" };
+    if (health >= 80) return { text: "text-[#2E7D32]", bg: "bg-[#2E7D32]" };
+    if (health >= 60) return { text: "text-gray-600", bg: "bg-gray-600" };
+    if (health >= 40) return { text: "text-gray-600", bg: "bg-gray-600" };
     return { text: "text-red-600", bg: "bg-red-500" };
   };
 
@@ -208,10 +208,10 @@ export function UnifiedFarmMap({
   const currentImage = satelliteImages[selectedImageDate];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-emerald-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-gray-100 p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Enhanced Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] via-[#388E3C] to-[#1B5E20] rounded-3xl p-6 md:p-8 text-white shadow-2xl">
+        <div className="relative overflow-hidden bg-[#2E7D32] rounded-3xl p-6 md:p-8 text-white shadow-2xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -224,7 +224,7 @@ export function UnifiedFarmMap({
                   <div className="h-16 w-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border-2 border-white/30 shadow-lg">
                     <Satellite className="h-8 w-8 text-white animate-pulse" />
                   </div>
-                  <div className="absolute -top-1 -right-1 h-4 w-4 bg-emerald-400 rounded-full border-2 border-white animate-ping"></div>
+                  <div className="absolute -top-1 -right-1 h-4 w-4 bg-[#2E7D32]/30 rounded-full border-2 border-white animate-ping"></div>
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold mb-1">{text.title}</h1>
@@ -311,7 +311,7 @@ export function UnifiedFarmMap({
               onClick={() => setViewMode("satellite")}
               className={`px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                 viewMode === "satellite"
-                  ? "bg-gradient-to-r from-[#2E7D32] to-[#388E3C] text-white shadow-xl scale-105"
+                  ? "bg-[#2E7D32] text-white shadow-xl scale-105"
                   : "bg-white text-gray-700 border-2 border-gray-200"
               }`}
             >
@@ -322,7 +322,7 @@ export function UnifiedFarmMap({
               onClick={() => setViewMode("map")}
               className={`px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                 viewMode === "map"
-                  ? "bg-gradient-to-r from-[#2E7D32] to-[#388E3C] text-white shadow-xl scale-105"
+                  ? "bg-[#2E7D32] text-white shadow-xl scale-105"
                   : "bg-white text-gray-700 border-2 border-gray-200"
               }`}
             >
@@ -333,7 +333,7 @@ export function UnifiedFarmMap({
               onClick={() => setViewMode("hybrid")}
               className={`px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                 viewMode === "hybrid"
-                  ? "bg-gradient-to-r from-[#2E7D32] to-[#388E3C] text-white shadow-xl scale-105"
+                  ? "bg-[#2E7D32] text-white shadow-xl scale-105"
                   : "bg-white text-gray-700 border-2 border-gray-200"
               }`}
             >
@@ -348,7 +348,7 @@ export function UnifiedFarmMap({
               variant="outline"
               size="sm"
               onClick={() => setShowFields(!showFields)}
-              className={`border-2 ${showFields ? "bg-emerald-50 border-emerald-300" : ""}`}
+              className={`border-2 ${showFields ? "bg-[#2E7D32]/5 border-[#2E7D32]/20" : ""}`}
             >
               {showFields ? <Eye className="h-4 w-4 mr-2" /> : <EyeOff className="h-4 w-4 mr-2" />}
               {text.fieldBoundaries}
@@ -363,7 +363,7 @@ export function UnifiedFarmMap({
                   : (language === "en" ? "NDVI vegetation index enabled" : "Kiashiria cha mimea NDVI kimewashwa")
                 );
               }}
-              className={`border-2 ${showNDVI ? "bg-green-50 border-green-300" : ""}`}
+              className={`border-2 ${showNDVI ? "bg-[#2E7D32]/5 border-[#2E7D32]/20" : ""}`}
             >
               <Sprout className="h-4 w-4 mr-2" />
               {text.ndviView}
@@ -372,7 +372,7 @@ export function UnifiedFarmMap({
               variant="outline"
               size="sm"
               onClick={() => setShowWeather(!showWeather)}
-              className={`border-2 ${showWeather ? "bg-blue-50 border-blue-300" : ""}`}
+              className={`border-2 ${showWeather ? "bg-gray-50 border-gray-300" : ""}`}
             >
               <CloudRain className="h-4 w-4 mr-2" />
               {text.weatherOverlay}
@@ -408,7 +408,7 @@ export function UnifiedFarmMap({
                     exit={{ opacity: 0 }}
                     className="absolute inset-0 mix-blend-multiply"
                   >
-                    <div className="w-full h-full bg-gradient-to-br from-emerald-500/60 via-lime-500/60 to-yellow-500/60"></div>
+                    <div className="w-full h-full bg-gradient-to-br from-[#2E7D32]/60 via-gray-50/60 to-gray-100/60"></div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -548,7 +548,7 @@ export function UnifiedFarmMap({
                   >
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">
-                        <Sun className="h-6 w-6 text-amber-500" />
+                        <Sun className="h-6 w-6 text-gray-600" />
                         <div>
                           <p className="text-2xl font-bold text-gray-900">28°C</p>
                           <p className="text-xs text-gray-600">{language === "en" ? "Sunny" : "Jua"}</p>
@@ -556,7 +556,7 @@ export function UnifiedFarmMap({
                       </div>
                       <div className="h-8 w-px bg-gray-300"></div>
                       <div className="flex items-center gap-2">
-                        <Droplets className="h-5 w-5 text-blue-500" />
+                        <Droplets className="h-5 w-5 text-gray-600" />
                         <div>
                           <p className="text-sm font-bold text-gray-900">65%</p>
                           <p className="text-xs text-gray-600">{language === "en" ? "Humidity" : "Unyevu"}</p>
@@ -605,11 +605,11 @@ export function UnifiedFarmMap({
               <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-xl rounded-xl px-4 py-2 shadow-2xl border border-gray-200">
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <div className="h-3 w-3 bg-emerald-500 rounded-full"></div>
-                    <div className="absolute inset-0 h-3 w-3 bg-emerald-500 rounded-full animate-ping"></div>
+                    <div className="h-3 w-3 bg-[#2E7D32] rounded-full"></div>
+                    <div className="absolute inset-0 h-3 w-3 bg-[#2E7D32] rounded-full animate-ping"></div>
                   </div>
                   <span className="text-sm font-semibold text-gray-900">GPS</span>
-                  <Badge className="bg-emerald-100 text-emerald-700 text-xs">±1.5m</Badge>
+                  <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] text-xs">±1.5m</Badge>
                 </div>
               </div>
 
@@ -642,7 +642,7 @@ export function UnifiedFarmMap({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl px-8 py-4 shadow-2xl"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-gray-50 to-gray-100 text-white rounded-2xl px-8 py-4 shadow-2xl"
                   >
                     <div className="text-center">
                       <PenTool className="h-8 w-8 mx-auto mb-2 animate-pulse" />
@@ -681,7 +681,7 @@ export function UnifiedFarmMap({
                     <span className="text-sm font-semibold text-gray-900">
                       {text.imageDate}: {new Date(currentImage.date).toLocaleDateString()}
                     </span>
-                    <Badge className="bg-blue-100 text-blue-700">
+                    <Badge className="bg-gray-100 text-gray-700">
                       {selectedImageDate + 1} / {satelliteImages.length}
                     </Badge>
                   </div>
@@ -792,17 +792,17 @@ export function UnifiedFarmMap({
 
         {/* Info Cards */}
         <div className="grid md:grid-cols-2 gap-4">
-          <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white">
+          <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white">
             <CardContent className="py-5">
               <div className="flex gap-3 items-start">
-                <div className="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center shadow-lg">
                   <Satellite className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-blue-900 mb-2 text-base">
+                  <h4 className="font-bold text-gray-900 mb-2 text-base">
                     {language === "en" ? "Satellite Imagery" : "Picha za Satelaiti"}
                   </h4>
-                  <p className="text-sm text-blue-700 leading-relaxed">
+                  <p className="text-sm text-gray-700 leading-relaxed">
                     {language === "en"
                       ? "Access high-resolution satellite images updated every 2 weeks. Compare historical imagery to track crop growth and field changes over time."
                       : "Pata picha za satelaiti zenye ubora wa juu zinazosasishwa kila wiki 2. Linganisha picha za zamani kufuatilia ukuaji wa mazao na mabadiliko ya shamba kwa muda."}
@@ -812,17 +812,17 @@ export function UnifiedFarmMap({
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white">
+          <Card className="border-2 border-[#2E7D32]/20 bg-gradient-to-br from-[#2E7D32] to-white">
             <CardContent className="py-5">
               <div className="flex gap-3 items-start">
-                <div className="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-2xl flex items-center justify-center shadow-lg">
                   <Sprout className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-green-900 mb-2 text-base">
+                  <h4 className="font-bold text-[#2E7D32] mb-2 text-base">
                     {language === "en" ? "NDVI Analysis" : "Uchambuzi wa NDVI"}
                   </h4>
-                  <p className="text-sm text-green-700 leading-relaxed">
+                  <p className="text-sm text-[#2E7D32] leading-relaxed">
                     {language === "en"
                       ? "Vegetation health index (NDVI) shows crop vitality. Green = healthy, Yellow = stress, Red = attention needed. Updated with every satellite pass."
                       : "Kiashiria cha afya ya mimea (NDVI) kinaonyesha nguvu ya mazao. Kijani = afya nzuri, Manjano = msongo, Nyekundu = inahitaji angalizo."}

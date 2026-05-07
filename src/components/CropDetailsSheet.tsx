@@ -146,7 +146,7 @@ export function CropDetailsSheet({
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
-            <Sprout className="h-5 w-5 text-green-600" />
+            <Sprout className="h-5 w-5 text-[#2E7D32]" />
             {cropName}
           </SheetTitle>
           <SheetDescription>
@@ -181,8 +181,8 @@ export function CropDetailsSheet({
                     <div className="flex items-center gap-1">
                       {cropPrice.change && cropPrice.change > 0 ? (
                         <>
-                          <TrendingUp className="h-5 w-5 text-green-600" />
-                          <span className="text-green-600 font-medium">+{cropPrice.change}%</span>
+                          <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
+                          <span className="text-[#2E7D32] font-medium">+{cropPrice.change}%</span>
                         </>
                       ) : (
                         <>
@@ -218,7 +218,7 @@ export function CropDetailsSheet({
                           <div key={region} className="flex items-center justify-between py-2 border-b last:border-b-0">
                             <div className="flex items-center gap-2">
                               <span className={isCurrent ? "font-medium" : ""}>{region}</span>
-                              {isLowest && <Badge variant="outline" className="text-green-600 border-green-600">Lowest</Badge>}
+                              {isLowest && <Badge variant="outline" className="text-[#2E7D32] border-[#2E7D32]/20">Lowest</Badge>}
                               {isHighest && <Badge variant="outline" className="text-red-600 border-red-600">Highest</Badge>}
                               {isCurrent && <Badge variant="default">Your Region</Badge>}
                             </div>
@@ -249,7 +249,7 @@ export function CropDetailsSheet({
                       return (
                         <div key={index} className="flex-1 flex flex-col items-center gap-1">
                           <div 
-                            className="w-full bg-green-500 rounded-t hover:bg-green-600 transition-colors"
+                            className="w-full bg-[#2E7D32] rounded-t hover:bg-[#2E7D32] transition-colors"
                             style={{ height: `${height}%`, minHeight: '4px' }}
                             title={`${trend.date}: ${formatPrice(trend.price)}`}
                           />
@@ -298,25 +298,25 @@ export function CropDetailsSheet({
               {cropAdvice ? (
                 <>
                   {/* Current Stage */}
-                  <Card className="p-4 bg-green-50 border-green-200">
-                    <h4 className="font-semibold mb-2 flex items-center gap-2 text-green-900">
+                  <Card className="p-4 bg-[#2E7D32]/5 border-[#2E7D32]/20">
+                    <h4 className="font-semibold mb-2 flex items-center gap-2 text-[#2E7D32]">
                       <Leaf className="h-4 w-4" />
                       Current Growth Stage
                     </h4>
-                    <p className="text-green-800">{cropAdvice.stage}</p>
+                    <p className="text-[#2E7D32]">{cropAdvice.stage}</p>
                   </Card>
 
                   {/* Immediate Tasks */}
                   {cropAdvice.tasks && cropAdvice.tasks.length > 0 && (
                     <Card className="p-4">
                       <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-orange-600" />
+                        <Calendar className="h-4 w-4 text-gray-600" />
                         Tasks This Week
                       </h4>
                       <ul className="space-y-2">
                         {cropAdvice.tasks.map((task, index) => (
                           <li key={index} className="flex items-start gap-2 text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <CheckCircle2 className="h-4 w-4 text-[#2E7D32] mt-0.5 flex-shrink-0" />
                             <span>{task}</span>
                           </li>
                         ))}
@@ -328,13 +328,13 @@ export function CropDetailsSheet({
                   {cropAdvice.tips && cropAdvice.tips.length > 0 && (
                     <Card className="p-4">
                       <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <Sun className="h-4 w-4 text-yellow-600" />
+                        <Sun className="h-4 w-4 text-gray-600" />
                         Growing Tips
                       </h4>
                       <ul className="space-y-2">
                         {cropAdvice.tips.map((tip, index) => (
                           <li key={index} className="flex items-start gap-2 text-sm">
-                            <span className="text-yellow-600 flex-shrink-0">•</span>
+                            <span className="text-gray-600 flex-shrink-0">•</span>
                             <span>{tip}</span>
                           </li>
                         ))}
@@ -379,16 +379,16 @@ export function CropDetailsSheet({
                     </Card>
 
                     <Card className="p-4">
-                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-orange-900">
-                        <Bug className="h-4 w-4 text-orange-600" />
+                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-gray-900">
+                        <Bug className="h-4 w-4 text-gray-600" />
                         Pest Control
                       </h4>
                       <p className="text-sm text-gray-700">{cropAdvice.pestControl}</p>
                     </Card>
 
                     <Card className="p-4">
-                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-green-900">
-                        <Calendar className="h-4 w-4 text-green-600" />
+                      <h4 className="font-semibold mb-2 flex items-center gap-2 text-[#2E7D32]">
+                        <Calendar className="h-4 w-4 text-[#2E7D32]" />
                         Expected Harvest
                       </h4>
                       <p className="text-sm text-gray-700">{cropAdvice.expectedHarvest}</p>

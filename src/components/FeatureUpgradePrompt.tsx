@@ -111,11 +111,11 @@ export function FeatureUpgradePrompt({
 
   const getRoleBadgeColor = (role: UserRole) => {
     const colors: Record<UserRole, string> = {
-      smallholder_farmer: "bg-green-100 text-green-700",
-      farmer: "bg-green-100 text-green-700",
+      smallholder_farmer: "bg-[#2E7D32]/10 text-[#2E7D32]",
+      farmer: "bg-[#2E7D32]/10 text-[#2E7D32]",
       farm_manager: "bg-gray-100 text-gray-700",
       commercial_farm_admin: "bg-gray-100 text-gray-700",
-      agribusiness_ops: "bg-orange-100 text-orange-700",
+      agribusiness_ops: "bg-gray-100 text-gray-700",
       extension_officer: "bg-gray-100 text-gray-700",
       cooperative_leader: "bg-gray-100 text-gray-700",
     };
@@ -125,7 +125,7 @@ export function FeatureUpgradePrompt({
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
       <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-t-xl">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 text-white rounded-t-xl">
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-2xl flex items-center gap-2 mb-2">
@@ -185,8 +185,8 @@ export function FeatureUpgradePrompt({
                       className={`
                         relative p-6 rounded-xl border-2 transition-all cursor-pointer
                         ${isSelected
-                          ? "border-green-500 bg-green-50 shadow-lg"
-                          : "border-gray-200 hover:border-green-300 hover:shadow-md"
+                          ? "border-[#2E7D32]/20 bg-[#2E7D32]/5 shadow-lg"
+                          : "border-gray-200 hover:border-[#2E7D32]/20 hover:shadow-md"
                         }
                       `}
                       onClick={() => setSelectedRole(role)}
@@ -194,14 +194,14 @@ export function FeatureUpgradePrompt({
                       {/* Badge */}
                       {isFarmManager && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1">
+                          <Badge className="bg-gradient-to-r from-gray-50 to-red-500 text-white px-3 py-1">
                             {text.recommended}
                           </Badge>
                         </div>
                       )}
                       {isCommercial && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <Badge className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-3 py-1">
+                          <Badge className="bg-gradient-to-r from-gray-50 to-gray-100 text-white px-3 py-1">
                             {text.enterprise}
                           </Badge>
                         </div>
@@ -210,11 +210,11 @@ export function FeatureUpgradePrompt({
                       <div className="flex items-center gap-3 mb-4">
                         <div className={`
                           p-3 rounded-xl
-                          ${isSelected ? "bg-green-100" : "bg-gray-100"}
+                          ${isSelected ? "bg-[#2E7D32]/10" : "bg-gray-100"}
                         `}>
                           <Icon className={`
                             h-6 w-6
-                            ${isSelected ? "text-green-600" : "text-gray-600"}
+                            ${isSelected ? "text-[#2E7D32]" : "text-gray-600"}
                           `} />
                         </div>
                         <div className="flex-1">
@@ -235,7 +235,7 @@ export function FeatureUpgradePrompt({
                           </span>
                           <span className="text-sm text-gray-600">{text.features}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-green-600">
+                        <div className="flex items-center gap-1 text-[#2E7D32]">
                           <TrendingUp className="h-4 w-4" />
                           <span className="text-sm font-medium">
                             +{comparison.additional} {text.additionalFeatures}
@@ -248,11 +248,11 @@ export function FeatureUpgradePrompt({
                         {role === "farmer" && (
                           <>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Farm Graph Dashboard</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Farm Finance Management</span>
                             </div>
                           </>
@@ -260,19 +260,19 @@ export function FeatureUpgradePrompt({
                         {role === "farm_manager" && (
                           <>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Task Management (Team)</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Farm Mapping & Allocation</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Digital Farm Twin</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Analytics Dashboard</span>
                             </div>
                           </>
@@ -280,19 +280,19 @@ export function FeatureUpgradePrompt({
                         {role === "commercial_farm_admin" && (
                           <>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Agribusiness Dashboard</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Orders & E-commerce</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>Institutional Dashboard</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Check className="h-4 w-4 text-green-600" />
+                              <Check className="h-4 w-4 text-[#2E7D32]" />
                               <span>System Diagnostics</span>
                             </div>
                           </>
@@ -304,7 +304,7 @@ export function FeatureUpgradePrompt({
                         className={`
                           w-full
                           ${isSelected
-                            ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                            ? "bg-gradient-to-r from-gray-50 to-gray-100 text-white"
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           }
                         `}

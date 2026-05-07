@@ -74,13 +74,13 @@ export function DataPrivacyConsent() {
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case "essential":
-        return <Badge className="bg-green-100 text-green-700 border-green-300">Essential</Badge>;
+        return <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20">Essential</Badge>;
       case "analytics":
         return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Analytics</Badge>;
       case "marketing":
-        return <Badge className="bg-orange-100 text-orange-700 border-orange-300">Marketing</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Marketing</Badge>;
       case "sharing":
-        return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">Data Sharing</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-300">Data Sharing</Badge>;
       default:
         return null;
     }
@@ -95,21 +95,21 @@ export function DataPrivacyConsent() {
             <Shield className="h-6 w-6" />
             Data Privacy & Consent
           </CardTitle>
-          <CardDescription className="text-green-100">
+          <CardDescription className="text-[#2E7D32]">
             Your data, your control. Manage how KILIMO uses your information.
           </CardDescription>
         </CardHeader>
       </Card>
 
       {/* Privacy Principles */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardHeader>
           <CardTitle className="text-gray-900">Our Privacy Commitment</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <Shield className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="font-medium text-gray-900 mb-1">Your Data is Secure</h4>
                 <p className="text-gray-700">
@@ -118,7 +118,7 @@ export function DataPrivacyConsent() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Eye className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <Eye className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="font-medium text-gray-900 mb-1">Transparent Use</h4>
                 <p className="text-gray-700">
@@ -127,7 +127,7 @@ export function DataPrivacyConsent() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Database className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <Database className="h-5 w-5 text-[#2E7D32] mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="font-medium text-gray-900 mb-1">Revenue Sharing</h4>
                 <p className="text-gray-700">
@@ -152,7 +152,7 @@ export function DataPrivacyConsent() {
             <div 
               key={consent.id}
               className={`border rounded-lg p-4 ${
-                consent.granted ? 'bg-green-50 border-green-200' : 'bg-gray-50'
+                consent.granted ? 'bg-[#2E7D32]/5 border-[#2E7D32]/20' : 'bg-gray-50'
               }`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -174,7 +174,7 @@ export function DataPrivacyConsent() {
                   disabled={consent.required}
                   className={`flex items-center justify-center h-12 w-12 rounded-full transition-all flex-shrink-0 ${
                     consent.granted
-                      ? 'bg-green-600 hover:bg-green-700'
+                      ? 'bg-[#2E7D32] hover:bg-[#2E7D32]'
                       : 'bg-gray-300 hover:bg-gray-400'
                   } ${consent.required ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
@@ -226,7 +226,7 @@ export function DataPrivacyConsent() {
       </Card>
 
       {/* Data Sharing Revenue */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardHeader>
           <CardTitle className="text-gray-900">Data Sharing Revenue</CardTitle>
           <CardDescription className="text-gray-700">
@@ -240,10 +240,10 @@ export function DataPrivacyConsent() {
                 <p className="font-medium text-gray-900">Your Total Earnings</p>
                 <p className="text-sm text-gray-700">From data sharing (last 6 months)</p>
               </div>
-              <p className="text-2xl font-bold text-green-600">12,500 TZS</p>
+              <p className="text-2xl font-bold text-[#2E7D32]">12,500 TZS</p>
             </div>
             
-            <div className="border-t border-green-200 pt-3 text-sm text-gray-700">
+            <div className="border-t border-[#2E7D32]/20 pt-3 text-sm text-gray-700">
               <p className="mb-2">
                 <strong>How it works:</strong> When you consent to "Anonymized Research Data", 
                 we may include your farming data (without personal identifiers) in aggregated 
@@ -255,7 +255,7 @@ export function DataPrivacyConsent() {
               </p>
             </div>
 
-            <Button className="w-full bg-green-600 hover:bg-green-700">
+            <Button className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]">
               View Revenue Details
             </Button>
           </div>
@@ -281,11 +281,11 @@ export function DataPrivacyConsent() {
             or SMS PRIVACY to 15050.
           </p>
           <div className="flex gap-2 mt-4">
-            <Button variant="link" className="text-xs h-auto p-0 text-green-600">
+            <Button variant="link" className="text-xs h-auto p-0 text-[#2E7D32]">
               Read Full Privacy Policy
             </Button>
             <span className="text-gray-400">•</span>
-            <Button variant="link" className="text-xs h-auto p-0 text-green-600">
+            <Button variant="link" className="text-xs h-auto p-0 text-[#2E7D32]">
               Read Terms of Service
             </Button>
           </div>

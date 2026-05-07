@@ -172,17 +172,17 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
 
   const getLevelBadge = (level: string) => {
     switch (level) {
-      case "beginner": return "bg-green-100 text-green-700 border-green-200";
-      case "intermediate": return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "beginner": return "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20";
+      case "intermediate": return "bg-gray-100 text-gray-700 border-gray-200";
       case "advanced": return "bg-red-100 text-red-700 border-red-200";
       default: return "bg-gray-100 text-gray-700";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -192,7 +192,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Learning Center" : "Kituo cha Kujifunza"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Build your farming knowledge, step by step"
                   : "Jenga ujuzi wako wa kilimo, hatua kwa hatua"}
@@ -204,19 +204,19 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
           <div className="grid grid-cols-3 gap-3 mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">12</div>
-              <div className="text-xs text-green-100">
+              <div className="text-xs text-[#2E7D32]">
                 {language === "en" ? "Completed" : "Imekamilika"}
               </div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">3</div>
-              <div className="text-xs text-green-100">
+              <div className="text-xs text-[#2E7D32]">
                 {language === "en" ? "In Progress" : "Inaendelea"}
               </div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">28h</div>
-              <div className="text-xs text-green-100">
+              <div className="text-xs text-[#2E7D32]">
                 {language === "en" ? "Learning Time" : "Muda wa Kujifunza"}
               </div>
             </div>
@@ -231,16 +231,16 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <Play className="h-5 w-5 text-green-600" />
+                  <Play className="h-5 w-5 text-[#2E7D32]" />
                   {language === "en" ? "Continue Learning" : "Endelea Kujifunza"}
                 </h2>
-                <button className="text-sm text-green-600 font-medium hover:text-green-700">
+                <button className="text-sm text-[#2E7D32] font-medium hover:text-[#2E7D32]">
                   {language === "en" ? "View All" : "Ona Zote"}
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {continueModules.map((module) => (
-                  <div key={module.id} className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200 hover:border-green-300 transition-all cursor-pointer group">
+                  <div key={module.id} className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200 hover:border-[#2E7D32]/20 transition-all cursor-pointer group">
                     <div className="flex items-start gap-3 mb-3">
                       <div className={`p-2 bg-${getCategoryColor(module.category)}-100 rounded-lg`}>
                         <module.icon className={`h-5 w-5 text-${getCategoryColor(module.category)}-600`} />
@@ -260,11 +260,11 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
                       </div>
                       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
+                          className="h-full bg-gradient-to-r from-[#2E7D32] to-gray-100"
                           style={{ width: `${module.progress}%` }}
                         ></div>
                       </div>
-                      <button className="w-full mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                      <button className="w-full mt-2 px-4 py-2 bg-[#2E7D32] text-white rounded-lg hover:bg-[#2E7D32] transition-colors flex items-center justify-center gap-2 text-sm font-medium">
                         <Play className="h-4 w-4" />
                         {language === "en" ? "Continue" : "Endelea"}
                       </button>
@@ -279,7 +279,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Target className="h-5 w-5 text-green-600" />
+                <Target className="h-5 w-5 text-[#2E7D32]" />
                 {language === "en" ? "Learning Paths" : "Njia za Kujifunza"}
               </h2>
             </div>
@@ -338,7 +338,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-600" />
+                <Star className="h-5 w-5 text-gray-600" />
                 {language === "en" ? "Featured Lessons" : "Masomo Maalum"}
               </h2>
               <div className="flex items-center gap-2">
@@ -346,7 +346,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
                   onClick={() => setActiveLevel("all")}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     activeLevel === "all"
-                      ? "bg-green-600 text-white"
+                      ? "bg-[#2E7D32] text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
@@ -356,7 +356,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
                   onClick={() => setActiveLevel("beginner")}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     activeLevel === "beginner"
-                      ? "bg-green-600 text-white"
+                      ? "bg-[#2E7D32] text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
@@ -366,7 +366,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
                   onClick={() => setActiveLevel("intermediate")}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     activeLevel === "intermediate"
-                      ? "bg-green-600 text-white"
+                      ? "bg-[#2E7D32] text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
@@ -380,7 +380,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
                 .map((module) => {
                   const ModuleIcon = module.icon;
                   return (
-                    <div key={module.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-green-300 hover:shadow-md transition-all cursor-pointer group">
+                    <div key={module.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-[#2E7D32]/20 hover:shadow-md transition-all cursor-pointer group">
                       <div className="flex items-start justify-between mb-3">
                         <div className={`p-2 bg-${getCategoryColor(module.category)}-100 rounded-lg`}>
                           <ModuleIcon className={`h-5 w-5 text-${getCategoryColor(module.category)}-600`} />
@@ -401,7 +401,7 @@ export function LearningHome({ userId, language, onNavigate }: LearningHomeProps
                           {module.duration}
                         </span>
                       </div>
-                      <button className="w-full px-4 py-2 bg-white border-2 border-gray-200 group-hover:border-green-500 group-hover:bg-green-50 text-gray-700 group-hover:text-green-700 rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-medium">
+                      <button className="w-full px-4 py-2 bg-white border-2 border-gray-200 group-hover:border-[#2E7D32]/20 group-hover:bg-[#2E7D32]/5 text-gray-700 group-hover:text-[#2E7D32] rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-medium">
                         <Play className="h-4 w-4" />
                         {language === "en" ? "Start Learning" : "Anza Kujifunza"}
                       </button>

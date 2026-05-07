@@ -86,13 +86,13 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
   ];
 
   const getHealthColor = (health: number) => {
-    if (health >= 90) return "text-green-600 bg-green-100";
-    if (health >= 75) return "text-yellow-600 bg-yellow-100";
+    if (health >= 90) return "text-[#2E7D32] bg-[#2E7D32]/10";
+    if (health >= 75) return "text-gray-600 bg-gray-100";
     return "text-red-600 bg-red-100";
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-600" />;
+    if (trend === "up") return <TrendingUp className="h-4 w-4 text-[#2E7D32]" />;
     if (trend === "down") return <TrendingDown className="h-4 w-4 text-red-600" />;
     return <Activity className="h-4 w-4 text-gray-600" />;
   };
@@ -158,7 +158,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
               px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize whitespace-nowrap
               ${timeRange === range
                 ? "bg-[#2E7D32] text-white shadow-lg"
-                : "bg-white text-gray-700 border border-gray-200 hover:border-green-300"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-[#2E7D32]/20"
               }
             `}
           >
@@ -170,13 +170,13 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
       {/* Key Metrics Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue */}
-        <Card className="hover:shadow-lg transition-all border-2 border-green-200">
+        <Card className="hover:shadow-lg transition-all border-2 border-[#2E7D32]/20">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-green-100 rounded-xl">
-                <DollarSign className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-[#2E7D32]/10 rounded-xl">
+                <DollarSign className="h-5 w-5 text-[#2E7D32]" />
               </div>
-              <Badge className="bg-green-100 text-green-700 gap-1">
+              <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] gap-1">
                 <ArrowUpRight className="h-3 w-3" />
                 +{farmMetrics.revenueGrowth}%
               </Badge>
@@ -209,13 +209,13 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
         </Card>
 
         {/* Yield Growth */}
-        <Card className="hover:shadow-lg transition-all border-2 border-orange-200">
+        <Card className="hover:shadow-lg transition-all border-2 border-gray-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-orange-100 rounded-xl">
-                <Leaf className="h-5 w-5 text-orange-600" />
+              <div className="p-2 bg-gray-100 rounded-xl">
+                <Leaf className="h-5 w-5 text-gray-600" />
               </div>
-              <Badge className="bg-orange-100 text-orange-700 gap-1">
+              <Badge className="bg-gray-100 text-gray-700 gap-1">
                 <ArrowUpRight className="h-3 w-3" />
                 +{farmMetrics.yieldGrowth}%
               </Badge>
@@ -254,7 +254,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Leaf className="h-5 w-5 text-green-600" />
+              <Leaf className="h-5 w-5 text-[#2E7D32]" />
               Crop Performance Analysis
             </CardTitle>
             <Button variant="outline" size="sm">
@@ -295,7 +295,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
                   </div>
                   <div className="text-center p-3 bg-white rounded-lg">
                     <p className="text-xs text-gray-600 mb-1">Revenue</p>
-                    <p className="text-lg font-bold text-green-600">
+                    <p className="text-lg font-bold text-[#2E7D32]">
                       {(crop.revenue / 1000000).toFixed(1)}M
                     </p>
                   </div>
@@ -330,7 +330,7 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-semibold text-gray-900">{month.month}</span>
                     <div className="flex items-center gap-4">
-                      <span className="text-green-600 font-bold">
+                      <span className="text-[#2E7D32] font-bold">
                         +{(month.revenue / 1000000).toFixed(1)}M
                       </span>
                       <span className="text-gray-700 font-bold">
@@ -339,9 +339,9 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <div className="flex-1 bg-green-100 rounded-full h-2">
+                    <div className="flex-1 bg-[#2E7D32]/10 rounded-full h-2">
                       <div
-                        className="bg-green-600 rounded-full h-2"
+                        className="bg-[#2E7D32] rounded-full h-2"
                         style={{ width: `${(month.revenue / 3500000) * 100}%` }}
                       />
                     </div>
@@ -373,8 +373,8 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
               const colorMap: Record<string, string> = {
                 blue: "bg-gray-500",
                 purple: "bg-gray-500",
-                green: "bg-green-500",
-                orange: "bg-orange-500"
+                green: "bg-[#2E7D32]",
+                orange: "bg-gray-600"
               };
               
               return (
@@ -402,10 +402,10 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
       </div>
 
       {/* Alerts & Insights */}
-      <Card className="border-2 border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50">
+      <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-yellow-600" />
+            <Zap className="h-5 w-5 text-gray-600" />
             Recent Alerts & Insights
           </CardTitle>
         </CardHeader>
@@ -413,13 +413,13 @@ export function AnalyticsDashboard({ userId }: AnalyticsDashboardProps) {
           <div className="space-y-3">
             {alerts.map((alert) => {
               const iconMap = {
-                success: <CheckCircle className="h-5 w-5 text-green-600" />,
-                warning: <AlertCircle className="h-5 w-5 text-yellow-600" />,
+                success: <CheckCircle className="h-5 w-5 text-[#2E7D32]" />,
+                warning: <AlertCircle className="h-5 w-5 text-gray-600" />,
                 info: <Activity className="h-5 w-5 text-gray-700" />
               };
               const bgMap = {
-                success: "bg-green-50 border-green-200",
-                warning: "bg-yellow-50 border-yellow-200",
+                success: "bg-[#2E7D32]/5 border-[#2E7D32]/20",
+                warning: "bg-gray-50 border-gray-200",
                 info: "bg-gray-50 border-gray-200"
               };
               

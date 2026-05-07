@@ -112,9 +112,9 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
   const completed = courses.filter(c => c.completed);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/20 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/20 pb-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-600 to-emerald-600 text-white px-4 lg:px-6 py-8">
+      <div className="bg-gradient-to-br from-[#2E7D32] to-gray-100 text-white px-4 lg:px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -124,7 +124,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
               <h1 className="text-2xl font-bold">
                 {language === "en" ? "Training Courses" : "Kozi za Mafunzo"}
               </h1>
-              <p className="text-green-100 text-sm">
+              <p className="text-[#2E7D32] text-sm">
                 {language === "en" 
                   ? "Structured learning paths with certificates"
                   : "Njia za kujifunza zilizopangwa na vyeti"}
@@ -136,15 +136,15 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
           <div className="grid grid-cols-3 gap-3 mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{inProgress.length}</div>
-              <div className="text-xs text-green-100">{language === "en" ? "In Progress" : "Inaendelea"}</div>
+              <div className="text-xs text-[#2E7D32]">{language === "en" ? "In Progress" : "Inaendelea"}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{completed.length}</div>
-              <div className="text-xs text-green-100">{language === "en" ? "Completed" : "Imekamilika"}</div>
+              <div className="text-xs text-[#2E7D32]">{language === "en" ? "Completed" : "Imekamilika"}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-2xl font-bold">{completed.length}</div>
-              <div className="text-xs text-green-100">{language === "en" ? "Certificates" : "Vyeti"}</div>
+              <div className="text-xs text-[#2E7D32]">{language === "en" ? "Certificates" : "Vyeti"}</div>
             </div>
           </div>
         </div>
@@ -156,16 +156,16 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
           {inProgress.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Play className="h-5 w-5 text-green-600" />
+                <Play className="h-5 w-5 text-[#2E7D32]" />
                 {language === "en" ? "Continue Learning" : "Endelea Kujifunza"}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {inProgress.map((course) => (
-                  <Card key={course.id} className="border-2 border-green-200 hover:shadow-md transition-all">
+                  <Card key={course.id} className="border-2 border-[#2E7D32]/20 hover:shadow-md transition-all">
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4 mb-4">
-                        <div className="p-3 bg-green-100 rounded-xl">
-                          <GraduationCap className="h-6 w-6 text-green-600" />
+                        <div className="p-3 bg-[#2E7D32]/10 rounded-xl">
+                          <GraduationCap className="h-6 w-6 text-[#2E7D32]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-bold text-gray-900 mb-1">{course.title}</h3>
@@ -179,7 +179,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                         </div>
                         <Progress value={course.progress || 0} className="h-2" />
                       </div>
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
+                      <Button className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]">
                         <Play className="h-4 w-4 mr-2" />
                         {language === "en" ? "Continue" : "Endelea"}
                       </Button>
@@ -237,7 +237,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                             </Badge>
                           )}
                           {course.completed && (
-                            <Badge className="bg-green-100 text-green-700 border-green-200 border">
+                            <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20 border">
                               <CheckCircle className="h-3 w-3 mr-1" />
                               {language === "en" ? "Completed" : "Imekamilika"}
                             </Badge>
@@ -250,7 +250,7 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
 
                       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
                         <span className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                          <Star className="h-3 w-3 text-gray-600 fill-gray-600" />
                           {course.rating}
                         </span>
                         <span>•</span>
@@ -274,9 +274,9 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                       </div>
 
                       {course.hasCertificate && (
-                        <div className="flex items-center gap-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
-                          <Trophy className="h-4 w-4 text-yellow-600" />
-                          <span className="text-xs font-medium text-yellow-700">
+                        <div className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded-lg mb-4">
+                          <Trophy className="h-4 w-4 text-gray-600" />
+                          <span className="text-xs font-medium text-gray-700">
                             {language === "en" ? "Certificate upon completion" : "Cheti baada ya kukamilisha"}
                           </span>
                         </div>
@@ -291,9 +291,9 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
                       <Button 
                         className={`w-full ${
                           course.completed 
-                            ? "bg-green-600 hover:bg-green-700" 
+                            ? "bg-[#2E7D32] hover:bg-[#2E7D32]" 
                             : course.progress
-                            ? "bg-green-600 hover:bg-green-700"
+                            ? "bg-[#2E7D32] hover:bg-[#2E7D32]"
                             : "bg-gray-900 hover:bg-gray-800"
                         }`}
                       >
@@ -323,17 +323,17 @@ export function TrainingCourses({ language, userId }: TrainingCoursesProps) {
 
           {/* Achievements/Certificates */}
           {completed.length > 0 && (
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border-2 border-yellow-200 p-6">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-yellow-600" />
+                <Trophy className="h-6 w-6 text-gray-600" />
                 {language === "en" ? "Your Certificates" : "Vyeti Vyako"}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {completed.map((course) => (
-                  <div key={course.id} className="bg-white rounded-xl p-4 border-2 border-yellow-300">
+                  <div key={course.id} className="bg-white rounded-xl p-4 border-2 border-gray-300">
                     <div className="text-center">
-                      <div className="inline-flex p-3 bg-yellow-100 rounded-full mb-3">
-                        <Award className="h-8 w-8 text-yellow-600" />
+                      <div className="inline-flex p-3 bg-gray-100 rounded-full mb-3">
+                        <Award className="h-8 w-8 text-gray-600" />
                       </div>
                       <h4 className="font-bold text-gray-900 text-sm mb-2">{course.title}</h4>
                       <Button size="sm" variant="outline" className="w-full border-2">

@@ -414,7 +414,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E7D32]/20 mx-auto"></div>
           <p className="mt-4 text-gray-600">{translations[language].loading}</p>
         </div>
       </div>
@@ -433,10 +433,10 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
         {/* Empty State */}
         <Card className="border border-gray-200 bg-white">
           <CardContent className="pt-12 pb-12 text-center">
-            <div className="h-16 w-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="h-8 w-8 text-green-700" />
+            <div className="h-16 w-16 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Users className="h-8 w-8 text-[#2E7D32]" />
             </div>
-            <Button onClick={createFamilyPlan} size="lg" className="bg-green-700 hover:bg-green-800 text-white">
+            <Button onClick={createFamilyPlan} size="lg" className="bg-[#2E7D32] hover:bg-[#2E7D32] text-white">
               <Plus className="h-5 w-5 mr-2" />
               {translations[language].createPlan}
             </Button>
@@ -474,7 +474,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                 <p className="text-sm text-gray-600 mb-1">{translations[language].teamMembers}</p>
                 <p className="text-2xl font-bold">{totalMembers}</p>
               </div>
-              <Users className="h-10 w-10 text-green-700" />
+              <Users className="h-10 w-10 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -486,7 +486,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                 <p className="text-sm text-gray-600 mb-1">{translations[language].activeTasks}</p>
                 <p className="text-2xl font-bold">{pendingTasks.length}</p>
               </div>
-              <ListTodo className="h-10 w-10 text-amber-600" />
+              <ListTodo className="h-10 w-10 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -498,7 +498,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                 <p className="text-sm text-gray-600 mb-1">{translations[language].completionRate}</p>
                 <p className="text-2xl font-bold">{completionRate}%</p>
               </div>
-              <CheckCircle2 className="h-10 w-10 text-green-600" />
+              <CheckCircle2 className="h-10 w-10 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -510,7 +510,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                 <p className="text-sm text-gray-600 mb-1">{translations[language].farmGoals}</p>
                 <p className="text-2xl font-bold">{plan.farmGoals?.length || 0}</p>
               </div>
-              <Target className="h-10 w-10 text-green-700" />
+              <Target className="h-10 w-10 text-[#2E7D32]" />
             </div>
           </CardContent>
         </Card>
@@ -543,7 +543,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
               <div className="space-y-2">
                 {plan.farmGoals?.map((goal: string, index: number) => (
                   <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <CheckCircle2 className="h-5 w-5 text-green-700 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-5 w-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                     <p className="text-sm">{goal}</p>
                   </div>
                 ))}
@@ -563,7 +563,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                     <div key={task.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         {task.status === "completed" ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-700" />
+                          <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
                         ) : (
                           <Circle className="h-4 w-4 text-gray-400" />
                         )}
@@ -620,7 +620,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                   <CardTitle>{translations[language].teamMembers}</CardTitle>
                   <CardDescription>{translations[language].trackMembers}</CardDescription>
                 </div>
-                <Button onClick={() => setShowMemberForm(!showMemberForm)} size="sm" className="bg-green-700 hover:bg-green-800">
+                <Button onClick={() => setShowMemberForm(!showMemberForm)} size="sm" className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                   <Plus className="h-4 w-4 mr-2" />
                   {translations[language].addMember}
                 </Button>
@@ -667,7 +667,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={addFamilyMember} className="bg-green-700 hover:bg-green-800">
+                    <Button onClick={addFamilyMember} className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                       {translations[language].save}
                     </Button>
                     <Button onClick={() => setShowMemberForm(false)} variant="outline">
@@ -687,8 +687,8 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                       <Card key={member.id} className="border border-gray-200">
                         <CardContent className="pt-6">
                           <div className="flex items-start gap-3 mb-4">
-                            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <Users className="h-6 w-6 text-green-700" />
+                            <div className="h-12 w-12 bg-[#2E7D32]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <Users className="h-6 w-6 text-[#2E7D32]" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-semibold truncate">{member.name}</h4>
@@ -705,7 +705,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                             </div>
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-600">{translations[language].completed}</span>
-                              <span className="font-medium text-green-700">{memberCompleted}</span>
+                              <span className="font-medium text-[#2E7D32]">{memberCompleted}</span>
                             </div>
                             <Progress 
                               value={memberTasks.length > 0 ? (memberCompleted / memberTasks.length) * 100 : 0} 
@@ -742,7 +742,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                 <Button 
                   onClick={() => setShowTaskForm(!showTaskForm)} 
                   size="sm"
-                  className="bg-green-700 hover:bg-green-800"
+                  className="bg-[#2E7D32] hover:bg-[#2E7D32]"
                   disabled={!plan.familyMembers || plan.familyMembers.length === 0}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -815,7 +815,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={createTask} className="bg-green-700 hover:bg-green-800">
+                    <Button onClick={createTask} className="bg-[#2E7D32] hover:bg-[#2E7D32]">
                       {translations[language].createTask}
                     </Button>
                     <Button onClick={() => setShowTaskForm(false)} variant="outline">
@@ -829,7 +829,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
               {pendingTasks.length > 0 && (
                 <div className="space-y-3">
                   <h4 className="font-medium text-sm flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-amber-600" />
+                    <Clock className="h-4 w-4 text-gray-600" />
                     {translations[language].pending} ({pendingTasks.length})
                   </h4>
                   {pendingTasks.map((task) => (
@@ -839,7 +839,7 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
                           onClick={() => toggleTaskStatus(task.id, task.status)}
                           className="flex-shrink-0 mt-1"
                         >
-                          <Circle className="h-5 w-5 text-gray-400 hover:text-green-700 transition-colors" />
+                          <Circle className="h-5 w-5 text-gray-400 hover:text-[#2E7D32] transition-colors" />
                         </button>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -868,17 +868,17 @@ export function FamilyFarmPlanner({ userId, apiBase, authToken, language = "en" 
               {completedTasks.length > 0 && (
                 <div className="space-y-3">
                   <h4 className="font-medium text-sm flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-700" />
+                    <CheckCircle2 className="h-4 w-4 text-[#2E7D32]" />
                     {translations[language].completed} ({completedTasks.length})
                   </h4>
                   {completedTasks.map((task) => (
-                    <div key={task.id} className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div key={task.id} className="p-4 bg-[#2E7D32]/5 rounded-lg border border-[#2E7D32]/20">
                       <div className="flex items-start gap-3">
                         <button
                           onClick={() => toggleTaskStatus(task.id, task.status)}
                           className="flex-shrink-0 mt-1"
                         >
-                          <CheckCircle2 className="h-5 w-5 text-green-700" />
+                          <CheckCircle2 className="h-5 w-5 text-[#2E7D32]" />
                         </button>
                         <div className="flex-1">
                           <p className="font-medium line-through text-gray-600 mb-1">{task.taskName}</p>

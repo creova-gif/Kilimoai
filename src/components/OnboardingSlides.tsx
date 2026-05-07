@@ -157,7 +157,7 @@ export function OnboardingSlides({ language, onComplete, onSkip }: OnboardingSli
                     className="mb-12"
                   >
                     <div className="relative inline-block">
-                      <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                       <img 
                         src={logo}
                         alt="KILIMO" 
@@ -228,7 +228,7 @@ export function OnboardingSlides({ language, onComplete, onSkip }: OnboardingSli
                           transition={{ delay: 0.5 + idx * 0.1 }}
                           className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors"
                         >
-                          <div className="flex-shrink-0 p-3 bg-green-600 rounded-xl shadow-sm">
+                          <div className="flex-shrink-0 p-3 bg-[#2E7D32] rounded-xl shadow-sm">
                             <FeatureIcon className="h-6 w-6 text-white" />
                           </div>
                           <p className="text-left text-base font-semibold text-gray-800">
@@ -281,7 +281,7 @@ export function OnboardingSlides({ language, onComplete, onSkip }: OnboardingSli
                           transition={{ delay: 0.5 + idx * 0.1 }}
                           className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors"
                         >
-                          <div className="flex-shrink-0 p-3 bg-green-600 rounded-xl shadow-sm">
+                          <div className="flex-shrink-0 p-3 bg-[#2E7D32] rounded-xl shadow-sm">
                             <PointIcon className="h-6 w-6 text-white" />
                           </div>
                           <p className="text-left text-base font-semibold text-gray-800">
@@ -309,7 +309,7 @@ export function OnboardingSlides({ language, onComplete, onSkip }: OnboardingSli
                 onClick={() => handleDotClick(index)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   index === currentSlide 
-                    ? 'w-8 bg-green-600' 
+                    ? 'w-8 bg-[#2E7D32]' 
                     : 'w-2 bg-gray-300 hover:bg-gray-400'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
@@ -320,7 +320,7 @@ export function OnboardingSlides({ language, onComplete, onSkip }: OnboardingSli
           {/* Continue/Next Button */}
           <Button
             onClick={handleNext}
-            className="w-full h-14 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+            className="w-full h-14 bg-[#2E7D32] hover:bg-[#2E7D32] text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
           >
             {currentSlide === slides.length - 1 
               ? (

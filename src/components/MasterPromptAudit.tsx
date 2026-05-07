@@ -293,18 +293,18 @@ export function MasterPromptAudit() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pass": return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case "pass": return <CheckCircle className="h-5 w-5 text-[#2E7D32]" />;
       case "fail": return <XCircle className="h-5 w-5 text-red-600" />;
-      case "warning": return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
+      case "warning": return <AlertTriangle className="h-5 w-5 text-gray-600" />;
       default: return null;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pass": return "bg-green-100 text-green-800 border-green-300";
+      case "pass": return "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20";
       case "fail": return "bg-red-100 text-red-800 border-red-300";
-      case "warning": return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "warning": return "bg-gray-100 text-gray-800 border-gray-300";
       default: return "";
     }
   };
@@ -312,9 +312,9 @@ export function MasterPromptAudit() {
   const getImpactBadge = (impact: string) => {
     const colors = {
       critical: "bg-red-600 text-white",
-      high: "bg-orange-600 text-white",
-      medium: "bg-yellow-600 text-white",
-      low: "bg-green-600 text-white"
+      high: "bg-gray-700 text-white",
+      medium: "bg-gray-700 text-white",
+      low: "bg-[#2E7D32] text-white"
     };
     return <Badge className={colors[impact as keyof typeof colors]}>{impact.toUpperCase()}</Badge>;
   };
@@ -375,7 +375,7 @@ export function MasterPromptAudit() {
             variant="outline" 
             onClick={runAudit}
             disabled={loading}
-            className="border-green-600 text-green-600 hover:bg-green-50"
+            className="border-[#2E7D32]/20 text-[#2E7D32] hover:bg-[#2E7D32]/5"
           >
             {loading ? (
               <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -386,7 +386,7 @@ export function MasterPromptAudit() {
           </Button>
           <Button 
             onClick={exportReport}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-[#2E7D32] hover:bg-[#2E7D32]"
           >
             <Download className="h-4 w-4 mr-2" />
             Export Report
@@ -404,21 +404,21 @@ export function MasterPromptAudit() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-green-300 bg-green-50">
+        <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
           <CardContent className="pt-6">
             <div className="text-center">
-              <CheckCircle className="h-6 w-6 mx-auto mb-1 text-green-600" />
+              <CheckCircle className="h-6 w-6 mx-auto mb-1 text-[#2E7D32]" />
               <p className="text-sm text-gray-600 mb-1">Passing</p>
-              <p className="text-3xl font-bold text-green-600">{summary.pass}</p>
+              <p className="text-3xl font-bold text-[#2E7D32]">{summary.pass}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-yellow-300 bg-yellow-50">
+        <Card className="border-gray-300 bg-gray-50">
           <CardContent className="pt-6">
             <div className="text-center">
-              <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-yellow-600" />
+              <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-gray-600" />
               <p className="text-sm text-gray-600 mb-1">Warnings</p>
-              <p className="text-3xl font-bold text-yellow-600">{summary.warning}</p>
+              <p className="text-3xl font-bold text-gray-600">{summary.warning}</p>
             </div>
           </CardContent>
         </Card>
@@ -439,11 +439,11 @@ export function MasterPromptAudit() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-orange-300 bg-orange-50">
+        <Card className="border-gray-300 bg-gray-50">
           <CardContent className="pt-6">
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-1">High Priority</p>
-              <p className="text-3xl font-bold text-orange-600">{summary.high}</p>
+              <p className="text-3xl font-bold text-gray-600">{summary.high}</p>
             </div>
           </CardContent>
         </Card>
@@ -553,10 +553,10 @@ export function MasterPromptAudit() {
         {/* Warning Items */}
         <TabsContent value="warning" className="space-y-3">
           {auditResults.filter(r => r.status === "warning").map((item, idx) => (
-            <Card key={idx} className="border-l-4 border-yellow-300 bg-yellow-50">
+            <Card key={idx} className="border-l-4 border-gray-300 bg-gray-50">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                  <AlertTriangle className="h-5 w-5 text-gray-600 flex-shrink-0" />
                   <div className="flex-1 space-y-2">
                     <div className="flex items-start justify-between gap-4">
                       <h4 className="font-semibold text-lg">{item.component}</h4>

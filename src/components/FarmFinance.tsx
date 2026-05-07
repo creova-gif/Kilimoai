@@ -47,16 +47,16 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
   };
 
   const incomeCategories = [
-    { name: "Crop Sales", amount: 6200000, percentage: 73, color: "bg-green-500", icon: Leaf },
+    { name: "Crop Sales", amount: 6200000, percentage: 73, color: "bg-[#2E7D32]", icon: Leaf },
     { name: "Livestock", amount: 1800000, percentage: 21, color: "bg-gray-500", icon: Users },
-    { name: "Other Income", amount: 500000, percentage: 6, color: "bg-orange-500", icon: Package },
+    { name: "Other Income", amount: 500000, percentage: 6, color: "bg-gray-600", icon: Package },
   ];
 
   const expenseCategories = [
-    { name: "Seeds & Inputs", amount: 1500000, percentage: 36, color: "bg-orange-500", icon: Package },
-    { name: "Fertilizers", amount: 1200000, percentage: 29, color: "bg-yellow-500", icon: Droplet },
+    { name: "Seeds & Inputs", amount: 1500000, percentage: 36, color: "bg-gray-600", icon: Package },
+    { name: "Fertilizers", amount: 1200000, percentage: 29, color: "bg-gray-600", icon: Droplet },
     { name: "Labor", amount: 900000, percentage: 21, color: "bg-gray-500", icon: Users },
-    { name: "Equipment", amount: 400000, percentage: 10, color: "bg-orange-500", icon: Truck },
+    { name: "Equipment", amount: 400000, percentage: 10, color: "bg-gray-600", icon: Truck },
     { name: "Other", amount: 200000, percentage: 4, color: "bg-gray-500", icon: ShoppingCart },
   ];
 
@@ -134,7 +134,7 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
                 Track income, expenses, and profitability
               </p>
             </div>
-            <Button className="bg-white text-green-600 hover:bg-white/90">
+            <Button className="bg-white text-[#2E7D32] hover:bg-white/90">
               <Plus className="h-4 w-4 mr-2" />
               Add Transaction
             </Button>
@@ -179,8 +179,8 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize
               ${timeRange === range
-                ? "bg-green-600 text-white shadow-lg"
-                : "bg-white text-gray-700 border border-gray-200 hover:border-green-300"
+                ? "bg-[#2E7D32] text-white shadow-lg"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-[#2E7D32]/20"
               }
             `}
           >
@@ -192,13 +192,13 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
       {/* Main Metrics Cards */}
       <div className="grid md:grid-cols-3 gap-6">
         {/* Total Income */}
-        <Card className="border-2 border-green-200 hover:shadow-xl transition-all">
+        <Card className="border-2 border-[#2E7D32]/20 hover:shadow-xl transition-all">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <div className="p-2 bg-green-100 rounded-xl">
-                <TrendingUp className="h-6 w-6 text-green-600" />
+              <div className="p-2 bg-[#2E7D32]/10 rounded-xl">
+                <TrendingUp className="h-6 w-6 text-[#2E7D32]" />
               </div>
-              <Badge className="bg-green-100 text-green-700">
+              <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +15.3%
               </Badge>
@@ -270,7 +270,7 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-green-600" />
+              <PieChart className="h-5 w-5 text-[#2E7D32]" />
               Income Breakdown
             </CardTitle>
             <CardDescription>Where your income comes from</CardDescription>
@@ -282,8 +282,8 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
                 <div key={idx} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <Icon className="h-4 w-4 text-green-700" />
+                      <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                        <Icon className="h-4 w-4 text-[#2E7D32]" />
                       </div>
                       <span className="text-sm font-medium text-gray-900">{cat.name}</span>
                     </div>
@@ -338,10 +338,10 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
       </div>
 
       {/* Budget Goals */}
-      <Card className="border-2 border-orange-200">
+      <Card className="border-2 border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-orange-600" />
+            <Target className="h-5 w-5 text-gray-600" />
             Budget Goals
           </CardTitle>
           <CardDescription>Track spending against your budget</CardDescription>
@@ -361,7 +361,7 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-sm font-bold ${isOverBudget ? 'text-red-600' : 'text-green-600'}`}>
+                    <p className={`text-sm font-bold ${isOverBudget ? 'text-red-600' : 'text-[#2E7D32]'}`}>
                       {percentageSpent.toFixed(1)}%
                     </p>
                     <p className="text-xs text-gray-600">
@@ -403,10 +403,10 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
                 <div className="flex items-center gap-3">
                   <div className={`
                     p-2 rounded-lg
-                    ${transaction.type === "income" ? "bg-green-100" : "bg-red-100"}
+                    ${transaction.type === "income" ? "bg-[#2E7D32]/10" : "bg-red-100"}
                   `}>
                     {transaction.type === "income" ? (
-                      <ArrowUpRight className="h-5 w-5 text-green-600" />
+                      <ArrowUpRight className="h-5 w-5 text-[#2E7D32]" />
                     ) : (
                       <ArrowDownRight className="h-5 w-5 text-red-600" />
                     )}
@@ -428,7 +428,7 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
                 <div className="text-right">
                   <p className={`
                     font-bold text-sm
-                    ${transaction.type === "income" ? "text-green-600" : "text-red-600"}
+                    ${transaction.type === "income" ? "text-[#2E7D32]" : "text-red-600"}
                   `}>
                     {transaction.type === "income" ? "+" : "-"}TZS {(transaction.amount / 1000).toFixed(0)}k
                   </p>
@@ -437,8 +437,8 @@ export function FarmFinance({ userId }: FarmFinanceProps) {
                     className={`
                       text-xs mt-1
                       ${transaction.status === "completed" 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-yellow-100 text-yellow-700"
+                        ? "bg-[#2E7D32]/10 text-[#2E7D32]" 
+                        : "bg-gray-100 text-gray-700"
                       }
                     `}
                   >

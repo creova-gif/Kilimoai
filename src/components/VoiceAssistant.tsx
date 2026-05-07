@@ -123,7 +123,7 @@ export function VoiceAssistant({ language = "en" }: VoiceAssistantProps) {
     <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
+        <div className="relative overflow-hidden bg-[#2E7D32] rounded-2xl p-6 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
@@ -157,7 +157,7 @@ export function VoiceAssistant({ language = "en" }: VoiceAssistantProps) {
                   className={`relative h-32 w-32 rounded-full mx-auto shadow-2xl transition-all ${
                     isRecording 
                       ? "bg-gradient-to-br from-red-500 to-red-600 scale-110" 
-                      : "bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] hover:scale-105"
+                      : "bg-[#2E7D32] hover:scale-105"
                   } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {isProcessing ? (
@@ -244,7 +244,7 @@ export function VoiceAssistant({ language = "en" }: VoiceAssistantProps) {
 
               {/* AI Response */}
               {aiResponse && (
-                <Card className="border-2 border-[#2E7D32] bg-gradient-to-br from-emerald-50 to-white">
+                <Card className="border-2 border-[#2E7D32] bg-gradient-to-br from-[#2E7D32] to-white">
                   <CardContent className="py-4">
                     <div className="flex gap-3">
                       <div className="flex-shrink-0 h-10 w-10 bg-[#2E7D32]/10 rounded-xl flex items-center justify-center">

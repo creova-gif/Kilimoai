@@ -276,9 +276,9 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
   const getStockStatus = (item: InventoryItem) => {
     const percentage = (item.quantity / item.maxStock) * 100;
     if (item.quantity <= item.minStock) return { status: "critical", color: "red", label: "Critical", bgColor: "bg-red-50", textColor: "text-red-700", borderColor: "border-red-200" };
-    if (percentage <= 50) return { status: "low", color: "orange", label: "Low Stock", bgColor: "bg-orange-50", textColor: "text-orange-700", borderColor: "border-orange-200" };
-    if (percentage >= 80) return { status: "good", color: "green", label: "Good", bgColor: "bg-green-50", textColor: "text-green-700", borderColor: "border-green-200" };
-    return { status: "medium", color: "blue", label: "Medium", bgColor: "bg-blue-50", textColor: "text-blue-700", borderColor: "border-blue-200" };
+    if (percentage <= 50) return { status: "low", color: "orange", label: "Low Stock", bgColor: "bg-gray-50", textColor: "text-gray-700", borderColor: "border-gray-200" };
+    if (percentage >= 80) return { status: "good", color: "green", label: "Good", bgColor: "bg-[#2E7D32]/5", textColor: "text-[#2E7D32]", borderColor: "border-[#2E7D32]/20" };
+    return { status: "medium", color: "blue", label: "Medium", bgColor: "bg-gray-50", textColor: "text-gray-700", borderColor: "border-gray-200" };
   };
 
   const getCategoryIcon = (category: string) => {
@@ -296,12 +296,12 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      seeds: "bg-green-100 text-green-700",
-      fertilizer: "bg-blue-100 text-blue-700",
+      seeds: "bg-[#2E7D32]/10 text-[#2E7D32]",
+      fertilizer: "bg-gray-100 text-gray-700",
       pesticide: "bg-red-100 text-red-700",
       tools: "bg-gray-100 text-gray-700",
-      feed: "bg-amber-100 text-amber-700",
-      fuel: "bg-purple-100 text-purple-700",
+      feed: "bg-gray-100 text-gray-700",
+      fuel: "bg-gray-100 text-gray-700",
       other: "bg-gray-100 text-gray-700"
     };
     return colors[category] || "bg-gray-100 text-gray-700";
@@ -384,26 +384,26 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
         {/* Maintenance Due Card */}
         <Card className={`relative overflow-hidden border-2 transition-all duration-300 ${
           stats.maintenanceDue > 0 
-            ? "border-amber-200 bg-amber-50 hover:shadow-lg" 
+            ? "border-gray-200 bg-gray-50 hover:shadow-lg" 
             : "border-gray-200 hover:border-gray-300"
         }`}>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full -mr-16 -mt-16" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gray-600/5 rounded-full -mr-16 -mt-16" />
           <CardContent className="pt-6 relative">
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-xl ${
-                stats.maintenanceDue > 0 ? "bg-amber-100" : "bg-gray-100"
+                stats.maintenanceDue > 0 ? "bg-gray-100" : "bg-gray-100"
               }`}>
                 <Settings className={`h-6 w-6 ${
-                  stats.maintenanceDue > 0 ? "text-amber-600" : "text-gray-600"
+                  stats.maintenanceDue > 0 ? "text-gray-600" : "text-gray-600"
                 }`} />
               </div>
               {stats.maintenanceDue > 0 && (
-                <Clock className="h-4 w-4 text-amber-600" />
+                <Clock className="h-4 w-4 text-gray-600" />
               )}
             </div>
             <p className="text-sm text-gray-600 mb-1 font-medium">{text.maintenanceDue}</p>
             <p className={`text-3xl font-bold mb-1 ${
-              stats.maintenanceDue > 0 ? "text-amber-700" : "text-gray-900"
+              stats.maintenanceDue > 0 ? "text-gray-700" : "text-gray-900"
             }`}>
               {stats.maintenanceDue}
             </p>
@@ -442,20 +442,20 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
           )}
 
           {stats.expiringItems > 0 && (
-            <Card className="border-2 border-amber-200 bg-amber-50">
+            <Card className="border-2 border-gray-200 bg-gray-50">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-2 bg-amber-100 rounded-lg flex-shrink-0">
-                    <Clock className="h-5 w-5 text-amber-600" />
+                  <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                    <Clock className="h-5 w-5 text-gray-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-amber-900 mb-1">
+                    <p className="font-bold text-gray-900 mb-1">
                       {stats.expiringItems} Items Expiring Soon
                     </p>
-                    <p className="text-sm text-amber-700 mb-3">
+                    <p className="text-sm text-gray-700 mb-3">
                       Review items expiring within 90 days
                     </p>
-                    <Button size="sm" variant="outline" className="border-amber-600 text-amber-700 hover:bg-amber-100">
+                    <Button size="sm" variant="outline" className="border-gray-400 text-gray-700 hover:bg-gray-100">
                       <Eye className="h-3 w-3 mr-2" />
                       View Items
                     </Button>
@@ -595,9 +595,9 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
                         <div 
                           className={`absolute left-0 top-0 h-full ${
                             stockStatus.status === "critical" ? "bg-red-500" :
-                            stockStatus.status === "low" ? "bg-orange-500" :
+                            stockStatus.status === "low" ? "bg-gray-600" :
                             stockStatus.status === "good" ? "bg-[#2E7D32]" :
-                            "bg-blue-500"
+                            "bg-gray-600"
                           } transition-all duration-500`}
                           style={{ width: `${Math.min(stockPercentage, 100)}%` }}
                         />
@@ -670,8 +670,8 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
                 <Card 
                   key={eq.id} 
                   className={`border-2 transition-all duration-300 hover:shadow-xl ${
-                    eq.status === "operational" ? "border-green-200 bg-green-50" :
-                    eq.status === "maintenance" ? "border-amber-200 bg-amber-50" :
+                    eq.status === "operational" ? "border-[#2E7D32]/20 bg-[#2E7D32]/5" :
+                    eq.status === "maintenance" ? "border-gray-200 bg-gray-50" :
                     "border-red-200 bg-red-50"
                   }`}
                 >
@@ -680,13 +680,13 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className={`p-3 rounded-xl ${
-                          eq.status === "operational" ? "bg-green-100" :
-                          eq.status === "maintenance" ? "bg-amber-100" :
+                          eq.status === "operational" ? "bg-[#2E7D32]/10" :
+                          eq.status === "maintenance" ? "bg-gray-100" :
                           "bg-red-100"
                         }`}>
                           <Wrench className={`h-5 w-5 ${
-                            eq.status === "operational" ? "text-green-600" :
-                            eq.status === "maintenance" ? "text-amber-600" :
+                            eq.status === "operational" ? "text-[#2E7D32]" :
+                            eq.status === "maintenance" ? "text-gray-600" :
                             "text-red-600"
                           }`} />
                         </div>
@@ -695,8 +695,8 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
                           <div className="flex items-center gap-2">
                             <Badge variant="outline" className="text-xs">{eq.model}</Badge>
                             <Badge className={
-                              eq.status === "operational" ? "bg-green-100 text-green-700" :
-                              eq.status === "maintenance" ? "bg-amber-100 text-amber-700" :
+                              eq.status === "operational" ? "bg-[#2E7D32]/10 text-[#2E7D32]" :
+                              eq.status === "maintenance" ? "bg-gray-100 text-gray-700" :
                               "bg-red-100 text-red-700"
                             }>
                               {eq.status}
@@ -706,9 +706,9 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
                       </div>
 
                       {maintenanceDue && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 rounded-lg">
-                          <Clock className="h-3 w-3 text-amber-600" />
-                          <span className="text-xs font-bold text-amber-600">{daysUntilMaintenance}d</span>
+                        <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-lg">
+                          <Clock className="h-3 w-3 text-gray-600" />
+                          <span className="text-xs font-bold text-gray-600">{daysUntilMaintenance}d</span>
                         </div>
                       )}
                     </div>
@@ -729,7 +729,7 @@ export function ResourceInventoryManagement({ userId, language }: ResourceInvent
                       </div>
                       <div>
                         <p className="text-xs text-gray-600 mb-1">Next Maintenance</p>
-                        <p className={`text-sm font-medium ${maintenanceDue ? 'text-amber-700 font-bold' : 'text-gray-900'}`}>
+                        <p className={`text-sm font-medium ${maintenanceDue ? 'text-gray-700 font-bold' : 'text-gray-900'}`}>
                           {eq.nextMaintenance}
                         </p>
                       </div>

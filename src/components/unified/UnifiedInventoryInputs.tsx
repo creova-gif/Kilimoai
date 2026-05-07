@@ -103,8 +103,8 @@ export function UnifiedInventoryInputs({
   const goodStockItems = inventory.filter(item => item.quantity >= item.minLevel);
 
   const categoryColors: Record<string, any> = {
-    [language === "en" ? "Seeds" : "Mbegu"]: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", icon: "bg-emerald-500" },
-    [language === "en" ? "Fertilizer" : "Mbolea"]: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", icon: "bg-amber-500" },
+    [language === "en" ? "Seeds" : "Mbegu"]: { bg: "bg-[#2E7D32]/5", text: "text-[#2E7D32]", border: "border-[#2E7D32]/20", icon: "bg-[#2E7D32]" },
+    [language === "en" ? "Fertilizer" : "Mbolea"]: { bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200", icon: "bg-gray-600" },
     [language === "en" ? "Pesticide" : "Dawa"]: { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", icon: "bg-red-500" },
   };
 
@@ -229,7 +229,7 @@ export function UnifiedInventoryInputs({
                         </div>
                         <Progress 
                           value={Math.min(stockPercent, 100)} 
-                          className={`h-2 ${isLowStock ? "[&>div]:bg-red-500" : "[&>div]:bg-emerald-500"}`}
+                          className={`h-2 ${isLowStock ? "[&>div]:bg-red-500" : "[&>div]:bg-[#2E7D32]"}`}
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           {language === "en" ? "Min" : "Chini"}: {item.minLevel} {item.unit}
@@ -261,17 +261,17 @@ export function UnifiedInventoryInputs({
         </div>
 
         {/* Info Card */}
-        <Card className="border-2 border-blue-100 bg-blue-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-blue-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "en" ? "Smart Inventory Management" : "Usimamizi Mahiri wa Hifadhi"}
                 </h4>
-                <p className="text-sm text-blue-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "en"
                     ? "KILIMO tracks your input usage and sends alerts when stock runs low. Connect with verified suppliers for direct purchasing."
                     : "KILIMO inafuatilia matumizi yako ya vifaa na kutuma tahadhari wakati hifadhi inapungua. Unganisha na wauzaji walioidhinishwa kwa ununuzi wa moja kwa moja."}

@@ -204,42 +204,42 @@ export function IntegrationsHub({ language }: IntegrationsHubProps) {
     {
       ...content.selcom,
       icon: Smartphone,
-      color: "from-green-500 to-emerald-600",
+      color: "from-[#2E7D32] to-gray-100",
       category: "Payments",
     },
     {
       ...content.flutterwave,
       icon: Globe,
-      color: "from-orange-500 to-yellow-500",
+      color: "from-gray-50 to-gray-100",
       category: "Payments",
     },
     {
       ...content.openrouter,
       icon: Brain,
-      color: "from-purple-500 to-pink-500",
+      color: "from-gray-50 to-gray-100",
       category: "AI",
     },
     {
       ...content.sentry,
       icon: Shield,
-      color: "from-blue-500 to-cyan-500",
+      color: "from-gray-50 to-gray-100",
       category: "Monitoring",
     },
     {
       ...content.posthog,
       icon: TrendingUp,
-      color: "from-green-500 to-teal-500",
+      color: "from-[#2E7D32] to-gray-100",
       category: "Analytics",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#2E7D32] via-white to-gray-100 p-6">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-12">
         <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="w-8 h-8 text-green-600" />
-          <h1 className="text-green-900">{content.title}</h1>
+          <Sparkles className="w-8 h-8 text-[#2E7D32]" />
+          <h1 className="text-[#2E7D32]">{content.title}</h1>
         </div>
         <p className="text-gray-600 max-w-2xl">{content.subtitle}</p>
       </div>
@@ -289,7 +289,7 @@ export function IntegrationsHub({ language }: IntegrationsHubProps) {
                 <div className="space-y-2">
                   {integration.features.map((feature, featureIndex) => (
                     <div key={featureIndex} className="flex items-start gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-[#2E7D32] flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-700">{feature}</span>
                     </div>
                   ))}
@@ -311,15 +311,15 @@ export function IntegrationsHub({ language }: IntegrationsHubProps) {
 
       {/* Benefits Section */}
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg p-8 mb-6">
-        <h2 className="text-green-900 mb-8 text-center">{content.benefits.title}</h2>
+        <h2 className="text-[#2E7D32] mb-8 text-center">{content.benefits.title}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {content.benefits.items.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl mb-4">
-                  <Icon className="w-8 h-8 text-green-600" />
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#2E7D32] to-gray-100 rounded-2xl mb-4">
+                  <Icon className="w-8 h-8 text-[#2E7D32]" />
                 </div>
                 <h3 className="mb-2">{benefit.title}</h3>
                 <p className="text-sm text-gray-600">{benefit.description}</p>
@@ -330,7 +330,7 @@ export function IntegrationsHub({ language }: IntegrationsHubProps) {
       </div>
 
       {/* Stats Footer */}
-      <div className="max-w-7xl mx-auto bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl shadow-lg p-8 text-white">
+      <div className="max-w-7xl mx-auto bg-gradient-to-r from-[#2E7D32] to-gray-100 rounded-2xl shadow-lg p-8 text-white">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
           <div>
             <div className="text-4xl mb-2">100+</div>

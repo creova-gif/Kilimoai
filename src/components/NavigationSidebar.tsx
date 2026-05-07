@@ -168,7 +168,7 @@ export function NavigationSidebar({
                 onClick={() => handleTabClick(item.id)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-all duration-200 ${ 
                   isActive
-                    ? "bg-green-600 text-white shadow-md"
+                    ? "bg-[#2E7D32] text-white shadow-md"
                     : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
                 }`}
                 aria-label={`Navigate to ${item.label}`}
@@ -192,7 +192,7 @@ export function NavigationSidebar({
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="left" className="w-[300px] sm:w-[340px] p-0 flex flex-col h-full bg-white">
         {/* Header */}
-        <SheetHeader className="px-4 pt-4 pb-3 bg-gradient-to-br from-green-600 via-green-500 to-emerald-600 flex-shrink-0">
+        <SheetHeader className="px-4 pt-4 pb-3 bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 flex-shrink-0">
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <SheetDescription className="sr-only">
             Access all features and sections of the KILIMO platform
@@ -256,10 +256,10 @@ export function NavigationSidebar({
           {renderSection("SUPPORT", support)}
         </nav>
 
-        <div className="p-4 border-t bg-gradient-to-r from-green-50 to-emerald-50 flex-shrink-0">
+        <div className="p-4 border-t bg-gradient-to-r from-[#2E7D32] to-gray-100 flex-shrink-0">
           <div className="text-center">
-            <p className="font-semibold text-sm text-green-800">KILIMO Agri-AI</p>
-            <p className="text-xs text-green-600 mt-0.5">Empowering Tanzanian Farmers</p>
+            <p className="font-semibold text-sm text-[#2E7D32]">KILIMO Agri-AI</p>
+            <p className="text-xs text-[#2E7D32] mt-0.5">Empowering Tanzanian Farmers</p>
           </div>
         </div>
       </SheetContent>

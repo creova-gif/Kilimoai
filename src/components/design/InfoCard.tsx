@@ -31,7 +31,7 @@ export function InfoCard({
       transition={{ delay, duration: 0.5 }}
       className={`rounded-2xl p-6 shadow-md hover:shadow-lg transition-all border ${
         variant === "highlight"
-          ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
+          ? "bg-gradient-to-br from-[#2E7D32] to-gray-100 border-[#2E7D32]/20"
           : "bg-white border-gray-200"
       }`}
     >
@@ -41,7 +41,7 @@ export function InfoCard({
           {Icon && (
             <div className={`p-3 rounded-xl ${
               variant === "highlight" 
-                ? "bg-green-100 text-green-600" 
+                ? "bg-[#2E7D32]/10 text-[#2E7D32]" 
                 : "bg-gray-100 text-gray-600"
             }`}>
               <Icon className="h-5 w-5" />
@@ -58,7 +58,7 @@ export function InfoCard({
         {action && (
           <button
             onClick={action.onClick}
-            className="text-sm font-semibold text-green-600 hover:text-green-700 flex items-center gap-1 whitespace-nowrap transition-colors"
+            className="text-sm font-semibold text-[#2E7D32] hover:text-[#2E7D32] flex items-center gap-1 whitespace-nowrap transition-colors"
           >
             {action.label}
             <ChevronRight className="h-4 w-4" />

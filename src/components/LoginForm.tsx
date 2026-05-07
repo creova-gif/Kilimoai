@@ -37,7 +37,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
     >
       <Card className="w-full shadow-2xl border-0 overflow-hidden backdrop-blur-lg">
         {/* Animated Header with Gradient */}
-        <div className="relative bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-[#1B5E20] p-8 md:p-10 text-white overflow-hidden">
+        <div className="relative bg-[#2E7D32] p-8 md:p-10 text-white overflow-hidden">
           {/* Animated background blobs */}
           <motion.div
             animate={{
@@ -221,7 +221,7 @@ export function LoginForm({ onLogin, loading }: LoginFormProps) {
             >
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#2E7D32] to-[#2E7D32] hover:from-[#1B5E20] hover:to-[#1B5E20] h-13 rounded-xl shadow-lg text-base font-bold"
+                className="w-full bg-[#2E7D32] hover:from-gray-50 hover:to-[#1B5E20] h-13 rounded-xl shadow-lg text-base font-bold"
                 disabled={loading}
               >
                 {loading ? (

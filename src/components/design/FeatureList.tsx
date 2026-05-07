@@ -31,7 +31,7 @@ export function FeatureList({ title, features, delay = 0 }: FeatureListProps) {
           >
             <div className="flex-shrink-0 mt-0.5">
               {feature.icon || (
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-[#2E7D32]" />
               )}
             </div>
             <p className="text-gray-700 text-sm leading-relaxed">{feature.text}</p>

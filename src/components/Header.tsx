@@ -26,25 +26,25 @@ export function Header({
   onLanguageToggle
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-green-600 to-green-700 shadow-lg safe-area-top">
+    <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-[#2E7D32] to-gray-100 shadow-lg safe-area-top">
       <div className="container flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-2 sm:gap-4">
           <Button 
             variant="ghost" 
             size="sm"
             onClick={onMenuClick}
-            className="text-white hover:bg-green-500 h-10 w-10 sm:h-auto sm:w-auto p-2"
+            className="text-white hover:bg-[#2E7D32] h-10 w-10 sm:h-auto sm:w-auto p-2"
             aria-label="Open menu"
           >
             <Menu className="h-6 w-6 sm:h-5 sm:w-5" />
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-white text-green-600 shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-white text-[#2E7D32] shadow-md">
               <span className="font-bold text-sm sm:text-base">CA</span>
             </div>
             <div className="hidden sm:block">
               <h1 className="font-bold text-white">KILIMO Agri-AI</h1>
-              <p className="text-xs text-green-100">{userType}</p>
+              <p className="text-xs text-[#2E7D32]">{userType}</p>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@ export function Header({
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-white hover:bg-green-500 h-10 px-2.5 sm:px-3 flex items-center gap-1.5 border border-white/30 rounded-lg transition-all hover:border-white/60"
+              className="text-white hover:bg-[#2E7D32] h-10 px-2.5 sm:px-3 flex items-center gap-1.5 border border-white/30 rounded-lg transition-all hover:border-white/60"
               onClick={onLanguageToggle}
               aria-label="Toggle language"
               title={language === "en" ? "Switch to Swahili" : "Badili kwenda Kiingereza"}
@@ -68,7 +68,7 @@ export function Header({
           <Button 
             variant="ghost" 
             size="sm" 
-            className="relative text-white hover:bg-green-500 h-10 w-10 p-2"
+            className="relative text-white hover:bg-[#2E7D32] h-10 w-10 p-2"
             onClick={onNotificationClick}
             aria-label="View notifications"
           >
@@ -87,11 +87,11 @@ export function Header({
             variant="ghost"
             size="sm"
             onClick={onProfileClick}
-            className="hidden sm:flex items-center gap-2 text-white hover:bg-green-500 px-3"
+            className="hidden sm:flex items-center gap-2 text-white hover:bg-[#2E7D32] px-3"
             aria-label="View profile"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
-              <UserCircle className="h-5 w-5 text-green-600" />
+              <UserCircle className="h-5 w-5 text-[#2E7D32]" />
             </div>
             <span className="text-sm max-w-[100px] truncate">{userName}</span>
           </Button>
@@ -101,7 +101,7 @@ export function Header({
             variant="ghost"
             size="sm"
             onClick={onProfileClick}
-            className="sm:hidden text-white hover:bg-green-500 h-10 w-10 p-2"
+            className="sm:hidden text-white hover:bg-[#2E7D32] h-10 w-10 p-2"
             aria-label="View profile"
           >
             <UserCircle className="h-6 w-6" />
@@ -111,7 +111,7 @@ export function Header({
             variant="ghost"
             size="sm"
             onClick={onLogout}
-            className="hidden sm:flex text-white hover:bg-green-500 h-auto px-3"
+            className="hidden sm:flex text-white hover:bg-[#2E7D32] h-auto px-3"
             aria-label="Logout"
           >
             <LogOut className="h-5 w-5" />

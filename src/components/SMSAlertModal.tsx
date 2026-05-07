@@ -34,8 +34,8 @@ export function SMSAlertModal({ onClose, alertType }: SMSAlertModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-              <Bell className="h-5 w-5 text-green-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2E7D32]/10">
+              <Bell className="h-5 w-5 text-[#2E7D32]" />
             </div>
             <div>
               <h3 className="font-bold text-lg">Enable SMS Alerts</h3>
@@ -59,19 +59,19 @@ export function SMSAlertModal({ onClose, alertType }: SMSAlertModalProps) {
                   <h4 className="font-medium text-gray-900 mb-2">What you'll receive:</h4>
                   <ul className="space-y-1 text-sm text-gray-800">
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       <span>Daily weather updates at 7 AM</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       <span>Severe weather warnings (storms, floods, droughts)</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       <span>Farming tips based on forecast</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                       <span>Market price alerts when prices change</span>
                     </li>
                   </ul>
@@ -92,8 +92,8 @@ export function SMSAlertModal({ onClose, alertType }: SMSAlertModalProps) {
                 </p>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-sm text-green-800">
+              <div className="bg-[#2E7D32]/5 border border-[#2E7D32]/20 rounded-lg p-3">
+                <p className="text-sm text-[#2E7D32]">
                   ✓ Free service for KILIMO users<br />
                   ✓ Up to 3 SMS per day<br />
                   ✓ Available in English & Swahili
@@ -101,7 +101,7 @@ export function SMSAlertModal({ onClose, alertType }: SMSAlertModalProps) {
               </div>
 
               <Button 
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]"
                 onClick={handleEnroll}
               >
                 Enable SMS Alerts
@@ -109,8 +109,8 @@ export function SMSAlertModal({ onClose, alertType }: SMSAlertModalProps) {
             </>
           ) : (
             <div className="text-center py-8">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2E7D32]/10 mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-[#2E7D32]" />
               </div>
               <h4 className="font-bold text-lg mb-2">Successfully Enrolled!</h4>
               <p className="text-gray-600">

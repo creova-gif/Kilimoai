@@ -59,7 +59,7 @@ export function EmptyState({
         >
           <Button
             onClick={onAction}
-            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+            className="bg-gradient-to-r from-[#2E7D32] to-gray-100 hover:from-[#2E7D32] hover:to-gray-100"
           >
             {actionLabel}
           </Button>

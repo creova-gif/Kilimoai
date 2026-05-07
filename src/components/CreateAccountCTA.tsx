@@ -37,8 +37,8 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
     <div className="fixed inset-0 z-50 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       {/* Background effects */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-20 left-20 w-96 h-96 bg-[#2E7D32] rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#2E7D32] rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <motion.div
@@ -61,7 +61,7 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
             <CardTitle className="text-3xl text-white font-black mb-2">
               {language === "sw" ? "Fungua Akaunti Yako" : "Create Your Account"}
             </CardTitle>
-            <p className="text-green-100">
+            <p className="text-[#2E7D32]">
               {language === "sw" 
                 ? "Fungua akaunti ili upate huduma kamili"
                 : "Sign up to unlock all features"}
@@ -83,9 +83,9 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 + idx * 0.1 }}
-                      className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-[#2E7D32]/5 rounded-lg"
                     >
-                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-[#2E7D32] flex-shrink-0" />
                       <p className="text-gray-800 font-medium">
                         {language === "sw" ? benefit.textSw : benefit.textEn}
                       </p>
@@ -118,15 +118,15 @@ export function CreateAccountCTA({ language, onPhoneSignup, onEmailSignup }: Cre
             {/* Footer benefits */}
             <div className="flex items-center justify-center gap-4 mt-6 pt-6 border-t">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <DollarSign className="h-4 w-4 text-green-600" />
+                <DollarSign className="h-4 w-4 text-[#2E7D32]" />
                 <span>{language === "sw" ? "Bure kuanza" : "Free to start"}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Shield className="h-4 w-4 text-green-600" />
+                <Shield className="h-4 w-4 text-[#2E7D32]" />
                 <span>{language === "sw" ? "Salama 100%" : "100% secure"}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Clock className="h-4 w-4 text-green-600" />
+                <Clock className="h-4 w-4 text-[#2E7D32]" />
                 <span>{language === "sw" ? "Dakika 2" : "2 minutes"}</span>
               </div>
             </div>

@@ -332,7 +332,7 @@ export function PayInputsDialog({ open, onOpenChange, walletBalance, userId, onP
                       </div>
                       <div className="flex justify-between text-xs text-gray-500 pt-1">
                         <span>Wallet Balance:</span>
-                        <span className={total > walletBalance ? "text-red-600" : "text-green-600"}>
+                        <span className={total > walletBalance ? "text-red-600" : "text-[#2E7D32]"}>
                           TZS {walletBalance.toLocaleString()}
                         </span>
                       </div>

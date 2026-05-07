@@ -14,7 +14,7 @@ export function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<"en" | "sw">("sw");
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-green-600 via-emerald-600 to-teal-700 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 flex items-center justify-center p-4 overflow-y-auto">
       {/* Animated background patterns */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -102,7 +102,7 @@ export function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
                 ? "Teknolojia ya Kilimo. Ushauri Sahihi. Mavuno Bora."
                 : "Agricultural Technology. Smart Advice. Better Harvests."}
             </p>
-            <p className="text-sm md:text-base text-green-100 italic">
+            <p className="text-sm md:text-base text-[#2E7D32] italic">
               {selectedLanguage === "sw"
                 ? "Jiunga na maelfu ya wakulima wanaoboresha mazao yao"
                 : "Join thousands of farmers improving their harvests"}
@@ -151,7 +151,7 @@ export function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
                 onClick={() => setSelectedLanguage("sw")}
                 className={`p-5 rounded-2xl font-bold transition-all ${
                   selectedLanguage === "sw"
-                    ? "bg-white text-green-700 shadow-2xl"
+                    ? "bg-white text-[#2E7D32] shadow-2xl"
                     : "bg-white/20 backdrop-blur-md text-white hover:bg-white/30"
                 }`}
               >
@@ -164,7 +164,7 @@ export function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
                 onClick={() => setSelectedLanguage("en")}
                 className={`p-5 rounded-2xl font-bold transition-all ${
                   selectedLanguage === "en"
-                    ? "bg-white text-green-700 shadow-2xl"
+                    ? "bg-white text-[#2E7D32] shadow-2xl"
                     : "bg-white/20 backdrop-blur-md text-white hover:bg-white/30"
                 }`}
               >
@@ -180,7 +180,7 @@ export function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
               <Button
                 onClick={() => onContinue(selectedLanguage)}
                 size="lg"
-                className="w-full bg-white text-green-700 hover:bg-green-50 font-bold text-lg h-16 rounded-2xl shadow-2xl"
+                className="w-full bg-white text-[#2E7D32] hover:bg-[#2E7D32]/5 font-bold text-lg h-16 rounded-2xl shadow-2xl"
               >
                 {selectedLanguage === "sw" ? "Anza Sasa" : "Get Started"} →
               </Button>

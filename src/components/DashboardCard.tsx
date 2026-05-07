@@ -50,7 +50,7 @@ export function DashboardCard({
                 {trend && (
                   <span
                     className={`text-sm font-medium ${
-                      trend.isPositive ? "text-green-600" : "text-red-600"
+                      trend.isPositive ? "text-[#2E7D32]" : "text-red-600"
                     }`}
                   >
                     {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}%

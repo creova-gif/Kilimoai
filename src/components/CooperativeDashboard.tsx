@@ -115,7 +115,7 @@ export function CooperativeDashboard({
             >
               {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <Users className="h-8 w-8 text-green-600" />
+            <Users className="h-8 w-8 text-[#2E7D32]" />
             <div>
               <h1 className="text-xl font-bold">{cooperativeName}</h1>
               <p className="text-sm text-gray-600">Cooperative Management Portal</p>
@@ -174,7 +174,7 @@ export function CooperativeDashboard({
                     <div>
                       <p className="text-sm text-gray-600">Total Members</p>
                       <p className="text-3xl font-bold">{coopStats.totalMembers}</p>
-                      <p className="text-sm text-green-600 mt-1">
+                      <p className="text-sm text-[#2E7D32] mt-1">
                         {coopStats.activeMembers} active
                       </p>
                     </div>
@@ -193,7 +193,7 @@ export function CooperativeDashboard({
                         This season
                       </p>
                     </div>
-                    <Package className="h-10 w-10 text-green-600" />
+                    <Package className="h-10 w-10 text-[#2E7D32]" />
                   </div>
                 </CardContent>
               </Card>
@@ -204,11 +204,11 @@ export function CooperativeDashboard({
                     <div>
                       <p className="text-sm text-gray-600">Total Revenue</p>
                       <p className="text-3xl font-bold">${coopStats.totalRevenue.toLocaleString()}</p>
-                      <p className="text-sm text-green-600 mt-1">
+                      <p className="text-sm text-[#2E7D32] mt-1">
                         +18.5% vs last year
                       </p>
                     </div>
-                    <DollarSign className="h-10 w-10 text-yellow-600" />
+                    <DollarSign className="h-10 w-10 text-gray-600" />
                   </div>
                 </CardContent>
               </Card>
@@ -297,17 +297,17 @@ export function CooperativeDashboard({
                   <div>
                     <CheckCircle2 className="h-6 w-6 mb-2" />
                     <p className="font-medium">Digital Records</p>
-                    <p className="text-sm text-green-100">All member data, production history & payments in one place</p>
+                    <p className="text-sm text-[#2E7D32]">All member data, production history & payments in one place</p>
                   </div>
                   <div>
                     <CheckCircle2 className="h-6 w-6 mb-2" />
                     <p className="font-medium">Harvest Coordination</p>
-                    <p className="text-sm text-green-100">Predict harvest, organize bulk sales & negotiate better prices</p>
+                    <p className="text-sm text-[#2E7D32]">Predict harvest, organize bulk sales & negotiate better prices</p>
                   </div>
                   <div>
                     <CheckCircle2 className="h-6 w-6 mb-2" />
                     <p className="font-medium">Reduce Paperwork</p>
-                    <p className="text-sm text-green-100">Digital attendance, training records & reporting</p>
+                    <p className="text-sm text-[#2E7D32]">Digital attendance, training records & reporting</p>
                   </div>
                 </div>
               </CardContent>
@@ -404,18 +404,18 @@ export function CooperativeDashboard({
         {activeTab === "harvest" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-green-50 border-green-200">
+              <Card className="bg-[#2E7D32]/5 border-[#2E7D32]/20">
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Expected Harvest</p>
-                  <p className="text-3xl font-bold text-green-600">184.5 tons</p>
+                  <p className="text-3xl font-bold text-[#2E7D32]">184.5 tons</p>
                   <p className="text-sm text-gray-600 mt-1">Next 3 months</p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-yellow-50 border-yellow-200">
+              <Card className="bg-gray-50 border-gray-200">
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-600 mb-2">Pending Sales</p>
-                  <p className="text-3xl font-bold text-yellow-600">{coopStats.pendingSales} tons</p>
+                  <p className="text-3xl font-bold text-gray-600">{coopStats.pendingSales} tons</p>
                   <p className="text-sm text-gray-600 mt-1">Ready to sell</p>
                 </CardContent>
               </Card>
@@ -454,7 +454,7 @@ export function CooperativeDashboard({
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="text-xl font-bold mb-2">Coordinate Bulk Sales</h3>
-                    <p className="text-green-100 mb-4">
+                    <p className="text-[#2E7D32] mb-4">
                       Know exactly how many tons members will harvest. Organize collective sales and negotiate better pricing with buyers.
                     </p>
                     <div className="flex gap-2">

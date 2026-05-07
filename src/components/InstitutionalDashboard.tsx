@@ -43,7 +43,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
           <h1 className="text-3xl mb-2">{organizationName}</h1>
           <p className="text-gray-600">Institutional Dashboard - {organizationType}</p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700">
+        <Button className="bg-[#2E7D32] hover:bg-[#2E7D32]">
           <Download className="h-4 w-4 mr-2" />
           Export M&E Report
         </Button>
@@ -55,13 +55,13 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardDescription>Registered Farmers</CardDescription>
-              <Users className="h-5 w-5 text-green-600" />
+              <Users className="h-5 w-5 text-[#2E7D32]" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-3xl mb-1">{stats.registeredFarmers.toLocaleString()}</div>
             <p className="text-xs text-gray-600">
-              <span className="text-green-600">↑ 23%</span> vs last quarter
+              <span className="text-[#2E7D32]">↑ 23%</span> vs last quarter
             </p>
           </CardContent>
         </Card>
@@ -70,7 +70,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardDescription>Active Users (30d)</CardDescription>
-              <Activity className="h-5 w-5 text-green-600" />
+              <Activity className="h-5 w-5 text-[#2E7D32]" />
             </div>
           </CardHeader>
           <CardContent>
@@ -100,7 +100,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardDescription>Transaction Volume</CardDescription>
-              <DollarSign className="h-5 w-5 text-orange-600" />
+              <DollarSign className="h-5 w-5 text-gray-600" />
             </div>
           </CardHeader>
           <CardContent>
@@ -132,7 +132,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Sprout className="h-4 w-4 text-green-600" />
+                    <Sprout className="h-4 w-4 text-[#2E7D32]" />
                     <span>Productivity Improvement</span>
                   </div>
                   <span className="text-sm font-semibold">{projectMetrics.productivity}%</span>
@@ -143,7 +143,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Sun className="h-4 w-4 text-orange-600" />
+                    <Sun className="h-4 w-4 text-gray-600" />
                     <span>Climate Resilience Score</span>
                   </div>
                   <span className="text-sm font-semibold">{projectMetrics.climateResilience}%</span>
@@ -154,7 +154,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-green-600" />
+                    <Target className="h-4 w-4 text-[#2E7D32]" />
                     <span>Market Access</span>
                   </div>
                   <span className="text-sm font-semibold">{projectMetrics.marketAccess}%</span>
@@ -165,7 +165,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-green-600" />
+                    <DollarSign className="h-4 w-4 text-[#2E7D32]" />
                     <span>Financial Inclusion</span>
                   </div>
                   <span className="text-sm font-semibold">{projectMetrics.financialInclusion}%</span>
@@ -245,7 +245,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
 
         <TabsContent value="gender" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
+            <Card className="bg-gradient-to-br from-gray-50 to-gray-100">
               <CardHeader>
                 <CardTitle>Female Farmers</CardTitle>
                 <CardDescription>Gender distribution insights</CardDescription>
@@ -262,7 +262,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50">
+            <Card className="bg-gradient-to-br from-gray-50 to-gray-100">
               <CardHeader>
                 <CardTitle>Youth Farmers</CardTitle>
                 <CardDescription>Age 18-34 years</CardDescription>
@@ -279,7 +279,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-50 to-emerald-50">
+            <Card className="bg-gradient-to-br from-[#2E7D32] to-gray-100">
               <CardHeader>
                 <CardTitle>Female-Headed</CardTitle>
                 <CardDescription>Household decision makers</CardDescription>
@@ -365,7 +365,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
                 <CardDescription>Loan performance tracking</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl mb-2 text-green-600">94%</div>
+                <div className="text-4xl mb-2 text-[#2E7D32]">94%</div>
                 <Progress value={94} className="h-2 mt-4" />
                 <p className="text-xs text-gray-500 mt-2">
                   Industry avg: 78%
@@ -381,10 +381,10 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { range: "Excellent (80-100)", count: 2847, percentage: 22, color: "bg-green-500" },
+                { range: "Excellent (80-100)", count: 2847, percentage: 22, color: "bg-[#2E7D32]" },
                 { range: "Good (70-79)", count: 5134, percentage: 40, color: "bg-gray-500" },
-                { range: "Fair (60-69)", count: 3214, percentage: 25, color: "bg-yellow-500" },
-                { range: "Poor (50-59)", count: 1234, percentage: 10, color: "bg-orange-500" },
+                { range: "Fair (60-69)", count: 3214, percentage: 25, color: "bg-gray-600" },
+                { range: "Poor (50-59)", count: 1234, percentage: 10, color: "bg-gray-600" },
                 { range: "Very Poor (<50)", count: 418, percentage: 3, color: "bg-red-500" }
               ].map((item) => (
                 <div key={item.range}>
@@ -471,7 +471,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
                     <Button variant="outline" size="sm">
                       <Download className="h-3 w-3 mr-1" />
                       Download
@@ -488,7 +488,7 @@ export function InstitutionalDashboard({ organizationName, organizationType }: I
               <CardDescription>Generate custom M&E reports for your specific needs</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full bg-green-600 hover:bg-green-700">
+              <Button className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Create Custom Report
               </Button>

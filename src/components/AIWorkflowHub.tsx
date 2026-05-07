@@ -52,7 +52,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
       name: "Crop Planning",
       nameSw: "Mpango wa Mazao",
       icon: Sprout,
-      color: "bg-emerald-500",
+      color: "bg-[#2E7D32]",
       description: "AI-powered crop rotation and planting schedules",
       descriptionSw: "Mpango wa kupanda na kubadilisha mazao kwa kutumia AI",
       badge: "AI",
@@ -62,7 +62,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
       name: "Livestock Health",
       nameSw: "Afya ya Mifugo",
       icon: Heart,
-      color: "bg-red-500",
+      color: "bg-gray-700",
       description: "Monitor and manage livestock health with AI",
       descriptionSw: "Fuatilia na kudhibiti afya ya mifugo kwa kutumia AI",
       badge: "AI",
@@ -72,7 +72,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
       name: "Task Management",
       nameSw: "Usimamizi wa Kazi",
       icon: ClipboardList,
-      color: "bg-blue-500",
+      color: "bg-gray-600",
       description: "Organize farm tasks and track labor efficiently",
       descriptionSw: "Panga kazi za shamba na kufuatilia wafanyakazi",
     },
@@ -81,7 +81,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
       name: "Yield Forecasting",
       nameSw: "Utabiri wa Mavuno",
       icon: BarChart3,
-      color: "bg-purple-500",
+      color: "bg-gray-600",
       description: "Predict harvest quantities with AI precision",
       descriptionSw: "Tabiri wingi wa mavuno kwa usahihi wa AI",
       badge: "AI Pro",
@@ -92,7 +92,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
       name: "Climate Risk",
       nameSw: "Hatari ya Hali ya Hewa",
       icon: CloudRain,
-      color: "bg-cyan-500",
+      color: "bg-gray-600",
       description: "Assess and mitigate climate-related farm risks",
       descriptionSw: "Tathmini na punguza hatari za hali ya hewa",
       badge: "AI",
@@ -114,7 +114,7 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
     <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
+        <div className="relative overflow-hidden bg-[#2E7D32] rounded-2xl p-6 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
@@ -204,17 +204,17 @@ export function AIWorkflowHub({ userId, userRole, userTier, onNavigate, language
         </div>
 
         {/* Info Card */}
-        <Card className="border-2 border-blue-100 bg-blue-50/50">
+        <Card className="border-2 border-gray-200 bg-gray-50/50">
           <CardContent className="py-4">
             <div className="flex gap-3 items-start">
-              <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-blue-600" />
+              <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">
                   {language === "sw" ? "Mchakato wa AI ni Nini?" : "What are AI Workflows?"}
                 </h4>
-                <p className="text-sm text-blue-700 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {language === "sw"
                     ? "Michakato ya AI ni mifumo maalum inayotumia akili bandia kusaidia katika maamuzi ya kila siku ya shamba lako - kutoka kupanga mazao hadi kutabiri mavuno."
                     : "AI Workflows are specialized systems that use artificial intelligence to assist with daily farm decisions - from crop planning to yield forecasting."}

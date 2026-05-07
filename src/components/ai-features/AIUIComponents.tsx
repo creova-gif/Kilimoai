@@ -141,7 +141,7 @@ export function AISuggestionChip({
   return (
     <button
       onClick={() => setExpanded(true)}
-      className="inline-flex items-center gap-2 px-3 py-1 text-sm bg-green-50 rounded-full border border-[#2E7D32]"
+      className="inline-flex items-center gap-2 px-3 py-1 text-sm bg-[#2E7D32]/5 rounded-full border border-[#2E7D32]"
     >
       <CheckCircle className="h-4 w-4 text-[#2E7D32]" />
       <span className="text-[#2E7D32] font-medium">
@@ -300,8 +300,8 @@ export function AIInsightCard({
             </h4>
             <ul className="space-y-2">
               {response.response.alerts.map((alert: string, idx: number) => (
-                <li key={idx} className="flex gap-2 text-sm text-yellow-800">
-                  <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <li key={idx} className="flex gap-2 text-sm text-gray-800">
+                  <AlertCircle className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
                   <span>{alert}</span>
                 </li>
               ))}
@@ -449,7 +449,7 @@ export function AIStatusBadge({
   }
 
   return (
-    <Badge className="bg-green-100 text-[#2E7D32]">
+    <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">
       <Sparkles className="h-3 w-3 mr-1" />
       {language === "EN" ? "AI Ready" : "AI Iko Tayari"}
     </Badge>

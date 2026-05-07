@@ -131,7 +131,7 @@ export function PeerDiscussionGroups() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white border-0">
+      <Card className="bg-gradient-to-r from-[#2E7D32] to-gray-100 text-white border-0">
         <CardHeader className="relative overflow-hidden">
           {/* Animated background patterns */}
           <div className="absolute inset-0 opacity-10">
@@ -155,12 +155,12 @@ export function PeerDiscussionGroups() {
             </div>
             
             {/* Title with enhanced typography */}
-            <span className="bg-gradient-to-r from-white via-green-50 to-white bg-clip-text text-transparent drop-shadow-sm">
+            <span className="bg-gradient-to-r from-white via-[#2E7D32] to-white bg-clip-text text-transparent drop-shadow-sm">
               Farmer Discussion Groups
             </span>
           </CardTitle>
           
-          <CardDescription className="relative text-green-50 text-base font-medium mt-3 leading-relaxed max-w-2xl">
+          <CardDescription className="relative text-[#2E7D32] text-base font-medium mt-3 leading-relaxed max-w-2xl">
             Connect with other farmers, share experiences, and learn from experts
             
             {/* Decorative underline accent */}
@@ -179,7 +179,7 @@ export function PeerDiscussionGroups() {
             <Card 
               key={group.id}
               className={`cursor-pointer transition-all hover:shadow-lg ${
-                isSelected ? 'border-green-500 border-2 shadow-lg' : 'border-gray-200'
+                isSelected ? 'border-[#2E7D32]/20 border-2 shadow-lg' : 'border-gray-200'
               }`}
               onClick={() => setSelectedGroup(isSelected ? null : group.id)}
             >
@@ -203,7 +203,7 @@ export function PeerDiscussionGroups() {
                 
                 {isSelected && (
                   <Button 
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700"
+                    className="w-full mt-4 bg-[#2E7D32] hover:bg-[#2E7D32]"
                     onClick={(e) => {
                       e.stopPropagation();
                       // Join group action
@@ -220,10 +220,10 @@ export function PeerDiscussionGroups() {
 
       {/* Active Discussion Feed */}
       {selectedGroup && (
-        <Card className="border-green-200">
+        <Card className="border-[#2E7D32]/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-green-600" />
+              <MessageSquare className="h-5 w-5 text-[#2E7D32]" />
               Recent Discussions
             </CardTitle>
             <CardDescription>
@@ -238,12 +238,12 @@ export function PeerDiscussionGroups() {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Share your experience, ask a question, or help a fellow farmer..."
                 rows={3}
-                className="mb-3 focus:ring-2 focus:ring-green-500 bg-white"
+                className="mb-3 focus:ring-2 focus:ring-[#2E7D32]/30 bg-white"
               />
               <div className="flex gap-2">
                 <Button 
                   onClick={handleSendMessage}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   Post Message
@@ -260,8 +260,8 @@ export function PeerDiscussionGroups() {
                 <div key={discussion.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                        <span className="font-medium text-green-700">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2E7D32]/10">
+                        <span className="font-medium text-[#2E7D32]">
                           {discussion.author.charAt(0)}
                         </span>
                       </div>
@@ -270,7 +270,7 @@ export function PeerDiscussionGroups() {
                           <p className="font-medium">{discussion.author}</p>
                           {getAuthorBadge(discussion.authorType)}
                           {discussion.verified && (
-                            <Badge className="bg-green-100 text-green-700">Verified</Badge>
+                            <Badge className="bg-[#2E7D32]/10 text-[#2E7D32]">Verified</Badge>
                           )}
                         </div>
                         <p className="text-xs text-gray-500">{discussion.timestamp}</p>
@@ -287,11 +287,11 @@ export function PeerDiscussionGroups() {
                   )}
 
                   <div className="flex items-center gap-4 text-sm">
-                    <button className="flex items-center gap-1 text-gray-600 hover:text-green-600 transition-colors">
+                    <button className="flex items-center gap-1 text-gray-600 hover:text-[#2E7D32] transition-colors">
                       <ThumbsUp className="h-4 w-4" />
                       <span>{discussion.likes} Likes</span>
                     </button>
-                    <button className="flex items-center gap-1 text-gray-600 hover:text-green-600 transition-colors">
+                    <button className="flex items-center gap-1 text-gray-600 hover:text-[#2E7D32] transition-colors">
                       <MessageSquare className="h-4 w-4" />
                       <span>{discussion.replies} Replies</span>
                     </button>

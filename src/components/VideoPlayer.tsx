@@ -57,7 +57,7 @@ export function VideoPlayer({ title, description, duration, language, onClose }:
             <div className="absolute inset-0 flex items-center justify-center">
               <button
                 onClick={handlePlayPause}
-                className="flex h-20 w-20 items-center justify-center rounded-full bg-green-600 hover:bg-green-700 transition-colors"
+                className="flex h-20 w-20 items-center justify-center rounded-full bg-[#2E7D32] hover:bg-[#2E7D32] transition-colors"
               >
                 <Play className="h-10 w-10 text-white ml-1" />
               </button>
@@ -78,7 +78,7 @@ export function VideoPlayer({ title, description, duration, language, onClose }:
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
               <div className="w-full bg-gray-600 rounded-full h-1 mb-3">
                 <div 
-                  className="bg-green-600 h-1 rounded-full transition-all"
+                  className="bg-[#2E7D32] h-1 rounded-full transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -88,13 +88,13 @@ export function VideoPlayer({ title, description, duration, language, onClose }:
                 <div className="flex items-center gap-4">
                   <button
                     onClick={handlePlayPause}
-                    className="hover:text-green-400 transition-colors"
+                    className="hover:text-[#2E7D32] transition-colors"
                   >
                     {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
                   </button>
                   <button
                     onClick={() => setIsMuted(!isMuted)}
-                    className="hover:text-green-400 transition-colors"
+                    className="hover:text-[#2E7D32] transition-colors"
                   >
                     {isMuted ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
                   </button>
@@ -102,7 +102,7 @@ export function VideoPlayer({ title, description, duration, language, onClose }:
                     {Math.floor((progress / 100) * parseInt(duration))}:{String(Math.floor(((progress / 100) * parseInt(duration) % 1) * 60)).padStart(2, '0')} / {duration}
                   </span>
                 </div>
-                <button className="hover:text-green-400 transition-colors">
+                <button className="hover:text-[#2E7D32] transition-colors">
                   <Maximize className="h-5 w-5" />
                 </button>
               </div>
@@ -118,24 +118,24 @@ export function VideoPlayer({ title, description, duration, language, onClose }:
           </div>
 
           {/* Key Takeaways */}
-          <Card className="border-green-200 bg-green-50">
+          <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
             <CardContent className="pt-4">
-              <h4 className="font-medium text-green-900 mb-3">Key Takeaways:</h4>
-              <ul className="space-y-2 text-sm text-green-800">
+              <h4 className="font-medium text-[#2E7D32] mb-3">Key Takeaways:</h4>
+              <ul className="space-y-2 text-sm text-[#2E7D32]">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-[#2E7D32] mt-0.5">•</span>
                   <span>Proper fertilizer application increases yields by 30-40%</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-[#2E7D32] mt-0.5">•</span>
                   <span>Apply fertilizer 10cm away from plant base to prevent burning</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-[#2E7D32] mt-0.5">•</span>
                   <span>Best time is early morning or after light rain</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-[#2E7D32] mt-0.5">•</span>
                   <span>Always wear protective gloves when handling chemicals</span>
                 </li>
               </ul>
@@ -144,7 +144,7 @@ export function VideoPlayer({ title, description, duration, language, onClose }:
 
           {/* Action Buttons */}
           <div className="flex gap-3">
-            <Button className="flex-1 bg-green-600 hover:bg-green-700">
+            <Button className="flex-1 bg-[#2E7D32] hover:bg-[#2E7D32]">
               <Download className="h-4 w-4 mr-2" />
               Download for Offline
             </Button>

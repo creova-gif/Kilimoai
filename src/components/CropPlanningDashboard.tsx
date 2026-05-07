@@ -262,10 +262,10 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
 
   const getEventColor = (type: CalendarEvent["type"]) => {
     switch (type) {
-      case "planting": return "bg-green-100 text-green-800 border-green-300";
+      case "planting": return "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20";
       case "fertilization": return "bg-gray-100 text-gray-800 border-gray-300";
       case "irrigation": return "bg-gray-100 text-gray-800 border-gray-300";
-      case "harvest": return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "harvest": return "bg-gray-100 text-gray-800 border-gray-300";
       case "pest-control": return "bg-red-100 text-red-800 border-red-300";
       default: return "bg-gray-100 text-gray-800 border-gray-300";
     }
@@ -273,7 +273,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
 
   const getStatusIcon = (status: CalendarEvent["status"]) => {
     switch (status) {
-      case "completed": return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case "completed": return <CheckCircle className="w-4 h-4 text-[#2E7D32]" />;
       case "alert": return <AlertTriangle className="w-4 h-4 text-red-600" />;
       default: return <Clock className="w-4 h-4 text-gray-600" />;
     }
@@ -281,8 +281,8 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
 
   const getRiskColor = (level: string) => {
     switch (level) {
-      case "low": return "text-green-600 bg-green-50";
-      case "medium": return "text-yellow-600 bg-yellow-50";
+      case "low": return "text-[#2E7D32] bg-[#2E7D32]/5";
+      case "medium": return "text-gray-600 bg-gray-50";
       case "high": return "text-red-600 bg-red-50";
       default: return "text-gray-600 bg-gray-50";
     }
@@ -342,7 +342,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold">{t.title}</h1>
-              <p className="text-green-100 flex items-center gap-2 mt-1">
+              <p className="text-[#2E7D32] flex items-center gap-2 mt-1">
                 <MapPin className="w-4 h-4" />
                 {selectedField} • {selectedSeason}
               </p>
@@ -408,7 +408,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
       <div className="flex flex-col sm:flex-row gap-3">
         <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
           <DialogTrigger asChild>
-            <Button className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-initial">
+            <Button className="bg-[#2E7D32] hover:bg-[#2E7D32] flex-1 sm:flex-initial">
               <Plus className="w-4 h-4 mr-2" />
               {t.createNew}
             </Button>
@@ -504,7 +504,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               <Button 
                 onClick={handleCreateCropPlan} 
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-[#2E7D32] hover:bg-[#2E7D32]"
               >
                 {loading ? (
                   <>
@@ -541,7 +541,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
       {/* Key Metrics Cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Yield Forecast */}
-        <Card className="border-green-200 hover:shadow-lg transition-shadow">
+        <Card className="border-[#2E7D32]/20 hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
               <Target className="w-4 h-4" />
@@ -564,7 +564,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
         </Card>
 
         {/* Expected Revenue */}
-        <Card className="border-green-200 hover:shadow-lg transition-shadow">
+        <Card className="border-[#2E7D32]/20 hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
               <DollarSign className="w-4 h-4" />
@@ -577,7 +577,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
                 {(metrics.expectedRevenue / 1000000).toFixed(1)}M
               </div>
               <div className="text-sm text-gray-600">{t.tzs}</div>
-              <div className="flex items-center gap-1 text-sm text-green-600">
+              <div className="flex items-center gap-1 text-sm text-[#2E7D32]">
                 <ArrowUpRight className="w-4 h-4" />
                 <span>+15% vs last season</span>
               </div>
@@ -586,7 +586,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
         </Card>
 
         {/* Soil Health Index */}
-        <Card className="border-green-200 hover:shadow-lg transition-shadow">
+        <Card className="border-[#2E7D32]/20 hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
               <Beaker className="w-4 h-4" />
@@ -600,7 +600,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               </div>
               <div className="text-sm text-gray-600">Score / 100</div>
               <Progress value={metrics.soilHealthIndex} className="h-2" />
-              <Badge className="bg-green-100 text-green-800 text-xs">
+              <Badge className="bg-[#2E7D32]/10 text-[#2E7D32] text-xs">
                 Good Health
               </Badge>
             </div>
@@ -608,7 +608,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
         </Card>
 
         {/* Risk Alerts */}
-        <Card className="border-orange-200 hover:shadow-lg transition-shadow">
+        <Card className="border-gray-200 hover:shadow-lg transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
               <AlertTriangle className="w-4 h-4" />
@@ -622,11 +622,11 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               </div>
               <div className="text-sm text-gray-600">Risk Level</div>
               <div className="space-y-1 mt-3">
-                <div className="flex items-center gap-2 text-xs text-yellow-700">
+                <div className="flex items-center gap-2 text-xs text-gray-700">
                   <AlertTriangle className="w-3 h-3" />
                   Nitrogen deficiency
                 </div>
-                <div className="flex items-center gap-2 text-xs text-yellow-700">
+                <div className="flex items-center gap-2 text-xs text-gray-700">
                   <AlertTriangle className="w-3 h-3" />
                   Late rainfall risk
                 </div>
@@ -643,7 +643,7 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-green-600" />
+                <Calendar className="w-5 h-5 text-[#2E7D32]" />
                 {t.calendar}
               </CardTitle>
               <CardDescription>
@@ -765,19 +765,19 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
             </CardHeader>
             <CardContent className="space-y-3 mt-4">
               {/* AI Suggestion Card 1 */}
-              <div className="bg-green-50 border-l-4 border-green-600 p-4 rounded-r-lg">
+              <div className="bg-[#2E7D32]/5 border-l-4 border-[#2E7D32]/20 p-4 rounded-r-lg">
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-[#2E7D32] mt-0.5" />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-green-900 mb-1">
+                    <h4 className="font-semibold text-[#2E7D32] mb-1">
                       {currentLanguage === "en" ? "Optimal Planting Time" : "Wakati Bora wa Kupanda"}
                     </h4>
-                    <p className="text-sm text-green-800">
+                    <p className="text-sm text-[#2E7D32]">
                       {currentLanguage === "en"
                         ? "Plant between March 15-20 for maximum yield. Weather forecast shows ideal rainfall."
                         : "Panda kati ya Machi 15-20 kwa mavuno bora. Utabiri wa hali ya hewa unaonesha mvua nzuri."}
                     </p>
-                    <Button size="sm" variant="ghost" className="mt-2 text-green-700 hover:text-green-900 h-auto p-0">
+                    <Button size="sm" variant="ghost" className="mt-2 text-[#2E7D32] hover:text-[#2E7D32] h-auto p-0">
                       {currentLanguage === "en" ? "Apply Suggestion" : "Tumia Pendekezo"} →
                     </Button>
                   </div>
@@ -785,19 +785,19 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
               </div>
 
               {/* AI Suggestion Card 2 */}
-              <div className="bg-yellow-50 border-l-4 border-yellow-600 p-4 rounded-r-lg">
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-4 rounded-r-lg">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                  <AlertTriangle className="w-5 h-5 text-gray-600 mt-0.5" />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-yellow-900 mb-1">
+                    <h4 className="font-semibold text-gray-900 mb-1">
                       {currentLanguage === "en" ? "Increase Fertilizer" : "Ongeza Mbolea"}
                     </h4>
-                    <p className="text-sm text-yellow-800">
+                    <p className="text-sm text-gray-800">
                       {currentLanguage === "en"
                         ? "Soil tests show low nitrogen. Recommend increasing DAP to 60kg/ha for +12% yield boost."
                         : "Upimaji wa udongo unaonesha nitrojeni chini. Tunapendekeza kuongeza DAP hadi 60kg/ha kwa kuongeza mavuno +12%."}
                     </p>
-                    <Button size="sm" variant="ghost" className="mt-2 text-yellow-700 hover:text-yellow-900 h-auto p-0">
+                    <Button size="sm" variant="ghost" className="mt-2 text-gray-700 hover:text-gray-900 h-auto p-0">
                       {currentLanguage === "en" ? "View Details" : "Angalia Maelezo"} →
                     </Button>
                   </div>
@@ -900,10 +900,10 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
                   <p className="font-bold text-gray-900">4800 kg/ha</p>
                   <p className="text-xs text-gray-600">vs 5000 target</p>
                 </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <p className="text-xs text-green-600 mb-1">Revenue</p>
-                  <p className="font-bold text-green-900">5.6M TZS</p>
-                  <p className="text-xs text-green-600 flex items-center gap-1">
+                <div className="bg-[#2E7D32]/5 p-3 rounded-lg">
+                  <p className="text-xs text-[#2E7D32] mb-1">Revenue</p>
+                  <p className="font-bold text-[#2E7D32]">5.6M TZS</p>
+                  <p className="text-xs text-[#2E7D32] flex items-center gap-1">
                     <ArrowUpRight className="w-3 h-3" />
                     +12% vs 2023
                   </p>
@@ -921,9 +921,9 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
                 </h5>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                    <CheckCircle className="w-4 h-4 text-[#2E7D32] mt-0.5" />
                     <div>
-                      <p className="font-medium text-green-900">
+                      <p className="font-medium text-[#2E7D32]">
                         {currentLanguage === "en" ? "What Worked:" : "Nilichofanya Vizuri:"}
                       </p>
                       <p className="text-gray-700">
@@ -934,9 +934,9 @@ export function CropPlanningDashboard({ userId, language = "en" }: CropPlanningD
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5" />
+                    <AlertTriangle className="w-4 h-4 text-gray-600 mt-0.5" />
                     <div>
-                      <p className="font-medium text-yellow-900">
+                      <p className="font-medium text-gray-900">
                         {currentLanguage === "en" ? "Needs Improvement:" : "Inahitaji Kuboresha:"}
                       </p>
                       <p className="text-gray-700">

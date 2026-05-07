@@ -142,18 +142,18 @@ export function CropSelector({ selectedCrops, onCropsChange, label }: CropSelect
 
       {/* Selected Crops Tags */}
       {selectedCrops.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-green-50 rounded-lg border border-green-100">
+        <div className="flex flex-wrap gap-2 p-3 bg-[#2E7D32]/5 rounded-lg border border-[#2E7D32]/20">
           {selectedCrops.map((crop) => (
             <Badge 
               key={crop} 
               variant="secondary" 
-              className="bg-green-600 text-white hover:bg-green-700 pl-3 pr-2 py-1.5 text-sm"
+              className="bg-[#2E7D32] text-white hover:bg-[#2E7D32] pl-3 pr-2 py-1.5 text-sm"
             >
               {crop}
               <button
                 type="button"
                 onClick={() => removeCrop(crop)}
-                className="ml-2 hover:bg-green-700 rounded-full p-0.5 transition-colors"
+                className="ml-2 hover:bg-[#2E7D32] rounded-full p-0.5 transition-colors"
                 aria-label={`Remove ${crop}`}
               >
                 <X className="h-3 w-3" />
@@ -201,7 +201,7 @@ export function CropSelector({ selectedCrops, onCropsChange, label }: CropSelect
                           className={`
                             text-left px-3 py-2 rounded text-sm transition-colors
                             ${isSelected 
-                              ? 'bg-green-100 text-green-800 font-medium' 
+                              ? 'bg-[#2E7D32]/10 text-[#2E7D32] font-medium' 
                               : 'hover:bg-gray-100'
                             }
                           `}
@@ -209,7 +209,7 @@ export function CropSelector({ selectedCrops, onCropsChange, label }: CropSelect
                           <div className="flex items-center justify-between">
                             <span>{crop}</span>
                             {isSelected && (
-                              <span className="text-green-600">✓</span>
+                              <span className="text-[#2E7D32]">✓</span>
                             )}
                           </div>
                         </button>
@@ -246,7 +246,7 @@ export function CropSelector({ selectedCrops, onCropsChange, label }: CropSelect
                 key={crop}
                 type="button"
                 onClick={() => toggleCrop(crop)}
-                className="px-3 py-1.5 text-xs border border-gray-300 rounded-full hover:bg-green-50 hover:border-green-300 transition-colors"
+                className="px-3 py-1.5 text-xs border border-gray-300 rounded-full hover:bg-[#2E7D32]/5 hover:border-[#2E7D32]/20 transition-colors"
               >
                 + {crop}
               </button>

@@ -219,10 +219,10 @@ function GrowingTemplates({
       </div>
 
       {/* Info Card */}
-      <Card className="border border-blue-200 bg-blue-50/50 mb-6">
+      <Card className="border border-gray-200 bg-gray-50/50 mb-6">
         <div className="p-4 flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-blue-900">
+          <AlertCircle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-gray-900">
             {text.description}
           </p>
         </div>
@@ -259,7 +259,7 @@ function GrowingTemplates({
                       <Badge className={`px-2 py-0.5 text-xs ${
                         template.confidence === "high"
                           ? "bg-[#2E7D32]/10 text-[#2E7D32] border-[#2E7D32]/20"
-                          : "bg-blue-50 text-blue-700 border-blue-200"
+                          : "bg-gray-50 text-gray-700 border-gray-200"
                       }`}>
                         {template.confidence === "high" ? "High Confidence" : "Medium Confidence"}
                       </Badge>
@@ -393,10 +393,10 @@ function HistoricalPerformance({
       </div>
 
       {/* Info Card */}
-      <Card className="border border-blue-200 bg-blue-50/50 mb-6">
+      <Card className="border border-gray-200 bg-gray-50/50 mb-6">
         <div className="p-4 flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-blue-900">
+          <AlertCircle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-gray-900">
             {text.description}
           </p>
         </div>

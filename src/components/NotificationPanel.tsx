@@ -92,8 +92,8 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "success": return "text-green-600 bg-green-100";
-      case "warning": return "text-yellow-600 bg-yellow-100";
+      case "success": return "text-[#2E7D32] bg-[#2E7D32]/10";
+      case "warning": return "text-gray-600 bg-gray-100";
       case "alert": return "text-red-600 bg-red-100";
       default: return "text-gray-600 bg-gray-100";
     }
@@ -171,7 +171,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all
               ${filter === "all" 
-                ? "bg-green-600 text-white" 
+                ? "bg-[#2E7D32] text-white" 
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }
             `}
@@ -183,7 +183,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
             className={`
               px-4 py-2 rounded-xl text-sm font-medium transition-all
               ${filter === "unread" 
-                ? "bg-green-600 text-white" 
+                ? "bg-[#2E7D32] text-white" 
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }
             `}
@@ -193,7 +193,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="ml-auto px-3 py-2 text-xs font-medium text-green-600 hover:bg-green-50 rounded-xl transition-colors"
+              className="ml-auto px-3 py-2 text-xs font-medium text-[#2E7D32] hover:bg-[#2E7D32]/5 rounded-xl transition-colors"
             >
               Mark all read
             </button>
@@ -232,7 +232,7 @@ export function NotificationPanel({ userId, onClose }: NotificationPanelProps) {
                 onClick={() => markAsRead(notification.id)}
               >
                 {!notification.read && (
-                  <div className="absolute top-4 right-4 w-2 h-2 bg-green-600 rounded-full"></div>
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-[#2E7D32] rounded-full"></div>
                 )}
 
                 <div className="flex gap-3">

@@ -74,8 +74,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
 
   const getTierColor = (tier?: string) => {
     switch (tier) {
-      case "premium": return "from-purple-500 to-pink-500";
-      case "basic": return "from-blue-500 to-cyan-500";
+      case "premium": return "from-gray-50 to-gray-100";
+      case "basic": return "from-gray-50 to-gray-100";
       default: return "from-gray-500 to-slate-500";
     }
   };
@@ -183,7 +183,7 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
                   <Button
                     onClick={handleSave}
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 gap-2"
+                    className="bg-[#2E7D32] hover:bg-[#2E7D32] gap-2"
                   >
                     <Save className="h-4 w-4" />
                     Save Changes
@@ -293,8 +293,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <Card className="shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <Leaf className="h-4 w-4 text-green-600" />
+                    <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                      <Leaf className="h-4 w-4 text-[#2E7D32]" />
                     </div>
                     My Crops & Livestock
                   </CardTitle>
@@ -302,10 +302,10 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {user.crops.map((crop, idx) => (
-                      <div key={idx} className="px-3 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg">
+                      <div key={idx} className="px-3 py-2 bg-gradient-to-r from-[#2E7D32] to-gray-100 border-2 border-[#2E7D32]/20 rounded-lg">
                         <div className="flex items-center gap-2">
-                          <Sprout className="h-4 w-4 text-green-600" />
-                          <span className="font-medium text-green-700">{crop}</span>
+                          <Sprout className="h-4 w-4 text-[#2E7D32]" />
+                          <span className="font-medium text-[#2E7D32]">{crop}</span>
                         </div>
                       </div>
                     ))}
@@ -321,12 +321,12 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-3">
                 <button className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl transition-all border-2 border-gray-200">
-                  <Share2 className="h-6 w-6 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Share Profile</span>
+                  <Share2 className="h-6 w-6 text-[#2E7D32]" />
+                  <span className="text-sm font-medium text-[#2E7D32]">Share Profile</span>
                 </button>
                 <button className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-gray-50 to-gray-50 hover:from-gray-100 hover:to-gray-100 rounded-xl transition-all border-2 border-gray-200">
-                  <Download className="h-6 w-6 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Export Data</span>
+                  <Download className="h-6 w-6 text-[#2E7D32]" />
+                  <span className="text-sm font-medium text-[#2E7D32]">Export Data</span>
                 </button>
               </CardContent>
             </Card>
@@ -364,8 +364,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-yellow-100 rounded-full mb-3">
-                      <Zap className="h-6 w-6 text-yellow-600" />
+                    <div className="p-3 bg-gray-100 rounded-full mb-3">
+                      <Zap className="h-6 w-6 text-gray-600" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900">{stats.aiQueries.used}/{stats.aiQueries.total}</p>
                     <p className="text-xs text-gray-600 mt-1">AI Queries</p>
@@ -377,14 +377,14 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-green-100 rounded-full mb-3">
-                      <CheckCircle className="h-6 w-6 text-green-600" />
+                    <div className="p-3 bg-[#2E7D32]/10 rounded-full mb-3">
+                      <CheckCircle className="h-6 w-6 text-[#2E7D32]" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900">{stats.tasksCompleted}</p>
                     <p className="text-xs text-gray-600 mt-1">Tasks Done</p>
                     <div className="flex items-center gap-1 mt-2">
-                      <TrendingUp className="h-3 w-3 text-green-600" />
-                      <span className="text-xs text-green-600 font-medium">+12 this week</span>
+                      <TrendingUp className="h-3 w-3 text-[#2E7D32]" />
+                      <span className="text-xs text-[#2E7D32] font-medium">+12 this week</span>
                     </div>
                   </div>
                 </CardContent>
@@ -418,16 +418,16 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
             </div>
 
             {/* Activity Streak */}
-            <Card className="shadow-sm border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50">
+            <Card className="shadow-sm border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-red-50">
               <CardContent className="p-5">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-lg">
+                  <div className="p-3 bg-gradient-to-br from-gray-50 to-red-500 rounded-2xl shadow-lg">
                     <Flame className="h-8 w-8 text-white" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold text-gray-900">{stats.streak} Days</h3>
                     <p className="text-sm text-gray-600">Activity Streak 🔥</p>
-                    <p className="text-xs text-orange-600 font-medium mt-1">Keep it up! You're on fire!</p>
+                    <p className="text-xs text-gray-600 font-medium mt-1">Keep it up! You're on fire!</p>
                   </div>
                 </div>
               </CardContent>
@@ -455,7 +455,7 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
 
             {/* Upgrade CTA */}
             {user.tier === "free" && (
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-green-500 via-green-500 to-green-500 overflow-hidden relative">
+              <Card className="shadow-lg border-0 bg-gradient-to-br from-[#2E7D32] via-[#2E7D32] to-gray-100 overflow-hidden relative">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
                 <CardContent className="p-6 text-center relative">
                   <div className="inline-flex p-4 bg-white/20 backdrop-blur-sm rounded-3xl mb-4">
@@ -483,7 +483,7 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
                       <span>Priority customer support</span>
                     </li>
                   </ul>
-                  <Button className="w-full bg-white text-green-600 hover:bg-gray-100 font-bold shadow-lg">
+                  <Button className="w-full bg-white text-[#2E7D32] hover:bg-gray-100 font-bold shadow-lg">
                     Upgrade to Premium
                   </Button>
                 </CardContent>
@@ -601,8 +601,8 @@ export function Profile({ user, onClose, onUpdate }: ProfileProps) {
             <Card className="shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <MessageCircle className="h-4 w-4 text-green-600" />
+                  <div className="p-2 bg-[#2E7D32]/10 rounded-lg">
+                    <MessageCircle className="h-4 w-4 text-[#2E7D32]" />
                   </div>
                   Help & Support
                 </CardTitle>
