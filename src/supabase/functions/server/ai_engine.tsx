@@ -127,7 +127,7 @@ aiEngine.post("/engine", async (c) => {
     if (structuredResponse.agentic_actions && Array.isArray(structuredResponse.agentic_actions)) {
       for (const action of structuredResponse.agentic_actions) {
         try {
-          await executeAgenticAction(user_id, action);
+          await executeAgenticAction(user_id, action, language);
         } catch (actionError) {
           console.error("Action execution error:", actionError);
         }
@@ -265,8 +265,19 @@ function parseAIResponse(aiResponse: string, feature: string): any {
 /**
  * Execute Agentic Action (SMS, Task, etc.)
  */
-async function executeAgenticAction(userId: string | undefined, action: any) {
+async function executeAgenticAction(userId: string | undefined, action: any, language: string) {
   console.log(`[AGENTIC ACTION] Executing ${action.type}:`, action.payload);
+
+  // LOG TO AUDIT TRAIL
+  if (userId) {
+    await supabase.from("audit_logs").insert({
+      user_id: userId,
+      action: `agentic_${action.type}`,
+      resource_type: "ai_agent",
+      metadata: { ...action.payload, justification: action.justification },
+      severity: "info",
+    });
+  }
 
   switch (action.type) {
     case "send_sms":
@@ -301,6 +312,24 @@ async function executeAgenticAction(userId: string | undefined, action: any) {
           category: action.payload.category || "produce",
           status: "draft", // Draft mode as safety measure
         });
+      }
+      break;
+
+    case "weather_alert":
+      if (userId && action.payload?.message) {
+        // Find user's phone number
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("phone_number")
+          .eq("id", userId)
+          .single();
+
+        if (profile?.phone_number) {
+          await sendSMS({
+            to: profile.phone_number,
+            message: action.payload.message,
+          });
+        }
       }
       break;
 

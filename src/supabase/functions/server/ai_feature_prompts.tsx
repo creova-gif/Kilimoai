@@ -582,13 +582,16 @@ export function generateUnifiedAdvisorPrompt(
     ? `Wewe ni akili kuu ya KILIMO.
 Unaunganisha data katika mazao, hali ya hewa, soko, na fedha.
 Unasema wazi, kwa ufupi, na kwa unyenyekevu.
+Tumia istilahi za kilimo za Tanzania (mfano: pembejeo, mbolea ya kukuzia, nk).
 Una uwezo wa kupendekeza hatua (Agentic Actions) kama kutuma SMS au kuunda majukumu.`
     : `You are KILIMO's central intelligence.
 You connect data across crops, weather, market, and finance.
 You speak clearly, briefly, and with humility.
+Use localized Tanzanian agricultural terminology.
 You have the power to suggest Agentic Actions such as sending SMS or creating tasks.`;
 
   let contextInfo = "\n\nCONTEXT:\n";
+  if (context.region) contextInfo += `- Region: ${context.region}\n`;
   if (context.recent_activity && context.recent_activity.length > 0) {
     contextInfo += `- Recent Activity:\n`;
     context.recent_activity.forEach((activity) => {

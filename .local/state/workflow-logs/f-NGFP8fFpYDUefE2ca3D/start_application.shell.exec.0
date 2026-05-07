@@ -1,0 +1,11 @@
+
+> kilimo-ai@0.1.0 dev
+> vite --host 0.0.0.0 --port 5000
+
+[1G[0KPort 5000 is in use, trying another one...
+
+  [32m[1mVITE[22m v6.3.5[39m  [2mready in [0m[1m160[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5001[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.24.0.2:[1m5001[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m

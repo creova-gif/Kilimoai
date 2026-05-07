@@ -1,4 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { edgeInference } from "../services/EdgeInferenceService";
+import { telemetry } from "../services/TelemetryService";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -40,7 +42,19 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const text = {
     title: language === "sw" ? "Changanua Picha" : "Photo Diagnosis",
@@ -64,6 +78,7 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
     tip1: language === "sw" ? "Piga picha wazi ya jua" : "Take clear, well-lit photos",
     tip2: language === "sw" ? "Karibia kwa majani yaliyoathirika" : "Focus on affected leaves",
     tip3: language === "sw" ? "Picha moja kwa mmea mmoja" : "One plant per photo",
+    offlineHint: language === "sw" ? "Hali ya Offline: Kutumia Edge AI kwa uchunguzi wa haraka" : "Offline Mode: Using Edge AI for rapid pre-screening",
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,10 +103,20 @@ export function PhotoCropDiagnosis({ onAnalyzePhoto, language = "en" }: PhotoCro
 
     setAnalyzing(true);
     try {
-      const result = await onAnalyzePhoto(selectedImage);
-      setDiagnosis(result);
-      toast.success(language === "sw" ? "Uchambuzi umekamilika!" : "Analysis complete!");
+      if (isOffline) {
+        toast.info(language === "sw" ? "Uchambuzi wa offline (Edge AI) unaanza..." : "Starting offline (Edge AI) analysis...");
+        const result = await edgeInference.preScreen(selectedImage, language.toUpperCase() as "EN" | "SW");
+        setDiagnosis(result as any);
+        telemetry.trackAIDiagnosis(result.className, result.probability, true);
+        toast.success(language === "sw" ? "Uchambuzi wa offline umekamilika!" : "Offline analysis complete!");
+      } else {
+        const result = await onAnalyzePhoto(selectedImage);
+        setDiagnosis(result);
+        telemetry.trackAIDiagnosis(result.disease, result.confidence, false);
+        toast.success(language === "sw" ? "Uchambuzi umekamilika!" : "Analysis complete!");
+      }
     } catch (error) {
+      telemetry.captureError(error as Error, { context: "PhotoCropDiagnosis.handleAnalyze" });
       toast.error(language === "sw" ? "Imeshindwa kuchambanua" : "Analysis failed");
     } finally {
       setAnalyzing(false);
