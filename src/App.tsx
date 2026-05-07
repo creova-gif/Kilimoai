@@ -156,7 +156,10 @@ export default function App() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [language, setLanguage] = useState<"en" | "sw">("sw"); // Default Swahili
+  const [language, setLanguage] = useState<"en" | "sw">(() => {
+    const saved = localStorage.getItem("kilimoLanguage");
+    return (saved === "en" || saved === "sw") ? saved : "sw";
+  });
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showInlinePersonalization, setShowInlinePersonalization] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);

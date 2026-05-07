@@ -280,7 +280,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
           <Button 
             variant="outline" 
             onClick={toggleLanguage}
-            className="border-green-600 text-green-600 hover:bg-green-50"
+            className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32]/5"
           >
             <Languages className="h-4 w-4 mr-2" />
             {language === "en" ? "EN" : "SW"}
@@ -288,7 +288,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
           <Button 
             onClick={generateRecommendations}
             disabled={loading}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-[#2E7D32] hover:bg-[#1B5E20]"
           >
             {loading ? (
               <>
@@ -306,10 +306,10 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
       </div>
 
       {/* Farmer Info Card */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-[#2E7D32]/20 bg-[#2E7D32]/5">
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
-            <div className="h-16 w-16 bg-green-600 rounded-full flex items-center justify-center">
+            <div className="h-16 w-16 bg-[#2E7D32] rounded-full flex items-center justify-center">
               <Brain className="h-8 w-8 text-white" />
             </div>
             <div>
@@ -448,7 +448,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
                   <div key={crop.field_id} className="p-4 border rounded-lg hover:bg-gray-50">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Leaf className="h-5 w-5 text-green-600" />
+                        <Leaf className="h-5 w-5 text-[#2E7D32]" />
                         <div>
                           <p className="font-medium">{crop.crop_name[language]}</p>
                           <p className="text-sm text-gray-600">
@@ -456,7 +456,7 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
                           </p>
                         </div>
                       </div>
-                      <Badge className="bg-orange-100 text-orange-700">
+                      <Badge className="bg-gray-100 text-gray-700">
                         {language === "en" ? "Alert" : "Tahadhari"}
                       </Badge>
                     </div>
@@ -555,15 +555,15 @@ export function AIRecommendations({ userId }: AIRecommendationsProps = {}) {
               </CardHeader>
               <CardContent className="space-y-3">
                 {recommendations.finance_advice.map((advice, idx) => (
-                  <div key={idx} className="p-4 border rounded-lg bg-green-50">
+                  <div key={idx} className="p-4 border rounded-lg bg-[#2E7D32]/5">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5 text-green-600" />
+                        <TrendingUp className="h-5 w-5 text-[#2E7D32]" />
                         <div>
                           <p className="font-medium">{advice.category[language]}</p>
                         </div>
                       </div>
-                      <Badge className="bg-green-600 text-white">
+                      <Badge className="bg-[#2E7D32] text-white">
                         {language === "en" ? "Optimize" : "Boresha"}
                       </Badge>
                     </div>

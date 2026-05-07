@@ -98,7 +98,7 @@ export function UnifiedAIAdvisor({
                   <Icon className="h-4 w-4 flex-shrink-0" />
                   <span>{tab.label}</span>
                   {tab.premium && !isActive && (
-                    <span className="ml-1 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
+                    <span className="ml-1 text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
                       Pro
                     </span>
                   )}

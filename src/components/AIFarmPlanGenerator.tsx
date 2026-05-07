@@ -44,19 +44,36 @@ export function AIFarmPlanGenerator({
     setLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const mockPlan = {
+      const response = await fetch(`${apiBase}/farm-plan/generate`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, region, crops, farmSize }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.plan) {
+          setFarmPlan({ ...data.plan, isEstimate: false });
+          toast.success(language === "sw" ? "Mpango umetengenezwa!" : "Plan generated!");
+          return;
+        }
+      }
+
+      // Fallback: generate a generic template and clearly label it as an estimate
+      const fallbackPlan = {
         crop: crops[0] || "Maize",
         farmSize,
         region,
+        isEstimate: true,
         timeline: [
-          { week: 1, activity: "Land preparation", status: "pending" },
-          { week: 2, activity: "Planting", status: "pending" },
-          { week: 4, activity: "First weeding", status: "pending" },
-          { week: 6, activity: "Fertilizer application", status: "pending" },
-          { week: 12, activity: "Harvesting", status: "pending" },
+          { week: 1, activity: language === "sw" ? "Maandalizi ya ardhi" : "Land preparation", status: "pending" },
+          { week: 2, activity: language === "sw" ? "Kupanda" : "Planting", status: "pending" },
+          { week: 4, activity: language === "sw" ? "Palizi ya kwanza" : "First weeding", status: "pending" },
+          { week: 6, activity: language === "sw" ? "Kuweka mbolea" : "Fertilizer application", status: "pending" },
+          { week: 12, activity: language === "sw" ? "Kuvuna" : "Harvesting", status: "pending" },
         ],
         budget: {
           seeds: 50000,
@@ -66,49 +83,41 @@ export function AIFarmPlanGenerator({
         },
         expectedYield: "2800 kg/acre",
       };
-      
-      setFarmPlan(mockPlan);
-      toast.success(language === "sw" ? "Mpango umetengenezwa!" : "Plan generated!");
+      setFarmPlan(fallbackPlan);
+      toast.info(language === "sw" ? "Mpango wa msingi unaonyeshwa — hakuna data halisi" : "Showing a generic template — not personalised data");
     } catch (error) {
-      toast.error(language === "sw" ? "Imeshindwa kutengeneza" : "Failed to generate");
+      toast.error(language === "sw" ? "Imeshindwa kutengeneza" : "Failed to generate plan");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-180px)] bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
+    <div className="min-h-[calc(100vh-180px)] bg-gray-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 text-white shadow-xl">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-          </div>
-          
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{text.title}</h1>
-                <p className="text-white/90 text-sm">{text.subtitle}</p>
-              </div>
+        <div className="bg-[#2E7D32] rounded-2xl p-6 text-white shadow-md">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Sparkles className="h-6 w-6 text-white" />
             </div>
-            
-            <div className="grid grid-cols-3 gap-3 mt-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
-                <p className="text-xs text-white/80">{language === "sw" ? "Eneo" : "Region"}</p>
-                <p className="font-semibold">{region}</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
-                <p className="text-xs text-white/80">{language === "sw" ? "Ukubwa" : "Size"}</p>
-                <p className="font-semibold">{farmSize}</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
-                <p className="text-xs text-white/80">{language === "sw" ? "Zao" : "Crop"}</p>
-                <p className="font-semibold">{crops[0] || "Maize"}</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold">{text.title}</h1>
+              <p className="text-white/90 text-sm">{text.subtitle}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white/10 rounded-lg p-2">
+              <p className="text-xs text-white/80">{language === "sw" ? "Eneo" : "Region"}</p>
+              <p className="font-semibold">{region}</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-2">
+              <p className="text-xs text-white/80">{language === "sw" ? "Ukubwa" : "Size"}</p>
+              <p className="font-semibold">{farmSize}</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-2">
+              <p className="text-xs text-white/80">{language === "sw" ? "Zao" : "Crop"}</p>
+              <p className="font-semibold">{crops[0] || "Maize"}</p>
             </div>
           </div>
         </div>
@@ -117,7 +126,7 @@ export function AIFarmPlanGenerator({
           /* Generate CTA */
           <Card className="border-2 border-dashed border-gray-300">
             <CardContent className="py-12 text-center">
-              <div className="h-20 w-20 bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+              <div className="h-20 w-20 bg-[#2E7D32] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
                 <Sparkles className="h-10 w-10 text-white" />
               </div>
               
@@ -163,31 +172,41 @@ export function AIFarmPlanGenerator({
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4"
             >
+              {/* Estimate notice when API fell back to template */}
+              {farmPlan.isEstimate && (
+                <div className="flex items-center gap-2 px-4 py-3 bg-gray-100 border border-gray-300 rounded-xl text-sm text-gray-700">
+                  <CheckCircle2 className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                  {language === "sw"
+                    ? "Mpango huu ni mfano wa jumla. Haujabinafsishwa kwa shamba lako maalum."
+                    : "This plan is a general template. It has not been personalised to your specific farm."}
+                </div>
+              )}
+
               {/* Quick Stats */}
               <div className="grid md:grid-cols-3 gap-4">
-                <Card className="border-2 border-emerald-200 bg-emerald-50">
+                <Card className="border-2 border-[#2E7D32]/20 bg-[#2E7D32]/5">
                   <CardContent className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                      <div className="h-10 w-10 bg-[#2E7D32] rounded-lg flex items-center justify-center">
                         <TrendingUp className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <p className="text-xs text-emerald-700 font-medium">{text.expectedYield}</p>
-                        <p className="text-lg font-bold text-emerald-900">{farmPlan.expectedYield}</p>
+                        <p className="text-xs text-[#2E7D32] font-medium">{text.expectedYield}</p>
+                        <p className="text-lg font-bold text-gray-900">{farmPlan.expectedYield}</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-blue-200 bg-blue-50">
+                <Card className="border-2 border-gray-200 bg-gray-50">
                   <CardContent className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <div className="h-10 w-10 bg-gray-600 rounded-lg flex items-center justify-center">
                         <Calendar className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <p className="text-xs text-blue-700 font-medium">{text.timeline}</p>
-                        <p className="text-lg font-bold text-blue-900">
+                        <p className="text-xs text-gray-600 font-medium">{text.timeline}</p>
+                        <p className="text-lg font-bold text-gray-900">
                           {farmPlan.timeline.length} {language === "sw" ? "hatua" : "steps"}
                         </p>
                       </div>
@@ -195,15 +214,15 @@ export function AIFarmPlanGenerator({
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-amber-200 bg-amber-50">
+                <Card className="border-2 border-gray-200 bg-gray-50">
                   <CardContent className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                      <div className="h-10 w-10 bg-gray-500 rounded-lg flex items-center justify-center">
                         <TrendingUp className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <p className="text-xs text-amber-700 font-medium">{text.budget}</p>
-                        <p className="text-lg font-bold text-amber-900">
+                        <p className="text-xs text-gray-600 font-medium">{text.budget}</p>
+                        <p className="text-lg font-bold text-gray-900">
                           {(farmPlan.budget.total / 1000).toFixed(0)}k TSh
                         </p>
                       </div>

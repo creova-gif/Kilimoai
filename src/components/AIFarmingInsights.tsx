@@ -53,25 +53,25 @@ export function AIFarmingInsights({ insights, language }: Props) {
               transition={{ delay: index * 0.1 }}
               className={`p-3 rounded-lg border-2 ${
                 insight.priority === "high" 
-                  ? "bg-red-50 border-red-200" 
+                  ? "bg-gray-50 border-gray-300" 
                   : insight.priority === "medium"
-                  ? "bg-orange-50 border-orange-200"
+                  ? "bg-gray-50 border-gray-200"
                   : "bg-[#2E7D32]/5 border-[#2E7D32]/30"
               }`}
             >
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg flex-shrink-0 ${
                   insight.priority === "high"
-                    ? "bg-red-100"
+                    ? "bg-gray-200"
                     : insight.priority === "medium"
-                    ? "bg-orange-100"
+                    ? "bg-gray-100"
                     : "bg-[#2E7D32]/10"
                 }`}>
                   <CheckCircle className={`h-4 w-4 ${
                     insight.priority === "high"
-                      ? "text-red-600"
+                      ? "text-gray-800"
                       : insight.priority === "medium"
-                      ? "text-orange-600"
+                      ? "text-gray-600"
                       : "text-[#2E7D32]"
                   }`} />
                 </div>

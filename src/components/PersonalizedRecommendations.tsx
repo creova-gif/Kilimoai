@@ -59,7 +59,7 @@ export function PersonalizedRecommendations({
       const responseText = await response.text();
 
       if (responseText.includes('<!DOCTYPE') || responseText.includes('<html')) {
-        setRecommendations(getMockRecommendations());
+        setRecommendations(null);
         setLoading(false);
         return;
       }
@@ -68,7 +68,7 @@ export function PersonalizedRecommendations({
       try {
         data = JSON.parse(responseText);
       } catch (parseError) {
-        setRecommendations(getMockRecommendations());
+        setRecommendations(null);
         setLoading(false);
         return;
       }
@@ -76,10 +76,11 @@ export function PersonalizedRecommendations({
       if (data.success) {
         setRecommendations(data.recommendations);
       } else {
-        setRecommendations(getMockRecommendations());
+        setRecommendations(null);
       }
     } catch (error) {
-      setRecommendations(getMockRecommendations());
+      console.error("Recommendations load error:", error);
+      setRecommendations(null);
     } finally {
       setLoading(false);
     }
@@ -206,6 +207,32 @@ export function PersonalizedRecommendations({
     );
   }
 
+  if (!recommendations) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl">
+          <AlertCircle className="h-5 w-5 text-gray-500 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-gray-800">
+              {language === "en" ? "Could not load recommendations" : "Imeshindwa kupakia mapendekezo"}
+            </p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {language === "en" 
+                ? "Please check your connection and try again." 
+                : "Tafadhali angalia muunganisho wako na ujaribu tena."}
+            </p>
+          </div>
+          <button
+            onClick={loadRecommendations}
+            className="text-sm text-[#2E7D32] font-medium hover:underline flex-shrink-0"
+          >
+            {language === "en" ? "Retry" : "Jaribu Tena"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const allRecommendations = [
     ...(recommendations?.urgent || []).map((r: any) => ({ ...r, type: "urgent" })),
     ...(recommendations?.seasonal || []).map((r: any) => ({ ...r, type: "seasonal" })),
@@ -240,16 +267,10 @@ export function PersonalizedRecommendations({
   return (
     <div className="space-y-6">
       {/* Hero Section - Task-Driven Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] rounded-2xl p-6 md:p-8 text-white shadow-xl">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative z-10">
+      <div className="bg-[#2E7D32] rounded-2xl p-6 md:p-8 text-white shadow-md">
+        <div>
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
               <Zap className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -260,25 +281,25 @@ export function PersonalizedRecommendations({
 
           {/* Quick Stats */}
           <div className="grid grid-cols-3 gap-3 mt-6">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+            <div className="bg-white/10 rounded-xl p-3 border border-white/20">
               <div className="flex items-center gap-2 mb-1">
-                <Flame className="h-4 w-4 text-red-300" />
+                <Flame className="h-4 w-4 text-white/80" />
                 <span className="text-xs text-white/80 uppercase tracking-wider">{text.urgent}</span>
               </div>
               <p className="text-2xl font-bold">{urgentCount}</p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+            <div className="bg-white/10 rounded-xl p-3 border border-white/20">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-4 w-4 text-emerald-300" />
+                <TrendingUp className="h-4 w-4 text-white/80" />
                 <span className="text-xs text-white/80 uppercase tracking-wider">{text.market}</span>
               </div>
               <p className="text-2xl font-bold">{marketCount}</p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+            <div className="bg-white/10 rounded-xl p-3 border border-white/20">
               <div className="flex items-center gap-2 mb-1">
-                <Leaf className="h-4 w-4 text-amber-300" />
+                <Leaf className="h-4 w-4 text-white/80" />
                 <span className="text-xs text-white/80 uppercase tracking-wider">{text.seasonal}</span>
               </div>
               <p className="text-2xl font-bold">{seasonalCount}</p>
@@ -312,15 +333,15 @@ export function PersonalizedRecommendations({
           onClick={() => setActiveFilter("urgent")}
           className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
             activeFilter === "urgent"
-              ? "bg-red-600 text-white shadow-lg scale-105"
-              : "bg-white text-gray-700 border-2 border-red-200 hover:border-red-400"
+              ? "bg-[#2E7D32] text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 border-2 border-gray-200 hover:border-gray-400"
           }`}
         >
           <span className="flex items-center gap-2">
             <Flame className="h-4 w-4" />
             {text.urgent}
             <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
-              activeFilter === "urgent" ? "bg-white/20" : "bg-red-100 text-red-700"
+              activeFilter === "urgent" ? "bg-white/20" : "bg-gray-100 text-gray-700"
             }`}>
               {urgentCount}
             </span>
@@ -332,14 +353,14 @@ export function PersonalizedRecommendations({
           className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
             activeFilter === "market"
               ? "bg-[#2E7D32] text-white shadow-lg scale-105"
-              : "bg-white text-gray-700 border-2 border-emerald-200 hover:border-emerald-400"
+              : "bg-white text-gray-700 border-2 border-gray-200 hover:border-gray-400"
           }`}
         >
           <span className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             {text.market}
             <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
-              activeFilter === "market" ? "bg-white/20" : "bg-emerald-100 text-emerald-700"
+              activeFilter === "market" ? "bg-white/20" : "bg-gray-100 text-gray-700"
             }`}>
               {marketCount}
             </span>
@@ -350,15 +371,15 @@ export function PersonalizedRecommendations({
           onClick={() => setActiveFilter("seasonal")}
           className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all ${
             activeFilter === "seasonal"
-              ? "bg-amber-600 text-white shadow-lg scale-105"
-              : "bg-white text-gray-700 border-2 border-amber-200 hover:border-amber-400"
+              ? "bg-[#2E7D32] text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 border-2 border-gray-200 hover:border-gray-400"
           }`}
         >
           <span className="flex items-center gap-2">
             <Leaf className="h-4 w-4" />
             {text.seasonal}
             <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
-              activeFilter === "seasonal" ? "bg-white/20" : "bg-amber-100 text-amber-700"
+              activeFilter === "seasonal" ? "bg-white/20" : "bg-gray-100 text-gray-700"
             }`}>
               {seasonalCount}
             </span>
@@ -387,30 +408,16 @@ export function PersonalizedRecommendations({
             return (
               <Card 
                 key={index} 
-                className={`border-2 transition-all hover:shadow-xl hover:scale-[1.01] ${
-                  isUrgent 
-                    ? "border-red-200 bg-gradient-to-br from-red-50 to-white" 
-                    : rec.type === "market"
-                    ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-white"
-                    : "border-gray-200 bg-white"
-                }`}
+                className="border-2 border-gray-200 bg-white transition-all hover:shadow-md hover:scale-[1.01]"
               >
                 <CardContent className="p-5">
                   <div className="flex gap-4">
                     {/* Icon */}
                     <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center ${
-                      isUrgent 
-                        ? "bg-red-100" 
-                        : rec.type === "market"
-                        ? "bg-emerald-100"
-                        : "bg-gray-100"
+                      isUrgent ? "bg-[#2E7D32]/10" : "bg-gray-100"
                     }`}>
                       <Icon className={`h-6 w-6 ${
-                        isUrgent 
-                          ? "text-red-600" 
-                          : rec.type === "market"
-                          ? "text-emerald-600"
-                          : "text-gray-600"
+                        isUrgent ? "text-[#2E7D32]" : "text-gray-600"
                       }`} />
                     </div>
 
@@ -428,11 +435,7 @@ export function PersonalizedRecommendations({
                         {daysLeft !== null && daysLeft <= 5 && (
                           <Badge 
                             variant="secondary" 
-                            className={`flex-shrink-0 ${
-                              daysLeft <= 2 
-                                ? "bg-red-100 text-red-700 border-red-300" 
-                                : "bg-amber-100 text-amber-700 border-amber-300"
-                            }`}
+                            className="flex-shrink-0 bg-gray-100 text-gray-700 border-gray-300"
                           >
                             <Clock className="h-3 w-3 mr-1" />
                             {daysLeft}d
@@ -460,11 +463,7 @@ export function PersonalizedRecommendations({
                           <Button
                             size="sm"
                             onClick={() => handleAction(rec)}
-                            className={`${
-                              isUrgent 
-                                ? "bg-red-600 hover:bg-red-700" 
-                                : "bg-[#2E7D32] hover:bg-[#1B5E20]"
-                            } shadow-md`}
+                            className="bg-[#2E7D32] hover:bg-[#1B5E20] shadow-md"
                           >
                             {text.takeAction}
                             <ArrowRight className="h-4 w-4 ml-1" />
