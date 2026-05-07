@@ -19,6 +19,13 @@
  */
 
 import * as kv from "./kv_store.tsx";
+import { createClient } from "npm:@supabase/supabase-js";
+
+// Initialize Supabase client for audit logs
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+);
 
 // Account types in the ledger
 export enum AccountType {
@@ -235,6 +242,17 @@ export async function recordDeposit(
   await kv.set(`transaction:${transactionId}`, transaction);
   await kv.set(`user-transaction:${userId}:${transactionId}`, transaction);
   
+  // TRA COMPLIANCE: Log audit action
+  await logAuditAction({
+    user_id: userId,
+    action: "wallet_deposit",
+    entity_type: "wallet",
+    entity_id: transactionId,
+    new_data: transaction,
+    severity: "info",
+    metadata: { paymentMethod, paymentRef, gateway }
+  });
+  
   return transaction;
 }
 
@@ -313,6 +331,17 @@ export async function recordWithdrawal(
   
   await kv.set(`transaction:${transactionId}`, transaction);
   await kv.set(`user-transaction:${userId}:${transactionId}`, transaction);
+  
+  // TRA COMPLIANCE: Log audit action
+  await logAuditAction({
+    user_id: userId,
+    action: "wallet_withdrawal",
+    entity_type: "wallet",
+    entity_id: transactionId,
+    new_data: transaction,
+    severity: "warning", // Withdrawals are higher severity
+    metadata: { phoneNumber, provider, paymentRef }
+  });
   
   return transaction;
 }
@@ -616,6 +645,41 @@ export async function recordRefund(
 /**
  * Get user ledger history
  */
+/**
+ * TRA COMPLIANCE: Record audit log in Supabase
+ */
+async function logAuditAction(params: {
+  user_id?: string;
+  action: string;
+  entity_type?: string;
+  entity_id?: string;
+  old_data?: any;
+  new_data?: any;
+  status?: string;
+  severity?: string;
+  metadata?: any;
+}) {
+  try {
+    const { error } = await supabase
+      .from("audit_logs")
+      .insert({
+        user_id: params.user_id,
+        action: params.action,
+        entity_type: params.entity_type,
+        entity_id: params.entity_id,
+        old_data: params.old_data,
+        new_data: params.new_data,
+        status: params.status || "success",
+        severity: params.severity || "info",
+        metadata: params.metadata || {},
+      });
+
+    if (error) console.error("TRA Audit Log Error:", error);
+  } catch (err) {
+    console.error("Critical Audit Log Failure:", err);
+  }
+}
+
 export async function getUserLedger(userId: string): Promise<LedgerEntry[]> {
   const entries = await kv.getByPrefix(`user-ledger:${userId}:`);
   return entries || [];

@@ -1,6 +1,7 @@
 import { Shield, Mail, Phone, Trash2, ChevronRight, ExternalLink, Lock, Eye, Database, Users } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner@2.0.3';
+import { LegalDocuments } from './LegalDocuments';
 
 interface PrivacySettingsProps {
   userId: string;
@@ -18,6 +19,7 @@ export function PrivacySettings({ userId, userEmail, userPhone, onClose, languag
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [legalView, setLegalView] = useState<"none" | "privacy" | "terms">("none");
 
   const t = {
     en: {
@@ -104,6 +106,10 @@ export function PrivacySettings({ userId, userEmail, userPhone, onClose, languag
       setIsDeleting(false);
     }
   };
+
+  if (legalView !== "none") {
+    return <LegalDocuments type={legalView} language={language} onBack={() => setLegalView("none")} />;
+  }
 
   if (showDeleteConfirm) {
     return (

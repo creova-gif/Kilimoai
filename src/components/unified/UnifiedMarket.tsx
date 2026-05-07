@@ -10,9 +10,9 @@
  * - Price trends & forecasts
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
-  TrendingUp, TrendingDown, Store, DollarSign, MapPin, Sparkles, Search
+  TrendingUp, TrendingDown, Store, DollarSign, MapPin, Sparkles, Search, Loader2
 } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
@@ -39,52 +39,49 @@ interface MarketPrice {
 
 export function UnifiedMarket({
   userId,
-  region,
+  region: initialRegion,
   language
 }: UnifiedMarketProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [prices, setPrices] = useState<MarketPrice[]>([
-    {
-      id: "1",
-      crop: language === "en" ? "Maize" : "Mahindi",
-      price: 850000,
-      change: 5.2,
-      market: "Arusha Central",
-      trend: "up",
-      lastUpdated: new Date().toISOString()
-    },
-    {
-      id: "2",
-      crop: language === "en" ? "Rice" : "Mchele",
-      price: 1200000,
-      change: -2.1,
-      market: "Mwanza Market",
-      trend: "down",
-      lastUpdated: new Date().toISOString()
-    },
-    {
-      id: "3",
-      crop: language === "en" ? "Beans" : "Maharagwe",
-      price: 950000,
-      change: 1.5,
-      market: "Dodoma Market",
-      trend: "up",
-      lastUpdated: new Date().toISOString()
-    },
-    {
-      id: "4",
-      crop: language === "en" ? "Coffee" : "Kahawa",
-      price: 3500000,
-      change: 0.3,
-      market: "Moshi Market",
-      trend: "stable",
-      lastUpdated: new Date().toISOString()
+  const [prices, setPrices] = useState<MarketPrice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentRegion, setCurrentRegion] = useState(initialRegion || "Arusha");
+
+  useEffect(() => {
+    async function fetchMarketPrices() {
+      try {
+        setLoading(true);
+        // Using the identified endpoint from index.tsx
+        const response = await fetch(`https://kilimo-backend.creova.workers.dev/make-server-ce1844e7/market-prices/${currentRegion}`);
+        const data = await response.json();
+
+        if (data.success && data.prices) {
+          // Map backend MarketData to frontend MarketPrice[]
+          const mappedPrices = data.prices.prices.map((p: any, index: number) => ({
+            id: `${index}`,
+            crop: p.crop,
+            price: p.price * 1000, // Backend is per kg, UI expects per tonne
+            change: p.change || 0,
+            market: p.market,
+            trend: (p.change || 0) > 0 ? "up" : (p.change || 0) < 0 ? "down" : "stable",
+            lastUpdated: data.prices.lastUpdated
+          }));
+          setPrices(mappedPrices);
+        }
+      } catch (error) {
+        console.error("Error fetching market prices:", error);
+        toast.error(language === "en" ? "Failed to load market prices" : "Imeshindwa kupakia bei za soko");
+      } finally {
+        setLoading(false);
+      }
     }
-  ]);
+
+    fetchMarketPrices();
+  }, [currentRegion, language]);
 
   const text = {
     title: language === "en" ? "Market Prices" : "Bei za Soko",
-    subtitle: language === "en" ? "Live prices and trading opportunities" : "Bei za sasa na fursa za biashara",
+    subtitle: language === "en" ? `Live prices in ${currentRegion}` : `Bei za sasa katika ${currentRegion}`,
     search: language === "en" ? "Search crop..." : "Tafuta zao...",
     perTonne: language === "en" ? "per tonne" : "kwa tani",
     updated: language === "en" ? "Updated" : "Imeboreshwa",
@@ -92,14 +89,26 @@ export function UnifiedMarket({
     viewMarket: language === "en" ? "View Market" : "Tazama Soko",
     sell: language === "en" ? "Sell" : "Uza",
     buy: language === "en" ? "Buy" : "Nunua",
+    loading: language === "en" ? "Fetching live prices..." : "Inatafuta bei za sasa...",
   };
 
   const filteredPrices = prices.filter(p => 
     p.crop.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const avgPrice = prices.reduce((sum, p) => sum + p.price, 0) / prices.length;
+  const avgPrice = prices.length > 0 ? prices.reduce((sum, p) => sum + p.price, 0) / prices.length : 0;
   const upTrends = prices.filter(p => p.trend === "up").length;
+
+  if (loading && prices.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#2E7D32] mx-auto" />
+          <p className="text-gray-500 font-medium">{text.loading}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -121,6 +130,20 @@ export function UnifiedMarket({
                   <h1 className="text-2xl font-bold">{text.title}</h1>
                   <p className="text-white/90 text-sm">{text.subtitle}</p>
                 </div>
+              </div>
+              
+              <div className="flex gap-2">
+                {["Arusha", "Dar es Salaam", "Mwanza", "Mbeya"].map(r => (
+                  <Button 
+                    key={r}
+                    variant={currentRegion === r ? "secondary" : "ghost"}
+                    size="sm"
+                    className={currentRegion === r ? "bg-white text-[#2E7D32]" : "text-white hover:bg-white/10"}
+                    onClick={() => setCurrentRegion(r)}
+                  >
+                    {r.split(' ')[0]}
+                  </Button>
+                ))}
               </div>
             </div>
 
@@ -158,7 +181,7 @@ export function UnifiedMarket({
 
         {/* Price Cards */}
         <div className="grid md:grid-cols-2 gap-4">
-          {filteredPrices.map((price, index) => (
+          {filteredPrices.length > 0 ? filteredPrices.map((price, index) => (
             <motion.div
               key={price.id}
               initial={{ opacity: 0, y: 20 }}
@@ -220,12 +243,18 @@ export function UnifiedMarket({
                   </div>
 
                   <p className="text-xs text-gray-500 mt-3 text-center">
-                    {text.updated}: {text.justNow}
+                    {text.updated}: {new Date(price.lastUpdated).toLocaleTimeString()}
                   </p>
                 </CardContent>
               </Card>
             </motion.div>
-          ))}
+          )) : (
+            <div className="md:col-span-2 text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+              <p className="text-gray-400">
+                {language === "en" ? "No prices found for this search" : "Hakuna bei zilizopatikana kwa utafutaji huu"}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Info Card */}

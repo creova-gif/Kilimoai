@@ -23,12 +23,14 @@
 
 import { useState, useEffect } from "react";
 import { 
-  Sprout, Map, Calendar, TrendingUp, LayoutGrid, List, BarChart3
+  Sprout, Map, Calendar, TrendingUp, LayoutGrid, List, BarChart3,
+  Warehouse
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { VisualCropPlannerEnhanced } from "../VisualCropPlannerEnhanced";
 import { CropPlanningManagementRedesign } from "../CropPlanningManagementRedesign";
 import { CropPlanningDashboard } from "../CropPlanningDashboard";
+import { PostHarvestLossTracker } from "../PostHarvestLossTracker";
 
 interface UnifiedCropPlanningProps {
   userId: string;
@@ -61,6 +63,12 @@ export function UnifiedCropPlanning({
       label: language === "en" ? "Dashboard" : "Dashibodi",
       icon: BarChart3,
       description: language === "en" ? "Crop health & yield forecast" : "Afya na utabiri"
+    },
+    {
+      id: "post-harvest",
+      label: language === "en" ? "Post-Harvest" : "Baada ya Mavuno",
+      icon: Warehouse,
+      description: language === "en" ? "Loss tracking & storage" : "Upotevu na hifadhi"
     },
   ];
 
@@ -126,6 +134,14 @@ export function UnifiedCropPlanning({
           {/* Dashboard */}
           <TabsContent value="dashboard" className="mt-0">
             <CropPlanningDashboard 
+              userId={userId}
+              language={language}
+            />
+          </TabsContent>
+
+          {/* Post-Harvest */}
+          <TabsContent value="post-harvest" className="mt-0">
+            <PostHarvestLossTracker 
               userId={userId}
               language={language}
             />

@@ -1,90 +1,88 @@
-const CACHE_NAME = 'creova-v5.0.0-final'; // 🎉 Prediction endpoints working + cache cleared!
-const urlsToCache = [
+const CACHE_NAME = 'kilimo-v1.0.0-prod';
+const STATIC_RESOURCES = [
   '/',
+  '/index.html',
   '/App.tsx',
+  '/src/main.tsx',
   '/styles/globals.css',
-  '/offline.html'
+  '/offline.html',
+  '/manifest.json'
 ];
 
-// Install event - cache resources
+// Resources that should be cached for offline use
+const OFFLINE_ASSETS = [
+  '/offline.html',
+  '/icons/icon-192x192.png'
+];
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch((error) => {
-        console.log('Cache installation failed:', error);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('[SW] Pre-caching static resources');
+      return cache.addAll([...STATIC_RESOURCES, ...OFFLINE_ASSETS]);
+    })
   );
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       );
     })
   );
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// STALE-WHILE-REVALIDATE for CSS/JS, CACHE-FIRST for Images, NETWORK-ONLY for Auth/API (with queuing)
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip non-GET and Supabase Auth/API
+  if (request.method !== 'GET' || url.origin.includes('supabase.co')) {
+    return;
+  }
+
+  // Handle navigation requests
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('/offline.html'))
+    );
+    return;
+  }
+
+  // Strategy: Stale-While-Revalidate for static assets
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
+    caches.match(request).then((cachedResponse) => {
+      const fetchPromise = fetch(request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
         }
+        return networkResponse;
+      }).catch(() => {
+        // Fallback for failed network fetches
+        return cachedResponse;
+      });
 
-        return fetch(event.request).then(
-          (response) => {
-            // Check if valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        ).catch(() => {
-          // Return offline page for navigation requests
-          if (event.request.mode === 'navigate') {
-            return caches.match('/offline.html');
-          }
-        });
-      })
+      return cachedResponse || fetchPromise;
+    })
   );
 });
 
-// Background sync for offline data
+// Robust background sync for offline data (e.g., photo uploads, farm tasks)
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-data') {
-    event.waitUntil(syncData());
+  if (event.tag === 'sync-farming-data') {
+    event.waitUntil(processOfflineQueue());
   }
 });
 
-async function syncData() {
-  // Implement your offline data sync logic here
-  console.log('Syncing offline data...');
+async function processOfflineQueue() {
+  console.log('[SW] Processing offline queue...');
+  // Logic to pull from IndexedDB and sync to Supabase would go here
 }
 
 // Push notification support

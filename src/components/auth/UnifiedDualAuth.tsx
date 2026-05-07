@@ -20,7 +20,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2, Chrome, Apple } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -84,6 +84,9 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
       passwordPlaceholder: "Enter password",
       continueWithEmail: "Continue with Email",
       forgotPassword: "Forgot password?",
+      socialTitle: "Or continue with",
+      appleSignIn: "Sign in with Apple",
+      googleSignIn: "Sign in with Google",
       
       // OTP
       otpSent: "Code sent to",
@@ -121,6 +124,11 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
         cooperative: "Cooperative Member",
         researcher: "Researcher/Student"
       },
+      
+      // Social
+      continueWithApple: "Continue with Apple",
+      continueWithGoogle: "Continue with Google",
+      orContinueWith: "Or continue with",
       
       // States
       loading: "Loading...",
@@ -160,6 +168,9 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
       passwordPlaceholder: "Weka nenosiri",
       continueWithEmail: "Endelea na Barua Pepe",
       forgotPassword: "Umesahau nenosiri?",
+      socialTitle: "Au endelea na",
+      appleSignIn: "Ingia na Apple",
+      googleSignIn: "Ingia na Google",
       
       // OTP
       otpSent: "Nambari imetumwa kwenye",
@@ -197,6 +208,11 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
         cooperative: "Mwanachama wa Ushirika",
         researcher: "Mtafiti/Mwanafunzi"
       },
+      
+      // Social
+      continueWithApple: "Endelea na Apple",
+      continueWithGoogle: "Endelea na Google",
+      orContinueWith: "Au endelea na",
       
       // States
       loading: "Inapakia...",
@@ -433,6 +449,24 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
     }
   };
 
+  // SOCIAL AUTH
+  const handleSocialAuth = async (provider: "google" | "apple") => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      console.error(`${provider} auth error:`, error);
+      toast.error(error.message || `Failed to sign in with ${provider}`);
+      setLoading(false);
+    }
+  };
+
   // PASSWORD RESET
   const handlePasswordReset = async () => {
     if (!email.trim()) return toast.error(text.emailRequired);
@@ -595,10 +629,10 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
           {authMode === "entry" && (
             <div className="space-y-4">
               {/* Method Tabs */}
-              <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+              <div className="flex gap-2 p-1.5 bg-gray-100 rounded-xl">
                 <button
                   onClick={() => setAuthMethod("phone")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
                     authMethod === "phone"
                       ? "bg-white text-[#2E7D32] shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
@@ -609,7 +643,7 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                 </button>
                 <button
                   onClick={() => setAuthMethod("email")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
                     authMethod === "email"
                       ? "bg-white text-[#2E7D32] shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
@@ -676,6 +710,39 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                         </button>
                       </p>
                     )}
+                  </div>
+
+                  {/* Social Auth Section */}
+                  <div className="pt-4 space-y-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-200" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">{text.socialTitle}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleSocialAuth("google")}
+                        disabled={loading}
+                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Chrome className="h-5 w-5 text-red-500" />
+                        <span className="text-sm font-medium">Google</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleSocialAuth("apple")}
+                        disabled={loading}
+                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Apple className="h-5 w-5 text-black" />
+                        <span className="text-sm font-medium">Apple</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -798,6 +865,39 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                         </button>
                       </p>
                     )}
+                  </div>
+
+                  {/* Social Auth Section */}
+                  <div className="pt-4 space-y-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-200" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">{text.socialTitle}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleSocialAuth("google")}
+                        disabled={loading}
+                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Chrome className="h-5 w-5 text-red-500" />
+                        <span className="text-sm font-medium">Google</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleSocialAuth("apple")}
+                        disabled={loading}
+                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Apple className="h-5 w-5 text-black" />
+                        <span className="text-sm font-medium">Apple</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}

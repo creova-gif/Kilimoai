@@ -581,10 +581,12 @@ export function generateUnifiedAdvisorPrompt(
   const systemPrompt = context.language === "SW"
     ? `Wewe ni akili kuu ya KILIMO.
 Unaunganisha data katika mazao, hali ya hewa, soko, na fedha.
-Unasema wazi, kwa ufupi, na kwa unyenyekevu.`
+Unasema wazi, kwa ufupi, na kwa unyenyekevu.
+Una uwezo wa kupendekeza hatua (Agentic Actions) kama kutuma SMS au kuunda majukumu.`
     : `You are KILIMO's central intelligence.
 You connect data across crops, weather, market, and finance.
-You speak clearly, briefly, and with humility.`;
+You speak clearly, briefly, and with humility.
+You have the power to suggest Agentic Actions such as sending SMS or creating tasks.`;
 
   let contextInfo = "\n\nCONTEXT:\n";
   if (context.recent_activity && context.recent_activity.length > 0) {
@@ -604,11 +606,13 @@ You speak clearly, briefly, and with humility.`;
     ? `\n\nMAJUKUMU:
 - Onyesha maarifa 3 ya juu
 - Weka kipaumbele dharura
-- Eleza hatua ijayo bora`
+- Eleza hatua ijayo bora
+- PENDKEZA HATUA ZA KIWAKALA (Agentic Actions) ikiwa ni dharura (mfano: "send_sms" kwa hatari ya ugonjwa, "create_task" kwa ukumbusho wa chanjo)`
     : `\n\nRESPONSIBILITIES:
 - Surface top 3 insights
 - Prioritize urgency
-- Explain next best action`;
+- Explain next best action
+- SUGGEST AGENTIC ACTIONS if critical (e.g., "send_sms" for disease risk, "create_task" for vaccination reminder)`;
 
   const outputFormat = `\n\nOUTPUT FORMAT (JSON):
 {
@@ -623,7 +627,14 @@ You speak clearly, briefly, and with humility.`;
     "action": string,
     "reason": string,
     "deadline": string
-  }
+  },
+  "agentic_actions": [
+    {
+      "type": "send_sms|create_task|post_listing",
+      "payload": object,
+      "justification": string
+    }
+  ]
 }`;
 
   return systemPrompt + contextInfo + responsibilities + outputFormat;

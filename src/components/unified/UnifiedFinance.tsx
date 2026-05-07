@@ -10,9 +10,9 @@
  * - Mobile money integration
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
-  Wallet, TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, CreditCard, Sparkles
+  Wallet, TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownLeft, CreditCard, Sparkles, Loader2
 } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
@@ -27,7 +27,7 @@ interface UnifiedFinanceProps {
 
 interface Transaction {
   id: string;
-  type: "income" | "expense";
+  type: "income" | "expense" | "credit" | "debit";
   amount: number;
   description: string;
   date: string;
@@ -38,41 +38,43 @@ export function UnifiedFinance({
   userId,
   language
 }: UnifiedFinanceProps) {
-  const [balance] = useState(2450000);
-  const [transactions] = useState<Transaction[]>([
-    {
-      id: "1",
-      type: "income",
-      amount: 850000,
-      description: language === "en" ? "Maize sale - Arusha Market" : "Mauzo ya mahindi - Soko la Arusha",
-      date: new Date(Date.now() - 86400000).toISOString(),
-      category: language === "en" ? "Sales" : "Mauzo"
-    },
-    {
-      id: "2",
-      type: "expense",
-      amount: 120000,
-      description: language === "en" ? "NPK Fertilizer purchase" : "Ununuzi wa mbolea ya NPK",
-      date: new Date(Date.now() - 172800000).toISOString(),
-      category: language === "en" ? "Inputs" : "Vifaa"
-    },
-    {
-      id: "3",
-      type: "income",
-      amount: 450000,
-      description: language === "en" ? "Bean harvest payment" : "Malipo ya mavuno ya maharagwe",
-      date: new Date(Date.now() - 259200000).toISOString(),
-      category: language === "en" ? "Sales" : "Mauzo"
-    },
-    {
-      id: "4",
-      type: "expense",
-      amount: 80000,
-      description: language === "en" ? "Labor - Weeding" : "Wafanyakazi - Kupalilia",
-      date: new Date(Date.now() - 345600000).toISOString(),
-      category: language === "en" ? "Labor" : "Wafanyakazi"
+  const [balance, setBalance] = useState<number>(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchWalletData() {
+      try {
+        setLoading(true);
+        // Using the identified endpoint
+        const response = await fetch(`https://kilimo-backend.creova.workers.dev/make-server-ce1844e7/wallet/${userId}`);
+        const data = await response.json();
+
+        if (data.success) {
+          setBalance(data.wallet.balance);
+          // Map backend transactions to frontend interface
+          const mappedTxs = data.transactions.map((tx: any) => ({
+            id: tx.id,
+            type: tx.type === "credit" ? "income" : "expense",
+            amount: tx.amount,
+            description: tx.description,
+            date: tx.timestamp || tx.date,
+            category: tx.category || (tx.type === "credit" ? "Sales" : "General")
+          }));
+          setTransactions(mappedTxs);
+        }
+      } catch (error) {
+        console.error("Error fetching wallet data:", error);
+        toast.error(language === "en" ? "Failed to load wallet data" : "Imeshindwa kupakia data za mkoba");
+      } finally {
+        setLoading(false);
+      }
     }
-  ]);
+
+    if (userId) {
+      fetchWalletData();
+    }
+  }, [userId, language]);
 
   const text = {
     title: language === "en" ? "Finance & Wallet" : "Fedha na Mkoba",
@@ -84,10 +86,22 @@ export function UnifiedFinance({
     sendMoney: language === "en" ? "Send Money" : "Tuma Fedha",
     recentTransactions: language === "en" ? "Recent Transactions" : "Shughuli za Hivi Karibuni",
     viewAll: language === "en" ? "View All" : "Tazama Zote",
+    loading: language === "en" ? "Updating wallet..." : "Inapakia mkoba...",
   };
 
   const totalIncome = transactions.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
   const totalExpenses = transactions.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+
+  if (loading && transactions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#2E7D32] mx-auto" />
+          <p className="text-gray-500 font-medium">{text.loading}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -171,7 +185,7 @@ export function UnifiedFinance({
           </div>
 
           <div className="space-y-3">
-            {transactions.map((transaction, index) => (
+            {transactions.length > 0 ? transactions.map((transaction, index) => (
               <motion.div
                 key={transaction.id}
                 initial={{ opacity: 0, x: -20 }}
@@ -217,7 +231,13 @@ export function UnifiedFinance({
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
+            )) : (
+              <div className="text-center py-10 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                <p className="text-gray-400">
+                  {language === "en" ? "No transactions found" : "Hakuna shughuli zilizopatikana"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

@@ -8,9 +8,10 @@ import { motion } from "motion/react";
 interface DigitalFarmTwinProps {
   userId: string;
   language?: "en" | "sw";
+  isPremium?: boolean;
 }
 
-export function DigitalFarmTwin({ userId, language = "en" }: DigitalFarmTwinProps) {
+export function DigitalFarmTwin({ userId, language = "en", isPremium = false }: DigitalFarmTwinProps) {
   const [selectedMetric, setSelectedMetric] = useState("overview");
 
   const text = {
@@ -24,6 +25,8 @@ export function DigitalFarmTwin({ userId, language = "en" }: DigitalFarmTwinProp
     good: language === "sw" ? "Nzuri" : "Good",
     attention: language === "sw" ? "Angalizo" : "Attention",
     premium: language === "sw" ? "Huduma ya Malipo" : "Premium Feature",
+    demoMode: language === "sw" ? "Hali ya Majaribio" : "Demo Mode",
+    upgradePrompt: language === "sw" ? "Boresha ili uone data ya shamba lako" : "Upgrade to see your farm data",
   };
 
   const metrics = [
@@ -87,15 +90,33 @@ export function DigitalFarmTwin({ userId, language = "en" }: DigitalFarmTwinProp
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">{text.title}</h1>
-                  <p className="text-white/90 text-sm">{text.subtitle}</p>
+                  <p className="text-white/90 text-sm">{isPremium ? text.subtitle : text.demoMode}</p>
                 </div>
               </div>
-              <Badge className="bg-amber-500 text-white border-0">
-                {text.premium}
+              <Badge className={`${isPremium ? "bg-emerald-500" : "bg-amber-500"} text-white border-0`}>
+                {isPremium ? (language === "sw" ? "Imekubaliwa" : "Active") : text.premium}
               </Badge>
             </div>
           </div>
         </div>
+
+        {!isPremium && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <p className="text-sm font-medium text-amber-900">{text.upgradePrompt}</p>
+            </div>
+            <Button size="sm" className="bg-amber-600 hover:bg-amber-700 whitespace-nowrap">
+              {language === "sw" ? "Boresha Sasa" : "Upgrade Now"}
+            </Button>
+          </motion.div>
+        )}
 
         {/* Metrics Grid */}
         <div className="grid md:grid-cols-2 gap-4">
@@ -121,7 +142,9 @@ export function DigitalFarmTwin({ userId, language = "en" }: DigitalFarmTwinProp
                     
                     <h3 className="text-sm font-semibold text-gray-600 mb-1">{metric.label}</h3>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-gray-900">{metric.value}</span>
+                      <span className={`text-4xl font-bold ${isPremium ? "text-gray-900" : "text-gray-400 blur-[4px]"}`}>
+                        {isPremium ? metric.value : "???"}
+                      </span>
                     </div>
                   </CardContent>
                 </Card>

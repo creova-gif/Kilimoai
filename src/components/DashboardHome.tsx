@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import { AutoAIInsights } from "./AutoAIInsights";
+import { DigitalFarmTwin } from "./DigitalFarmTwin";
+import { FarmSetupNudge } from "./FarmSetupNudge";
 import {
   TrendingUp,
   TrendingDown,
@@ -23,6 +25,7 @@ import {
   Loader2,
   RefreshCw
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner@2.0.3";
 import { aiTelemetry } from "../utils/ai-telemetry";
 import { useErrorReporting } from "../utils/crash-reporting";
@@ -104,6 +107,17 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [showFarmNudge, setShowFarmNudge] = useState(false);
+
+  useEffect(() => {
+    // Check if farm profile is incomplete
+    if (user && (!user.region || !user.farmSize || !user.crops || user.crops.length === 0)) {
+      const isDismissed = localStorage.getItem(`nudge_dismissed_${user.id}`);
+      if (!isDismissed) {
+        setShowFarmNudge(true);
+      }
+    }
+  }, [user]);
 
   // Translations
   const text = {
@@ -427,12 +441,40 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
         </div>
       </div>
 
+      {/* Farm Setup Nudge (Progressive Onboarding) */}
+      <AnimatePresence>
+        {showFarmNudge && (
+          <div className="mb-6">
+            <FarmSetupNudge 
+              language={language as 'en' | 'sw'}
+              onSetup={() => {
+                if (onNavigate) onNavigate("profile");
+                setShowFarmNudge(false);
+              }}
+              onDismiss={() => {
+                setShowFarmNudge(false);
+                if (user) {
+                  localStorage.setItem(`nudge_dismissed_${user.id}`, 'true');
+                }
+              }}
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Auto AI Insights Widget - FIXED LANGUAGE PROP */}
       <AutoAIInsights 
         userId={user.id}
         language={language}
         autoLoad={true}
         refreshInterval={REFRESH_INTERVAL_MS}
+      />
+
+      {/* Digital Farm Twin Demo/Premium Card */}
+      <DigitalFarmTwin 
+        userId={user.id} 
+        language={language as "en" | "sw"} 
+        isPremium={user.tier === "premium" || user.role === "commercial_farm_admin"} 
       />
 
       {/* Main Content Grid */}
