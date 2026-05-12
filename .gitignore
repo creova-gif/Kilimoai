@@ -42,3 +42,13 @@ coverage/
 *.njsproj
 *.sln
 *.sw?
+
+# Expo
+.expo/
+mobile/.expo/
+mobile/node_modules/
+mobile/dist/
+*.jks
+*.p12
+*.key
+*.mobileprovision
