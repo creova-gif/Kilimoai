@@ -27,10 +27,9 @@ import {
   IdCard, Network, Lightbulb, Leaf, Microscope, Link, Send, HelpCircle,
   PhoneCall, Info, PlayCircle, MessageCircle, Building2, DollarSign, Boxes, Zap, Wallet
 } from "lucide-react";
-import { Capacitor } from "@capacitor/core";
-import { StatusBar, Style } from "@capacitor/status-bar";
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import { NativeBiometric } from "capacitor-native-biometric";
+import { NativeAdapter } from "./utils/native-adapter";
+import { Style } from "@capacitor/status-bar"; // Keep types if needed, or replace with local ones
+import { ImpactStyle } from "@capacitor/haptics";
 
 import { UnifiedDualAuth } from "./components/auth/UnifiedDualAuth"; // ✅ PRODUCTION: Dual-method auth (Email+Password OR Phone+OTP)
 import { supabase } from "./utils/supabase/client"; // ✅ Singleton Supabase client
@@ -217,25 +216,20 @@ export default function App() {
           console.log("✅ [SESSION v2] User state set:", { id: userData.id, role: userData.role });
 
           // Trigger biometric lock if on native
-          if (Capacitor.isNativePlatform()) {
+          if (NativeAdapter.isNative()) {
             try {
-              const availability = await NativeBiometric.isAvailable();
-              if (availability.isAvailable) {
-                setIsLocked(true);
-                const verified = await NativeBiometric.verifyIdentity({
-                  reason: language === "en" ? "Unlock Kilimo AI" : "Fungua Kilimo AI",
-                  title: language === "en" ? "Authentication Required" : "Unahitaji Kuthibitisha",
-                  subtitle: language === "en" ? "Please verify your identity" : "Tafadhali thibitisha utambulisho wako",
-                  description: language === "en" ? "Use biometrics to access your farm data" : "Tumia biometrisia kupata data zako",
-                });
-                if (verified) {
-                  setIsLocked(false);
-                  toast.success(language === "en" ? "Identity verified! 🎉" : "Utambulisho umethibitishwa! 🎉");
-                }
+              setIsLocked(true);
+              const verified = await NativeAdapter.verifyIdentity({
+                reason: language === "en" ? "Unlock Kilimo AI" : "Fungua Kilimo AI",
+                title: language === "en" ? "Authentication Required" : "Unahitaji Kuthibitisha"
+              });
+              if (verified) {
+                setIsLocked(false);
+                toast.success(language === "en" ? "Identity verified! 🎉" : "Utambulisho umethibitishwa! 🎉");
               }
             } catch (bioError) {
               console.warn("Biometric auth skipped or failed:", bioError);
-              setIsLocked(false); // Fallback to unlocked if biometrics fail (or prompt password)
+              setIsLocked(false); // Fallback to unlocked if biometrics fail
             }
           }
         } else {
@@ -278,13 +272,12 @@ export default function App() {
 
   // ✅ Initialize native mobile features (StatusBar, Haptics)
   useEffect(() => {
-    if (Capacitor.isNativePlatform()) {
+    if (NativeAdapter.isNative()) {
       // Configure Status Bar
       try {
-        StatusBar.setStyle({ style: Style.Light }); // Black text for light backgrounds
-        StatusBar.show();
+        NativeAdapter.setStatusBar(Style.Light);
       } catch (e) {
-        console.warn("StatusBar plugin not available or failed:", e);
+        console.warn("StatusBar setup failed:", e);
       }
     }
   }, []);
@@ -750,11 +743,9 @@ export default function App() {
         <Button 
           onClick={async () => {
             try {
-              const verified = await NativeBiometric.verifyIdentity({
+              const verified = await NativeAdapter.verifyIdentity({
                 reason: language === "en" ? "Unlock Kilimo AI" : "Fungua Kilimo AI",
-                title: language === "en" ? "Authentication Required" : "Unahitaji Kuthibitisha",
-                subtitle: language === "en" ? "Please verify your identity" : "Tafadhali thibitisha utambulisho wako",
-                description: language === "en" ? "Use biometrics to access your farm data" : "Tumia biometrisia kupata data zako",
+                title: language === "en" ? "Authentication Required" : "Unahitaji Kuthibitisha"
               });
               if (verified) {
                 setIsLocked(false);

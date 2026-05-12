@@ -46,6 +46,8 @@
     "cmdk": "^1.1.1",
     "embla-carousel-react": "^8.6.0",
     "expo": "~51.0.0",
+    "expo-haptics": "^55.0.14",
+    "expo-local-authentication": "^55.0.13",
     "expo-status-bar": "~1.12.1",
     "framer-motion": "*",
     "hono": "^4.6.14",
@@ -77,8 +79,11 @@
     "vite-plugin-pwa": "^1.3.0"
   },
   "scripts": {
-    "start:mobile": "vite web --host 0.0.0.0 --port 5173",
-    "build": "vite build web",
+    "start:mobile": "vite --host 0.0.0.0 --port 5173",
+    "dev:web": "npm run start:mobile",
+    "dev:native": "npx expo start --tunnel",
+    "dev": "npm run start:mobile",
+    "build": "vite build",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

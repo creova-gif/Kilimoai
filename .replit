@@ -20,7 +20,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run start:mobile & npx expo start --tunnel"
+args = "npm run dev:web & npx expo start --tunnel"
 
 [workflows.workflow.metadata]
 outputType = "mobile"
