@@ -1,4 +1,6 @@
-modules = ["nodejs-20", "web", "bash", "python-3.11"]
+modules = ["nodejs-20", "bash"]
+run = "npm run dev & npx expo start --tunnel"
+
 [agent]
 expertMode = true
 integrations = ["github:1.0.0"]
@@ -15,34 +17,16 @@ mode = "parallel"
 author = "agent"
 
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start application"
-
-[[workflows.workflow]]
-name = "Start application"
-author = "agent"
-
-[[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev & npx expo start"
-waitForPort = 5000
+args = "npm run dev & npx expo start --tunnel"
 
 [workflows.workflow.metadata]
-outputType = "webview"
-
-[[ports]]
-localPort = 5000
-externalPort = 80
+outputType = "mobile"
 
 [[ports]]
 localPort = 8081
 externalPort = 19000
 
-[deployment]
-deploymentTarget = "static"
-build = ["npm", "run", "build"]
-publicDir = "build"
-
-[postMerge]
-path = "scripts/post-merge.sh"
-timeoutMs = 60000
+[[ports]]
+localPort = 5173
+externalPort = 80
