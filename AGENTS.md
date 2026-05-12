@@ -61,3 +61,19 @@ Use the returned `workflowDir` exactly as provided. Do not reconstruct paths fro
 
 Never write `n8nac-config.json`, `~/.n8n-manager`, or n8n-manager secret files by hand.
 <!-- n8n-as-code-end -->
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in the repo's GitHub Issues. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical roles map to GitHub labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout. See `docs/agents/domain.md`.
