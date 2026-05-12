@@ -1,6 +1,25 @@
-modules = ["nodejs-20", "web", "bash"]
+modules = ["nodejs-20", "bash"]
+run = "npm run dev & npx expo start --tunnel"
+entrypoint = "App.js"
+
 [agent]
 expertMode = true
+integrations = ["github:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
+
+[workflows]
+runButton = "Mobile App"
+
+[[workflows.workflow]]
+name = "Mobile App"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev & npx expo start --tunnel"
+
+[workflows.workflow.metadata]
+outputType = "mobile"

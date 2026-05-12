@@ -125,6 +125,10 @@ export default defineConfig({
       '@jsr/supabase__supabase-js@2.49.8': '@supabase/supabase-js',
       '@jsr/supabase__supabase-js@2': '@supabase/supabase-js',
       '@': path.resolve(__dirname, './src'),
+      'capacitor-native-biometric': path.resolve(__dirname, '../node_modules/capacitor-native-biometric'),
+      '@capacitor/core': path.resolve(__dirname, '../node_modules/@capacitor/core'),
+      '@capacitor/status-bar': path.resolve(__dirname, '../node_modules/@capacitor/status-bar'),
+      '@capacitor/haptics': path.resolve(__dirname, '../node_modules/@capacitor/haptics'),
     },
   },
   build: {
@@ -133,7 +137,10 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 5000,
+    port: 5173,
     allowedHosts: true,
   },
+  optimizeDeps: {
+    exclude: ['capacitor-native-biometric', '@capacitor/status-bar', '@capacitor/haptics', '@capacitor/core']
+  }
 });
