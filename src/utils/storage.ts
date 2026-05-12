@@ -154,3 +154,34 @@ export function fileToBase64(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+/**
+ * Key-Value Storage Utilities (LocalStorage Wrapper)
+ * Used for offline caching and session management
+ */
+
+export async function getItem(key: string): Promise<any> {
+  try {
+    const value = localStorage.getItem(`kilimo:${key}`);
+    return value ? JSON.parse(value) : null;
+  } catch (error) {
+    console.error(`Error reading ${key} from storage:`, error);
+    return null;
+  }
+}
+
+export async function setItem(key: string, value: any): Promise<void> {
+  try {
+    localStorage.setItem(`kilimo:${key}`, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Error writing ${key} to storage:`, error);
+  }
+}
+
+export async function removeItem(key: string): Promise<void> {
+  try {
+    localStorage.removeItem(`kilimo:${key}`);
+  } catch (error) {
+    console.error(`Error removing ${key} from storage:`, error);
+  }
+}

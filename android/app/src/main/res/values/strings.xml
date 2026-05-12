@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kilimo AI</string>
+    <string name="title_activity_main">Kilimo AI</string>
+    <string name="package_name">com.kilimoai.app</string>
+    <string name="custom_url_scheme">com.kilimoai.app</string>
+</resources>

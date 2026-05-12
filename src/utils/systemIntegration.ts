@@ -21,6 +21,7 @@ import { projectId, publicAnonKey } from './supabase/info';
 import { supabase } from './supabase/client';
 import * as kv from './storage';
 import { analytics } from './analytics';
+import { toast } from 'sonner';
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
 
@@ -253,7 +254,7 @@ export interface Task {
 }
 
 // Create crop plan from template
-export async function createCropPlanFromTemplate(templateId: string, userId: string, customizations: any): Promise<{ success: boolean; plan?: CropPlan; error?: string }> {
+export async function createCropPlanFromTemplate(templateId: string, userId: string, customizations: any, language: 'en' | 'sw' = 'en'): Promise<{ success: boolean; plan?: CropPlan; error?: string }> {
   try {
     const authToken = await kv.getItem('authToken');
 
@@ -266,6 +267,36 @@ export async function createCropPlanFromTemplate(templateId: string, userId: str
     if (startDate < today && !customizations.isHistorical) {
       startDate.setTime(today.getTime());
       console.warn('Start date adjusted to today. Use isHistorical flag for past data.');
+    }
+
+    // Check if offline
+    if (!navigator.onLine) {
+      const offlineId = `offline_plan_${Date.now()}`;
+      const plan: CropPlan = {
+        id: offlineId,
+        userId,
+        cropName: customizations.cropName || 'Unknown Crop',
+        templateId,
+        startDate: startDate.toISOString(),
+        endDate: new Date(startDate.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString(), // Default 90 days
+        expectedYield: 0,
+        expectedRevenue: 0,
+        status: 'planning',
+        tasks: [],
+      };
+
+      await kv.setItem(`cropPlan:${offlineId}`, plan);
+      await queueOfflineAction('/crop-planning/create-from-template', 'POST', { 
+        templateId, 
+        userId, 
+        customizations: {
+          ...customizations,
+          startDate: startDate.toISOString()
+        }
+      });
+
+      toast.info(language === 'en' ? 'Plan saved offline' : 'Mpango umehifadhiwa offline');
+      return { success: true, plan };
     }
 
     const response = await fetch(`${API_BASE}/crop-planning/create-from-template`, {
@@ -409,9 +440,23 @@ async function scheduleTaskNotification(task: Task): Promise<void> {
 }
 
 // Update task and sync to calendar
-export async function updateTask(taskId: string, updates: Partial<Task>): Promise<{ success: boolean; error?: string }> {
+export async function updateTask(taskId: string, updates: Partial<Task>, language: 'en' | 'sw' = 'en'): Promise<{ success: boolean; error?: string }> {
   try {
     const authToken = await kv.getItem('authToken');
+
+    // Check if offline
+    if (!navigator.onLine) {
+      await queueOfflineAction(`/tasks/${taskId}`, 'PUT', updates);
+      
+      // Update local cache immediately
+      const task = await kv.getItem(`task:${taskId}`);
+      if (task) {
+        Object.assign(task, updates);
+        await kv.setItem(`task:${taskId}`, task);
+      }
+      
+      return { success: true };
+    }
 
     const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
       method: 'PUT',
@@ -524,10 +569,17 @@ export async function processMarketplaceSale(saleData: {
   quantity: number;
   pricePerUnit: number;
   buyerId: string;
-}): Promise<{ success: boolean; error?: string }> {
+}, language: 'en' | 'sw' = 'en'): Promise<{ success: boolean; error?: string }> {
   try {
     const authToken = await kv.getItem('authToken');
     const userId = await getUserId();
+
+    // Check if offline
+    if (!navigator.onLine) {
+      await queueOfflineAction('/marketplace/process-sale', 'POST', { ...saleData, sellerId: userId });
+      toast.info(language === 'en' ? 'Sale recorded offline' : 'Mauzo yamehifadhiwa offline');
+      return { success: true };
+    }
 
     const response = await fetch(`${API_BASE}/marketplace/process-sale`, {
       method: 'POST',

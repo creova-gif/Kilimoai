@@ -27,6 +27,10 @@ import {
   IdCard, Network, Lightbulb, Leaf, Microscope, Link, Send, HelpCircle,
   PhoneCall, Info, PlayCircle, MessageCircle, Building2, DollarSign, Boxes, Zap, Wallet
 } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
+import { StatusBar, Style } from "@capacitor/status-bar";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { NativeBiometric } from "capacitor-native-biometric";
 
 import { UnifiedDualAuth } from "./components/auth/UnifiedDualAuth"; // ✅ PRODUCTION: Dual-method auth (Email+Password OR Phone+OTP)
 import { supabase } from "./utils/supabase/client"; // ✅ Singleton Supabase client
@@ -54,6 +58,8 @@ import { Marketplace } from "./components/Marketplace";
 import { NextGenMarketplace } from "./components/NextGenMarketplace";
 import { ExpertConsultations } from "./components/ExpertConsultations";
 import { SoilTestingService } from "./components/SoilTestingService";
+import { syncOfflineData } from "./utils/systemIntegration";
+import { kv } from "./utils/storage";
 import { VideoTutorials } from "./components/VideoTutorials";
 import { KnowledgeRepository } from "./components/KnowledgeRepository";
 import { PeerDiscussionGroups } from "./components/PeerDiscussionGroups";
@@ -163,6 +169,7 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showInlinePersonalization, setShowInlinePersonalization] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   // ❌ REMOVED: Demo mode state variables - production only
 
   const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ce1844e7`;
@@ -208,6 +215,29 @@ export default function App() {
           
           console.log("✅ [SESSION v2] Session restored:", userData.email || userData.phone);
           console.log("✅ [SESSION v2] User state set:", { id: userData.id, role: userData.role });
+
+          // Trigger biometric lock if on native
+          if (Capacitor.isNativePlatform()) {
+            try {
+              const availability = await NativeBiometric.isAvailable();
+              if (availability.isAvailable) {
+                setIsLocked(true);
+                const verified = await NativeBiometric.verifyIdentity({
+                  reason: language === "en" ? "Unlock Kilimo AI" : "Fungua Kilimo AI",
+                  title: language === "en" ? "Authentication Required" : "Unahitaji Kuthibitisha",
+                  subtitle: language === "en" ? "Please verify your identity" : "Tafadhali thibitisha utambulisho wako",
+                  description: language === "en" ? "Use biometrics to access your farm data" : "Tumia biometrisia kupata data zako",
+                });
+                if (verified) {
+                  setIsLocked(false);
+                  toast.success(language === "en" ? "Identity verified! 🎉" : "Utambulisho umethibitishwa! 🎉");
+                }
+              }
+            } catch (bioError) {
+              console.warn("Biometric auth skipped or failed:", bioError);
+              setIsLocked(false); // Fallback to unlocked if biometrics fail (or prompt password)
+            }
+          }
         } else {
           // No session - check localStorage fallback
           console.log("⚠️ [SESSION v2] No Supabase session, checking localStorage...");
@@ -246,6 +276,19 @@ export default function App() {
     restoreSession();
   }, []);
 
+  // ✅ Initialize native mobile features (StatusBar, Haptics)
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      // Configure Status Bar
+      try {
+        StatusBar.setStyle({ style: Style.Light }); // Black text for light backgrounds
+        StatusBar.show();
+      } catch (e) {
+        console.warn("StatusBar plugin not available or failed:", e);
+      }
+    }
+  }, []);
+
   // ✅ Initialize analytics on app load
   useEffect(() => {
     analytics.page('app_root');
@@ -254,6 +297,26 @@ export default function App() {
       environment: 'production'
     });
   }, []);
+
+  // ✅ Handle background synchronization when coming back online
+  useEffect(() => {
+    const handleSync = async () => {
+      if (navigator.onLine) {
+        console.log("🌐 [SYNC] Connection restored, starting background sync...");
+        await syncOfflineData(language === "en" ? "en" : "sw");
+      }
+    };
+
+    // Listen for online events
+    window.addEventListener("online", handleSync);
+    
+    // Also check on mount
+    handleSync();
+
+    return () => {
+      window.removeEventListener("online", handleSync);
+    };
+  }, [language]);
 
   // ✅ Session timeout for security (15 minutes of inactivity)
   useSessionTimeout({
@@ -668,6 +731,53 @@ export default function App() {
   ];
 
   // ❌ REMOVED: Demo Mode Control Panel - production only
+
+  // Biometric Lock Screen
+  if (isLocked) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="mb-8 p-6 bg-gray-50 rounded-full">
+          <Shield className="h-16 w-16 text-[#2E7D32]" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          {language === "en" ? "App Locked" : "App Imefungwa"}
+        </h2>
+        <p className="text-gray-600 mb-8 max-w-xs">
+          {language === "en" 
+            ? "Please use biometric authentication to unlock Kilimo AI and access your farm data." 
+            : "Tafadhali tumia utambulisho wa biometrisia kufungua Kilimo AI na kupata data zako za shamba."}
+        </p>
+        <Button 
+          onClick={async () => {
+            try {
+              const verified = await NativeBiometric.verifyIdentity({
+                reason: language === "en" ? "Unlock Kilimo AI" : "Fungua Kilimo AI",
+                title: language === "en" ? "Authentication Required" : "Unahitaji Kuthibitisha",
+                subtitle: language === "en" ? "Please verify your identity" : "Tafadhali thibitisha utambulisho wako",
+                description: language === "en" ? "Use biometrics to access your farm data" : "Tumia biometrisia kupata data zako",
+              });
+              if (verified) {
+                setIsLocked(false);
+                toast.success(language === "en" ? "Welcome back!" : "Karibu tena!");
+              }
+            } catch (e) {
+              console.error("Retry failed:", e);
+              toast.error(language === "en" ? "Authentication failed" : "Uthibitishaji umefeli");
+            }
+          }}
+          className="bg-[#2E7D32] hover:bg-[#1B5E20] h-12 px-8 rounded-xl font-medium"
+        >
+          {language === "en" ? "Unlock Now" : "Fungua Sasa"}
+        </Button>
+        <button 
+          onClick={handleLogout}
+          className="mt-6 text-sm text-gray-500 hover:text-gray-700 font-medium"
+        >
+          {language === "en" ? "Log in as different user" : "Ingia kama mtumiaji mwingine"}
+        </button>
+      </div>
+    );
+  }
 
   // Loading screen while checking session
   if (loading) {

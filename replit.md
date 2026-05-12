@@ -27,7 +27,11 @@ KILIMO AI is a Swahili-language agriculture app built with React + TypeScript + 
 - **Build**: `npm run build` (outputs to `/build`)
 
 ## Deployment
-- Static deployment with build output in `/build` directory
+- **Web**: Static deployment with build output in `/build` directory.
+- **Mobile (Android/iOS)**: 
+  - Preview build (APK): `cd mobile && npm run build:preview`
+  - Production build: `cd mobile && npm run build:production`
+  - Custom build: `./mobile/scripts/build.sh [platform] [profile]`
 
 ## Recent Changes
 - 2026-02-18: Initial Replit setup

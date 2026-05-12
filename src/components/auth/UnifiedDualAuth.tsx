@@ -21,6 +21,9 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
+import { SignInWithApple } from "@capacitor-community/apple-sign-in";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { GoogleLogo, AppleLogo } from "../icons/BrandLogos";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -454,16 +457,79 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
   const handleSocialAuth = async (provider: "google" | "apple") => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) throw error;
+      if (Capacitor.isNativePlatform()) {
+        if (provider === "apple") {
+          const result = await SignInWithApple.authorize({
+            clientId: "com.kilimoai.app",
+            redirectURI: `https://${projectId}.supabase.co/auth/v1/callback`,
+            scopes: "email name",
+          });
+
+          if (result.response && result.response.identityToken) {
+            const { data, error } = await supabase.auth.signInWithIdToken({
+              provider: "apple",
+              token: result.response.identityToken,
+            });
+            if (error) throw error;
+            
+            if (data.user) {
+              const userData = {
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.name || data.user.user_metadata?.full_name || data.user.email,
+                role: data.user.user_metadata?.role || "smallholder_farmer",
+                tier: data.user.user_metadata?.tier || "free",
+                verified: true,
+                onboardingCompleted: data.user.user_metadata?.onboarding_complete || false,
+              };
+              localStorage.setItem("kilimoUser", JSON.stringify(userData));
+              onSuccess(userData);
+            }
+          } else {
+            throw new Error("Apple Sign In failed: No identity token returned");
+          }
+        } else if (provider === "google") {
+          const user = await GoogleAuth.signIn();
+          if (user && user.authentication.idToken) {
+            const { data, error } = await supabase.auth.signInWithIdToken({
+              provider: "google",
+              token: user.authentication.idToken,
+            });
+            if (error) throw error;
+            
+            if (data.user) {
+              const userData = {
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.name || data.user.user_metadata?.full_name || data.user.email,
+                role: data.user.user_metadata?.role || "smallholder_farmer",
+                tier: data.user.user_metadata?.tier || "free",
+                verified: true,
+                onboardingCompleted: data.user.user_metadata?.onboarding_complete || false,
+              };
+              localStorage.setItem("kilimoUser", JSON.stringify(userData));
+              onSuccess(userData);
+            }
+          } else {
+            throw new Error("Google Sign In failed: No ID token returned");
+          }
+        }
+      } else {
+        // WEB FLOW
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+        if (error) throw error;
+      }
     } catch (error: any) {
       console.error(`${provider} auth error:`, error);
-      toast.error(error.message || `Failed to sign in with ${provider}`);
+      // Don't show toast if user cancelled
+      if (error.message !== "User cancelled" && !error.message?.includes("cancel")) {
+        toast.error(error.message || `Failed to sign in with ${provider}`);
+      }
       setLoading(false);
     }
   };
