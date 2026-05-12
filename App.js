@@ -7,7 +7,9 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <WebView 
-        source={{ uri: 'http://192.168.68.108:5001/' }}
+        // NOTE: For testing on a physical device, use your Replit public URL:
+        // source={{ uri: 'https://kilimoai.justinmafie.repl.co' }}
+        source={{ uri: 'http://0.0.0.0:5000/' }}
         style={styles.webview}
         javaScriptEnabled={true}
         domStorageEnabled={true}
