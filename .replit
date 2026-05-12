@@ -1,6 +1,7 @@
 modules = ["nodejs-20", "bash"]
-run = "npm run dev & npx expo start --tunnel"
+language = "javascript"
 entrypoint = "App.js"
+outputType = "mobile"
 
 [agent]
 expertMode = true
@@ -19,7 +20,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev & npx expo start --tunnel"
+args = "npm run start:mobile & npx expo start --tunnel"
 
 [workflows.workflow.metadata]
 outputType = "mobile"
