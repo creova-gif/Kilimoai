@@ -1,0 +1,41 @@
+{
+	"appId": "com.kilimo.ai",
+	"appName": "KILIMO AI",
+	"webDir": "build",
+	"bundledWebRuntime": false,
+	"server": {
+		"androidScheme": "https"
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 2000,
+			"launchAutoHide": true,
+			"backgroundColor": "#2E7D32",
+			"androidSplashResourceName": "splash",
+			"androidScaleType": "CENTER_CROP",
+			"showSpinner": false,
+			"splashFullScreen": true,
+			"splashImmersive": true
+		},
+		"StatusBar": {
+			"style": "LIGHT",
+			"backgroundColor": "#2E7D32"
+		},
+		"Keyboard": {
+			"resize": "body",
+			"style": "dark",
+			"resizeOnFullScreen": true
+		}
+	},
+	"android": {
+		"backgroundColor": "#2E7D32",
+		"allowMixedContent": false,
+		"captureInput": true,
+		"webContentsDebuggingEnabled": false
+	},
+	"ios": {
+		"contentInset": "automatic",
+		"backgroundColor": "#2E7D32",
+		"preferredContentMode": "mobile"
+	}
+}
