@@ -20,7 +20,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2, User, Briefcase } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { SignInWithApple } from "@capacitor-community/apple-sign-in";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
@@ -29,6 +29,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import logo from "figma:asset/e26027fb3aabd00c928ba655f087af31ac20983e.png";
 import { projectId, publicAnonKey } from "../../utils/supabase/info";
 import { toast } from "sonner@2.0.3";
@@ -820,15 +821,18 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                   {authAction === "signup" && (
                     <div className="space-y-2">
                       <Label>{text.nameLabel}</Label>
-                      <Input
-                        type="text"
-                        placeholder={text.namePlaceholder}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="h-12"
-                        disabled={loading}
-                        autoFocus
-                      />
+                      <div className="relative">
+                        <User className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
+                        <Input
+                          type="text"
+                          placeholder={text.namePlaceholder}
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="pl-12 h-12"
+                          disabled={loading}
+                          autoFocus
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -873,16 +877,23 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                   {authAction === "signup" && (
                     <div className="space-y-2">
                       <Label>{text.roleLabel}</Label>
-                      <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="w-full h-12 px-4 border border-gray-300 rounded-md"
-                        disabled={loading}
-                      >
-                        {Object.entries(text.roles).map(([key, label]) => (
-                          <option key={key} value={key}>{label}</option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <Briefcase className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 z-10" />
+                        <Select
+                          value={role}
+                          onValueChange={setRole}
+                          disabled={loading}
+                        >
+                          <SelectTrigger className="pl-12 h-12 bg-white">
+                            <SelectValue placeholder={text.roleLabel} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(text.roles).map(([key, label]) => (
+                              <SelectItem key={key} value={key}>{label as string}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   )}
 
