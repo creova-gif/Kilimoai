@@ -240,7 +240,23 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
     },
   };
 
-  const text = t[language];
+  // DEV BYPASS
+  const handleDevBypass = () => {
+    const userData = {
+      id: "dev-user-id",
+      email: "dev@kilimo.ai",
+      name: "Developer Admin",
+      role: "smallholder_farmer",
+      tier: "pro",
+      verified: true,
+      onboardingCompleted: true,
+    };
+    localStorage.setItem("kilimoUser", JSON.stringify(userData));
+    toast.success("🔓 DEV BYPASS: Entering Hub...");
+    onSuccess(userData);
+  };
+
+  const text = t[language as keyof typeof t];
 
   // Validation helpers
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -264,9 +280,26 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.status === 429 || error.message?.includes("rate limit")) {
+          toast.error(language === "en" ? "Too many attempts. Please try again later or use Phone Login." : "Majaribio yamekuwa mengi. Tafadhali jaribu baadaye au tumia Nambari ya Simu.");
+          return;
+        }
+        throw error;
+      }
 
       if (data.user) {
+        // Check if verification is required (session will be null if verification is needed)
+        if (!data.session) {
+          toast.success(language === "en" 
+            ? "Account created! 📧 Please check your email to verify before logging in." 
+            : "Akaunti imeundwa! 📧 Tafadhali kagua barua pepe yako ili kuthibitisha kabla ya kuingia.", 
+            { duration: 10000 }
+          );
+          setAuthAction("login");
+          return;
+        }
+
         const userData = {
           id: data.user.id,
           email: data.user.email,
@@ -306,7 +339,13 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
         password: password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.status === 429 || error.message?.includes("rate limit")) {
+          toast.error(language === "en" ? "Too many login attempts. Please try again later." : "Majaribio ya kuingia yamekuwa mengi. Tafadhali jaribu baadaye.");
+          return;
+        }
+        throw error;
+      }
 
       if (data.user && data.session) {
         const userData = {
@@ -851,6 +890,22 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                       />
                     </div>
                   </div>
+          {/* Dev Bypass Section */}
+          {(projectId.includes("localhost") || true) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="mt-8 pt-6 border-t border-white/5 text-center"
+            >
+              <button
+                onClick={handleDevBypass}
+                className="text-[10px] uppercase tracking-widest text-white/20 hover:text-white/60 transition-colors"
+              >
+                Enter as Developer (Bypass Auth)
+              </button>
+            </motion.div>
+          )}
 
                   <div className="space-y-2">
                     <Label>{text.passwordLabel}</Label>

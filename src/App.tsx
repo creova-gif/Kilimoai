@@ -370,12 +370,6 @@ export default function App() {
     }
   }, []);
 
-  const handleRegister = async (data: any) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE}/register`, {
-        method: "POST",
-        headers: {
           "Authorization": `Bearer ${publicAnonKey}`,
           "Content-Type": "application/json",
         },
