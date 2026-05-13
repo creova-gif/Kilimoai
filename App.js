@@ -9,9 +9,15 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const webviewRef = useRef(null);
 
-  // 🚀 CONFIGURATION: Point this to your public Replit URL
-  // This is the web app that the native shell will load.
-  const REPL_URL = 'https://kilimo-ai.replit.app';
+  // 🚀 CONFIGURATION: Point this to your local Vite server IP for Expo Go development
+  // You can find your IP by running `ipconfig getifaddr en0` or `ifconfig`
+  const DEV_URL = 'http://192.168.68.108:5173'; 
+  const PROD_URL = 'https://kilimo-ai.replit.app';
+
+  // Expo's __DEV__ flag determines which URL to use
+  const REPL_URL = __DEV__ ? DEV_URL : PROD_URL;
+
+  console.log(`[KilimoAI] Loading: ${REPL_URL} (${__DEV__ ? 'DEV' : 'PROD'})`);
 
   const handleMessage = async (event) => {
     try {

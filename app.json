@@ -1,37 +1,65 @@
 {
   "expo": {
     "name": "Kilimo AI",
-    "slug": "kilimo-ai",
+    "slug": "kilimoai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#2E7D32"
+      "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jaymafie.kilimoai"
+      "bundleIdentifier": "com.jaymafie.kilimoai",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#2E7D32"
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.jaymafie.kilimoai"
+      "package": "com.jaymafie.kilimoai",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
-    "owner": "jaymafie",
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-notifications",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/inter/Inter_400Regular.ttf",
+            "node_modules/@expo-google-fonts/inter/Inter_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/inter/Inter_700Bold.ttf"
+          ]
+        }
+      ]
+    ],
+    "scheme": "kilimoai",
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "1ee34dcc-aa20-4f85-988c-466261953362"
+        "projectId": "68826767-4665-4f24-9b24-c18471960249"
       }
     }
   }
