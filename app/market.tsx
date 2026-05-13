@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -27,7 +27,12 @@ import {
   Zap,
   Leaf,
   ShoppingBag,
-  Info
+  Info,
+  Mic,
+  MessageCircle,
+  Cpu,
+  BarChart3,
+  Layers
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -39,12 +44,20 @@ import { motion, AnimatePresence } from "motion/react";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const MARKET_DATA = [
-  { id: '1', name: 'Maize (White)', price: 'TZS 85,000', unit: '100kg Bag', trend: '+2.4%', positive: true, market: 'Tandale Market', emoji: '🌽' },
-  { id: '2', name: 'Rice (Grade A)', price: 'TZS 120,000', unit: '100kg Bag', trend: '-1.2%', positive: false, market: 'Mbagala Market', emoji: '🌾' },
-  { id: '3', name: 'Beans (Soya)', price: 'TZS 210,000', unit: '100kg Bag', trend: '+0.8%', positive: true, market: 'Kariakoo Market', emoji: '🫘' },
-  { id: '4', name: 'Onions (Red)', price: 'TZS 45,000', unit: 'Net', trend: '+5.1%', positive: true, market: 'Tandale Market', emoji: '🧅' },
-  { id: '5', name: 'Tomatoes', price: 'TZS 35,000', unit: 'Crate', trend: '-3.5%', positive: false, market: 'Kariakoo Market', emoji: '🍅' },
-  { id: '6', name: 'Potatoes (Round)', price: 'TZS 75,000', unit: 'Sack', trend: '+1.2%', positive: true, market: 'Mbagala Market', emoji: '🥔' },
+  { id: '1', name: 'Maize (White)', price: 'TZS 85,000', unit: '100kg Bag', trend: '+2.4%', positive: true, market: 'Tandale Market', emoji: '🌽', volatility: 'Low' },
+  { id: '2', name: 'Rice (Grade A)', price: 'TZS 120,000', unit: '100kg Bag', trend: '-1.2%', positive: false, market: 'Mbagala Market', emoji: '🌾', volatility: 'Medium' },
+  { id: '3', name: 'Beans (Soya)', price: 'TZS 210,000', unit: '100kg Bag', trend: '+0.8%', positive: true, market: 'Kariakoo Market', emoji: '🫘', volatility: 'Low' },
+  { id: '4', name: 'Onions (Red)', price: 'TZS 45,000', unit: 'Net', trend: '+5.1%', positive: true, market: 'Tandale Market', emoji: '🧅', volatility: 'High' },
+  { id: '5', name: 'Tomatoes', price: 'TZS 35,000', unit: 'Crate', trend: '-3.5%', positive: false, market: 'Kariakoo Market', emoji: '🍅', volatility: 'High' },
+  { id: '6', name: 'Potatoes (Round)', price: 'TZS 75,000', unit: 'Sack', trend: '+1.2%', positive: true, market: 'Mbagala Market', emoji: '🥔', volatility: 'Low' },
+];
+
+const CATEGORIES = [
+  { name: 'All', icon: <Layers size={14} /> },
+  { name: 'Grains', icon: <Leaf size={14} /> },
+  { name: 'Vegetables', icon: <ShoppingBag size={14} /> },
+  { name: 'Trending', icon: <TrendingUp size={14} /> },
+  { name: 'Input', icon: <Zap size={14} /> },
 ];
 
 // Variants for staggered entrance
@@ -53,25 +66,35 @@ const containerVariants = {
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1
+      staggerChildren: 0.1,
+      delayChildren: 0.2
     }
   }
 };
 
-// Background Orb Component
-const NeuralOrb = ({ color, size, delay, x, y }: any) => {
+const itemVariants = {
+  initial: { opacity: 0, y: 30, scale: 0.95 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: { type: "spring", damping: 22, stiffness: 120 }
+  }
+};
+
+// Enhanced Neural Orb Component
+const NeuralOrb = ({ color, size, delay, x, y, duration = 20 }: any) => {
   return (
     <motion.View
       initial={{ x, y, opacity: 0, scale: 0.8 }}
       animate={{ 
-        x: [x, x + 45, x - 25, x],
-        y: [y, y - 55, y + 35, y],
-        opacity: [0.08, 0.15, 0.1, 0.08],
-        scale: [1, 1.12, 0.92, 1]
+        x: [x, x + 60, x - 40, x],
+        y: [y, y - 80, y + 60, y],
+        opacity: [0.08, 0.18, 0.12, 0.08],
+        scale: [1, 1.2, 0.9, 1]
       }}
       transition={{
-        duration: 18 + delay / 1000,
+        duration: duration + delay / 1000,
         repeat: Infinity,
         ease: "easeInOut",
       }}
@@ -82,27 +105,83 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
           height: size,
           borderRadius: size / 2,
           backgroundColor: color,
-          filter: Platform.OS === 'web' ? 'blur(90px)' : undefined,
+          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
         },
       ]}
     />
   );
 };
 
-const itemVariants = {
-  initial: { opacity: 0, y: 20, scale: 0.98 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: { type: "spring", damping: 20, stiffness: 100 }
-  }
+// Live Intelligence Feed Component
+const IntelligenceHero = ({ isDark, colors }: any) => {
+  return (
+    <motion.View 
+      variants={itemVariants}
+      style={styles.intelligenceContainer}
+    >
+      <BlurView intensity={isDark ? 25 : 85} tint={isDark ? "dark" : "light"} style={[styles.intelligenceCard, { borderColor: colors.border }]}>
+        <LinearGradient
+          colors={isDark 
+            ? ['rgba(62, 207, 142, 0.12)', 'rgba(30, 41, 59, 0.6)', 'rgba(15, 23, 42, 0.8)'] 
+            : ['rgba(62, 207, 142, 0.08)', 'rgba(255, 255, 255, 0.9)', 'rgba(241, 245, 249, 0.95)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        
+        <View style={styles.intelHeader}>
+          <View style={styles.intelBadge}>
+            <Cpu size={14} color={colors.primary} />
+            <Text style={[styles.intelBadgeText, { color: colors.primary }]}>AGENTIC INSIGHT</Text>
+          </View>
+          <View style={styles.liveBadge}>
+            <motion.View 
+              animate={{ scale: [1, 1.4, 1], opacity: [1, 0.4, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={[styles.liveDot, { backgroundColor: '#ef4444' }]} 
+            />
+            <Text style={[styles.liveText, { color: colors.textMute }]}>LIVE FEED</Text>
+          </View>
+        </View>
+
+        <View style={styles.intelContent}>
+          <Text style={[styles.intelTitle, { color: colors.text }]}>Regional Supply Squeeze Detected</Text>
+          <Text style={[styles.intelDescription, { color: colors.textMute }]}>
+            AI analysis of transport logs shows a <Text style={{ color: colors.primary, fontWeight: '800' }}>15% slowdown</Text> in Mbeya-Dar corridor. Expect Maize prices to rise by <Text style={{ color: colors.primary, fontWeight: '800' }}>TZS 2,500</Text> per bag within 48h.
+          </Text>
+        </View>
+
+        <View style={[styles.intelDivider, { backgroundColor: colors.border }]} />
+
+        <View style={styles.intelFooter}>
+          <View style={styles.suggestionBox}>
+            <Sparkles size={14} color={colors.primary} />
+            <Text style={[styles.suggestionText, { color: colors.text }]}>Sourcing Tip: Check Iringa Market</Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.intelAction, { backgroundColor: colors.primary }]}
+            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+          >
+            <ArrowUpRight size={18} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Scanning Effect Overlay */}
+        <motion.View 
+          animate={{ translateY: [-100, 300] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          style={[styles.scanningLine, { backgroundColor: colors.primary, opacity: 0.15 }]}
+        />
+      </BlurView>
+    </motion.View>
+  );
 };
 
 export default function MarketScreen() {
   const { colors, isDark, spacing, radius, shadows } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -110,27 +189,23 @@ export default function MarketScreen() {
     setTimeout(() => setRefreshing(false), 2000);
   }, []);
 
-  const handlePressItem = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       
-      {/* Premium Background System */}
+      {/* Dynamic Background System */}
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={420} x={-120} y={150} delay={0} />
-        <NeuralOrb color="#3b82f6" size={380} x={SCREEN_WIDTH - 150} y={SCREEN_HEIGHT - 350} delay={2000} />
-        <NeuralOrb color="#f59e0b" size={280} x={SCREEN_WIDTH / 2} y={350} delay={4000} />
+        <NeuralOrb color={colors.primary} size={500} x={-150} y={100} delay={0} duration={25} />
+        <NeuralOrb color="#3b82f6" size={450} x={SCREEN_WIDTH - 200} y={SCREEN_HEIGHT - 400} delay={3000} duration={30} />
+        <NeuralOrb color="#f59e0b" size={350} x={SCREEN_WIDTH / 2 - 175} y={400} delay={6000} duration={20} />
         
         <LinearGradient
           colors={[
-            isDark ? colors.slate[950] : '#fff',
-            isDark ? colors.slate[900] + 'ee' : colors.slate[50] + 'ee',
+            isDark ? colors.slate[950] : '#ffffff',
+            isDark ? colors.slate[950] + 'f2' : '#ffffff' + 'f2',
             'transparent'
           ]}
-          style={styles.bgGradient}
+          style={styles.bgOverlay}
         />
       </View>
 
@@ -141,23 +216,26 @@ export default function MarketScreen() {
           animate="animate"
           style={{ flex: 1 }}
         >
-          {/* Header Section */}
+          {/* Immersive Header */}
           <motion.View variants={itemVariants} style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
-              <BlurView intensity={isDark ? 20 : 40} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
+              <BlurView intensity={isDark ? 30 : 60} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
                 <ChevronLeft size={24} color={colors.text} />
               </BlurView>
             </TouchableOpacity>
+            
             <View style={styles.headerCenter}>
               <Text style={[styles.headerTitle, { color: colors.text }]}>Market Intel</Text>
               <View style={styles.locationContainer}>
-                <MapPin size={10} color={colors.primary} />
-                <Text style={[styles.locationText, { color: colors.textMute }]}>Dar es Salaam, TZ</Text>
+                <View style={[styles.statusDot, { backgroundColor: colors.primary }]} />
+                <Text style={[styles.locationText, { color: colors.textMute }]}>Tanzania Regional Feed</Text>
               </View>
             </View>
+
             <TouchableOpacity activeOpacity={0.7} onPress={() => Haptics.selectionAsync()}>
-              <BlurView intensity={isDark ? 20 : 40} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
+              <BlurView intensity={isDark ? 30 : 60} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
                 <Bell size={20} color={colors.text} />
+                <View style={[styles.notifDot, { backgroundColor: colors.error }]} />
               </BlurView>
             </TouchableOpacity>
           </motion.View>
@@ -168,152 +246,136 @@ export default function MarketScreen() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
             }
             contentContainerStyle={styles.scrollContent}
+            stickyHeaderIndices={[1]}
           >
-            {/* Modern Search */}
-            <motion.View variants={itemVariants}>
-              <BlurView intensity={isDark ? 15 : 60} tint={isDark ? "dark" : "light"} style={[styles.searchContainer, { borderColor: colors.border }]}>
-                <Search size={18} color={colors.textMute} />
+            {/* Search Bar */}
+            <motion.View variants={itemVariants} style={{ marginBottom: 24 }}>
+              <BlurView intensity={isDark ? 20 : 70} tint={isDark ? "dark" : "light"} style={[styles.searchBar, { borderColor: colors.border }]}>
+                <Search size={20} color={colors.textMute} />
                 <TextInput 
-                  placeholder="Search commodities..." 
+                  placeholder="Analyze commodities..." 
                   placeholderTextColor={colors.textMute}
                   style={[styles.searchInput, { color: colors.text }]}
                 />
-                <TouchableOpacity style={styles.filterBtn}>
-                  <Filter size={18} color={colors.primary} />
-                </TouchableOpacity>
+                <View style={styles.searchActions}>
+                  <TouchableOpacity style={styles.searchActionBtn}>
+                    <Mic size={18} color={colors.textMute} />
+                  </TouchableOpacity>
+                  <View style={styles.searchDivider} />
+                  <TouchableOpacity style={styles.searchActionBtn}>
+                    <Filter size={18} color={colors.primary} />
+                  </TouchableOpacity>
+                </View>
               </BlurView>
             </motion.View>
 
-            {/* Category Filters */}
-            <motion.View variants={itemVariants}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.categoryContainer}>
-                {['Trending', 'Grains', 'Vegetables', 'Fruits', 'Fertilizers'].map((cat, i) => (
+            {/* Category Filter - Sticky Style */}
+            <View style={[styles.stickyCategory, { backgroundColor: isDark ? 'transparent' : 'transparent' }]}>
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                contentContainerStyle={styles.categoryContent}
+              >
+                {CATEGORIES.map((cat) => (
                   <TouchableOpacity 
-                    key={i} 
-                    onPress={() => Haptics.selectionAsync()}
-                    activeOpacity={0.7}
+                    key={cat.name}
+                    onPress={() => {
+                      setActiveCategory(cat.name);
+                      Haptics.selectionAsync();
+                    }}
+                    activeOpacity={0.8}
                   >
                     <BlurView 
-                      intensity={i === 0 ? 0 : (isDark ? 10 : 30)} 
+                      intensity={activeCategory === cat.name ? 0 : (isDark ? 15 : 40)} 
                       tint={isDark ? "dark" : "light"} 
                       style={[
                         styles.categoryPill, 
-                        i === 0 
+                        activeCategory === cat.name 
                           ? { backgroundColor: colors.primary } 
                           : { borderColor: colors.border, borderWidth: 1 }
                       ]}
                     >
-                      <Text style={[styles.categoryText, i === 0 ? { color: '#ffffff' } : { color: colors.textMute }]}>{cat}</Text>
+                      {cat.icon && React.cloneElement(cat.icon as React.ReactElement, { color: activeCategory === cat.name ? '#fff' : colors.textMute })}
+                      <Text style={[styles.categoryText, activeCategory === cat.name ? { color: '#ffffff' } : { color: colors.textMute }]}>
+                        {cat.name}
+                      </Text>
                     </BlurView>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-            </motion.View>
+            </View>
 
-            {/* Premium Insight Card */}
-            <motion.View 
-              variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <TouchableOpacity activeOpacity={0.9} onPress={handlePressItem}>
-                <BlurView intensity={isDark ? 15 : 80} tint={isDark ? "dark" : "light"} style={[styles.trendCard, { borderColor: colors.border }]}>
-                  <LinearGradient
-                    colors={isDark 
-                      ? ['rgba(62, 207, 142, 0.08)', 'rgba(30, 41, 59, 0.4)', 'rgba(15, 23, 42, 0.6)'] 
-                      : ['rgba(62, 207, 142, 0.05)', 'rgba(255, 255, 255, 0.8)', 'rgba(241, 245, 249, 0.9)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  
-                  {/* Glowing Edge Effect */}
-                  <View style={[styles.glowLine, { backgroundColor: colors.primary, opacity: isDark ? 0.3 : 0.1 }]} />
-                  
-                  <View style={styles.trendCardHeader}>
-                    <motion.View 
-                      animate={{ opacity: [0.6, 1, 0.6] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      style={[styles.premiumBadge, { backgroundColor: colors.primary + '20' }]}
-                    >
-                      <Sparkles size={12} color={colors.primary} />
-                      <Text style={[styles.badgeText, { color: colors.primary }]}>BULLISH SIGNAL</Text>
-                    </motion.View>
-                    <View style={styles.liveIndicator}>
-                      <motion.View 
-                        animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                        style={[styles.liveDot, { backgroundColor: colors.primary }]} 
-                      />
-                      <Text style={[styles.timeText, { color: colors.textMute }]}>Live Analysis</Text>
-                    </View>
-                  </View>
-                  
-                  <Text style={[styles.trendTitle, { color: colors.text }]}>Maize prices surging in Mbeya</Text>
-                  <Text style={[styles.trendDesc, { color: colors.textMute }]}>Regional logistics delays are tightening supply in Mbeya markets. Sourcing alternatives suggested in Block C.</Text>
-                  
-                  <View style={[styles.divider, { backgroundColor: colors.border }]} />
-                  
-                  <View style={styles.trendFooter}>
-                    <View style={styles.socialGroup}>
-                      <View style={[styles.avatarStack]}>
-                        {[1, 2, 3].map(i => (
-                          <View key={i} style={[styles.avatar, { backgroundColor: colors.slate[isDark ? 800 : 200], marginLeft: i === 1 ? 0 : -12, borderColor: isDark ? colors.slate[900] : '#fff', borderWidth: 2 }]} />
-                        ))}
-                      </View>
-                      <Text style={[styles.socialText, { color: colors.textMute }]}>+124 watching</Text>
-                    </View>
-                    <motion.View whileHover={{ x: 5 }} whileTap={{ scale: 0.9 }}>
-                      <TouchableOpacity style={[styles.insightAction, { backgroundColor: colors.primary + '20' }]}>
-                        <ArrowUpRight size={20} color={colors.primary} />
-                      </TouchableOpacity>
-                    </motion.View>
-                  </View>
-                </BlurView>
-              </TouchableOpacity>
-            </motion.View>
+            {/* Agentic Intelligence Section */}
+            <IntelligenceHero isDark={isDark} colors={colors} />
 
-            {/* Market Feed Section */}
+            {/* Market List Section Header */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Regional Price Feed</Text>
-              <TouchableOpacity style={styles.viewMoreBtn}>
-                <Text style={[styles.viewMoreText, { color: colors.primary }]}>LATEST</Text>
+              <View style={styles.sectionTitleRow}>
+                <BarChart3 size={18} color={colors.primary} />
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Live Market Indices</Text>
+              </View>
+              <TouchableOpacity style={styles.viewToggle}>
+                <Text style={[styles.viewToggleText, { color: colors.primary }]}>VOLATILITY</Text>
               </TouchableOpacity>
             </motion.View>
 
-            <View style={styles.marketList}>
+            {/* Redesigned Market Cards */}
+            <View style={styles.marketGrid}>
               {MARKET_DATA.map((item, index) => (
                 <motion.View 
                   key={item.id} 
                   variants={itemVariants}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <TouchableOpacity 
-                    onPress={handlePressItem}
-                    activeOpacity={0.8}
+                    onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+                    activeOpacity={0.9}
                   >
-                    <BlurView intensity={isDark ? 8 : 40} tint={isDark ? "dark" : "light"} style={[styles.marketCard, { borderColor: colors.border }]}>
-                      <View style={styles.marketCardMain}>
-                        <View style={[styles.commodityIcon, { backgroundColor: isDark ? colors.slate[800] : colors.slate[100] }]}>
-                          <Text style={styles.commodityEmoji}>{item.emoji}</Text>
+                    <BlurView intensity={isDark ? 10 : 50} tint={isDark ? "dark" : "light"} style={[styles.premiumCard, { borderColor: colors.border }]}>
+                      <View style={styles.cardHeader}>
+                        <View style={[styles.emojiContainer, { backgroundColor: isDark ? colors.slate[800] : colors.slate[100] }]}>
+                          <Text style={styles.cardEmoji}>{item.emoji}</Text>
                         </View>
-                        <View style={styles.commodityInfo}>
-                          <Text style={[styles.commodityName, { color: colors.text }]}>{item.name}</Text>
-                          <View style={styles.marketSubInfo}>
-                            <Text style={[styles.marketName, { color: colors.textMute }]}>{item.market}</Text>
-                            <View style={[styles.dot, { backgroundColor: colors.border }]} />
-                            <Text style={[styles.unitText, { color: colors.textMute }]}>{item.unit}</Text>
-                          </View>
+                        <View style={styles.cardMeta}>
+                          <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
+                          <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market}</Text>
                         </View>
-                        <View style={styles.priceSection}>
-                          <Text style={[styles.priceValue, { color: colors.text }]}>{item.price.split(' ')[1]}</Text>
+                        <View style={[
+                          styles.volatilityBadge, 
+                          { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#10b98115' }
+                        ]}>
+                          <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#10b981' }]}>
+                            {item.volatility}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View style={styles.cardBody}>
+                        <View style={styles.priceContainer}>
+                          <Text style={[styles.priceLabel, { color: colors.textMute }]}>Current Avg.</Text>
+                          <Text style={[styles.priceBig, { color: colors.text }]}>{item.price}</Text>
+                        </View>
+                        <View style={styles.trendContainer}>
                           <View style={[
-                            styles.trendBadgeSmall, 
-                            { backgroundColor: item.positive ? '#10b98115' : '#ef444415' }
+                            styles.trendPill, 
+                            { backgroundColor: item.positive ? '#10b98120' : '#ef444420' }
                           ]}>
-                            {item.positive ? <TrendingUp size={10} color="#10b981" /> : <TrendingDown size={10} color="#ef4444" />}
-                            <Text style={[styles.trendTextSmall, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
+                            {item.positive ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
+                            <Text style={[styles.trendPercent, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
                           </View>
                         </View>
+                      </View>
+
+                      <View style={[styles.cardFooter, { borderColor: colors.border }]}>
+                        <View style={styles.unitBox}>
+                          <Info size={12} color={colors.textMute} />
+                          <Text style={[styles.unitLabel, { color: colors.textMute }]}>{item.unit}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.cardDetailBtn}>
+                          <Text style={[styles.detailBtnText, { color: colors.primary }]}>Analyze</Text>
+                          <ArrowRight size={14} color={colors.primary} />
+                        </TouchableOpacity>
                       </View>
                     </BlurView>
                   </TouchableOpacity>
@@ -321,10 +383,42 @@ export default function MarketScreen() {
               ))}
             </View>
 
-            <View style={{ height: 120 }} />
+            <View style={{ height: 140 }} />
           </ScrollView>
         </motion.View>
       </SafeAreaView>
+
+      {/* Persistent AI Assistant Bubble */}
+      <motion.View 
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1, type: "spring" }}
+        style={styles.aiAssistantContainer}
+      >
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          onPress={() => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            router.push('/hub');
+          }}
+        >
+          <BlurView intensity={80} tint="dark" style={styles.aiAssistantBubble}>
+            <LinearGradient
+              colors={[colors.primary, '#3b82f6']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.aiAssistantIcon}
+            >
+              <MessageCircle size={28} color="#fff" />
+              <motion.View 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                style={styles.aiPulse}
+              />
+            </LinearGradient>
+          </BlurView>
+        </TouchableOpacity>
+      </motion.View>
     </View>
   );
 }
@@ -338,190 +432,220 @@ const styles = StyleSheet.create({
   },
   bgOrb: {
     position: 'absolute',
-    filter: Platform.OS === 'web' ? 'blur(90px)' : undefined,
   },
-  bgGradient: {
+  bgOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 700,
+    height: 800,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingVertical: 16,
   },
   headerCenter: {
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontFamily: 'Inter_900Black',
-    letterSpacing: -0.8,
+    letterSpacing: -1,
   },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
+    marginTop: 4,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: 6,
   },
   locationText: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Inter_700Bold',
-    marginLeft: 4,
-    opacity: 0.6,
+    opacity: 0.5,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   iconButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 18,
+    width: 52,
+    height: 52,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     overflow: 'hidden',
   },
-  scrollContent: {
-    padding: 24,
+  notifDot: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
-  searchContainer: {
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+  },
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    height: 64,
+    height: 68,
     borderRadius: 24,
+    paddingHorizontal: 20,
     borderWidth: 1,
     overflow: 'hidden',
-    marginBottom: 24,
   },
   searchInput: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: 'Inter_600SemiBold',
   },
-  filterBtn: {
+  searchActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  searchActionBtn: {
     padding: 8,
   },
-  categoryScroll: {
+  searchDivider: {
+    width: 1,
+    height: 24,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  stickyCategory: {
     marginBottom: 32,
     marginHorizontal: -24,
+    zIndex: 10,
   },
-  categoryContainer: {
+  categoryContent: {
     paddingHorizontal: 24,
     gap: 12,
+    paddingBottom: 8,
   },
   categoryPill: {
-    paddingHorizontal: 22,
-    paddingVertical: 12,
-    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 18,
     overflow: 'hidden',
+    gap: 8,
   },
   categoryText: {
     fontSize: 14,
     fontFamily: 'Inter_800ExtraBold',
   },
-  trendCard: {
-    borderRadius: 40,
-    padding: 28,
-    marginBottom: 36,
-    overflow: 'hidden',
+  intelligenceContainer: {
+    marginBottom: 40,
+  },
+  intelligenceCard: {
+    borderRadius: 36,
+    padding: 24,
     borderWidth: 1,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 30,
-    elevation: 8,
+    elevation: 10,
   },
-  glowLine: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 1,
-  },
-  trendCardHeader: {
+  intelHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
   },
-  premiumBadge: {
+  intelBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 12,
+    backgroundColor: 'rgba(62, 207, 142, 0.15)',
     gap: 6,
   },
-  liveIndicator: {
+  intelBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1.2,
+  },
+  liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
   liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-  badgeText: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1.2,
-  },
-  timeText: {
+  liveText: {
     fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-    opacity: 0.6,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
   },
-  trendTitle: {
+  intelContent: {
+    marginBottom: 24,
+  },
+  intelTitle: {
     fontSize: 28,
     fontFamily: 'Inter_900Black',
-    marginBottom: 12,
     letterSpacing: -1,
+    lineHeight: 34,
+    marginBottom: 12,
   },
-  trendDesc: {
-    fontSize: 15,
+  intelDescription: {
+    fontSize: 16,
     fontFamily: 'Inter_500Medium',
     lineHeight: 24,
-    marginBottom: 24,
-    opacity: 0.8,
+    opacity: 0.9,
   },
-  divider: {
+  intelDivider: {
     height: 1,
     width: '100%',
+    opacity: 0.1,
     marginBottom: 20,
-    opacity: 0.05,
   },
-  trendFooter: {
+  intelFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  socialGroup: {
+  suggestionBox: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
+    flex: 1,
   },
-  avatarStack: {
-    flexDirection: 'row',
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-  },
-  socialText: {
-    fontSize: 13,
+  suggestionText: {
+    fontSize: 14,
     fontFamily: 'Inter_700Bold',
-    marginLeft: 12,
   },
-  insightAction: {
+  intelAction: {
     width: 48,
     height: 48,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  scanningLine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -529,91 +653,165 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.8,
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
-  viewMoreBtn: {
+  sectionTitle: {
+    fontSize: 20,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+  },
+  viewToggle: {
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  viewMoreText: {
+  viewToggleText: {
     fontSize: 11,
     fontFamily: 'Inter_900Black',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
-  marketList: {
+  marketGrid: {
     gap: 16,
   },
-  marketCard: {
+  premiumCard: {
     borderRadius: 32,
+    padding: 20,
     borderWidth: 1,
-    padding: 18,
     overflow: 'hidden',
   },
-  marketCardMain: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 20,
   },
-  commodityIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
+  emojiContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  commodityEmoji: {
-    fontSize: 30,
+  cardEmoji: {
+    fontSize: 28,
   },
-  commodityInfo: {
+  cardMeta: {
     flex: 1,
     marginLeft: 16,
   },
-  commodityName: {
-    fontSize: 17,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.4,
-  },
-  marketSubInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  marketName: {
-    fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    marginHorizontal: 8,
-    opacity: 0.2,
-  },
-  unitText: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-  },
-  priceSection: {
-    alignItems: 'flex-end',
-  },
-  priceValue: {
+  itemName: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
-    marginBottom: 6,
+    fontFamily: 'Inter_800ExtraBold',
     letterSpacing: -0.5,
   },
-  trendBadgeSmall: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  itemMarket: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+    marginTop: 2,
+  },
+  volatilityBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
-    gap: 4,
+    borderRadius: 8,
   },
-  trendTextSmall: {
+  volatilityText: {
     fontSize: 10,
     fontFamily: 'Inter_900Black',
+    textTransform: 'uppercase',
   },
+  cardBody: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: 20,
+  },
+  priceContainer: {
+    gap: 4,
+  },
+  priceLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  priceBig: {
+    fontSize: 22,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+  },
+  trendContainer: {
+    alignItems: 'flex-end',
+  },
+  trendPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    gap: 6,
+  },
+  trendPercent: {
+    fontSize: 13,
+    fontFamily: 'Inter_900Black',
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 16,
+    borderTopWidth: 1,
+  },
+  unitBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  unitLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  cardDetailBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  detailBtnText: {
+    fontSize: 13,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  aiAssistantContainer: {
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 100 : 80,
+    right: 24,
+    zIndex: 100,
+  },
+  aiAssistantBubble: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    padding: 4,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 12,
+  },
+  aiAssistantIcon: {
+    flex: 1,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  aiPulse: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+});
+
 });
