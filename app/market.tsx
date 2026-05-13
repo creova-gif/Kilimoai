@@ -177,17 +177,58 @@ const IntelligenceHero = ({ isDark, colors }: any) => {
   );
 };
 
+// Premium Sparkline Component
+const NeuralSparkline = ({ data, positive, colors }: any) => {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min;
+  
+  return (
+    <View style={styles.sparklineOuter}>
+      {data.map((val: number, i: number) => {
+        const height = ((val - min) / range) * 30 + 5;
+        return (
+          <motion.View
+            key={i}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height, opacity: 1 }}
+            transition={{ delay: 0.5 + i * 0.05, type: "spring", damping: 15 }}
+            style={[
+              styles.sparkBar,
+              { 
+                backgroundColor: positive ? '#10b981' : '#ef4444',
+                opacity: 0.3 + (i / data.length) * 0.7
+              }
+            ]}
+          />
+        );
+      })}
+    </View>
+  );
+};
+
 export default function MarketScreen() {
   const { colors, isDark, spacing, radius, shadows } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setTimeout(() => setRefreshing(false), 2000);
   }, []);
+
+  const toggleExpand = (id: string) => {
+    if (expandedId === id) {
+      setExpandedId(null);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } else {
+      setExpandedId(id);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -321,66 +362,119 @@ export default function MarketScreen() {
 
             {/* Redesigned Market Cards */}
             <View style={styles.marketGrid}>
-              {MARKET_DATA.map((item, index) => (
-                <motion.View 
-                  key={item.id} 
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <TouchableOpacity 
-                    onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-                    activeOpacity={0.9}
+              {MARKET_DATA.map((item, index) => {
+                const isExpanded = expandedId === item.id;
+                return (
+                  <motion.View 
+                    key={item.id} 
+                    variants={itemVariants}
+                    layout
                   >
-                    <BlurView intensity={isDark ? 10 : 50} tint={isDark ? "dark" : "light"} style={[styles.premiumCard, { borderColor: colors.border }]}>
-                      <View style={styles.cardHeader}>
-                        <View style={[styles.emojiContainer, { backgroundColor: isDark ? colors.slate[800] : colors.slate[100] }]}>
-                          <Text style={styles.cardEmoji}>{item.emoji}</Text>
-                        </View>
-                        <View style={styles.cardMeta}>
-                          <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
-                          <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market}</Text>
-                        </View>
-                        <View style={[
-                          styles.volatilityBadge, 
-                          { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#10b98115' }
-                        ]}>
-                          <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#10b981' }]}>
-                            {item.volatility}
-                          </Text>
-                        </View>
-                      </View>
-
-                      <View style={styles.cardBody}>
-                        <View style={styles.priceContainer}>
-                          <Text style={[styles.priceLabel, { color: colors.textMute }]}>Current Avg.</Text>
-                          <Text style={[styles.priceBig, { color: colors.text }]}>{item.price}</Text>
-                        </View>
-                        <View style={styles.trendContainer}>
+                    <TouchableOpacity 
+                      onPress={() => toggleExpand(item.id)}
+                      activeOpacity={0.9}
+                    >
+                      <BlurView intensity={isDark ? 10 : 50} tint={isDark ? "dark" : "light"} style={[
+                        styles.premiumCard, 
+                        { borderColor: colors.border },
+                        isExpanded && { borderColor: colors.primary + '40', borderWidth: 1.5 }
+                      ]}>
+                        <View style={styles.cardHeader}>
+                          <View style={[styles.emojiContainer, { backgroundColor: isDark ? colors.slate[800] : colors.slate[100] }]}>
+                            <Text style={styles.cardEmoji}>{item.emoji}</Text>
+                          </View>
+                          <View style={styles.cardMeta}>
+                            <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
+                            <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market}</Text>
+                          </View>
                           <View style={[
-                            styles.trendPill, 
-                            { backgroundColor: item.positive ? '#10b98120' : '#ef444420' }
+                            styles.volatilityBadge, 
+                            { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#10b98115' }
                           ]}>
-                            {item.positive ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
-                            <Text style={[styles.trendPercent, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
+                            <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#10b981' }]}>
+                              {item.volatility}
+                            </Text>
                           </View>
                         </View>
-                      </View>
 
-                      <View style={[styles.cardFooter, { borderColor: colors.border }]}>
-                        <View style={styles.unitBox}>
-                          <Info size={12} color={colors.textMute} />
-                          <Text style={[styles.unitLabel, { color: colors.textMute }]}>{item.unit}</Text>
+                        <View style={styles.cardBody}>
+                          <View style={styles.priceContainer}>
+                            <Text style={[styles.priceLabel, { color: colors.textMute }]}>Current Avg.</Text>
+                            <Text style={[styles.priceBig, { color: colors.text }]}>{item.price}</Text>
+                          </View>
+                          
+                          <View style={styles.trendArea}>
+                            <NeuralSparkline 
+                              data={[40, 45, 42, 48, 52, 50, 58, 62, 60, 65].map(v => item.positive ? v : 100 - v)} 
+                              positive={item.positive}
+                              colors={colors}
+                            />
+                            <View style={[
+                              styles.trendPill, 
+                              { backgroundColor: item.positive ? '#10b98120' : '#ef444420' }
+                            ]}>
+                              {item.positive ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
+                              <Text style={[styles.trendPercent, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
+                            </View>
+                          </View>
                         </View>
-                        <TouchableOpacity style={styles.cardDetailBtn}>
-                          <Text style={[styles.detailBtnText, { color: colors.primary }]}>Analyze</Text>
-                          <ArrowRight size={14} color={colors.primary} />
-                        </TouchableOpacity>
-                      </View>
-                    </BlurView>
-                  </TouchableOpacity>
-                </motion.View>
-              ))}
+
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.View
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              style={styles.expandedContent}
+                            >
+                              <View style={[styles.intelDivider, { backgroundColor: colors.border, marginVertical: 16 }]} />
+                              
+                              <View style={styles.analysisRow}>
+                                <View style={styles.analysisItem}>
+                                  <Text style={[styles.analysisLabel, { color: colors.textMute }]}>Predictive Outlook</Text>
+                                  <View style={styles.outlookBadge}>
+                                    <Sparkles size={12} color={colors.primary} />
+                                    <Text style={[styles.outlookText, { color: colors.primary }]}>BULLISH</Text>
+                                  </View>
+                                </View>
+                                <View style={styles.analysisItem}>
+                                  <Text style={[styles.analysisLabel, { color: colors.textMute }]}>Demand Signal</Text>
+                                  <Text style={[styles.analysisValue, { color: colors.text }]}>Strong (8.4/10)</Text>
+                                </View>
+                              </View>
+
+                              <Text style={[styles.agenticQuote, { color: colors.textMute }]}>
+                                "Agentic analysis suggests locking in supply now. Logistic bottlenecks are forming in the northern regions."
+                              </Text>
+
+                              <TouchableOpacity 
+                                style={[styles.fullActionBtn, { backgroundColor: colors.primary }]}
+                                onPress={() => router.push('/hub')}
+                              >
+                                <Text style={styles.fullActionText}>Deep Analysis with Kilimo AI</Text>
+                                <Zap size={16} color="#fff" />
+                              </TouchableOpacity>
+                            </motion.View>
+                          )}
+                        </AnimatePresence>
+
+                        {!isExpanded && (
+                          <View style={[styles.cardFooter, { borderColor: colors.border }]}>
+                            <View style={styles.unitBox}>
+                              <Info size={12} color={colors.textMute} />
+                              <Text style={[styles.unitLabel, { color: colors.textMute }]}>{item.unit}</Text>
+                            </View>
+                            <View style={styles.cardDetailBtn}>
+                              <Text style={[styles.detailBtnText, { color: colors.primary }]}>Analyze</Text>
+                              <ArrowRight size={14} color={colors.primary} />
+                            </View>
+                          </View>
+                        )}
+                      </BlurView>
+                    </TouchableOpacity>
+                  </motion.View>
+                );
+              })}
             </View>
 
             <View style={{ height: 140 }} />
@@ -811,6 +905,79 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 2,
     borderColor: '#fff',
+  },
+  sparklineOuter: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    height: 35,
+    gap: 2,
+    marginRight: 12,
+  },
+  sparkBar: {
+    width: 3,
+    borderRadius: 1,
+  },
+  trendArea: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  expandedContent: {
+    overflow: 'hidden',
+  },
+  analysisRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  analysisItem: {
+    gap: 6,
+  },
+  analysisLabel: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  outlookBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(62, 207, 142, 0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  outlookText: {
+    fontSize: 12,
+    fontFamily: 'Inter_900Black',
+  },
+  analysisValue: {
+    fontSize: 15,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  agenticQuote: {
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold_Italic',
+    lineHeight: 20,
+    opacity: 0.7,
+    marginBottom: 24,
+    paddingLeft: 12,
+    borderLeftWidth: 2,
+    borderLeftColor: 'rgba(62, 207, 142, 0.3)',
+  },
+  fullActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    height: 56,
+    borderRadius: 18,
+    marginBottom: 8,
+  },
+  fullActionText: {
+    color: '#fff',
+    fontSize: 15,
+    fontFamily: 'Inter_800ExtraBold',
   },
 });
 
