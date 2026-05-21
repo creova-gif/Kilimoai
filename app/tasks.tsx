@@ -34,6 +34,9 @@ import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
+import { springs, transitions } from '../constants/MotionTokens';
+import { useKilimoStore } from '../store/useKilimoStore';
+import { useTasks } from '../hooks/useTasks';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -88,22 +91,28 @@ const itemVariants = {
     opacity: 1, 
     y: 0,
     scale: 1,
-    transition: { type: "spring", damping: 20, stiffness: 100 }
+    // motion-foundations: use springs token, not inline values
+    transition: springs.gentle,
   }
 };
 
 export default function TasksScreen() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
-  const [offlineMode, setOfflineMode] = useState(true); // Demo offline state
-  const [tasks, setTasks] = useState(TASKS_DATA);
+
+  // ── Live store & hooks ───────────────────────────────────
+  const isOffline = useKilimoStore((s) => s.isOffline);
+  const syncQueue = useKilimoStore((s) => s.syncQueue);
+  const { tasks, pendingTasks, completedTasks, totalXP, completeTask } = useTasks();
+
+  const progress = tasks.length > 0
+    ? Math.round((completedTasks.length / tasks.length) * 100)
+    : 0;
 
   const handleToggleTask = (id: string) => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed, sync: offlineMode ? 'pending' : 'synced' } : t));
+    completeTask(id);
   };
-
-  const progress = Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -141,9 +150,9 @@ export default function TasksScreen() {
               <Text style={[styles.headerTitle, { color: colors.text }]}>Kazi za Shamba</Text>
             </View>
 
-            <TouchableOpacity onPress={() => setOfflineMode(!offlineMode)} activeOpacity={0.7}>
-              <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: offlineMode ? '#ef444450' : colors.border }]}>
-                {offlineMode ? <WifiOff size={20} color="#ef4444" /> : <Plus size={24} color={colors.primary} />}
+            <TouchableOpacity onPress={() => router.push('/notifications' as any)} activeOpacity={0.7}>
+              <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: isOffline ? '#ef444450' : colors.border }]}>
+                {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Plus size={24} color={colors.primary} />}
               </BlurView>
             </TouchableOpacity>
           </motion.View>
@@ -163,7 +172,7 @@ export default function TasksScreen() {
                       UFANISI WA LEO
                     </motion.Text>
                     <Text style={[styles.dashboardTitle, { color: colors.text }]}>Maendeleo ya Kazi</Text>
-                    <Text style={[styles.dashboardSubtitle, { color: colors.textMute }]}>Kazi {tasks.filter(t=>t.completed).length} zimekamilika kati ya {tasks.length}</Text>
+                    <Text style={[styles.dashboardSubtitle, { color: colors.textMute }]}>Kazi {completedTasks.length} zimekamilika kati ya {tasks.length}</Text>
                   </View>
                   <motion.View whileHover={{ scale: 1.05 }} style={[styles.progressCircle, { borderColor: colors.primary + '30' }]}>
                     <Text style={[styles.progressText, { color: colors.primary }]}>{progress}%</Text>
@@ -173,7 +182,7 @@ export default function TasksScreen() {
                   <motion.View 
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    transition={{ type: "spring", damping: 20 }}
+                    transition={springs.gentle}
                     style={{ height: '100%' }}
                   >
                     <LinearGradient colors={[colors.primary, '#10b981']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
@@ -184,7 +193,7 @@ export default function TasksScreen() {
 
             {/* Offline Sync Warning */}
             <AnimatePresence>
-              {offlineMode && (
+              {isOffline && (
                 <motion.View 
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -216,7 +225,7 @@ export default function TasksScreen() {
                     <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[
                       styles.taskCard, 
                       { borderColor: colors.border },
-                      task.completed && { opacity: 0.7 }
+                      task.status === 'done' && { opacity: 0.7 }
                     ]}>
                       
                       <View style={styles.taskCardHeader}>
@@ -224,7 +233,7 @@ export default function TasksScreen() {
                           <View style={[styles.catBadge, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' }]}>
                             <Text style={[styles.catText, { color: colors.textMute }]}>{task.category.toUpperCase()}</Text>
                           </View>
-                          {task.group && (
+                          {task.coopId && (
                             <View style={[styles.catBadge, { backgroundColor: 'rgba(59, 130, 246, 0.15)' }]}>
                               <Users size={10} color="#3b82f6" style={{ marginRight: 4 }} />
                               <Text style={[styles.catText, { color: '#3b82f6' }]}>AMCOS</Text>
@@ -232,8 +241,8 @@ export default function TasksScreen() {
                           )}
                         </View>
                         <View style={styles.priorityRow}>
-                          <View style={[styles.priorityDot, { backgroundColor: task.priority === 'High' ? '#ef4444' : task.priority === 'Medium' ? '#f59e0b' : colors.textMute }]} />
-                          <Text style={[styles.priorityText, { color: colors.textMute }]}>{task.priority}</Text>
+                          <View style={[styles.priorityDot, { backgroundColor: task.priority === 'critical' ? '#ef4444' : task.priority === 'high' ? '#f59e0b' : colors.textMute }]} />
+                          <Text style={[styles.priorityText, { color: colors.textMute }]}>{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</Text>
                         </View>
                       </View>
                       
@@ -241,25 +250,31 @@ export default function TasksScreen() {
                         <motion.View 
                           style={[
                             styles.checkCircle, 
-                            { backgroundColor: task.completed ? colors.primary : 'transparent', borderColor: task.completed ? colors.primary : colors.border }
+                            { backgroundColor: task.status === 'done' ? colors.primary : 'transparent', borderColor: task.status === 'done' ? colors.primary : colors.border }
                           ]}
                         >
-                          {task.completed && <Check size={16} color="#000" strokeWidth={3} />}
+                          {task.status === 'done' && <Check size={16} color="#000" strokeWidth={3} />}
                         </motion.View>
                         <View style={styles.taskInfo}>
-                          <Text style={[styles.taskTitle, { color: colors.text }, task.completed && { textDecorationLine: 'line-through' }]}>
-                            {task.title}
+                          <Text style={[styles.taskTitle, { color: colors.text }, task.status === 'done' && { textDecorationLine: 'line-through' }]}>
+                            {task.titleSw ?? task.title}
                           </Text>
                           <View style={styles.taskFooter}>
-                            <View style={styles.footerTag}>
-                              <Clock size={12} color={colors.primary} />
-                              <Text style={[styles.footerTagText, { color: colors.textMute }]}>{task.date}</Text>
-                            </View>
-                            <View style={styles.footerTag}>
-                              <View style={[styles.fieldMarker, { backgroundColor: colors.primary }]} />
-                              <Text style={[styles.footerTagText, { color: colors.textMute }]}>{task.field}</Text>
-                            </View>
-                            {task.sync === 'pending' && (
+                            {task.farmBlock && (
+                              <View style={styles.footerTag}>
+                                <View style={[styles.fieldMarker, { backgroundColor: colors.primary }]} />
+                                <Text style={[styles.footerTagText, { color: colors.textMute }]}>{task.farmBlock}</Text>
+                              </View>
+                            )}
+                            {task.dueDate && (
+                              <View style={styles.footerTag}>
+                                <Clock size={12} color={colors.primary} />
+                                <Text style={[styles.footerTagText, { color: colors.textMute }]}>
+                                  {new Date(task.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </Text>
+                              </View>
+                            )}
+                            {task.syncedOffline && (
                               <View style={styles.footerTag}>
                                 <CloudLightning size={12} color="#f59e0b" />
                                 <Text style={[styles.footerTagText, { color: '#f59e0b' }]}>Inasubiri mtandao</Text>
