@@ -1,0 +1,37 @@
+{
+  "name": "fusion-plugin-service-worker-tests",
+  "version": "0.0.0-monorepo",
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/plugin-transform-flow-strip-types": "^7.19.0",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "flow-bin": "0.131.0",
+    "fusion-cli": "workspace:*",
+    "fusion-core": "workspace:*",
+    "fusion-plugin-react-router": "workspace:*",
+    "fusion-plugin-service-worker": "workspace:*",
+    "fusion-plugin-styletron-react": "workspace:*",
+    "fusion-react": "workspace:*",
+    "fusion-test-utils": "workspace:*",
+    "fusion-tokens": "workspace:*",
+    "get-port": "^5.1.1",
+    "isomorphic-fetch": "^2.2.1",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
+    "prop-types": "^15.7.2",
+    "puppeteer": "^2.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.2",
+    "redux": "4.0.5",
+    "styletron-react": "^6.0.0"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "yarn g:lint",
+    "test": "jest --runInBand"
+  },
+  "sideEffects": false
+}

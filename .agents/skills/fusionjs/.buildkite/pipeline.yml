@@ -1,0 +1,7 @@
+steps:
+  - label: ':pipeline:'
+    timeout_in_minutes: 5
+    commands:
+      - '.buildkite/create-pipeline.sh | buildkite-agent pipeline upload'
+    agents:
+      queue: workers

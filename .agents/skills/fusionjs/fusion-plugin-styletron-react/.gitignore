@@ -1,0 +1,13 @@
+node_modules/
+dist-browser-cjs/
+dist-browser-esm/
+dist-node-cjs/
+dist-node-esm/
+coverage/
+.nyc_output/
+src/test/*/.fusion
+
+.DS_Store
+npm-debug.log
+yarn-error.log
+lib/

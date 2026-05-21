@@ -1,0 +1,250 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
+import type { Server } from "http";
+import type {Context as KoaContext} from 'koa';
+
+type Token<T> = {
+  (): T,
+  optional: Token<void | T>,
+  stacks: Array<{
+    // eslint-disable-next-line
+    type:
+      | 'token'
+      | 'plugin'
+      | 'register'
+      | 'enhance'
+      | 'alias-from'
+      | 'alias-to',
+    stack: string,
+  }>,
+};
+
+type ExtendedKoaContext = KoaContext & {memoized: Map<Object, mixed>};
+
+type SanitizedHTMLWrapper = Object;
+
+type SSRContext = {
+  element: any,
+  template: {
+    htmlAttrs: Object,
+    title: string,
+    head: Array<SanitizedHTMLWrapper>,
+    body: Array<SanitizedHTMLWrapper>,
+    bodyAttrs: {[string]: string},
+  },
+} & ExtendedKoaContext;
+
+type Context = SSRContext | ExtendedKoaContext;
+
+type Middleware = (
+  ctx: Context,
+  next: () => Promise<void>
+) => Promise<*>;
+
+type MiddlewareWithDeps<Deps> = (
+  Deps: $ObjMap<Deps, ExtractTokenType>
+) => Middleware;
+
+type ExtractTokenType = <V>(Token<V>) => V;
+
+type ExtractDepsType<V> = $ObjMap<V, ExtractTokenType>;
+
+type FusionPluginDepsType = $ReadOnly<{
+  [key: string]: Token<any>,
+}> | void;
+
+type FusionPlugin<Deps: FusionPluginDepsType, Service> = {|
+  __plugin__: boolean,
+  stack: string,
+  deps?: Deps,
+  provides?: (Deps: ExtractDepsType<Deps & {}>) => Service,
+  middleware?: (
+    Deps: ExtractDepsType<Deps & {}>,
+    Service: Service
+  ) => Middleware,
+  cleanup?: (service: Service) => Promise<void> | void,
+|};
+
+type SSRDecider = (Context) => boolean | 'stream';
+
+type aliaser = {
+  alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser,
+};
+
+type cleanupFn = (thing?: any) => Promise<void> | void;
+
+type SSRBodyTemplate = (Context) => $PropertyType<Context, 'body'>;
+
+type SSRShellTemplate = (Context) => {
+  start: string,
+  end: string,
+  scripts: Array<string>,
+  useModuleScripts: boolean,
+};
+
+type unstable_EnableServerStreamingTokenType = boolean;
+
+type RenderType = (any, Context) => any;
+
+type RouteTagsType = {
+  from: (ctx: Context) => {[string]: string},
+};
+
+export const TokenType = Object.freeze({
+  Required: 0,
+  Optional: 1,
+});
+
+declare class TokenImpl<TResolved> {
+  name: string;
+  ref: mixed;
+  type: $Values<typeof TokenType>;
+  optional: ?TokenImpl<TResolved>;
+  stacks: Array<{
+    type: "token" | "register" | "enhance" | "alias-from" | "alias-to",
+    stack: string,
+  }>;
+  constructor(name: string, ref?: mixed): TokenImpl<TResolved>;
+}
+
+declare export function createToken<TResolvedType>(
+  name: string
+): Token<TResolvedType>;
+
+export type MemoizeFn<A> = (ctx: Context) => A;
+
+declare export function memoize<A>(fn: MemoizeFn<A>): MemoizeFn<A>;
+
+declare class BaseApp {
+  constructor(el: any, render: any): BaseApp;
+  registered: Map<
+    any,
+    {
+      aliases?: Map<any, any>,
+      enhancers?: Array<any>,
+      token: any,
+      value?: FusionPlugin<*, *>,
+    }
+  >;
+  enhancerToToken: Map<any, any>;
+  plugins: Array<any>;
+  cleanups: Array<cleanupFn>;
+  renderer: any;
+  _getService: (any) => any;
+  _dependedOn: Set<any>;
+  register<T>(
+    tokenOrValue: Token<T> | FusionPlugin<any, T>,
+    maybeValue?: FusionPlugin<any, T> | T
+  ): aliaser;
+  _register<T>(token: Token<T>, value: any): aliaser;
+  middleware<TDeps: {} = {}>(
+    deps: TDeps | Middleware,
+    middleware?: (Deps: $ObjMap<TDeps, ExtractTokenType>) => Middleware
+  ): void;
+  enhance<TResolved>(token: Token<TResolved>, enhancer: Function): void;
+  cleanup(): Promise<any> | any;
+  resolve<TResolved>(): void;
+  getService<TResolved>(token: Token<TResolved>): TResolved;
+  callback(...args: any[]): Promise<void> | any;
+}
+
+// eslint-disable-next-line flowtype/generic-spacing
+type FusionPluginNoHidden<TDeps, TService> = $Diff<
+  FusionPlugin<TDeps, TService>,
+  { __plugin__: boolean, stack: string }
+>;
+
+declare export function createPlugin<TDeps: FusionPluginDepsType, TService>(
+  opts: $Exact<FusionPluginNoHidden<TDeps, TService>>
+): FusionPlugin<TDeps, TService>;
+
+declare export default typeof BaseApp;
+
+declare export function compose(middleware: Array<Middleware>): Middleware;
+
+declare export function html(
+  strings: Array<string>,
+  ...expressions: Array<string>
+): SanitizedHTMLWrapper;
+
+declare export function dangerouslySetHTML(html: string): Object;
+
+declare export function consumeSanitizedHTML(str: SanitizedHTMLWrapper): string;
+
+declare export function escape(str: string): string;
+
+declare export function unescape(str: string): string;
+
+type Env = {
+  rootDir: string,
+  env: string,
+  prefix: string,
+  assetPath: string,
+  baseAssetPath: string,
+  cdnUrl: string,
+  webpackPublicPath: string,
+  dangerouslyExposeSourceMaps: boolean,
+};
+
+declare export function getEnv(): Env;
+
+declare export function assetUrl(url: string): string;
+declare export function chunkId(filename: string): string;
+declare export function syncChunkIds(argument: any): any;
+declare export function syncChunkPaths(argument: any): any;
+declare export function workerUrl(url: string): string;
+
+declare var RouteTagsToken: Token<RouteTagsType>;
+declare var RenderToken: Token<RenderType>;
+declare var ElementToken: Token<any>;
+declare var SSRDeciderToken: Token<SSRDecider>;
+declare var HttpServerToken: Token<Server>;
+declare var SSRBodyTemplateToken: Token<SSRBodyTemplate>;
+declare var SSRShellTemplateToken: Token<SSRShellTemplate>;
+declare var RoutePrefixToken: Token<string>;
+declare var unstable_EnableServerStreamingToken: Token<unstable_EnableServerStreamingTokenType>;
+
+type CriticalChunkIds = Set<number>;
+
+type CriticalChunkIdsService = {
+  from(ctx: Context): CriticalChunkIds,
+};
+
+declare var CriticalChunkIdsToken: Token<CriticalChunkIdsService>;
+
+declare var EnableMiddlewareTimingToken: Token<boolean>;
+
+export {
+  RenderToken,
+  ElementToken,
+  SSRDeciderToken,
+  HttpServerToken,
+  SSRBodyTemplateToken,
+  SSRShellTemplateToken,
+  RoutePrefixToken,
+  CriticalChunkIdsToken,
+  RouteTagsToken,
+  EnableMiddlewareTimingToken,
+  unstable_EnableServerStreamingToken,
+};
+
+export type {
+  Context,
+  ExtractTokenType,
+  BaseApp as FusionApp,
+  FusionPlugin,
+  FusionPluginDepsType,
+  Middleware,
+  Token,
+  SSRBodyTemplate,
+  RenderType as Render,
+  RouteTagsType,
+  ExtractDepsType,
+  unstable_EnableServerStreamingTokenType,
+};

@@ -1,0 +1,280 @@
+/// Rollup of one time window (today / 7 days / 30 days / month / all) used as the canonical
+/// input to the menubar payload. Built inside the CLI and also consumed by the day-aggregator
+/// when hydrating per-day cache entries.
+export type PeriodData = {
+  label: string
+  cost: number
+  calls: number
+  sessions: number
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  categories: Array<{ name: string; cost: number; turns: number; editTurns: number; oneShotTurns: number }>
+  models: Array<{ name: string; cost: number; calls: number }>
+  projects?: Array<{ name: string; cost: number; sessions: number; sessionDetails?: Array<{ cost: number; calls: number; inputTokens: number; outputTokens: number; date: string; models: Array<{ name: string; cost: number }> }> }>
+  modelEfficiency?: Array<{ name: string; costPerEdit: number | null; oneShotRate: number | null }>
+  topSessions?: Array<{ project: string; cost: number; calls: number; date: string }>
+}
+
+export type ProviderCost = {
+  name: string
+  cost: number
+}
+import type { OptimizeResult } from './optimize.js'
+
+const TOP_ACTIVITIES_LIMIT = 20
+const TOP_MODELS_LIMIT = 20
+const TOP_FINDINGS_LIMIT = 10
+const HISTORY_DAYS_LIMIT = 365
+const SYNTHETIC_MODEL_NAME = '<synthetic>'
+const TOP_PROJECTS_LIMIT = 5
+const TOP_SESSIONS_LIMIT = 3
+const MODEL_EFFICIENCY_LIMIT = 5
+
+export type DailyModelBreakdown = {
+  name: string
+  cost: number
+  calls: number
+  inputTokens: number
+  outputTokens: number
+}
+
+export type DailyHistoryEntry = {
+  date: string
+  cost: number
+  calls: number
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  topModels: DailyModelBreakdown[]
+}
+
+export type MenubarPayload = {
+  generated: string
+  current: {
+    label: string
+    cost: number
+    calls: number
+    sessions: number
+    oneShotRate: number | null
+    inputTokens: number
+    outputTokens: number
+    cacheHitPercent: number
+    topActivities: Array<{
+      name: string
+      cost: number
+      turns: number
+      oneShotRate: number | null
+    }>
+    topModels: Array<{
+      name: string
+      cost: number
+      calls: number
+    }>
+    providers: Record<string, number>
+    topProjects: Array<{
+      name: string
+      cost: number
+      sessions: number
+      avgCostPerSession: number
+      sessionDetails: Array<{
+        cost: number
+        calls: number
+        inputTokens: number
+        outputTokens: number
+        date: string
+        models: Array<{ name: string; cost: number }>
+      }>
+    }>
+    modelEfficiency: Array<{
+      name: string
+      costPerEdit: number | null
+      oneShotRate: number | null
+    }>
+    topSessions: Array<{
+      project: string
+      cost: number
+      calls: number
+      date: string
+    }>
+    retryTax: {
+      totalUSD: number
+      retries: number
+      editTurns: number
+      byModel: Array<{
+        name: string
+        taxUSD: number
+        retries: number
+        retriesPerEdit: number | null
+      }>
+    }
+    routingWaste: {
+      totalSavingsUSD: number
+      baselineModel: string
+      baselineCostPerEdit: number
+      byModel: Array<{
+        name: string
+        costPerEdit: number
+        editTurns: number
+        actualUSD: number
+        counterfactualUSD: number
+        savingsUSD: number
+      }>
+    }
+  }
+  optimize: {
+    findingCount: number
+    savingsUSD: number
+    topFindings: Array<{
+      title: string
+      impact: 'high' | 'medium' | 'low'
+      savingsUSD: number
+    }>
+  }
+  history: {
+    daily: DailyHistoryEntry[]
+  }
+}
+
+function oneShotRateFor(editTurns: number, oneShotTurns: number): number | null {
+  if (editTurns === 0) return null
+  return oneShotTurns / editTurns
+}
+
+function aggregateOneShotRate(categories: PeriodData['categories']): number | null {
+  let edits = 0
+  let oneShots = 0
+  for (const cat of categories) {
+    edits += cat.editTurns
+    oneShots += cat.oneShotTurns
+  }
+  if (edits === 0) return null
+  return oneShots / edits
+}
+
+function cacheHitPercent(inputTokens: number, cacheReadTokens: number): number {
+  const denom = inputTokens + cacheReadTokens
+  if (denom === 0) return 0
+  return (cacheReadTokens / denom) * 100
+}
+
+function buildTopActivities(categories: PeriodData['categories']): MenubarPayload['current']['topActivities'] {
+  return categories.slice(0, TOP_ACTIVITIES_LIMIT).map(cat => ({
+    name: cat.name,
+    cost: cat.cost,
+    turns: cat.turns,
+    oneShotRate: oneShotRateFor(cat.editTurns, cat.oneShotTurns),
+  }))
+}
+
+function buildTopModels(models: PeriodData['models']): MenubarPayload['current']['topModels'] {
+  return models
+    .filter(m => m.name !== SYNTHETIC_MODEL_NAME)
+    .slice(0, TOP_MODELS_LIMIT)
+    .map(m => ({ name: m.name, cost: m.cost, calls: m.calls }))
+}
+
+function buildOptimize(optimize: OptimizeResult | null): MenubarPayload['optimize'] {
+  if (!optimize || optimize.findings.length === 0) {
+    return { findingCount: 0, savingsUSD: 0, topFindings: [] }
+  }
+  const { findings, costRate } = optimize
+  const totalSavingsUSD = findings.reduce((s, f) => s + f.tokensSaved * costRate, 0)
+  const topFindings = findings.slice(0, TOP_FINDINGS_LIMIT).map(f => ({
+    title: f.title,
+    impact: f.impact,
+    savingsUSD: f.tokensSaved * costRate,
+  }))
+  return {
+    findingCount: findings.length,
+    savingsUSD: totalSavingsUSD,
+    topFindings,
+  }
+}
+
+function buildProviders(providers: ProviderCost[]): Record<string, number> {
+  const map: Record<string, number> = {}
+  for (const p of providers) {
+    if (p.cost < 0) continue
+    map[p.name.toLowerCase()] = p.cost
+  }
+  return map
+}
+
+function buildHistory(daily: DailyHistoryEntry[] | undefined): MenubarPayload['history'] {
+  if (!daily || daily.length === 0) return { daily: [] }
+  const sorted = [...daily].sort((a, b) => a.date.localeCompare(b.date))
+  const trimmed = sorted.slice(-HISTORY_DAYS_LIMIT)
+  return { daily: trimmed }
+}
+
+function buildTopProjects(projects: PeriodData['projects']): MenubarPayload['current']['topProjects'] {
+  return (projects ?? [])
+    .filter(p => p.cost > 0)
+    .sort((a, b) => b.cost - a.cost)
+    .slice(0, TOP_PROJECTS_LIMIT)
+    .map(p => ({
+      name: p.name,
+      cost: p.cost,
+      sessions: p.sessions,
+      avgCostPerSession: p.sessions > 0 ? p.cost / p.sessions : 0,
+      sessionDetails: (p.sessionDetails ?? []).map(s => ({
+        cost: s.cost,
+        calls: s.calls,
+        inputTokens: s.inputTokens,
+        outputTokens: s.outputTokens,
+        date: s.date,
+        models: s.models,
+      })),
+    }))
+}
+
+function buildModelEfficiency(models: PeriodData['modelEfficiency']): MenubarPayload['current']['modelEfficiency'] {
+  return (models ?? [])
+    .filter(m => m.costPerEdit !== null)
+    .sort((a, b) => (a.costPerEdit ?? Infinity) - (b.costPerEdit ?? Infinity))
+    .slice(0, MODEL_EFFICIENCY_LIMIT)
+    .map(m => ({ name: m.name, costPerEdit: m.costPerEdit, oneShotRate: m.oneShotRate }))
+}
+
+function buildTopSessions(sessions: PeriodData['topSessions']): MenubarPayload['current']['topSessions'] {
+  return (sessions ?? [])
+    .sort((a, b) => b.cost - a.cost)
+    .slice(0, TOP_SESSIONS_LIMIT)
+    .map(s => ({ project: s.project, cost: s.cost, calls: s.calls, date: s.date }))
+}
+
+export function buildMenubarPayload(
+  current: PeriodData,
+  providers: ProviderCost[],
+  optimize: OptimizeResult | null,
+  dailyHistory?: DailyHistoryEntry[],
+  retryTax?: MenubarPayload['current']['retryTax'],
+  routingWaste?: MenubarPayload['current']['routingWaste'],
+): MenubarPayload {
+  return {
+    generated: new Date().toISOString(),
+    current: {
+      label: current.label,
+      cost: current.cost,
+      calls: current.calls,
+      sessions: current.sessions,
+      oneShotRate: aggregateOneShotRate(current.categories),
+      inputTokens: current.inputTokens,
+      outputTokens: current.outputTokens,
+      cacheHitPercent: cacheHitPercent(current.inputTokens, current.cacheReadTokens),
+      topActivities: buildTopActivities(current.categories),
+      topModels: buildTopModels(current.models),
+      providers: buildProviders(providers),
+      topProjects: buildTopProjects(current.projects ?? []),
+      modelEfficiency: buildModelEfficiency(current.modelEfficiency ?? []),
+      topSessions: buildTopSessions(current.topSessions ?? []),
+      retryTax: retryTax ?? { totalUSD: 0, retries: 0, editTurns: 0, byModel: [] },
+      routingWaste: routingWaste ?? { totalSavingsUSD: 0, baselineModel: '', baselineCostPerEdit: 0, byModel: [] },
+    },
+    optimize: buildOptimize(optimize),
+    history: buildHistory(dailyHistory),
+  }
+}

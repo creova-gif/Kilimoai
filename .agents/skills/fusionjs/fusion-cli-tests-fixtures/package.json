@@ -1,0 +1,7 @@
+{
+  "name": "fusion-cli-tests-fixtures",
+  "private": true,
+  "workspaces": [
+    "fixtures/node_modules/*"
+  ]
+}

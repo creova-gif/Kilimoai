@@ -1,0 +1,26 @@
+{
+  "eslint.nodePath": "common/temp/node_modules",
+  "eslint.options": {
+    "ignorePattern": [
+      "dist",
+      "node_modules",
+      "templates"
+    ]
+  },
+  "files.associations": {
+    // json comments in rush config files
+    "command-line.json": "jsonc",
+    "common-versions.json": "jsonc",
+    "rush.json": "jsonc",
+    "version-policies.json": "jsonc"
+  },
+  "flow.pathToFlow": "${workspaceFolder}/.yarn/sdks/flow-bin/cli.js",
+  "javascript.validate.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  }
+}
