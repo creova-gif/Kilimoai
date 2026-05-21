@@ -3,7 +3,7 @@
  * Perfect for dashboard cards, task lists, navigation items
  */
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { ReactNode } from "react";
 
 interface StaggerContainerProps {
@@ -19,6 +19,8 @@ export function StaggerContainer({
   staggerDelay = 0.08,
   initialDelay = 0.1,
 }: StaggerContainerProps) {
+  const prefersReduced = useReducedMotion();
+
   return (
     <motion.div
       initial="hidden"
@@ -27,8 +29,8 @@ export function StaggerContainer({
         hidden: {},
         visible: {
           transition: {
-            staggerChildren: staggerDelay,
-            delayChildren: initialDelay,
+            staggerChildren: prefersReduced ? 0 : staggerDelay,
+            delayChildren: prefersReduced ? 0 : initialDelay,
           },
         },
       }}
@@ -57,18 +59,19 @@ export function StaggerItem({
   className = "",
   direction = "up",
 }: StaggerItemProps) {
-  const offset = directionOffset[direction];
+  const prefersReduced = useReducedMotion();
+  const offset = prefersReduced ? { x: 0, y: 0 } : directionOffset[direction];
 
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, ...offset },
+        hidden: { opacity: prefersReduced ? 1 : 0, ...offset },
         visible: {
           opacity: 1,
           x: 0,
           y: 0,
           transition: {
-            duration: 0.4,
+            duration: prefersReduced ? 0 : 0.4,
             ease: [0.25, 0.1, 0.25, 1],
           },
         },
@@ -98,10 +101,12 @@ export function AnimatedCard({
   tapScale = 0.98,
   onClick,
 }: AnimatedCardProps) {
+  const prefersReduced = useReducedMotion();
+
   return (
     <motion.div
-      whileHover={{ scale: hoverScale, y: -2 }}
-      whileTap={{ scale: tapScale }}
+      whileHover={prefersReduced ? undefined : { scale: hoverScale, y: -2 }}
+      whileTap={prefersReduced ? undefined : { scale: tapScale }}
       transition={{
         type: "spring",
         stiffness: 400,
@@ -119,6 +124,8 @@ export function AnimatedCard({
  * PulseDot - Animated status/pulse indicator
  */
 export function PulseDot({ color = "#2E7D32", size = 8 }: { color?: string; size?: number }) {
+  const prefersReduced = useReducedMotion();
+
   return (
     <motion.div
       className="rounded-full"
@@ -127,7 +134,7 @@ export function PulseDot({ color = "#2E7D32", size = 8 }: { color?: string; size
         height: size,
         backgroundColor: color,
       }}
-      animate={{
+      animate={prefersReduced ? {} : {
         scale: [1, 1.3, 1],
         opacity: [1, 0.6, 1],
       }}

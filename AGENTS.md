@@ -80,7 +80,9 @@ Single-context layout. See `docs/agents/domain.md`.
 
 ### Available Skills
 
-The following skills are available in `.agents/skills/` (Qoder) and `.github/agents/` (VS Code/Copilot):
+The following skills are available in `.agents/skills/` (Kiro/Qoder) and `.github/agents/` (VS Code/Copilot):
+
+#### Core KILIMO AI Skills
 
 | Skill | Use When |
 | :--- | :--- |
@@ -91,9 +93,76 @@ The following skills are available in `.agents/skills/` (Qoder) and `.github/age
 | `writing-plans` | Creating bite-sized implementation plans from approved specs |
 | `tdd` | Building features or fixing bugs using test-driven development |
 | `diagnose` | Systematic debugging of hard bugs and performance regressions |
-| `ui-ux-pro-max` | UI/UX design tasks requiring professional-grade output |
-| `caveman` | Ultra-compressed communication mode to reduce token usage |
+| `ui-ux-pro-max` | UI/UX design tasks requiring professional-grade output (67 styles, 161 palettes) |
+| `caveman` | Ultra-compressed communication mode to reduce token usage ~75% |
 | `n8n-architect` | Creating, editing, or troubleshooting n8n workflows |
+
+#### Animation & Motion Skills
+
+| Skill | Use When |
+| :--- | :--- |
+| `motion-foundations` | Setting up motion tokens, spring presets, reduced-motion support, SSR safety |
+| `motion-patterns` | Button, modal, stagger, page transition, scroll animation patterns |
+| `motion-advanced` | Drag, gestures, SVG, text animations, custom hooks |
+| `motion-ui` | UI-specific motion patterns and component animations |
+| `motion-vue` | Vue 3 animations using Motion for Vue (motion-v) |
+| `gsap-master-mcp` | AI-powered GSAP animation creation, debugging, optimization via MCP |
+| `anime-js` | Lightweight SVG animations, morphing, stagger, number counting |
+| `liquid-glass-design` | iOS 26 Liquid Glass design system (SwiftUI/UIKit/WidgetKit) |
+
+#### Design & UI Skills
+
+| Skill | Use When |
+| :--- | :--- |
+| `open-design` | Designing UI artifacts, pitch decks, dashboards — 31 skills, 129+ design systems |
+| `design-system` | Generating or auditing design systems, visual consistency checks |
+| `frontend-patterns` | Frontend architecture patterns and component design |
+
+#### Agent Orchestration & Tooling Skills
+
+| Skill | Use When |
+| :--- | :--- |
+| `gstack` | Virtual engineering team — code review, QA, security audit, release automation |
+| `ruflo` | Multi-agent orchestration, swarms, persistent memory, federated agents |
+| `ecc` | Harness-native operator system — skills, security scanning, cross-harness config |
+| `codeburn` | Tracking AI token usage and costs across 19 coding tools |
+| `n8n-architect` | Creating, editing, or troubleshooting n8n workflows |
+
+#### AI & Generative Skills
+
+| Skill | Use When |
+| :--- | :--- |
+| `open-generative-ai` | Generating AI images/videos for KILIMO AI — crop visuals, tutorials, marketing |
+| `higgsfield-generate` | Higgsfield AI video/image generation |
+| `higgsfield-marketplace-cards` | Higgsfield marketplace card generation |
+| `higgsfield-product-photoshoot` | AI product photography |
+| `higgsfield-soul-id` | Higgsfield Soul ID generation |
+
+#### Engineering Process Skills
+
+| Skill | Use When |
+| :--- | :--- |
+| `prototype` | Rapid prototyping before full implementation |
+| `improve-codebase-architecture` | Architectural improvements after bug fixes |
+| `grill-me` | Stress-testing ideas and designs |
+| `grill-with-docs` | Building domain glossary and ADRs |
+| `triage` | Triaging GitHub issues |
+| `to-issues` | Converting specs/plans to GitHub issues |
+| `to-prd` | Converting ideas to PRDs |
+| `write-a-skill` | Creating new SKILL.md files |
+| `handoff` | Handing off context between sessions |
+| `zoom-out` | High-level architectural perspective |
+| `setup-matt-pocock-skills` | Setting up Matt Pocock's engineering skills |
+
+#### Reference Repositories (in `.agents/skills/`)
+
+| Skill | Description |
+| :--- | :--- |
+| `fusionjs` | Uber's universal React framework — SSR, i18n, service worker patterns |
+| `Figma-Context-MCP` | Figma MCP integration for design-to-code workflows |
+| `awesome-claude-code-subagents` | 131+ specialized Claude subagents across 10 categories |
+| `awesome-claude-skills` | Composio's collection of Claude skills |
+| `agent-spec-mobile-react-native` | Mobile React Native agent spec |
 
 ### External Resources
 
