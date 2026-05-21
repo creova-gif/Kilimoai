@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -11,87 +11,69 @@ import {
   Platform,
   StatusBar,
   Image,
-  RefreshControl
+  RefreshControl,
+  Pressable
 } from 'react-native';
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { 
-  ChevronLeft, 
-  Search, 
+  Globe, 
+  Database, 
+  ShieldCheck, 
+  Zap, 
   TrendingUp, 
-  TrendingDown, 
+  TrendingDown,
+  BarChart3, 
+  Activity,
+  ArrowUpRight,
+  Sparkles,
+  Cpu,
+  MessageCircle,
+  ShoppingBag,
+  Leaf,
+  Mic,
+  Search,
+  ChevronLeft,
+  Bell,
   Filter,
   MapPin,
   ArrowRight,
-  Bell,
-  ArrowUpRight,
-  Sparkles,
-  Zap,
-  Leaf,
-  ShoppingBag,
   Info,
-  Mic,
-  MessageCircle,
-  Cpu,
-  BarChart3,
-  Layers
+  Layers,
+  FileSignature,
+  Wallet
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '../constants/Theme';
-import { motion, AnimatePresence } from "motion/react";
+import { useTheme } from '../../constants/Theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const MARKET_DATA = [
-  { id: '1', name: 'Maize (White)', price: 'TZS 85,000', unit: '100kg Bag', trend: '+2.4%', positive: true, market: 'Tandale Market', emoji: '🌽', volatility: 'Low' },
-  { id: '2', name: 'Rice (Grade A)', price: 'TZS 120,000', unit: '100kg Bag', trend: '-1.2%', positive: false, market: 'Mbagala Market', emoji: '🌾', volatility: 'Medium' },
-  { id: '3', name: 'Beans (Soya)', price: 'TZS 210,000', unit: '100kg Bag', trend: '+0.8%', positive: true, market: 'Kariakoo Market', emoji: '🫘', volatility: 'Low' },
-  { id: '4', name: 'Onions (Red)', price: 'TZS 45,000', unit: 'Net', trend: '+5.1%', positive: true, market: 'Tandale Market', emoji: '🧅', volatility: 'High' },
-  { id: '5', name: 'Tomatoes', price: 'TZS 35,000', unit: 'Crate', trend: '-3.5%', positive: false, market: 'Kariakoo Market', emoji: '🍅', volatility: 'High' },
-  { id: '6', name: 'Potatoes (Round)', price: 'TZS 75,000', unit: 'Sack', trend: '+1.2%', positive: true, market: 'Mbagala Market', emoji: '🥔', volatility: 'Low' },
+  { id: '1', name: 'Mahindi (Meupe)', price: 'TZS 85,000', unit: '100kg Bag', trend: '+2.4%', positive: true, market: 'Tandale Market', emoji: '🌽', volatility: 'Low', demand: 'High', outlook: 'Bullish' },
+  { id: '2', name: 'Mchele (Daraja A)', price: 'TZS 120,000', unit: '100kg Bag', trend: '-1.2%', positive: false, market: 'Mbagala Market', emoji: '🌾', volatility: 'Medium', demand: 'Stable', outlook: 'Neutral' },
+  { id: '3', name: 'Soya (Beans)', price: 'TZS 210,000', unit: '100kg Bag', trend: '+0.8%', positive: true, market: 'Kariakoo Market', emoji: '🫘', volatility: 'Low', demand: 'High', outlook: 'Bullish' },
+  { id: '4', name: 'Vitunguu (Vyekundu)', price: 'TZS 45,000', unit: 'Net', trend: '+5.1%', positive: true, market: 'Tandale Market', emoji: '🧅', volatility: 'High', demand: 'Surging', outlook: 'Volatile' },
 ];
 
 const CATEGORIES = [
-  { name: 'All', icon: <Layers size={14} /> },
-  { name: 'Grains', icon: <Leaf size={14} /> },
-  { name: 'Vegetables', icon: <ShoppingBag size={14} /> },
-  { name: 'Trending', icon: <TrendingUp size={14} /> },
-  { name: 'Input', icon: <Zap size={14} /> },
+  { name: 'Yote (All)', icon: <Layers size={14} /> },
+  { name: 'Nafaka (Grains)', icon: <Leaf size={14} /> },
+  { name: 'Mboga (Veg)', icon: <ShoppingBag size={14} /> },
+  { name: 'Inayovuma', icon: <TrendingUp size={14} /> },
 ];
 
-// Variants for staggered entrance
-const containerVariants = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  initial: { opacity: 0, y: 30, scale: 0.95 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: { type: "spring", damping: 22, stiffness: 120 }
-  }
-};
-
-// Enhanced Neural Orb Component
-const NeuralOrb = ({ color, size, delay, x, y, duration = 20 }: any) => {
+// Cinematic Background Component
+const NeuralOrb = ({ color, size, delay, x, y, duration = 20, scrolled }: any) => {
   return (
     <motion.View
       initial={{ x, y, opacity: 0, scale: 0.8 }}
       animate={{ 
         x: [x, x + 60, x - 40, x],
         y: [y, y - 80, y + 60, y],
-        opacity: [0.08, 0.18, 0.12, 0.08],
-        scale: [1, 1.2, 0.9, 1]
+        opacity: scrolled ? [0.05, 0.1, 0.08, 0.05] : [0.1, 0.2, 0.15, 0.1],
+        scale: scrolled ? [0.8, 1, 0.9, 0.8] : [1, 1.15, 0.95, 1]
       }}
       transition={{
         duration: duration + delay / 1000,
@@ -105,80 +87,85 @@ const NeuralOrb = ({ color, size, delay, x, y, duration = 20 }: any) => {
           height: size,
           borderRadius: size / 2,
           backgroundColor: color,
-          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
+          filter: Platform.OS === 'web' ? 'blur(120px)' : undefined,
         },
       ]}
     />
   );
 };
 
-// Live Intelligence Feed Component
-const IntelligenceHero = ({ isDark, colors }: any) => {
+// Agentic Intelligence Bento
+const IntelligenceBento = ({ isDark, colors }: any) => {
   return (
-    <motion.View 
-      variants={itemVariants}
-      style={styles.intelligenceContainer}
-    >
-      <BlurView intensity={isDark ? 25 : 85} tint={isDark ? "dark" : "light"} style={[styles.intelligenceCard, { borderColor: colors.border }]}>
+    <View style={styles.bentoContainer}>
+      <motion.View 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 120 }}
+        style={[styles.bentoMain, { borderColor: colors.border }]}
+      >
+        <BlurView intensity={isDark ? 25 : 85} tint={isDark ? "dark" : "light"} style={StyleSheet.absoluteFill} />
         <LinearGradient
           colors={isDark 
-            ? ['rgba(62, 207, 142, 0.12)', 'rgba(30, 41, 59, 0.6)', 'rgba(15, 23, 42, 0.8)'] 
-            : ['rgba(62, 207, 142, 0.08)', 'rgba(255, 255, 255, 0.9)', 'rgba(241, 245, 249, 0.95)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+            ? ['rgba(62, 207, 142, 0.15)', 'rgba(15, 23, 42, 0.9)'] 
+            : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.9)']}
           style={StyleSheet.absoluteFill}
         />
         
-        <View style={styles.intelHeader}>
+        <View style={styles.bentoHeader}>
           <View style={styles.intelBadge}>
             <Cpu size={14} color={colors.primary} />
-            <Text style={[styles.intelBadgeText, { color: colors.primary }]}>AGENTIC INSIGHT</Text>
+            <Text style={[styles.intelBadgeText, { color: colors.primary }]}>AI ENGINE V4.5</Text>
           </View>
-          <View style={styles.liveBadge}>
-            <motion.View 
-              animate={{ scale: [1, 1.4, 1], opacity: [1, 0.4, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              style={[styles.liveDot, { backgroundColor: '#ef4444' }]} 
-            />
-            <Text style={[styles.liveText, { color: colors.textMute }]}>LIVE FEED</Text>
-          </View>
+          <motion.View animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
+            <Sparkles size={20} color={colors.primary} opacity={0.6} />
+          </motion.View>
         </View>
 
-        <View style={styles.intelContent}>
-          <Text style={[styles.intelTitle, { color: colors.text }]}>Regional Supply Squeeze Detected</Text>
-          <Text style={[styles.intelDescription, { color: colors.textMute }]}>
-            AI analysis of transport logs shows a <Text style={{ color: colors.primary, fontWeight: '800' }}>15% slowdown</Text> in Mbeya-Dar corridor. Expect Maize prices to rise by <Text style={{ color: colors.primary, fontWeight: '800' }}>TZS 2,500</Text> per bag within 48h.
-          </Text>
-        </View>
-
-        <View style={[styles.intelDivider, { backgroundColor: colors.border }]} />
-
-        <View style={styles.intelFooter}>
-          <View style={styles.suggestionBox}>
-            <Sparkles size={14} color={colors.primary} />
-            <Text style={[styles.suggestionText, { color: colors.text }]}>Sourcing Tip: Check Iringa Market</Text>
-          </View>
-          <TouchableOpacity 
-            style={[styles.intelAction, { backgroundColor: colors.primary }]}
-            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-          >
-            <ArrowUpRight size={18} color="#fff" />
+        <Text style={[styles.bentoTitle, { color: colors.text }]}>Tahadhari ya Soko</Text>
+        <Text style={[styles.bentoDesc, { color: colors.textMute }]}>
+          Mbeya supply route showing <Text style={{ color: colors.primary, fontWeight: '700' }}>15% latency</Text>. Maize pricing impact expected in <Text style={{ fontWeight: '700' }}>48h</Text>.
+        </Text>
+        
+        <View style={styles.bentoFooter}>
+          <TouchableOpacity style={[styles.bentoAction, { backgroundColor: colors.primary }]}>
+            <Text style={styles.bentoActionText}>Analyze Route</Text>
+            <ArrowUpRight size={14} color="#000" />
           </TouchableOpacity>
         </View>
+      </motion.View>
 
-        {/* Scanning Effect Overlay */}
+      <View style={styles.bentoSidebar}>
         <motion.View 
-          animate={{ translateY: [-100, 300] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          style={[styles.scanningLine, { backgroundColor: colors.primary, opacity: 0.15 }]}
-        />
-      </BlurView>
-    </motion.View>
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1, type: "spring" }}
+          style={[styles.bentoSmall, { borderColor: colors.border }]}
+        >
+          <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={StyleSheet.absoluteFill} />
+          <TrendingUp size={20} color={colors.primary} />
+          <Text style={[styles.bentoSmallTitle, { color: colors.text }]}>+2.4%</Text>
+          <Text style={[styles.bentoSmallDesc, { color: colors.textMute }]}>Maize Index</Text>
+        </motion.View>
+
+        <motion.View 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, type: "spring" }}
+          style={[styles.bentoSmall, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)' }]}
+        >
+          <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={StyleSheet.absoluteFill} />
+          <Activity size={20} color="#3b82f6" />
+          <Text style={[styles.bentoSmallTitle, { color: colors.text }]}>Imara</Text>
+          <Text style={[styles.bentoSmallDesc, { color: colors.textMute }]}>Market Volatility</Text>
+        </motion.View>
+      </View>
+    </View>
   );
 };
 
-// Premium Sparkline Component
-const NeuralSparkline = ({ data, positive, colors }: any) => {
+// Premium Sparkline 
+const NeuralSparkline = ({ data, positive }: any) => {
   const max = Math.max(...data);
   const min = Math.min(...data);
   const range = max - min;
@@ -192,7 +179,7 @@ const NeuralSparkline = ({ data, positive, colors }: any) => {
             key={i}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height, opacity: 1 }}
-            transition={{ delay: 0.5 + i * 0.05, type: "spring", damping: 15 }}
+            transition={{ delay: 0.2 + i * 0.05, type: "spring", damping: 15 }}
             style={[
               styles.sparkBar,
               { 
@@ -208,11 +195,13 @@ const NeuralSparkline = ({ data, positive, colors }: any) => {
 };
 
 export default function MarketScreen() {
-  const { colors, isDark, spacing, radius, shadows } = useTheme();
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('Yote (All)');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -221,29 +210,23 @@ export default function MarketScreen() {
   }, []);
 
   const toggleExpand = (id: string) => {
-    if (expandedId === id) {
-      setExpandedId(null);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } else {
-      setExpandedId(id);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
+    setExpandedId(expandedId === id ? null : id);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       
-      {/* Dynamic Background System */}
+      {/* Background Motion System */}
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={500} x={-150} y={100} delay={0} duration={25} />
-        <NeuralOrb color="#3b82f6" size={450} x={SCREEN_WIDTH - 200} y={SCREEN_HEIGHT - 400} delay={3000} duration={30} />
-        <NeuralOrb color="#f59e0b" size={350} x={SCREEN_WIDTH / 2 - 175} y={400} delay={6000} duration={20} />
+        <NeuralOrb color={colors.primary} size={500} x={-150} y={50} delay={0} scrolled={scrolled} />
+        <NeuralOrb color="#f59e0b" size={350} x={SCREEN_WIDTH / 2} y={350} delay={3000} scrolled={scrolled} />
         
         <LinearGradient
           colors={[
             isDark ? colors.slate[950] : '#ffffff',
-            isDark ? colors.slate[950] + 'f2' : '#ffffff' + 'f2',
+            isDark ? colors.slate[950] + 'ee' : '#ffffff' + 'ee',
             'transparent'
           ]}
           style={styles.bgOverlay}
@@ -251,734 +234,304 @@ export default function MarketScreen() {
       </View>
 
       <SafeAreaView style={styles.safeArea}>
+        {/* Header */}
         <motion.View 
-          variants={containerVariants}
-          initial="initial"
-          animate="animate"
-          style={{ flex: 1 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={styles.header}
         >
-          {/* Immersive Header */}
-          <motion.View variants={itemVariants} style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
-              <BlurView intensity={isDark ? 30 : 60} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
-                <ChevronLeft size={24} color={colors.text} />
-              </BlurView>
-            </TouchableOpacity>
-            
-            <View style={styles.headerCenter}>
-              <Text style={[styles.headerTitle, { color: colors.text }]}>Market Intel</Text>
-              <View style={styles.locationContainer}>
-                <View style={[styles.statusDot, { backgroundColor: colors.primary }]} />
-                <Text style={[styles.locationText, { color: colors.textMute }]}>Tanzania Regional Feed</Text>
-              </View>
+          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+            <BlurView intensity={isDark ? 30 : 60} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
+              <ChevronLeft size={24} color={colors.text} />
+            </BlurView>
+          </TouchableOpacity>
+          
+          <View style={styles.headerCenter}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Soko & Intel</Text>
+            <View style={styles.locationContainer}>
+              <View style={[styles.statusDot, { backgroundColor: '#10b981' }]} />
+              <Text style={[styles.locationText, { color: colors.textMute }]}>EAST AFRICA FEED</Text>
             </View>
+          </View>
 
-            <TouchableOpacity activeOpacity={0.7} onPress={() => Haptics.selectionAsync()}>
-              <BlurView intensity={isDark ? 30 : 60} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
-                <Bell size={20} color={colors.text} />
-                <View style={[styles.notifDot, { backgroundColor: colors.error }]} />
-              </BlurView>
-            </TouchableOpacity>
-          </motion.View>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => Haptics.selectionAsync()}>
+            <BlurView intensity={isDark ? 30 : 60} tint={isDark ? "dark" : "light"} style={[styles.iconButton, { borderColor: colors.border }]}>
+              <Bell size={20} color={colors.text} />
+              <View style={[styles.notifDot, { backgroundColor: '#ef4444' }]} />
+            </BlurView>
+          </TouchableOpacity>
+        </motion.View>
 
-          <ScrollView 
-            showsVerticalScrollIndicator={false} 
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
-            }
-            contentContainerStyle={styles.scrollContent}
-            stickyHeaderIndices={[1]}
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          onScroll={(e) => {
+            const y = e.nativeEvent.contentOffset.y;
+            if (y > 40 && !scrolled) setScrolled(true);
+            if (y <= 40 && scrolled) setScrolled(false);
+          }}
+          scrollEventThrottle={16}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          contentContainerStyle={styles.scrollContent}
+          stickyHeaderIndices={[1]}
+        >
+          {/* Morphing Search Bar */}
+          <motion.View 
+            layout
+            style={[styles.searchContainer, searchFocused && styles.searchContainerFocused]}
           >
-            {/* Search Bar */}
-            <motion.View variants={itemVariants} style={{ marginBottom: 24 }}>
-              <BlurView intensity={isDark ? 20 : 70} tint={isDark ? "dark" : "light"} style={[styles.searchBar, { borderColor: colors.border }]}>
-                <Search size={20} color={colors.textMute} />
-                <TextInput 
-                  placeholder="Analyze commodities..." 
-                  placeholderTextColor={colors.textMute}
-                  style={[styles.searchInput, { color: colors.text }]}
-                />
-                <View style={styles.searchActions}>
-                  <TouchableOpacity style={styles.searchActionBtn}>
-                    <Mic size={18} color={colors.textMute} />
+            <BlurView 
+              intensity={isDark ? 25 : 75} 
+              tint={isDark ? "dark" : "light"} 
+              style={[styles.searchBar, { borderColor: searchFocused ? colors.primary : colors.border }]}
+            >
+              <Search size={20} color={searchFocused ? colors.primary : colors.textMute} />
+              <TextInput 
+                placeholder="Tafuta bidhaa, masoko..." 
+                placeholderTextColor={colors.textMute}
+                style={[styles.searchInput, { color: colors.text }]}
+                onFocus={() => { setSearchFocused(true); Haptics.selectionAsync(); }}
+                onBlur={() => setSearchFocused(false)}
+              />
+              <View style={styles.searchActions}>
+                {searchFocused ? (
+                  <TouchableOpacity onPress={() => setSearchFocused(false)}>
+                    <Text style={{ color: colors.primary, fontWeight: '800', fontSize: 13 }}>DONE</Text>
                   </TouchableOpacity>
-                  <View style={styles.searchDivider} />
+                ) : (
                   <TouchableOpacity style={styles.searchActionBtn}>
                     <Filter size={18} color={colors.primary} />
                   </TouchableOpacity>
-                </View>
-              </BlurView>
-            </motion.View>
+                )}
+              </View>
+            </BlurView>
+          </motion.View>
 
-            {/* Category Filter - Sticky Style */}
-            <View style={[styles.stickyCategory, { backgroundColor: isDark ? 'transparent' : 'transparent' }]}>
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false} 
-                contentContainerStyle={styles.categoryContent}
-              >
-                {CATEGORIES.map((cat) => (
-                  <TouchableOpacity 
-                    key={cat.name}
-                    onPress={() => {
-                      setActiveCategory(cat.name);
-                      Haptics.selectionAsync();
-                    }}
-                    activeOpacity={0.8}
-                  >
+          {/* Sticky Categories */}
+          <View style={styles.stickyCategory}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContent}>
+              {CATEGORIES.map((cat, idx) => (
+                <motion.View 
+                  key={cat.name}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <TouchableOpacity onPress={() => { setActiveCategory(cat.name); Haptics.selectionAsync(); }}>
                     <BlurView 
-                      intensity={activeCategory === cat.name ? 0 : (isDark ? 15 : 40)} 
+                      intensity={activeCategory === cat.name ? 0 : (isDark ? 20 : 50)} 
                       tint={isDark ? "dark" : "light"} 
                       style={[
                         styles.categoryPill, 
-                        activeCategory === cat.name 
-                          ? { backgroundColor: colors.primary } 
-                          : { borderColor: colors.border, borderWidth: 1 }
+                        activeCategory === cat.name ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }
                       ]}
                     >
-                      {cat.icon && React.cloneElement(cat.icon as React.ReactElement, { color: activeCategory === cat.name ? '#fff' : colors.textMute })}
-                      <Text style={[styles.categoryText, activeCategory === cat.name ? { color: '#ffffff' } : { color: colors.textMute }]}>
+                      {React.cloneElement(cat.icon as React.ReactElement, { color: activeCategory === cat.name ? '#000' : colors.textMute })}
+                      <Text style={[styles.categoryText, activeCategory === cat.name ? { color: '#000', fontFamily: 'Inter_800ExtraBold' } : { color: colors.textMute }]}>
                         {cat.name}
                       </Text>
                     </BlurView>
                   </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+                </motion.View>
+              ))}
+            </ScrollView>
+          </View>
 
-            {/* Agentic Intelligence Section */}
-            <IntelligenceHero isDark={isDark} colors={colors} />
+          {/* Agentic Intelligence Layer */}
+          <IntelligenceBento isDark={isDark} colors={colors} />
 
-            {/* Market List Section Header */}
-            <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <View style={styles.sectionTitleRow}>
-                <BarChart3 size={18} color={colors.primary} />
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Live Market Indices</Text>
-              </View>
-              <TouchableOpacity style={styles.viewToggle}>
-                <Text style={[styles.viewToggleText, { color: colors.primary }]}>VOLATILITY</Text>
-              </TouchableOpacity>
-            </motion.View>
+          {/* Market Data */}
+          <View style={styles.sectionHeader}>
+            <BarChart3 size={18} color={colors.primary} />
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Bei za Moja kwa Moja</Text>
+          </View>
 
-            {/* Redesigned Market Cards */}
-            <View style={styles.marketGrid}>
-              {MARKET_DATA.map((item, index) => {
-                const isExpanded = expandedId === item.id;
-                return (
-                  <motion.View 
-                    key={item.id} 
-                    variants={itemVariants}
-                    layout
-                  >
-                    <TouchableOpacity 
-                      onPress={() => toggleExpand(item.id)}
-                      activeOpacity={0.9}
-                    >
-                      <BlurView intensity={isDark ? 10 : 50} tint={isDark ? "dark" : "light"} style={[
-                        styles.premiumCard, 
-                        { borderColor: colors.border },
-                        isExpanded && { borderColor: colors.primary + '40', borderWidth: 1.5 }
-                      ]}>
-                        <View style={styles.cardHeader}>
-                          <View style={[styles.emojiContainer, { backgroundColor: isDark ? colors.slate[800] : colors.slate[100] }]}>
-                            <Text style={styles.cardEmoji}>{item.emoji}</Text>
-                          </View>
-                          <View style={styles.cardMeta}>
-                            <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
-                            <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market}</Text>
-                          </View>
-                          <View style={[
-                            styles.volatilityBadge, 
-                            { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#10b98115' }
-                          ]}>
-                            <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#10b981' }]}>
-                              {item.volatility}
-                            </Text>
+          <View style={styles.marketGrid}>
+            {MARKET_DATA.map((item, idx) => {
+              const isExpanded = expandedId === item.id;
+              return (
+                <motion.View 
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + idx * 0.1 }}
+                  layout
+                >
+                  <TouchableOpacity onPress={() => toggleExpand(item.id)} activeOpacity={0.9}>
+                    <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[
+                      styles.premiumCard, 
+                      { borderColor: colors.border },
+                      isExpanded && { borderColor: colors.primary + '40', borderWidth: 2 }
+                    ]}>
+                      
+                      <View style={styles.cardHeader}>
+                        <View style={[styles.emojiContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}>
+                          <Text style={styles.cardEmoji}>{item.emoji}</Text>
+                        </View>
+                        <View style={styles.cardMeta}>
+                          <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
+                          <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market}</Text>
+                        </View>
+                        <View style={[styles.volatilityBadge, { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#10b98115' }]}>
+                          <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#10b981' }]}>{item.volatility}</Text>
+                        </View>
+                      </View>
+
+                      <View style={styles.cardBody}>
+                        <View style={styles.priceContainer}>
+                          <Text style={[styles.priceLabel, { color: colors.textMute }]}>Wastani wa Bei</Text>
+                          <Text style={[styles.priceBig, { color: colors.text }]}>{item.price}</Text>
+                        </View>
+                        
+                        <View style={styles.trendArea}>
+                          <NeuralSparkline 
+                            data={[40, 45, 42, 48, 52, 50, 58, 62, 60, 65].map(v => item.positive ? v : 100 - v)} 
+                            positive={item.positive} 
+                          />
+                          <View style={[styles.trendPill, { backgroundColor: item.positive ? '#10b98120' : '#ef444420' }]}>
+                            {item.positive ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
+                            <Text style={[styles.trendPercent, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
                           </View>
                         </View>
+                      </View>
 
-                        <View style={styles.cardBody}>
-                          <View style={styles.priceContainer}>
-                            <Text style={[styles.priceLabel, { color: colors.textMute }]}>Current Avg.</Text>
-                            <Text style={[styles.priceBig, { color: colors.text }]}>{item.price}</Text>
-                          </View>
-                          
-                          <View style={styles.trendArea}>
-                            <NeuralSparkline 
-                              data={[40, 45, 42, 48, 52, 50, 58, 62, 60, 65].map(v => item.positive ? v : 100 - v)} 
-                              positive={item.positive}
-                              colors={colors}
-                            />
-                            <View style={[
-                              styles.trendPill, 
-                              { backgroundColor: item.positive ? '#10b98120' : '#ef444420' }
-                            ]}>
-                              {item.positive ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
-                              <Text style={[styles.trendPercent, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
-                            </View>
-                          </View>
-                        </View>
-
-                        <AnimatePresence>
-                          {isExpanded && (
-                            <motion.View
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              style={styles.expandedContent}
-                            >
-                              <View style={[styles.intelDivider, { backgroundColor: colors.border, marginVertical: 16 }]} />
-                              
-                              <View style={styles.analysisRow}>
-                                <View style={styles.analysisItem}>
-                                  <Text style={[styles.analysisLabel, { color: colors.textMute }]}>Predictive Outlook</Text>
-                                  <View style={styles.outlookBadge}>
-                                    <Sparkles size={12} color={colors.primary} />
-                                    <Text style={[styles.outlookText, { color: colors.primary }]}>BULLISH</Text>
-                                  </View>
-                                </View>
-                                <View style={styles.analysisItem}>
-                                  <Text style={[styles.analysisLabel, { color: colors.textMute }]}>Demand Signal</Text>
-                                  <Text style={[styles.analysisValue, { color: colors.text }]}>Strong (8.4/10)</Text>
+                      {/* Smart Contract / Escrow Flow Expansion */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.View
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            style={styles.expandedContent}
+                          >
+                            <View style={[styles.intelDivider, { backgroundColor: colors.border }]} />
+                            
+                            <View style={styles.analysisRow}>
+                              <View style={styles.analysisItem}>
+                                <Text style={[styles.analysisLabel, { color: colors.textMute }]}>AI Outlook</Text>
+                                <View style={styles.outlookBadge}>
+                                  <Sparkles size={12} color={colors.primary} />
+                                  <Text style={[styles.outlookText, { color: colors.primary }]}>{item.outlook}</Text>
                                 </View>
                               </View>
+                              <View style={styles.analysisItem}>
+                                <Text style={[styles.analysisLabel, { color: colors.textMute }]}>Demand</Text>
+                                <Text style={[styles.analysisValue, { color: colors.text }]}>{item.demand}</Text>
+                              </View>
+                            </View>
 
-                              <Text style={[styles.agenticQuote, { color: colors.textMute }]}>
-                                "Agentic analysis suggests locking in supply now. Logistic bottlenecks are forming in the northern regions."
-                              </Text>
-
-                              <TouchableOpacity 
-                                style={[styles.fullActionBtn, { backgroundColor: colors.primary }]}
-                                onPress={() => router.push('/hub')}
-                              >
-                                <Text style={styles.fullActionText}>Deep Analysis with Kilimo AI</Text>
-                                <Zap size={16} color="#fff" />
+                            <View style={styles.actionGrid}>
+                              <TouchableOpacity style={[styles.contractBtn, { backgroundColor: colors.primary }]}>
+                                <Wallet size={16} color="#000" />
+                                <Text style={[styles.contractBtnText, { color: '#000' }]}>Buy via Escrow</Text>
                               </TouchableOpacity>
-                            </motion.View>
-                          )}
-                        </AnimatePresence>
+                              <TouchableOpacity style={[styles.contractBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
+                                <FileSignature size={16} color={colors.text} />
+                                <Text style={[styles.contractBtnText, { color: colors.text }]}>Smart Contract</Text>
+                              </TouchableOpacity>
+                            </View>
 
-                        {!isExpanded && (
-                          <View style={[styles.cardFooter, { borderColor: colors.border }]}>
-                            <View style={styles.unitBox}>
-                              <Info size={12} color={colors.textMute} />
-                              <Text style={[styles.unitLabel, { color: colors.textMute }]}>{item.unit}</Text>
-                            </View>
-                            <View style={styles.cardDetailBtn}>
-                              <Text style={[styles.detailBtnText, { color: colors.primary }]}>Analyze</Text>
-                              <ArrowRight size={14} color={colors.primary} />
-                            </View>
-                          </View>
+                          </motion.View>
                         )}
-                      </BlurView>
-                    </TouchableOpacity>
-                  </motion.View>
-                );
-              })}
-            </View>
+                      </AnimatePresence>
 
-            <View style={{ height: 140 }} />
-          </ScrollView>
-        </motion.View>
+                      {!isExpanded && (
+                        <View style={[styles.cardFooter, { borderColor: colors.border }]}>
+                          <Text style={[styles.unitLabel, { color: colors.textMute }]}>{item.unit}</Text>
+                          <View style={styles.cardDetailBtn}>
+                            <Text style={[styles.detailBtnText, { color: colors.primary }]}>Fanya Biashara</Text>
+                            <ArrowRight size={14} color={colors.primary} />
+                          </View>
+                        </View>
+                      )}
+                    </BlurView>
+                  </TouchableOpacity>
+                </motion.View>
+              );
+            })}
+          </View>
+          <View style={{ height: 100 }} />
+        </ScrollView>
       </SafeAreaView>
-
-      {/* Persistent AI Assistant Bubble */}
-      <motion.View 
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1, type: "spring" }}
-        style={styles.aiAssistantContainer}
-      >
-        <TouchableOpacity 
-          activeOpacity={0.8}
-          onPress={() => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            router.push('/hub');
-          }}
-        >
-          <BlurView intensity={80} tint="dark" style={styles.aiAssistantBubble}>
-            <LinearGradient
-              colors={[colors.primary, '#3b82f6']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.aiAssistantIcon}
-            >
-              <MessageCircle size={28} color="#fff" />
-              <motion.View 
-                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                style={styles.aiPulse}
-              />
-            </LinearGradient>
-          </BlurView>
-        </TouchableOpacity>
-      </motion.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  bgOrb: {
-    position: 'absolute',
-  },
-  bgOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 800,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  headerCenter: {
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -1,
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: 6,
-  },
-  locationText: {
-    fontSize: 11,
-    fontFamily: 'Inter_700Bold',
-    opacity: 0.5,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  iconButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  notifDot: {
-    position: 'absolute',
-    top: 14,
-    right: 14,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-  },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 68,
-    borderRadius: 24,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 17,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  searchActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  searchActionBtn: {
-    padding: 8,
-  },
-  searchDivider: {
-    width: 1,
-    height: 24,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-  },
-  stickyCategory: {
-    marginBottom: 32,
-    marginHorizontal: -24,
-    zIndex: 10,
-  },
-  categoryContent: {
-    paddingHorizontal: 24,
-    gap: 12,
-    paddingBottom: 8,
-  },
-  categoryPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 18,
-    overflow: 'hidden',
-    gap: 8,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  intelligenceContainer: {
-    marginBottom: 40,
-  },
-  intelligenceCard: {
-    borderRadius: 36,
-    padding: 24,
-    borderWidth: 1,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.15,
-    shadowRadius: 30,
-    elevation: 10,
-  },
-  intelHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  intelBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: 'rgba(62, 207, 142, 0.15)',
-    gap: 6,
-  },
-  intelBadgeText: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1.2,
-  },
-  liveBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  liveDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  liveText: {
-    fontSize: 12,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: 0.5,
-  },
-  intelContent: {
-    marginBottom: 24,
-  },
-  intelTitle: {
-    fontSize: 28,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -1,
-    lineHeight: 34,
-    marginBottom: 12,
-  },
-  intelDescription: {
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 24,
-    opacity: 0.9,
-  },
-  intelDivider: {
-    height: 1,
-    width: '100%',
-    opacity: 0.1,
-    marginBottom: 20,
-  },
-  intelFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  suggestionBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
-  suggestionText: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-  },
-  intelAction: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scanningLine: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 100,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.5,
-  },
-  viewToggle: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  viewToggleText: {
-    fontSize: 11,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1.2,
-  },
-  marketGrid: {
-    gap: 16,
-  },
-  premiumCard: {
-    borderRadius: 32,
-    padding: 20,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  emojiContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cardEmoji: {
-    fontSize: 28,
-  },
-  cardMeta: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  itemName: {
-    fontSize: 18,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.5,
-  },
-  itemMarket: {
-    fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
-    marginTop: 2,
-  },
-  volatilityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  volatilityText: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    textTransform: 'uppercase',
-  },
-  cardBody: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: 20,
-  },
-  priceContainer: {
-    gap: 4,
-  },
-  priceLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter_700Bold',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  priceBig: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.5,
-  },
-  trendContainer: {
-    alignItems: 'flex-end',
-  },
-  trendPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    gap: 6,
-  },
-  trendPercent: {
-    fontSize: 13,
-    fontFamily: 'Inter_900Black',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 16,
-    borderTopWidth: 1,
-  },
-  unitBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  unitLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  cardDetailBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  detailBtnText: {
-    fontSize: 13,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  aiAssistantContainer: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 100 : 80,
-    right: 24,
-    zIndex: 100,
-  },
-  aiAssistantBubble: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    padding: 4,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 12,
-  },
-  aiAssistantIcon: {
-    flex: 1,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  aiPulse: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  sparklineOuter: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 35,
-    gap: 2,
-    marginRight: 12,
-  },
-  sparkBar: {
-    width: 3,
-    borderRadius: 1,
-  },
-  trendArea: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  expandedContent: {
-    overflow: 'hidden',
-  },
-  analysisRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  analysisItem: {
-    gap: 6,
-  },
-  analysisLabel: {
-    fontSize: 11,
-    fontFamily: 'Inter_700Bold',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  outlookBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(62, 207, 142, 0.1)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  outlookText: {
-    fontSize: 12,
-    fontFamily: 'Inter_900Black',
-  },
-  analysisValue: {
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  agenticQuote: {
-    fontSize: 14,
-    fontFamily: 'Inter_600SemiBold_Italic',
-    lineHeight: 20,
-    opacity: 0.7,
-    marginBottom: 24,
-    paddingLeft: 12,
-    borderLeftWidth: 2,
-    borderLeftColor: 'rgba(62, 207, 142, 0.3)',
-  },
-  fullActionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    height: 56,
-    borderRadius: 18,
-    marginBottom: 8,
-  },
-  fullActionText: {
-    color: '#fff',
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-});
-
+  container: { flex: 1 },
+  safeArea: { flex: 1 },
+  bgOrb: { position: 'absolute' },
+  bgOverlay: { position: 'absolute', top: 0, left: 0, right: 0, height: SCREEN_HEIGHT },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16, zIndex: 100 },
+  headerCenter: { alignItems: 'center' },
+  headerTitle: { fontSize: 24, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+  locationContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
+  locationText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+  iconButton: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
+  notifDot: { position: 'absolute', top: 12, right: 12, width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: '#000' },
+  scrollContent: { paddingHorizontal: 24, paddingTop: 16 },
+  searchContainer: { marginBottom: 24 },
+  searchContainerFocused: { zIndex: 50 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', height: 64, borderRadius: 24, paddingHorizontal: 20, borderWidth: 1, overflow: 'hidden' },
+  searchInput: { flex: 1, marginLeft: 12, fontSize: 16, fontFamily: 'Inter_600SemiBold' },
+  searchActions: { flexDirection: 'row', alignItems: 'center' },
+  searchActionBtn: { padding: 8 },
+  stickyCategory: { marginBottom: 32, marginHorizontal: -24, zIndex: 10 },
+  categoryContent: { paddingHorizontal: 24, gap: 12 },
+  categoryPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 20, gap: 8 },
+  categoryText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 200 },
+  bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
+  bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(62, 207, 142, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  intelBadgeText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  bentoTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', marginTop: 12, marginBottom: 4 },
+  bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
+  bentoFooter: { marginTop: 16 },
+  bentoAction: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, gap: 8 },
+  bentoActionText: { color: '#000', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
+  bentoSidebar: { flex: 1, gap: 16 },
+  bentoSmall: { flex: 1, borderRadius: 24, padding: 16, borderWidth: 1, overflow: 'hidden', justifyContent: 'center' },
+  bentoSmallTitle: { fontSize: 20, fontFamily: 'Inter_900Black', marginTop: 8, marginBottom: 2 },
+  bentoSmallDesc: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  sectionTitle: { fontSize: 20, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  marketGrid: { gap: 16 },
+  premiumCard: { borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden' },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  emojiContainer: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
+  cardEmoji: { fontSize: 20 },
+  cardMeta: { flex: 1, marginLeft: 12 },
+  itemName: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
+  itemMarket: { fontSize: 12, fontFamily: 'Inter_500Medium', opacity: 0.7 },
+  volatilityBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
+  volatilityText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  cardBody: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 },
+  priceContainer: { flex: 1 },
+  priceLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 4 },
+  priceBig: { fontSize: 24, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+  trendArea: { alignItems: 'flex-end', gap: 8 },
+  sparklineOuter: { flexDirection: 'row', alignItems: 'flex-end', height: 40, gap: 3 },
+  sparkBar: { width: 4, borderRadius: 2 },
+  trendPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, gap: 4 },
+  trendPercent: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
+  expandedContent: { overflow: 'hidden', marginTop: 8 },
+  intelDivider: { height: 1, marginVertical: 16 },
+  analysisRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  analysisItem: { flex: 1 },
+  analysisLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
+  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(62, 207, 142, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
+  outlookText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
+  actionGrid: { flexDirection: 'row', gap: 12 },
+  contractBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 16, gap: 8 },
+  contractBtnText: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTopWidth: 1 },
+  unitLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+  cardDetailBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  detailBtnText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
+  aiAssistantContainer: { position: 'absolute', bottom: 32, right: 24, zIndex: 100 },
+  aiAssistantBubble: { width: 64, height: 64, borderRadius: 32, padding: 4, overflow: 'hidden' },
+  aiAssistantIcon: { flex: 1, borderRadius: 28, justifyContent: 'center', alignItems: 'center' },
+  aiPulse: { position: 'absolute', width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#fff' }
 });

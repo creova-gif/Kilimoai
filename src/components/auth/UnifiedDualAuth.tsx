@@ -19,7 +19,8 @@
  */
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
+import { AnimatedPage } from "../animations";
 import { Mail, Phone, Lock, ArrowRight, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2, User, Briefcase } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { SignInWithApple } from "@capacitor-community/apple-sign-in";
@@ -614,14 +615,11 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
         </motion.div>
 
         {/* Main Auth Form */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-6"
-        >
-          {/* PASSWORD RESET MODE */}
-          {authMode === "password-reset" && (
+        <div className="space-y-6">
+          <AnimatePresence mode="wait">
+            {/* PASSWORD RESET MODE */}
+            {authMode === "password-reset" && (
+              <AnimatedPage key="password-reset" direction="left">
             <div className="space-y-4">
               <div className="text-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">{text.resetTitle}</h2>
@@ -646,13 +644,15 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                     </div>
                   </div>
 
-                  <Button
-                    onClick={handlePasswordReset}
-                    disabled={loading}
-                    className="w-full h-12 bg-[#2E7D32] hover:bg-[#1B5E20]"
-                  >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : text.sendResetLink}
-                  </Button>
+                  <motion.div whileTap={{ scale: 0.98 }} className="w-full">
+                    <Button
+                      onClick={handlePasswordReset}
+                      disabled={loading}
+                      className="w-full h-12 bg-[#2E7D32] hover:bg-[#1B5E20]"
+                    >
+                      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : text.sendResetLink}
+                    </Button>
+                  </motion.div>
                 </>
               ) : (
                 <div className="text-center py-8">
@@ -668,10 +668,12 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                 {text.backToLogin}
               </button>
             </div>
+            </AnimatedPage>
           )}
 
           {/* OTP VERIFY MODE */}
           {authMode === "otp-verify" && (
+            <AnimatedPage key="otp-verify" direction="right">
             <div className="space-y-4">
               <div className="text-center mb-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#E8F5E9] rounded-full mb-3">
@@ -705,13 +707,15 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                 )}
               </div>
 
-              <Button
-                onClick={handleOTPVerify}
-                disabled={loading || otp.length !== 6}
-                className="w-full h-12 bg-[#2E7D32] hover:bg-[#1B5E20]"
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : text.verifyCode}
-              </Button>
+              <motion.div whileTap={{ scale: 0.98 }} className="w-full">
+                <Button
+                  onClick={handleOTPVerify}
+                  disabled={loading || otp.length !== 6}
+                  className="w-full h-12 bg-[#2E7D32] hover:bg-[#1B5E20]"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : text.verifyCode}
+                </Button>
+              </motion.div>
 
               <div className="text-center space-y-2">
                 <button
@@ -730,10 +734,12 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                 </button>
               </div>
             </div>
+            </AnimatedPage>
           )}
 
           {/* ENTRY MODE - TABS */}
           {authMode === "entry" && (
+            <AnimatedPage key="entry" direction="up">
             <div className="space-y-4">
               {/* Method Tabs */}
               <div className="flex gap-2 p-1.5 bg-gray-100 rounded-xl">
@@ -761,8 +767,10 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                 </button>
               </div>
 
+              <AnimatePresence mode="wait">
               {/* PHONE TAB */}
               {authMethod === "phone" && (
+                <AnimatedPage key="phone" direction="left">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>{text.phoneLabel}</Label>
@@ -831,31 +839,37 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("google")}
-                        disabled={loading}
-                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <GoogleLogo width={20} height={20} />
-                        <span className="text-sm font-medium">Google</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("apple")}
-                        disabled={loading}
-                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <AppleLogo width={20} height={20} />
-                        <span className="text-sm font-medium">Apple</span>
-                      </Button>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleSocialAuth("google")}
+                          disabled={loading}
+                          className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2 w-full"
+                        >
+                          <GoogleLogo width={20} height={20} />
+                          <span className="text-sm font-medium">Google</span>
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleSocialAuth("apple")}
+                          disabled={loading}
+                          className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2 w-full"
+                        >
+                          <AppleLogo width={20} height={20} />
+                          <span className="text-sm font-medium">Apple</span>
+                        </Button>
+                      </motion.div>
                     </div>
                   </div>
                 </div>
+                </AnimatedPage>
               )}
 
               {/* EMAIL TAB */}
               {authMethod === "email" && (
+                <AnimatedPage key="email" direction="right">
                 <div className="space-y-4">
                   {authAction === "signup" && (
                     <div className="space-y-2">
@@ -1012,31 +1026,39 @@ export function UnifiedDualAuth({ onSuccess, language = "sw" }: UnifiedDualAuthP
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("google")}
-                        disabled={loading}
-                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <GoogleLogo width={20} height={20} />
-                        <span className="text-sm font-medium">Google</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("apple")}
-                        disabled={loading}
-                        className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <AppleLogo width={20} height={20} />
-                        <span className="text-sm font-medium">Apple</span>
-                      </Button>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleSocialAuth("google")}
+                          disabled={loading}
+                          className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2 w-full"
+                        >
+                          <GoogleLogo width={20} height={20} />
+                          <span className="text-sm font-medium">Google</span>
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleSocialAuth("apple")}
+                          disabled={loading}
+                          className="h-12 border-gray-200 hover:bg-gray-50 flex items-center gap-2 w-full"
+                        >
+                          <AppleLogo width={20} height={20} />
+                          <span className="text-sm font-medium">Apple</span>
+                        </Button>
+                      </motion.div>
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
-        </motion.div>
+              </AnimatedPage>
+            )}
+            </AnimatePresence>
+          </div>
+        </AnimatedPage>
+      )}
+      </AnimatePresence>
+    </div>
       </div>
     </div>
   );

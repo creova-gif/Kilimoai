@@ -5,45 +5,37 @@ import {
   Text, 
   ScrollView, 
   TouchableOpacity, 
-  Switch, 
   Dimensions, 
-  Platform, 
+  SafeAreaView,
   StatusBar,
+  Image,
+  Switch,
+  Platform
 } from 'react-native';
 import { 
   User, 
-  Bell, 
-  Shield, 
-  LogOut, 
-  ChevronRight, 
+  Settings, 
+  ShieldCheck, 
   CreditCard, 
+  Smartphone, 
+  Bell, 
   HelpCircle, 
-  BadgeCheck, 
-  ExternalLink,
-  Sparkles,
-  Zap,
-  Activity,
-  LayoutGrid
+  LogOut, 
+  ChevronRight,
+  Database,
+  Fingerprint,
+  WifiOff,
+  CloudSun,
+  Wallet
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../../constants/Theme';
+import { motion } from "motion/react";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-// Animation Variants
-const containerVariants = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Background Orb Component
 const NeuralOrb = ({ color, size, delay, x, y }: any) => {
@@ -51,10 +43,10 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
     <motion.View
       initial={{ x, y, opacity: 0, scale: 0.8 }}
       animate={{ 
-        x: [x, x + 40, x - 20, x],
-        y: [y, y - 50, y + 30, y],
-        opacity: [0.05, 0.15, 0.1, 0.05],
-        scale: [1, 1.1, 0.9, 1]
+        x: [x, x + 30, x - 20, x],
+        y: [y, y - 40, y + 30, y],
+        opacity: [0.1, 0.2, 0.15, 0.1],
+        scale: [1, 1.1, 0.95, 1]
       }}
       transition={{
         duration: 20 + delay / 1000,
@@ -68,236 +60,205 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
           height: size,
           borderRadius: size / 2,
           backgroundColor: color,
-          filter: Platform.OS === 'web' ? 'blur(80px)' : undefined,
+          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
         },
       ]}
     />
   );
 };
 
-const itemVariants = {
-  initial: { opacity: 0, y: 20, scale: 0.95 },
-  animate: { 
-    opacity: 1, 
-    y: 0, 
-    scale: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 18
-    }
+const AGRO_ID_DATA = {
+  name: 'Justin Mafie',
+  role: 'Mkulima Mkuu',
+  location: 'Arusha, Tanzania',
+  id: 'KILIMO-8492-XJ',
+  tier: 'Premium Co-op Member',
+  joinDate: '2023'
+};
+
+const PROFILE_SECTIONS = [
+  {
+    title: 'AGRO ID & FEDHA',
+    items: [
+      { id: 'wallet', title: 'M-Pesa Wallet Sync', icon: <Wallet size={20} color="#10b981" />, hasSwitch: false, value: 'Linked' },
+      { id: 'identity', title: 'Biometric Identity', icon: <Fingerprint size={20} color="#3b82f6" />, hasSwitch: true, value: true },
+      { id: 'coop', title: 'Cooperative Dues', icon: <CreditCard size={20} color="#f59e0b" />, hasSwitch: false, value: 'Up to date' },
+    ]
   },
+  {
+    title: 'MIFUMO & MTANDAO',
+    items: [
+      { id: 'offline', title: 'Offline-First Mode', icon: <WifiOff size={20} color="#ef4444" />, hasSwitch: true, value: true },
+      { id: 'sync', title: 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: 'Last sync: 2h ago' },
+      { id: 'weather', title: 'Weather Telemetry', icon: <CloudSun size={20} color="#0ea5e9" />, hasSwitch: true, value: true },
+    ]
+  },
+  {
+    title: 'MIPANGILIO YA AKAUNTI',
+    items: [
+      { id: 'notifications', title: 'Push Notifications', icon: <Bell size={20} color="#64748b" />, hasSwitch: true, value: true },
+      { id: 'security', title: 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '' },
+      { id: 'help', title: 'Help & Support', icon: <HelpCircle size={20} color="#64748b" />, hasSwitch: false, value: '' },
+    ]
+  }
+];
+
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { type: "spring", damping: 25, stiffness: 120 } }
 };
 
 export default function ProfileScreen() {
-  const { colors, isDark } = useTheme();
-
-  const handlePress = () => {
-    Haptics.selectionAsync();
-  };
+  const { colors, spacing, radius, isDark } = useTheme();
+  const router = useRouter();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       
-      {/* Premium Background System */}
+      {/* Cinematic Background */}
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={350} x={-100} y={50} delay={0} />
-        <NeuralOrb color="#3b82f6" size={250} x={SCREEN_WIDTH - 100} y={200} delay={2000} />
-        <NeuralOrb color="#8b5cf6" size={200} x={SCREEN_WIDTH / 2} y={500} delay={4000} />
+        <NeuralOrb color="#3ecf8e" size={350} x={-50} y={-50} delay={0} />
+        <NeuralOrb color="#3b82f6" size={300} x={SCREEN_WIDTH - 150} y={400} delay={2000} />
         
         <LinearGradient
           colors={[
-            isDark ? colors.background : '#fff',
-            isDark ? colors.background + 'cc' : colors.background + 'cc',
+            isDark ? colors.slate[950] : '#f8fafc',
+            isDark ? colors.slate[900] + 'ee' : colors.slate[50] + 'ee',
             'transparent'
           ]}
           style={styles.bgGradient}
         />
       </View>
 
-      <ScrollView 
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <motion.View 
-          variants={containerVariants}
-          initial="initial"
-          animate="animate"
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
         >
-          <motion.View variants={itemVariants} style={styles.header}>
-            <View style={styles.avatarWrapper}>
-              <LinearGradient
-                colors={[colors.primary, '#16a34a']}
-                style={styles.avatarGradient}
-              >
-                <User color="#ffffff" size={48} strokeWidth={1.5} />
-              </LinearGradient>
-              <View style={[styles.badgeContainer, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 2 }]}>
-                <BadgeCheck size={20} color={colors.primary} fill={isDark ? 'transparent' : 'white'} />
-              </View>
-            </View>
-            
-            <View style={styles.userInfo}>
-              <Text style={[styles.userName, { color: colors.text }]}>Justin Mafie</Text>
-              <Text style={[styles.userEmail, { color: colors.textMute }]}>justin@kilimo.ai</Text>
+          <motion.View
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+          >
+            {/* Header */}
+            <motion.View variants={itemVariants} style={styles.header}>
+              <Text style={[styles.headerTitle, { color: colors.text }]}>Identity</Text>
+              <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                <Settings size={24} color={colors.text} />
+              </TouchableOpacity>
+            </motion.View>
+
+            {/* Agro ID Card */}
+            <motion.View 
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={styles.idCardContainer}
+            >
+              <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
+                <LinearGradient
+                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                  style={StyleSheet.absoluteFill}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
+                
+                <View style={styles.idHeader}>
+                  <View style={styles.idBadge}>
+                    <Fingerprint size={12} color={colors.primary} />
+                    <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
+                  </View>
+                  <Text style={[styles.idNumber, { color: colors.textMute }]}>{AGRO_ID_DATA.id}</Text>
+                </View>
+
+                <View style={styles.profileRow}>
+                  <Image 
+                    source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2787&auto=format&fit=crop' }} 
+                    style={[styles.profileImage, { borderColor: colors.primary + '40' }]}
+                  />
+                  <View style={styles.profileInfo}>
+                    <Text style={[styles.profileName, { color: colors.text }]}>{AGRO_ID_DATA.name}</Text>
+                    <Text style={[styles.profileRole, { color: colors.textMute }]}>{AGRO_ID_DATA.role}</Text>
+                    <Text style={[styles.profileLocation, { color: colors.textMute }]}>{AGRO_ID_DATA.location}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.tierContainer}>
+                  <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
+                  <Text style={[styles.joinText, { color: colors.textMute }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
+                </View>
+              </BlurView>
+            </motion.View>
+
+            {/* Sections */}
+            {PROFILE_SECTIONS.map((section, sIdx) => (
+              <motion.View key={sIdx} variants={itemVariants} style={styles.sectionContainer}>
+                <Text style={[styles.sectionTitle, { color: colors.textMute }]}>{section.title}</Text>
+                
+                <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.sectionBlock, { borderColor: colors.border }]}>
+                  {section.items.map((item, iIdx) => (
+                    <View key={item.id}>
+                      <TouchableOpacity 
+                        activeOpacity={item.hasSwitch ? 1 : 0.7}
+                        onPress={() => !item.hasSwitch && Haptics.selectionAsync()}
+                        style={styles.itemRow}
+                      >
+                        <View style={[styles.itemIconBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
+                          {item.icon}
+                        </View>
+                        <View style={styles.itemContent}>
+                          <Text style={[styles.itemTitle, { color: colors.text }]}>{item.title}</Text>
+                          {!item.hasSwitch && item.value ? (
+                            <Text style={[styles.itemValue, { color: colors.textMute }]}>{item.value}</Text>
+                          ) : null}
+                        </View>
+                        
+                        {item.hasSwitch ? (
+                          <Switch 
+                            value={item.value as boolean} 
+                            trackColor={{ false: colors.border, true: colors.primary }}
+                            onValueChange={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+                          />
+                        ) : (
+                          <ChevronRight size={20} color={colors.textMute} />
+                        )}
+                      </TouchableOpacity>
+                      
+                      {iIdx < section.items.length - 1 && (
+                        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                      )}
+                    </View>
+                  ))}
+                </BlurView>
+              </motion.View>
+            ))}
+
+            {/* Logout */}
+            <motion.View variants={itemVariants}>
               <TouchableOpacity 
                 activeOpacity={0.8}
-                style={[styles.proBadge, { backgroundColor: isDark ? 'rgba(62, 207, 142, 0.15)' : 'rgba(34, 197, 94, 0.1)', borderColor: colors.primary + '40' }]}
-                onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+                onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+                style={styles.logoutBtn}
               >
-                <Sparkles size={12} color={colors.primary} />
-                <Text style={[styles.proBadgeText, { color: colors.primary }]}>KILIMO AI PRO</Text>
+                <LogOut size={20} color="#ef4444" />
+                <Text style={styles.logoutText}>Ondoka (Log Out)</Text>
               </TouchableOpacity>
-            </View>
-
-            <View style={styles.quickStats}>
-              <BlurView intensity={isDark ? 10 : 40} tint={isDark ? "dark" : "light"} style={[styles.statBox, { borderColor: colors.border }]}>
-                <Text style={[styles.statNumber, { color: colors.text }]}>12</Text>
-                <Text style={[styles.statLabel, { color: colors.textMute }]}>Fields</Text>
-              </BlurView>
-              <BlurView intensity={isDark ? 10 : 40} tint={isDark ? "dark" : "light"} style={[styles.statBox, { borderColor: colors.border }]}>
-                <Text style={[styles.statNumber, { color: colors.text }]}>84%</Text>
-                <Text style={[styles.statLabel, { color: colors.textMute }]}>Avg Health</Text>
-              </BlurView>
-              <BlurView intensity={isDark ? 10 : 40} tint={isDark ? "dark" : "light"} style={[styles.statBox, { borderColor: colors.border }]}>
-                <Text style={[styles.statNumber, { color: colors.text }]}>2.4k</Text>
-                <Text style={[styles.statLabel, { color: colors.textMute }]}>kg Yield</Text>
-              </BlurView>
-            </View>
+            </motion.View>
           </motion.View>
 
-          <View style={styles.content}>
-            <motion.View variants={itemVariants}>
-              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>ACCOUNT INTELLIGENCE</Text>
-              <BlurView intensity={isDark ? 5 : 30} tint={isDark ? "dark" : "light"} style={[styles.menuCard, { borderColor: colors.border }]}>
-                <MenuItem 
-                  icon={<User color="#3b82f6" size={20} />} 
-                  label="Profile Data" 
-                  colors={colors}
-                  isDark={isDark}
-                  onPress={handlePress}
-                />
-                <View style={[styles.itemDivider, { backgroundColor: colors.border }]} />
-                <MenuItem 
-                  icon={<Bell color="#f59e0b" size={20} />} 
-                  label="Alert Protocols" 
-                  colors={colors}
-                  isDark={isDark}
-                  hasSwitch
-                  onPress={handlePress}
-                />
-                <View style={[styles.itemDivider, { backgroundColor: colors.border }]} />
-                <MenuItem 
-                  icon={<Shield color="#10b981" size={20} />} 
-                  label="Secure Access" 
-                  colors={colors}
-                  isDark={isDark}
-                  onPress={handlePress}
-                />
-              </BlurView>
-            </motion.View>
-
-            <motion.View variants={itemVariants}>
-              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>OPERATIONS</Text>
-              <BlurView intensity={isDark ? 5 : 30} tint={isDark ? "dark" : "light"} style={[styles.menuCard, { borderColor: colors.border }]}>
-                <MenuItem 
-                  icon={<LayoutGrid color="#22c55e" size={20} />} 
-                  label="Workspace Units" 
-                  colors={colors}
-                  isDark={isDark}
-                  value="12 active"
-                  onPress={handlePress}
-                />
-                <View style={[styles.itemDivider, { backgroundColor: colors.border }]} />
-                <MenuItem 
-                  icon={<CreditCard color="#6366f1" size={20} />} 
-                  label="Nexus Billing" 
-                  colors={colors}
-                  isDark={isDark}
-                  onPress={handlePress}
-                />
-                <View style={[styles.itemDivider, { backgroundColor: colors.border }]} />
-                <MenuItem 
-                  icon={<Activity color="#ec4899" size={20} />} 
-                  label="Sensor Nodes" 
-                  colors={colors}
-                  isDark={isDark}
-                  value="Online"
-                  onPress={handlePress}
-                />
-              </BlurView>
-            </motion.View>
-
-            <motion.View variants={itemVariants}>
-              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>SUBSYSTEMS</Text>
-              <BlurView intensity={isDark ? 5 : 30} tint={isDark ? "dark" : "light"} style={[styles.menuCard, { borderColor: colors.border }]}>
-                <MenuItem 
-                  icon={<HelpCircle color="#06b6d4" size={20} />} 
-                  label="Knowledge Base" 
-                  colors={colors}
-                  isDark={isDark}
-                  onPress={handlePress}
-                />
-                <View style={[styles.itemDivider, { backgroundColor: colors.border }]} />
-                <MenuItem 
-                  icon={<ExternalLink color="#8b5cf6" size={20} />} 
-                  label="System Protocol" 
-                  colors={colors}
-                  isDark={isDark}
-                  onPress={handlePress}
-                />
-              </BlurView>
-
-              <TouchableOpacity 
-                style={[styles.logoutButton, { borderColor: 'rgba(239, 68, 68, 0.2)', borderWidth: 1 }]} 
-                onPress={() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)}
-              >
-                <BlurView intensity={isDark ? 5 : 20} tint="dark" style={StyleSheet.absoluteFill} />
-                <LogOut color="#ef4444" size={20} />
-                <Text style={styles.logoutText}>TERMINATE SESSION</Text>
-              </TouchableOpacity>
-            </motion.View>
-            
-            <motion.View variants={itemVariants} style={styles.footer}>
-              <Text style={[styles.versionText, { color: colors.textMute }]}>Kilimo AI Core v2.4.8 High-Impact</Text>
-              <Text style={[styles.copyrightText, { color: colors.textMute }]}>© 2026 KILIMO AI TECHNOLOGY GROUP</Text>
-            </motion.View>
-          </View>
-        </motion.View>
-      </ScrollView>
+          <View style={{ height: 100 }} />
+        </ScrollView>
+      </SafeAreaView>
     </View>
-  );
-}
-
-function MenuItem({ icon, label, colors, isDark, hasSwitch = false, value = '', onPress }: any) {
-  return (
-    <TouchableOpacity 
-      style={styles.menuItem} 
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={styles.menuItemLeft}>
-        <View style={[styles.iconBox, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
-          {icon}
-        </View>
-        <Text style={[styles.menuItemLabel, { color: colors.text }]}>{label}</Text>
-      </View>
-      <View style={styles.menuItemRight}>
-        {value ? <Text style={[styles.menuItemValue, { color: colors.primary }]}>{value}</Text> : null}
-        {hasSwitch ? (
-          <Switch 
-            value={true} 
-            trackColor={{ false: '#262626', true: colors.primary }}
-            thumbColor="#ffffff"
-          />
-        ) : (
-          <ChevronRight color={colors.textMute} size={18} />
-        )}
-      </View>
-    </TouchableOpacity>
   );
 }
 
@@ -305,205 +266,180 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  safeArea: {
+    flex: 1,
+  },
   bgOrb: {
     position: 'absolute',
-    filter: 'blur(80px)',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    filter: 'blur(100px)',
   },
   bgGradient: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 600,
-  },
-  scrollView: {
-    flex: 1,
+    height: SCREEN_HEIGHT,
   },
   scrollContent: {
-    paddingTop: 60,
-    paddingBottom: 20,
+    padding: 24,
+    paddingTop: 12,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 32,
+    marginBottom: 24,
   },
-  avatarWrapper: {
-    position: 'relative',
-    marginBottom: 20,
-  },
-  avatarGradient: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: "#3ecf8e",
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 12,
-  },
-  badgeContainer: {
-    position: 'absolute',
-    bottom: 4,
-    right: 4,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-  },
-  userInfo: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  userName: {
+  headerTitle: {
     fontSize: 28,
     fontFamily: 'Inter_900Black',
     letterSpacing: -1,
-    marginBottom: 6,
   },
-  userEmail: {
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
-    marginBottom: 16,
-    opacity: 0.7,
+  idCardContainer: {
+    marginBottom: 32,
   },
-  proBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
+  idCard: {
+    borderRadius: 32,
+    padding: 24,
+    overflow: 'hidden',
     borderWidth: 1,
-    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 8,
   },
-  proBadgeText: {
-    fontSize: 11,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1.5,
-  },
-  quickStats: {
+  idHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 20,
-    gap: 12,
-  },
-  statBox: {
-    flex: 1,
-    paddingVertical: 20,
-    borderRadius: 24,
     alignItems: 'center',
-    borderWidth: 1,
-    overflow: 'hidden',
+    marginBottom: 24,
   },
-  statNumber: {
+  idBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(62, 207, 142, 0.15)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 6,
+  },
+  idBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1,
+  },
+  idNumber: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 2,
+  },
+  profileRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  profileImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 24,
+    borderWidth: 2,
+  },
+  profileInfo: {
+    marginLeft: 16,
+    flex: 1,
+  },
+  profileName: {
     fontSize: 24,
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
     marginBottom: 4,
   },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter_700Bold',
-    opacity: 0.6,
+  profileRole: {
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+    marginBottom: 2,
   },
-  content: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+  profileLocation: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    opacity: 0.7,
+  },
+  tierContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  tierText: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+  },
+  joinText: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+  },
+  sectionContainer: {
+    marginBottom: 28,
   },
   sectionTitle: {
     fontSize: 11,
     fontFamily: 'Inter_900Black',
     letterSpacing: 1.5,
-    marginBottom: 16,
-    marginTop: 24,
-    paddingLeft: 4,
-    opacity: 0.8,
+    marginBottom: 12,
+    marginLeft: 8,
   },
-  menuCard: {
-    borderRadius: 32,
-    overflow: 'hidden',
+  sectionBlock: {
+    borderRadius: 24,
     borderWidth: 1,
-    paddingVertical: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 18,
-  },
-  itemDivider: {
-    height: 1,
-    marginHorizontal: 20,
-    opacity: 0.05,
-  },
-  menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  menuItemLabel: {
-    fontSize: 17,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.3,
-  },
-  menuItemRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  menuItemValue: {
-    fontSize: 14,
-    marginRight: 10,
-    fontFamily: 'Inter_900Black',
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 22,
-    borderRadius: 28,
-    marginTop: 32,
-    marginBottom: 40,
     overflow: 'hidden',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  itemIconBg: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemContent: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  itemTitle: {
+    fontSize: 15,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  itemValue: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 2,
+  },
+  divider: {
+    height: 1,
+    marginLeft: 72,
+  },
+  logoutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    borderRadius: 20,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    gap: 8,
   },
   logoutText: {
     color: '#ef4444',
-    fontSize: 14,
-    fontFamily: 'Inter_900Black',
-    marginLeft: 12,
-    letterSpacing: 1,
-  },
-  footer: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  versionText: {
-    fontSize: 12,
+    fontSize: 15,
     fontFamily: 'Inter_800ExtraBold',
-    marginBottom: 6,
-    opacity: 0.7,
-  },
-  copyrightText: {
-    fontSize: 10,
-    fontFamily: 'Inter_600SemiBold',
-    opacity: 0.4,
-    letterSpacing: 0.5,
   },
 });

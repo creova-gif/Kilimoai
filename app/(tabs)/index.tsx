@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -11,31 +11,27 @@ import {
   RefreshControl,
   Platform,
   Image,
-  Pressable
 } from 'react-native';
 import { 
   BrainCircuit, 
   Camera, 
   TrendingUp, 
-  Calendar, 
   Bell, 
-  ChevronRight,
-  CloudSun,
-  MapPin,
-  ArrowRight,
-  Search,
-  Activity,
-  History,
   LayoutGrid,
   Sparkles,
-  Zap,
   Leaf,
   Droplets,
   Sun,
   Microscope,
-  Cpu,
   BarChart3,
-  Waves
+  Waves,
+  Fingerprint,
+  ArrowUpRight,
+  ArrowDownLeft,
+  WifiOff,
+  ArrowRight,
+  CloudOff,
+  RefreshCw
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -43,6 +39,7 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
+import { useKilimoStore } from '../../store/useKilimoStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -82,17 +79,10 @@ const RECENT_ACTIVITIES = [
   { id: '3', title: 'Market Price Alert', time: '6h ago', icon: <BarChart3 size={16} color="#f59e0b" />, status: 'High', detail: 'Maize up 12% in Mbeya' },
 ];
 
-const FARM_STATS = [
-  { id: 'soil', label: 'Soil Health', value: '84%', icon: <Leaf size={18} color="#3ecf8e" />, color: '#3ecf8e' },
-  { id: 'moisture', label: 'Moisture', value: '42%', icon: <Droplets size={18} color="#3b82f6" />, color: '#3b82f6' },
-  { id: 'weather', label: 'Weather', value: '24°C', icon: <Sun size={18} color="#f59e0b" />, color: '#f59e0b' },
-  { id: 'yield', label: 'Yield Est.', value: '1.2t', icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
-];
-
 const QUICK_ACTIONS = [
-  { id: 'scan', label: 'Vision Scan', icon: <Camera size={24} color="#fff" />, color: '#3ecf8e', desc: 'Analyze crops' },
-  { id: 'tasks', label: 'Management', icon: <LayoutGrid size={24} color="#fff" />, color: '#3b82f6', desc: 'Field log' },
-  { id: 'market', label: 'Economy', icon: <TrendingUp size={24} color="#fff" />, color: '#f59e0b', desc: 'Price index' },
+  { id: 'scan', label: 'Uchunguzi wa Mazao', icon: <Camera size={24} color="#fff" />, color: '#3ecf8e', desc: 'AI Crop Scan' },
+  { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={24} color="#fff" />, color: '#3b82f6', desc: 'Farm Tasks' },
+  { id: 'market', label: 'Soko', icon: <TrendingUp size={24} color="#fff" />, color: '#f59e0b', desc: 'Market Prices' },
 ];
 
 // Variants for staggered entrance
@@ -117,16 +107,30 @@ const itemVariants = {
 };
 
 export default function HomeScreen() {
-  const { colors, spacing, radius, isDark } = useTheme();
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  // ── Live global state ────────────────────────────────────────────────────
+  const agroId = useKilimoStore((s) => s.agroId);
+  const isOffline = useKilimoStore((s) => s.isOffline);
+  const syncQueue = useKilimoStore((s) => s.syncQueue);
+  const farmVitals = useKilimoStore((s) => s.farmVitals);
+  const wallet = useKilimoStore((s) => s.wallet);
+  const unreadCount = useKilimoStore((s) => s.unreadCount);
+
+  // Derive dynamic farm stats from live store
+  const FARM_STATS = [
+    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#3ecf8e" />, color: '#3ecf8e' },
+    { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#3b82f6" />, color: '#3b82f6' },
+    { id: 'weather', label: 'Joto', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#f59e0b" />, color: '#f59e0b' },
+    { id: 'yield', label: 'Mavuno', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
+  ];
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+    setTimeout(() => setRefreshing(false), 1500);
   }, []);
 
   return (
@@ -169,33 +173,92 @@ export default function HomeScreen() {
             {/* Header Section */}
             <motion.View variants={itemVariants} style={styles.header}>
               <View>
-                <View style={styles.statusBadge}>
-                  <View style={[styles.statusDot, { backgroundColor: colors.primary }]} />
-                  <Text style={[styles.statusText, { color: colors.primary }]}>SYSTEMS OPTIMAL</Text>
+                <View style={[styles.statusBadge, { backgroundColor: isOffline ? 'rgba(239, 68, 68, 0.1)' : 'rgba(62, 207, 142, 0.1)' }]}>
+                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} />
+                  <Text style={[styles.statusText, { color: isOffline ? '#ef4444' : colors.primary }]}>
+                    {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
+                  </Text>
                 </View>
-                <Text style={[styles.greeting, { color: colors.textMute }]}>WELCOME BACK,</Text>
-                <Text style={[styles.name, { color: colors.text }]}>Justin Mafie</Text>
+                <Text style={[styles.greeting, { color: colors.textMute }]}>KARIBU TENA,</Text>
+                <Text style={[styles.name, { color: colors.text }]}>{agroId?.name?.split(' ')[0] ?? 'Mkulima'}</Text>
               </View>
               <View style={styles.headerActions}>
                 <TouchableOpacity 
-                  onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    router.push('/notifications' as any);
+                  }}
                   style={styles.actionCircle}
                 >
                   <BlurView intensity={20} tint={isDark ? "dark" : "light"} style={styles.circleBlur}>
-                    <Bell size={22} color={colors.text} />
-                    <View style={styles.notificationDot} />
+                    {isOffline ? <WifiOff size={22} color="#ef4444" /> : <Bell size={22} color={colors.text} />}
+                    {unreadCount > 0 && !isOffline && (
+                      <View style={[styles.notificationDot, styles.notificationBadge]}>
+                        <Text style={styles.notificationBadgeText}>
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </Text>
+                      </View>
+                    )}
                   </BlurView>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.avatarContainer, { borderColor: colors.primary + '40' }]}
-                  onPress={() => router.push('/profile')}
+                  onPress={() => router.push('/(tabs)/profile' as any)}
                 >
                   <Image 
-                    source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2787&auto=format&fit=crop' }} 
+                    source={{ uri: agroId?.avatarUrl ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400' }} 
                     style={styles.avatar}
                   />
                 </TouchableOpacity>
               </View>
+            </motion.View>
+
+            {/* Agro ID & Mobile Money Wallet Card */}
+            <motion.View 
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={styles.walletContainer}
+            >
+              <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.walletCard, { borderColor: colors.border }]}>
+                <LinearGradient
+                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                  style={StyleSheet.absoluteFill}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
+                
+                <View style={styles.walletHeader}>
+                  <View style={styles.agroIdBadge}>
+                    <Fingerprint size={14} color={colors.primary} />
+                    <Text style={[styles.agroIdText, { color: colors.primary }]}>AGRO ID SECURED</Text>
+                  </View>
+                  <View style={styles.mobileMoneyTag}>
+                    <Text style={styles.mobileMoneyText}>
+                      {agroId?.mpesaLinked ? 'M-PESA LINKED' : 'LINK M-PESA'}
+                    </Text>
+                  </View>
+                </View>
+
+                <Text style={[styles.balanceLabel, { color: colors.textMute }]}>Akiba Yako ({wallet.currency})</Text>
+                <View style={styles.balanceRow}>
+                  <Text style={[styles.balanceAmount, { color: colors.text }]}>
+                    {wallet.balanceTZS.toLocaleString()}
+                  </Text>
+                  <Text style={[styles.balanceDecimals, { color: colors.textMute }]}>.00</Text>
+                </View>
+
+                <View style={styles.walletActions}>
+                  <TouchableOpacity style={[styles.walletBtn, { backgroundColor: colors.primary }]}>
+                    <ArrowDownLeft size={18} color="#000" />
+                    <Text style={[styles.walletBtnText, { color: '#000' }]}>Deposit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.walletBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
+                    <ArrowUpRight size={18} color={colors.text} />
+                    <Text style={[styles.walletBtnText, { color: colors.text }]}>Pay Co-op</Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
             </motion.View>
 
             {/* Sankofa AI - The Neural Hub */}
@@ -251,17 +314,17 @@ export default function HomeScreen() {
                         style={styles.aiBadge}
                       >
                         <Sparkles size={10} color={colors.primary} />
-                        <Text style={styles.aiBadgeText}>CORE INTELLIGENCE</Text>
+                        <Text style={styles.aiBadgeText}>SANKOFA AI</Text>
                       </motion.View>
                     </View>
                     
                     <View style={styles.aiRight}>
-                      <Text style={[styles.aiTitle, { color: colors.text }]}>Sankofa AI</Text>
+                      <Text style={[styles.aiTitle, { color: colors.text }]}>Ushauri wa AI</Text>
                       <Text style={[styles.aiMessage, { color: colors.text }]}>
                         "Block B soil moisture is dropping faster than predicted. Suggesting irrigation at 18:00."
                       </Text>
                       <View style={styles.aiActionRow}>
-                        <Text style={[styles.aiActionLabel, { color: colors.primary }]}>VIEW ANALYSIS</Text>
+                        <Text style={[styles.aiActionLabel, { color: colors.primary }]}>SOMA ZAIDI</Text>
                         <ArrowRight size={14} color={colors.primary} />
                       </View>
                     </View>
@@ -272,7 +335,7 @@ export default function HomeScreen() {
 
             {/* Farm Vitale Grid */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Farm Vitale</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Afya ya Shamba</Text>
               <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                 <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS</Text>
               </TouchableOpacity>
@@ -359,7 +422,7 @@ export default function HomeScreen() {
 
             {/* Telemetry Feed */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Telemetry Stream</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Shughuli za Hivi Karibuni</Text>
               <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                 <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>CLEAR ALL</Text>
               </TouchableOpacity>
@@ -436,12 +499,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(62, 207, 142, 0.1)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
@@ -509,19 +571,102 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 25,
   },
+  walletContainer: {
+    marginBottom: 28,
+  },
+  walletCard: {
+    borderRadius: 36,
+    padding: 24,
+    overflow: 'hidden',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  walletHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  agroIdBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(62, 207, 142, 0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    gap: 6,
+  },
+  agroIdText: {
+    fontSize: 10,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1,
+  },
+  mobileMoneyTag: {
+    backgroundColor: '#10b981',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  mobileMoneyText: {
+    color: '#fff',
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 0.5,
+  },
+  balanceLabel: {
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+    marginBottom: 4,
+  },
+  balanceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 24,
+  },
+  balanceAmount: {
+    fontSize: 42,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -2,
+  },
+  balanceDecimals: {
+    fontSize: 20,
+    fontFamily: 'Inter_700Bold',
+  },
+  walletActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  walletBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 20,
+    gap: 8,
+  },
+  walletBtnText: {
+    fontSize: 15,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: -0.5,
+  },
   aiHeroContainer: {
     marginBottom: 36,
   },
   aiHero: {
-    borderRadius: 40,
-    padding: 28,
+    borderRadius: 36,
+    padding: 24,
     overflow: 'hidden',
     borderWidth: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.15,
-    shadowRadius: 30,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 8,
   },
   aiHeroContent: {
     flexDirection: 'row',
@@ -529,35 +674,35 @@ const styles = StyleSheet.create({
   },
   aiLeft: {
     alignItems: 'center',
-    marginRight: 24,
+    marginRight: 20,
   },
   aiBrainWrapper: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   aiRotateContainer: {
     position: 'absolute',
-    width: 90,
-    height: 90,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
   },
   aiOrbit: {
     width: '100%',
     height: '100%',
-    borderRadius: 45,
+    borderRadius: 40,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
     borderStyle: 'dashed',
     opacity: 0.5,
   },
   aiIconMain: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -577,30 +722,31 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontFamily: 'Inter_900Black',
     marginLeft: 4,
+    letterSpacing: 0.5,
   },
   aiRight: {
     flex: 1,
   },
   aiTitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   aiMessage: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Inter_500Medium',
-    lineHeight: 20,
-    marginBottom: 16,
+    lineHeight: 18,
+    marginBottom: 12,
     opacity: 0.8,
   },
   aiActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   aiActionLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Inter_900Black',
     letterSpacing: 0.5,
   },
@@ -608,18 +754,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Inter_900Black',
-    letterSpacing: -0.8,
+    letterSpacing: -0.5,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 36,
+    marginBottom: 32,
   },
   statCardContainer: {
     width: (SCREEN_WIDTH - 64) / 2,
@@ -627,26 +773,26 @@ const styles = StyleSheet.create({
   },
   statCard: {
     padding: 20,
-    borderRadius: 32,
+    borderRadius: 28,
     borderWidth: 1,
     overflow: 'hidden',
   },
   statIconBg: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 22,
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     opacity: 0.7,
     marginBottom: 12,
@@ -662,7 +808,7 @@ const styles = StyleSheet.create({
   },
   actionScroll: {
     paddingRight: 40,
-    marginBottom: 40,
+    marginBottom: 36,
     gap: 16,
   },
   actionCardWrapper: {
@@ -671,41 +817,42 @@ const styles = StyleSheet.create({
   actionCard: {
     padding: 24,
     borderRadius: 32,
-    height: 180,
+    height: 160,
     justifyContent: 'space-between',
   },
   actionIconOuter: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.2)',
     padding: 2,
   },
   actionIconInner: {
     flex: 1,
-    borderRadius: 18,
+    borderRadius: 16,
     backgroundColor: 'rgba(0,0,0,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   actionLabel: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Inter_900Black',
     marginBottom: 4,
+    letterSpacing: -0.5,
   },
   actionDesc: {
     color: 'rgba(255,255,255,0.7)',
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
   },
   actionArrow: {
     position: 'absolute',
     top: 24,
     right: 24,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -726,17 +873,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   activityIconWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    backgroundColor: 'rgba(255,255,255,0.03)',
   },
   activityContent: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: 14,
     marginRight: 8,
   },
   activityHeader: {
@@ -746,7 +892,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   activityTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: -0.3,
   },
@@ -762,13 +908,28 @@ const styles = StyleSheet.create({
   },
   activityStatusTag: {
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: 8,
   },
   activityStatusText: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: 'Inter_900Black',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
+  },
+  notificationBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#ef4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: -4,
+    right: -4,
+  },
+  notificationBadgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
   },
 });

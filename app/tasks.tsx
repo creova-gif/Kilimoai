@@ -23,7 +23,10 @@ import {
   Bell,
   Check,
   Target,
-  LayoutGrid
+  LayoutGrid,
+  WifiOff,
+  CloudLightning,
+  Users
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -35,38 +38,33 @@ import { motion, AnimatePresence } from "motion/react";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const TASKS_DATA = [
-  { id: '1', title: 'Apply Top-dressing Fertilizer', field: 'Field A (Maize)', date: '10:00 AM', priority: 'High', completed: false, category: 'Maintenance' },
-  { id: '2', title: 'Check Irrigation System', field: 'Field B (Rice)', date: '02:00 PM', priority: 'Medium', completed: true, category: 'Infrastructure' },
-  { id: '3', title: 'Harvest Tomatoes', field: 'Vegetable Garden', date: '06:00 AM', priority: 'High', completed: false, category: 'Harvest' },
-  { id: '4', title: 'Meeting with Cooperative', field: 'Main Office', date: '09:00 AM', priority: 'Low', completed: false, category: 'Admin' },
-  { id: '5', title: 'Soil Sample Collection', field: 'Field C', date: '08:30 AM', priority: 'Medium', completed: false, category: 'Planning' },
+  { id: '1', title: 'Weka Mbolea (Top-dressing)', field: 'Kitalu A (Mahindi)', date: '10:00 AM', priority: 'High', completed: false, category: 'Matunzo', sync: 'synced' },
+  { id: '2', title: 'Kagua Mfumo wa Umwagiliaji', field: 'Kitalu B (Mpunga)', date: '02:00 PM', priority: 'Medium', completed: true, category: 'Miundombinu', sync: 'synced' },
+  { id: '3', title: 'Vuna Nyanya', field: 'Bustani', date: '06:00 AM', priority: 'High', completed: false, category: 'Mavuno', sync: 'pending' },
+  { id: '4', title: 'Kikao na Ushirika (AMCOS)', field: 'Ofisi Kuu', date: '09:00 AM', priority: 'Low', completed: false, category: 'Utawala', sync: 'synced', group: true },
+  { id: '5', title: 'Chukua Sampuli ya Udongo', field: 'Kitalu C', date: '08:30 AM', priority: 'Medium', completed: false, category: 'Mipango', sync: 'synced' },
 ];
 
-// Variants for staggered entrance
 const containerVariants = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
   }
 };
 
-// Background Orb Component
 const NeuralOrb = ({ color, size, delay, x, y }: any) => {
   return (
     <motion.View
       initial={{ x, y, opacity: 0, scale: 0.8 }}
       animate={{ 
-        x: [x, x + 45, x - 25, x],
-        y: [y, y - 55, y + 35, y],
+        x: [x, x + 40, x - 20, x],
+        y: [y, y - 50, y + 30, y],
         opacity: [0.08, 0.15, 0.1, 0.08],
-        scale: [1, 1.12, 0.92, 1]
+        scale: [1, 1.1, 0.95, 1]
       }}
       transition={{
-        duration: 18 + delay / 1000,
+        duration: 20 + delay / 1000,
         repeat: Infinity,
         ease: "easeInOut",
       }}
@@ -95,22 +93,25 @@ const itemVariants = {
 };
 
 export default function TasksScreen() {
-  const { colors, isDark, spacing, radius, shadows } = useTheme();
+  const { colors, isDark } = useTheme();
   const router = useRouter();
+  const [offlineMode, setOfflineMode] = useState(true); // Demo offline state
+  const [tasks, setTasks] = useState(TASKS_DATA);
 
   const handleToggleTask = (id: string) => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed, sync: offlineMode ? 'pending' : 'synced' } : t));
   };
+
+  const progress = Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
-      {/* Premium Background System */}
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={420} x={-120} y={100} delay={0} />
-        <NeuralOrb color="#3b82f6" size={380} x={SCREEN_WIDTH - 150} y={250} delay={2000} />
-        <NeuralOrb color="#10b981" size={320} x={SCREEN_WIDTH / 4} y={SCREEN_HEIGHT - 350} delay={4000} />
+        <NeuralOrb color={colors.primary} size={400} x={-100} y={50} delay={0} />
+        <NeuralOrb color="#8b5cf6" size={350} x={SCREEN_WIDTH - 150} y={300} delay={2000} />
         
         <LinearGradient
           colors={[
@@ -123,16 +124,11 @@ export default function TasksScreen() {
       </View>
 
       <SafeAreaView style={styles.safeArea}>
-        <motion.View 
-          variants={containerVariants}
-          initial="initial"
-          animate="animate"
-          style={{ flex: 1 }}
-        >
-          {/* Premium Glass Header */}
+        <motion.View variants={containerVariants} initial="initial" animate="animate" style={{ flex: 1 }}>
+          
           <motion.View variants={itemVariants} style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
-              <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={styles.headerBtn}>
+              <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: colors.border }]}>
                 <ChevronLeft size={24} color={colors.text} />
               </BlurView>
             </TouchableOpacity>
@@ -140,133 +136,109 @@ export default function TasksScreen() {
             <View style={styles.headerCenter}>
               <View style={[styles.commandBadge, { backgroundColor: colors.primary + '20' }]}>
                 <Target size={12} color={colors.primary} />
-                <Text style={[styles.commandText, { color: colors.primary }]}>OPERATIONAL COMMAND</Text>
+                <Text style={[styles.commandText, { color: colors.primary }]}>MTAA WA OPERESHENI</Text>
               </View>
-              <Text style={[styles.headerTitle, { color: colors.text }]}>Strategic Tasks</Text>
+              <Text style={[styles.headerTitle, { color: colors.text }]}>Kazi za Shamba</Text>
             </View>
 
-            <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)} activeOpacity={0.7}>
-              <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={styles.headerBtn}>
-                <Plus size={24} color={colors.primary} />
+            <TouchableOpacity onPress={() => setOfflineMode(!offlineMode)} activeOpacity={0.7}>
+              <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: offlineMode ? '#ef444450' : colors.border }]}>
+                {offlineMode ? <WifiOff size={20} color="#ef4444" /> : <Plus size={24} color={colors.primary} />}
               </BlurView>
             </TouchableOpacity>
           </motion.View>
 
-          <ScrollView 
-            showsVerticalScrollIndicator={false} 
-            contentContainerStyle={styles.scrollContent}
-            scrollEventThrottle={16}
-          >
-            {/* Productivity Dashboard */}
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+            
+            {/* Gamification Dashboard */}
             <motion.View variants={itemVariants} style={styles.dashboard}>
               <BlurView intensity={isDark ? 20 : 90} tint={isDark ? "dark" : "light"} style={[styles.dashboardCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={isDark 
-                    ? ['rgba(62, 207, 142, 0.12)', 'transparent'] 
-                    : ['rgba(62, 207, 142, 0.08)', 'transparent']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
+                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'transparent'] : ['rgba(62, 207, 142, 0.08)', 'transparent']}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.dashboardHeader}>
                   <View style={{ flex: 1 }}>
-                    <motion.Text 
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                      style={[styles.dashboardLabel, { color: colors.primary }]}
-                    >
-                      DAILY EFFICIENCY
+                    <motion.Text animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 3, repeat: Infinity }} style={[styles.dashboardLabel, { color: colors.primary }]}>
+                      UFANISI WA LEO
                     </motion.Text>
-                    <Text style={[styles.dashboardTitle, { color: colors.text }]}>Optimization Progress</Text>
-                    <Text style={[styles.dashboardSubtitle, { color: colors.textMute }]}>4 nodes synchronized out of 12</Text>
+                    <Text style={[styles.dashboardTitle, { color: colors.text }]}>Maendeleo ya Kazi</Text>
+                    <Text style={[styles.dashboardSubtitle, { color: colors.textMute }]}>Kazi {tasks.filter(t=>t.completed).length} zimekamilika kati ya {tasks.length}</Text>
                   </View>
-                  <motion.View 
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    style={[styles.progressCircle, { borderColor: colors.primary + '30' }]}
-                  >
-                    <Text style={[styles.progressText, { color: colors.primary }]}>33%</Text>
+                  <motion.View whileHover={{ scale: 1.05 }} style={[styles.progressCircle, { borderColor: colors.primary + '30' }]}>
+                    <Text style={[styles.progressText, { color: colors.primary }]}>{progress}%</Text>
                   </motion.View>
                 </View>
                 <View style={[styles.progressTrack, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
                   <motion.View 
                     initial={{ width: 0 }}
-                    animate={{ width: '33%' }}
-                    transition={{ type: "spring", damping: 20, stiffness: 50, delay: 0.5 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ type: "spring", damping: 20 }}
                     style={{ height: '100%' }}
                   >
-                    <LinearGradient
-                      colors={[colors.primary, '#10b981']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.progressFill}
-                    />
+                    <LinearGradient colors={[colors.primary, '#10b981']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
                   </motion.View>
                 </View>
               </BlurView>
             </motion.View>
 
-            {/* Temporal Navigation */}
-            <motion.View variants={itemVariants} style={styles.temporalNav}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.dateScroll}>
-                {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day, i) => {
-                  const isActive = i === 2;
-                  return (
-                    <TouchableOpacity key={day} onPress={() => Haptics.selectionAsync()} activeOpacity={0.8}>
-                      <BlurView 
-                        intensity={isActive ? 0 : 20} 
-                        tint={isDark ? "dark" : "light"}
-                        style={[
-                          styles.dateCard, 
-                          isActive ? { backgroundColor: colors.primary } : { backgroundColor: 'rgba(255,255,255,0.03)', borderColor: colors.border, borderWidth: 1 }
-                        ]}
-                      >
-                        <Text style={[styles.dateDay, isActive ? { color: '#000' } : { color: colors.textMute }]}>{day}</Text>
-                        <Text style={[styles.dateNum, isActive ? { color: '#000' } : { color: colors.text }]}>{12 + i}</Text>
-                      </BlurView>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </motion.View>
+            {/* Offline Sync Warning */}
+            <AnimatePresence>
+              {offlineMode && (
+                <motion.View 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ overflow: 'hidden', marginBottom: 24 }}
+                >
+                  <View style={[styles.offlineCard, { backgroundColor: '#ef444415', borderColor: '#ef444430' }]}>
+                    <AlertCircle size={20} color="#ef4444" />
+                    <View style={{ flex: 1, marginLeft: 12 }}>
+                      <Text style={[styles.offlineTitle, { color: '#ef4444' }]}>Hali ya Mtandao</Text>
+                      <Text style={[styles.offlineDesc, { color: isDark ? '#fca5a5' : '#b91c1c' }]}>Upo nje ya mtandao. Kazi zitahifadhiwa kwenye simu na kutumwa baadaye.</Text>
+                    </View>
+                  </View>
+                </motion.View>
+              )}
+            </AnimatePresence>
 
-            {/* Operational Queue */}
             <motion.View variants={itemVariants} style={styles.queueHeader}>
-              <Text style={[styles.queueTitle, { color: colors.text }]}>Active Operations</Text>
-              <TouchableOpacity style={[styles.filterBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Text style={[styles.queueTitle, { color: colors.text }]}>Orodha ya Kazi</Text>
+              <TouchableOpacity style={[styles.filterBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', borderColor: colors.border }]}>
                 <LayoutGrid size={18} color={colors.primary} />
               </TouchableOpacity>
             </motion.View>
 
             <View style={styles.taskList}>
-              {TASKS_DATA.map((task, i) => (
-                <motion.View 
-                  key={task.id} 
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.01, x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                >
+              {tasks.map((task) => (
+                <motion.View key={task.id} variants={itemVariants} layout>
                   <TouchableOpacity onPress={() => handleToggleTask(task.id)} activeOpacity={0.85}>
-                    <BlurView intensity={isDark ? 15 : 60} tint={isDark ? "dark" : "light"} style={[styles.taskCard, { borderColor: colors.border }]}>
-                      {task.priority === 'High' && (
-                        <View style={[styles.priorityGlow, { backgroundColor: '#ef4444', opacity: isDark ? 0.05 : 0.03 }]} />
-                      )}
+                    <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[
+                      styles.taskCard, 
+                      { borderColor: colors.border },
+                      task.completed && { opacity: 0.7 }
+                    ]}>
+                      
                       <View style={styles.taskCardHeader}>
-                        <View style={[styles.catBadge, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' }]}>
-                          <Text style={[styles.catText, { color: colors.textMute }]}>{task.category.toUpperCase()}</Text>
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                          <View style={[styles.catBadge, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' }]}>
+                            <Text style={[styles.catText, { color: colors.textMute }]}>{task.category.toUpperCase()}</Text>
+                          </View>
+                          {task.group && (
+                            <View style={[styles.catBadge, { backgroundColor: 'rgba(59, 130, 246, 0.15)' }]}>
+                              <Users size={10} color="#3b82f6" style={{ marginRight: 4 }} />
+                              <Text style={[styles.catText, { color: '#3b82f6' }]}>AMCOS</Text>
+                            </View>
+                          )}
                         </View>
                         <View style={styles.priorityRow}>
-                          <motion.View 
-                            animate={task.priority === 'High' ? { scale: [1, 1.4, 1], opacity: [1, 0.6, 1] } : {}}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            style={[styles.priorityDot, { backgroundColor: task.priority === 'High' ? '#ef4444' : task.priority === 'Medium' ? '#f59e0b' : colors.textMute }]} 
-                          />
-                          <Text style={[styles.priorityText, { color: colors.textMute }]}>{task.priority} Priority</Text>
+                          <View style={[styles.priorityDot, { backgroundColor: task.priority === 'High' ? '#ef4444' : task.priority === 'Medium' ? '#f59e0b' : colors.textMute }]} />
+                          <Text style={[styles.priorityText, { color: colors.textMute }]}>{task.priority}</Text>
                         </View>
                       </View>
                       
                       <View style={styles.taskBody}>
                         <motion.View 
-                          whileTap={{ scale: 0.8 }}
                           style={[
                             styles.checkCircle, 
                             { backgroundColor: task.completed ? colors.primary : 'transparent', borderColor: task.completed ? colors.primary : colors.border }
@@ -275,11 +247,7 @@ export default function TasksScreen() {
                           {task.completed && <Check size={16} color="#000" strokeWidth={3} />}
                         </motion.View>
                         <View style={styles.taskInfo}>
-                          <Text style={[
-                            styles.taskTitle, 
-                            { color: colors.text },
-                            task.completed && { textDecorationLine: 'line-through', opacity: 0.5 }
-                          ]}>
+                          <Text style={[styles.taskTitle, { color: colors.text }, task.completed && { textDecorationLine: 'line-through' }]}>
                             {task.title}
                           </Text>
                           <View style={styles.taskFooter}>
@@ -291,6 +259,12 @@ export default function TasksScreen() {
                               <View style={[styles.fieldMarker, { backgroundColor: colors.primary }]} />
                               <Text style={[styles.footerTagText, { color: colors.textMute }]}>{task.field}</Text>
                             </View>
+                            {task.sync === 'pending' && (
+                              <View style={styles.footerTag}>
+                                <CloudLightning size={12} color="#f59e0b" />
+                                <Text style={[styles.footerTagText, { color: '#f59e0b' }]}>Inasubiri mtandao</Text>
+                              </View>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -309,253 +283,47 @@ export default function TasksScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  bgOrb: {
-    position: 'absolute',
-    filter: Platform.OS === 'web' ? 'blur(90px)' : undefined,
-  },
-  bgGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 700,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  headerBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
-  },
-  headerCenter: {
-    alignItems: 'center',
-  },
-  commandBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-    marginBottom: 4,
-  },
-  commandText: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    marginLeft: 6,
-    letterSpacing: 1,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.8,
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  dashboard: {
-    marginBottom: 36,
-  },
-  dashboardCard: {
-    borderRadius: 36,
-    padding: 28,
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  dashboardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  dashboardLabel: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1.2,
-    marginBottom: 8,
-  },
-  dashboardTitle: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  dashboardSubtitle: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
-    opacity: 0.6,
-  },
-  progressCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressText: {
-    fontSize: 18,
-    fontFamily: 'Inter_900Black',
-  },
-  progressTrack: {
-    height: 10,
-    borderRadius: 5,
-    width: '100%',
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 5,
-  },
-  temporalNav: {
-    marginBottom: 36,
-    marginHorizontal: -20,
-  },
-  dateScroll: {
-    paddingHorizontal: 20,
-  },
-  dateCard: {
-    width: 68,
-    height: 88,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 14,
-    overflow: 'hidden',
-  },
-  dateDay: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    marginBottom: 8,
-    letterSpacing: 0.5,
-  },
-  dateNum: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-  },
-  queueHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  queueTitle: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.8,
-  },
-  filterBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  taskList: {
-    gap: 16,
-  },
-  taskCard: {
-    borderRadius: 32,
-    padding: 24,
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  priorityGlow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  taskCardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  catBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-  },
-  catText: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 0.8,
-  },
-  priorityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  priorityDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  priorityText: {
-    fontSize: 12,
-    fontFamily: 'Inter_700Bold',
-    opacity: 0.6,
-  },
-  taskBody: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  checkCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 12,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 2,
-    marginRight: 20,
-  },
-  taskInfo: {
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 18,
-    fontFamily: 'Inter_800ExtraBold',
-    lineHeight: 26,
-    marginBottom: 16,
-    letterSpacing: -0.2,
-  },
-  taskFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  footerTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  footerTagText: {
-    fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
-    marginLeft: 8,
-    opacity: 0.6,
-  },
-  fieldMarker: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
+  container: { flex: 1 },
+  bgOrb: { position: 'absolute' },
+  bgGradient: { position: 'absolute', top: 0, left: 0, right: 0, height: 700 },
+  safeArea: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 12 },
+  headerBtn: { width: 52, height: 52, borderRadius: 20, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
+  headerCenter: { alignItems: 'center' },
+  commandBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, marginBottom: 4 },
+  commandText: { fontSize: 9, fontFamily: 'Inter_900Black', marginLeft: 6, letterSpacing: 1 },
+  headerTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
+  scrollContent: { padding: 20 },
+  dashboard: { marginBottom: 24 },
+  dashboardCard: { borderRadius: 36, padding: 28, overflow: 'hidden', borderWidth: 1 },
+  dashboardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  dashboardLabel: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.2, marginBottom: 8 },
+  dashboardTitle: { fontSize: 22, fontFamily: 'Inter_900Black', marginBottom: 4, letterSpacing: -0.5 },
+  dashboardSubtitle: { fontSize: 13, fontFamily: 'Inter_500Medium', opacity: 0.6 },
+  progressCircle: { width: 64, height: 64, borderRadius: 32, borderWidth: 4, justifyContent: 'center', alignItems: 'center' },
+  progressText: { fontSize: 18, fontFamily: 'Inter_900Black' },
+  progressTrack: { height: 10, borderRadius: 5, width: '100%', overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: 5 },
+  offlineCard: { flexDirection: 'row', padding: 16, borderRadius: 20, borderWidth: 1, alignItems: 'center' },
+  offlineTitle: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', marginBottom: 4 },
+  offlineDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 18 },
+  queueHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  queueTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
+  filterBtn: { width: 48, height: 48, borderRadius: 16, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
+  taskList: { gap: 16 },
+  taskCard: { borderRadius: 32, padding: 24, overflow: 'hidden', borderWidth: 1 },
+  taskCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  catBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
+  catText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.8 },
+  priorityRow: { flexDirection: 'row', alignItems: 'center' },
+  priorityDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
+  priorityText: { fontSize: 12, fontFamily: 'Inter_700Bold', opacity: 0.6 },
+  taskBody: { flexDirection: 'row', alignItems: 'flex-start' },
+  checkCircle: { width: 32, height: 32, borderRadius: 12, borderWidth: 2, justifyContent: 'center', alignItems: 'center', marginTop: 2, marginRight: 20 },
+  taskInfo: { flex: 1 },
+  taskTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', lineHeight: 26, marginBottom: 12, letterSpacing: -0.2 },
+  taskFooter: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12 },
+  footerTag: { flexDirection: 'row', alignItems: 'center' },
+  footerTagText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginLeft: 6, opacity: 0.8 },
+  fieldMarker: { width: 6, height: 6, borderRadius: 3 },
 });

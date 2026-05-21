@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -55,26 +55,31 @@ const SLIDES = [
   },
   {
     id: '3',
-    title: 'Sankofa AI\nAdvisory',
+    title: 'Agro ID &\nSankofa AI',
     subtitle: 'Always Available',
-    description: 'Connect with our Swahili-speaking AI agent to diagnose crop diseases and get expert farming advice instantly.',
+    description: 'Establish your digital identity and connect with our voice-first Swahili AI to diagnose crops and get instant support.',
     icon: <BrainCircuit size={80} color="#8b5cf6" />,
     gradient: ['#4c1d95', '#2e1065'] as [string, string],
     accent: '#8b5cf6',
-    tag: 'AI Diagnostic',
+    tag: 'Digital Identity',
     image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2940&auto=format&fit=crop'
   },
 ];
 
-// Motion Components
 const MotionView = motion(View);
 const MotionText = motion(Text);
 
 export default function OnboardingScreen() {
   const { colors, isDark } = useTheme();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isReady, setIsReady] = useState(false);
   const router = useRouter();
   
+  useEffect(() => {
+    // Simulate cinematic loading sequence
+    setTimeout(() => setIsReady(true), 500);
+  }, []);
+
   const handleNext = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (currentSlide < SLIDES.length - 1) {
@@ -91,64 +96,70 @@ export default function OnboardingScreen() {
 
   const slide = SLIDES[currentSlide];
 
+  if (!isReady) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <motion.View
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <Sprout size={48} color="#3ecf8e" />
+        </motion.View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* Dynamic Background System */}
+      {/* Dynamic Background System with Cinematic Parallax */}
       <AnimatePresence mode="wait">
-        <MotionView
+        <motion.View
           key={`bg-${currentSlide}`}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
           style={StyleSheet.absoluteFill}
         >
-          <ImageBackground 
-            source={{ uri: slide.image }} 
+          <motion.View
+            animate={{ scale: [1.1, 1] }}
+            transition={{ duration: 8, ease: "easeOut" }}
             style={StyleSheet.absoluteFill}
-            resizeMode="cover"
           >
-            <LinearGradient
-              colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.95)']}
+            <ImageBackground 
+              source={{ uri: slide.image }} 
               style={StyleSheet.absoluteFill}
-            />
-            <LinearGradient
-              colors={[slide.gradient[0] + '80', 'transparent']}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            />
-          </ImageBackground>
-        </MotionView>
+              resizeMode="cover"
+            >
+              {/* Complex Vignette & Gradient Overlays */}
+              <LinearGradient
+                colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.98)']}
+                style={StyleSheet.absoluteFill}
+              />
+              <LinearGradient
+                colors={[slide.gradient[0] + '90', slide.gradient[1] + '40', 'transparent']}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              />
+            </ImageBackground>
+          </motion.View>
+        </motion.View>
       </AnimatePresence>
 
-      {/* Neural Hub Overlays */}
+      {/* Liquid Glass Neural Orbs */}
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <MotionView
-          animate={{
-            x: [0, 20, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          style={[styles.glowOrb, { backgroundColor: slide.accent + '20', top: '10%', right: '-10%' }]}
+        <motion.View
+          animate={{ x: [0, 30, 0], y: [0, -40, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          style={[styles.glowOrb, { backgroundColor: slide.accent + '30', top: '-10%', right: '-20%' }]}
         />
-        <MotionView
-          animate={{
-            x: [0, -40, 0],
-            y: [0, 20, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          style={[styles.glowOrb, { backgroundColor: slide.accent + '15', bottom: '15%', left: '-20%' }]}
+        <motion.View
+          animate={{ x: [0, -50, 0], y: [0, 30, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          style={[styles.glowOrb, { backgroundColor: slide.accent + '20', bottom: '10%', left: '-30%' }]}
         />
       </View>
 
@@ -157,7 +168,7 @@ export default function OnboardingScreen() {
         <View style={styles.header}>
           <View style={styles.pagination}>
             {SLIDES.map((_, i) => (
-              <MotionView 
+              <motion.View 
                 key={i} 
                 animate={{
                   width: i === currentSlide ? 40 : 10,
@@ -170,66 +181,65 @@ export default function OnboardingScreen() {
             ))}
           </View>
           <TouchableOpacity onPress={handleSkip} style={styles.skipBtn}>
-            <Text style={styles.skipText}>Skip</Text>
+            <BlurView intensity={20} tint="dark" style={styles.skipBlur}>
+              <Text style={styles.skipText}>Skip</Text>
+            </BlurView>
           </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
           <AnimatePresence mode="wait">
-            <MotionView
+            <motion.View
               key={`content-${currentSlide}`}
-              initial={{ opacity: 0, y: 40, scale: 0.9 }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -40, scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              exit={{ opacity: 0, y: -30, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 180, damping: 22 }}
               style={styles.slideContent}
             >
               {/* Central Neural Icon */}
               <View style={styles.iconWrapper}>
-                <MotionView
-                  animate={{ rotateY: [0, 360] }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                  style={styles.iconOrbit}
+                <motion.View
+                  animate={{ rotateY: [0, 360], rotateZ: [0, 180, 360] }}
+                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                  style={[styles.iconOrbit, { borderColor: slide.accent + '40' }]}
                 >
                   <View style={[styles.orbitDot, { backgroundColor: slide.accent }]} />
-                </MotionView>
+                </motion.View>
                 
-                <BlurView intensity={25} tint="dark" style={styles.iconContainer}>
-                  <MotionView
-                    animate={{ scale: [1, 1.1, 1] }}
+                <BlurView intensity={40} tint="dark" style={[styles.iconContainer, { borderColor: slide.accent + '60' }]}>
+                  <motion.View
+                    animate={{ scale: [1, 1.15, 1] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   >
                     {slide.icon}
-                  </MotionView>
-                  <LinearGradient
-                    colors={['rgba(255,255,255,0.2)', 'transparent']}
-                    style={styles.iconGloss}
-                  />
+                  </motion.View>
+                  <LinearGradient colors={['rgba(255,255,255,0.3)', 'transparent']} style={styles.iconGloss} />
                 </BlurView>
                 
-                <MotionView 
-                  animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
+                <motion.View 
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.2, 0.5, 0.2] }}
                   transition={{ duration: 3, repeat: Infinity }}
-                  style={[styles.iconShadow, { shadowColor: slide.accent }]} 
+                  style={[styles.iconShadow, { backgroundColor: slide.accent, filter: 'blur(30px)' }]} 
                 />
               </View>
 
               {/* Typography Section */}
               <View style={styles.textContainer}>
-                <MotionView
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  style={[styles.tag, { borderColor: slide.accent + '40', backgroundColor: slide.accent + '15' }]}
+                <motion.View
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring" }}
+                  style={[styles.tag, { borderColor: slide.accent + '50', backgroundColor: slide.accent + '20' }]}
                 >
-                  <Sparkles size={12} color={slide.accent} />
+                  <Sparkles size={14} color={slide.accent} />
                   <Text style={[styles.tagText, { color: slide.accent }]}>{slide.tag}</Text>
-                </MotionView>
+                </motion.View>
                 
                 <MotionText 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.3 }}
                   style={styles.title}
                 >
                   {slide.title}
@@ -238,56 +248,49 @@ export default function OnboardingScreen() {
                 <MotionText 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.4 }}
                   style={styles.description}
                 >
                   {slide.description}
                 </MotionText>
               </View>
-            </MotionView>
+            </motion.View>
           </AnimatePresence>
         </View>
 
         {/* Footer Interaction Zone */}
         <View style={styles.footer}>
-          <MotionView
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            style={styles.buttonShadow}
-          >
+          <motion.View whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <TouchableOpacity style={styles.nextButton} onPress={handleNext} activeOpacity={0.9}>
               <LinearGradient
-                colors={['#ffffff', '#e2e8f0']}
+                colors={[slide.accent, slide.gradient[0]]}
                 style={styles.buttonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
                 <Text style={styles.nextButtonText}>
-                  {currentSlide === SLIDES.length - 1 ? 'Enter Neural Hub' : 'Continue'}
+                  {currentSlide === SLIDES.length - 1 ? 'Activate Agro ID' : 'Continue'}
                 </Text>
-                <MotionView
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <ArrowRight color="#000" size={24} strokeWidth={3} />
-                </MotionView>
+                <motion.View animate={{ x: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                  <ArrowRight color="#ffffff" size={24} strokeWidth={3} />
+                </motion.View>
               </LinearGradient>
             </TouchableOpacity>
-          </MotionView>
+          </motion.View>
           
           <View style={styles.trustRow}>
             <View style={styles.trustItem}>
-              <Fingerprint size={14} color="#ffffff" opacity={0.5} />
+              <Fingerprint size={14} color="#ffffff" opacity={0.6} />
               <Text style={styles.trustText}>SECURE AI</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.trustItem}>
-              <Zap size={14} color="#ffffff" opacity={0.5} />
+              <Zap size={14} color="#ffffff" opacity={0.6} />
               <Text style={styles.trustText}>REAL-TIME</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.trustItem}>
-              <Globe size={14} color="#ffffff" opacity={0.5} />
+              <Globe size={14} color="#ffffff" opacity={0.6} />
               <Text style={styles.trustText}>LOCALIZED</Text>
             </View>
           </View>
@@ -307,10 +310,10 @@ const styles = StyleSheet.create({
   },
   glowOrb: {
     position: 'absolute',
-    width: 400,
-    height: 400,
-    borderRadius: 200,
-    filter: 'blur(80px)',
+    width: 500,
+    height: 500,
+    borderRadius: 250,
+    filter: 'blur(90px)',
   },
   header: {
     flexDirection: 'row',
@@ -330,16 +333,18 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   skipBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    overflow: 'hidden',
+    borderRadius: 16,
+  },
+  skipBlur: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
   skipText: {
     fontSize: 14,
     fontFamily: 'Inter_700Bold',
     color: '#ffffff',
-    opacity: 0.8,
   },
   content: {
     flex: 1,
@@ -351,11 +356,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   iconWrapper: {
-    width: 220,
-    height: 220,
+    width: 240,
+    height: 240,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 60,
+    marginBottom: 50,
   },
   iconContainer: {
     width: 180,
@@ -364,47 +369,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.2)',
     overflow: 'hidden',
     zIndex: 10,
   },
   iconGloss: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    top: 0, left: 0, right: 0, bottom: 0,
   },
   iconOrbit: {
     position: 'absolute',
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    borderWidth: 1.5,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
   },
   orbitDot: {
     position: 'absolute',
-    top: -5,
+    top: -6,
     width: 12,
     height: 12,
     borderRadius: 6,
     shadowColor: '#fff',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 10,
+    shadowRadius: 15,
   },
   iconShadow: {
     position: 'absolute',
-    width: 140,
-    height: 40,
-    borderRadius: 70,
-    bottom: -10,
-    opacity: 0.5,
-    filter: 'blur(30px)',
+    width: 150,
+    height: 50,
+    borderRadius: 75,
+    bottom: -15,
   },
   textContainer: {
     alignItems: 'center',
@@ -413,50 +411,43 @@ const styles = StyleSheet.create({
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 24,
     borderWidth: 1,
     marginBottom: 24,
     gap: 8,
   },
   tagText: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Inter_900Black',
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
+    letterSpacing: 2,
   },
   title: {
-    fontSize: 48,
+    fontSize: 52,
     fontFamily: 'Inter_900Black',
     textAlign: 'center',
     color: '#ffffff',
-    marginBottom: 20,
-    letterSpacing: -2.5,
-    lineHeight: 52,
+    marginBottom: 24,
+    letterSpacing: -2,
+    lineHeight: 56,
   },
   description: {
     fontSize: 18,
     fontFamily: 'Inter_500Medium',
     textAlign: 'center',
-    color: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,0.8)',
     lineHeight: 28,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
   },
   footer: {
     paddingHorizontal: 24,
     paddingBottom: Platform.OS === 'ios' ? 40 : 32,
   },
-  buttonShadow: {
-    shadowColor: '#ffffff',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 15,
-  },
   nextButton: {
-    height: 80,
-    borderRadius: 28,
+    height: 72,
+    borderRadius: 24,
     overflow: 'hidden',
   },
   buttonGradient: {
@@ -467,7 +458,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   nextButtonText: {
-    color: '#000000',
+    color: '#ffffff',
     fontSize: 20,
     fontFamily: 'Inter_900Black',
     marginRight: 16,
@@ -477,25 +468,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 32,
-    gap: 12,
+    marginTop: 24,
+    gap: 16,
   },
   trustItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   trustText: {
     color: '#ffffff',
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Inter_900Black',
-    opacity: 0.4,
-    letterSpacing: 1,
+    opacity: 0.5,
+    letterSpacing: 1.5,
   },
   divider: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.3)',
   }
 });

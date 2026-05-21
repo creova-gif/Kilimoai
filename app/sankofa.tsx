@@ -27,7 +27,10 @@ import {
   MoreVertical,
   Cpu,
   ArrowRight,
-  Fingerprint
+  Fingerprint,
+  MicOff,
+  CloudOff,
+  MessageSquare
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -52,56 +55,40 @@ interface Message {
   timestamp: Date;
 }
 
-// Background Orb Component using motion/react
-const NeuralOrb = ({ color, size, delay, x, y }: any) => {
-  return (
-    <motion.View
-      initial={{ x, y, opacity: 0, scale: 0.8 }}
-      animate={{ 
-        x: [x, x + 60, x - 40, x],
-        y: [y, y - 80, y + 50, y],
-        opacity: [0.15, 0.25, 0.18, 0.15],
-        scale: [1, 1.2, 0.9, 1]
-      }}
-      transition={{
-        duration: 15 + delay / 1000,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-      style={[
-        styles.orb,
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: color,
-          filter: Platform.OS === 'web' ? 'blur(80px)' : undefined,
-        },
-      ]}
-    />
-  );
-};
+type VoiceState = 'IDLE' | 'LISTENING' | 'PROCESSING' | 'SPEAKING';
 
 export default function SankofaScreen() {
   const router = useRouter();
   const { colors, spacing, radius, isDark } = useTheme();
+  
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [voiceState, setVoiceState] = useState<VoiceState>('IDLE');
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm Sankofa AI, your neural agricultural advisor. My sensors are calibrated and ready to optimize your yield. How can I assist you today?",
+      text: "Jambo! I'm Sankofa AI, your neural agricultural advisor. My sensors are calibrated to East African soil conditions. How can I assist you today?",
       sender: 'ai',
       timestamp: new Date(),
     }
   ]);
   const flatListRef = useRef<FlatList>(null);
 
+  // Auto-scroll chat
+  useEffect(() => {
+    if (!isVoiceMode && messages.length > 0) {
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 300);
+    }
+  }, [messages, isTyping, isVoiceMode]);
+
+  // Handle Text Send
   const handleSend = () => {
     if (inputText.trim() === '') return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputText,
@@ -117,7 +104,9 @@ export default function SankofaScreen() {
     setTimeout(() => {
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Analyzing your request... Based on my recent data ingestion, your local soil moisture is slightly below the 15% threshold. I recommend a 20-minute irrigation cycle before sunset to maximize absorption.",
+        text: isOffline 
+          ? "Network unstable. Falling back to cached local data. Your soil moisture is at 12%. Irrigate immediately."
+          : "Analyzing your request... Based on my recent satellite ingestion, your local soil moisture is slightly below the 15% threshold. I recommend a 20-minute irrigation cycle before sunset.",
         sender: 'ai',
         timestamp: new Date(),
       };
@@ -127,23 +116,76 @@ export default function SankofaScreen() {
     }, 2000);
   };
 
-  useEffect(() => {
-    if (messages.length > 0) {
+  // Handle Voice Interaction
+  const toggleVoiceMode = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setIsVoiceMode(!isVoiceMode);
+    setVoiceState('IDLE');
+  };
+
+  const handleVoiceInteraction = () => {
+    if (voiceState === 'IDLE' || voiceState === 'SPEAKING') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setVoiceState('LISTENING');
+      
+      // Simulate listening -> processing -> speaking
       setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 300);
+        setVoiceState('PROCESSING');
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        
+        setTimeout(() => {
+          setVoiceState('SPEAKING');
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          
+          setTimeout(() => {
+            setVoiceState('IDLE');
+          }, 4000); // Speaking duration
+        }, 2000); // Processing duration
+      }, 3000); // Listening duration
+    } else {
+      // Cancel
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setVoiceState('IDLE');
     }
-  }, [messages, isTyping]);
+  };
+
+  // Background Neural Orb
+  const NeuralOrb = ({ color, size, delay, x, y, active = true }: any) => (
+    <motion.View
+      initial={{ x, y, opacity: 0, scale: 0.8 }}
+      animate={{ 
+        x: [x, x + 50, x - 30, x],
+        y: [y, y - 60, y + 40, y],
+        opacity: active ? [0.12, 0.25, 0.18, 0.12] : [0.05, 0.08, 0.05],
+        scale: active ? [1, 1.15, 0.95, 1] : [1, 1.05, 1]
+      }}
+      transition={{
+        duration: active ? 12 + delay / 1000 : 20,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+      style={[
+        styles.orb,
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: color,
+          filter: Platform.OS === 'web' ? 'blur(80px)' : undefined,
+        },
+      ]}
+    />
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
-      {/* Neural Background Orbs */}
+      {/* Immersive Neural Background */}
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={350} delay={0} x={-120} y={-80} />
-        <NeuralOrb color="#3b82f6" size={300} delay={2000} x={SCREEN_WIDTH - 180} y={220} />
-        <NeuralOrb color={colors.primary} size={250} delay={4000} x={30} y={SCREEN_HEIGHT - 300} />
+        <NeuralOrb color={isVoiceMode ? '#8b5cf6' : colors.primary} size={400} delay={0} x={-100} y={-50} active={!isVoiceMode || voiceState === 'PROCESSING'} />
+        <NeuralOrb color={isVoiceMode ? '#ec4899' : "#3b82f6"} size={350} delay={2000} x={SCREEN_WIDTH - 200} y={isVoiceMode ? SCREEN_HEIGHT / 2 - 100 : 250} active={voiceState === 'LISTENING' || voiceState === 'SPEAKING'} />
+        <NeuralOrb color={colors.primary} size={250} delay={4000} x={30} y={SCREEN_HEIGHT - 200} active={!isVoiceMode} />
       </View>
 
       <SafeAreaView style={styles.safeArea}>
@@ -155,7 +197,7 @@ export default function SankofaScreen() {
           style={styles.headerWrapper}
         >
           <BlurView intensity={isDark ? 20 : 80} tint={isDark ? "dark" : "light"} style={[styles.header, { borderBottomColor: colors.border }]}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn} accessibilityLabel="Go Back">
               <ChevronLeft size={24} color={colors.text} />
             </TouchableOpacity>
             
@@ -163,152 +205,247 @@ export default function SankofaScreen() {
               <View style={styles.titleRow}>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Sankofa AI</Text>
                 <motion.View 
-                  animate={{ opacity: [0.6, 1, 0.6] }}
+                  animate={{ opacity: isOffline ? 0.6 : [0.6, 1, 0.6] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  style={[styles.proBadge, { backgroundColor: colors.primary + '25' }]}
+                  style={[styles.proBadge, { backgroundColor: isOffline ? '#ef444425' : colors.primary + '25' }]}
                 >
-                  <Cpu size={10} color={colors.primary} style={{ marginRight: 4 }} />
-                  <Text style={[styles.proText, { color: colors.primary }]}>CORE v2.5</Text>
+                  <Cpu size={10} color={isOffline ? '#ef4444' : colors.primary} style={{ marginRight: 4 }} />
+                  <Text style={[styles.proText, { color: isOffline ? '#ef4444' : colors.primary }]}>
+                    {isOffline ? 'LOCAL CORE' : 'CLOUD CORE v3.1'}
+                  </Text>
                 </motion.View>
               </View>
               <View style={styles.statusRow}>
                 <motion.View 
-                  animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                  animate={isOffline ? {} : { scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  style={[styles.statusDot, { backgroundColor: colors.primary }]} 
+                  style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} 
                 />
-                <Text style={[styles.statusText, { color: colors.textMute }]}>Neural Link Active</Text>
+                <Text style={[styles.statusText, { color: colors.textMute }]}>
+                  {isOffline ? 'SMS Fallback Active' : 'Neural Link Active'}
+                </Text>
               </View>
             </View>
  
-            <TouchableOpacity style={styles.iconBtn}>
-              <MoreVertical size={20} color={colors.text} />
+            <TouchableOpacity onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setIsOffline(!isOffline);
+            }} style={styles.iconBtn} accessibilityLabel="Toggle offline mode">
+              {isOffline ? <CloudOff size={20} color="#ef4444" /> : <MoreVertical size={20} color={colors.text} />}
             </TouchableOpacity>
           </BlurView>
         </motion.View>
 
-        <View style={styles.chatContent}>
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            renderItem={({ item, index }) => (
-              <ChatMessage 
-                item={item} 
-                index={index} 
-                colors={colors} 
-                isDark={isDark} 
+        <AnimatePresence mode="wait">
+          {!isVoiceMode ? (
+            /* TEXT CHAT MODE */
+            <motion.View 
+              key="text-mode"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+              style={styles.chatContent}
+            >
+              <FlatList
+                ref={flatListRef}
+                data={messages}
+                renderItem={({ item, index }) => (
+                  <ChatMessage item={item} index={index} colors={colors} isDark={isDark} />
+                )}
+                keyExtractor={item => item.id}
+                contentContainerStyle={styles.listPadding}
+                showsVerticalScrollIndicator={false}
+                ListFooterComponent={
+                  <AnimatePresence>
+                    {isTyping && (
+                      <motion.View
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        <TypingIndicator colors={colors} />
+                      </motion.View>
+                    )}
+                  </AnimatePresence>
+                }
               />
-            )}
-            keyExtractor={item => item.id}
-            contentContainerStyle={styles.listPadding}
-            showsVerticalScrollIndicator={false}
-            ListFooterComponent={
-              <AnimatePresence>
-                {isTyping && (
-                  <motion.View
-                    initial={{ opacity: 0, y: 10 }}
+            </motion.View>
+          ) : (
+            /* VOICE FIRST IMMERSIVE MODE */
+            <motion.View 
+              key="voice-mode"
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+              style={styles.voiceModeContainer}
+            >
+              <View style={styles.voiceHeader}>
+                <Text style={[styles.voicePhaseText, { color: colors.text }]}>
+                  {voiceState === 'IDLE' && "Sankofa is Ready"}
+                  {voiceState === 'LISTENING' && "Sankofa is Listening..."}
+                  {voiceState === 'PROCESSING' && "Analyzing Audio..."}
+                  {voiceState === 'SPEAKING' && "Sankofa is Speaking"}
+                </Text>
+                {voiceState === 'SPEAKING' && (
+                  <motion.Text 
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    style={[styles.voiceTranscript, { color: colors.textMute }]}
                   >
-                    <TypingIndicator colors={colors} />
+                    "Soil moisture is at 12%. Irrigate immediately."
+                  </motion.Text>
+                )}
+              </View>
+
+              <View style={styles.voiceOrbWrapper}>
+                {/* Voice Interaction Button */}
+                <TouchableOpacity 
+                  onPress={handleVoiceInteraction}
+                  activeOpacity={0.9}
+                  style={styles.voiceOrbButton}
+                >
+                  {/* Dynamic ripples based on state */}
+                  {[0, 1, 2].map((i) => (
+                    <motion.View
+                      key={i}
+                      animate={
+                        voiceState === 'LISTENING' ? { scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] } :
+                        voiceState === 'PROCESSING' ? { scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4], rotate: 360 } :
+                        voiceState === 'SPEAKING' ? { scale: [1, 1.5, 1.2, 1], opacity: [0.5, 0.2, 0.5] } :
+                        { scale: 1, opacity: 0 }
+                      }
+                      transition={
+                        voiceState === 'PROCESSING' ? { duration: 2, repeat: Infinity, ease: "linear" } :
+                        { duration: 2, repeat: Infinity, delay: i * 0.4, ease: "easeInOut" }
+                      }
+                      style={[
+                        styles.voiceRipple,
+                        { borderColor: voiceState === 'PROCESSING' ? '#8b5cf6' : colors.primary }
+                      ]}
+                    />
+                  ))}
+
+                  <BlurView intensity={80} tint="dark" style={[styles.voiceOrbCore, { borderColor: colors.primary }]}>
+                    <LinearGradient
+                      colors={[colors.primary + '40', 'transparent']}
+                      style={StyleSheet.absoluteFill}
+                    />
+                    {voiceState === 'PROCESSING' ? (
+                      <BrainCircuit size={48} color={colors.primary} />
+                    ) : voiceState === 'SPEAKING' ? (
+                      <motion.View animate={{ height: [20, 50, 20] }} transition={{ duration: 0.5, repeat: Infinity }}>
+                        <Zap size={48} color={colors.primary} />
+                      </motion.View>
+                    ) : (
+                      <Mic size={48} color={voiceState === 'LISTENING' ? colors.primary : '#ffffff'} />
+                    )}
+                  </BlurView>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity style={styles.exitVoiceBtn} onPress={toggleVoiceMode}>
+                <MessageSquare size={20} color={colors.textMute} />
+                <Text style={[styles.exitVoiceText, { color: colors.textMute }]}>Switch to Text</Text>
+              </TouchableOpacity>
+            </motion.View>
+          )}
+        </AnimatePresence>
+
+        {/* Text Input Area (Hidden in Voice Mode) */}
+        <AnimatePresence>
+          {!isVoiceMode && (
+            <KeyboardAvoidingView 
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+            >
+              {/* Suggested Prompts */}
+              <AnimatePresence>
+                {!isTyping && messages.length < 3 && (
+                  <motion.View 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    style={styles.suggestionBox}
+                  >
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionScroll}>
+                      {SUGGESTED_PROMPTS.map((prompt, index) => (
+                        <motion.View
+                          key={index}
+                          initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                          animate={{ opacity: 1, scale: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          <TouchableOpacity 
+                            style={[styles.suggestionBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+                            onPress={() => {
+                              setInputText(prompt);
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            }}
+                          >
+                            <Sparkles size={14} color={colors.primary} style={{ marginRight: 8 }} />
+                            <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
+                          </TouchableOpacity>
+                        </motion.View>
+                      ))}
+                    </ScrollView>
                   </motion.View>
                 )}
               </AnimatePresence>
-            }
-          />
-        </View>
 
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-        >
-          {/* Suggested Prompts */}
-          <AnimatePresence>
-            {!isTyping && messages.length < 3 && (
+              {/* Premium Input Area */}
               <motion.View 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={styles.suggestionBox}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 120 }}
+                style={styles.inputAreaWrapper}
               >
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionScroll}>
-                  {SUGGESTED_PROMPTS.map((prompt, index) => (
-                    <motion.View
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.9, x: 20 }}
-                      animate={{ opacity: 1, scale: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <TouchableOpacity 
-                        style={[styles.suggestionBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-                        onPress={() => {
-                          setInputText(prompt);
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        }}
-                      >
-                        <Sparkles size={14} color={colors.primary} style={{ marginRight: 8 }} />
-                        <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
-                      </TouchableOpacity>
-                    </motion.View>
-                  ))}
-                </ScrollView>
-              </motion.View>
-            )}
-          </AnimatePresence>
-
-          {/* Premium Input Area */}
-          <motion.View 
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "spring", damping: 25, stiffness: 120 }}
-            style={styles.inputAreaWrapper}
-          >
-            <BlurView intensity={isDark ? 30 : 90} tint={isDark ? "dark" : "light"} style={[styles.inputArea, { borderTopColor: colors.border }]}>
-              <View style={styles.inputRow}>
-                <TouchableOpacity style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
-                  <Plus size={22} color={colors.text} />
-                </TouchableOpacity>
-                
-                <View style={[styles.inputContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)', borderColor: colors.border, borderWidth: 1 }]}>
-                  <TextInput
-                    style={[styles.input, { color: colors.text }]}
-                    placeholder="Inquire with Sankofa..."
-                    placeholderTextColor={colors.textMute}
-                    value={inputText}
-                    onChangeText={setInputText}
-                    multiline
-                    onFocus={() => Haptics.selectionAsync()}
-                  />
-                  <View style={styles.inputActions}>
-                    <TouchableOpacity style={styles.actionBtn}>
-                      <Mic size={20} color={colors.textMute} />
+                <BlurView intensity={isDark ? 40 : 90} tint={isDark ? "dark" : "light"} style={[styles.inputArea, { borderTopColor: 'rgba(255,255,255,0.05)' }]}>
+                  <View style={styles.inputRow}>
+                    <TouchableOpacity style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
+                      <Plus size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <motion.View
-                      animate={{ 
-                        scale: inputText.trim() ? 1 : 0.9,
-                        opacity: inputText.trim() ? 1 : 0.6
-                      }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <TouchableOpacity 
-                        style={[
-                          styles.sendBtn, 
-                          { backgroundColor: inputText.trim() ? colors.primary : colors.slate[400] + '40' }
-                        ]}
-                        onPress={handleSend}
-                        disabled={!inputText.trim()}
-                      >
-                        <Send size={18} color={inputText.trim() ? "#000" : colors.textMute} />
-                      </TouchableOpacity>
-                    </motion.View>
+                    
+                    <View style={[styles.inputContainer, { backgroundColor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.03)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }]}>
+                      <TextInput
+                        style={[styles.input, { color: colors.text }]}
+                        placeholder={isOffline ? "Send offline SMS..." : "Inquire with Sankofa..."}
+                        placeholderTextColor={colors.textMute}
+                        value={inputText}
+                        onChangeText={setInputText}
+                        multiline
+                        onFocus={() => Haptics.selectionAsync()}
+                      />
+                      <View style={styles.inputActions}>
+                        <TouchableOpacity style={styles.actionBtn} onPress={toggleVoiceMode}>
+                          <Mic size={22} color={colors.textMute} />
+                        </TouchableOpacity>
+                        <motion.View
+                          animate={{ 
+                            scale: inputText.trim() ? 1 : 0.9,
+                            opacity: inputText.trim() ? 1 : 0.6
+                          }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <TouchableOpacity 
+                            style={[
+                              styles.sendBtn, 
+                              { backgroundColor: inputText.trim() ? colors.primary : colors.slate[400] + '40' }
+                            ]}
+                            onPress={handleSend}
+                            disabled={!inputText.trim()}
+                          >
+                            <Send size={18} color={inputText.trim() ? "#000" : colors.textMute} />
+                          </TouchableOpacity>
+                        </motion.View>
+                      </View>
+                    </View>
                   </View>
-                </View>
-              </View>
-            </BlurView>
-          </motion.View>
-        </KeyboardAvoidingView>
+                </BlurView>
+              </motion.View>
+            </KeyboardAvoidingView>
+          )}
+        </AnimatePresence>
       </SafeAreaView>
     </View>
   );
@@ -334,15 +471,15 @@ function ChatMessage({ item, index, colors, isDark }: any) {
           animate={{ rotate: 0, scale: 1 }}
           transition={{ type: "spring", damping: 15, delay: 0.2 }}
         >
-          <BlurView intensity={20} tint={isDark ? "dark" : "light"} style={[styles.avatar, { borderColor: colors.border, borderWidth: 1 }]}>
-            <BrainCircuit size={16} color={colors.primary} />
+          <BlurView intensity={30} tint={isDark ? "dark" : "light"} style={[styles.avatar, { borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }]}>
+            <BrainCircuit size={18} color={colors.primary} />
           </BlurView>
         </motion.View>
       )}
       <View style={[
         styles.bubble,
         isAi ? 
-          [styles.aiBubble, { backgroundColor: colors.card, borderColor: colors.border }] : 
+          [styles.aiBubble, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#ffffff', borderColor: 'rgba(255,255,255,0.05)' }] : 
           [styles.userBubble, { backgroundColor: colors.primary }]
       ]}>
         <Text style={[
@@ -360,7 +497,7 @@ function ChatMessage({ item, index, colors, isDark }: any) {
           </Text>
           {isAi && (
             <TouchableOpacity style={styles.infoIcon}>
-              <Info size={10} color={colors.textMute} />
+              <Info size={12} color={colors.textMute} />
             </TouchableOpacity>
           )}
         </View>
@@ -370,9 +507,9 @@ function ChatMessage({ item, index, colors, isDark }: any) {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", damping: 15, delay: 0.2 }}
-          style={[styles.avatar, { backgroundColor: colors.slate[isDark ? 800 : 200], borderColor: colors.border, borderWidth: 1 }]}
+          style={[styles.avatar, { backgroundColor: colors.slate[isDark ? 800 : 200], borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }]}
         >
-          <User size={16} color={isDark ? colors.slate[400] : colors.slate[600]} />
+          <User size={18} color={isDark ? colors.slate[400] : colors.slate[600]} />
         </motion.View>
       )}
     </motion.View>
@@ -382,17 +519,15 @@ function ChatMessage({ item, index, colors, isDark }: any) {
 function TypingIndicator({ colors }: any) {
   return (
     <View style={styles.typingBox}>
-      <LinearGradient colors={['#171717', '#333333']} style={styles.avatar}>
-        <BrainCircuit size={16} color={colors.primary} />
+      <LinearGradient colors={['rgba(255,255,255,0.1)', 'transparent']} style={styles.avatar}>
+        <BrainCircuit size={18} color={colors.primary} />
       </LinearGradient>
-      <View style={[styles.bubble, styles.aiBubble, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View style={[styles.bubble, styles.aiBubble, { backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.05)' }]}>
         <View style={styles.dotRow}>
           {[0, 1, 2].map((i) => (
             <motion.View
               key={i}
-              animate={{
-                y: [0, -6, 0],
-              }}
+              animate={{ y: [0, -6, 0] }}
               transition={{
                 duration: 0.8,
                 repeat: Infinity,
@@ -427,7 +562,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
   },
   iconBtn: {
     width: 44,
@@ -435,17 +569,18 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
   headerInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 16,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
   },
@@ -454,11 +589,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 10,
+    borderRadius: 12,
     marginLeft: 10,
   },
   proText: {
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: 'Inter_900Black',
     letterSpacing: 1,
   },
@@ -471,24 +606,91 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginRight: 6,
+    marginRight: 8,
   },
   statusText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
-    opacity: 0.6,
+    opacity: 0.7,
   },
   chatContent: {
     flex: 1,
   },
+  voiceModeContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  voiceHeader: {
+    alignItems: 'center',
+    paddingHorizontal: 30,
+  },
+  voicePhaseText: {
+    fontSize: 28,
+    fontFamily: 'Inter_900Black',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  voiceTranscript: {
+    fontSize: 18,
+    fontFamily: 'Inter_500Medium',
+    textAlign: 'center',
+    lineHeight: 28,
+    fontStyle: 'italic',
+  },
+  voiceOrbWrapper: {
+    width: 200,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  voiceOrbButton: {
+    width: 140,
+    height: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  voiceOrbCore: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  voiceRipple: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 2,
+  },
+  exitVoiceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  exitVoiceText: {
+    fontSize: 15,
+    fontFamily: 'Inter_700Bold',
+    marginLeft: 8,
+  },
   listPadding: {
-    padding: 20,
-    paddingBottom: 30,
+    padding: 24,
+    paddingBottom: 40,
   },
   msgWrapper: {
     flexDirection: 'row',
-    marginBottom: 20,
-    maxWidth: '88%',
+    marginBottom: 24,
+    maxWidth: '90%',
     alignItems: 'flex-end',
   },
   aiMsg: {
@@ -498,45 +700,46 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
-    marginLeft: 8,
+    marginRight: 10,
+    marginLeft: 10,
+    overflow: 'hidden',
   },
   bubble: {
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderRadius: 28,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
   },
   aiBubble: {
-    borderBottomLeftRadius: 4,
+    borderBottomLeftRadius: 6,
     borderWidth: 1,
   },
   userBubble: {
-    borderBottomRightRadius: 4,
+    borderBottomRightRadius: 6,
   },
   msgText: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
   },
   msgFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 6,
+    marginTop: 8,
   },
   msgTime: {
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: 'Inter_500Medium',
-    opacity: 0.5,
+    opacity: 0.6,
   },
   infoIcon: {
     padding: 2,
@@ -544,39 +747,43 @@ const styles = StyleSheet.create({
   typingBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   dotRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 20,
-    width: 40,
+    height: 24,
+    width: 48,
     justifyContent: 'center',
   },
   dot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    marginHorizontal: 3,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginHorizontal: 4,
   },
   suggestionBox: {
     paddingVertical: 12,
     overflow: 'hidden',
   },
   suggestionScroll: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   suggestionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderRadius: 24,
     borderWidth: 1,
-    marginRight: 10,
+    marginRight: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   suggestionText: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: 'Inter_700Bold',
   },
   inputAreaWrapper: {
@@ -585,7 +792,7 @@ const styles = StyleSheet.create({
   inputArea: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 20,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
     borderTopWidth: 1,
   },
   inputRow: {
@@ -593,9 +800,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   plusBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -604,29 +811,29 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 28,
+    borderRadius: 30,
     paddingHorizontal: 16,
-    paddingVertical: 4,
+    paddingVertical: 6,
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_500Medium',
-    maxHeight: 100,
-    paddingVertical: 12,
+    maxHeight: 120,
+    paddingVertical: 14,
   },
   inputActions: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   actionBtn: {
-    padding: 8,
+    padding: 10,
     marginRight: 4,
   },
   sendBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { 
   useFonts, 
   Inter_400Regular, 
+  Inter_500Medium,
   Inter_600SemiBold, 
   Inter_700Bold,
   Inter_800ExtraBold,
@@ -15,9 +16,33 @@ import { useColorScheme } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
 
+// ── Kilimo AI Global Services ─────────────────────────────────────────────
+import { useSyncEngine } from '../hooks/useSyncEngine';
+import { useNotifications } from '../hooks/useNotifications';
+import { useFarmVitals } from '../hooks/useFarmVitals';
+
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 2,
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+    },
+  },
+});
+
+/**
+ * AppServices — bootstraps all background hooks inside the providers.
+ * Keeps RootLayout clean; all side effects live here.
+ */
+function AppServices() {
+  useSyncEngine();       // 🔄 Offline queue drain
+  useNotifications();    // 🔔 Push notification registration
+  useFarmVitals();       // 🌱 Sensor telemetry polling
+  return null;
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -25,6 +50,7 @@ export default function RootLayout() {
   
   const [loaded, error] = useFonts({
     Inter_400Regular,
+    Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
     Inter_800ExtraBold,
@@ -65,6 +91,9 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        {/* Bootstrap all background services once providers are mounted */}
+        <AppServices />
+
         <Stack initialRouteName={isFirstLaunch ? 'onboarding' : '(tabs)'}>
           <Stack.Screen name="onboarding" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -73,6 +102,7 @@ export default function RootLayout() {
           <Stack.Screen name="market" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="notifications" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
           <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
         </Stack>

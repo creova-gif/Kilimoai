@@ -15,15 +15,16 @@ import {
   Zap, 
   Image as ImageIcon, 
   RotateCw, 
-  ScanLine,
+  WifiOff,
   Info,
-  CheckCircle2,
   AlertCircle,
   Sparkles,
   ArrowRight,
   BrainCircuit,
-  Maximize2,
-  Camera
+  Camera,
+  CloudOff,
+  CheckCircle2,
+  Activity
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -34,25 +35,72 @@ import { motion, AnimatePresence } from "motion/react";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+type ScanPhase = 'IDLE' | 'SCANNING' | 'ANALYZING' | 'RESULT';
+
 export default function ScanScreen() {
   const router = useRouter();
   const { colors, spacing, radius, isDark } = useTheme();
-  const [isScanning, setIsScanning] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  
+  const [phase, setPhase] = useState<ScanPhase>('IDLE');
+  const [isOffline, setIsOffline] = useState(false); // Mock offline state
+  const [analysisText, setAnalysisText] = useState('Initiating quantum analysis...');
 
-// Background Orb Component
-const NeuralOrb = ({ color, size, delay, x, y }: any) => {
-  return (
+  // Cycle through analysis text to feel agentic
+  useEffect(() => {
+    if (phase === 'ANALYZING') {
+      const texts = [
+        'Extracting spectral bio-markers...',
+        'Cross-referencing East African pathogen database...',
+        'Validating confidence levels...',
+        'Compiling predictive treatment plan...'
+      ];
+      let i = 0;
+      const interval = setInterval(() => {
+        i = (i + 1) % texts.length;
+        setAnalysisText(texts[i]);
+      }, 1200);
+      return () => clearInterval(interval);
+    }
+  }, [phase]);
+
+  const handleScan = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setPhase('SCANNING');
+    
+    // Simulate multi-phase cinematic scan
+    setTimeout(() => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setPhase('ANALYZING');
+      
+      setTimeout(() => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setPhase('RESULT');
+      }, 3500);
+    }, 2000);
+  };
+
+  const handleReset = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setPhase('IDLE');
+  };
+
+  const toggleNetwork = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsOffline(!isOffline);
+  };
+
+  // Advanced Neural Orb for background aesthetics
+  const NeuralOrb = ({ color, size, delay, x, y }: any) => (
     <motion.View
       initial={{ x, y, opacity: 0, scale: 0.8 }}
       animate={{ 
-        x: [x, x + 45, x - 25, x],
-        y: [y, y - 55, y + 35, y],
+        x: [x, x + 40, x - 20, x],
+        y: [y, y - 50, y + 30, y],
         opacity: [0.08, 0.15, 0.1, 0.08],
-        scale: [1, 1.12, 0.92, 1]
+        scale: [1, 1.1, 0.95, 1]
       }}
       transition={{
-        duration: 18 + delay / 1000,
+        duration: 20 + delay / 1000,
         repeat: Infinity,
         ease: "easeInOut",
       }}
@@ -68,33 +116,19 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
       ]}
     />
   );
-};
-
-  const handleScan = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setIsScanning(true);
-    
-    // Mock scanning process
-    setTimeout(() => {
-      setIsScanning(false);
-      setShowResult(true);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }, 3500);
-  };
-
-  const handleReset = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setShowResult(false);
-  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* Premium Camera View Mock */}
+      {/* Cinematic Camera View */}
       <motion.View 
-        animate={{ scale: isScanning ? 1.1 : 1 }}
-        transition={{ type: "spring", damping: 20, stiffness: 80 }}
+        animate={{ 
+          scale: phase === 'IDLE' ? 1 : 1.05,
+          filter: phase === 'ANALYZING' || phase === 'RESULT' ? 'blur(10px)' : 'blur(0px)',
+          opacity: phase === 'ANALYZING' ? 0.6 : 1
+        }}
+        transition={{ type: "spring", damping: 25, stiffness: 70 }}
         style={styles.cameraView}
       >
         <Image 
@@ -102,9 +136,9 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
           style={styles.mockCamera}
         />
         
-        {/* Advanced Scanning Line Overlay */}
+        {/* Dynamic Scan Line Overlay */}
         <AnimatePresence>
-          {isScanning && (
+          {phase === 'SCANNING' && (
             <motion.View 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -113,25 +147,21 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
             >
               <motion.View 
                 animate={{ 
-                  y: [SCREEN_HEIGHT * 0.2, SCREEN_HEIGHT * 0.7, SCREEN_HEIGHT * 0.2] 
+                  y: [SCREEN_HEIGHT * 0.15, SCREEN_HEIGHT * 0.75, SCREEN_HEIGHT * 0.15] 
                 }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                 style={styles.scanOverlay}
               >
                 <LinearGradient
-                  colors={['transparent', colors.primary + '60', colors.primary, colors.primary + '60', 'transparent']}
+                  colors={['transparent', colors.primary + '80', colors.primary, colors.primary + '80', 'transparent']}
                   style={styles.scanLine}
                   start={{ x: 0, y: 0.5 }}
                   end={{ x: 1, y: 0.5 }}
                 />
                 <motion.View 
-                  animate={{ opacity: [0.1, 0.4, 0.1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                  style={[styles.scanGlow, { backgroundColor: colors.primary + '20' }]} 
+                  animate={{ opacity: [0.1, 0.5, 0.1], scaleY: [1, 2, 1] }}
+                  transition={{ duration: 1.1, repeat: Infinity }}
+                  style={[styles.scanGlow, { backgroundColor: colors.primary + '30' }]} 
                 />
               </motion.View>
             </motion.View>
@@ -142,37 +172,56 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
       <SafeAreaView style={styles.safeArea}>
         {/* Floating Header */}
         <motion.View 
-          animate={{ opacity: isScanning ? 0 : 1, y: isScanning ? -20 : 0 }}
+          animate={{ opacity: phase === 'IDLE' ? 1 : 0, y: phase === 'IDLE' ? 0 : -20 }}
           style={styles.header}
         >
-          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
-            <BlurView intensity={30} tint="dark" style={styles.iconButton}>
+          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} accessibilityLabel="Go back">
+            <BlurView intensity={40} tint="dark" style={styles.iconButton}>
               <X size={24} color="#ffffff" />
             </BlurView>
           </TouchableOpacity>
           
           <View style={styles.headerTitleBox}>
-            <BlurView intensity={25} tint="dark" style={styles.badge}>
+            <BlurView intensity={30} tint="dark" style={styles.badge}>
               <Sparkles size={12} color={colors.primary} />
-              <Text style={styles.badgeText}>NEURAL SCAN V2.4</Text>
+              <Text style={styles.badgeText}>KILIMO VISION AI</Text>
             </BlurView>
           </View>
 
-          <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)} activeOpacity={0.7}>
-            <BlurView intensity={30} tint="dark" style={styles.iconButton}>
-              <Zap size={22} color="#ffffff" />
+          <TouchableOpacity onPress={toggleNetwork} activeOpacity={0.7} accessibilityLabel="Toggle offline mode">
+            <BlurView intensity={40} tint="dark" style={[styles.iconButton, isOffline && { borderColor: '#ef4444' }]}>
+              {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Zap size={22} color={colors.primary} />}
             </BlurView>
           </TouchableOpacity>
         </motion.View>
 
+        {/* Offline Warning Toast */}
+        <AnimatePresence>
+          {isOffline && phase === 'IDLE' && (
+            <motion.View
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              style={styles.offlineToast}
+            >
+              <BlurView intensity={60} tint="dark" style={styles.offlineInner}>
+                <CloudOff size={16} color="#fbbf24" />
+                <Text style={styles.offlineText}>Offline Mode: Diagnosis will be queued and synced.</Text>
+              </BlurView>
+            </motion.View>
+          )}
+        </AnimatePresence>
+
         <View style={styles.content}>
           <AnimatePresence mode="wait">
-            {!showResult ? (
+            
+            {/* IDLE / SCANNING PHASE */}
+            {(phase === 'IDLE' || phase === 'SCANNING') && (
               <motion.View 
                 key="scanner"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
                 style={styles.scannerInterface}
               >
                 {/* Aiming Reticle */}
@@ -181,21 +230,17 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
                     <motion.View 
                       key={idx}
                       animate={{ 
-                        scale: isScanning ? 1.05 : 1,
-                        opacity: isScanning ? [0.4, 1, 0.4] : 1
+                        scale: phase === 'SCANNING' ? 1.08 : 1,
+                        opacity: phase === 'SCANNING' ? [0.4, 1, 0.4] : 1,
+                        borderColor: phase === 'SCANNING' ? colors.primary : '#ffffff'
                       }}
-                      transition={{ 
-                        duration: 1.5, 
-                        repeat: Infinity,
-                        delay: idx * 0.1
-                      }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: idx * 0.1 }}
                       style={[styles.corner, posStyle]} 
                     />
                   ))}
                   
-                  {/* Dynamic AI Markers */}
                   <AnimatePresence>
-                    {isScanning && (
+                    {phase === 'SCANNING' && (
                       <motion.View 
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -203,54 +248,62 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
                         style={styles.aiMarkers}
                       >
                         <motion.View 
-                          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1, repeat: Infinity }}
+                          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.8, repeat: Infinity }}
                           style={styles.markerPulse} 
                         />
                         <View style={styles.markerTextContainer}>
-                          <Text style={styles.markerText}>ANALYZING BIO-MARKERS</Text>
-                          <motion.View 
-                            animate={{ height: [0, 40, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            style={styles.markerLine} 
-                          />
+                          <Text style={styles.markerText}>LOCKING TARGET</Text>
                         </View>
                       </motion.View>
                     )}
                   </AnimatePresence>
                 </View>
 
-                <motion.View 
-                  animate={{ y: isScanning ? 20 : 0 }}
-                  style={styles.instructions}
-                >
+                <motion.View animate={{ y: phase === 'SCANNING' ? 20 : 0 }} style={styles.instructions}>
                   <Text style={styles.instructionLarge}>
-                    {isScanning ? 'Decoding Molecular Structure' : 'Target Crop Biomass'}
+                    {phase === 'SCANNING' ? 'Hold Steady' : 'Target Crop Anomaly'}
                   </Text>
                   <Text style={styles.instructionSmall}>
-                    {isScanning ? 'Kilimo AI is verifying plant health markers' : 'Hold position for hyperspectral analysis'}
+                    {phase === 'SCANNING' ? 'Kilimo AI is capturing hyperspectral data...' : 'Ensure the affected leaf is well-lit and in focus.'}
                   </Text>
                 </motion.View>
               </motion.View>
-            ) : (
+            )}
+
+            {/* ANALYZING PHASE */}
+            {phase === 'ANALYZING' && (
+              <motion.View 
+                key="analyzing"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, y: -20 }}
+                style={styles.analyzingContainer}
+              >
+                <NeuralOrb color={colors.primary} size={250} x={0} y={0} delay={0} />
+                <motion.View
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  style={styles.analyzingRings}
+                >
+                  <Activity size={48} color={colors.primary} />
+                </motion.View>
+                <Text style={styles.analyzingTitle}>AI Agronomist Active</Text>
+                <Text style={styles.analyzingSubtitle}>{analysisText}</Text>
+              </motion.View>
+            )}
+
+            {/* RESULT PHASE */}
+            {phase === 'RESULT' && (
               <motion.View 
                 key="result"
-                initial={{ opacity: 0, y: 100, scale: 0.9 }}
+                initial={{ opacity: 0, y: 80, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 50 }}
-                transition={{ type: "spring", damping: 20, stiffness: 100 }}
+                transition={{ type: "spring", damping: 22, stiffness: 90 }}
                 style={styles.resultWrapper}
               >
-                <AnimatePresence>
-                  {showResult && (
-                    <View style={StyleSheet.absoluteFill}>
-                      <NeuralOrb color={colors.primary} size={350} x={-100} y={100} delay={0} />
-                      <NeuralOrb color="#3b82f6" size={300} x={SCREEN_WIDTH - 150} y={SCREEN_HEIGHT - 400} delay={2000} />
-                    </View>
-                  )}
-                </AnimatePresence>
-
-                <BlurView intensity={isDark ? 30 : 90} tint={isDark ? "dark" : "light"} style={[styles.resultCard, { borderColor: colors.border }]}>
+                <BlurView intensity={isDark ? 40 : 90} tint={isDark ? "dark" : "light"} style={[styles.resultCard, { borderColor: 'rgba(255,255,255,0.1)' }]}>
                   <LinearGradient
                     colors={[colors.primary + '15', 'transparent']}
                     style={StyleSheet.absoluteFill}
@@ -258,12 +311,12 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
                   
                   <View style={styles.resultHeader}>
                     <motion.View 
-                      initial={{ rotate: -15, scale: 0.5 }}
+                      initial={{ rotate: -20, scale: 0.5 }}
                       animate={{ rotate: 0, scale: 1 }}
                       transition={{ type: "spring", delay: 0.2 }}
                       style={[styles.resultIcon, { backgroundColor: colors.primary }]}
                     >
-                      <BrainCircuit size={28} color="#000" />
+                      <BrainCircuit size={32} color="#000" />
                     </motion.View>
                     <View style={styles.resultMeta}>
                       <Text style={[styles.resultName, { color: colors.text }]}>Maize Streak Virus</Text>
@@ -273,46 +326,50 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
                         transition={{ delay: 0.4 }}
                         style={styles.confBadge}
                       >
-                        <Text style={styles.confText}>98.4% Confidence</Text>
+                        <Text style={styles.confText}>98.4% AI Confidence</Text>
                       </motion.View>
                     </View>
                   </View>
+
+                  {isOffline && (
+                    <motion.View initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.offlineNoticeBox}>
+                      <CloudOff size={16} color="#fbbf24" />
+                      <Text style={styles.offlineNoticeText}>Saved locally. Will sync to your Agro ID when online.</Text>
+                    </motion.View>
+                  )}
 
                   <motion.View 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}
+                    style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}
                   >
                     <View style={styles.detailTitleRow}>
-                      <AlertCircle size={16} color="#ef4444" />
-                      <Text style={[styles.detailTitle, { color: colors.text }]}>Viral Pathogen Detected</Text>
+                      <AlertCircle size={18} color="#ef4444" />
+                      <Text style={[styles.detailTitle, { color: colors.text }]}>Critical Priority</Text>
                     </View>
                     <Text style={[styles.detailBody, { color: colors.textMute }]}>
-                      Characteristic yellow streaks along leaf veins. Rapid intervention is recommended to protect the fleet.
+                      High risk of spread to neighboring plots. Immediate isolation and vector control required to protect yield.
                     </Text>
                   </motion.View>
 
-                  <motion.View
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
+                  <motion.View initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
                     <TouchableOpacity 
                       style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
                       activeOpacity={0.8}
                       onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                        router.push('/sankofa');
+                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                         router.push('/sankofa');
                       }}
+                      accessibilityLabel="Speak with AI Agronomist"
                     >
-                      <Text style={styles.primaryBtnText}>Initialize Treatment Flow</Text>
-                      <ArrowRight size={18} color="#000" />
+                      <Text style={styles.primaryBtnText}>Ask AI Agronomist</Text>
+                      <ArrowRight size={20} color="#000" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
-                      <RotateCw size={16} color={colors.textMute} />
-                      <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Retake Sample</Text>
+                    <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Retake Scan">
+                      <RotateCw size={18} color={colors.textMute} />
+                      <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Scan Another Plant</Text>
                     </TouchableOpacity>
                   </motion.View>
                 </BlurView>
@@ -323,44 +380,36 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
 
         {/* Shutter Controls */}
         <AnimatePresence>
-          {!showResult && (
+          {phase === 'IDLE' && (
             <motion.View 
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
               style={styles.footer}
             >
-              <TouchableOpacity style={styles.auxBtn}>
+              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Open gallery">
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
-                  <ImageIcon size={22} color="#ffffff" />
+                  <ImageIcon size={24} color="#ffffff" />
                 </BlurView>
               </TouchableOpacity>
               
               <TouchableOpacity 
                 style={[styles.shutterRing, { borderColor: colors.primary }]}
                 onPress={handleScan}
-                disabled={isScanning}
                 activeOpacity={0.8}
+                accessibilityLabel="Take picture for AI diagnosis"
               >
                 <motion.View 
-                  animate={{ scale: isScanning ? 0.9 : 1 }}
-                  style={[styles.shutterCore, { backgroundColor: isScanning ? colors.primary : '#ffffff' }]}
+                  whileTap={{ scale: 0.9 }}
+                  style={[styles.shutterCore, { backgroundColor: '#ffffff' }]}
                 >
-                  {isScanning ? (
-                     <motion.View 
-                       animate={{ rotate: 360 }}
-                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                       style={styles.shutterLoading} 
-                     />
-                  ) : (
-                    <Camera size={30} color="#000" />
-                  )}
+                  <Camera size={34} color="#000" />
                 </motion.View>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.auxBtn}>
+              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Scanning tips">
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
-                  <Info size={22} color="#ffffff" />
+                  <Info size={24} color="#ffffff" />
                 </BlurView>
               </TouchableOpacity>
             </motion.View>
@@ -382,7 +431,7 @@ const styles = StyleSheet.create({
   mockCamera: {
     width: '100%',
     height: '100%',
-    opacity: 0.7,
+    opacity: 0.8,
   },
   bgOrb: {
     position: 'absolute',
@@ -392,23 +441,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: 120,
+    height: 140,
     alignItems: 'center',
     justifyContent: 'center',
   },
   scanLine: {
     width: '100%',
-    height: 4,
+    height: 6,
     shadowColor: "#3ecf8e",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 20,
+    shadowRadius: 25,
     elevation: 20,
   },
   scanGlow: {
     position: 'absolute',
     width: '100%',
-    height: 60,
+    height: 70,
   },
   safeArea: {
     flex: 1,
@@ -418,7 +467,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 16,
+    zIndex: 10,
   },
   headerTitleBox: {
     flex: 1,
@@ -427,7 +477,7 @@ const styles = StyleSheet.create({
   iconButton: {
     width: 52,
     height: 52,
-    borderRadius: 20,
+    borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -437,9 +487,9 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 30,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.15)',
@@ -447,9 +497,31 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: '#ffffff',
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Inter_900Black',
     letterSpacing: 2,
+  },
+  offlineToast: {
+    position: 'absolute',
+    top: 90,
+    left: 20,
+    right: 20,
+    zIndex: 20,
+  },
+  offlineInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(251, 191, 36, 0.3)',
+    gap: 10,
+    overflow: 'hidden',
+  },
+  offlineText: {
+    color: '#fbbf24',
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
   },
   content: {
     flex: 1,
@@ -460,187 +532,236 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   reticleContainer: {
-    width: SCREEN_WIDTH * 0.8,
-    height: SCREEN_WIDTH * 0.8,
+    width: SCREEN_WIDTH * 0.75,
+    height: SCREEN_WIDTH * 0.75,
     justifyContent: 'center',
     alignItems: 'center',
   },
   corner: {
     position: 'absolute',
-    width: 50,
-    height: 50,
-    borderColor: '#3ecf8e',
+    width: 60,
+    height: 60,
   },
   tl: {
     top: 0,
     left: 0,
-    borderTopWidth: 6,
-    borderLeftWidth: 6,
-    borderTopLeftRadius: 36,
+    borderTopWidth: 8,
+    borderLeftWidth: 8,
+    borderTopLeftRadius: 40,
   },
   tr: {
     top: 0,
     right: 0,
-    borderTopWidth: 6,
-    borderRightWidth: 6,
-    borderTopRightRadius: 36,
+    borderTopWidth: 8,
+    borderRightWidth: 8,
+    borderTopRightRadius: 40,
   },
   bl: {
     bottom: 0,
     left: 0,
-    borderBottomWidth: 6,
-    borderLeftWidth: 6,
-    borderBottomLeftRadius: 36,
+    borderBottomWidth: 8,
+    borderLeftWidth: 8,
+    borderBottomLeftRadius: 40,
   },
   br: {
     bottom: 0,
     right: 0,
-    borderBottomWidth: 6,
-    borderRightWidth: 6,
-    borderBottomRightRadius: 36,
+    borderBottomWidth: 8,
+    borderRightWidth: 8,
+    borderBottomRightRadius: 40,
   },
   aiMarkers: {
     alignItems: 'center',
   },
   markerPulse: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: '#3ecf8e',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   markerTextContainer: {
     alignItems: 'center',
   },
   markerText: {
     color: '#3ecf8e',
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: 'Inter_900Black',
-    letterSpacing: 1.5,
-  },
-  markerLine: {
-    width: 1,
-    backgroundColor: '#3ecf8e',
-    marginTop: 8,
+    letterSpacing: 2,
   },
   instructions: {
-    marginTop: 60,
+    marginTop: 70,
     alignItems: 'center',
   },
   instructionLarge: {
     color: '#ffffff',
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: 'Inter_900Black',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
     letterSpacing: -0.5,
   },
   instructionSmall: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 14,
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 15,
     fontFamily: 'Inter_500Medium',
     textAlign: 'center',
-    maxWidth: 240,
+    maxWidth: 260,
+    lineHeight: 22,
+  },
+  analyzingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  analyzingRings: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: 'rgba(62, 207, 142, 0.3)',
+    borderTopColor: '#3ecf8e',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  analyzingTitle: {
+    color: '#ffffff',
+    fontSize: 24,
+    fontFamily: 'Inter_900Black',
+    marginBottom: 12,
+  },
+  analyzingSubtitle: {
+    color: '#3ecf8e',
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+    textAlign: 'center',
   },
   resultWrapper: {
-    width: SCREEN_WIDTH * 0.9,
+    width: SCREEN_WIDTH * 0.92,
   },
   resultCard: {
-    borderRadius: 40,
-    padding: 30,
+    borderRadius: 44,
+    padding: 32,
     overflow: 'hidden',
     borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
+    elevation: 20,
   },
   resultHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 20,
   },
   resultIcon: {
-    width: 68,
-    height: 68,
-    borderRadius: 24,
+    width: 72,
+    height: 72,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: "#3ecf8e",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
   },
   resultMeta: {
     flex: 1,
     marginLeft: 20,
   },
   resultName: {
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
   },
   confBadge: {
-    marginTop: 6,
+    marginTop: 8,
   },
   confText: {
     color: '#3ecf8e',
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Inter_800ExtraBold',
   },
+  offlineNoticeBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+    padding: 12,
+    borderRadius: 16,
+    marginBottom: 20,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(251, 191, 36, 0.2)',
+  },
+  offlineNoticeText: {
+    color: '#fbbf24',
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    flex: 1,
+  },
   detailCard: {
-    padding: 24,
-    borderRadius: 28,
+    padding: 26,
+    borderRadius: 32,
     marginBottom: 32,
   },
   detailTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
   detailTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: 'Inter_900Black',
-    marginLeft: 10,
+    marginLeft: 12,
   },
   detailBody: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Inter_500Medium',
-    lineHeight: 22,
-    opacity: 0.8,
+    lineHeight: 24,
+    opacity: 0.85,
   },
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
-    borderRadius: 24,
+    paddingVertical: 22,
+    borderRadius: 28,
     marginBottom: 16,
+    shadowColor: "#3ecf8e",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 10,
   },
   primaryBtnText: {
     color: '#000',
-    fontSize: 17,
+    fontSize: 18,
     fontFamily: 'Inter_900Black',
-    marginRight: 10,
+    marginRight: 12,
   },
   resetBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
   },
   resetBtnText: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Inter_700Bold',
-    marginLeft: 8,
+    marginLeft: 10,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 40,
-    paddingBottom: 40,
+    paddingBottom: 50,
   },
   auxBtn: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     overflow: 'hidden',
   },
   auxInner: {
@@ -651,27 +772,19 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.1)',
   },
   shutterRing: {
-    width: 108,
-    height: 108,
-    borderRadius: 54,
+    width: 116,
+    height: 116,
+    borderRadius: 58,
     borderWidth: 6,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
   shutterCore: {
-    width: 82,
-    height: 82,
-    borderRadius: 41,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  shutterLoading: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 4,
-    borderColor: '#000',
-    borderTopColor: 'transparent',
   },
 });

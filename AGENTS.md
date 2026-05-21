@@ -78,6 +78,23 @@ Canonical roles map to GitHub labels. See `docs/agents/triage-labels.md`.
 
 Single-context layout. See `docs/agents/domain.md`.
 
+### Available Skills
+
+The following skills are available in `.agents/skills/` (Qoder) and `.github/agents/` (VS Code/Copilot):
+
+| Skill | Use When |
+| :--- | :--- |
+| `frontend-developer` | Building/modifying React components, TypeScript types, Framer Motion animations, Vite config |
+| `performance-engineer` | Optimizing render cycles, bundle size, animation FPS, low-bandwidth performance |
+| `accessibility-tester` | Auditing WCAG compliance, keyboard nav, screen readers, mobile touch accessibility |
+| `brainstorming` | Planning new features, UI redesigns, or architectural changes before coding |
+| `writing-plans` | Creating bite-sized implementation plans from approved specs |
+| `tdd` | Building features or fixing bugs using test-driven development |
+| `diagnose` | Systematic debugging of hard bugs and performance regressions |
+| `ui-ux-pro-max` | UI/UX design tasks requiring professional-grade output |
+| `caveman` | Ultra-compressed communication mode to reduce token usage |
+| `n8n-architect` | Creating, editing, or troubleshooting n8n workflows |
+
 ### External Resources
 
 A collection of vendor repositories (design, AI agents, skills) for project reference. See `docs/EXTERNAL_RESOURCES.md`.

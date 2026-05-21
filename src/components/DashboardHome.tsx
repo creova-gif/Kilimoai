@@ -26,6 +26,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { StaggerContainer, StaggerItem } from "./animations";
 import { toast } from "sonner@2.0.3";
 import { aiTelemetry } from "../utils/ai-telemetry";
 import { useErrorReporting } from "../utils/crash-reporting";
@@ -408,36 +409,44 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-            <div className="bg-white/20 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Leaf className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[10px] md:text-xs text-white/80">{text.activeCrops}</p>
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+            <StaggerItem>
+              <div className="bg-white/20 rounded-xl p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Leaf className="h-4 w-4" aria-hidden="true" />
+                  <p className="text-[10px] md:text-xs text-white/80">{text.activeCrops}</p>
+                </div>
+                <p className="text-xl md:text-2xl font-bold">{stats.activeCrops}</p>
               </div>
-              <p className="text-xl md:text-2xl font-bold">{stats.activeCrops}</p>
-            </div>
-            <div className="bg-white/20 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Package className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[10px] md:text-xs text-white/80">{text.pendingTasks}</p>
+            </StaggerItem>
+            <StaggerItem>
+              <div className="bg-white/20 rounded-xl p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Package className="h-4 w-4" aria-hidden="true" />
+                  <p className="text-[10px] md:text-xs text-white/80">{text.pendingTasks}</p>
+                </div>
+                <p className="text-xl md:text-2xl font-bold">{stats.pendingTasks}</p>
               </div>
-              <p className="text-xl md:text-2xl font-bold">{stats.pendingTasks}</p>
-            </div>
-            <div className="bg-white/20 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[10px] md:text-xs text-white/80">{text.revenue}</p>
+            </StaggerItem>
+            <StaggerItem>
+              <div className="bg-white/20 rounded-xl p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <TrendingUp className="h-4 w-4" aria-hidden="true" />
+                  <p className="text-[10px] md:text-xs text-white/80">{text.revenue}</p>
+                </div>
+                <p className="text-xl md:text-2xl font-bold">{stats.revenue}</p>
               </div>
-              <p className="text-xl md:text-2xl font-bold">{stats.revenue}</p>
-            </div>
-            <div className="bg-white/20 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Droplet className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[10px] md:text-xs text-white/80">{text.soilHealth}</p>
+            </StaggerItem>
+            <StaggerItem>
+              <div className="bg-white/20 rounded-xl p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Droplet className="h-4 w-4" aria-hidden="true" />
+                  <p className="text-[10px] md:text-xs text-white/80">{text.soilHealth}</p>
+                </div>
+                <p className="text-xl md:text-2xl font-bold">{stats.soilHealth}</p>
               </div>
-              <p className="text-xl md:text-2xl font-bold">{stats.soilHealth}</p>
-            </div>
-          </div>
+            </StaggerItem>
+          </StaggerContainer>
         </div>
       </div>
 
@@ -553,9 +562,15 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
+            <StaggerContainer staggerDelay={0.05}>
             {tasks.map((task: any) => (
-              <div
+              <motion.div
                 key={task.id}
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => handleToggleTask(task.id)}
                 className={`
                   flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer
@@ -600,8 +615,9 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
                 }>
                   {task.priority}
                 </Badge>
-              </div>
+              </motion.div>
             ))}
+            </StaggerContainer>
 
             <button 
               className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-600 hover:border-[#2E7D32] hover:text-[#2E7D32] transition-colors"
@@ -638,9 +654,17 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
           <CardDescription>{text.liveFromMarkets} {user.region} {text.markets}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <StaggerContainer staggerDelay={0.06} className="space-y-3">
             {marketTrends.map((market: any, idx: number) => (
-              <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+              <motion.div
+                key={idx}
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                whileHover={{ scale: 1.01, x: 2 }}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+              >
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-white rounded-lg">
                     <Package className="h-5 w-5 text-gray-600" aria-hidden="true" />
@@ -667,9 +691,9 @@ export function DashboardHome({ user, onNavigate, language }: DashboardHomeProps
                     {Math.abs(market.change)}%
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </StaggerContainer>
         </CardContent>
       </Card>
 

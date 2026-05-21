@@ -17,6 +17,8 @@ console.log('✅ CACHE KEY: APP_20260210_006_FETCH_WRAPPER');
 console.log('═══════════════════════════════════════════════════');
 
 import { useState, useEffect } from "react";
+import { AnimatePresence } from "motion/react";
+import { AnimatedPage } from "./components/animations";
 import { toast, Toaster } from "sonner@2.0.3";
 import { 
   Home, MessageSquare, Camera, TrendingUp, CloudRain, ShoppingCart, 
@@ -369,44 +371,6 @@ export default function App() {
       setShowOnboarding(true);
     }
   }, []);
-
-          "Authorization": `Bearer ${publicAnonKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Use the user data returned from backend
-        const user = {
-          ...result.user,
-          tier: result.user.tier || "free",
-          role: result.user.role || data.role || "smallholder_farmer"
-        };
-        setCurrentUser(user);
-        setIsRegistered(true);
-        localStorage.setItem("kilimoUser", JSON.stringify(user));
-        
-        // Show role-based welcome message
-        const roleDisplayName = getRoleDisplayName(user.role, language);
-        const featureCount = getRoleFeatures(user.role).length;
-        toast.success(
-          language === "en"
-            ? `Welcome to KILIMO, ${user.name}! 🌾\n${roleDisplayName} • ${featureCount} features unlocked`
-            : `Karibu KILIMO, ${user.name}! 🌾\n${roleDisplayName} • Vipengele ${featureCount} vimefunguliwa`
-        );
-      } else {
-        toast.error(result.error || "Registration failed");
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast.error("Registration failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogin = async (identifier: string, password: string) => {
     setLoading(true);
@@ -1259,20 +1223,20 @@ export default function App() {
                         <div className="absolute inset-0 bg-gradient-to-br from-[#2E7D32]/[0.02] via-transparent to-gray-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
                         
                         {/* Tab Content with Transition System */}
-                        <div className="relative">
+                        <AnimatePresence mode="wait">
                           {/* ========== HOME/DASHBOARD ========== */}
                           {activeTab === "home" && currentUser && (
-                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <AnimatedPage key="home">
                               <ErrorBoundary componentName="DashboardHome">
                                 <DashboardHome user={currentUser} onNavigate={setActiveTab} language={language} />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED AI ADVISOR ========== */}
                           {/* Consolidates: ai-chat, workflows, diagnosis, voice, ai-training, predictions, digital-twin, ai-farm-plan, personalized, ai-recommendations, ai-advisory */}
                           {activeTab === "ai-chat" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="ai-chat">
                               <ErrorBoundary componentName="UnifiedAIAdvisor">
                                 <UnifiedAIAdvisor
                                   userId={currentUser.id}
@@ -1288,13 +1252,13 @@ export default function App() {
                                   initialTab={getDeepLinkTab("ai-chat")}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED CROP PLANNING ========== */}
                           {/* Execution Layer: Current season plans, field allocation, yield forecasts, task timelines */}
                           {activeTab === "land-allocation" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="land-allocation">
                               <ErrorBoundary componentName="UnifiedCropPlanning">
                                 <UnifiedCropPlanning
                                   userId={currentUser.id}
@@ -1306,13 +1270,13 @@ export default function App() {
                                   onNavigate={setActiveTab}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED CROP INTELLIGENCE ========== */}
                           {/* Knowledge Layer: Crop library, growing tips, templates, historical performance */}
                           {(activeTab === "crop-tips" || activeTab === "crop-library") && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="crop-tips">
                               <ErrorBoundary componentName="UnifiedCropIntelligence">
                                 <UnifiedCropIntelligence
                                   userId={currentUser.id}
@@ -1328,38 +1292,38 @@ export default function App() {
                                   onNavigate={setActiveTab}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== FARM MAP (Standalone) ========== */}
                           {activeTab === "farm-mapping" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="farm-mapping">
                               <ErrorBoundary componentName="FarmMappingRedesign">
                                 <FarmMappingRedesign userId={currentUser.id} language={language} />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== TASKS & SCHEDULE (Standalone) ========== */}
                           {activeTab === "tasks" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="tasks">
                               <ErrorBoundary componentName="TaskManagementRedesign">
                                 <TaskManagementRedesign userId={currentUser.id} onNavigate={setActiveTab} language={language} />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== DEBUG PAGE (TEMPORARY) ========== */}
                           {activeTab === "url-debug" && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="url-debug">
                               <URLDebugPage />
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED INVENTORY & INPUTS ========== */}
                           {/* Consolidates: inventory, input-supply */}
                           {activeTab === "inventory" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="inventory">
                               <ErrorBoundary componentName="UnifiedInventory">
                                 <UnifiedInventory
                                   userId={currentUser.id}
@@ -1370,13 +1334,13 @@ export default function App() {
                                   initialTab={getDeepLinkTab("inventory")}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED MARKET ========== */}
                           {/* Consolidates: orders, marketplace, market */}
                           {activeTab === "orders" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="orders">
                               <ErrorBoundary componentName="UnifiedMarket">
                                 <UnifiedMarket
                                   userId={currentUser.id}
@@ -1386,13 +1350,13 @@ export default function App() {
                                   initialTab={getDeepLinkTab("orders")}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED FINANCE ========== */}
                           {/* Consolidates: finance, mobile-money, reporting, contracts, insurance, wallet-admin */}
                           {activeTab === "finance" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="finance">
                               <ErrorBoundary componentName="UnifiedFinance">
                                 <UnifiedFinance
                                   userId={currentUser.id}
@@ -1402,22 +1366,22 @@ export default function App() {
                                   initialTab={getDeepLinkTab("finance")}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== LIVESTOCK (Standalone) ========== */}
                           {activeTab === "livestock" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="livestock">
                               <ErrorBoundary componentName="AdvancedLivestockManagement">
                                 <AdvancedLivestockManagement userId={currentUser.id} language={language} />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED COMMUNITY ========== */}
                           {/* Consolidates: discussions, experts, soil-test */}
                           {activeTab === "discussions" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="discussions">
                               <ErrorBoundary componentName="UnifiedCommunity">
                                 <UnifiedCommunity
                                   userId={currentUser.id}
@@ -1426,13 +1390,13 @@ export default function App() {
                                   initialTab={getDeepLinkTab("discussions")}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== UNIFIED LEARNING & SUPPORT ========== */}
                           {/* Consolidates: support, videos, knowledge, contact, faq, training */}
                           {activeTab === "support" && currentUser && (
-                            <div className="animate-fadeIn">
+                            <AnimatedPage key="support">
                               <ErrorBoundary componentName="UnifiedLearning">
                                 <UnifiedLearning
                                   userId={currentUser.id}
@@ -1441,12 +1405,12 @@ export default function App() {
                                   initialTab={getDeepLinkTab("support")}
                                 />
                               </ErrorBoundary>
-                            </div>
+                            </AnimatedPage>
                           )}
 
                           {/* ========== LEGACY ROUTES (for backwards compatibility) ========== */}
                           {/* These will be auto-redirected by useEffect above */}
-                        </div>
+                        </AnimatePresence>
                       </div>
                     </div>
                   </div>
