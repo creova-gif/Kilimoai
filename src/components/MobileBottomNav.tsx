@@ -90,6 +90,61 @@ export function MobileBottomNav({ activeTab, onTabChange, notificationCount = 0,
   const navItems = getRoleNavItems();
 
   return (
-    <></>
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg lg:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <div className="flex items-center justify-around h-16 px-2">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+
+          return (
+            <button
+              key={item.id}
+              onClick={() => onTabChange(item.id)}
+              className={`
+                flex flex-col items-center justify-center flex-1 h-full relative
+                transition-all duration-200 active:scale-95 min-w-[56px]
+                ${isActive ? "text-[#2E7D32]" : "text-gray-500 hover:text-gray-700"}
+              `}
+              aria-label={item.label}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {/* Active pill background */}
+              {isActive && (
+                <motion.div
+                  layoutId="bottomNavPill"
+                  className="absolute inset-x-1 inset-y-1 bg-[#2E7D32]/8 rounded-xl"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+
+              <div className="relative">
+                <Icon
+                  className={`h-5 w-5 transition-all duration-200 ${
+                    isActive ? "scale-110" : ""
+                  }`}
+                />
+                {/* Notification dot */}
+                {item.id === "ai-chat" && notificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1.5 h-4 w-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                    {notificationCount > 9 ? "9+" : notificationCount}
+                  </span>
+                )}
+              </div>
+
+              <span
+                className={`text-[10px] mt-1 font-medium transition-all duration-200 ${
+                  isActive ? "text-[#2E7D32]" : "text-gray-500"
+                }`}
+              >
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 }

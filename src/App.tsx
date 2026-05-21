@@ -1068,8 +1068,8 @@ export default function App() {
                           className={`
                             w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-left group/item
                             ${isActive 
-                              ? 'bg-white border-2 border-gray-300 shadow-lg' 
-                              : 'bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]'
+                              ? 'bg-[#2E7D32] border-2 border-[#2E7D32] shadow-lg shadow-[#2E7D32]/20' 
+                              : 'bg-white border border-gray-200 hover:border-[#2E7D32]/30 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]'
                             }
                           `}
                         >
@@ -1077,34 +1077,38 @@ export default function App() {
                           <div className={`
                             p-1.5 rounded-lg transition-all duration-200
                             ${isActive 
-                              ? 'bg-gray-100' 
+                              ? 'bg-white/20' 
                               : 'bg-gray-50 group-hover/item:bg-gray-100'
                             }
                           `}>
                             <Icon className={`
                               h-4 w-4 transition-colors duration-200
-                              ${isActive ? 'text-gray-900' : item.color + ' group-hover/item:text-gray-700'}
+                              ${isActive ? 'text-white' : item.color + ' group-hover/item:text-gray-700'}
                             `} />
                           </div>
 
                           {/* Label */}
                           <span className={`
                             text-sm font-semibold transition-colors duration-200 flex-1
-                            ${isActive ? 'text-gray-900' : 'text-gray-700 group-hover/item:text-gray-900'}
+                            ${isActive ? 'text-white' : 'text-gray-700 group-hover/item:text-gray-900'}
                           `}>
                             {item.label}
                           </span>
 
                           {/* Badge */}
                           {item.badge && (
-                            <span className="px-2 py-1 bg-[#2E7D32]/20 text-[#2E7D32] text-xs font-bold rounded-lg shadow-sm border border-[#2E7D32]/30">
+                            <span className={`px-2 py-1 text-xs font-bold rounded-lg shadow-sm border ${
+                              isActive
+                                ? 'bg-white/20 text-white border-white/30'
+                                : 'bg-[#2E7D32]/20 text-[#2E7D32] border-[#2E7D32]/30'
+                            }`}>
                               {item.badge}
                             </span>
                           )}
 
                           {/* Active Indicator */}
                           {isActive && (
-                            <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shadow-sm"></div>
+                            <div className="w-1.5 h-1.5 bg-white rounded-full shadow-sm"></div>
                           )}
                         </button>
                       );
@@ -1159,7 +1163,7 @@ export default function App() {
                 <div className="h-1.5 bg-[#2E7D32]"></div>
                 
                 {/* Inner Content with Padding */}
-                <div className="p-4 lg:p-8 pb-24 lg:pb-8">
+                <div className="p-4 lg:p-8 pb-20 lg:pb-8">
                   {/* Content Delivery System */}
                   <div className="relative min-h-[calc(100vh-12rem)]">
                     {/* Content Layer */}
