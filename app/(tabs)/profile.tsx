@@ -89,6 +89,7 @@ const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; co
   { key: 'input', label: 'Wauzaji', sub: 'Input Supply', route: '/input-supply', color: '#10b981' },
   { key: 'peer', label: 'Vikundi', sub: 'Peer Groups', route: '/peer-groups', color: '#ec4899' },
   { key: 'expert', label: 'Wataalamu', sub: 'Consultations', route: '/consultations', color: '#a855f7' },
+  { key: 'wallet-admin', label: 'Pochi Msimamizi', sub: 'Wallet Admin', route: '/wallet-admin', color: '#14b8a6' },
 ];
 
 const PROFILE_SECTIONS = [

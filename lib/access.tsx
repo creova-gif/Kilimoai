@@ -48,7 +48,8 @@ export type Feature =
   | 'expert_consultations'
   | 'weather_alerts'
   | 'offline_mode'
-  | 'peer_groups';
+  | 'peer_groups'
+  | 'wallet_admin';
 
 // Matrix mirrors PRD Section 2.1
 const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
@@ -60,6 +61,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'none',
     analytics_predictive: 'none', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'none',
   },
   farmer: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -69,6 +71,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'none',
     analytics_predictive: 'none', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'none',
   },
   farm_manager: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -78,6 +81,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'none',
     analytics_predictive: 'full', digital_farm_twin: 'full',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'basic',
   },
   agribusiness: {
     ai_chat: 'none', photo_diagnosis: 'none', voice_assistant: 'none',
@@ -87,6 +91,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'none', agro_id: 'full',
     analytics_predictive: 'full', digital_farm_twin: 'none',
     expert_consultations: 'none', weather_alerts: 'none', offline_mode: 'none', peer_groups: 'none',
+    wallet_admin: 'basic',
   },
   coop_leader: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -96,6 +101,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'none', agro_id: 'full',
     analytics_predictive: 'basic', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'full',
   },
   commercial_farmer: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -105,6 +111,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
     analytics_predictive: 'full', digital_farm_twin: 'basic',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'basic',
   },
   commercial_admin: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -114,6 +121,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
     analytics_predictive: 'full', digital_farm_twin: 'full',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'full',
   },
   extension_officer: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -123,6 +131,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'none', mobile_money: 'none', insurance: 'basic', agro_id: 'none',
     analytics_predictive: 'full', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+    wallet_admin: 'none',
   },
 };
 
@@ -149,6 +158,7 @@ const FEATURE_LABELS: Record<Feature, string> = {
   weather_alerts: 'Weather & Alerts',
   offline_mode: 'Offline Mode',
   peer_groups: 'Peer Groups',
+  wallet_admin: 'Wallet Admin',
 };
 
 const ROLE_LABELS: Record<CanonicalRole, string> = {

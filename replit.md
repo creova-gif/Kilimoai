@@ -53,4 +53,4 @@ KILIMO AI is a Swahili-language agriculture app built with React + TypeScript + 
 - T205 Safaricom Daraja M-Pesa — needs `MPESA_CONSUMER_KEY/SECRET/SHORTCODE/PASSKEY/ENV`
 
 ## Out of scope (deferred)
-- Wallet Admin (enterprise), predictive ML models, Digital Farm Twin "what if" sim
+- Predictive ML models, Digital Farm Twin "what if" sim
