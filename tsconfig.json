@@ -4,7 +4,9 @@
     "strict": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "motion/react": ["./shims/motion/index.tsx"],
+      "motion": ["./shims/motion/index.tsx"]
     }
   },
   "include": [

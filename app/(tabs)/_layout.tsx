@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View } from 'react-native';
 import { LayoutDashboard, CloudRain, User } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
-import { useTheme } from '../constants/Theme';
+import { useTheme } from '../../constants/Theme';
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();

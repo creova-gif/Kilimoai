@@ -11,6 +11,7 @@ import {
   RefreshControl,
   Platform,
   Image,
+  Pressable,
 } from 'react-native';
 import { 
   BrainCircuit, 
