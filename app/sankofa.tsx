@@ -39,6 +39,7 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
 import { chat as aiChat, transcribeAudio, aiConfigured, AIError, ChatMessage as AIChatMessage } from '../lib/ai';
+import { demoChat } from '../lib/ai-demo';
 import { useKilimoStore } from '../store/useKilimoStore';
 import {
   useAudioRecorder,
@@ -51,10 +52,12 @@ import * as FileSystem from 'expo-file-system/legacy';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const SUGGESTED_PROMPTS = [
-  "Check crop health",
-  "Pest diagnosis",
-  "Market price trends",
-  "Weather forecast"
+  "Angalia afya ya mazao yangu",
+  "Wadudu wanashambulia mahindi",
+  "Bei za soko wiki hii",
+  "Hali ya hewa — mvua inakuja?",
+  "Mbolea gani nitumie sasa?",
+  "Panga ratiba ya kupanda",
 ];
 
 interface Message {
@@ -155,21 +158,17 @@ export default function SankofaScreen() {
       }
     };
 
-    if (!aiConfigured()) {
-      const msg = 'Sankofa AI haijasanidiwa bado. Mtumiaji wa app anatakiwa kuwasha kazi ya OpenAI kwenye Supabase.';
-      if (requestSeqRef.current !== reqId) return 'sent';
-      appendAi(msg);
-      addNotification({ title: 'Sankofa AI', body: msg, type: 'warning' });
-      setIsTyping(false);
-      return 'sent';
-    }
-
     try {
-      const history: AIChatMessage[] = snapshot.slice(-16).map((m) => ({
-        role: m.sender === 'ai' ? 'assistant' : 'user',
-        content: m.text,
-      }));
-      const reply = await aiChat(history);
+      let reply: string;
+      if (!aiConfigured()) {
+        reply = await demoChat(trimmed);
+      } else {
+        const history: AIChatMessage[] = snapshot.slice(-16).map((m) => ({
+          role: m.sender === 'ai' ? 'assistant' : 'user',
+          content: m.text,
+        }));
+        reply = await aiChat(history);
+      }
       if (requestSeqRef.current !== reqId) return 'sent';
       appendAi(reply || 'Samahani, sikuelewa swali lako. Tafadhali jaribu tena.');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

@@ -98,12 +98,12 @@ export function generateRecommendations({ profile, vitals, language }: Inputs): 
     });
   }
 
-  // 5) Planning — encourage AI farm plan when no plan ever generated
+  // 5) Planning — link directly to Crop Planning screen (B1)
   if (primaryCrop) {
     recs.push({
       id: 'rec-plan', category: 'planning', severity: 'info',
       ...t.plan_season(primaryCrop),
-      cta: { label: language === 'sw' ? 'Uliza Sankofa' : 'Ask Sankofa', route: '/sankofa' },
+      cta: { label: language === 'sw' ? 'Panga Mazao' : 'Plan Crops', route: '/crop-planning' },
     });
   }
 
@@ -112,7 +112,7 @@ export function generateRecommendations({ profile, vitals, language }: Inputs): 
     recs.push({
       id: 'rec-diversify', category: 'planning', severity: 'info',
       ...t.diversify(),
-      cta: { label: language === 'sw' ? 'Pata ushauri' : 'Get advice', route: '/sankofa' },
+      cta: { label: language === 'sw' ? 'Angalia Mazao' : 'Explore Crops', route: '/crop-planning' },
     });
   }
   if (recs.length < 3) {

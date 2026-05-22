@@ -146,6 +146,10 @@ export default function RootLayout() {
           <Stack.Screen name="peer-groups" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="consultations" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="crop-planning" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="farm-twin" options={{ headerShown: false }} />
+          <Stack.Screen name="analytics" options={{ headerShown: false }} />
+          <Stack.Screen name="wallet-admin" options={{ headerShown: false }} />
           <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
           <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
         </Stack>

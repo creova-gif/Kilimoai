@@ -39,6 +39,7 @@ import { sendSms } from '../lib/sms';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { diagnoseCropPhoto, aiConfigured, AIError, VisionDiagnosis } from '../lib/ai';
+import { demoDiagnosis } from '../lib/ai-demo';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -115,11 +116,6 @@ export default function ScanScreen() {
   };
 
   const runVisionDiagnosis = async (source: 'camera' | 'library') => {
-    if (!aiConfigured()) {
-      setErrorMsg('Sankofa AI haijasanidiwa bado. Wasiliana na msimamizi.');
-      setPhase('ERROR');
-      return;
-    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
     const asset = await pickPhoto(source);
@@ -138,31 +134,38 @@ export default function ScanScreen() {
     setPhase('ANALYZING');
 
     try {
-      // Read picked file as base64 for the vision proxy. On web, expo-image-picker
-      // returns data: URIs which fail readAsStringAsync — handle both paths.
-      let base64: string;
-      let mimeType = 'image/jpeg';
-      if (asset.uri.startsWith('data:')) {
-        const m = asset.uri.match(/^data:([^;]+);base64,(.*)$/);
-        if (!m) throw new AIError('Picha haikuweza kusomwa. Jaribu picha nyingine.', 'validation');
-        mimeType = m[1];
-        base64 = m[2];
+      let result: VisionDiagnosis;
+
+      if (!aiConfigured()) {
+        // Demo mode: realistic simulated diagnosis without any API call.
+        result = await demoDiagnosis();
       } else {
-        // Hard cap at 5MB raw to protect lower-end devices from OOM crashes.
-        try {
-          const info = await FileSystem.getInfoAsync(asset.uri);
-          if (info.exists && typeof info.size === 'number' && info.size > 5_000_000) {
-            throw new AIError('Picha ni kubwa sana. Tafadhali piga picha nyepesi.', 'validation');
+        // Read picked file as base64 for the vision proxy. On web, expo-image-picker
+        // returns data: URIs which fail readAsStringAsync — handle both paths.
+        let base64: string;
+        let mimeType = 'image/jpeg';
+        if (asset.uri.startsWith('data:')) {
+          const m = asset.uri.match(/^data:([^;]+);base64,(.*)$/);
+          if (!m) throw new AIError('Picha haikuweza kusomwa. Jaribu picha nyingine.', 'validation');
+          mimeType = m[1];
+          base64 = m[2];
+        } else {
+          // Hard cap at 5MB raw to protect lower-end devices from OOM crashes.
+          try {
+            const info = await FileSystem.getInfoAsync(asset.uri);
+            if (info.exists && typeof info.size === 'number' && info.size > 5_000_000) {
+              throw new AIError('Picha ni kubwa sana. Tafadhali piga picha nyepesi.', 'validation');
+            }
+          } catch (e) {
+            if (e instanceof AIError) throw e;
+            // getInfoAsync may fail on some URIs; proceed and let the read fail.
           }
-        } catch (e) {
-          if (e instanceof AIError) throw e;
-          // getInfoAsync may fail on some URIs; proceed and let the read fail.
+          base64 = await FileSystem.readAsStringAsync(asset.uri, { encoding: FileSystem.EncodingType.Base64 });
+          if (asset.uri.toLowerCase().endsWith('.png')) mimeType = 'image/png';
         }
-        base64 = await FileSystem.readAsStringAsync(asset.uri, { encoding: FileSystem.EncodingType.Base64 });
-        if (asset.uri.toLowerCase().endsWith('.png')) mimeType = 'image/png';
+        result = await diagnoseCropPhoto(base64, { mimeType });
       }
 
-      const result = await diagnoseCropPhoto(base64, { mimeType });
       if (scanSeq.current !== seq) return; // stale
 
       setDiagnosis(result);

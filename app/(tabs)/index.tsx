@@ -86,6 +86,8 @@ const QUICK_ACTIONS = [
   { id: 'scan', label: 'Uchunguzi wa Mazao', icon: <Camera size={24} color="#fff" />, color: '#3ecf8e', desc: 'AI Crop Scan' },
   { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={24} color="#fff" />, color: '#3b82f6', desc: 'Farm Tasks' },
   { id: 'market', label: 'Soko', icon: <TrendingUp size={24} color="#fff" />, color: '#f59e0b', desc: 'Market Prices' },
+  { id: 'crop-planning', label: 'Panga Mazao', icon: <Leaf size={24} color="#fff" />, color: '#22c55e', desc: 'AI Crop Planning' },
+  { id: 'contracts', label: 'Mikataba', icon: <BarChart3 size={24} color="#fff" />, color: '#8b5cf6', desc: 'Contract Farming' },
 ];
 
 // Variants for staggered entrance
@@ -339,7 +341,9 @@ export default function HomeScreen() {
                     <View style={styles.aiRight}>
                       <Text style={[styles.aiTitle, { color: colors.text }]}>Ushauri wa AI</Text>
                       <Text style={[styles.aiMessage, { color: colors.text }]}>
-                        "Block B soil moisture is dropping faster than predicted. Suggesting irrigation at 18:00."
+                        {language === 'sw'
+                          ? `"Unyevu wa Shamba B unashuka haraka. Napendekeza umwagiliaji saa 12 jioni — mazao yako yatashukuru."`
+                          : `"Block B moisture dropping faster than predicted. Recommended: irrigate at 18:00 before peak heat."`}
                       </Text>
                       <View style={styles.aiActionRow}>
                         <Text style={[styles.aiActionLabel, { color: colors.primary }]}>SOMA ZAIDI</Text>
