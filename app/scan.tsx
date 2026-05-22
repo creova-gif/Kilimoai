@@ -36,17 +36,22 @@ import { useTasks } from '../hooks/useTasks';
 import { useNotifications } from '../hooks/useNotifications';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { sendSms } from '../lib/sms';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system/legacy';
+import { diagnoseCropPhoto, aiConfigured, AIError, VisionDiagnosis } from '../lib/ai';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-type ScanPhase = 'IDLE' | 'SCANNING' | 'ANALYZING' | 'RESULT';
+type ScanPhase = 'IDLE' | 'SCANNING' | 'ANALYZING' | 'RESULT' | 'ERROR';
 
-// PRD: critical-severity diagnosis must (a) create a scouting task,
-// (b) fire an in-app notification, (c) trigger SMS (stubbed in Phase 1).
-const DIAGNOSIS_RESULT = {
-  disease: 'Maize Streak Virus',
-  severity: 'critical' as const,
-  recommendation: 'Tenga mimea iliyoathirika ndani ya saa 24. Tumia dawa ya wadudu inayopendekezwa.',
+const MOCK_BG = 'https://images.unsplash.com/photo-1594488651083-023b8a4a3b1e?q=80&w=2940&auto=format&fit=crop';
+
+// Fallback used only when the AI returns unparseable content — keeps the UI
+// from rendering "undefined".
+const FALLBACK_RESULT: Required<Pick<VisionDiagnosis, 'disease' | 'severity'>> & { recommendation: string } = {
+  disease: 'Diagnosis incomplete',
+  severity: 'medium',
+  recommendation: 'Picha haikutoa matokeo wazi. Tafadhali piga picha nyingine yenye mwanga mzuri.',
 };
 
 export default function ScanScreen() {
@@ -60,6 +65,11 @@ export default function ScanScreen() {
   const [phase, setPhase] = useState<ScanPhase>('IDLE');
   const [isOffline, setIsOffline] = useState(false); // Mock offline state
   const [analysisText, setAnalysisText] = useState('Initiating quantum analysis...');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [diagnosis, setDiagnosis] = useState<VisionDiagnosis | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  // Versioning so a stale vision response cannot overwrite a newer one
+  const scanSeq = React.useRef(0);
 
   // Cycle through analysis text to feel agentic
   useEffect(() => {
@@ -79,38 +89,118 @@ export default function ScanScreen() {
     }
   }, [phase]);
 
-  const handleScan = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setPhase('SCANNING');
-    
-    // Simulate multi-phase cinematic scan
-    setTimeout(() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      setPhase('ANALYZING');
-      
-      setTimeout(() => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        setPhase('RESULT');
-        fireCriticalSideEffects();
-      }, 3500);
-    }, 2000);
+  const pickPhoto = async (source: 'camera' | 'library') => {
+    const perm = source === 'camera'
+      ? await ImagePicker.requestCameraPermissionsAsync()
+      : await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      setErrorMsg('Tafadhali ruhusu app kufikia kamera/picha kwenye mipangilio.');
+      setPhase('ERROR');
+      return null;
+    }
+    // quality 0.5 + allowsEditing crops/resizes before we read base64, keeping
+    // payload < ~1.5MB on typical phones and avoiding memory spikes from raw
+    // 12MP captures.
+    const opts = {
+      quality: 0.5,
+      base64: false,
+      allowsEditing: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    } as const;
+    const result = source === 'camera'
+      ? await ImagePicker.launchCameraAsync(opts)
+      : await ImagePicker.launchImageLibraryAsync(opts);
+    if (result.canceled) return null;
+    return result.assets[0];
   };
 
+  const runVisionDiagnosis = async (source: 'camera' | 'library') => {
+    if (!aiConfigured()) {
+      setErrorMsg('Sankofa AI haijasanidiwa bado. Wasiliana na msimamizi.');
+      setPhase('ERROR');
+      return;
+    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+    const asset = await pickPhoto(source);
+    if (!asset) return;
+
+    const seq = ++scanSeq.current;
+    setPhotoUri(asset.uri);
+    setErrorMsg(null);
+    setDiagnosis(null);
+    setPhase('SCANNING');
+
+    // Brief cinematic scan -> analyzing transition
+    await new Promise((r) => setTimeout(r, 800));
+    if (scanSeq.current !== seq) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setPhase('ANALYZING');
+
+    try {
+      // Read picked file as base64 for the vision proxy. On web, expo-image-picker
+      // returns data: URIs which fail readAsStringAsync — handle both paths.
+      let base64: string;
+      let mimeType = 'image/jpeg';
+      if (asset.uri.startsWith('data:')) {
+        const m = asset.uri.match(/^data:([^;]+);base64,(.*)$/);
+        if (!m) throw new AIError('Picha haikuweza kusomwa. Jaribu picha nyingine.', 'validation');
+        mimeType = m[1];
+        base64 = m[2];
+      } else {
+        // Hard cap at 5MB raw to protect lower-end devices from OOM crashes.
+        try {
+          const info = await FileSystem.getInfoAsync(asset.uri);
+          if (info.exists && typeof info.size === 'number' && info.size > 5_000_000) {
+            throw new AIError('Picha ni kubwa sana. Tafadhali piga picha nyepesi.', 'validation');
+          }
+        } catch (e) {
+          if (e instanceof AIError) throw e;
+          // getInfoAsync may fail on some URIs; proceed and let the read fail.
+        }
+        base64 = await FileSystem.readAsStringAsync(asset.uri, { encoding: FileSystem.EncodingType.Base64 });
+        if (asset.uri.toLowerCase().endsWith('.png')) mimeType = 'image/png';
+      }
+
+      const result = await diagnoseCropPhoto(base64, { mimeType });
+      if (scanSeq.current !== seq) return; // stale
+
+      setDiagnosis(result);
+      setPhase('RESULT');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (result.severity === 'critical') {
+        fireCriticalSideEffects(result);
+      }
+    } catch (err) {
+      if (scanSeq.current !== seq) return;
+      const e = err as AIError;
+      const friendly =
+        e?.kind === 'validation' ? e.message
+        : e?.kind === 'unauthorized' ? 'Tafadhali ingia tena ili kutumia uchunguzi wa picha.'
+        : e?.kind === 'network' ? 'Hakuna mtandao. Picha itahifadhiwa na kuchanganuliwa baadaye.'
+        : 'Samahani, uchunguzi wa picha umeshindikana. Jaribu tena.';
+      setErrorMsg(friendly);
+      setPhase('ERROR');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
+  };
+
+  const handleScan = () => runVisionDiagnosis('camera');
+  const handlePickFromGallery = () => runVisionDiagnosis('library');
+
   /**
-   * Critical-severity diagnosis side effects (PRD §2.2 Notification Matrix):
-   *   1. Create a scouting task auto-assigned to the affected block
-   *   2. Push an in-app notification
-   *   3. Schedule a local follow-up reminder in 4h
-   *   4. Send an SMS (stub — wires up in Phase 2)
+   * Critical-severity diagnosis side effects (PRD §2.2 Notification Matrix).
    */
-  const fireCriticalSideEffects = async () => {
-    if (DIAGNOSIS_RESULT.severity !== 'critical') return;
+  const fireCriticalSideEffects = async (result: VisionDiagnosis) => {
+    if (result.severity !== 'critical') return;
+    const disease = result.disease ?? 'Critical crop issue';
+    const recommendation = result.actions?.join(' • ') ?? FALLBACK_RESULT.recommendation;
 
     try {
       await createTask({
-        title: `Critical · Isolate ${DIAGNOSIS_RESULT.disease}`,
-        titleSw: `Hatari · Tenga mimea (${DIAGNOSIS_RESULT.disease})`,
-        description: DIAGNOSIS_RESULT.recommendation,
+        title: `Critical · Isolate ${disease}`,
+        titleSw: `Hatari · Tenga mimea (${disease})`,
+        description: recommendation,
         category: 'scouting',
         priority: 'critical',
         status: 'pending',
@@ -120,26 +210,24 @@ export default function ScanScreen() {
       });
 
       addNotification({
-        title: `⚠️ ${DIAGNOSIS_RESULT.disease} detected`,
-        body: DIAGNOSIS_RESULT.recommendation,
+        title: `⚠️ ${disease} detected`,
+        body: recommendation,
         type: 'warning',
       });
 
-      // Local push reminder in 4 hours
       scheduleReminder(
         'Follow-up · Crop diagnosis',
-        `Check progress on ${DIAGNOSIS_RESULT.disease} containment.`,
+        `Check progress on ${disease} containment.`,
         4 * 60 * 60,
         '/tasks',
-      ).catch(() => { /* notification permission may be denied — silent */ });
+      ).catch(() => { /* permission may be denied — silent */ });
 
-      // SMS adapter (stub until Phase 2 SMS credentials are configured)
       if (agroId?.phoneNumber) {
         sendSms({
           to: agroId.phoneNumber,
           event: 'critical_diagnosis',
-          body: `KILIMO AI: ${DIAGNOSIS_RESULT.disease} imegunduliwa. Tenga mimea ndani ya 24h. Angalia app.`,
-          meta: { disease: DIAGNOSIS_RESULT.disease },
+          body: `KILIMO AI: ${disease} imegunduliwa. Tenga mimea ndani ya 24h. Angalia app.`,
+          meta: { disease },
         }).catch(() => { /* stub may log but never throws */ });
       }
     } catch (err) {
@@ -149,7 +237,11 @@ export default function ScanScreen() {
 
   const handleReset = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    scanSeq.current++; // invalidate any in-flight diagnosis
     setPhase('IDLE');
+    setPhotoUri(null);
+    setDiagnosis(null);
+    setErrorMsg(null);
   };
 
   const toggleNetwork = () => {
@@ -199,8 +291,8 @@ export default function ScanScreen() {
         transition={{ type: "spring", damping: 25, stiffness: 70 }}
         style={styles.cameraView}
       >
-        <Image 
-          source={{ uri: 'https://images.unsplash.com/photo-1594488651083-023b8a4a3b1e?q=80&w=2940&auto=format&fit=crop' }} 
+        <Image
+          source={{ uri: photoUri ?? MOCK_BG }}
           style={styles.mockCamera}
         />
         
@@ -361,6 +453,36 @@ export default function ScanScreen() {
               </motion.View>
             )}
 
+            {/* ERROR PHASE */}
+            {phase === 'ERROR' && (
+              <motion.View
+                key="error"
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0 }}
+                style={styles.resultWrapper}
+              >
+                <BlurView intensity={isDark ? 40 : 90} tint={isDark ? 'dark' : 'light'} style={[styles.resultCard, { borderColor: 'rgba(239,68,68,0.3)' }]}>
+                  <View style={styles.resultHeader}>
+                    <View style={[styles.resultIcon, { backgroundColor: '#ef4444' }]}>
+                      <AlertCircle size={32} color="#fff" />
+                    </View>
+                    <View style={styles.resultMeta}>
+                      <Text style={[styles.resultName, { color: colors.text }]}>Imeshindikana</Text>
+                      <Text style={[styles.confText, { color: colors.textMute }]}>Uchunguzi haukufanyika</Text>
+                    </View>
+                  </View>
+                  <View style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}>
+                    <Text style={[styles.detailBody, { color: colors.textMute }]}>{errorMsg ?? 'Hitilafu isiyojulikana.'}</Text>
+                  </View>
+                  <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Try again">
+                    <RotateCw size={18} color={colors.textMute} />
+                    <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Jaribu Tena</Text>
+                  </TouchableOpacity>
+                </BlurView>
+              </motion.View>
+            )}
+
             {/* RESULT PHASE */}
             {phase === 'RESULT' && (
               <motion.View 
@@ -377,49 +499,68 @@ export default function ScanScreen() {
                     style={StyleSheet.absoluteFill}
                   />
                   
-                  <View style={styles.resultHeader}>
-                    <motion.View 
-                      initial={{ rotate: -20, scale: 0.5 }}
-                      animate={{ rotate: 0, scale: 1 }}
-                      transition={{ type: "spring", delay: 0.2 }}
-                      style={[styles.resultIcon, { backgroundColor: colors.primary }]}
-                    >
-                      <BrainCircuit size={32} color="#000" />
-                    </motion.View>
-                    <View style={styles.resultMeta}>
-                      <Text style={[styles.resultName, { color: colors.text }]}>Maize Streak Virus</Text>
-                      <motion.View 
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 }}
-                        style={styles.confBadge}
-                      >
-                        <Text style={styles.confText}>98.4% AI Confidence</Text>
-                      </motion.View>
-                    </View>
-                  </View>
+                  {(() => {
+                    const sev = diagnosis?.severity ?? FALLBACK_RESULT.severity;
+                    const sevColor = sev === 'critical' ? '#ef4444'
+                      : sev === 'high' ? '#f97316'
+                      : sev === 'medium' ? '#eab308'
+                      : '#22c55e';
+                    const sevLabel = sev === 'critical' ? 'Critical Priority'
+                      : sev === 'high' ? 'High Priority'
+                      : sev === 'medium' ? 'Medium Priority'
+                      : 'Low Priority';
+                    const disease = diagnosis?.disease ?? FALLBACK_RESULT.disease;
+                    const cropLine = diagnosis?.crop ? `${diagnosis.crop} · ` : '';
+                    const actions = diagnosis?.actions ?? [];
+                    const body = actions.length > 0
+                      ? actions.map((a) => `• ${a}`).join('\n')
+                      : (diagnosis?.raw?.slice(0, 280) ?? FALLBACK_RESULT.recommendation);
+                    return (
+                      <>
+                        <View style={styles.resultHeader}>
+                          <motion.View
+                            initial={{ rotate: -20, scale: 0.5 }}
+                            animate={{ rotate: 0, scale: 1 }}
+                            transition={{ type: 'spring', delay: 0.2 }}
+                            style={[styles.resultIcon, { backgroundColor: colors.primary }]}
+                          >
+                            <BrainCircuit size={32} color="#000" />
+                          </motion.View>
+                          <View style={styles.resultMeta}>
+                            <Text style={[styles.resultName, { color: colors.text }]}>{disease}</Text>
+                            <motion.View
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.4 }}
+                              style={styles.confBadge}
+                            >
+                              <Text style={styles.confText}>{cropLine}AI Diagnosis</Text>
+                            </motion.View>
+                          </View>
+                        </View>
 
-                  {isOffline && (
-                    <motion.View initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.offlineNoticeBox}>
-                      <CloudOff size={16} color="#fbbf24" />
-                      <Text style={styles.offlineNoticeText}>Saved locally. Will sync to your Agro ID when online.</Text>
-                    </motion.View>
-                  )}
+                        {isOffline && (
+                          <motion.View initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.offlineNoticeBox}>
+                            <CloudOff size={16} color="#fbbf24" />
+                            <Text style={styles.offlineNoticeText}>Saved locally. Will sync to your Agro ID when online.</Text>
+                          </motion.View>
+                        )}
 
-                  <motion.View 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}
-                  >
-                    <View style={styles.detailTitleRow}>
-                      <AlertCircle size={18} color="#ef4444" />
-                      <Text style={[styles.detailTitle, { color: colors.text }]}>Critical Priority</Text>
-                    </View>
-                    <Text style={[styles.detailBody, { color: colors.textMute }]}>
-                      High risk of spread to neighboring plots. Immediate isolation and vector control required to protect yield.
-                    </Text>
-                  </motion.View>
+                        <motion.View
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 }}
+                          style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}
+                        >
+                          <View style={styles.detailTitleRow}>
+                            <AlertCircle size={18} color={sevColor} />
+                            <Text style={[styles.detailTitle, { color: colors.text }]}>{sevLabel}</Text>
+                          </View>
+                          <Text style={[styles.detailBody, { color: colors.textMute }]}>{body}</Text>
+                        </motion.View>
+                      </>
+                    );
+                  })()}
 
                   <motion.View initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
                     <TouchableOpacity 
@@ -455,7 +596,7 @@ export default function ScanScreen() {
               exit={{ y: 100, opacity: 0 }}
               style={styles.footer}
             >
-              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Open gallery">
+              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Open gallery" onPress={handlePickFromGallery}>
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
                   <ImageIcon size={24} color="#ffffff" />
                 </BlurView>

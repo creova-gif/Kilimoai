@@ -20,6 +20,11 @@
       "bundleIdentifier": "com.jaymafie.kilimoai",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "KILIMO AI hutumia kamera kupiga picha za mimea kwa uchunguzi wa AI.",
+        "NSPhotoLibraryUsageDescription": "KILIMO AI hutumia picha zako kuchanganua afya ya mazao.",
+        "NSMicrophoneUsageDescription": "KILIMO AI hutumia kipaza sauti kwa amri za sauti kwa Sankofa AI."
       }
     },
     "android": {
@@ -32,7 +37,10 @@
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ],
       "versionCode": 3
     },
@@ -45,6 +53,13 @@
       "expo-secure-store",
       "expo-notifications",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "KILIMO AI hutumia picha zako kuchanganua afya ya mazao.",
+          "cameraPermission": "KILIMO AI hutumia kamera kupiga picha za mimea kwa uchunguzi wa AI."
+        }
+      ],
+      [
         "expo-font",
         {
           "fonts": [
@@ -53,7 +68,8 @@
             "node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "scheme": "kilimoai",
     "extra": {

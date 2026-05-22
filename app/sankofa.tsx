@@ -38,6 +38,15 @@ import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
+import { chat as aiChat, transcribeAudio, aiConfigured, AIError, ChatMessage as AIChatMessage } from '../lib/ai';
+import { useKilimoStore } from '../store/useKilimoStore';
+import {
+  useAudioRecorder,
+  RecordingPresets,
+  requestRecordingPermissionsAsync,
+  setAudioModeAsync,
+} from 'expo-audio';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -66,11 +75,12 @@ export default function SankofaScreen() {
   const [isOffline, setIsOffline] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [voiceState, setVoiceState] = useState<VoiceState>('IDLE');
+  const addNotification = useKilimoStore((s) => s.addNotification);
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Jambo! I'm Sankofa AI, your neural agricultural advisor. My sensors are calibrated to East African soil conditions. How can I assist you today?",
+      text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
       sender: 'ai',
       timestamp: new Date(),
     }
@@ -84,68 +94,218 @@ export default function SankofaScreen() {
     }
   }, [messages, isTyping, isVoiceMode]);
 
-  // Handle Text Send
-  const handleSend = () => {
-    if (inputText.trim() === '') return;
+  // Tracks the in-flight request id so a late response from a cancelled or
+  // stale send cannot mutate the UI out of order.
+  const requestSeqRef = useRef(0);
+  // Latest transcript shown in voice-mode SPEAKING bubble.
+  const [voiceReply, setVoiceReply] = useState<string>('');
+  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  // Mirror of `messages` for deterministic history derivation without relying
+  // on React's setState callback timing.
+  const messagesRef = useRef<Message[]>(messages);
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
+
+  /**
+   * Shared send path used by both text input and voice transcription.
+   * Centralizes concurrency guarding, history truncation, server policy
+   * compliance, and error UX so the voice flow inherits the same hardening
+   * already verified for text.
+   */
+  type SendResult = 'sent' | 'busy' | 'invalid';
+  const sendUserMessage = async (
+    text: string,
+    opts: { fromVoice?: boolean } = {}
+  ): Promise<SendResult> => {
+    const trimmed = text.trim();
+    if (trimmed === '') return 'invalid';
+    if (isTyping) return 'busy';
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: inputText,
+      text: trimmed,
       sender: 'user',
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputText('');
+    const reqId = ++requestSeqRef.current;
+    // Derive snapshot deterministically from the ref — independent of React's
+    // setState callback scheduling — so history always includes the newest msg.
+    const snapshot: Message[] = [...messagesRef.current, userMessage];
+    messagesRef.current = snapshot;
+    setMessages(snapshot);
     setIsTyping(true);
 
-    // Mock AI Response
-    setTimeout(() => {
-      const aiResponse: Message = {
+    const appendAi = (txt: string) => {
+      const next = [...messagesRef.current, {
         id: (Date.now() + 1).toString(),
-        text: isOffline 
-          ? "Network unstable. Falling back to cached local data. Your soil moisture is at 12%. Irrigate immediately."
-          : "Analyzing your request... Based on my recent satellite ingestion, your local soil moisture is slightly below the 15% threshold. I recommend a 20-minute irrigation cycle before sunset.",
-        sender: 'ai',
+        text: txt,
+        sender: 'ai' as const,
         timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, aiResponse]);
+      }];
+      messagesRef.current = next;
+      setMessages(next);
+      if (opts.fromVoice) {
+        setVoiceReply(txt);
+        setVoiceState('SPEAKING');
+        // Auto-return to IDLE after a brief read-aloud window so user can tap again.
+        setTimeout(() => {
+          if (requestSeqRef.current === reqId) setVoiceState('IDLE');
+        }, 5000);
+      }
+    };
+
+    if (!aiConfigured()) {
+      const msg = 'Sankofa AI haijasanidiwa bado. Mtumiaji wa app anatakiwa kuwasha kazi ya OpenAI kwenye Supabase.';
+      if (requestSeqRef.current !== reqId) return 'sent';
+      appendAi(msg);
+      addNotification({ title: 'Sankofa AI', body: msg, type: 'warning' });
       setIsTyping(false);
+      return 'sent';
+    }
+
+    try {
+      const history: AIChatMessage[] = snapshot.slice(-16).map((m) => ({
+        role: m.sender === 'ai' ? 'assistant' : 'user',
+        content: m.text,
+      }));
+      const reply = await aiChat(history);
+      if (requestSeqRef.current !== reqId) return 'sent';
+      appendAi(reply || 'Samahani, sikuelewa swali lako. Tafadhali jaribu tena.');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }, 2000);
+    } catch (err) {
+      if (requestSeqRef.current !== reqId) return 'sent';
+      const e = err as AIError;
+      const friendly =
+        e?.kind === 'validation' ? e.message
+        : e?.kind === 'unauthorized' ? 'Tafadhali ingia tena ili kutumia Sankofa AI.'
+        : e?.kind === 'network' ? 'Hakuna mtandao. Hakikisha umeunganishwa kisha jaribu tena.'
+        : 'Samahani, kuna hitilafu kwenye huduma ya AI kwa sasa.';
+      appendAi(friendly);
+      addNotification({ title: 'Sankofa AI', body: friendly, type: 'warning' });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      if (requestSeqRef.current === reqId) setIsTyping(false);
+    }
+    return 'sent';
   };
 
-  // Handle Voice Interaction
+  // Text-input wrapper that also clears the input field.
+  const handleSend = async () => {
+    const text = inputText;
+    if (text.trim() === '' || isTyping) return;
+    setInputText('');
+    await sendUserMessage(text);
+  };
+
+  // ── Voice mode (T203 — Whisper STT via openai-proxy) ────────────────────
   const toggleVoiceMode = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    // Leaving voice mode mid-flight must invalidate any in-flight transcribe
+    // /chat work AND stop the recorder. Bumping requestSeqRef ensures late
+    // responses cannot mutate UI after we leave.
+    if (isVoiceMode) {
+      requestSeqRef.current++;
+      if (voiceState === 'LISTENING') recorder.stop().catch(() => undefined);
+    }
     setIsVoiceMode(!isVoiceMode);
     setVoiceState('IDLE');
+    setVoiceReply('');
+    setIsTyping(false);
+  };
+
+  const startRecording = async () => {
+    try {
+      const perm = await requestRecordingPermissionsAsync();
+      if (!perm.granted) {
+        addNotification({
+          title: 'Sankofa AI',
+          body: 'Tafadhali ruhusu kipaza sauti kwenye mipangilio ili kutumia sauti.',
+          type: 'warning',
+        });
+        return;
+      }
+      await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+      await recorder.prepareToRecordAsync();
+      recorder.record();
+      setVoiceState('LISTENING');
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } catch (err) {
+      console.warn('[sankofa] start recording failed', err);
+      addNotification({ title: 'Sankofa AI', body: 'Kipaza sauti hakikuanzishwa.', type: 'warning' });
+      setVoiceState('IDLE');
+    }
+  };
+
+  const stopRecordingAndTranscribe = async () => {
+    // Cancellation token: any toggleVoiceMode bump invalidates this run.
+    const opId = ++requestSeqRef.current;
+    const stale = () => requestSeqRef.current !== opId || !isVoiceMode;
+    try {
+      setVoiceState('PROCESSING');
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      await recorder.stop();
+      if (stale()) return;
+      const uri = recorder.uri;
+      if (!uri) throw new AIError('Hakuna rekodi iliyopatikana.', 'validation');
+
+      // 5MB hard cap protects low-end devices from OOM during base64 encode.
+      try {
+        const info = await FileSystem.getInfoAsync(uri);
+        if (info.exists && typeof info.size === 'number' && info.size > 5_000_000) {
+          throw new AIError('Sauti ni ndefu sano. Jaribu kwa muda mfupi.', 'validation');
+        }
+      } catch (e) {
+        if (e instanceof AIError) throw e;
+      }
+
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      if (stale()) return;
+      const mimeType = uri.toLowerCase().endsWith('.wav') ? 'audio/wav' : 'audio/m4a';
+      const transcript = await transcribeAudio(base64, { mimeType, language: 'sw' });
+      if (stale()) return;
+
+      if (!transcript || !transcript.trim()) {
+        addNotification({ title: 'Sankofa AI', body: 'Sikukusikia. Jaribu tena.', type: 'warning' });
+        setVoiceState('IDLE');
+        return;
+      }
+      // Pipe the transcript through the shared chat path so concurrency,
+      // history, and error-mapping rules apply identically to text + voice.
+      const result = await sendUserMessage(transcript, { fromVoice: true });
+      // If the shared guard rejected (prior request still in flight), the
+      // voice flow would otherwise hang in PROCESSING. Surface + reset.
+      if (result === 'busy') {
+        addNotification({
+          title: 'Sankofa AI',
+          body: 'Subiri jibu la swali la awali kumalizika kabla ya kuuliza tena.',
+          type: 'warning',
+        });
+        setVoiceState('IDLE');
+      } else if (result === 'invalid') {
+        setVoiceState('IDLE');
+      }
+    } catch (err) {
+      if (stale()) return;
+      const e = err as AIError;
+      const friendly =
+        e?.kind === 'validation' ? e.message
+        : e?.kind === 'unauthorized' ? 'Tafadhali ingia tena ili kutumia sauti.'
+        : e?.kind === 'network' ? 'Hakuna mtandao. Jaribu tena ukiunganishwa.'
+        : 'Samahani, sauti haijachanganuliwa. Jaribu tena.';
+      addNotification({ title: 'Sankofa AI', body: friendly, type: 'warning' });
+      setVoiceState('IDLE');
+    }
   };
 
   const handleVoiceInteraction = () => {
     if (voiceState === 'IDLE' || voiceState === 'SPEAKING') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      setVoiceState('LISTENING');
-      
-      // Simulate listening -> processing -> speaking
-      setTimeout(() => {
-        setVoiceState('PROCESSING');
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        
-        setTimeout(() => {
-          setVoiceState('SPEAKING');
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          
-          setTimeout(() => {
-            setVoiceState('IDLE');
-          }, 4000); // Speaking duration
-        }, 2000); // Processing duration
-      }, 3000); // Listening duration
+      startRecording();
+    } else if (voiceState === 'LISTENING') {
+      stopRecordingAndTranscribe();
     } else {
-      // Cancel
+      // PROCESSING — already in flight; tap is a no-op.
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setVoiceState('IDLE');
     }
   };
 
@@ -281,18 +441,18 @@ export default function SankofaScreen() {
             >
               <View style={styles.voiceHeader}>
                 <Text style={[styles.voicePhaseText, { color: colors.text }]}>
-                  {voiceState === 'IDLE' && "Sankofa is Ready"}
-                  {voiceState === 'LISTENING' && "Sankofa is Listening..."}
-                  {voiceState === 'PROCESSING' && "Analyzing Audio..."}
-                  {voiceState === 'SPEAKING' && "Sankofa is Speaking"}
+                  {voiceState === 'IDLE' && "Sankofa yuko tayari — gusa kuongea"}
+                  {voiceState === 'LISTENING' && "Sankofa anakusikiliza..."}
+                  {voiceState === 'PROCESSING' && "Inachanganua sauti..."}
+                  {voiceState === 'SPEAKING' && "Sankofa anajibu"}
                 </Text>
-                {voiceState === 'SPEAKING' && (
+                {voiceState === 'SPEAKING' && !!voiceReply && (
                   <motion.Text 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     style={[styles.voiceTranscript, { color: colors.textMute }]}
                   >
-                    "Soil moisture is at 12%. Irrigate immediately."
+                    {voiceReply}
                   </motion.Text>
                 )}
               </View>
@@ -430,10 +590,10 @@ export default function SankofaScreen() {
                           <TouchableOpacity 
                             style={[
                               styles.sendBtn, 
-                              { backgroundColor: inputText.trim() ? colors.primary : colors.slate[400] + '40' }
+                              { backgroundColor: (inputText.trim() && !isTyping) ? colors.primary : colors.slate[400] + '40' }
                             ]}
                             onPress={handleSend}
-                            disabled={!inputText.trim()}
+                            disabled={!inputText.trim() || isTyping}
                           >
                             <Send size={18} color={inputText.trim() ? "#000" : colors.textMute} />
                           </TouchableOpacity>
