@@ -11,16 +11,32 @@ integrations = ["github:1.0.0"]
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Mobile App"
+runButton = "Project"
 
 [[workflows.workflow]]
-name = "Mobile App"
+name = "Project"
 mode = "parallel"
 author = "agent"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev:web & npx expo start --tunnel"
+task = "workflow.run"
+args = "Start application"
 
 [workflows.workflow.metadata]
 outputType = "mobile"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
