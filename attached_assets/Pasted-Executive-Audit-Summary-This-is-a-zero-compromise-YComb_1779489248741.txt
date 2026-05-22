@@ -1,0 +1,1565 @@
+Executive Audit Summary
+This is a zero-compromise, YCombinator-grade audit framework designed to test every aspect of Kilimo AI against your Master Blueprint and PRD. Every user journey, every edge case, every design element, every metric.
+
+PART 1: PRE-AUDIT SETUP
+Test Environment Configuration
+markdown
+## Required Test Devices / Emulators
+
+| Device | Network Condition | Priority |
+|--------|------------------|----------|
+| Smartphone (Android) - Low-end ($50-100) | 2G / Edge | P0 |
+| Smartphone (Android) - Mid-range | 3G / 4G | P0 |
+| iPhone (any) | 4G / 5G | P1 |
+| Feature phone (SMS/USSD fallback) | 2G | P0 |
+| Offline mode (airplane mode) | No signal | P0 |
+
+## Test Accounts to Create
+
+| Role | Phone | Email | Language |
+|------|-------|-------|----------|
+| Smallholder Farmer | +255 7XX XXX 001 | farmer1@test.com | Swahili |
+| Commercial Farmer | +255 7XX XXX 002 | farmer2@test.com | Swahili/English |
+| Farm Manager | +255 7XX XXX 003 | manager@test.com | English |
+| Agribusiness Buyer | +255 7XX XXX 004 | buyer@agribiz.com | English |
+| Cooperative Leader | +255 7XX XXX 005 | coop@test.com | Swahili |
+
+## Test Data Required
+
+- Sample crop disease images (healthy, early-stage, severe)
+- GPS coordinates for mock farms
+- Mock M-Pesa/Airtel test credentials
+- Sample marketplace listings
+PART 2: THE 4-PILLAR AUDIT FRAMEWORK
+Audit Command Structure
+markdown
+For EACH test case below, answer:
+
+[PASS/FAIL/PARTIAL] - [Severity: Critical/Major/Minor/Nice-to-have]
+
+Evidence: (screenshot / video / console log)
+
+Expected Behavior: (from docs)
+
+Actual Behavior: (observed)
+
+Fix Required: (if fail)
+PILLAR A: AI & ADVISORY SUITE
+A1. Photo Crop Diagnosis (P0 - CRITICAL)
+markdown
+### TEST CASE: A1.1 - Successful Disease Detection
+User: Smallholder Farmer
+Action: Upload diseased crop photo (use provided test images)
+
+Acceptance Criteria Checklist:
+[ ] App opens camera within 2 seconds
+[ ] Upload shows progress indicator (not frozen)
+[ ] Response returns in < 5 seconds on 3G
+[ ] Response includes: disease_name
+[ ] Response includes: confidence_% (0-100)
+[ ] Response includes: severity (low/medium/high/critical)
+[ ] Response includes: remedy_text
+[ ] Response includes: nearby_dealers list
+[ ] Response displays in Swahili when user language = Swahili
+
+Critical Edge Cases:
+[ ] TEST: Upload same photo twice → should return consistent results
+[ ] TEST: Upload blurry image → should return low confidence warning
+[ ] TEST: Upload healthy leaf → should return "No disease detected"
+[ ] TEST: Upload non-plant image → graceful error with helpful message
+
+### TEST CASE: A1.2 - Critical Severity Auto-Task
+User: Smallholder Farmer  
+Action: Upload image of disease marked as "critical"
+
+Check:
+[ ] Dialog appears: "Create treatment task?" (Swahili/English based on user)
+[ ] Clicking "Yes" creates task in Task Management
+[ ] Task has priority = HIGH
+[ ] SMS is sent to farmer's phone (check Africa's Talking logs)
+[ ] SMS contains: disease name + remedy + severity warning
+[ ] In-app notification also appears
+
+### TEST CASE: A1.3 - Offline Diagnosis Queue (P1)
+User: Smallholder Farmer with airplane mode ON
+Action: Take photo while offline
+
+Check:
+[ ] App accepts photo without error
+[ ] Shows "Queued - Will diagnose when online" indicator
+[ ] Photo appears in offline queue (visible in UI)
+[ ] When connectivity restored:
+    [ ] Auto-uploads within 30 seconds
+    [ ] Diagnosis returns
+    [ ] User receives notification
+    [ ] SMS sent if critical
+A2. AI Chat Assistant (P0)
+markdown
+### TEST CASE: A2.1 - Basic Chat Functionality
+User: Any
+Action: Type questions in chat
+
+Questions to test:
+[ ] "Nina ugonjwa gani kwenye mahindi yangu?" (Swahili)
+[ ] "What is the best time to plant maize in Arusha?"
+[ ] "Show me my farm summary"
+[ ] "How much are tomatoes in Dar es Salaam?"
+
+Checks:
+[ ] Response in user's selected language
+[ ] Response is context-aware (knows user's region/crops if registered)
+[ ] Chat history persists after refresh
+[ ] Typing indicator shows while AI responds
+[ ] Can share chat response via WhatsApp/SMS
+
+### TEST CASE: A2.2 - Voice Assistant (P1)
+User: Low-literacy persona
+Action: Tap microphone icon, speak in Swahili
+
+Test phrases:
+[ ] "Nina shida na wadudu kwenye mboga" (I have pest problem on vegetables)
+[ ] "Bei ya mbolea sasa" (Fertilizer price now)
+[ ] "Hali ya hewa wiki hii" (Weather this week)
+
+Checks:
+[ ] Voice input starts within 1 second of tap
+[ ] Speech-to-text transcription appears
+[ ] Transcription is editable before sending
+[ ] AI responds in spoken Swahili (TTS)
+[ ] TTS can be toggled off/on
+[ ] Works in noisy environment test (play background farm sounds)
+
+### TEST CASE: A2.3 - Digital Farm Twin (Premium/P2)
+User: Farm Manager (Premium)
+Action: Access Digital Farm Twin from dashboard
+
+Checks:
+[ ] Visual farm map loads with registered plots
+[ ] Can click plot → shows current crop, planting date, status
+[ ] "What if" scenario builder accessible
+[ ] Can select crop rotation scenario
+[ ] System returns projected yield estimate
+[ ] System returns estimated P&L
+[ ] Can save and compare multiple scenarios
+A3. Predictive Models (P2 - Premium/Enterprise)
+markdown
+### TEST CASE: A3.1 - Yield Forecast
+User: Farm Manager
+Action: Navigate to Analytics → Yield Forecast
+
+Checks:
+[ ] Forecast shows per registered plot
+[ ] Forecast includes confidence range (e.g., "2.4-3.1 tons/acre")
+[ ] Historical comparison data visible
+[ ] Can adjust inputs (fertilizer, water) to see impact
+[ ] Export forecast as PDF
+
+### TEST CASE: A3.2 - Price Trend Predictions
+User: Farm Manager or Agribusiness
+Action: Analytics → Price Predictions
+
+Checks:
+[ ] Shows 30/60/90 day price predictions for user's crops
+[ ] Chart visualizes historical + predicted prices
+[ ] Confidence intervals shown
+[ ] Alerts can be set for predicted price thresholds
+PILLAR B: FARM MANAGEMENT SUITE
+B1. Crop Planning & Calendar (P1)
+markdown
+### TEST CASE: B1.1 - AI-Assisted Crop Selection
+User: Commercial Farmer
+Action: Crop Planning → Add New Plan
+
+Checks:
+[ ] Can select plot from farm map (or create new)
+[ ] AI recommendations appear based on:
+    [ ] Region/zone
+    [ ] Soil type (if entered)
+    [ ] Previous crop (rotation logic)
+    [ ] Season (long rains/short rains/dry)
+[ ] Recommended crops show expected yield range
+[ ] Can accept or override AI recommendation
+
+### TEST CASE: B1.2 - Visual Crop Calendar
+User: Commercial Farmer
+Action: View crop calendar after creating plan
+
+Checks:
+[ ] Calendar shows planting window (green)
+[ ] Calendar shows growth stages (yellow)
+[ ] Calendar shows harvest window (orange)
+[ ] Tasks auto-generated for:
+    [ ] Land preparation date
+    [ ] Planting date
+    [ ] Fertilizer application dates
+    [ ] Pest scouting dates
+    [ ] Harvest start date
+[ ] Calendar is mobile-responsive (pinch zoom works)
+[ ] Swahili month names display correctly
+B2. Farm Mapping (GPS)
+markdown
+### TEST CASE: B2.1 - Interactive Field Mapping
+User: Commercial Farmer
+Action: Farm Mapping → Add New Field
+
+Checks:
+[ ] GPS gets location within 10 meters accuracy
+[ ] Can draw polygon to mark field boundaries
+[ ] Can enter field size manually if GPS fails
+[ ] Can assign crop to drawn field
+[ ] Fields appear on main farm map
+[ ] Map supports offline base tiles (cached)
+
+### TEST CASE: B2.2 - Plot-Level Assignment
+User: Farm Manager (multiple plots)
+Action: Manage multiple fields
+
+Checks:
+[ ] Each plot has independent:
+    [ ] Crop assignment
+    [ ] Task list
+    [ ] Input tracking
+    [ ] Yield recording
+[ ] Can toggle between plot views
+[ ] Can merge plots or split existing plot
+B3. Task Management
+markdown
+### TEST CASE: B3.1 - Task Creation & Tracking
+User: Commercial Farmer
+Action: Task Management
+
+Checks:
+[ ] Can create manual task (title, date, priority, notes)
+[ ] Priority colors: HIGH=Red, MEDIUM=Yellow, LOW=Blue
+[ ] Task calendar view (month/week/day)
+[ ] Task list view with sorting by date/priority
+[ ] Push notification at 8am for tasks due today
+[ ] Can mark task complete → moves to history
+[ ] Completed tasks contribute to gamification points
+
+### TEST CASE: B3.2 - Auto-Creation from AI Diagnosis
+User: Smallholder Farmer
+Action: Get critical diagnosis → accept task creation
+
+Checks:
+[ ] Task appears with disease name as title
+[ ] Task description contains remedy text
+[ ] Due date = today + urgency level
+[ ] Task links back to diagnosis for reference
+[ ] Can add photo evidence to task
+B4. Livestock & Inventory (Commercial+)
+markdown
+### TEST CASE: B4.1 - Livestock Health Records
+User: Commercial Farmer
+Action: Livestock → Add Animal
+
+Checks:
+[ ] Can add animal with type, breed, birth date, tag ID
+[ ] Vaccination schedule with alerts
+[ ] Health incident logging
+[ ] Growth tracking with weight entries
+[ ] Photo gallery per animal
+[ ] QR code generation for animal ID
+
+### TEST CASE: B4.2 - Inventory Management
+User: Farm Manager
+Action: Inventory → Add Input
+
+Checks:
+[ ] Add seed/fertilizer/pesticide with quantity and unit
+[ ] Set low stock threshold
+[ ] Low stock triggers notification
+[ ] Consumption tracking (use X units on Y date)
+[ ] Purchase history linked to finance tracker
+PILLAR C: MARKET & SALES SUITE
+C1. Market Prices (P0)
+markdown
+### TEST CASE: C1.1 - Real-Time Price Display
+User: Any
+Action: Market → Prices
+
+Checks:
+[ ] Prices shown for user's registered crops FIRST
+[ ] Can search other crops
+[ ] Shows price per unit (kg/piece/bunch based on crop)
+[ ] Shows market location and distance from user
+[ ] Last updated timestamp visible
+[ ] Historical 30-day trend chart accessible
+[ ] Refreshes with pull-to-refresh
+
+### TEST CASE: C1.2 - Price Alerts (P0)
+User: Any
+Action: Set price alert on a crop
+
+Checks:
+[ ] Can set alert for "above X price" OR "below Y price"
+[ ] Alert confirmation shown
+[ ] Alert appears in Alerts tab
+[ ] Can edit/delete alert
+[ ] When price crosses threshold:
+    [ ] In-app notification received
+    [ ] SMS received (check Africa's Talking)
+    [ ] Alert marked as "triggered" in history
+C2. Marketplace (P0)
+markdown
+### TEST CASE: C2.1 - Create Listing (Farmer)
+User: Smallholder Farmer
+Action: Marketplace → Sell → Create Listing
+
+Checks:
+[ ] Can select crop from registered crops (or add new)
+[ ] Quantity entry with unit selection
+[ ] Price entry (per unit OR total)
+[ ] Location auto-populated from farm GPS
+[ ] Quality grade selection (if applicable)
+[ ] Photo upload (max 5 images)
+[ ] Listing published within 2 seconds
+[ ] Listing appears in search within 5 seconds
+
+### TEST CASE: C2.2 - Search & Filter (Agribusiness Buyer)
+User: Agribusiness Buyer
+Action: Marketplace → Buy → Search
+
+Filters to test:
+[ ] Crop type (dropdown with search)
+[ ] Region (Tanzania regions: Arusha, Kilimanjaro, Mbeya, Iringa, etc.)
+[ ] Quantity range (min/max kg)
+[ ] Price range (min/max TZS)
+[ ] Certification (Organic / GlobalG.A.P. / None)
+[ ] Cooperative affiliation
+
+Checks:
+[ ] Filter results update in real-time
+[ ] Results show seller rating (stars)
+[ ] Results show distance from buyer
+[ ] Can save search as alert
+
+### TEST CASE: C2.3 - Submit Offer & Negotiate
+User: Agribusiness Buyer
+Action: Click listing → Make Offer
+
+Checks:
+[ ] Offer includes: proposed price, quantity, delivery deadline
+[ ] Optional message to seller
+[ ] Seller receives in-app + SMS notification
+[ ] Seller can: Accept / Counter / Decline
+[ ] Counter-offer flow preserves original terms with modifications
+[ ] Chat between buyer/seller for negotiation (within app)
+C3. Contract Farming (P0 for Commercial+)
+markdown
+### TEST CASE: C3.1 - Digital Contract Creation
+User: Agribusiness Buyer or Farm Manager
+Action: Contracts → Create New
+
+Checks:
+[ ] Contract lifecycle visible: DRAFT → SENT → UNDER_REVIEW → SIGNED → ACTIVE → MILESTONE_DUE → COMPLETED
+[ ] Template includes:
+    [ ] Parties (buyer/seller names, IDs, signatures)
+    [ ] Crop specifications (type, variety, quality standards)
+    [ ] Quantity (total, with unit)
+    [ ] Price (fixed OR market-linked formula)
+    [ ] Delivery schedule and location
+    [ ] Payment milestones (dates or events)
+    [ ] Penalty clauses (optional)
+[ ] Can save as draft
+[ ] Can send to counterparty (in-app + SMS link)
+
+### TEST CASE: C3.2 - Contract Signing & Milestones
+User: Both parties
+Action: Sign received contract
+
+Checks:
+[ ] Signature capture (draw or type name)
+[ ] Timestamp and GPS location recorded
+[ ] Both signatures required
+[ ] After signing:
+    [ ] Status becomes ACTIVE
+    [ ] Milestones visible on both dashboards
+    [ ] 3-day reminder before milestone due (SMS + in-app)
+[ ] Payment release linked to milestone completion
+[ ] Completed contract archived with PDF export
+
+### TEST CASE: C3.3 - Contract Farming Lifecycle
+User: Complete full cycle
+
+Flow to test:
+[ ] 1. Buyer creates draft contract
+[ ] 2. Buyer sends to farmer
+[ ] 3. Farmer receives notification
+[ ] 4. Farmer reviews and signs
+[ ] 5. Buyer reviews final and signs
+[ ] 6. Contract becomes ACTIVE
+[ ] 7. Milestone 1 due date arrives → notification sent
+[ ] 8. Farmer marks milestone complete (upload proof)
+[ ] 9. Buyer approves milestone
+[ ] 10. Payment released via Mobile Money Hub
+[ ] 11. Repeat for subsequent milestones
+[ ] 12. Final milestone → Contract COMPLETED
+
+Test failure cases:
+[ ] Farmer rejects contract → status DECLINED, both notified
+[ ] Milestone missed → escalation notification
+C4. Input Supply
+markdown
+### TEST CASE: C4.1 - Browse & Order Inputs
+User: Commercial Farmer
+Action: Input Supply → Browse
+
+Checks:
+[ ] Suppliers are vetted (badge visible)
+[ ] Seeds: filtering by crop type, variety, certification
+[ ] Fertilizers: filtering by NPK ratio, organic/synthetic
+[ ] Pesticides: filtering by target pest, organic status
+[ ] Price comparison across suppliers
+[ ] Delivery scheduling: can select delivery date
+[ ] Order confirmation with tracking number
+
+### TEST CASE: C4.2 - Bulk Order for Cooperative
+User: Cooperative Leader
+Action: Input Supply → Bulk Order
+
+Checks:
+[ ] Can create group order for cooperative members
+[ ] Each member selects quantity
+[ ] Leader reviews aggregated order
+[ ] Single payment collected (or split across members)
+[ ] Delivery to central point visible
+[ ] Distribution tracking per member
+PILLAR D: FINANCE SUITE
+D1. Farm Finance Tracker (P0)
+markdown
+### TEST CASE: D1.1 - Income/Expense Recording
+User: Any
+Action: Finance → Add Transaction
+
+Checks:
+[ ] Transaction types: INCOME / EXPENSE
+[ ] Categories:
+    Income: Crop sales, Livestock sales, Other
+    Expense: Seeds, Fertilizer, Pesticides, Labor, Transport, Water, Equipment, Other
+[ ] Can attach photo of receipt
+[ ] Can tag to specific crop/plot/livestock
+[ ] GPS location recorded automatically
+[ ] Date can be today or past date
+
+### TEST CASE: D1.2 - Season-Level P&L
+User: Any with completed season
+Action: Finance → Reports → Season P&L
+
+Checks:
+[ ] Select season (Long Rains 2025 / Short Rains 2025 / Dry 2026)
+[ ] Report shows:
+    [ ] Total revenue (by crop)
+    [ ] Total expenses (by category)
+    [ ] Net profit
+    [ ] Profit per acre
+    [ ] Break-even analysis
+[ ] Visual charts (bar/line)
+[ ] Share via WhatsApp/PDF
+
+### TEST CASE: D1.3 - PDF Export for Loan Applications (P0)
+User: Any
+Action: Finance → Export → Agro ID Loan Packet
+
+Checks:
+[ ] Generates branded PDF with:
+    [ ] Kilimo AI header + logo
+    [ ] Farmer name + Agro ID QR code
+    [ ] Farm summary (total acres, registered crops)
+    [ ] Last 12 months P&L
+    [ ] Transaction summary (total volume, average price)
+    [ ] Certification status (if any)
+    [ ] Timestamp and digital signature
+[ ] QR code scans to verifiable profile (no login required)
+[ ] PDF file size < 2MB
+[ ] Can share directly from app to WhatsApp/Email
+[ ] PDF saved to device downloads
+D2. Mobile Money Hub (P0)
+markdown
+### TEST CASE: D2.1 - Wallet Linking
+User: Any
+Action: Finance → Mobile Money → Link Wallet
+
+Checks:
+[ ] Provider options: M-Pesa, Airtel Money, Tigo Pesa
+[ ] Enter phone number
+[ ] OTP verification sent via SMS
+[ ] 30-second timeout for OTP entry
+[ ] Successful link shows wallet balance (if API permits)
+[ ] Can link multiple wallets
+
+### TEST CASE: D2.2 - Send Payment
+User: Any
+Action: Mobile Money → Send
+
+Checks:
+[ ] Can send to: phone number OR app user (search by name)
+[ ] Amount entry with TZS currency
+[ ] Reason for payment (Marketplace purchase / Contract milestone / Loan repayment / Other)
+[ ] Confirmation screen shows:
+    [ ] Recipient name (if in app) or phone number
+    [ ] Amount
+    [ ] Fee (if any)
+[ ] PIN/OTP required to confirm
+[ ] Success screen with transaction ID
+[ ] Receipt saved to Finance Tracker automatically
+[ ] SMS confirmation sent to sender and recipient
+
+### TEST CASE: D2.3 - Receive Payment
+User: Any
+Action: Receive money via Mobile Money
+
+Checks:
+[ ] In-app notification appears within 5 seconds of payment
+[ ] SMS notification received
+[ ] Transaction logged to Finance Tracker as INCOME
+[ ] Can tag to specific contract/listing
+[ ] Wallet balance updates (if visible)
+D3. Insurance Hub (P1)
+markdown
+### TEST CASE: D3.1 - Browse & Purchase Insurance
+User: Smallholder Farmer
+Action: Finance → Insurance
+
+Checks:
+[ ] Products filtered by:
+    [ ] Crop type (maize, rice, beans, coffee, etc.)
+    [ ] Livestock type (cattle, goats, chickens)
+    [ ] Region availability
+[ ] Product card shows:
+    [ ] Coverage amount
+    [ ] Premium cost
+    [ ] Exclusions summary
+    [ ] Claim process steps
+[ ] Purchase flow:
+    [ ] Select coverage period
+    [ ] Enter insured value
+    [ ] Review terms (must scroll and accept)
+    [ ] Pay via Mobile Money Hub
+    [ ] Policy document available as PDF
+[ ] Policy appears in "My Insurance" tab
+
+### TEST CASE: D3.2 - Claim Submission
+User: Insured farmer
+Action: Insurance → My Policies → File Claim
+
+Checks:
+[ ] Can select which policy to claim
+[ ] Incident description field
+[ ] Photo evidence upload (max 10 images)
+[ ] GPS location captured
+[ ] Estimated loss percentage
+[ ] Claim reference number generated
+[ ] Claim status tracked: SUBMITTED → UNDER_REVIEW → APPROVED → PAID / REJECTED
+[ ] Status change notifications (in-app + SMS)
+D4. Agro ID (P0 for Enterprise)
+markdown
+### TEST CASE: D4.1 - QR Code Identity Card
+User: Agribusiness Buyer (viewing farmer's Agro ID)
+Action: Scan farmer's QR code
+
+Checks:
+[ ] QR code scans to web page (no app login required)
+[ ] Web page shows:
+    [ ] Farmer name (verified)
+    [ ] Farm location (region, district)
+    [ ] Total farm size (acres)
+    [ ] Registered crops (with last season yields)
+    [ ] Certifications (Organic, Rainforest, etc.)
+    [ ] Transaction history summary (volume, average price)
+    [ ] 12-month P&L summary
+    [ ] Cooperative affiliation (if any)
+[ ] Verifiable badge (timestamp + Kilimo AI signature)
+[ ] Can download as PDF
+
+### TEST CASE: D4.2 - Share for Loan Application
+User: Farmer
+Action: Profile → Agro ID → Share with Lender
+
+Checks:
+[ ] Can generate temporary share link (expires in 7 days)
+[ ] Can revoke access before expiry
+[ ] Lender access log visible to farmer
+[ ] Required data for loan: 
+    [ ] Last 3 seasons P&L
+    [ ] Crop insurance status
+    [ ] Input purchase history
+    [ ] Marketplace sales history
+[ ] Bank can request additional data via in-app permission
+PILLAR E: SERVICES & COMMUNITY
+E1. Expert Consultations (P2)
+markdown
+### TEST CASE: E1.1 - Book Consultation
+User: Smallholder Farmer
+Action: Services → Experts
+
+Checks:
+[ ] Expert list filtered by:
+    [ ] Specialty (Maize, Coffee, Livestock, Soil, Pests)
+    [ ] Language (Swahili/English)
+    [ ] Rating (4+ stars)
+[ ] Expert profile shows:
+    [ ] Certification credentials
+    [ ] Years of experience
+    [ ] Languages spoken
+    [ ] Availability calendar
+    [ ] Consultation fee (if any)
+[ ] Booking flow:
+    [ ] Select date/time (user local time)
+    [ ] Describe problem (text or voice)
+    [ ] Upload photos
+    [ ] Confirm booking
+    [ ] Calendar event added
+
+### TEST CASE: E1.2 - Video Consultation
+User: Farmer with booked session
+Action: At scheduled time → Join Call
+
+Checks:
+[ ] Join button appears 5 minutes before session
+[ ] Video/audio quality degrades gracefully on 3G
+[ ] Screen sharing capability (to show farm map)
+[ ] Chat during call
+[ ] Session recording available after (with consent)
+[ ] Session summary auto-saved:
+    [ ] Recommendations
+    [ ] Prescriptions
+    [ ] Follow-up tasks auto-created
+E2. Weather Intelligence
+markdown
+### TEST CASE: E2.1 - Hyperlocal Forecast
+User: Any
+Action: Services → Weather
+
+Checks:
+[ ] Forecast automatically uses registered farm GPS
+[ ] 7-day forecast with:
+    [ ] High/low temperature (Celsius)
+    [ ] Rain probability (%)
+    [ ] Expected rainfall (mm)
+    [ ] Humidity (%)
+    [ ] Wind speed (km/h)
+[ ] Agricultural relevance:
+    [ ] Planting suitability indicator
+    [ ] Harvest suitability indicator
+    [ ] Pest risk indicator (based on conditions)
+
+### TEST CASE: E2.2 - Severe Weather Alerts (P1)
+User: Any
+Action: (Automatic, no action needed)
+
+Trigger events to test (simulate):
+[ ] Heavy rain > 50mm in 24h
+[ ] Drought > 14 days no rain
+[ ] High wind > 40km/h
+[ ] Frost warning (if applicable region)
+
+Checks:
+[ ] In-app push notification appears
+[ ] SMS received (check Africa's Talking)
+[ ] Alert includes:
+    [ ] Event type
+    [ ] Expected start/end time
+    [ ] Recommended actions (harvest early, cover crops, etc.)
+E3. Offline Mode (P1 - CRITICAL FOR RURAL)
+markdown
+### TEST CASE: E3.1 - Offline Access
+User: Any, Airplane Mode ON
+
+Check each feature:
+[ ] App loads (no blank screen)
+[ ] Farm map shows cached tiles
+[ ] Previously loaded chat history visible
+[ ] Crop calendar viewable (cached)
+[ ] Task management works (creates local tasks)
+[ ] Finance tracker accepts new entries (queued)
+[ ] Camera capture works (queues for later upload)
+[ ] "You are offline" indicator visible
+
+When connectivity restored:
+[ ] Queued uploads process automatically
+[ ] No duplicate entries created
+[ ] User notified of successful uploads
+
+### TEST CASE: E3.2 - Service Worker Caching
+Technical test via DevTools:
+[ ] Service worker registered (check Application → Service Workers)
+[ ] Cache storage includes:
+    [ ] /static/ (CSS, JS, icons)
+    [ ] /api/farms (basic farm data)
+    [ ] /offline.html (fallback page)
+[ ] Cached assets load in < 100ms offline
+E4. Peer Groups & Gamification (P2)
+markdown
+### TEST CASE: E4.1 - Peer Discussion Groups
+User: Any
+Action: Community → Groups
+
+Checks:
+[ ] Recommended groups based on:
+    [ ] Registered crops (Maize Farmers Tanzania)
+    [ ] Region (Arusha Farmers)
+    [ ] Language (Wakulima wa Kiswahili)
+[ ] Join group (public/request to join)
+[ ] Post text + photo to group
+[ ] Comment and react to posts
+[ ] Expert moderators have badge
+[ ] Report inappropriate content
+
+### TEST CASE: E4.2 - Gamification System
+User: Any
+
+Actions that award points (test each):
+[ ] Complete a task: +10 points
+[ ] Submit crop diagnosis: +15 points
+[ ] Share marketplace listing: +5 points
+[ ] Post in peer group: +3 points
+[ ] Refer new farmer: +50 points
+[ ] Achieve 90% task completion week: +25 points
+
+Checks:
+[ ] Points appear immediately
+[ ] Badges awarded at milestones:
+    [ ] 100 points: "Mkulami Mwanzilishi" (Beginner Farmer)
+    [ ] 500 points: "Mkulami Stadi" (Skilled Farmer)
+    [ ] 1000 points: "Mkulami Bingwa" (Expert Farmer)
+    [ ] 5000 points: "Mkulami Mwalimu" (Master Farmer)
+[ ] Leaderboard (regional/weekly) updates
+[ ] Top farmers featured in "Community Champions"
+[ ] Badges visible on profile and Agro ID
+PART 3: DESIGN & BRANDING AUDIT
+D1. Visual Identity Audit
+markdown
+### Color Palette Verification
+
+Check each screen against Master Blueprint:
+
+| Element | Expected | Actual | PASS/FAIL |
+|---------|----------|--------|-----------|
+| Background | #ffffff (white) | | |
+| Text primary | #171717 (ink/almost black) | | |
+| Text secondary | #525252 (gray) | | |
+| CTAs / buttons | #3ecf8e (Emerald Green) | | |
+| CTA hover state | Darker green (#2daf78) | | |
+| Error messages | Red (#ef4444) | | |
+| Success messages | Emerald Green (#3ecf8e) | | |
+| Warning messages | Amber (#f59e0b) | | |
+| Links | Emerald Green, underlined on hover | | |
+| Borders | #e5e5e5 (light gray) | | |
+
+### Contrast Check (WCAG 2.1 AA)
+[ ] Text on white background: contrast > 4.5:1
+[ ] Text on emerald green CTA: white text, contrast > 4.5:1
+[ ] Placeholder text: sufficient contrast
+[ ] Focus indicators visible (keyboard navigation)
+
+### Glass Morphism Cards
+[ ] Cards have: border-radius: 16px
+[ ] Cards have: box-shadow (subtle)
+[ ] Cards on dark background (if any) have backdrop-blur
+[ ] Cards consistent across all pages
+D2. Typography Audit
+markdown
+### Font System
+[ ] Headings: Inter or system font (bold, 24px/32px for H1)
+[ ] Body: Inter or system font (regular, 16px/24px)
+[ ] Small text: 14px/20px
+[ ] Swahili characters: rendering correctly (ng', ny, etc.)
+[ ] No cut-off text at any viewport size
+
+### Reading Experience
+[ ] Line length: max 75 characters per line on desktop
+[ ] Line height: 1.5 for body text
+[ ] Proper spacing between sections (48px margin)
+[ ] No text overlapping on any screen
+D3. Iconography & Navigation
+markdown
+### Navigation Audit (Low-Literacy Focus)
+
+Main navigation icons (bottom bar or side menu):
+[ ] Home: House icon
+[ ] Diagnosis: Leaf/scan icon  
+[ ] Farm: Map/field icon
+[ ] Market: Cart/store icon
+[ ] Finance: Wallet/money icon
+[ ] Profile: Person icon
+
+Each icon has:
+[ ] Text label below icon
+[ ] Active state indicator (emerald green)
+[ ] Touch target minimum 44x44px
+[ ] Hover state on web
+
+### Icon Consistency
+[ ] Same icon set throughout (Lucide/Feather/Heroicons style)
+[ ] Icons meaningful without text
+[ ] Cultural appropriateness (no offensive gestures)
+D4. Accessibility Audit
+markdown
+### Low-Literacy User Testing
+Simulate using screen reader or have low-literacy user test:
+
+[ ] Voice navigation works for all primary actions
+[ ] Icons are intuitive
+[ ] Text size can be increased without breaking layout
+[ ] High contrast mode supported
+[ ] Focus visible for keyboard navigation
+[ ] All images have alt text (Swahili where appropriate)
+[ ] Form fields have clear labels
+
+### Language Switching
+[ ] Swahili to English toggle works everywhere
+[ ] No hardcoded English strings remain
+[ ] Date formats: DD/MM/YYYY (Tanzania standard)
+[ ] Currency: TZS with correct formatting
+[ ] Units: metric (kg, hectares, etc.)
+D5. Animation & Polish (YC Standard)
+markdown
+### Spring Physics (motion/react)
+Check each transition:
+[ ] Page transitions: smooth, not jarring
+[ ] Modal open/close: spring animation
+[ ] Button taps: subtle scale feedback
+[ ] Loading states: skeleton screens (not spinners everywhere)
+[ ] Pull-to-refresh: works with haptic feedback
+[ ] Infinite scroll: loading indicator at bottom
+
+### Performance
+[ ] First Contentful Paint < 1.5s on 3G
+[ ] Time to Interactive < 5s on low-end device
+[ ] No layout shift (CLS < 0.1)
+[ ] Smooth scrolling (60fps)
+[ ] Images lazy load
+[ ] No render-blocking resources
+PART 4: TECHNICAL & METRICS AUDIT
+T1. Core Web Vitals & Performance
+markdown
+### Measure using Lighthouse (Mobile, 3G Slow)
+
+Targets from Master Blueprint:
+[ ] Performance score > 90
+[ ] FCP (First Contentful Paint) < 1.5s
+[ ] LCP (Largest Contentful Paint) < 2.5s
+[ ] TTI (Time to Interactive) < 3.5s
+[ ] TBT (Total Blocking Time) < 200ms
+[ ] CLS (Cumulative Layout Shift) < 0.1
+
+### API Response Times
+Test each endpoint (n=10, average):
+
+| Endpoint | Target | Actual |
+|----------|--------|--------|
+| POST /diagnosis/analyze | < 3s | |
+| GET /market/prices | < 500ms | |
+| POST /auth/login (OTP) | < 2s | |
+| GET /farm/map | < 1s | |
+| POST /payments/mpesa/send | < 3s | |
+T2. Offline & Network Resilience
+markdown
+### Network Degradation Tests
+
+Test each scenario:
+[ ] 2G (Edge) connection: app usable within 10s
+[ ] 3G (variable): no timeouts
+[ ] 4G to No Signal to 4G: state recovery works
+[ ] Request timeout: graceful error message, retry button
+[ ] API rate limiting: handled with backoff
+
+### SMS Fallback Testing (P0)
+Test each critical event:
+[ ] Critical diagnosis: SMS received within 10s
+[ ] Price alert: SMS received
+[ ] Severe weather: SMS received
+[ ] Contract milestone: SMS received
+[ ] Payment: SMS received
+
+SMS content checks:
+[ ] Sender ID: "KilimoAI" or registered
+[ ] Short enough for feature phone (160 chars)
+[ ] Includes call-to-action (link or reply code)
+[ ] Swahili version sent to Swahili users
+T3. Security & Data Privacy
+markdown
+### Authentication
+[ ] OTP expires after 5 minutes
+[ ] Session timeout after 7 days (or configurable)
+[ ] Biometric login supported (FaceID/Fingerprint)
+[ ] Logout clears local sensitive data
+
+### Data Protection (Supabase RLS)
+Test row-level security:
+[ ] Farmer A cannot see Farmer B's farm data
+[ ] Coop leader can see member data (but not edit)
+[ ] Agribusiness sees only buyer-relevant data
+[ ] No raw PII in URLs or logs
+
+### API Security
+[ ] All API calls over HTTPS
+[ ] JWT tokens used, expire appropriately
+[ ] CORS configured correctly
+[ ] Rate limiting active (100 req/min per user)
+[ ] Input sanitization (no SQL injection vectors)
+T4. Success Metrics Validation
+markdown
+### Measure against 12-Month Targets from Blueprint
+
+| Metric | Target | Current | Gap | Action |
+|--------|--------|---------|-----|--------|
+| MAU (unique farmers) | 50,000 | | | |
+| Diagnosis accuracy | >85% | | | (Test with 100 labeled images) |
+| Market transaction volume | $2M USD | | | |
+| Farmer income uplift reported | +20% | | | (Need baseline survey) |
+| Free → Paid conversion (90d) | 15% | | | |
+
+### Diagnosis Accuracy Test Protocol
+Create test set of 100 labeled crop disease images:
+[ ] 50 common diseases (maize, rice, beans, coffee, tomatoes)
+[ ] 25 healthy crops
+[ ] 25 edge cases (blurry, poor lighting, multiple diseases)
+
+Calculate:
+[ ] True Positive rate
+[ ] False Positive rate
+[ ] Confidence score calibration (80% confidence should be right 80% of time)
+
+### Conversion Funnel Tracking
+[ ] Signup → Active user (5+ actions/week) rate
+[ ] Free → Basic conversion rate
+[ ] Basic → Premium conversion rate
+[ ] Feature adoption per role:
+    [ ] % of farmers using diagnosis weekly
+    [ ] % using marketplace to sell
+    [ ] % using finance tracker monthly
+PART 5: USER JOURNEY COMPLETE WALKTHROUGHS
+Journey 1: New Farmer Onboarding to First Diagnosis (P0)
+markdown
+### Step-by-Step Test
+User: New user, first launch
+
+[ ] 1. Landing page loads < 2s
+[ ] 2. Language selection: Swahili/English (Swahili default for Tanzania)
+[ ] 3. Phone number entry (country code +255 pre-filled)
+[ ] 4.
+finish up
+Journey 1: New Farmer Onboarding to First Diagnosis (P0) - CONTINUED
+markdown
+[ ] 4. OTP received via SMS within 5 seconds
+[ ] 5. OTP auto-fills from SMS (if permission granted)
+[ ] 6. Profile creation screen:
+    [ ] Name field (required)
+    [ ] Farm location (GPS or manual entry)
+    [ ] Farm size (acres/hectares toggle)
+    [ ] Primary crops (multi-select)
+[ ] 7. Tutorial overlay appears (3-5 screens, skippable)
+[ ] 8. Home screen loads with empty state guidance
+[ ] 9. "Scan Crop" CTA prominent (emerald green)
+[ ] 10. Camera opens within 2 seconds
+[ ] 11. Take photo of diseased crop
+[ ] 12. Diagnosis returns within 5 seconds
+[ ] 13. Result screen shows all required fields
+[ ] 14. "Save to Farm Record" button appears
+[ ] 15. Confirmation toast: "Diagnosis saved"
+
+**Time to first diagnosis: Target < 3 minutes from download**
+**Actual: ______ minutes**
+
+**PASS/FAIL: ______**
+Journey 2: Farmer Selling Produce via Marketplace (P0)
+markdown
+### Complete Sales Cycle
+User: Smallholder Farmer with harvest ready
+
+**Part A - Create Listing**
+[ ] 1. Tap Market tab → bottom navigation
+[ ] 2. Tap "Sell" → "+ New Listing"
+[ ] 3. Select crop from list (auto-populated from registered crops)
+[ ] 4. Enter quantity (kg) → validation: positive number only
+[ ] 5. Enter price per kg (TZS) → validation: reasonable range
+[ ] 6. Upload photos (max 5) → compression works
+[ ] 7. Quality grade selection (Grade A/B/C)
+[ ] 8. Tap "Publish" → loading state appears
+[ ] 9. Success screen with share options
+[ ] 10. Listing appears in search results within 10 seconds
+
+**Part B - Receive & Accept Offer**
+[ ] 11. Push notification received: "New offer from [Buyer Name]"
+[ ] 12. Tap notification → opens offer detail
+[ ] 13. Offer shows: price, quantity, delivery terms
+[ ] 14. Chat button available to negotiate
+[ ] 15. Tap "Accept Offer"
+[ ] 16. Confirmation dialog appears
+[ ] 17. Contract created automatically (P0 for commercial, optional for smallholder)
+[ ] 18. Both parties receive confirmation
+
+**Part C - Complete Transaction**
+[ ] 19. Buyer sends payment via Mobile Money Hub
+[ ] 20. Farmer receives in-app + SMS notification
+[ ] 21. Payment auto-logged to Finance Tracker
+[ ] 22. Farmer marks "Delivery Completed"
+[ ] 23. Buyer confirms receipt
+[ ] 24. Rating screen appears (rate buyer 1-5 stars)
+[ ] 25. Listing marked as SOLD
+
+**PASS/FAIL: ______**
+Journey 3: Farmer Building Credit History for Loan (P0)
+markdown
+### Financial Identity Journey
+User: Smallholder Farmer → Loan Applicant
+
+**Part A - Record Income/Expenses (30-day history)**
+[ ] 1. Finance → Add Transaction → Expense
+[ ] 2. Category: Seeds → amount: 50,000 TZS
+[ ] 3. Attach photo of receipt
+[ ] 4. Tag to crop: Maize
+[ ] 5. Save → appears in transaction list
+[ ] 6. Repeat for: Fertilizer (75,000), Labor (100,000), Transport (30,000)
+[ ] 7. Add Income: Crop Sale → 350,000 TZS → tag to Maize
+[ ] 8. Add another sale: 280,000 TZS
+[ ] 9. View Finance → Overview → sees season total
+
+**Part B - Generate Agro ID Loan Packet**
+[ ] 10. Profile → Agro ID
+[ ] 11. Verify all farm details are correct
+[ ] 12. Tap "Apply for Loan" → "Generate Loan Packet"
+[ ] 13. Select date range (Last 90 days / Last season / Custom)
+[ ] 14. Tap "Generate PDF"
+[ ] 15. PDF generates within 3 seconds
+[ ] 16. Verify PDF contains:
+    [ ] Farmer name and Agro ID QR
+    [ ] Farm summary
+    [ ] P&L statement
+    [ ] Transaction list
+    [ ] Verifiable badge
+[ ] 17. Tap "Share" → WhatsApp option available
+[ ] 18. Send to test lender contact
+[ ] 19. Lender scans QR code → verifies data matches PDF
+[ ] 20. (Advanced) Lender can request additional permissions
+
+**PASS/FAIL: ______**
+Journey 4: Agribusiness Bulk Purchase with Contract (P0)
+markdown
+### B2B Transaction Journey
+User: Agribusiness Buyer
+
+**Part A - Search & Filter**
+[ ] 1. Login as Agribusiness (Enterprise tier)
+[ ] 2. Market → Buy
+[ ] 3. Apply filters:
+    [ ] Crop: Maize
+    [ ] Region: Mbeya
+    [ ] Min quantity: 5,000 kg
+    [ ] Certification: Organic preferred
+[ ] 4. Results update in real-time (< 500ms)
+[ ] 5. Results show: aggregated listings, cooperative bulk offers
+[ ] 6. Sort by: Price (low to high) / Distance / Rating
+
+**Part B - Create Contract**
+[ ] 7. Select cooperative listing (10,000 kg available)
+[ ] 8. Tap "Initiate Contract"
+[ ] 9. Contract form loads with pre-filled:
+    [ ] Seller cooperative info
+    [ ] Crop specifications
+    [ ] Quantity (editable)
+[ ] 10. Set price: 800 TZS/kg (fixed)
+[ ] 11. Set delivery schedule:
+    [ ] Milestone 1: 5,000 kg by May 30
+    [ ] Milestone 2: 5,000 kg by June 15
+[ ] 12. Set payment terms: 50% advance, 50% on completion
+[ ] 13. Add quality clauses (optional)
+[ ] 14. Save as Draft → status: DRAFT
+[ ] 15. Review and Send → status changes to SENT
+[ ] 16. Cooperative leader receives in-app + SMS notification
+
+**Part C - Signing & Execution**
+[ ] 17. Cooperative leader opens contract
+[ ] 18. Reviews terms → requests clarification via chat
+[ ] 19. Agribusiness responds to chat
+[ ] 20. Cooperative leader signs (draw signature)
+[ ] 21. Agribusiness receives notification
+[ ] 22. Agribusiness reviews final → signs
+[ ] 23. Contract status becomes ACTIVE
+[ ] 24. Advance payment (50%) automatically requested
+[ ] 25. Payment sent via Mobile Money Hub
+[ ] 26. Milestone tracking dashboard visible to both parties
+
+**PASS/FAIL: ______**
+Journey 5: Offline-First Critical Diagnosis (P1 - Critical for Rural)
+markdown
+### Complete Offline Scenario
+User: Farmer in remote area with intermittent connectivity
+
+**Part A - Offline Diagnosis Capture**
+[ ] 1. Enable Airplane Mode on device
+[ ] 2. Open Kilimo AI → "Offline Mode" indicator visible
+[ ] 3. Previously loaded data accessible:
+    [ ] Home screen cached
+    [ ] Farm map (cached tiles)
+    [ ] Chat history visible
+[ ] 4. Tap "Scan Crop" → camera opens
+[ ] 5. Take photo of diseased crop
+[ ] 6. App shows: "Queued - Will diagnose when online"
+[ ] 7. Can take multiple photos (queue shows count: 3)
+[ ] 8. Close app completely
+[ ] 9. Re-open app offline → queue persists
+
+**Part B - Online Sync**
+[ ] 10. Disable Airplane Mode (restore connectivity)
+[ ] 11. App detects connection within 10 seconds
+[ ] 12. Queue automatically processes
+[ ] 13. Upload progress indicator visible
+[ ] 14. Diagnosis results return sequentially
+[ ] 15. Each diagnosis triggers notification (in-app + SMS if critical)
+[ ] 16. No duplicate uploads or data loss
+[ ] 17. Queue empty confirmation shown
+
+**Part C - Critical Severity Offline Edge Case**
+[ ] 18. Take photo of CRITICAL severity disease while offline
+[ ] 19. App cannot send SMS immediately (no signal)
+[ ] 20. App stores "pending SMS" in queue
+[ ] 21. When signal restored:
+    [ ] Diagnosis processed
+    [ ] SMS sent for critical case
+    [ ] Even if user has closed app, SMS sends in background
+[ ] 22. Task auto-created upon online sync
+
+**PASS/FAIL: ______**
+Journey 6: Voice-First Farmer (Low Literacy - P1)
+markdown
+### Complete Voice-Driven Journey
+User: Low-literacy farmer, Swahili-only
+
+**Part A - Voice Onboarding**
+[ ] 1. First launch → language selection: Swahili
+[ ] 2. Tutorial uses voice prompts (TTS reads instructions)
+[ ] 3. Microphone permission requested (explained in Swahili)
+[ ] 4. "Bonyeza kuzungumza" (Press to speak) button prominent
+
+**Part B - Voice Diagnosis**
+[ ] 5. Tap microphone → "Sema swali lako" (Say your question)
+[ ] 6. Speak: "Nina ugonjwa kwenye mahindi yangu" (I have disease on my maize)
+[ ] 7. Transcription appears: "Nina ugonjwa kwenye mahindi yangu"
+[ ] 8. AI responds in Swahili voice: "Tafadhali picha ugonjwa" (Please photograph the disease)
+[ ] 9. Camera opens via voice confirmation
+[ ] 10. Take photo → diagnosis returns
+[ ] 11. AI reads diagnosis aloud in Swahili
+[ ] 12. User can ask follow-up by voice: "Nitumie dawa gani?" (What medicine should I use?)
+
+**Part C - Voice Marketplace**
+[ ] 13. "Nataka kuuza mahindi" (I want to sell maize)
+[ ] 14. AI guides through listing creation:
+    [ ] "Kiasi gani?" (What quantity?) → user speaks: "Kilo mia tano" (500 kg)
+    [ ] "Bei gani?" (What price?) → user speaks: "Shilingi mia tano kwa kilo" (500 TZS/kg)
+[ ] 15. AI confirms listing details
+[ ] 16. Voice confirmation: "Ndiyo" (Yes)
+[ ] 17. Listing published
+[ ] 18. AI reads back confirmation: "Listing yako imechapishwa" (Your listing is published)
+
+**PASS/FAIL: ______**
+Journey 7: Cooperative Leader Managing Members (P1)
+markdown
+### Group Management Journey
+User: Cooperative Leader
+
+**Part A - Cooperative Setup**
+[ ] 1. Login as Cooperative Leader
+[ ] 2. Cooperative Dashboard loads
+[ ] 3. Tap "Add Members"
+[ ] 4. Options: Import by phone numbers / QR code / Manual entry
+[ ] 5. Add 5 test members via phone numbers
+[ ] 6. Each member receives SMS invitation with install link
+[ ] 7. Members who join appear in "Pending Approval"
+[ ] 8. Approve members → now in "Active Members" list
+
+**Part B - Aggregate Sales**
+[ ] 9. View Member List → see each member's inventory
+[ ] 10. Select 3 members with maize inventory
+[ ] 11. Tap "Create Bulk Listing"
+[ ] 12. System aggregates: Total 8,000 kg available
+[ ] 13. Set cooperative price: 750 TZS/kg (above individual price)
+[ ] 14. Bulk listing appears in marketplace with "Cooperative" badge
+[ ] 15. Agribusiness buyer makes offer on bulk listing
+[ ] 16. Leader receives notification
+[ ] 17. Accept offer → contract created
+[ ] 18. Payment received → distributed to members based on contribution
+[ ] 19. Each member receives their share in Mobile Money
+[ ] 20. Leader sees distribution report
+
+**Part C - Member Analytics**
+[ ] 21. Leader Dashboard shows:
+    [ ] Total members: active/pending
+    [ ] Aggregate yield this season
+    [ ] Total sales volume
+    [ ] Member leaderboard (by yield or sales)
+[ ] 22. Can export member report as CSV/PDF
+[ ] 23. Can message all members (broadcast via SMS + in-app)
+
+**PASS/FAIL: ______**
+PART 6: EDGE CASES & BREAKAGE TESTING
+Edge Case Matrix
+markdown
+### Authentication & Account
+[ ] **EC-01:** User enters wrong OTP 3x → account locked for 5 minutes, clear message
+[ ] **EC-02:** User requests OTP 10x in 1 minute → rate limited, error message
+[ ] **EC-03:** User logs in on second device → first device session remains active (or logs out? Define expected)
+[ ] **EC-04:** User deletes account → all data removed within 30 days, confirmation email sent
+[ ] **EC-05:** Phone number reassigned to new user → old account inaccessible, support flow
+
+### Diagnosis Edge Cases
+[ ] **EC-06:** Upload image > 10MB → compression applied, error if still too large
+[ ] **EC-07:** Upload non-image file → error: "Tafadhali chagua picha" (Please select a photo)
+[ ] **EC-08:** AI confidence < 50% → message: "Hakika? Tafadhali picha nyingine" (Not sure? Please take another photo)
+[ ] **EC-09:** No disease detected but user insists → escalate to human expert option
+[ ] **EC-10:** Upload same image twice in 1 minute → cached response returns instantly
+
+### Marketplace Edge Cases
+[ ] **EC-11:** User creates listing with price 0 → validation error
+[ ] **EC-12:** User creates listing with quantity 0 → validation error
+[ ] **EC-13:** Buyer offers price below seller's minimum → offer automatically rejected OR warning shown
+[ ] **EC-14:** Two buyers offer on same limited stock → first to confirm payment wins, second gets "Sold Out"
+[ ] **EC-15:** Seller tries to delete listing after offer accepted → confirmation required, penalty for abuse
+
+### Finance Edge Cases
+[ ] **EC-16:** Mobile Money API timeout → retry 3x with exponential backoff, then fallback to SMS instructions
+[ ] **EC-17:** Insufficient M-Pesa balance → clear error, offer alternative payment
+[ ] **EC-18:** Duplicate payment prevention → idempotency keys, user notified if retry within 5 min
+[ ] **EC-19:** Finance tracker negative balance → allowed (debt/credit), but warning shown
+[ ] **EC-20:** Export PDF with 10,000+ transactions → pagination, streaming generation
+
+### Network Edge Cases
+[ ] **EC-21:** Connection drops during diagnosis upload → auto-retry on resume, no user action needed
+[ ] **EC-22:** Server returns 500 error → user-friendly error, retry button
+[ ] **EC-23:** Server returns 429 (rate limit) → retry-After header respected, user notified
+[ ] **EC-24:** Slow network (2G, 100ms RTT) → timeout extended to 30s, progress indicator
+[ ] **EC-25:** No signal for 7 days → app remains functional offline, warning at 3 days to find signal
+
+### Data Edge Cases
+[ ] **EC-26:** User has 500+ registered plots → virtual scrolling, lazy loading
+[ ] **EC-27:** User has 10,000+ transactions → aggregated views, date filtering required
+[ ] **EC-28:** Special characters in Swahili (ng', ny, etc.) → display correctly in all fonts
+[ ] **EC-29:** Very long crop name (e.g., "Mahindi ya Kiasili ya Mlima Kilimanjaro") → truncation with ellipsis
+[ ] **EC-30:** Emoji in chat → display correctly or stripped based on database support
+
+### Audit Logging
+Record each edge case result:
+
+| EC# | Expected Behavior | Actual Behavior | PASS/FAIL | Severity |
+|-----|-------------------|-----------------|-----------|----------|
+| 01  | | | | |
+| 02  | | | | |
+| ... | | | | |
+| 30  | | | | |
+PART 7: PERFORMANCE & SCALING TESTS
+Load Testing Protocol
+markdown
+### Simulated Concurrent Users
+
+Use k6 or similar tool:
+
+[ ] **Test 1: 100 concurrent users**
+    - Login OTP requests
+    - Diagnosis uploads
+    - Marketplace searches
+    - Target: All requests < 2s, 0% error rate
+
+[ ] **Test 2: 1,000 concurrent users**
+    - Mixed workload (70% read, 20% write, 10% diagnose)
+    - Target: < 5s p95, < 1% error rate
+
+[ ] **Test 3: Peak hour simulation (10,000 users over 1 hour)**
+    - Ramp-up: 0 to 10,000 over 10 minutes
+    - Sustained: 10,000 for 40 minutes
+    - Ramp-down: 10 minutes
+    - Monitor Supabase connection pool, Edge Function cold starts
+
+[ ] **Test 4: Database query performance**
+    - Query: Get farmer dashboard with transactions (last 90 days)
+    - Target: < 200ms with 10,000 transactions
+    - Query: Search marketplace with 5 filters
+    - Target: < 500ms with 100,000 listings
+
+### Resource Monitoring
+Record during load tests:
+
+| Metric | Idle | 100 users | 1,000 users | Peak | PASS/FAIL |
+|--------|------|-----------|-------------|------|-----------|
+| CPU (Supabase) | | | | | |
+| Memory (Supabase) | | | | | |
+| Edge Function duration (p95) | | | | | |
+| API response time (p95) | | | | | |
+| Database connections | | | | | |
+| Bandwidth (CDN) | | | | | |
+Storage & Quota Testing
+markdown
+[ ] **Storage Test:** Upload 1,000 diagnosis images
+    - Storage used: _______ MB
+    - Storage limit (free tier): _______ 
+    - Projected cost at 50k MAU: _______
+
+[ ] **Database Test:** Insert 10,000 transactions for single farmer
+    - Query performance degradation: _______ %
+    - Partitioning needed at: _______ rows
+
+[ ] **Cache Test:** Redis/Memcache hit rate
+    - Market prices cache hit rate: _______ %
+    - Diagnosis cache hit rate (same image within 1hr): _______ %
+PART 8: SECURITY & COMPLIANCE DEEP DIVE
+Security Test Matrix
+markdown
+### Authentication Security
+[ ] **SEC-01:** JWT tokens stored securely (HttpOnly cookie or secure storage)
+[ ] **SEC-02:** No PII in JWT payload
+[ ] **SEC-03:** Refresh token rotation implemented
+[ ] **SEC-04:** Session invalidation on logout works on all devices
+[ ] **SEC-05:** OTP not logged to console or analytics
+
+### API Security
+[ ] **SEC-06:** All endpoints require valid JWT (except /auth/*, /health)
+[ ] **SEC-07:** CORS restricted to allowed domains
+[ ] **SEC-08:** SQL injection protection (Supabase parameterized queries)
+[ ] **SEC-09:** XSS protection headers set
+[ ] **SEC-10:** Rate limiting per user: 100 req/min, 1000 req/hr
+
+### Data Security
+[ ] **SEC-11:** Sensitive data encrypted at rest (Supabase encryption)
+[ ] **SEC-12:** PII not exposed in URLs or logs
+[ ] **SEC-13:** Images sanitized before storage (EXIF data removed)
+[ ] **SEC-14:** User can download all their data (GDPR Article 20)
+[ ] **SEC-15:** User can request deletion (GDPR Article 17)
+
+### Mobile Money Security
+[ ] **SEC-16:** No hardcoded API keys in frontend
+[ ] **SEC-17:** Payment callbacks validate signature from M-Pesa/Airtel
+[ ] **SEC-18:** Idempotency keys prevent double charging
+[ ] **SEC-19:** Payment confirmation requires OTP for large amounts (>500,000 TZS)
+
+### Compliance Checklist
+[ ] **Tanzania:** Data Protection Act 2022 compliance
+[ ] **Kenya:** Data Protection Act 2019 (if expanding)
+[ ] **Mobile Money:** M-Pesa API terms compliance
+[ ] **SMS:** Africa's Talking acceptable use policy
+[ ] **AI:** Ethical AI guidelines (no harmful advice, human oversight)
+
+### Penetration Test Checklist (if budget allows)
+[ ] OTP brute force protection
+[ ] Account takeover via session fixation
+[ ] IDOR (Insecure Direct Object Reference) on farm IDs
+[ ] Mass assignment vulnerability on profile updates
+[ ] SSRF (Server-Side Request Forgery) on image upload
+PART 9: METRICS & ANALYTICS VERIFICATION
+Event Tracking Audit
+markdown
+### Required Events (for YC-level metrics)
+
+Verify each event fires correctly:
+
+**Acquisition Events**
+[ ] signup_started (phone entry)
+[ ] signup_completed (OTP verified, profile created)
+[ ] app_install (via Firebase/Adjust)
+[ ] referral_sent (user shares invite link)
+[ ] referral_converted (new user signs from referral)
+
+**Activation Events**
+[ ] first_diagnosis_completed
+[ ] first_listing_created
+[ ] first_transaction_recorded
+[ ] farm_mapped (GPS location saved)
+[ ] tutorial_completed
+
+**Engagement Events (Daily/Weekly)**
+[ ] app_opened
+[ ] diagnosis_submitted
+[ ] diagnosis_result_viewed
+[ ] chat_message_sent (AI)
+[ ] chat_message_received
+[ ] marketplace_search_performed
+[ ] listing_viewed
+[ ] offer_made
+[ ] task_completed
+[ ] voice_command_used
+
+**Retention Events**
+[ ] day_1_active
+[ ] day_7_active
+[ ] day_30_active
+[ ] session_duration (calculated)
+[ ] screens_per_session
+
+**Revenue Events**
+[ ] subscription_started (Free → Basic)
+[ ] subscription_renewed
+[ ] subscription_cancelled
+[ ] marketplace_sale_completed
+[ ] marketplace_fee_collected (if applicable)
+[ ] contract_signed
+[ ] contract_completed
+[ ] insurance_purchased
+
+**Support Events**
+[ ] error_occurred (with stack trace)
+[ ] support_ticket_created
+[ ] support_ticket_resolved
+[ ] feedback_submitted
+
+### Analytics Dashboard Verification
+[ ] Real-time events appear in analytics tool (PostHog/Mixpanel/Amplitude)
+[ ] Funnels correctly configured (Signup → Diagnosis → Marketplace)
+[ ] Cohort retention reports accurate
+[ ] No duplicate events
+[ ] No PII in event properties
+[ ] Event volume matches server logs (+/- 5%)
+KPI Dashboard Testing
+markdown
+### Executive Dashboard (for team review)
+
+Verify each metric calculates correctly:
+
+[ ] **MAU (Monthly Active Users):** Unique users with ≥1 session in last 30 days
+    - Test: Create 10 test users, 5 active in last 30 days → MAU should be 5
+
+[ ] **DAU (Daily Active Users):** Unique users with ≥1 session today
+
+[ ] **Diagnosis Accuracy:** Correct diagnoses / Total diagnoses (based on expert review)
+    - Test: Submit 100 labeled images, compare to expert labels
+
+[ ] **Free → Paid Conversion:** Paid users / Total users (at day 90)
+    - Test: Create cohort of 100 test users, convert 15 → 15%
+
+[ ] **Marketplace GMV:** Total value of completed sales (TZS)
+    - Test: Complete 3 sales: 100k, 200k, 300k → GMV = 600k
+
+[ ] **Farmer Income Uplift:** (Avg income after 90d) - (Avg income before)
+    - Test: Survey 50 farmers, compare self-reported income
+
+[ ] **NPS (Net Promoter Score):** "How likely to recommend Kilimo AI?"
+    - Test: Collect responses from 100 users
+
+[ ] **Churn Rate:** Users who cancel subscription / Total subscribers (monthly)
+    - Test: 100 subscribers, 5 cancel → 5% churn
+
+[ ] **LTV (Lifetime Value):** Avg revenue per user × Avg lifetime months
+    - Test: Basic plan 10,000 TZS/month, avg 12 months → LTV = 120,000 TZS
+
+[ ] **CAC (Customer Acquisition Cost):** Marketing spend / New paid users
+    - Test: Spend 1,000,000 TZS, acquire 100 paid users → CAC = 10,000 TZS
+PART 10: FINAL AUDIT REPORT TEMPLATE
+Executive Summary
+markdown
+# KILIMO AI - BRUTE AUDIT REPORT
+**Date:** ________________
+**Auditor:** ________________
+**App Version:** ________________
+**Environment:** Staging / Production
+
+## Overall Score: _____ / 100
+
+| Category | Score | Weight | Weighted |
+|----------|-------|--------|----------|
+| P0 Critical Journeys | /100 | 30% | |
+| P1 High Priority | /100 | 20% | |
+| Design & Branding | /100 | 15% | |
+| Performance & Metrics | /100 | 15% | |
+| Security & Compliance | /100 | 10% | |
+| Edge Cases | /100 | 10% | |
+| **TOTAL** | | **100%** | |
+
+## Y-Combinator Readiness Assessment
+
+[ ] **Launch Ready** - All P0 journeys pass, no critical bugs
+[ ] **Beta Ready** - P0 journeys pass, minor P1 issues acceptable  
+[ ] **Prototype** - Core flows work, significant work needed
+[ ] **Not Ready** - Critical failures block user experience
+
+## Critical Issues (Must Fix Before Launch)
+
+| ID | Issue | Severity | Owner | Deadline |
+|----|-------|----------|-------|----------|
+| 1 | | Critical | | |
+| 2 | | Critical | | |
+| 3 | | Critical | | |
+
+## Major Issues (Fix Within 30 Days)
+
+| ID | Issue | Severity | Owner | Deadline |
+|----|-------|----------|-------|----------|
+| 1 | | Major | | |
+| 2 | | Major | | |
+
+## Minor Issues (Fix Within 90 Days)
+
+| ID | Issue | Severity |
+|----|-------|----------|
+| 1 | | Minor |
+| 2 | | Minor |
+
+## Passed Checks Summary
+
+- P0 Journeys: _____ / _____ passed
+- P1 Journeys: _____ / _____ passed  
+- Design checks: _____ / _____ passed
+- Edge cases: _____ / _____ passed
+- Security checks: _____ / _____ passed
+
+## Final Verdict
+
+**LAUNCH STATUS:** [APPROVED / CONDITIONAL / REJECTED]
+
+**Notes:**
+_________________________________________________________________
+
+_________________________________________________________________
+
+_________________________________________________________________
+
+**Signed:**
+_________________________
+Lead Auditor
+
+**Date:**
+_________________________
+PART 11: QUICK AUDIT COMMAND CHEAT SHEET
+Copy-Paste Audit Commands
+bash
+# For quick execution, copy these commands:
+
+## 1. RUN FULL AUDIT (sequential)
+echo "=== KILIMO AI FULL AUDIT ==="
+echo "Starting P0 Journeys..."
+# Manually execute Journeys 1-4
+echo "Starting P1 Journeys..."
+# Manually execute Journeys 5-7
+echo "Running Performance Tests..."
+# Run Lighthouse, Web Vitals
+echo "Running Security Scan..."
+# Run OWASP ZAP or similar
+echo "Audit Complete"
+
+## 2. QUICK SMOKE TEST (5 min)
+# Run only P0 journeys, note any failures
+# Document: All P0 must pass for launch
+
+## 3. PERFORMANCE SPOT CHECK
+lighthouse https://kilimo.ai --preset=desktop --output=json
+lighthouse https://kilimo.ai --preset=mobile --throttling=slow4G
+
+## 4. SECURITY QUICK SCAN
+npx snyk test
+npx auditjs ossi
+
+## 5. OFFLINE TEST
+# Enable airplane mode on device
+# Navigate through app for 5 minutes
+# Disable airplane mode
+# Check sync queue
+CONCLUSION
+This audit protocol is exhaustive by design. It tests every claim in your Master Blueprint and PRD against real-world execution.
+
+Minimum bar for launch: All P0 journeys pass, all P0 edge cases handled, critical severity = 0, major severity < 3.
+
+YC top-tier bar: All journeys pass (P0 + P1), design audit > 90%, performance > 90 Lighthouse, security scan clean, farmer NPS > 50.
+
+Good luck with the audit. One Platform. One Identity. One Future for African Agriculture.
+
+This response is AI-generated, for reference only.
+
+

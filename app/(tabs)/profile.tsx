@@ -93,6 +93,7 @@ const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; co
   { key: 'wallet-admin', label: 'Pochi Msimamizi', sub: 'Wallet Admin', route: '/wallet-admin', color: '#14b8a6' },
   { key: 'farm-twin', label: 'Shamba Dijiti', sub: 'Digital Farm Twin', route: '/farm-twin', color: '#6366f1' },
   { key: 'analytics', label: 'Uchanganuzi wa AI', sub: 'Predictive Analytics', route: '/analytics', color: '#f97316' },
+  { key: 'crop-plan', label: 'Upangaji Mazao', sub: 'Crop Planning · AI', route: '/crop-planning', color: '#22c55e' },
 ];
 
 // Sections built inside component to access router + store actions

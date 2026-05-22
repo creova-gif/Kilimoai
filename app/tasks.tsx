@@ -119,10 +119,23 @@ export default function TasksScreen() {
   const [newCat, setNewCat] = useState<TaskCategory>('general');
   const [newPri, setNewPri] = useState<TaskPriority>('medium');
   const [newBlock, setNewBlock] = useState('');
-  // Filter state
+  // Filter & view state
   const [filter, setFilter] = useState<'all'|'pending'|'done'>('all');
+  const [viewMode, setViewMode] = useState<'list'|'calendar'>('list');
+  const [selectedDay, setSelectedDay] = useState<number|null>(null);
 
-  const displayTasks = filter === 'pending' ? pendingTasks : filter === 'done' ? completedTasks : tasks;
+  const displayTasks = (() => {
+    const base = filter === 'pending' ? pendingTasks : filter === 'done' ? completedTasks : tasks;
+    if (viewMode === 'calendar' && selectedDay !== null) {
+      const now = new Date();
+      return base.filter((t) => {
+        if (!t.dueDate) return false;
+        const d = new Date(t.dueDate);
+        return d.getDate() === selectedDay && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      });
+    }
+    return base;
+  })();
 
   const progress = tasks.length > 0
     ? Math.round((completedTasks.length / tasks.length) * 100)
@@ -251,6 +264,13 @@ export default function TasksScreen() {
             <motion.View variants={itemVariants} style={styles.queueHeader}>
               <Text style={[styles.queueTitle, { color: colors.text }]}>Orodha ya Kazi</Text>
               <View style={{ flexDirection: 'row', gap: 6 }}>
+                {/* Calendar / List toggle */}
+                <TouchableOpacity
+                  onPress={() => { setViewMode(v => v === 'list' ? 'calendar' : 'list'); setSelectedDay(null); Haptics.selectionAsync(); }}
+                  style={[styles.filterBtn, { backgroundColor: viewMode === 'calendar' ? colors.primary + '20' : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), borderColor: viewMode === 'calendar' ? colors.primary : colors.border }]}
+                >
+                  {viewMode === 'calendar' ? <LayoutGrid size={18} color={colors.primary} /> : <CalendarIcon size={18} color={colors.textMute} />}
+                </TouchableOpacity>
                 {(['all','pending','done'] as const).map((f) => (
                   <TouchableOpacity
                     key={f}
@@ -262,12 +282,93 @@ export default function TasksScreen() {
                     }]}
                   >
                     <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: filter === f ? '#000' : colors.textMute }}>
-                      {f === 'all' ? 'ZOTE' : f === 'pending' ? 'ZINAZONGOJA' : 'ZILIZOKAMILIKA'}
+                      {f === 'all' ? 'ZOTE' : f === 'pending' ? 'ZINAZO' : 'ZIMEKAM'}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </motion.View>
+
+            {/* ── Month Calendar View ─────────────────────────────── */}
+            <AnimatePresence>
+              {viewMode === 'calendar' && (
+                <motion.View
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ overflow: 'hidden', marginBottom: 24 }}
+                >
+                  <BlurView intensity={isDark ? 18 : 55} tint={isDark ? 'dark' : 'light'} style={[styles.calCard, { borderColor: colors.border }]}>
+                    {/* Month label */}
+                    {(() => {
+                      const now = new Date();
+                      const monthNames = ['Januari','Februari','Machi','Aprili','Mei','Juni','Julai','Agosti','Septemba','Oktoba','Novemba','Desemba'];
+                      const month = now.getMonth();
+                      const year = now.getFullYear();
+                      const firstDay = new Date(year, month, 1).getDay();
+                      const daysInMonth = new Date(year, month + 1, 0).getDate();
+                      const today = now.getDate();
+
+                      // Build tasksByDay index
+                      const tasksByDay: Record<number, typeof tasks> = {};
+                      tasks.forEach((t) => {
+                        if (!t.dueDate) return;
+                        const d = new Date(t.dueDate);
+                        if (d.getMonth() === month && d.getFullYear() === year) {
+                          const day = d.getDate();
+                          if (!tasksByDay[day]) tasksByDay[day] = [];
+                          tasksByDay[day].push(t);
+                        }
+                      });
+
+                      const cells: (number | null)[] = Array(firstDay).fill(null);
+                      for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+                      const DAY_HDRS = ['J','T','K','A','Al','Ij','S'];
+
+                      return (
+                        <>
+                          <Text style={[styles.calMonth, { color: colors.text }]}>{monthNames[month]} {year}</Text>
+                          <View style={styles.calDayHdrs}>
+                            {DAY_HDRS.map((d, i) => <Text key={i} style={[styles.calDayHdr, { color: colors.textMute }]}>{d}</Text>)}
+                          </View>
+                          <View style={styles.calGrid}>
+                            {cells.map((day, i) => {
+                              if (!day) return <View key={`e${i}`} style={styles.calCell} />;
+                              const isToday = day === today;
+                              const isSel = day === selectedDay;
+                              const dayTasks = tasksByDay[day] || [];
+                              return (
+                                <TouchableOpacity key={day} onPress={() => { setSelectedDay(isSel ? null : day); Haptics.selectionAsync(); }} style={styles.calCell}>
+                                  <View style={[styles.calDayNum, isToday && { backgroundColor: colors.primary + '25' }, isSel && { backgroundColor: colors.primary }]}>
+                                    <Text style={{ fontSize: 13, fontFamily: isToday ? 'Inter_900Black' : 'Inter_500Medium', color: isSel ? '#000' : isToday ? colors.primary : colors.text }}>{day}</Text>
+                                  </View>
+                                  {dayTasks.length > 0 && (
+                                    <View style={styles.calDots}>
+                                      {dayTasks.slice(0, 3).map((t, ti) => (
+                                        <View key={ti} style={[styles.calDot, { backgroundColor: PRI_COLOR[t.priority as TaskPriority] || colors.primary }]} />
+                                      ))}
+                                    </View>
+                                  )}
+                                </TouchableOpacity>
+                              );
+                            })}
+                          </View>
+                          {selectedDay && (
+                            <View style={[styles.calSelBanner, { backgroundColor: colors.primary + '15' }]}>
+                              <CalendarIcon size={13} color={colors.primary} />
+                              <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.primary }}>
+                                {selectedDay} {monthNames[month]} — kazi {displayTasks.length}
+                              </Text>
+                              <TouchableOpacity onPress={() => setSelectedDay(null)}><X size={14} color={colors.primary} /></TouchableOpacity>
+                            </View>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </BlurView>
+                </motion.View>
+              )}
+            </AnimatePresence>
 
             <View style={styles.taskList}>
               {displayTasks.map((task) => (
@@ -438,6 +539,16 @@ const styles = StyleSheet.create({
   queueHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   queueTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
   filterBtn: { width: 48, height: 48, borderRadius: 16, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
+  calCard: { borderRadius: 24, padding: 18, borderWidth: 1, overflow: 'hidden' },
+  calMonth: { fontSize: 16, fontFamily: 'Inter_900Black', marginBottom: 14, textAlign: 'center' },
+  calDayHdrs: { flexDirection: 'row', marginBottom: 8 },
+  calDayHdr: { flex: 1, textAlign: 'center', fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calCell: { width: '14.28%', alignItems: 'center', paddingVertical: 4 },
+  calDayNum: { width: 34, height: 34, borderRadius: 17, justifyContent: 'center', alignItems: 'center' },
+  calDots: { flexDirection: 'row', gap: 2, marginTop: 2 },
+  calDot: { width: 4, height: 4, borderRadius: 2 },
+  calSelBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14, padding: 10, borderRadius: 10 },
   taskList: { gap: 16 },
   taskCard: { borderRadius: 32, padding: 24, overflow: 'hidden', borderWidth: 1 },
   taskCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
