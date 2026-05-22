@@ -34,6 +34,17 @@ KILIMO AI is a Swahili-language agriculture app built with React + TypeScript + 
   - Custom build: `./mobile/scripts/build.sh [platform] [profile]`
 
 ## Recent Changes
+- 2026-05-22: Digital Farm Twin + Predictive ML Analytics
+  - `lib/farmtwin/model.ts` — parametric yield/revenue model; 7 crops (Mahindi, Mpunga, Maharagwe, Kahawa, Nyanya, Mihogo, Alizeti), 4 soil types, 5 input factors (soil health, rainfall, fertilizer, irrigation, planting density); Swahili advisory generator; `compareScenarios()` utility
+  - `store/useDigitalFarmTwinStore.ts` — persisted scenario store; create/rename/duplicate/delete; 2 seed scenarios; capped at 6
+  - `app/farm-twin/index.tsx` — scenario list with comparative mini-bar charts (yield, profit, risk), create-modal, duplicate/delete actions; RBAC gated (farm_manager/commercial_admin=full, commercial_farmer=basic)
+  - `app/farm-twin/[id].tsx` — live what-if simulator; stepper inputs; real-time model output; cost breakdown bars, risk gauge (drought/pest/market), Swahili advisory tips; save back to store
+  - `lib/analytics/predictions.ts` — three client-side statistical models: (1) YieldForecast via exponential smoothing + seasonal EAfrica calendar, (2) PestRisk via weighted moisture×temp×crop-sensitivity threshold model, (3) PriceTrend via OLS linear regression on 6-month farmgate price series
+  - `app/analytics/index.tsx` — predictive dashboard; yield forecast card (current vs predicted, confidence badge, % change), pest risk gauge with Swahili drivers + recommendations, per-crop price trend bars with sell signal (Uza sasa/Subiri/Hifadhi); RBAC gated (all manager/farmer/agribusiness/extension roles)
+  - Profile quick-access wired for both new routes (Shamba Dijiti + Uchanganuzi wa AI)
+- 2026-05-22: Wallet Admin module (COMPLETE)
+  - `store/useWalletAdminStore.ts`, `app/wallet-admin/{_layout,index,transactions,payouts}.tsx`
+  - Role-gated, SMS+notification side-effects on all payout actions, balance integrity check in markSettled
 - 2026-05-22: Phase 2 AI integrations (T201–T203, T206)
   - Supabase Edge Function `openai-proxy` (chat/vision/transcribe actions, JWT-verified, server-enforced SANKOFA_SYSTEM)
   - Sankofa chat wired to real LLM with request sequence guarding + 16-msg history
@@ -53,4 +64,5 @@ KILIMO AI is a Swahili-language agriculture app built with React + TypeScript + 
 - T205 Safaricom Daraja M-Pesa — needs `MPESA_CONSUMER_KEY/SECRET/SHORTCODE/PASSKEY/ENV`
 
 ## Out of scope (deferred)
-- Predictive ML models, Digital Farm Twin "what if" sim
+- True server-side ML models (current analytics are client-side statistical models)
+- Digital Farm Twin multi-season historical replay

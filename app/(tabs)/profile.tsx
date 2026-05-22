@@ -90,6 +90,8 @@ const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; co
   { key: 'peer', label: 'Vikundi', sub: 'Peer Groups', route: '/peer-groups', color: '#ec4899' },
   { key: 'expert', label: 'Wataalamu', sub: 'Consultations', route: '/consultations', color: '#a855f7' },
   { key: 'wallet-admin', label: 'Pochi Msimamizi', sub: 'Wallet Admin', route: '/wallet-admin', color: '#14b8a6' },
+  { key: 'farm-twin', label: 'Shamba Dijiti', sub: 'Digital Farm Twin', route: '/farm-twin', color: '#6366f1' },
+  { key: 'analytics', label: 'Uchanganuzi wa AI', sub: 'Predictive Analytics', route: '/analytics', color: '#f97316' },
 ];
 
 const PROFILE_SECTIONS = [
