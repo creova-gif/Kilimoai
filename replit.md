@@ -34,9 +34,23 @@ KILIMO AI is a Swahili-language agriculture app built with React + TypeScript + 
   - Custom build: `./mobile/scripts/build.sh [platform] [profile]`
 
 ## Recent Changes
+- 2026-05-22: Phase 2 AI integrations (T201–T203, T206)
+  - Supabase Edge Function `openai-proxy` (chat/vision/transcribe actions, JWT-verified, server-enforced SANKOFA_SYSTEM)
+  - Sankofa chat wired to real LLM with request sequence guarding + 16-msg history
+  - Crop diagnosis wired to OpenAI Vision via `expo-image-picker` + base64 upload; severity normalized; critical results auto-create task + notification
+  - Voice mode wired to Whisper STT via `expo-audio` recorder; shared concurrency guard with text path; in-flight cancellation on voice-mode exit
+  - OpenWeather integration for weather screens
+  - Validation errors surface verbatim Swahili messages instead of generic fallback
 - 2026-02-18: Initial Replit setup
   - Fixed package.json (removed invalid Node.js built-in packages)
   - Configured Vite for Replit (port 5000, host 0.0.0.0, allowedHosts)
   - Added root-level tsconfig.json with relaxed settings
   - Renamed crash-reporting.ts to .tsx (contained JSX)
   - Set up deployment configuration
+
+## Pending (need user-supplied credentials)
+- T204 Africa's Talking SMS — needs `AT_USERNAME`, `AT_API_KEY`, `AT_SENDER_ID`
+- T205 Safaricom Daraja M-Pesa — needs `MPESA_CONSUMER_KEY/SECRET/SHORTCODE/PASSKEY/ENV`
+
+## Out of scope (deferred)
+- Wallet Admin (enterprise), predictive ML models, Digital Farm Twin "what if" sim
