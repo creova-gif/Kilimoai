@@ -20,13 +20,13 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Web Preview"
+args = "Start application"
 
 [workflows.workflow.metadata]
 outputType = "mobile"
 
 [[workflows.workflow]]
-name = "Web Preview"
+name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
