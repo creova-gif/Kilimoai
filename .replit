@@ -31,7 +31,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npx expo start --tunnel --port 5000"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
