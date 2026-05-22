@@ -3,7 +3,7 @@
  */
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { ArrowDownRight, ArrowUpRight, Receipt } from 'lucide-react-native';
+import { ArrowDownRight, ArrowUpRight, Receipt, ShieldCheck } from 'lucide-react-native';
 import PageScaffold, { GlassCard, EmptyState } from '../../components/PageScaffold';
 import { useTheme } from '../../constants/Theme';
 import { Gate } from '../../lib/access';
@@ -60,7 +60,7 @@ export default function TransactionsScreen() {
   return (
     <Gate
       feature="wallet_admin"
-      fallback={<PageScaffold title="Daftari la Miamala" badge="ENTERPRISE"><View /></PageScaffold>}
+      fallback={<PageScaffold title="Daftari la Miamala" badge="ENTERPRISE"><GlassCard style={{ margin: 24, padding: 24, alignItems: 'center', gap: 12 }}><ShieldCheck size={32} color="#64748b" /><Text style={{ fontFamily: 'Inter_700Bold', fontSize: 16, color: '#64748b', textAlign: 'center' }}>Hairuhusiwi{'\n'}Daftari hili ni kwa Viongozi wa Ushirika na Wasimamizi pekee.</Text></GlassCard></PageScaffold>}
     >
       <PageScaffold title="Daftari la Miamala" subtitle="Ledger" badge="ENTERPRISE">
         <View style={s.filterRow}>

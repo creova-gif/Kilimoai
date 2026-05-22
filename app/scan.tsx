@@ -616,7 +616,7 @@ export default function ScanScreen() {
                 </motion.View>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Scanning tips">
+              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Scanning tips" onPress={() => { Haptics.selectionAsync(); Alert.alert('Vidokezo vya Skanning', '• Hakikisha taa ya kutosha\n• Shika simu umbali wa sm 15-30\n• Zingatia majani yenye dalili\n• Epuka mwanga mkali nyuma\n• Piga picha moja kwa wakati mmoja'); }}>
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
                   <Info size={24} color="#ffffff" />
                 </BlurView>

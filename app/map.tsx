@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -8,7 +8,8 @@ import {
   Dimensions, 
   Image, 
   Platform,
-  StatusBar
+  StatusBar,
+  Alert
 } from 'react-native';
 import { 
   ChevronLeft, 
@@ -64,8 +65,22 @@ export default function MapScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
 
-  const handleAction = () => {
+  const [activeLayer, setActiveLayer] = useState<'ndvi'|'moisture'|'standard'>('standard');
+  const LAYER_LABELS = { ndvi: 'NDVI (Afya ya Mimea)', moisture: 'Unyevu wa Udongo', standard: 'Ramani ya Kawaida' };
+
+  const handleLayers = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const next = activeLayer === 'standard' ? 'ndvi' : activeLayer === 'ndvi' ? 'moisture' : 'standard';
+    setActiveLayer(next);
+    Alert.alert('Tabaka la Ramani', `Umebadilisha hadi: ${LAYER_LABELS[next]}`);
+  };
+  const handleLocate = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Alert.alert('GPS', 'Eneo lako: Mbeya, Kitalu A (Alpha)\n7G • Hekta 2.4\n8.9° S, 33.4° E');
+  };
+  const handleFullscreen = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Alert.alert('Ramani Kamili', 'Fungua KILIMO AI kwenye simu yako ili upate ramani kamili ya mwingiliano.');
   };
 
   return (
@@ -103,7 +118,7 @@ export default function MapScreen() {
               </BlurView>
             </View>
 
-            <TouchableOpacity onPress={handleAction} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }} activeOpacity={0.7}>
               <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
                 <Settings size={20} color="#fff" />
               </BlurView>
@@ -111,17 +126,17 @@ export default function MapScreen() {
           </motion.View>
 
           <motion.View variants={controlVariants} style={styles.mapControls}>
-            <TouchableOpacity onPress={handleAction} style={styles.controlItem}>
-              <BlurView intensity={40} tint="dark" style={styles.controlInner}>
-                <Layers size={22} color="#fff" />
+            <TouchableOpacity onPress={handleLayers} style={styles.controlItem}>
+              <BlurView intensity={40} tint="dark" style={[styles.controlInner, activeLayer !== 'standard' && { borderColor: colors.primary }]}>
+                <Layers size={22} color={activeLayer !== 'standard' ? colors.primary : '#fff'} />
               </BlurView>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleAction} style={styles.controlItem}>
+            <TouchableOpacity onPress={handleFullscreen} style={styles.controlItem}>
               <BlurView intensity={40} tint="dark" style={styles.controlInner}>
                 <Maximize2 size={22} color="#fff" />
               </BlurView>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleAction} style={styles.controlItem}>
+            <TouchableOpacity onPress={handleLocate} style={styles.controlItem}>
               <BlurView intensity={50} tint="dark" style={[styles.controlInner, { borderColor: colors.primary }]}>
                 <Locate size={22} color={colors.primary} />
               </BlurView>
@@ -166,7 +181,7 @@ export default function MapScreen() {
                     <Text style={[styles.metaText, { color: colors.textMute }]}>Eneo 7G • Hekta 2.4 • Hali Nzuri</Text>
                   </View>
                 </View>
-                <TouchableOpacity style={[styles.addPlotBtn, { backgroundColor: colors.primary }]} onPress={handleAction}>
+                <TouchableOpacity style={[styles.addPlotBtn, { backgroundColor: colors.primary }]} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/tasks' as any); }}>
                   <Plus size={20} color="#000" />
                   <Text style={styles.addPlotText}>Ongeza Kitalu</Text>
                 </TouchableOpacity>
@@ -189,7 +204,7 @@ export default function MapScreen() {
                 </View>
               </View>
 
-              <TouchableOpacity style={styles.fullAnalysisBtn} onPress={handleAction}>
+              <TouchableOpacity style={styles.fullAnalysisBtn} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/analytics' as any); }}>
                 <Zap size={16} color={colors.primary} style={{ marginRight: 10 }} />
                 <Text style={[styles.fullAnalysisText, { color: colors.primary }]}>Anzisha Uchambuzi Kamili wa AI</Text>
               </TouchableOpacity>

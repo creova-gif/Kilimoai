@@ -86,7 +86,7 @@ export default function AnalyticsDashboard() {
   const confColor: Record<typeof yieldForecast.confidence, string> = {
     high: '#22c55e', medium: '#f59e0b', low: '#ef4444',
   };
-  const maxPrice = Math.max(...priceTrends.map((t) => t.forecast90dTZSkg), 1);
+  const maxPrice = priceTrends.length > 0 ? Math.max(...priceTrends.map((t) => t.forecast90dTZSkg), 1) : 1;
 
   return (
     <Gate

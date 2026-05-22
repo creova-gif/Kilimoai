@@ -123,6 +123,7 @@ interface KilimoState {
   // Notifications
   addNotification: (notif: Omit<Notification, 'id' | 'read' | 'timestamp'>) => void;
   markNotificationRead: (id: string) => void;
+  removeNotification: (id: string) => void;
   markAllRead: () => void;
   clearNotifications: () => void;
 
@@ -264,6 +265,15 @@ export const useKilimoStore = create<KilimoState>()(
           notifications: state.notifications.map((n) => ({ ...n, read: true })),
           unreadCount: 0,
         })),
+
+      removeNotification: (id) =>
+        set((state) => {
+          const notif = state.notifications.find((n) => n.id === id);
+          return {
+            notifications: state.notifications.filter((n) => n.id !== id),
+            unreadCount: Math.max(0, state.unreadCount - (notif && !notif.read ? 1 : 0)),
+          };
+        }),
 
       clearNotifications: () =>
         set({ notifications: [], unreadCount: 0 }),

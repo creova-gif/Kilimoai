@@ -152,14 +152,14 @@ export default function NotificationsScreen() {
   const { colors, isDark } = useTheme();
   const notifications = useKilimoStore((s) => s.notifications);
   const markNotificationRead = useKilimoStore((s) => s.markNotificationRead);
+  const removeNotification = useKilimoStore((s) => s.removeNotification);
   const markAllRead = useKilimoStore((s) => s.markAllRead);
   const clearNotifications = useKilimoStore((s) => s.clearNotifications);
   const unreadCount = useKilimoStore((s) => s.unreadCount);
 
-  // Remove a single notification from store
   const handleDelete = (id: string) => {
-    // We use markRead as a soft-delete pattern; clearAll for bulk
-    markNotificationRead(id);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    removeNotification(id);
   };
 
   return (

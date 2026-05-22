@@ -562,7 +562,7 @@ export default function SankofaScreen() {
               >
                 <BlurView intensity={isDark ? 40 : 90} tint={isDark ? "dark" : "light"} style={[styles.inputArea, { borderTopColor: 'rgba(255,255,255,0.05)' }]}>
                   <View style={styles.inputRow}>
-                    <TouchableOpacity style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
+                    <TouchableOpacity style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/scan' as any); }}>
                       <Plus size={24} color={colors.text} />
                     </TouchableOpacity>
                     

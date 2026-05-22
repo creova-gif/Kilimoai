@@ -48,8 +48,8 @@ export default function FarmTwinList() {
   const [newName, setNewName] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-  const maxYield = Math.max(...scenarios.map((s) => s.output.totalYieldTonnes), 1);
-  const maxProfit = Math.max(...scenarios.map((s) => Math.max(0, s.output.netProfitTZS)), 1);
+  const maxYield = scenarios.length > 0 ? Math.max(...scenarios.map((s) => s.output.totalYieldTonnes), 1) : 1;
+  const maxProfit = scenarios.length > 0 ? Math.max(...scenarios.map((s) => Math.max(0, s.output.netProfitTZS)), 1) : 1;
 
   function handleCreate() {
     const name = newName.trim() || `Hali ${scenarios.length + 1}`;

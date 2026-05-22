@@ -128,7 +128,7 @@ const IntelligenceBento = ({ isDark, colors }: any) => {
         </Text>
         
         <View style={styles.bentoFooter}>
-          <TouchableOpacity style={[styles.bentoAction, { backgroundColor: colors.primary }]}>
+          <TouchableOpacity style={[styles.bentoAction, { backgroundColor: colors.primary }]} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/map' as any); }}>
             <Text style={styles.bentoActionText}>Analyze Route</Text>
             <ArrowUpRight size={14} color="#000" />
           </TouchableOpacity>
@@ -201,6 +201,7 @@ export default function MarketScreen() {
   const [activeCategory, setActiveCategory] = useState('Yote (All)');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -289,16 +290,30 @@ export default function MarketScreen() {
                 placeholder="Tafuta bidhaa, masoko..." 
                 placeholderTextColor={colors.textMute}
                 style={[styles.searchInput, { color: colors.text }]}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
                 onFocus={() => { setSearchFocused(true); Haptics.selectionAsync(); }}
                 onBlur={() => setSearchFocused(false)}
               />
               <View style={styles.searchActions}>
-                {searchFocused ? (
+                {searchQuery.length > 0 ? (
+                  <TouchableOpacity onPress={() => { setSearchQuery(''); Haptics.selectionAsync(); }}>
+                    <Text style={{ color: colors.textMute, fontWeight: '800', fontSize: 13 }}>✕</Text>
+                  </TouchableOpacity>
+                ) : searchFocused ? (
                   <TouchableOpacity onPress={() => setSearchFocused(false)}>
                     <Text style={{ color: colors.primary, fontWeight: '800', fontSize: 13 }}>DONE</Text>
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity style={styles.searchActionBtn}>
+                  <TouchableOpacity style={styles.searchActionBtn} onPress={() => {
+                    Haptics.selectionAsync();
+                    Alert.alert('Chuja (Filter)', 'Chagua mpangilio', [
+                      { text: 'Bei: Juu → Chini', onPress: () => {} },
+                      { text: 'Bei: Chini → Juu', onPress: () => {} },
+                      { text: 'Hifadhi ya Karibu', onPress: () => {} },
+                      { text: 'Ghairi', style: 'cancel' },
+                    ]);
+                  }}>
                     <Filter size={18} color={colors.primary} />
                   </TouchableOpacity>
                 )}
@@ -346,7 +361,11 @@ export default function MarketScreen() {
           </View>
 
           <View style={styles.marketGrid}>
-            {MARKET_DATA.map((item, idx) => {
+            {MARKET_DATA.filter((item) => {
+              const catMatch = activeCategory === 'Yote (All)' || item.category === activeCategory;
+              const qMatch = !searchQuery.trim() || item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.region.toLowerCase().includes(searchQuery.toLowerCase());
+              return catMatch && qMatch;
+            }).map((item, idx) => {
               const isExpanded = expandedId === item.id;
               return (
                 <motion.View 
@@ -443,10 +462,17 @@ export default function MarketScreen() {
                       {!isExpanded && (
                         <View style={[styles.cardFooter, { borderColor: colors.border }]}>
                           <Text style={[styles.unitLabel, { color: colors.textMute }]}>{item.unit}</Text>
-                          <View style={styles.cardDetailBtn}>
+                          <TouchableOpacity
+                            style={styles.cardDetailBtn}
+                            onPress={(e) => {
+                              e.stopPropagation?.();
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                              router.push('/wallet-admin' as any);
+                            }}
+                          >
                             <Text style={[styles.detailBtnText, { color: colors.primary }]}>Fanya Biashara</Text>
                             <ArrowRight size={14} color={colors.primary} />
-                          </View>
+                          </TouchableOpacity>
                         </View>
                       )}
                     </BlurView>

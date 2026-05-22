@@ -34,6 +34,7 @@ import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../../constants/Theme';
+import { useRouter } from 'expo-router';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -90,6 +91,7 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
 
 export default function ForecastScreen() {
   const { colors, isDark } = useTheme();
+  const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const { configured, location, current, forecast, loading, error, errorKind, refetch } = useWeather();
   const forecastDays = forecast ?? EMPTY_FORECAST;
@@ -292,8 +294,8 @@ export default function ForecastScreen() {
 
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Wiki Nzima</Text>
-              <TouchableOpacity style={styles.moreButton}>
-                <Text style={[styles.moreText, { color: colors.primary }]}>TAARIFA ZAIDI</Text>
+              <TouchableOpacity style={styles.moreButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}>
+                <Text style={[styles.moreText, { color: colors.primary }]}>TAARIFA ZAIDI →</Text>
               </TouchableOpacity>
             </motion.View>
             
