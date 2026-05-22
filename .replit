@@ -1,7 +1,6 @@
 modules = ["nodejs-20", "bash"]
 language = "javascript"
-entrypoint = "App.js"
-outputType = "mobile"
+
 
 [agent]
 expertMode = true
@@ -31,16 +30,13 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx expo start --tunnel --port 5000"
-waitForPort = 5000
+args = "npx expo start --tunnel --port 8080"
+waitForPort = 8080
 
 [workflows.workflow.metadata]
-outputType = "webview"
+outputType = "console"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
-[deployment]
-run = ["sh", "-c", "/nix/store/1lagpgadaybvs1n2312gysg2phjk89y8-nodejs-20.20.0-wrapped/bin/node $file"]
-deploymentTarget = "cloudrun"
