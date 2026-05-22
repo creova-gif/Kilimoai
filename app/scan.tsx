@@ -32,15 +32,31 @@ import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
+import { useTasks } from '../hooks/useTasks';
+import { useNotifications } from '../hooks/useNotifications';
+import { useKilimoStore } from '../store/useKilimoStore';
+import { sendSms } from '../lib/sms';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 type ScanPhase = 'IDLE' | 'SCANNING' | 'ANALYZING' | 'RESULT';
 
+// PRD: critical-severity diagnosis must (a) create a scouting task,
+// (b) fire an in-app notification, (c) trigger SMS (stubbed in Phase 1).
+const DIAGNOSIS_RESULT = {
+  disease: 'Maize Streak Virus',
+  severity: 'critical' as const,
+  recommendation: 'Tenga mimea iliyoathirika ndani ya saa 24. Tumia dawa ya wadudu inayopendekezwa.',
+};
+
 export default function ScanScreen() {
   const router = useRouter();
   const { colors, spacing, radius, isDark } = useTheme();
-  
+  const { createTask } = useTasks();
+  const { scheduleReminder } = useNotifications();
+  const addNotification = useKilimoStore((s) => s.addNotification);
+  const agroId = useKilimoStore((s) => s.agroId);
+
   const [phase, setPhase] = useState<ScanPhase>('IDLE');
   const [isOffline, setIsOffline] = useState(false); // Mock offline state
   const [analysisText, setAnalysisText] = useState('Initiating quantum analysis...');
@@ -75,8 +91,60 @@ export default function ScanScreen() {
       setTimeout(() => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setPhase('RESULT');
+        fireCriticalSideEffects();
       }, 3500);
     }, 2000);
+  };
+
+  /**
+   * Critical-severity diagnosis side effects (PRD §2.2 Notification Matrix):
+   *   1. Create a scouting task auto-assigned to the affected block
+   *   2. Push an in-app notification
+   *   3. Schedule a local follow-up reminder in 4h
+   *   4. Send an SMS (stub — wires up in Phase 2)
+   */
+  const fireCriticalSideEffects = async () => {
+    if (DIAGNOSIS_RESULT.severity !== 'critical') return;
+
+    try {
+      await createTask({
+        title: `Critical · Isolate ${DIAGNOSIS_RESULT.disease}`,
+        titleSw: `Hatari · Tenga mimea (${DIAGNOSIS_RESULT.disease})`,
+        description: DIAGNOSIS_RESULT.recommendation,
+        category: 'scouting',
+        priority: 'critical',
+        status: 'pending',
+        dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        xpReward: 60,
+        farmBlock: 'Block A',
+      });
+
+      addNotification({
+        title: `⚠️ ${DIAGNOSIS_RESULT.disease} detected`,
+        body: DIAGNOSIS_RESULT.recommendation,
+        type: 'warning',
+      });
+
+      // Local push reminder in 4 hours
+      scheduleReminder(
+        'Follow-up · Crop diagnosis',
+        `Check progress on ${DIAGNOSIS_RESULT.disease} containment.`,
+        4 * 60 * 60,
+        '/tasks',
+      ).catch(() => { /* notification permission may be denied — silent */ });
+
+      // SMS adapter (stub until Phase 2 SMS credentials are configured)
+      if (agroId?.phoneNumber) {
+        sendSms({
+          to: agroId.phoneNumber,
+          event: 'critical_diagnosis',
+          body: `KILIMO AI: ${DIAGNOSIS_RESULT.disease} imegunduliwa. Tenga mimea ndani ya 24h. Angalia app.`,
+          meta: { disease: DIAGNOSIS_RESULT.disease },
+        }).catch(() => { /* stub may log but never throws */ });
+      }
+    } catch (err) {
+      console.warn('[scan] critical side effects failed:', err);
+    }
   };
 
   const handleReset = () => {

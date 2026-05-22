@@ -103,6 +103,15 @@ export default function RootLayout() {
           <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="notifications" options={{ headerShown: false, presentation: 'card' }} />
+          {/* Phase 1 — full PRD features */}
+          <Stack.Screen name="agro-id" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="contracts" options={{ headerShown: false }} />
+          <Stack.Screen name="livestock" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="inventory" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="insurance" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="input-supply" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="peer-groups" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="consultations" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
           <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
         </Stack>

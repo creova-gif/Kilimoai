@@ -25,6 +25,7 @@ export interface AgroID {
   joinDate: string;
   avatarUrl?: string;
   mpesaLinked: boolean;
+  phoneNumber?: string;
   biometricEnabled: boolean;
   coopId?: string;
 }

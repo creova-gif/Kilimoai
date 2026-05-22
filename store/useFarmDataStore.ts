@@ -1,0 +1,329 @@
+/**
+ * Kilimo AI — Farm Data Store
+ *
+ * One persisted Zustand store backing the six "missing feature" PRD pages:
+ *   - Livestock
+ *   - Inventory
+ *   - Insurance Hub
+ *   - Input Supply (orders)
+ *   - Peer Groups
+ *   - Expert Consultations
+ *   - P&L ledger entries (drives the Agro ID PDF export)
+ *
+ * Phase 1 wires UI + state. Phase 2 swaps `useEffect` data loaders for
+ * Supabase queries; the shapes here are already DB-friendly.
+ */
+
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// ─── Livestock ───────────────────────────────────────────────────────────────
+export type LivestockSpecies = 'cattle' | 'goat' | 'sheep' | 'poultry' | 'pig';
+
+export interface LivestockAnimal {
+  id: string;
+  tag: string;             // ear-tag / RFID
+  species: LivestockSpecies;
+  name?: string;
+  birthDate?: string;
+  weightKg?: number;
+  lastVaccineDate?: string;
+  nextVaccineDue?: string;
+  healthStatus: 'healthy' | 'attention' | 'sick';
+  notes?: string;
+}
+
+// ─── Inventory ───────────────────────────────────────────────────────────────
+export type InventoryUnit = 'kg' | 'L' | 'bag' | 'piece' | 'pack';
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  category: 'seed' | 'fertilizer' | 'pesticide' | 'feed' | 'tool' | 'other';
+  unit: InventoryUnit;
+  qty: number;
+  lowStockAt: number;
+  costPerUnitTZS?: number;
+  expiresOn?: string;
+  supplier?: string;
+}
+
+// ─── Insurance ───────────────────────────────────────────────────────────────
+export type InsurancePolicyStatus = 'browse' | 'pending' | 'active' | 'expired' | 'claimed';
+
+export interface InsurancePolicy {
+  id: string;
+  product: string;          // e.g. "Drought Shield — Maize"
+  provider: string;
+  coverage: 'crop' | 'livestock';
+  premiumTZS: number;
+  payoutMaxTZS: number;
+  termMonths: number;
+  status: InsurancePolicyStatus;
+  startedAt?: string;
+  expiresAt?: string;
+  claimReason?: string;
+  claimAmountTZS?: number;
+}
+
+// ─── Input Supply ────────────────────────────────────────────────────────────
+export type InputOrderStatus = 'cart' | 'placed' | 'dispatched' | 'delivered' | 'cancelled';
+
+export interface InputSupplier {
+  id: string;
+  name: string;
+  vetted: boolean;
+  region: string;
+  rating: number;     // 0–5
+  category: string;
+}
+
+export interface InputOrder {
+  id: string;
+  supplierId: string;
+  itemName: string;
+  qty: number;
+  unit: InventoryUnit;
+  totalTZS: number;
+  status: InputOrderStatus;
+  expectedDelivery?: string;
+  placedAt: string;
+}
+
+// ─── Peer Groups ─────────────────────────────────────────────────────────────
+export interface PeerGroup {
+  id: string;
+  name: string;
+  topic: string;       // e.g. "Maize · Arusha"
+  region: string;
+  memberCount: number;
+  joined: boolean;
+  lastActivity?: string;
+}
+
+export interface PeerPost {
+  id: string;
+  groupId: string;
+  author: string;
+  body: string;
+  createdAt: string;
+}
+
+// ─── Expert Consultations ────────────────────────────────────────────────────
+export type ConsultationStatus = 'available' | 'requested' | 'scheduled' | 'completed' | 'cancelled';
+
+export interface Expert {
+  id: string;
+  name: string;
+  specialty: string;     // e.g. "Soil & Fertility"
+  yearsExperience: number;
+  languages: string[];
+  ratePerHourTZS: number;
+  rating: number;
+  avatarUrl?: string;
+}
+
+export interface Consultation {
+  id: string;
+  expertId: string;
+  scheduledFor?: string;
+  status: ConsultationStatus;
+  channel: 'video' | 'chat';
+  topic: string;
+}
+
+// ─── P&L Ledger ──────────────────────────────────────────────────────────────
+export interface LedgerEntry {
+  id: string;
+  date: string;         // ISO
+  category: string;     // e.g. "Sale · Maize", "Input · Fertilizer"
+  description: string;
+  amountTZS: number;    // +income / -expense
+}
+
+// ─── Store ───────────────────────────────────────────────────────────────────
+interface FarmDataState {
+  // Collections
+  livestock: LivestockAnimal[];
+  inventory: InventoryItem[];
+  insurance: InsurancePolicy[];
+  suppliers: InputSupplier[];
+  orders: InputOrder[];
+  groups: PeerGroup[];
+  posts: PeerPost[];
+  experts: Expert[];
+  consultations: Consultation[];
+  ledger: LedgerEntry[];
+
+  // Livestock
+  addAnimal: (a: Omit<LivestockAnimal, 'id'>) => void;
+  updateAnimal: (id: string, patch: Partial<LivestockAnimal>) => void;
+  removeAnimal: (id: string) => void;
+
+  // Inventory
+  addItem: (i: Omit<InventoryItem, 'id'>) => void;
+  adjustItem: (id: string, delta: number) => void;
+  removeItem: (id: string) => void;
+
+  // Insurance
+  enrollPolicy: (id: string) => void;
+  fileClaim: (id: string, reason: string, amountTZS: number) => void;
+
+  // Input Supply
+  placeOrder: (o: Omit<InputOrder, 'id' | 'placedAt' | 'status'>) => void;
+  advanceOrder: (id: string, status: InputOrderStatus) => void;
+
+  // Peer Groups
+  joinGroup: (id: string) => void;
+  leaveGroup: (id: string) => void;
+  addPost: (groupId: string, author: string, body: string) => void;
+
+  // Consultations
+  requestConsultation: (expertId: string, topic: string, channel: 'video' | 'chat') => void;
+  cancelConsultation: (id: string) => void;
+
+  // Ledger
+  addLedgerEntry: (e: Omit<LedgerEntry, 'id'>) => void;
+  removeLedgerEntry: (id: string) => void;
+}
+
+// ─── Seeds ───────────────────────────────────────────────────────────────────
+const SEED_LIVESTOCK: LivestockAnimal[] = [
+  { id: 'a1', tag: 'TZ-0421', species: 'cattle', name: 'Sita', birthDate: '2022-03-12', weightKg: 380, lastVaccineDate: '2026-03-05', nextVaccineDue: '2026-09-05', healthStatus: 'healthy' },
+  { id: 'a2', tag: 'TZ-0422', species: 'cattle', name: 'Bahati', birthDate: '2023-08-01', weightKg: 290, lastVaccineDate: '2026-02-10', nextVaccineDue: '2026-08-10', healthStatus: 'attention', notes: 'Slight limp on rear leg' },
+  { id: 'a3', tag: 'GT-118', species: 'goat', birthDate: '2024-11-20', weightKg: 32, lastVaccineDate: '2026-04-15', nextVaccineDue: '2026-10-15', healthStatus: 'healthy' },
+];
+
+const SEED_INVENTORY: InventoryItem[] = [
+  { id: 'i1', name: 'DAP Fertilizer', category: 'fertilizer', unit: 'bag', qty: 4, lowStockAt: 2, costPerUnitTZS: 95_000, supplier: 'YARA' },
+  { id: 'i2', name: 'Maize Seed — DK 8033', category: 'seed', unit: 'kg', qty: 15, lowStockAt: 5, costPerUnitTZS: 12_000, supplier: 'East African Seed' },
+  { id: 'i3', name: 'Bee Repellent', category: 'pesticide', unit: 'L', qty: 1, lowStockAt: 2, costPerUnitTZS: 18_000 },
+  { id: 'i4', name: 'Layer Mash', category: 'feed', unit: 'bag', qty: 6, lowStockAt: 3, costPerUnitTZS: 64_000 },
+];
+
+const SEED_INSURANCE: InsurancePolicy[] = [
+  { id: 'p1', product: 'Drought Shield — Maize', provider: 'Britam', coverage: 'crop', premiumTZS: 45_000, payoutMaxTZS: 1_200_000, termMonths: 6, status: 'browse' },
+  { id: 'p2', product: 'Cattle Mortality Cover', provider: 'ACRE Africa', coverage: 'livestock', premiumTZS: 80_000, payoutMaxTZS: 2_500_000, termMonths: 12, status: 'active', startedAt: new Date(Date.now() - 90 * 86400_000).toISOString(), expiresAt: new Date(Date.now() + 275 * 86400_000).toISOString() },
+  { id: 'p3', product: 'Hail & Flood — Mixed Crops', provider: 'Jubilee', coverage: 'crop', premiumTZS: 62_000, payoutMaxTZS: 1_800_000, termMonths: 6, status: 'browse' },
+];
+
+const SEED_SUPPLIERS: InputSupplier[] = [
+  { id: 's1', name: 'YARA East Africa', vetted: true, region: 'Arusha', rating: 4.7, category: 'Fertilizer' },
+  { id: 's2', name: 'East African Seed Co.', vetted: true, region: 'Arusha', rating: 4.8, category: 'Seed' },
+  { id: 's3', name: 'Bayer CropScience', vetted: true, region: 'Dar es Salaam', rating: 4.5, category: 'Pesticide' },
+  { id: 's4', name: 'Mbeya Agro Supplies', vetted: false, region: 'Mbeya', rating: 4.1, category: 'General' },
+];
+
+const SEED_ORDERS: InputOrder[] = [
+  { id: 'o1', supplierId: 's1', itemName: 'CAN Fertilizer', qty: 6, unit: 'bag', totalTZS: 510_000, status: 'dispatched', expectedDelivery: new Date(Date.now() + 2 * 86400_000).toISOString(), placedAt: new Date(Date.now() - 3 * 86400_000).toISOString() },
+];
+
+const SEED_GROUPS: PeerGroup[] = [
+  { id: 'g1', name: 'Wakulima wa Mahindi · Arusha', topic: 'Maize · Arusha', region: 'Arusha', memberCount: 482, joined: true, lastActivity: new Date(Date.now() - 30 * 60_000).toISOString() },
+  { id: 'g2', name: 'Mpunga Bora Mbeya', topic: 'Rice · Mbeya', region: 'Mbeya', memberCount: 211, joined: false, lastActivity: new Date(Date.now() - 6 * 3600_000).toISOString() },
+  { id: 'g3', name: 'Ufugaji wa Ng\'ombe', topic: 'Dairy Cattle', region: 'National', memberCount: 893, joined: false, lastActivity: new Date(Date.now() - 2 * 3600_000).toISOString() },
+];
+
+const SEED_POSTS: PeerPost[] = [
+  { id: 'p1', groupId: 'g1', author: 'Asha M.', body: 'Bei ya mahindi imepanda Soko la Arusha leo — TZS 920/kg.', createdAt: new Date(Date.now() - 45 * 60_000).toISOString() },
+  { id: 'p2', groupId: 'g1', author: 'John K.', body: 'Nimepata Maize Streak kwenye plot 3. Sasa nasubiri ushauri wa Sankofa.', createdAt: new Date(Date.now() - 2 * 3600_000).toISOString() },
+];
+
+const SEED_EXPERTS: Expert[] = [
+  { id: 'e1', name: 'Dr. Esther Mushi', specialty: 'Soil & Fertility', yearsExperience: 14, languages: ['Swahili', 'English'], ratePerHourTZS: 35_000, rating: 4.9, avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200' },
+  { id: 'e2', name: 'Bw. Daudi Kileo', specialty: 'Pest & Disease', yearsExperience: 9, languages: ['Swahili'], ratePerHourTZS: 25_000, rating: 4.7 },
+  { id: 'e3', name: 'Dr. Neema Kessy', specialty: 'Livestock Health', yearsExperience: 18, languages: ['Swahili', 'English'], ratePerHourTZS: 40_000, rating: 4.95, avatarUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200' },
+];
+
+const SEED_CONSULTATIONS: Consultation[] = [
+  { id: 'co1', expertId: 'e1', scheduledFor: new Date(Date.now() + 36 * 3600_000).toISOString(), status: 'scheduled', channel: 'video', topic: 'Soil test review for Block B' },
+];
+
+const SEED_LEDGER: LedgerEntry[] = [
+  { id: 'l1', date: new Date(Date.now() - 60 * 86400_000).toISOString(), category: 'Input · Seed', description: 'Maize seed DK 8033 — 30kg', amountTZS: -360_000 },
+  { id: 'l2', date: new Date(Date.now() - 58 * 86400_000).toISOString(), category: 'Input · Fertilizer', description: 'DAP fertilizer — 8 bags', amountTZS: -760_000 },
+  { id: 'l3', date: new Date(Date.now() - 40 * 86400_000).toISOString(), category: 'Labour', description: 'Planting crew — 6 days', amountTZS: -180_000 },
+  { id: 'l4', date: new Date(Date.now() - 30 * 86400_000).toISOString(), category: 'Sale · Beans', description: 'Beans to local market — 200kg', amountTZS: 460_000 },
+  { id: 'l5', date: new Date(Date.now() - 10 * 86400_000).toISOString(), category: 'Sale · Maize', description: 'Maize harvest — 1,200kg @ TZS 850', amountTZS: 1_020_000 },
+  { id: 'l6', date: new Date(Date.now() - 7 * 86400_000).toISOString(), category: 'Cooperative', description: 'AMCOS milestone payout', amountTZS: 540_000 },
+  { id: 'l7', date: new Date(Date.now() - 3 * 86400_000).toISOString(), category: 'Input · Pesticide', description: 'Bee repellent — 4L', amountTZS: -72_000 },
+];
+
+const uid = (prefix: string) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+
+export const useFarmDataStore = create<FarmDataState>()(
+  persist(
+    (set, get) => ({
+      livestock: SEED_LIVESTOCK,
+      inventory: SEED_INVENTORY,
+      insurance: SEED_INSURANCE,
+      suppliers: SEED_SUPPLIERS,
+      orders: SEED_ORDERS,
+      groups: SEED_GROUPS,
+      posts: SEED_POSTS,
+      experts: SEED_EXPERTS,
+      consultations: SEED_CONSULTATIONS,
+      ledger: SEED_LEDGER,
+
+      addAnimal: (a) => set((s) => ({ livestock: [{ ...a, id: uid('a') }, ...s.livestock] })),
+      updateAnimal: (id, patch) => set((s) => ({ livestock: s.livestock.map((x) => x.id === id ? { ...x, ...patch } : x) })),
+      removeAnimal: (id) => set((s) => ({ livestock: s.livestock.filter((x) => x.id !== id) })),
+
+      addItem: (i) => set((s) => ({ inventory: [{ ...i, id: uid('i') }, ...s.inventory] })),
+      adjustItem: (id, delta) => set((s) => ({
+        inventory: s.inventory.map((x) => x.id === id ? { ...x, qty: Math.max(0, x.qty + delta) } : x),
+      })),
+      removeItem: (id) => set((s) => ({ inventory: s.inventory.filter((x) => x.id !== id) })),
+
+      enrollPolicy: (id) => set((s) => ({
+        insurance: s.insurance.map((p) => p.id === id ? {
+          ...p,
+          status: 'active',
+          startedAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + p.termMonths * 30 * 86400_000).toISOString(),
+        } : p),
+      })),
+      fileClaim: (id, reason, amountTZS) => set((s) => ({
+        insurance: s.insurance.map((p) => p.id === id ? { ...p, status: 'claimed', claimReason: reason, claimAmountTZS: amountTZS } : p),
+      })),
+
+      placeOrder: (o) => set((s) => ({
+        orders: [{ ...o, id: uid('o'), status: 'placed', placedAt: new Date().toISOString() }, ...s.orders],
+      })),
+      advanceOrder: (id, status) => set((s) => ({
+        orders: s.orders.map((x) => x.id === id ? { ...x, status } : x),
+      })),
+
+      joinGroup: (id) => set((s) => ({
+        groups: s.groups.map((g) => g.id === id ? { ...g, joined: true, memberCount: g.memberCount + 1 } : g),
+      })),
+      leaveGroup: (id) => set((s) => ({
+        groups: s.groups.map((g) => g.id === id ? { ...g, joined: false, memberCount: Math.max(0, g.memberCount - 1) } : g),
+      })),
+      addPost: (groupId, author, body) => set((s) => ({
+        posts: [{ id: uid('p'), groupId, author, body, createdAt: new Date().toISOString() }, ...s.posts],
+      })),
+
+      requestConsultation: (expertId, topic, channel) => set((s) => ({
+        consultations: [{
+          id: uid('co'),
+          expertId,
+          status: 'requested',
+          channel,
+          topic,
+        }, ...s.consultations],
+      })),
+      cancelConsultation: (id) => set((s) => ({
+        consultations: s.consultations.map((c) => c.id === id ? { ...c, status: 'cancelled' } : c),
+      })),
+
+      addLedgerEntry: (e) => set((s) => ({ ledger: [{ ...e, id: uid('l') }, ...s.ledger] })),
+      removeLedgerEntry: (id) => set((s) => ({ ledger: s.ledger.filter((x) => x.id !== id) })),
+    }),
+    {
+      name: 'kilimo-farm-data',
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+);
