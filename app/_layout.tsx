@@ -12,7 +12,8 @@ import {
   Inter_900Black 
 } from '@expo-google-fonts/inter';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
+import { pingActivity } from '../hooks/useIdleTimeout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useKilimoStore } from '../store/useKilimoStore';
 
@@ -20,6 +21,7 @@ import { useKilimoStore } from '../store/useKilimoStore';
 import { useSyncEngine } from '../hooks/useSyncEngine';
 import { useNotifications } from '../hooks/useNotifications';
 import { useFarmVitals } from '../hooks/useFarmVitals';
+import { useIdleTimeout } from '../hooks/useIdleTimeout';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,6 +43,7 @@ function AppServices() {
   useSyncEngine();       // 🔄 Offline queue drain
   useNotifications();    // 🔔 Push notification registration
   useFarmVitals();       // 🌱 Sensor telemetry polling
+  useIdleTimeout();      // 🔒 AUTH-06 session inactivity gate
   return null;
 }
 
@@ -68,16 +71,20 @@ function OnboardingGate({ hydrated }: { hydrated: boolean }) {
   const segments = useSegments();
   const navState = useRootNavigationState();
   const onboardingComplete = useKilimoStore((s) => s.onboardingComplete);
+  const isAuthenticated = useKilimoStore((s) => s.isAuthenticated);
 
   useEffect(() => {
     if (!hydrated || !navState?.key) return; // wait for hydration + nav ready
     const inOnboarding = segments[0] === 'onboarding';
-    if (!onboardingComplete && !inOnboarding) {
+    // Force onboarding when either onboarding incomplete OR session cleared
+    // (e.g. AUTH-06 idle timeout calls clearAgroId, which flips isAuthenticated).
+    const needsOnboarding = !onboardingComplete || !isAuthenticated;
+    if (needsOnboarding && !inOnboarding) {
       router.replace('/onboarding');
-    } else if (onboardingComplete && inOnboarding) {
+    } else if (!needsOnboarding && inOnboarding) {
       router.replace('/(tabs)');
     }
-  }, [hydrated, onboardingComplete, segments, router, navState?.key]);
+  }, [hydrated, onboardingComplete, isAuthenticated, segments, router, navState?.key]);
 
   return null;
 }
@@ -117,6 +124,9 @@ export default function RootLayout() {
         {hydrated && <AppServices />}
         <OnboardingGate hydrated={hydrated} />
 
+        {/* Native activity sink for AUTH-06 — any touch bubbles up and resets
+            the idle timer without swallowing child gestures. */}
+        <View style={{ flex: 1 }} onTouchStart={pingActivity}>
         <Stack>
           <Stack.Screen name="onboarding" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -139,6 +149,7 @@ export default function RootLayout() {
           <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
           <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
         </Stack>
+        </View>
         <StatusBar style="auto" />
       </ThemeProvider>
     </QueryClientProvider>
