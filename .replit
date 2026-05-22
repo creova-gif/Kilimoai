@@ -20,13 +20,13 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Start application"
+args = "Web Preview"
 
 [workflows.workflow.metadata]
 outputType = "mobile"
 
 [[workflows.workflow]]
-name = "Start application"
+name = "Web Preview"
 author = "agent"
 
 [[workflows.workflow.tasks]]
@@ -35,7 +35,7 @@ args = "npm run dev"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
-outputType = "console"
+outputType = "webview"
 
 [[ports]]
 localPort = 5000
