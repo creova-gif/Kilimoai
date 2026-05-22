@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -26,17 +26,19 @@ import {
   LayoutGrid,
   WifiOff,
   CloudLightning,
-  Users
+  Users,
+  X
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import { TextInput, Modal, Alert } from 'react-native';
 import { useTheme } from '../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
 import { springs, transitions } from '../constants/MotionTokens';
 import { useKilimoStore } from '../store/useKilimoStore';
-import { useTasks } from '../hooks/useTasks';
+import { useTasks, TaskCategory, TaskPriority } from '../hooks/useTasks';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -96,6 +98,11 @@ const itemVariants = {
   }
 };
 
+const CATEGORIES: TaskCategory[] = ['irrigation','planting','harvest','scouting','finance','general'];
+const PRIORITIES: TaskPriority[] = ['low','medium','high','critical'];
+const CAT_LABEL: Record<TaskCategory,string> = { irrigation:'Umwagiliaji', planting:'Upanzi', harvest:'Mavuno', scouting:'Uchunguzi', finance:'Fedha', general:'Jumla' };
+const PRI_COLOR: Record<TaskPriority,string> = { low:'#22c55e', medium:'#f59e0b', high:'#f97316', critical:'#ef4444' };
+
 export default function TasksScreen() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
@@ -103,7 +110,19 @@ export default function TasksScreen() {
   // ── Live store & hooks ───────────────────────────────────
   const isOffline = useKilimoStore((s) => s.isOffline);
   const syncQueue = useKilimoStore((s) => s.syncQueue);
-  const { tasks, pendingTasks, completedTasks, totalXP, completeTask } = useTasks();
+  const { tasks, pendingTasks, completedTasks, totalXP, completeTask, createTask, cancelTask } = useTasks();
+
+  // Create task modal state
+  const [showCreate, setShowCreate] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newTitleSw, setNewTitleSw] = useState('');
+  const [newCat, setNewCat] = useState<TaskCategory>('general');
+  const [newPri, setNewPri] = useState<TaskPriority>('medium');
+  const [newBlock, setNewBlock] = useState('');
+  // Filter state
+  const [filter, setFilter] = useState<'all'|'pending'|'done'>('all');
+
+  const displayTasks = filter === 'pending' ? pendingTasks : filter === 'done' ? completedTasks : tasks;
 
   const progress = tasks.length > 0
     ? Math.round((completedTasks.length / tasks.length) * 100)
@@ -113,6 +132,24 @@ export default function TasksScreen() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     completeTask(id);
   };
+
+  function handleCreate() {
+    if (!newTitle.trim()) { Alert.alert('Jaza jina la kazi'); return; }
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    createTask({
+      title: newTitle.trim(),
+      titleSw: newTitleSw.trim() || undefined,
+      category: newCat,
+      priority: newPri,
+      status: 'pending',
+      xpReward: newPri === 'critical' ? 40 : newPri === 'high' ? 25 : newPri === 'medium' ? 15 : 10,
+      farmBlock: newBlock.trim() || undefined,
+      dueDate: new Date(Date.now() + 24 * 3600_000).toISOString(),
+    });
+    setShowCreate(false);
+    setNewTitle(''); setNewTitleSw(''); setNewBlock('');
+    setNewCat('general'); setNewPri('medium');
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -150,7 +187,7 @@ export default function TasksScreen() {
               <Text style={[styles.headerTitle, { color: colors.text }]}>Kazi za Shamba</Text>
             </View>
 
-            <TouchableOpacity onPress={() => router.push('/notifications' as any)} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => { if (isOffline) { Alert.alert('Nje ya Mtandao', 'Kazi itahifadhiwa na kutumwa baadaye.'); } setShowCreate(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }} activeOpacity={0.7}>
               <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: isOffline ? '#ef444450' : colors.border }]}>
                 {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Plus size={24} color={colors.primary} />}
               </BlurView>
@@ -213,13 +250,27 @@ export default function TasksScreen() {
 
             <motion.View variants={itemVariants} style={styles.queueHeader}>
               <Text style={[styles.queueTitle, { color: colors.text }]}>Orodha ya Kazi</Text>
-              <TouchableOpacity style={[styles.filterBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', borderColor: colors.border }]}>
-                <LayoutGrid size={18} color={colors.primary} />
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', gap: 6 }}>
+                {(['all','pending','done'] as const).map((f) => (
+                  <TouchableOpacity
+                    key={f}
+                    onPress={() => { setFilter(f); Haptics.selectionAsync(); }}
+                    style={[styles.filterBtn, {
+                      backgroundColor: filter === f ? colors.primary : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                      borderColor: filter === f ? colors.primary : colors.border,
+                      paddingHorizontal: 10,
+                    }]}
+                  >
+                    <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: filter === f ? '#000' : colors.textMute }}>
+                      {f === 'all' ? 'ZOTE' : f === 'pending' ? 'ZINAZONGOJA' : 'ZILIZOKAMILIKA'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </motion.View>
 
             <View style={styles.taskList}>
-              {tasks.map((task) => (
+              {displayTasks.map((task) => (
                 <motion.View key={task.id} variants={itemVariants} layout>
                   <TouchableOpacity onPress={() => handleToggleTask(task.id)} activeOpacity={0.85}>
                     <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[
@@ -293,6 +344,68 @@ export default function TasksScreen() {
           </ScrollView>
         </motion.View>
       </SafeAreaView>
+
+      {/* ── Create Task Modal ──────────────────────────────── */}
+      <Modal visible={showCreate} transparent animationType="slide" onRequestClose={() => setShowCreate(false)}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+          <View style={{ backgroundColor: isDark ? '#0f172a' : '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 40, gap: 16 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ fontFamily: 'Inter_900Black', fontSize: 20, color: colors.text }}>Kazi Mpya</Text>
+              <TouchableOpacity onPress={() => setShowCreate(false)}>
+                <X size={22} color={colors.textMute} />
+              </TouchableOpacity>
+            </View>
+
+            <TextInput
+              value={newTitle}
+              onChangeText={setNewTitle}
+              placeholder="Jina la kazi (English)"
+              placeholderTextColor={colors.textMute}
+              style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, fontFamily: 'Inter_600SemiBold', fontSize: 15, color: colors.text, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}
+            />
+            <TextInput
+              value={newTitleSw}
+              onChangeText={setNewTitleSw}
+              placeholder="Jina kwa Kiswahili (hiari)"
+              placeholderTextColor={colors.textMute}
+              style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, fontFamily: 'Inter_600SemiBold', fontSize: 15, color: colors.text, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}
+            />
+            <TextInput
+              value={newBlock}
+              onChangeText={setNewBlock}
+              placeholder="Eneo la shamba (hiari, mfano: Block A)"
+              placeholderTextColor={colors.textMute}
+              style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, fontFamily: 'Inter_600SemiBold', fontSize: 15, color: colors.text, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}
+            />
+
+            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.textMute, letterSpacing: 1 }}>AINA YA KAZI</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                {CATEGORIES.map((c) => (
+                  <TouchableOpacity key={c} onPress={() => setNewCat(c)}
+                    style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: newCat === c ? colors.primary : colors.border, backgroundColor: newCat === c ? colors.primary + '20' : 'transparent' }}>
+                    <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: newCat === c ? colors.primary : colors.textMute }}>{CAT_LABEL[c]}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.textMute, letterSpacing: 1 }}>KIPAUMBELE</Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {PRIORITIES.map((p) => (
+                <TouchableOpacity key={p} onPress={() => setNewPri(p)}
+                  style={{ flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, alignItems: 'center', borderColor: newPri === p ? PRI_COLOR[p] : colors.border, backgroundColor: newPri === p ? PRI_COLOR[p] + '20' : 'transparent' }}>
+                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 11, color: newPri === p ? PRI_COLOR[p] : colors.textMute, textTransform: 'uppercase' }}>{p}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity onPress={handleCreate} style={{ backgroundColor: colors.primary, borderRadius: 16, padding: 18, alignItems: 'center', marginTop: 4 }}>
+              <Text style={{ fontFamily: 'Inter_900Black', fontSize: 16, color: '#000' }}>Ongeza Kazi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

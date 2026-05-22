@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -76,10 +76,10 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
   );
 };
 
-const RECENT_ACTIVITIES = [
-  { id: '1', title: 'Soil Scan Complete', time: '2h ago', icon: <Microscope size={16} color="#3ecf8e" />, status: 'Optimal', detail: 'Nitrogen levels at 92%' },
-  { id: '2', title: 'Irrigation Scheduled', time: '4h ago', icon: <Waves size={16} color="#3b82f6" />, status: 'Pending', detail: 'Block B - 05:00 AM' },
-  { id: '3', title: 'Market Price Alert', time: '6h ago', icon: <BarChart3 size={16} color="#f59e0b" />, status: 'High', detail: 'Maize up 12% in Mbeya' },
+const INITIAL_ACTIVITIES = [
+  { id: '1', title: 'Soil Scan Complete', route: '/scan', time: '2h ago', icon: <Microscope size={16} color="#3ecf8e" />, status: 'Optimal', detail: 'Nitrogen levels at 92%' },
+  { id: '2', title: 'Irrigation Scheduled', route: '/tasks', time: '4h ago', icon: <Waves size={16} color="#3b82f6" />, status: 'Pending', detail: 'Block B - 05:00 AM' },
+  { id: '3', title: 'Market Price Alert', route: '/market', time: '6h ago', icon: <BarChart3 size={16} color="#f59e0b" />, status: 'High', detail: 'Maize up 12% in Mbeya' },
 ];
 
 const QUICK_ACTIONS = [
@@ -113,6 +113,7 @@ export default function HomeScreen() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
 
   // ── Live global state ────────────────────────────────────────────────────
   const agroId = useKilimoStore((s) => s.agroId);
@@ -260,11 +261,17 @@ export default function HomeScreen() {
                 </View>
 
                 <View style={styles.walletActions}>
-                  <TouchableOpacity style={[styles.walletBtn, { backgroundColor: colors.primary }]}>
+                  <TouchableOpacity
+                    style={[styles.walletBtn, { backgroundColor: colors.primary }]}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/agro-id' as any); }}
+                  >
                     <ArrowDownLeft size={18} color="#000" />
                     <Text style={[styles.walletBtnText, { color: '#000' }]}>Deposit</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.walletBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
+                  <TouchableOpacity
+                    style={[styles.walletBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/wallet-admin' as any); }}
+                  >
                     <ArrowUpRight size={18} color={colors.text} />
                     <Text style={[styles.walletBtnText, { color: colors.text }]}>Pay Co-op</Text>
                   </TouchableOpacity>
@@ -347,8 +354,8 @@ export default function HomeScreen() {
             {/* Farm Vitale Grid */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Afya ya Shamba</Text>
-              <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS</Text>
+              <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}>
+                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS →</Text>
               </TouchableOpacity>
             </motion.View>
 
@@ -476,13 +483,19 @@ export default function HomeScreen() {
             {/* Telemetry Feed */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Shughuli za Hivi Karibuni</Text>
-              <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+              <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActivities([]); }}>
                 <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>CLEAR ALL</Text>
               </TouchableOpacity>
             </motion.View>
 
             <View style={styles.activityList}>
-              {RECENT_ACTIVITIES.map((activity, index) => (
+              {activities.length === 0 && (
+                <Pressable onPress={() => setActivities(INITIAL_ACTIVITIES)} style={{ alignItems: 'center', paddingVertical: 24 }}>
+                  <RefreshCw size={20} color={colors.textMute} />
+                  <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 8 }}>Gonga kurejeza shughuli</Text>
+                </Pressable>
+              )}
+              {activities.map((activity, index) => (
                 <motion.View 
                   key={activity.id}
                   variants={itemVariants}
@@ -493,7 +506,7 @@ export default function HomeScreen() {
                       styles.activityItemContainer,
                       { transform: [{ scale: pressed ? 0.98 : 1 }] }
                     ]}
-                    onPress={() => Haptics.selectionAsync()}
+                    onPress={() => { Haptics.selectionAsync(); router.push(activity.route as any); }}
                   >
                     <BlurView intensity={isDark ? 10 : 40} tint={isDark ? "dark" : "light"} style={[styles.activityItem, { borderColor: colors.border }]}>
                       <View style={[styles.activityIconWrapper, { backgroundColor: activity.icon.props.color + '10', borderColor: activity.icon.props.color + '30' }]}>

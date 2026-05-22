@@ -420,11 +420,17 @@ export default function MarketScreen() {
                             </View>
 
                             <View style={styles.actionGrid}>
-                              <TouchableOpacity style={[styles.contractBtn, { backgroundColor: colors.primary }]}>
+                              <TouchableOpacity
+                                style={[styles.contractBtn, { backgroundColor: colors.primary }]}
+                                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/wallet-admin' as any); }}
+                              >
                                 <Wallet size={16} color="#000" />
                                 <Text style={[styles.contractBtnText, { color: '#000' }]}>Buy via Escrow</Text>
                               </TouchableOpacity>
-                              <TouchableOpacity style={[styles.contractBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
+                              <TouchableOpacity
+                                style={[styles.contractBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
+                                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/contracts' as any); }}
+                              >
                                 <FileSignature size={16} color={colors.text} />
                                 <Text style={[styles.contractBtnText, { color: colors.text }]}>Smart Contract</Text>
                               </TouchableOpacity>
