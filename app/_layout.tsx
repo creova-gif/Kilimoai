@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { 
@@ -14,7 +14,7 @@ import {
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as SecureStore from 'expo-secure-store';
+import { useKilimoStore } from '../store/useKilimoStore';
 
 // ── Kilimo AI Global Services ─────────────────────────────────────────────
 import { useSyncEngine } from '../hooks/useSyncEngine';
@@ -44,10 +44,48 @@ function AppServices() {
   return null;
 }
 
+/**
+ * OnboardingGate — hydration-aware redirect.
+ * Zustand-persist rehydrates asynchronously from AsyncStorage, so the initial
+ * route can race the persisted `onboardingComplete` value. We wait for
+ * hydration and then replace the route imperatively. This also handles users
+ * who reset their onboarding state mid-session.
+ */
+/** Subscribe to Zustand-persist hydration completion. Returns true once safe. */
+function usePersistHydrated(): boolean {
+  const [hydrated, setHydrated] = useState(() => useKilimoStore.persist.hasHydrated());
+  useEffect(() => {
+    if (hydrated) return;
+    const unsub = useKilimoStore.persist.onFinishHydration(() => setHydrated(true));
+    if (useKilimoStore.persist.hasHydrated()) setHydrated(true);
+    return unsub;
+  }, [hydrated]);
+  return hydrated;
+}
+
+function OnboardingGate({ hydrated }: { hydrated: boolean }) {
+  const router = useRouter();
+  const segments = useSegments();
+  const navState = useRootNavigationState();
+  const onboardingComplete = useKilimoStore((s) => s.onboardingComplete);
+
+  useEffect(() => {
+    if (!hydrated || !navState?.key) return; // wait for hydration + nav ready
+    const inOnboarding = segments[0] === 'onboarding';
+    if (!onboardingComplete && !inOnboarding) {
+      router.replace('/onboarding');
+    } else if (onboardingComplete && inOnboarding) {
+      router.replace('/(tabs)');
+    }
+  }, [hydrated, onboardingComplete, segments, router, navState?.key]);
+
+  return null;
+}
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
-  
+  const hydrated = usePersistHydrated();
+
   const [loaded, error] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -58,43 +96,28 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    async function checkFirstLaunch() {
-      try {
-        const hasLaunched = await SecureStore.getItemAsync('hasLaunched');
-        if (hasLaunched === null) {
-          await SecureStore.setItemAsync('hasLaunched', 'true');
-          setIsFirstLaunch(true);
-        } else {
-          setIsFirstLaunch(false);
-        }
-      } catch (err) {
-        setIsFirstLaunch(false);
-      }
-    }
-    checkFirstLaunch();
-  }, []);
-
-  useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded && isFirstLaunch !== null) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isFirstLaunch]);
+  }, [loaded]);
 
-  if (!loaded || isFirstLaunch === null) {
+  if (!loaded) {
     return null;
   }
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        {/* Bootstrap all background services once providers are mounted */}
-        <AppServices />
+        {/* Bootstrap background services only after persist hydration completes —
+            otherwise their store writes can clobber persisted onboarding state. */}
+        {hydrated && <AppServices />}
+        <OnboardingGate hydrated={hydrated} />
 
-        <Stack initialRouteName={isFirstLaunch ? 'onboarding' : '(tabs)'}>
+        <Stack>
           <Stack.Screen name="onboarding" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="sankofa" options={{ headerShown: false, presentation: 'card' }} />
@@ -112,6 +135,7 @@ export default function RootLayout() {
           <Stack.Screen name="input-supply" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="peer-groups" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="consultations" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
           <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
         </Stack>

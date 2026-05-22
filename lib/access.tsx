@@ -19,9 +19,12 @@ export type AccessLevel = 'full' | 'basic' | 'none';
 export type CanonicalRole =
   | 'smallholder'
   | 'farmer'
+  | 'commercial_farmer'
   | 'farm_manager'
+  | 'commercial_admin'
   | 'agribusiness'
-  | 'coop_leader';
+  | 'coop_leader'
+  | 'extension_officer';
 
 export type Feature =
   | 'ai_chat'
@@ -90,8 +93,35 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     crop_planning: 'full', farm_mapping: 'full', task_management: 'none',
     livestock: 'none', inventory: 'none',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'none',
-    finance_tracker: 'full', mobile_money: 'full', insurance: 'none', agro_id: 'none',
-    analytics_predictive: 'none', digital_farm_twin: 'none',
+    finance_tracker: 'full', mobile_money: 'full', insurance: 'none', agro_id: 'full',
+    analytics_predictive: 'basic', digital_farm_twin: 'none',
+    expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+  },
+  commercial_farmer: {
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    crop_planning: 'full', farm_mapping: 'full', task_management: 'full',
+    livestock: 'full', inventory: 'full',
+    market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
+    finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
+    analytics_predictive: 'full', digital_farm_twin: 'basic',
+    expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+  },
+  commercial_admin: {
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    crop_planning: 'full', farm_mapping: 'full', task_management: 'full',
+    livestock: 'full', inventory: 'full',
+    market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
+    finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
+    analytics_predictive: 'full', digital_farm_twin: 'full',
+    expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
+  },
+  extension_officer: {
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    crop_planning: 'basic', farm_mapping: 'basic', task_management: 'full',
+    livestock: 'basic', inventory: 'none',
+    market_prices: 'full', marketplace: 'none', contract_farming: 'none', input_supply: 'basic',
+    finance_tracker: 'none', mobile_money: 'none', insurance: 'basic', agro_id: 'none',
+    analytics_predictive: 'full', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
   },
 };
@@ -124,20 +154,39 @@ const FEATURE_LABELS: Record<Feature, string> = {
 const ROLE_LABELS: Record<CanonicalRole, string> = {
   smallholder: 'Mkulima Mdogo (Smallholder)',
   farmer: 'Mkulima (Farmer)',
-  farm_manager: 'Msimamizi (Farm Manager)',
+  commercial_farmer: 'Mkulima wa Biashara (Commercial Farmer)',
+  farm_manager: 'Msimamizi wa Shamba (Farm Manager)',
+  commercial_admin: 'Msimamizi Mkuu (Commercial Admin)',
   agribusiness: 'Agribiashara (Agribusiness)',
   coop_leader: 'Kiongozi wa Ushirika (Co-op Leader)',
+  extension_officer: 'Afisa Ugani / NGO (Extension Officer)',
+};
+
+export const ROLE_DESCRIPTIONS: Record<CanonicalRole, string> = {
+  smallholder: 'Shamba dogo (0–5 ekari). AI advice + utambuzi wa magonjwa.',
+  farmer: 'Mkulima huru (5+ ekari). Mpango wa msimu + uongezaji wa mazao.',
+  commercial_farmer: 'Uzalishaji wa biashara. Mikataba, fedha, na uchambuzi.',
+  farm_manager: 'Unasimamia mashamba mengi. Kazi za timu + ripoti.',
+  commercial_admin: 'Operesheni za kibiashara — udhibiti kamili wa jukwaa.',
+  agribusiness: 'Mnunuzi au msambazaji wa pembejeo. Soko + mikataba.',
+  coop_leader: 'Kiongozi wa kikundi cha wakulima. Mauzo ya pamoja.',
+  extension_officer: 'Afisa ugani au NGO. Fuatilia wakulima + mafunzo.',
 };
 
 // Map AgroID.role free-form string → canonical role.
 // Defaults to 'farmer' which is a sensible middle ground.
 export function normalizeRole(role: string | undefined | null): CanonicalRole {
   if (!role) return 'farmer';
+  // Canonical key direct match
+  if ((Object.keys(ROLE_LABELS) as string[]).includes(role)) return role as CanonicalRole;
   const r = role.toLowerCase();
-  if (r.includes('small') || r.includes('mdogo')) return 'smallholder';
-  if (r.includes('manager') || r.includes('msimamizi') || r.includes('mkuu')) return 'farm_manager';
-  if (r.includes('agri') || r.includes('biashara') || r.includes('buyer')) return 'agribusiness';
+  if (r.includes('extension') || r.includes('ugani') || r.includes('ngo')) return 'extension_officer';
   if (r.includes('coop') || r.includes('ushirika') || r.includes('amcos')) return 'coop_leader';
+  if (r.includes('admin')) return 'commercial_admin';
+  if (r.includes('commercial') || r.includes('biashara mkubwa')) return 'commercial_farmer';
+  if (r.includes('agri') || r.includes('biashara') || r.includes('buyer') || r.includes('supplier')) return 'agribusiness';
+  if (r.includes('manager') || r.includes('msimamizi') || r.includes('mkuu')) return 'farm_manager';
+  if (r.includes('small') || r.includes('mdogo')) return 'smallholder';
   return 'farmer';
 }
 

@@ -41,6 +41,8 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { generateRecommendations, severityColor } from '../../lib/recommendations';
+import { Lightbulb } from 'lucide-react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -119,6 +121,14 @@ export default function HomeScreen() {
   const farmVitals = useKilimoStore((s) => s.farmVitals);
   const wallet = useKilimoStore((s) => s.wallet);
   const unreadCount = useKilimoStore((s) => s.unreadCount);
+  const farmProfile = useKilimoStore((s) => s.farmProfile);
+  const language = useKilimoStore((s) => s.language);
+
+  // AI-06 — personalized recommendations (≥3, refreshed on profile/vitals change)
+  const recommendations = React.useMemo(
+    () => generateRecommendations({ profile: farmProfile, vitals: farmVitals, language }),
+    [farmProfile, farmVitals, language]
+  );
 
   // Derive dynamic farm stats from live store
   const FARM_STATS = [
@@ -421,6 +431,48 @@ export default function HomeScreen() {
               </ScrollView>
             </motion.View>
 
+            {/* AI-06 — Sankofa AI personalized recommendations */}
+            <motion.View variants={itemVariants} style={styles.sectionHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Lightbulb size={18} color={colors.primary} />
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                  {language === 'sw' ? 'Mapendekezo ya Sankofa AI' : 'Sankofa AI Recommendations'}
+                </Text>
+              </View>
+              <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 1 }}>
+                {recommendations.length} {language === 'sw' ? 'MAPYA' : 'NEW'}
+              </Text>
+            </motion.View>
+            <View style={{ gap: 10, marginBottom: 20 }}>
+              {recommendations.map((rec) => {
+                const col = severityColor(rec.severity);
+                return (
+                  <motion.View key={rec.id} variants={itemVariants}>
+                    <Pressable
+                      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(rec.cta.route as any); }}
+                      style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
+                    >
+                      <BlurView intensity={isDark ? 15 : 50} tint={isDark ? 'dark' : 'light'} style={[styles.recCard, { borderColor: col + '40' }]}>
+                        <View style={[styles.recBar, { backgroundColor: col }]} />
+                        <View style={{ flex: 1 }}>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                            <View style={[styles.recDot, { backgroundColor: col }]} />
+                            <Text style={[styles.recCat, { color: col }]}>{rec.category.toUpperCase()}</Text>
+                          </View>
+                          <Text style={[styles.recTitle, { color: colors.text }]}>{rec.title}</Text>
+                          <Text style={[styles.recBody, { color: colors.textMute }]}>{rec.body}</Text>
+                          <View style={[styles.recCta, { borderColor: col + '50' }]}>
+                            <Text style={[styles.recCtaText, { color: col }]}>{rec.cta.label}</Text>
+                            <ArrowRight size={12} color={col} />
+                          </View>
+                        </View>
+                      </BlurView>
+                    </Pressable>
+                  </motion.View>
+                );
+              })}
+            </View>
+
             {/* Telemetry Feed */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Shughuli za Hivi Karibuni</Text>
@@ -496,6 +548,22 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingTop: 12,
   },
+  recCard: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 14,
+    paddingLeft: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  recBar: { width: 4, borderRadius: 2, alignSelf: 'stretch' },
+  recDot: { width: 6, height: 6, borderRadius: 3 },
+  recCat: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.5 },
+  recTitle: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', marginBottom: 4 },
+  recBody: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 17, marginBottom: 10 },
+  recCta: { flexDirection: 'row', alignSelf: 'flex-start', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1 },
+  recCtaText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

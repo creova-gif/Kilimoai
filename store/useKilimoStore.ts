@@ -64,10 +64,25 @@ export interface WalletState {
 
 // ─── Store State ─────────────────────────────────────────────────────────────
 
+export interface FarmProfile {
+  primaryCrops: string[];
+  region: string;
+  district?: string;
+  farmSizeAcres: number;
+  mainActivity: 'mazao' | 'mifugo' | 'mchanganyiko';
+  hasLivestock: boolean;
+  hasIrrigation: boolean;
+}
+
+export type AppLanguage = 'sw' | 'en';
+
 interface KilimoState {
   // Auth / Identity
   agroId: AgroID | null;
   isAuthenticated: boolean;
+  onboardingComplete: boolean;
+  language: AppLanguage;
+  farmProfile: FarmProfile | null;
   
   // Network / Offline
   isOffline: boolean;
@@ -88,7 +103,12 @@ interface KilimoState {
 
   // Auth
   setAgroId: (agroId: AgroID) => void;
+  updateAgroId: (patch: Partial<AgroID>) => void;
   clearAgroId: () => void;
+  setOnboardingComplete: (complete: boolean) => void;
+  setLanguage: (lang: AppLanguage) => void;
+  setFarmProfile: (profile: FarmProfile) => void;
+  resetOnboarding: () => void;
 
   // Network
   setOffline: (offline: boolean) => void;
@@ -116,19 +136,13 @@ export const useKilimoStore = create<KilimoState>()(
   persist(
     (set, get) => ({
       // ── Initial State ──────────────────────────────────────────
-      agroId: {
-        id: 'KILIMO-8492-XJ',
-        name: 'Justin Mafie',
-        role: 'Mkulima Mkuu',
-        location: 'Arusha, Tanzania',
-        tier: 'Premium',
-        joinDate: '2023',
-        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400',
-        mpesaLinked: true,
-        biometricEnabled: true,
-        coopId: 'AMCOS-KIL-001',
-      },
-      isAuthenticated: true,
+      // Fresh-install defaults — wizard creates real agroId + profile on completion.
+      // Existing users hydrate previously-persisted values from AsyncStorage.
+      agroId: null,
+      isAuthenticated: false,
+      onboardingComplete: false,
+      language: 'sw',
+      farmProfile: null,
 
       isOffline: false,
       syncQueue: [],
@@ -178,8 +192,15 @@ export const useKilimoStore = create<KilimoState>()(
       },
 
       // ── Auth Actions ───────────────────────────────────────────
-      setAgroId: (agroId) => set({ agroId, isAuthenticated: true }),
+      setAgroId: (agroId) => set({ agroId, isAuthenticated: true, onboardingComplete: true }),
+      updateAgroId: (patch) =>
+        set((state) => ({ agroId: state.agroId ? { ...state.agroId, ...patch } : state.agroId })),
       clearAgroId: () => set({ agroId: null, isAuthenticated: false }),
+      setOnboardingComplete: (complete) => set({ onboardingComplete: complete }),
+      setLanguage: (language) => set({ language }),
+      setFarmProfile: (farmProfile) => set({ farmProfile }),
+      resetOnboarding: () =>
+        set({ onboardingComplete: false, agroId: null, farmProfile: null, isAuthenticated: false }),
 
       // ── Network Actions ────────────────────────────────────────
       setOffline: (offline) => set({ isOffline: offline }),
@@ -256,10 +277,26 @@ export const useKilimoStore = create<KilimoState>()(
     {
       name: 'kilimo-ai-store',
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      // Backfill: pre-v2 stores didn't have `onboardingComplete`. Returning
+      // authenticated users (have agroId or were marked authenticated) should
+      // skip onboarding instead of being forced back through it.
+      migrate: (persisted: any, _version) => {
+        if (!persisted) return persisted;
+        if (persisted.onboardingComplete == null) {
+          persisted.onboardingComplete = Boolean(
+            persisted.agroId || persisted.isAuthenticated || persisted.farmProfile
+          );
+        }
+        return persisted;
+      },
       // Only persist non-sensitive, offline-resilient data
       partialize: (state) => ({
         agroId: state.agroId,
         isAuthenticated: state.isAuthenticated,
+        onboardingComplete: state.onboardingComplete,
+        language: state.language,
+        farmProfile: state.farmProfile,
         syncQueue: state.syncQueue,
         lastSyncedAt: state.lastSyncedAt,
         farmVitals: state.farmVitals,

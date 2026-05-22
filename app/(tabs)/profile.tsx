@@ -80,6 +80,7 @@ const AGRO_ID_FALLBACK = {
 
 // Routes for the PRD-mandated Quick Access shortcuts (rendered below the ID card).
 const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; color: string }[] = [
+  { key: 'edit', label: 'Hariri Wasifu', sub: 'Edit Farm Profile', route: '/edit-profile', color: '#22d3ee' },
   { key: 'agro', label: 'Agro ID', sub: 'P&L · PDF export', route: '/agro-id', color: '#3ecf8e' },
   { key: 'contracts', label: 'Mikataba', sub: 'Contract Farming', route: '/contracts', color: '#3b82f6' },
   { key: 'livestock', label: 'Mifugo', sub: 'Livestock', route: '/livestock', color: '#f59e0b' },
