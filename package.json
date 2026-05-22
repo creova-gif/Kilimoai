@@ -116,5 +116,9 @@
     "eas:build:all": "eas build --platform all --profile production --non-interactive",
     "eas:submit:ios": "eas submit --platform ios",
     "eas:submit:android": "eas submit --platform android"
+  },
+  "overrides": {
+    "postcss": ">=8.5.10",
+    "uuid": ">=11.1.1"
   }
 }
