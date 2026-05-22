@@ -9,8 +9,10 @@ import {
   Platform,
   StatusBar,
   RefreshControl,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator
 } from 'react-native';
+import { useWeather } from '../../hooks/useWeather';
 import { 
   Cloud, 
   Sun, 
@@ -35,15 +37,9 @@ import { useTheme } from '../../constants/Theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const FORECAST_DAYS = [
-  { day: 'Jumatatu', date: 'Okt 12', high: 24, low: 16, condition: 'sun', pop: '0%', desc: 'Siku nzuri kwa uvunaji' },
-  { day: 'Jumanne', date: 'Okt 13', high: 22, low: 15, condition: 'cloud', pop: '15%', desc: 'Hali nzuri kwa kupanda' },
-  { day: 'Jumatano', date: 'Okt 14', high: 19, low: 14, condition: 'rain', pop: '85%', desc: 'Mvua kubwa inatarajiwa' },
-  { day: 'Alhamisi', date: 'Okt 15', high: 21, low: 15, condition: 'storm', pop: '60%', desc: 'Tahadhari ya upepo mkali' },
-  { day: 'Ijumaa', date: 'Okt 16', high: 25, low: 17, condition: 'sun', pop: '0%', desc: 'Udongo utakauka vizuri' },
-  { day: 'Jumamosi', date: 'Okt 17', high: 23, low: 16, condition: 'cloud', pop: '10%', desc: 'Hali ya mawingu kiasi' },
-  { day: 'Jumapili', date: 'Okt 18', high: 20, low: 15, condition: 'rain', pop: '90%', desc: 'Hakuna haja ya umwagiliaji' },
-];
+// Empty-state placeholder shown while the OpenWeather request is in flight or
+// when the key isn't configured. Real data comes from useWeather() below.
+const EMPTY_FORECAST: Array<{ day: string; date: string; high: number; low: number; condition: string; pop: string; desc: string }> = [];
 
 const containerVariants = {
   initial: { opacity: 0 },
@@ -95,11 +91,37 @@ const NeuralOrb = ({ color, size, delay, x, y }: any) => {
 export default function ForecastScreen() {
   const { colors, isDark } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
+  const { configured, location, current, forecast, loading, error, errorKind, refetch } = useWeather();
+  const forecastDays = forecast ?? EMPTY_FORECAST;
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setTimeout(() => setRefreshing(false), 2000);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
+
+  const errorCopy = React.useMemo(() => {
+    if (errorKind === 'unknown_location') {
+      return {
+        title: 'ENEO HALITAMBULIWI',
+        body: `Mfumo haukutambui "${location}". Sahihisha eneo lako kwenye Wasifu.`,
+      };
+    }
+    if (errorKind === 'network') {
+      return { title: 'HITILAFU YA MTANDAO', body: 'Hakikisha mtandao unafanya kazi kisha jaribu tena.' };
+    }
+    return { title: 'HITILAFU', body: 'Imeshindwa kupata data ya hali ya hewa.' };
+  }, [errorKind, location]);
+
+  // Localized "today" label, e.g. "LEO, 12 OKT"
+  const todayLabel = React.useMemo(() => {
+    const d = new Date();
+    const months = ['JAN', 'FEB', 'MAC', 'APR', 'MEI', 'JUN', 'JUL', 'AGO', 'SEP', 'OKT', 'NOV', 'DES'];
+    return `LEO, ${d.getDate()} ${months[d.getMonth()]}`;
   }, []);
 
   const renderWeatherIcon = (condition: string, size = 24, color = colors.text) => {
@@ -150,7 +172,9 @@ export default function ForecastScreen() {
                 <Text style={[styles.headerTitle, { color: colors.text }]}>Utabiri wa Siku</Text>
                 <View style={styles.locationContainer}>
                   <MapPin size={12} color={colors.primary} />
-                  <Text style={[styles.locationText, { color: colors.textMute }]}>Mbeya Region, TZ</Text>
+                  <Text style={[styles.locationText, { color: colors.textMute }]}>
+                    {current?.location ?? location}
+                  </Text>
                 </View>
               </View>
               <TouchableOpacity style={styles.refreshAction} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); onRefresh(); }}>
@@ -168,12 +192,18 @@ export default function ForecastScreen() {
                 />
                 <View style={styles.heroTop}>
                   <View style={styles.tempSection}>
-                    <Text style={[styles.todayText, { color: colors.textMute }]}>LEO, 12 OKT</Text>
+                    <Text style={[styles.todayText, { color: colors.textMute }]}>{todayLabel}</Text>
                     <View style={styles.tempMainContainer}>
-                      <Text style={[styles.tempMain, { color: colors.text }]}>24</Text>
+                      <Text style={[styles.tempMain, { color: colors.text }]}>
+                        {current ? current.temp : (loading ? '—' : '?')}
+                      </Text>
                       <Text style={[styles.tempDegree, { color: colors.primary }]}>°C</Text>
                     </View>
-                    <Text style={[styles.conditionMain, { color: colors.text }]}>Mawingu Kiasi</Text>
+                    <Text style={[styles.conditionMain, { color: colors.text }]}>
+                      {current?.conditionLabel
+                        ? current.conditionLabel.charAt(0).toUpperCase() + current.conditionLabel.slice(1)
+                        : (loading ? 'Inapakia…' : 'Hakuna data')}
+                    </Text>
                   </View>
                   <motion.View 
                     animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
@@ -191,38 +221,74 @@ export default function ForecastScreen() {
                     <View style={[styles.statIcon, { backgroundColor: 'rgba(59, 130, 246, 0.1)' }]}>
                       <Droplets size={18} color="#3b82f6" />
                     </View>
-                    <Text style={[styles.statVal, { color: colors.text }]}>42%</Text>
+                    <Text style={[styles.statVal, { color: colors.text }]}>
+                      {current ? `${current.humidity}%` : '—'}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textMute }]}>Unyevunyevu</Text>
                   </View>
                   <View style={styles.statItem}>
                     <View style={[styles.statIcon, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
                       <Wind size={18} color="#10b981" />
                     </View>
-                    <Text style={[styles.statVal, { color: colors.text }]}>18 km/h</Text>
+                    <Text style={[styles.statVal, { color: colors.text }]}>
+                      {current ? `${current.windKph} km/h` : '—'}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textMute }]}>Upepo</Text>
                   </View>
                   <View style={styles.statItem}>
                     <View style={[styles.statIcon, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
                       <Thermometer size={18} color="#f59e0b" />
                     </View>
-                    <Text style={[styles.statVal, { color: colors.text }]}>26°</Text>
+                    <Text style={[styles.statVal, { color: colors.text }]}>
+                      {current ? `${current.feelsLike}°` : '—'}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textMute }]}>Inahisika Kama</Text>
                   </View>
                 </View>
               </BlurView>
             </motion.View>
 
-            <motion.View variants={itemVariants}>
-              <BlurView intensity={isDark ? 10 : 30} tint={isDark ? "dark" : "light"} style={[styles.insightCard, { borderColor: colors.primary + '30' }]}>
-                <View style={styles.insightHeader}>
-                  <Zap size={14} color={colors.primary} />
-                  <Text style={[styles.insightTitle, { color: colors.primary }]}>USHAURI WA AI (AGRONOMIST)</Text>
-                </View>
-                <Text style={[styles.insightText, { color: colors.text }]}>
-                  Kuna uwezekano wa mvua ndani ya saa 48 zijazo. Epuka kuweka mbolea leo kwenye kitalu B (Mahindi) ili isisombwe na maji.
-                </Text>
-              </BlurView>
-            </motion.View>
+            {!configured && (
+              <motion.View variants={itemVariants}>
+                <BlurView intensity={isDark ? 10 : 30} tint={isDark ? "dark" : "light"} style={[styles.insightCard, { borderColor: '#f59e0b40' }]}>
+                  <View style={styles.insightHeader}>
+                    <Zap size={14} color="#f59e0b" />
+                    <Text style={[styles.insightTitle, { color: '#f59e0b' }]}>HAIJASANIDIWA</Text>
+                  </View>
+                  <Text style={[styles.insightText, { color: colors.text }]}>
+                    Funguo ya OpenWeather haijawekwa. Ongeza EXPO_PUBLIC_OPENWEATHER_API_KEY ili kupata utabiri wa kweli.
+                  </Text>
+                </BlurView>
+              </motion.View>
+            )}
+
+            {configured && !!error && (
+              <motion.View variants={itemVariants}>
+                <BlurView intensity={isDark ? 10 : 30} tint={isDark ? "dark" : "light"} style={[styles.insightCard, { borderColor: '#ef444440' }]}>
+                  <View style={styles.insightHeader}>
+                    <Zap size={14} color="#ef4444" />
+                    <Text style={[styles.insightTitle, { color: '#ef4444' }]}>{errorCopy.title}</Text>
+                  </View>
+                  <Text style={[styles.insightText, { color: colors.text }]}>
+                    {errorCopy.body}
+                  </Text>
+                </BlurView>
+              </motion.View>
+            )}
+
+            {configured && !error && forecastDays[0] && (
+              <motion.View variants={itemVariants}>
+                <BlurView intensity={isDark ? 10 : 30} tint={isDark ? "dark" : "light"} style={[styles.insightCard, { borderColor: colors.primary + '30' }]}>
+                  <View style={styles.insightHeader}>
+                    <Zap size={14} color={colors.primary} />
+                    <Text style={[styles.insightTitle, { color: colors.primary }]}>USHAURI WA AI (AGRONOMIST)</Text>
+                  </View>
+                  <Text style={[styles.insightText, { color: colors.text }]}>
+                    {forecastDays[0].desc}
+                  </Text>
+                </BlurView>
+              </motion.View>
+            )}
 
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Wiki Nzima</Text>
@@ -231,8 +297,14 @@ export default function ForecastScreen() {
               </TouchableOpacity>
             </motion.View>
             
+            {loading && forecastDays.length === 0 && (
+              <View style={{ paddingVertical: 32, alignItems: 'center' }}>
+                <ActivityIndicator color={colors.primary} />
+              </View>
+            )}
+
             <View style={styles.forecastList}>
-              {FORECAST_DAYS.map((item, index) => (
+              {forecastDays.map((item, index) => (
                 <motion.View key={item.day} variants={itemVariants} layout>
                   <TouchableOpacity activeOpacity={0.8} onPress={() => Haptics.selectionAsync()} style={styles.dayRowContainer}>
                     <BlurView intensity={isDark ? 15 : 50} tint={isDark ? "dark" : "light"} style={[styles.dayRow, { borderColor: colors.border }]}>
