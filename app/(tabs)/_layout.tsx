@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View } from 'react-native';
-import { LayoutDashboard, CloudRain, User } from 'lucide-react-native';
+import { LayoutDashboard, CloudRain, LayoutGrid, User } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../../constants/Theme';
 
@@ -13,7 +13,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: isDark ? '#707070' : '#9a9a9a',
-        headerShown: false, // All screens now use custom headers for premium feel
+        headerShown: false,
         tabBarStyle: {
           position: 'absolute',
           borderTopWidth: 0,
@@ -50,6 +50,13 @@ export default function TabLayout() {
         options={{
           title: 'CLIMATE',
           tabBarIcon: ({ color, size }) => <CloudRain color={color} size={size - 2} strokeWidth={2.5} />,
+        }}
+      />
+      <Tabs.Screen
+        name="features"
+        options={{
+          title: 'FEATURES',
+          tabBarIcon: ({ color, size }) => <LayoutGrid color={color} size={size - 2} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
