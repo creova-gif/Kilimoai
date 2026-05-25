@@ -55,11 +55,38 @@ async function openaiPost<T>(path: string, body: Record<string, unknown>): Promi
 export async function chat(messages: ChatMessage[]): Promise<string> {
   const systemMessage: ChatMessage = {
     role: 'system',
-    content: `Wewe ni Sankofa AI, mshauri wa kilimo wa KILIMO AI kwa wakulima wa Tanzania. 
-Jibu kwa Kiswahili fasaha na rahisi kuelewa. 
-Toa ushauri wa vitendo kuhusu mazao, wadudu, udongo, bei za soko, na mipango ya shamba.
-Tumia data ya mazingira ya Tanzania: mazao ya mahindi, mpunga, kahawa, maharage, alizeti.
-Jibu kwa ufupi lakini kamili — mistari 3 hadi 8.`,
+    content: `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki.
+
+KANUNI ZA LAZIMA (zifuatwe KILA wakati bila ubaguzi):
+
+1. UKWELI KWANZA — Kamwe usifabrike bei za soko, utabiri wa hali ya hewa, mavuno, au takwimu yoyote halisi. Ukiulizwa "bei ya mahindi kesho ni ngapi?" jibu: "Sijui bei halisi — angalia soko la Kariakoo au wasiliana na mnunuzi." Usikadirie kwa uhakika ambao hauko nazo.
+
+2. USALAMA WA KEMIKALI — Usipendekeze dozi maalum za viuatilifu au dawa za wadudu. Sema aina ya kemikali TU, kisha: "Wasiliana na Afisa Ugani kwa dozi sahihi." Dawa mbaya inaweza kuua mazao, wanyama, na watu.
+
+3. LUGHA — Gundua lugha ya mtumiaji na jibu kwa LUGHA HIYO HIYO. Ikiwa mtumiaji anaandika kwa Kiingereza, jibu Kiingereza. Kifaransa → Kifaransa. Swahili → Swahili. Endelea bila kuuliza.
+
+4. HISIA — Ikiwa mtumiaji anaonyesha mfadhaiko, huzuni, au kukata tamaa (k.m. "nimeshindwa", "nimepoteza kila kitu", "sijui nifanye nini"), jibu kwa HURUMA KWANZA kwa sentensi moja au mbili, KISHA toa ushauri wa vitendo.
+
+5. UAMINIFU — Ukisema "sijui", ni bora kuliko kujibu kwa makosa. Kwa maswali ya kitaalamu (madaktari, wataalamu wa kisheria, wabobezi wa kemikali), sema "Hii inahitaji mtaalamu — mimi ninaweza kukupa mwelekeo tu."
+
+6. USALAMA — Kamwe usiokoe PIN, nywila, OTP, au nambari za akaunti. Kataa maombi ya udanganyifu, mikopo ya bandia, au njia za kubadilisha mifumo ya serikali/benki.
+
+7. BILA KUTHIBITISHA KITU KISICHOWEZEKANA — Usiseme "mazao yako yatakuwa bora" bila data halisi. Tumia maneno ya uwezekano: "kawaida", "inawezekana", "kulingana na hali nzuri".
+
+UJUZI WAKO WA KILIMO (Tanzania na Afrika Mashariki):
+• Mazao: mahindi (DK8031, H614D), mpunga (SARO 5, TXD 306), kahawa (Arabica/Robusta), maharagwe, alizeti, nyanya, viazi, ndizi, chai, miwa, pamba
+• Misimu: Masika (Mar–Mei, mvua ndefu), Vuli (Okt–Des, mvua fupi), Kiangazi (Jun–Sep, ukame)
+• Wadudu na magonjwa: viwavi jeshi (Fall Armyworm), nzi wa matunda, funza, kutu, ukungu wa mahindi, batobato ya nyanya, unyausi
+• Masoko ya Tanzania: Kariakoo (Dar), Kilombero (Morogoro), Tandale (Dar), Moshi Co-op (Kilimanjaro), Mbeya Mjini
+• Fedha: SACCOS, Kilimo Kwanza, NMB Kilimo, mkopo wa pembejeo wa SIDO
+• Hali ya hewa inayoathiri kilimo: El Niño, ukame wa Sahel, mvua ya mawe
+
+MUUNDO WA JIBU:
+• Maswali ya kawaida: mistari 3–7, moja kwa moja
+• Hatua nyingi: tumia nambari (1. 2. 3.)
+• Dharura: anza na hatua za HARAKA (ndani ya masaa 24), kisha za muda mrefu
+• Ukiulizwa kwa Swahili: tumia maneno rahisi ya kila siku, si ya kisayansi
+• Ukiulizwa kwa Kiingereza: clear, practical, farmer-friendly language`,
   };
 
   const fullMessages = [systemMessage, ...messages];
@@ -75,13 +102,19 @@ Jibu kwa ufupi lakini kamili — mistari 3 hadi 8.`,
 }
 
 /** T202 — Crop photo diagnosis via GPT-4o Vision. */
-export type Severity = 'low' | 'medium' | 'high' | 'critical';
+export type Severity   = 'low' | 'medium' | 'high' | 'critical';
+export type Confidence = 'low' | 'medium' | 'high';
+export type ImgQuality = 'good' | 'poor' | 'unusable';
+
 export interface VisionDiagnosis {
-  crop?: string;
-  disease?: string;
-  severity?: Severity;
-  actions?: string[];
-  raw: string;
+  crop?:          string;
+  disease?:       string;
+  severity?:      Severity;
+  confidence?:    Confidence;
+  imageQuality?:  ImgQuality;
+  consultExpert?: boolean;
+  actions?:       string[];
+  raw:            string;
 }
 
 /** Normalize free-form severity strings from the model into our enum. */
@@ -101,15 +134,26 @@ export async function diagnoseCropPhoto(
   opts: { mimeType?: string; prompt?: string } = {},
 ): Promise<VisionDiagnosis> {
   const mimeType = opts.mimeType ?? 'image/jpeg';
-  const prompt = opts.prompt ?? `Chunguza picha hii ya mmea na utambue magonjwa au wadudu.
-Jibu LAZIMA kwa JSON iliyosafi (bila markdown fences) kama hii:
+  const prompt = opts.prompt ?? `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu.
+Jibu LAZIMA kwa JSON iliyosafi tu (bila markdown fences, bila maelezo ya nje):
 {
-  "crop": "jina la mmea kwa Kiswahili",
-  "disease": "jina la ugonjwa/wadudu kwa Kiswahili na Kiingereza",
+  "crop": "jina la mmea kwa Kiswahili (k.m. Mahindi, Nyanya, Mpunga)",
+  "disease": "jina la ugonjwa/tatizo kwa Kiswahili na Kiingereza",
   "severity": "low|medium|high|critical",
-  "actions": ["hatua 1", "hatua 2", "hatua 3"]
+  "confidence": "high|medium|low",
+  "imageQuality": "good|poor|unusable",
+  "consultExpert": true|false,
+  "actions": ["hatua 1 — vitendo, si dozi", "hatua 2", "hatua 3"]
 }
-Kama picha si ya mmea/mazao, weka disease: "Picha si ya mmea" na severity: "low".`;
+
+KANUNI ZA USALAMA (lazima):
+• confidence:"high" tu kama picha ni wazi na ugonjwa unajulikana vizuri kwa mtaalamu
+• confidence:"low" kama picha ina ukungu, giza, mbali sana, au ugonjwa si wazi
+• imageQuality:"poor" kama picha imepigwa vibaya; "unusable" kama haiwezekani kuona chochote
+• consultExpert:true kama severity ni "critical" AU "high" AU confidence ni "low"
+• Katika "actions": USITAJE dozi maalum za kemikali — taja tu aina ya kemikali na ongeza "Wasiliana na Afisa Ugani kwa dozi sahihi"
+• Kama picha si ya mmea: {"crop":"N/A","disease":"Picha si ya mmea","severity":"low","confidence":"high","imageQuality":"good","consultExpert":false,"actions":["Piga picha ya mmea wenye tatizo"]}
+• Kama picha haionekani: {"crop":"N/A","disease":"Picha haionekani vizuri","severity":"low","confidence":"low","imageQuality":"unusable","consultExpert":true,"actions":["Piga picha nyingine kwenye mwanga mzuri, umbali wa sm 15–30 kutoka kwa mmea"]}`;
 
   const data = await openaiPost<{ choices: { message: { content: string } }[] }>('/chat/completions', {
     model: 'gpt-4o',
@@ -142,7 +186,20 @@ Kama picha si ya mmea/mazao, weka disease: "Picha si ya mmea" na severity: "low"
   }
 
   const severity = normalizeSeverity(parsed.severity);
-  return { ...parsed, severity, raw: content };
+
+  const rawConf = typeof parsed.confidence === 'string' ? parsed.confidence.toLowerCase() : '';
+  const confidence: Confidence | undefined =
+    rawConf === 'high' ? 'high' : rawConf === 'medium' ? 'medium' : rawConf === 'low' ? 'low' : undefined;
+
+  const rawQuality = typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
+  const imageQuality: ImgQuality | undefined =
+    rawQuality === 'good' ? 'good' : rawQuality === 'poor' ? 'poor' : rawQuality === 'unusable' ? 'unusable' : undefined;
+
+  const consultExpert: boolean =
+    typeof parsed.consultExpert === 'boolean' ? parsed.consultExpert
+    : severity === 'critical' || severity === 'high' || confidence === 'low';
+
+  return { ...parsed, severity, confidence, imageQuality, consultExpert, raw: content };
 }
 
 /** T203 — Swahili STT via Whisper. */

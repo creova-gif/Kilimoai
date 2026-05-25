@@ -14,7 +14,7 @@ import {
   Globe, TrendingUp, TrendingDown, BarChart3, Activity, ArrowUpRight,
   Sparkles, Cpu, ShoppingBag, Leaf, Search, ChevronLeft, Bell,
   Filter, ArrowRight, Layers, FileSignature, Wallet, Plus, X, Check,
-  AlertCircle, Tag, Package, MapPin, Clock, Send,
+  AlertCircle, Tag, Package, MapPin, Clock, Send, Shield, Users, Calendar,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -364,6 +364,17 @@ export default function MarketScreen() {
   const [showSell, setShowSell] = useState(false);
   const [offerItem, setOfferItem] = useState<typeof MARKET_DATA[0] | null>(null);
   const [priceAlerts, setPriceAlerts] = useState<PriceAlert[]>([]);
+  const [showScamBanner, setShowScamBanner] = useState(true);
+
+  const sellingAdvice = React.useMemo(() => {
+    const bullish  = MARKET_DATA.filter((d) => d.outlook === 'Bullish' && d.positive);
+    const volatile = MARKET_DATA.filter((d) => d.volatility === 'High');
+    const bearish  = MARKET_DATA.filter((d) => d.outlook === 'Neutral' && !d.positive);
+    if (bullish.length >= 2) return { emoji: '🟢', title: 'Wakati Mzuri wa Kuuza', tip: `${bullish.map((d) => d.name.split(' ')[0]).join(', ')} viko juu sasa. Wasiliana na mnunuzi haraka kabla bei haijashuka.`, color: '#10b981' };
+    if (volatile.length >= 2) return { emoji: '🟡', title: 'Bei Zina Kushuka Kupanda', tip: `${volatile.map((d) => d.name.split(' ')[0]).join(', ')} vina bei zisizo imara. Angalia kila siku kabla ya kuuza.`, color: '#f59e0b' };
+    if (bearish.length >= 2) return { emoji: '🔴', title: 'Bei Zimeshuka — Subiri', tip: `${bearish.map((d) => d.name.split(' ')[0]).join(', ')} — bei za chini sasa. Hifadhi kwa wiki 2–3 kama unaweza.`, color: '#ef4444' };
+    return { emoji: '⚪', title: 'Bei za Wastani', tip: 'Bei ziko imara kwa sasa. Hakikisha bei za soko la karibu nawe kabla ya kuuza.', color: '#64748b' };
+  }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -477,6 +488,46 @@ export default function MarketScreen() {
 
           {/* Intelligence bento */}
           <IntelligenceBento isDark={isDark} colors={colors} router={router} />
+
+          {/* Selling timing advisory */}
+          <motion.View initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, type: 'spring', damping: 22 }} style={[styles.sellingCard, { borderColor: sellingAdvice.color + '40' }]}>
+            <BlurView intensity={isDark ? 20 : 65} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={[sellingAdvice.color + '15', 'transparent']} style={StyleSheet.absoluteFill} />
+            <View style={styles.sellingTop}>
+              <Text style={{ fontSize: 22 }}>{sellingAdvice.emoji}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.sellingTitle, { color: sellingAdvice.color }]}>{sellingAdvice.title}</Text>
+                <Text style={[styles.sellingTip, { color: colors.text }]}>{sellingAdvice.tip}</Text>
+              </View>
+            </View>
+            <View style={styles.sellingFooter}>
+              <View style={styles.sellingChannel}>
+                <Users size={12} color={colors.primary} />
+                <Text style={[styles.sellingChannelText, { color: colors.primary }]}>KILIMO CO-OP</Text>
+              </View>
+              <Text style={[styles.sellingChannelNote, { color: colors.textMute }]}>Vikundi vya wakulima hupata bei 8–15% zaidi ya soko la kawaida</Text>
+            </View>
+          </motion.View>
+
+          {/* Anti-scam awareness banner */}
+          <AnimatePresence>
+            {showScamBanner && (
+              <motion.View initial={{ opacity: 0, y: 10, scaleX: 0.97 }} animate={{ opacity: 1, y: 0, scaleX: 1 }} exit={{ opacity: 0, y: -10, scaleX: 0.97 }} transition={{ type: 'spring', damping: 20 }} style={[styles.scamBanner, { borderColor: '#f59e0b40' }]}>
+                <BlurView intensity={isDark ? 15 : 50} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={['#f59e0b14', 'transparent']} style={StyleSheet.absoluteFill} />
+                <View style={styles.scamRow}>
+                  <Shield size={18} color="#f59e0b" />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.scamTitle}>TAHADHARI YA UDANGANYIFU</Text>
+                    <Text style={[styles.scamText, { color: colors.text }]}>Epuka: mnunuzi anayetaka malipo kabla ya kupokea mazao • Bei "kubwa sana" zisizo za kawaida • Mawakala wasio na ofisi rasmi. Tumia escrow ya KILIMO AI kwa usalama.</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => { setShowScamBanner(false); Haptics.selectionAsync(); }} style={styles.scamClose}>
+                    <X size={14} color={colors.textMute} />
+                  </TouchableOpacity>
+                </View>
+              </motion.View>
+            )}
+          </AnimatePresence>
 
           {/* Market data */}
           <View style={styles.sectionHeader}>
@@ -627,6 +678,19 @@ const styles = StyleSheet.create({
   bentoSmall: { flex: 1, borderRadius: 24, padding: 16, borderWidth: 1, overflow: 'hidden', justifyContent: 'center' },
   bentoSmallTitle: { fontSize: 20, fontFamily: 'Inter_900Black', marginTop: 8, marginBottom: 2 },
   bentoSmallDesc: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
+  sellingCard: { borderRadius: 24, padding: 18, borderWidth: 1, overflow: 'hidden', marginBottom: 16 },
+  sellingTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
+  sellingTitle: { fontSize: 13, fontFamily: 'Inter_900Black', letterSpacing: 0.3, marginBottom: 4 },
+  sellingTip: { fontSize: 13, fontFamily: 'Inter_600SemiBold', lineHeight: 19 },
+  sellingFooter: { borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.06)', paddingTop: 10, gap: 4 },
+  sellingChannel: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  sellingChannelText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  sellingChannelNote: { fontSize: 11, fontFamily: 'Inter_500Medium', lineHeight: 16 },
+  scamBanner: { borderRadius: 20, borderWidth: 1, overflow: 'hidden', marginBottom: 20, padding: 14 },
+  scamRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  scamTitle: { fontSize: 9, fontFamily: 'Inter_900Black', color: '#f59e0b', letterSpacing: 1, marginBottom: 4 },
+  scamText: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 18 },
+  scamClose: { padding: 4 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
   sectionTitle: { fontSize: 20, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
   marketGrid: { gap: 16 },

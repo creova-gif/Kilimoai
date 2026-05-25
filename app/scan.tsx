@@ -25,7 +25,10 @@ import {
   Camera,
   CloudOff,
   CheckCircle2,
-  Activity
+  Activity,
+  Phone,
+  ShieldAlert,
+  ImageOff,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -501,16 +504,21 @@ export default function ScanScreen() {
                       : sev === 'high' ? '#f97316'
                       : sev === 'medium' ? '#eab308'
                       : '#22c55e';
-                    const sevLabel = sev === 'critical' ? 'Critical Priority'
-                      : sev === 'high' ? 'High Priority'
-                      : sev === 'medium' ? 'Medium Priority'
-                      : 'Low Priority';
+                    const sevLabel = sev === 'critical' ? 'Hatari Kubwa'
+                      : sev === 'high' ? 'Tatizo Kubwa'
+                      : sev === 'medium' ? 'Tatizo la Wastani'
+                      : 'Tatizo Dogo';
                     const disease = diagnosis?.disease ?? FALLBACK_RESULT.disease;
                     const cropLine = diagnosis?.crop ? `${diagnosis.crop} · ` : '';
                     const actions = diagnosis?.actions ?? [];
                     const body = actions.length > 0
                       ? actions.map((a) => `• ${a}`).join('\n')
                       : (diagnosis?.raw?.slice(0, 280) ?? FALLBACK_RESULT.recommendation);
+                    const conf = diagnosis?.confidence;
+                    const confLabel = conf === 'high' ? 'UHAKIKA: JUU' : conf === 'medium' ? 'UHAKIKA: WASTANI' : conf === 'low' ? 'UHAKIKA: CHINI' : 'AI Diagnosis';
+                    const confBadgeColor = conf === 'high' ? '#10b981' : conf === 'low' ? '#ef4444' : '#f59e0b';
+                    const imgQuality = diagnosis?.imageQuality;
+                    const needsExpert = diagnosis?.consultExpert === true || sev === 'critical' || sev === 'high' || conf === 'low';
                     return (
                       <>
                         <View style={styles.resultHeader}>
@@ -524,16 +532,33 @@ export default function ScanScreen() {
                           </motion.View>
                           <View style={styles.resultMeta}>
                             <Text style={[styles.resultName, { color: colors.text }]}>{disease}</Text>
-                            <motion.View
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.4 }}
-                              style={styles.confBadge}
-                            >
-                              <Text style={styles.confText}>{cropLine}AI Diagnosis</Text>
-                            </motion.View>
+                            <View style={styles.confBadgeRow}>
+                              <motion.View
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.4 }}
+                                style={[styles.confBadge, { backgroundColor: confBadgeColor + '20', borderColor: confBadgeColor + '40' }]}
+                              >
+                                <Text style={[styles.confText, { color: confBadgeColor }]}>{confLabel}</Text>
+                              </motion.View>
+                              <motion.View
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                style={[styles.sevChip, { backgroundColor: sevColor + '18' }]}
+                              >
+                                <Text style={[styles.sevChipText, { color: sevColor }]}>{cropLine.replace(' · ', '')}</Text>
+                              </motion.View>
+                            </View>
                           </View>
                         </View>
+
+                        {imgQuality === 'poor' || imgQuality === 'unusable' ? (
+                          <motion.View initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} style={styles.imgQualityWarn}>
+                            <ImageOff size={14} color="#f59e0b" />
+                            <Text style={styles.imgQualityText}>Picha si wazi — piga tena kwa mwanga mzuri, umbali wa sm 15–30, kuzingatia majani yenye tatizo.</Text>
+                          </motion.View>
+                        ) : null}
 
                         {isOffline && (
                           <motion.View initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.offlineNoticeBox}>
@@ -554,6 +579,33 @@ export default function ScanScreen() {
                           </View>
                           <Text style={[styles.detailBody, { color: colors.textMute }]}>{body}</Text>
                         </motion.View>
+
+                        {needsExpert && (
+                          <motion.View initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, type: 'spring', damping: 22 }} style={styles.expertCard}>
+                            <LinearGradient colors={['#f9731620', 'transparent']} style={StyleSheet.absoluteFill} />
+                            <View style={styles.expertRow}>
+                              <View style={[styles.expertIconBox, { backgroundColor: '#f9731620' }]}>
+                                <ShieldAlert size={20} color="#f97316" />
+                              </View>
+                              <View style={{ flex: 1 }}>
+                                <Text style={styles.expertTitle}>Wasiliana na Afisa Ugani</Text>
+                                <Text style={[styles.expertBody, { color: colors.textMute }]}>
+                                  {sev === 'critical' ? 'Ugonjwa huu ni hatari — usichelewe kuwasiliana na mtaalamu wa kilimo ndani ya masaa 24.'
+                                    : conf === 'low' ? 'Picha haikutosha kwa utambuzi sahihi. Mtaalamu ataona mmea moja kwa moja.'
+                                    : 'Tatizo hili linahitaji msaada wa mtaalamu kwa ushauri sahihi wa matibabu.'}
+                                </Text>
+                              </View>
+                            </View>
+                            <TouchableOpacity
+                              style={[styles.expertBtn, { borderColor: '#f97316' + '50' }]}
+                              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/consultations' as any); }}
+                              activeOpacity={0.8}
+                            >
+                              <Phone size={14} color="#f97316" />
+                              <Text style={styles.expertBtnText}>Omba Mshauri wa Kilimo</Text>
+                            </TouchableOpacity>
+                          </motion.View>
+                        )}
                       </>
                     );
                   })()}
@@ -880,13 +932,96 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
   },
-  confBadge: {
+  confBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 8,
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  confBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+    borderWidth: 1,
   },
   confText: {
-    color: '#3ecf8e',
-    fontSize: 13,
+    fontSize: 10,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 0.5,
+  },
+  sevChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  sevChipText: {
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+  },
+  imgQualityWarn: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: 'rgba(245,158,11,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(245,158,11,0.25)',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 16,
+  },
+  imgQualityText: {
+    flex: 1,
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    color: '#f59e0b',
+    lineHeight: 18,
+  },
+  expertCard: {
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(249,115,22,0.3)',
+    padding: 18,
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
+  expertRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginBottom: 14,
+  },
+  expertIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  expertTitle: {
+    fontSize: 15,
+    fontFamily: 'Inter_900Black',
+    color: '#f97316',
+    marginBottom: 4,
+  },
+  expertBody: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  expertBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+  },
+  expertBtnText: {
+    fontSize: 14,
     fontFamily: 'Inter_800ExtraBold',
+    color: '#f97316',
   },
   offlineNoticeBox: {
     flexDirection: 'row',

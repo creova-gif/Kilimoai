@@ -136,6 +136,34 @@ export default function ForecastScreen() {
     }
   };
 
+  const getFarmAdvisory = (condition: string, popStr: string): { emoji: string; label: string; tip: string; color: string; urgency: 'ok' | 'caution' | 'warning' } => {
+    const rainPct = parseInt(popStr ?? '0', 10) || 0;
+    if (condition === 'storm') return {
+      emoji: '⛈️', label: 'TAHADHARI — DHORUBA', color: '#ef4444', urgency: 'warning',
+      tip: 'Simama shughuli zote za nje. Kinga mazao dhidi ya upepo. Funga kuku na mifugo.',
+    };
+    if (condition === 'rain' || rainPct >= 70) return {
+      emoji: '🌧️', label: 'MVUA — PUMZIKA', color: '#3b82f6', urgency: 'caution',
+      tip: 'Epuka kupiga dawa za wadudu (zitaoshwa). Kagua mifereji ya maji. Nzuri kwa kupanda miche.',
+    };
+    if (rainPct >= 40) return {
+      emoji: '🌦️', label: 'UWEZEKANO WA MVUA', color: '#8b5cf6', urgency: 'caution',
+      tip: 'Subiri asubuhi — kama hakuna mvua, endelea. Usipige dawa jioni kama mvua inawezekana.',
+    };
+    if (condition === 'cloud') return {
+      emoji: '⛅', label: 'MAWINGU — FANYA KAZI', color: '#64748b', urgency: 'ok',
+      tip: 'Wakati bora wa kupanda miche (si jua kali). Kagua wadudu wanaojificha kwenye majani.',
+    };
+    if (condition === 'sun' && rainPct < 20) return {
+      emoji: '☀️', label: 'JUA — SIKU BORA', color: '#f59e0b', urgency: 'ok',
+      tip: 'Nzuri kwa: kukausha mazao, kupanda mbegu, kunyunyizia dawa (asubuhi mapema), kuvuna.',
+    };
+    return {
+      emoji: '🌤️', label: 'HALI YA KAWAIDA', color: '#10b981', urgency: 'ok',
+      tip: 'Endelea na shughuli za kawaida. Angalia mabadiliko ya hali ya hewa mchana.',
+    };
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
@@ -278,19 +306,27 @@ export default function ForecastScreen() {
               </motion.View>
             )}
 
-            {configured && !error && forecastDays[0] && (
-              <motion.View variants={itemVariants}>
-                <BlurView intensity={isDark ? 10 : 30} tint={isDark ? "dark" : "light"} style={[styles.insightCard, { borderColor: colors.primary + '30' }]}>
-                  <View style={styles.insightHeader}>
-                    <Zap size={14} color={colors.primary} />
-                    <Text style={[styles.insightTitle, { color: colors.primary }]}>USHAURI WA AI (AGRONOMIST)</Text>
-                  </View>
-                  <Text style={[styles.insightText, { color: colors.text }]}>
-                    {forecastDays[0].desc}
-                  </Text>
-                </BlurView>
-              </motion.View>
-            )}
+            {configured && !error && forecastDays[0] && (() => {
+              const adv = getFarmAdvisory(forecastDays[0].condition, forecastDays[0].pop);
+              return (
+                <motion.View variants={itemVariants}>
+                  <BlurView intensity={isDark ? 10 : 40} tint={isDark ? "dark" : "light"} style={[styles.insightCard, { borderColor: adv.color + '40' }]}>
+                    <LinearGradient colors={[adv.color + '18', 'transparent']} style={StyleSheet.absoluteFill} />
+                    <View style={styles.insightHeader}>
+                      <Text style={{ fontSize: 16 }}>{adv.emoji}</Text>
+                      <Text style={[styles.insightTitle, { color: adv.color }]}>{adv.label}</Text>
+                      <View style={[styles.urgencyBadge, { backgroundColor: adv.urgency === 'warning' ? '#ef4444' : adv.urgency === 'caution' ? '#f59e0b' : '#10b981' }]}>
+                        <Text style={styles.urgencyText}>{adv.urgency === 'warning' ? 'HATUA HARAKA' : adv.urgency === 'caution' ? 'TAHADHARI' : 'SALAMA'}</Text>
+                      </View>
+                    </View>
+                    <Text style={[styles.insightText, { color: colors.text, marginBottom: 8 }]}>{adv.tip}</Text>
+                    {forecastDays[0].desc ? (
+                      <Text style={[styles.insightDesc, { color: colors.textMute }]}>{forecastDays[0].desc}</Text>
+                    ) : null}
+                  </BlurView>
+                </motion.View>
+              );
+            })()}
 
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Wiki Nzima</Text>
@@ -306,46 +342,53 @@ export default function ForecastScreen() {
             )}
 
             <View style={styles.forecastList}>
-              {forecastDays.map((item, index) => (
-                <motion.View key={item.day} variants={itemVariants} layout>
-                  <TouchableOpacity activeOpacity={0.8} onPress={() => Haptics.selectionAsync()} style={styles.dayRowContainer}>
-                    <BlurView intensity={isDark ? 15 : 50} tint={isDark ? "dark" : "light"} style={[styles.dayRow, { borderColor: colors.border }]}>
-                      <View style={styles.dayMain}>
-                        <Text style={[styles.dayName, { color: colors.text }]}>{item.day}</Text>
-                        <Text style={[styles.dayDate, { color: colors.textMute }]}>{item.date}</Text>
-                      </View>
-                      
-                      <View style={styles.dayIcon}>
-                        <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
-                          {renderWeatherIcon(item.condition, 22, isDark ? colors.primary : colors.slate[700])}
+              {forecastDays.map((item, index) => {
+                const adv = getFarmAdvisory(item.condition, item.pop);
+                return (
+                  <motion.View key={item.day} variants={itemVariants} layout>
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => Haptics.selectionAsync()} style={styles.dayRowContainer}>
+                      <BlurView intensity={isDark ? 15 : 50} tint={isDark ? "dark" : "light"} style={[styles.dayRow, { borderColor: colors.border }]}>
+                        <View style={styles.dayMain}>
+                          <Text style={[styles.dayName, { color: colors.text }]}>{item.day}</Text>
+                          <Text style={[styles.dayDate, { color: colors.textMute }]}>{item.date}</Text>
                         </View>
-                        <View style={[styles.popBadge, { backgroundColor: colors.primary + '10' }]}>
-                          <Droplets size={10} color={colors.primary} />
-                          <Text style={[styles.popText, { color: colors.primary }]}>{item.pop}</Text>
+                        
+                        <View style={styles.dayIcon}>
+                          <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
+                            {renderWeatherIcon(item.condition, 22, isDark ? colors.primary : colors.slate[700])}
+                          </View>
+                          <View style={[styles.popBadge, { backgroundColor: colors.primary + '10' }]}>
+                            <Droplets size={10} color={colors.primary} />
+                            <Text style={[styles.popText, { color: colors.primary }]}>{item.pop}</Text>
+                          </View>
                         </View>
-                      </View>
-                      
-                      <View style={styles.tempRange}>
-                        <View style={styles.tempLabels}>
-                          <Text style={[styles.highTemp, { color: colors.text }]}>{item.high}°</Text>
-                          <Text style={[styles.lowTemp, { color: colors.textMute }]}>{item.low}°</Text>
+                        
+                        <View style={styles.tempRange}>
+                          <View style={styles.tempLabels}>
+                            <Text style={[styles.highTemp, { color: colors.text }]}>{item.high}°</Text>
+                            <Text style={[styles.lowTemp, { color: colors.textMute }]}>{item.low}°</Text>
+                          </View>
+                          <View style={[styles.tempBarBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}>
+                            <motion.View 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(item.high / 30) * 100}%` }}
+                              transition={{ type: "spring", damping: 20, delay: 0.5 + index * 0.1 }}
+                              style={{ flex: 1 }}
+                            >
+                              <LinearGradient colors={[colors.primary, '#3b82f6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.tempBarFill} />
+                            </motion.View>
+                          </View>
+                          <ChevronRight size={18} color={colors.border} />
                         </View>
-                        <View style={[styles.tempBarBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}>
-                          <motion.View 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(item.high / 30) * 100}%` }}
-                            transition={{ type: "spring", damping: 20, delay: 0.5 + index * 0.1 }}
-                            style={{ flex: 1 }}
-                          >
-                            <LinearGradient colors={[colors.primary, '#3b82f6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.tempBarFill} />
-                          </motion.View>
-                        </View>
-                        <ChevronRight size={18} color={colors.border} />
-                      </View>
-                    </BlurView>
-                  </TouchableOpacity>
-                </motion.View>
-              ))}
+                      </BlurView>
+                    </TouchableOpacity>
+                    <View style={[styles.farmTipStrip, { borderColor: adv.color + '30', backgroundColor: adv.color + '0a' }]}>
+                      <Text style={[styles.farmTipEmoji]}>{adv.emoji}</Text>
+                      <Text style={[styles.farmTipText, { color: adv.color }]}>{adv.tip}</Text>
+                    </View>
+                  </motion.View>
+                );
+              })}
             </View>
 
             <View style={{ height: 120 }} />
@@ -394,7 +437,13 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
   moreButton: { paddingHorizontal: 12, paddingVertical: 6 },
   moreText: { fontSize: 11, fontFamily: 'Inter_900Black', letterSpacing: 1 },
-  forecastList: { gap: 12 },
+  urgencyBadge: { marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  urgencyText: { fontSize: 8, fontFamily: 'Inter_900Black', color: '#fff', letterSpacing: 0.5 },
+  insightDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 18, opacity: 0.7 },
+  farmTipStrip: { marginHorizontal: 6, marginTop: -4, paddingHorizontal: 16, paddingVertical: 8, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderWidth: 1, borderTopWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  farmTipEmoji: { fontSize: 13 },
+  farmTipText: { fontSize: 11, fontFamily: 'Inter_600SemiBold', lineHeight: 16, flex: 1 },
+  forecastList: { gap: 4 },
   dayRowContainer: { borderRadius: 28, overflow: 'hidden' },
   dayRow: { flexDirection: 'row', alignItems: 'center', padding: 18, borderRadius: 28, borderWidth: 1, overflow: 'hidden' },
   dayMain: { width: 100 },
