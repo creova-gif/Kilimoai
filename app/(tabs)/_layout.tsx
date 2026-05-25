@@ -16,7 +16,7 @@ function TabBackground({ isDark }: { isDark: boolean }) {
       />
       <LinearGradient
         colors={isDark
-          ? ['rgba(15,23,42,0.6)', 'rgba(2,6,23,0.7)']
+          ? ['rgba(10,26,14,0.88)', 'rgba(5,15,7,0.96)']
           : ['rgba(255,255,255,0.75)', 'rgba(248,250,252,0.85)']}
         style={StyleSheet.absoluteFill}
       />

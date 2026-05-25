@@ -62,9 +62,9 @@ const VISUAL_ROLES: {
     labelSw: 'Mkulima', labelEn: 'Farmer',
     descSw: 'Ninolima mazao — kidogo au kwa wingi',
     descEn: 'I grow crops — small or large scale',
-    icon: <Sprout size={32} color="#3ecf8e" />,
+    icon: <Sprout size={32} color="#22d15a" />,
     gradient: ['rgba(62,207,142,0.18)', 'rgba(16,185,129,0.06)'],
-    glow: '#3ecf8e',
+    glow: '#22d15a',
   },
   {
     id: 'commercial_farmer',
@@ -104,14 +104,14 @@ const SIZE_OPTIONS = [
 
 // Trust badges for Power Entry
 const TRUST = [
-  { icon: <Users size={13} color="#3ecf8e" />, label: '15,000+ farmers' },
-  { icon: <ShieldCheck size={13} color="#3ecf8e" />, label: 'Bank-level security' },
-  { icon: <Star size={13} color="#3ecf8e" />, label: 'Free forever' },
+  { icon: <Users size={13} color="#22d15a" />, label: '15,000+ farmers' },
+  { icon: <ShieldCheck size={13} color="#22d15a" />, label: 'Bank-level security' },
+  { icon: <Star size={13} color="#22d15a" />, label: 'Free forever' },
 ];
 
 // Features for Welcome step
 const FEATURES = [
-  { icon: <Sparkles size={22} color="#3ecf8e" />, bg: 'rgba(62,207,142,0.12)', border: 'rgba(62,207,142,0.2)',  labelSw: 'Sankofa AI',    subSw: 'Mshauri wa AI',         labelEn: 'Sankofa AI',    subEn: 'AI farming advisor' },
+  { icon: <Sparkles size={22} color="#22d15a" />, bg: 'rgba(62,207,142,0.12)', border: 'rgba(62,207,142,0.2)',  labelSw: 'Sankofa AI',    subSw: 'Mshauri wa AI',         labelEn: 'Sankofa AI',    subEn: 'AI farming advisor' },
   { icon: <Camera size={22} color="#10b981" />,   bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.2)',  labelSw: 'Skani Mazao',   subSw: 'Tambua magonjwa',       labelEn: 'Crop Scan',     subEn: 'Disease diagnosis' },
   { icon: <TrendingUp size={22} color="#3b82f6" />,bg: 'rgba(59,130,246,0.12)',border: 'rgba(59,130,246,0.2)',  labelSw: 'Bei za Soko',   subSw: 'Masoko ya Tanzania',    labelEn: 'Market Prices', subEn: 'Live market data' },
   { icon: <ShieldCheck size={22} color="#f59e0b" />,bg:'rgba(245,158,11,0.12)',border: 'rgba(245,158,11,0.2)',  labelSw: 'Bima ya Mazao', subSw: 'Ulinzi wa mavuno',      labelEn: 'Crop Insurance',subEn: 'Protect your harvest' },
@@ -122,14 +122,14 @@ const FEATURES = [
 type Step = 0 | 1 | 2 | 3 | 4 | 5;
 const TOTAL = 6;
 
-// Per-step background accent colours (light theme)
+// Per-step background accent colours (dark forest-green theme)
 const STEP_GRADIENTS: [string, string, string][] = [
-  ['#f0fdf4', '#f8fafc', '#eff6ff'],   // 0 power entry — soft green/white
-  ['#f8fafc', '#f0f9ff', '#f5f3ff'],   // 1 welcome     — soft blue/indigo
-  ['#f8fafc', '#eff6ff', '#f0f9ff'],   // 2 role        — soft blue
-  ['#f8fafc', '#f0fdf4', '#fffbeb'],   // 3 profile     — neutral light
-  ['#f8fafc', '#fefce8', '#f0fdf4'],   // 4 personalise — warm light
-  ['#f0fdf4', '#f8fafc', '#dcfce7'],   // 5 success     — fresh green
+  ['#0a1a0e', '#0d2010', '#091509'],   // 0 power entry  — deep forest green
+  ['#091509', '#0a1a0e', '#0c1e10'],   // 1 welcome      — forest green
+  ['#0a1a0e', '#0c1e10', '#091509'],   // 2 role         — forest green
+  ['#0a1a0e', '#0d2010', '#091509'],   // 3 profile      — forest green
+  ['#0d2010', '#0a1a0e', '#091509'],   // 4 personalise  — forest green
+  ['#091509', '#0a1a0e', '#0c2212'],   // 5 success      — rich forest green
 ];
 
 // ── Floating Orb component ───────────────────────────────────────────────────
@@ -163,13 +163,13 @@ function ProgressBar({ step }: { step: number }) {
         transition={{ type: 'spring', damping: 22, stiffness: 140 }}
         style={pb.fill}
       >
-        <LinearGradient colors={['#3ecf8e', '#10b981']} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+        <LinearGradient colors={['#22d15a', '#16a34a']} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
       </motion.View>
     </View>
   );
 }
 const pb = StyleSheet.create({
-  track: { height: 3, backgroundColor: 'rgba(0,0,0,0.08)', borderRadius: 2, marginHorizontal: 24, marginTop: 8, overflow: 'hidden' },
+  track: { height: 3, backgroundColor: 'rgba(255,255,255,0.10)', borderRadius: 2, marginHorizontal: 24, marginTop: 8, overflow: 'hidden' },
   fill:  { height: '100%', borderRadius: 2, overflow: 'hidden' },
 });
 
@@ -187,13 +187,13 @@ function PowerEntry({ lang, setLang }: { lang: AppLanguage; setLang: (l: AppLang
           style={pe.logoWrap}
         >
           <LinearGradient colors={['rgba(62,207,142,0.25)', 'rgba(16,185,129,0.08)']} style={pe.logoGrad}>
-            <Sparkles size={44} color="#3ecf8e" />
+            <Sparkles size={44} color="#22d15a" />
           </LinearGradient>
           {/* Pulse ring */}
           <motion.View
             animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0, 0.4] }}
             transition={{ duration: 2.5, repeat: Infinity }}
-            style={[StyleSheet.absoluteFill, { borderRadius: 48, borderWidth: 2, borderColor: '#3ecf8e' }]}
+            style={[StyleSheet.absoluteFill, { borderRadius: 48, borderWidth: 2, borderColor: '#22d15a' }]}
           />
         </motion.View>
 
@@ -234,11 +234,11 @@ function PowerEntry({ lang, setLang }: { lang: AppLanguage; setLang: (l: AppLang
               style={{ flex: 1 }}
             >
               <LinearGradient
-                colors={lang === L ? ['rgba(62,207,142,0.22)', 'rgba(16,185,129,0.1)'] : ['rgba(0,0,0,0.03)', 'rgba(0,0,0,0.01)']}
-                style={[pe.langBtn, lang === L && { borderColor: '#3ecf8e' }]}
+                colors={lang === L ? ['rgba(34,209,90,0.22)', 'rgba(22,163,74,0.10)'] : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']}
+                style={[pe.langBtn, lang === L && { borderColor: '#22d15a' }]}
               >
-                <Globe size={18} color={lang === L ? '#3ecf8e' : '#94a3b8'} />
-                <Text style={[pe.langBtnText, lang === L && { color: '#3ecf8e' }]}>
+                <Globe size={18} color={lang === L ? '#22d15a' : '#94a3b8'} />
+                <Text style={[pe.langBtnText, lang === L && { color: '#22d15a' }]}>
                   {L === 'sw' ? '🇹🇿  Kiswahili' : '🇬🇧  English'}
                 </Text>
                 {lang === L && (
@@ -257,17 +257,17 @@ function PowerEntry({ lang, setLang }: { lang: AppLanguage; setLang: (l: AppLang
 
 const pe = StyleSheet.create({
   logoWrap:    { width: 96, height: 96, borderRadius: 48, justifyContent: 'center', alignItems: 'center', marginBottom: 28 },
-  logoGrad:    { width: 96, height: 96, borderRadius: 48, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(62,207,142,0.35)' },
-  appName:     { fontSize: 38, fontFamily: 'Inter_900Black', color: '#0f172a', textAlign: 'center', letterSpacing: -1.5 },
-  tagline:     { fontSize: 16, fontFamily: 'Inter_500Medium', color: '#475569', textAlign: 'center', marginTop: 8, letterSpacing: 0.2 },
+  logoGrad:    { width: 96, height: 96, borderRadius: 48, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(34,209,90,0.40)' },
+  appName:     { fontSize: 38, fontFamily: 'Inter_900Black', color: '#f0fff4', textAlign: 'center', letterSpacing: -1.5 },
+  tagline:     { fontSize: 16, fontFamily: 'Inter_500Medium', color: '#7a9e82', textAlign: 'center', marginTop: 8, letterSpacing: 0.2 },
   trustRow:    { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 24 },
-  trustBadge:  { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(62,207,142,0.08)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(62,207,142,0.2)' },
-  trustText:   { color: '#334155', fontSize: 11, fontFamily: 'Inter_600SemiBold' },
-  langLabel:   { color: '#94a3b8', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, textAlign: 'center' },
+  trustBadge:  { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(34,209,90,0.10)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(34,209,90,0.25)' },
+  trustText:   { color: 'rgba(255,255,255,0.75)', fontSize: 11, fontFamily: 'Inter_600SemiBold' },
+  langLabel:   { color: 'rgba(255,255,255,0.40)', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, textAlign: 'center' },
   langRow:     { flexDirection: 'row', gap: 10, paddingBottom: 8 },
-  langBtn:     { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: 16, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.1)' },
-  langBtnText: { flex: 1, color: '#475569', fontSize: 14, fontFamily: 'Inter_700Bold' },
-  langCheck:   { width: 18, height: 18, borderRadius: 9, backgroundColor: '#3ecf8e', justifyContent: 'center', alignItems: 'center' },
+  langBtn:     { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: 16, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)' },
+  langBtnText: { flex: 1, color: 'rgba(255,255,255,0.55)', fontSize: 14, fontFamily: 'Inter_700Bold' },
+  langCheck:   { width: 18, height: 18, borderRadius: 9, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
 });
 
 // ── Step 1: Welcome / Feature Showcase ──────────────────────────────────────
@@ -284,12 +284,12 @@ function WelcomeStep({ lang }: { lang: AppLanguage }) {
           style={ws.heroWrap}
         >
           <LinearGradient colors={['rgba(62,207,142,0.2)', 'rgba(62,207,142,0.04)']} style={ws.heroGrad}>
-            <Sprout size={52} color="#3ecf8e" />
+            <Sprout size={52} color="#22d15a" />
           </LinearGradient>
           <motion.View
             animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }}
             transition={{ duration: 3, repeat: Infinity }}
-            style={[StyleSheet.absoluteFill, { borderRadius: 56, borderWidth: 2, borderColor: '#3ecf8e' }]}
+            style={[StyleSheet.absoluteFill, { borderRadius: 56, borderWidth: 2, borderColor: '#22d15a' }]}
           />
         </motion.View>
 
@@ -346,18 +346,18 @@ function WelcomeStep({ lang }: { lang: AppLanguage }) {
 
 const ws = StyleSheet.create({
   heroWrap: { width: 112, height: 112, borderRadius: 56, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
-  heroGrad: { width: 112, height: 112, borderRadius: 56, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(62,207,142,0.3)' },
-  title:    { fontSize: 28, fontFamily: 'Inter_900Black', color: '#0f172a', textAlign: 'center', letterSpacing: -0.8, lineHeight: 34 },
-  sub:      { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#475569', textAlign: 'center', marginTop: 8, lineHeight: 20 },
-  statsRow: { flexDirection: 'row', gap: 0, marginTop: 20, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(0,0,0,0.08)', overflow: 'hidden', alignSelf: 'stretch' },
-  statItem: { flex: 1, alignItems: 'center', paddingVertical: 14, borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: 'rgba(0,0,0,0.08)' },
-  statVal:  { fontSize: 20, fontFamily: 'Inter_900Black', color: '#3ecf8e' },
-  statSub:  { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#64748b', marginTop: 2 },
+  heroGrad: { width: 112, height: 112, borderRadius: 56, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(34,209,90,0.35)' },
+  title:    { fontSize: 28, fontFamily: 'Inter_900Black', color: '#f0fff4', textAlign: 'center', letterSpacing: -0.8, lineHeight: 34 },
+  sub:      { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#7a9e82', textAlign: 'center', marginTop: 8, lineHeight: 20 },
+  statsRow: { flexDirection: 'row', gap: 0, marginTop: 20, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', overflow: 'hidden', alignSelf: 'stretch' },
+  statItem: { flex: 1, alignItems: 'center', paddingVertical: 14, borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: 'rgba(255,255,255,0.08)' },
+  statVal:  { fontSize: 20, fontFamily: 'Inter_900Black', color: '#22d15a' },
+  statSub:  { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#7a9e82', marginTop: 2 },
   grid:     { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   card:     { borderRadius: 16, padding: 14, borderWidth: 1, gap: 6 },
   iconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 2 },
-  cardLabel:{ color: '#0f172a', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  cardSub:  { color: '#64748b', fontSize: 11, fontFamily: 'Inter_500Medium', lineHeight: 15 },
+  cardLabel:{ color: '#f0fff4', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
+  cardSub:  { color: '#7a9e82', fontSize: 11, fontFamily: 'Inter_500Medium', lineHeight: 15 },
 });
 
 // ── Step 2: Role Selection ───────────────────────────────────────────────────
@@ -368,7 +368,7 @@ function RoleStep({ lang, role, setRole }: { lang: AppLanguage; role: CanonicalR
     <View style={{ flex: 1, paddingHorizontal: 24 }}>
       <motion.View initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <View style={rs.eyebrow}>
-          <UserCog size={14} color="#3ecf8e" />
+          <UserCog size={14} color="#22d15a" />
           <Text style={rs.eyebrowText}>{sw ? 'HATUA YA 1 KWA 4' : 'STEP 1 OF 4'}</Text>
         </View>
         <Text style={rs.title}>{sw ? 'Wewe ni nani?' : 'Who are you?'}</Text>
@@ -393,10 +393,10 @@ function RoleStep({ lang, role, setRole }: { lang: AppLanguage; role: CanonicalR
                   activeOpacity={0.82}
                 >
                   <LinearGradient
-                    colors={active ? r.gradient : ['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.01)']}
+                    colors={active ? r.gradient : ['rgba(255,255,255,0.04)', 'rgba(255,255,255,0.02)']}
                     style={[rs.card, active && { borderColor: r.glow }]}
                   >
-                    <View style={[rs.iconWrap, { backgroundColor: active ? `${r.glow}20` : 'rgba(0,0,0,0.05)', borderColor: active ? `${r.glow}40` : 'transparent', borderWidth: 1 }]}>
+                    <View style={[rs.iconWrap, { backgroundColor: active ? `${r.glow}20` : 'rgba(255,255,255,0.06)', borderColor: active ? `${r.glow}40` : 'transparent', borderWidth: 1 }]}>
                       {r.icon}
                     </View>
                     <View style={{ flex: 1 }}>
@@ -428,15 +428,15 @@ function RoleStep({ lang, role, setRole }: { lang: AppLanguage; role: CanonicalR
 
 const rs = StyleSheet.create({
   eyebrow:     { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 },
-  eyebrowText: { color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2 },
-  title:       { fontSize: 30, fontFamily: 'Inter_900Black', color: '#0f172a', letterSpacing: -0.8, lineHeight: 36 },
-  sub:         { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#475569', marginTop: 6 },
-  card:        { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 18, borderRadius: 20, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.08)' },
+  eyebrowText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2 },
+  title:       { fontSize: 30, fontFamily: 'Inter_900Black', color: '#f0fff4', letterSpacing: -0.8, lineHeight: 36 },
+  sub:         { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#7a9e82', marginTop: 6 },
+  card:        { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 18, borderRadius: 20, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.10)' },
   iconWrap:    { width: 58, height: 58, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  name:        { color: '#0f172a', fontSize: 15, fontFamily: 'Inter_800ExtraBold', marginBottom: 3 },
-  desc:        { color: '#64748b', fontSize: 12, fontFamily: 'Inter_500Medium' },
+  name:        { color: '#f0fff4', fontSize: 15, fontFamily: 'Inter_800ExtraBold', marginBottom: 3 },
+  desc:        { color: '#7a9e82', fontSize: 12, fontFamily: 'Inter_500Medium' },
   check:       { width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
-  checkEmpty:  { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.2)' },
+  checkEmpty:  { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)' },
 });
 
 // ── Step 3: Farm Profile ─────────────────────────────────────────────────────
@@ -454,7 +454,7 @@ function ProfileStep({
       <ScrollView style={{ flex: 1, paddingHorizontal: 24 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <motion.View initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <View style={ps.eyebrow}>
-            <MapPin size={14} color="#3ecf8e" />
+            <MapPin size={14} color="#22d15a" />
             <Text style={ps.eyebrowText}>{sw ? 'HATUA YA 2 KWA 4' : 'STEP 2 OF 4'}</Text>
           </View>
           <Text style={ps.title}>{sw ? 'Shamba lako' : 'Your Farm'}</Text>
@@ -485,10 +485,10 @@ function ProfileStep({
               return (
                 <TouchableOpacity key={r} onPress={() => { Haptics.selectionAsync(); setRegion(r); }} activeOpacity={0.8}>
                   <LinearGradient
-                    colors={on ? ['rgba(62,207,142,0.22)', 'rgba(16,185,129,0.1)'] : ['rgba(0,0,0,0.03)', 'rgba(0,0,0,0.02)']}
-                    style={[ps.regionPill, on && { borderColor: '#3ecf8e' }]}
+                    colors={on ? ['rgba(34,209,90,0.22)', 'rgba(22,163,74,0.10)'] : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.03)']}
+                    style={[ps.regionPill, on && { borderColor: '#22d15a' }]}
                   >
-                    <Text style={[ps.regionText, on && { color: '#3ecf8e' }]}>{r}</Text>
+                    <Text style={[ps.regionText, on && { color: '#22d15a' }]}>{r}</Text>
                   </LinearGradient>
                 </TouchableOpacity>
               );
@@ -508,11 +508,11 @@ function ProfileStep({
               return (
                 <TouchableOpacity key={c.name} onPress={() => !locked && toggleCrop(c.name)} activeOpacity={0.8} style={{ opacity: locked ? 0.3 : 1 }}>
                   <LinearGradient
-                    colors={on ? ['rgba(62,207,142,0.2)', 'rgba(16,185,129,0.08)'] : ['rgba(0,0,0,0.03)', 'rgba(0,0,0,0.01)']}
-                    style={[ps.cropPill, on && { borderColor: '#3ecf8e' }]}
+                    colors={on ? ['rgba(34,209,90,0.20)', 'rgba(22,163,74,0.08)'] : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']}
+                    style={[ps.cropPill, on && { borderColor: '#22d15a' }]}
                   >
                     <Text style={ps.cropEmoji}>{c.emoji}</Text>
-                    <Text style={[ps.cropText, on && { color: '#3ecf8e' }]}>{c.name}</Text>
+                    <Text style={[ps.cropText, on && { color: '#22d15a' }]}>{c.name}</Text>
                     {on && <View style={ps.cropCheck}><Check size={9} color="#000" strokeWidth={3} /></View>}
                   </LinearGradient>
                 </TouchableOpacity>
@@ -529,19 +529,19 @@ function ProfileStep({
 
 const ps = StyleSheet.create({
   eyebrow:    { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10, marginTop: 4 },
-  eyebrowText:{ color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2 },
-  title:      { fontSize: 30, fontFamily: 'Inter_900Black', color: '#0f172a', letterSpacing: -0.8, lineHeight: 36 },
-  sub:        { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#475569', marginTop: 6, marginBottom: 4 },
-  label:      { color: '#94a3b8', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 20, marginBottom: 10, textTransform: 'uppercase' },
-  inputWrap:  { backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.1)', overflow: 'hidden' },
-  input:      { color: '#0f172a', fontSize: 17, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 18, paddingVertical: 16 },
-  regionPill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.1)' },
-  regionText: { color: '#334155', fontSize: 13, fontFamily: 'Inter_700Bold' },
+  eyebrowText:{ color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2 },
+  title:      { fontSize: 30, fontFamily: 'Inter_900Black', color: '#f0fff4', letterSpacing: -0.8, lineHeight: 36 },
+  sub:        { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#7a9e82', marginTop: 6, marginBottom: 4 },
+  label:      { color: 'rgba(255,255,255,0.40)', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 20, marginBottom: 10, textTransform: 'uppercase' },
+  inputWrap:  { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)', overflow: 'hidden' },
+  input:      { color: '#f0fff4', fontSize: 17, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 18, paddingVertical: 16 },
+  regionPill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)' },
+  regionText: { color: 'rgba(255,255,255,0.75)', fontSize: 13, fontFamily: 'Inter_700Bold' },
   cropGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cropPill:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.1)' },
+  cropPill:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)' },
   cropEmoji:  { fontSize: 14 },
-  cropText:   { color: '#334155', fontSize: 12, fontFamily: 'Inter_700Bold' },
-  cropCheck:  { width: 14, height: 14, borderRadius: 7, backgroundColor: '#3ecf8e', justifyContent: 'center', alignItems: 'center' },
+  cropText:   { color: 'rgba(255,255,255,0.75)', fontSize: 12, fontFamily: 'Inter_700Bold' },
+  cropCheck:  { width: 14, height: 14, borderRadius: 7, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
 });
 
 // ── Step 4: Personalisation ──────────────────────────────────────────────────
@@ -559,7 +559,7 @@ function PersonaliseStep({
     <ScrollView style={{ flex: 1, paddingHorizontal: 24 }} showsVerticalScrollIndicator={false}>
       <motion.View initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <View style={prs.eyebrow}>
-          <Zap size={14} color="#3ecf8e" />
+          <Zap size={14} color="#22d15a" />
           <Text style={prs.eyebrowText}>{sw ? 'HATUA YA 3 KWA 4' : 'STEP 3 OF 4'}</Text>
         </View>
         <Text style={prs.title}>{sw ? 'Maelezo ya Shamba' : 'Farm Details'}</Text>
@@ -575,11 +575,11 @@ function PersonaliseStep({
             return (
               <TouchableOpacity key={opt.value} onPress={() => { Haptics.selectionAsync(); setAcres(opt.value); }} activeOpacity={0.8} style={{ width: (SW - 48 - 10) / 2 }}>
                 <LinearGradient
-                  colors={on ? ['rgba(62,207,142,0.2)', 'rgba(16,185,129,0.08)'] : ['rgba(0,0,0,0.03)', 'rgba(0,0,0,0.01)']}
-                  style={[prs.sizeCard, on && { borderColor: '#3ecf8e' }]}
+                  colors={on ? ['rgba(34,209,90,0.20)', 'rgba(22,163,74,0.08)'] : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']}
+                  style={[prs.sizeCard, on && { borderColor: '#22d15a' }]}
                 >
-                  <Text style={[prs.sizeText, on && { color: '#3ecf8e' }]}>{opt.label}</Text>
-                  {on && <Check size={14} color="#3ecf8e" />}
+                  <Text style={[prs.sizeText, on && { color: '#22d15a' }]}>{opt.label}</Text>
+                  {on && <Check size={14} color="#22d15a" />}
                 </LinearGradient>
               </TouchableOpacity>
             );
@@ -600,10 +600,10 @@ function PersonaliseStep({
             return (
               <TouchableOpacity key={a.val} onPress={() => { Haptics.selectionAsync(); setActivity(a.val); }} activeOpacity={0.8} style={{ flex: 1 }}>
                 <LinearGradient
-                  colors={on ? ['rgba(62,207,142,0.2)', 'rgba(16,185,129,0.08)'] : ['rgba(0,0,0,0.03)', 'rgba(0,0,0,0.01)']}
-                  style={[prs.actCard, on && { borderColor: '#3ecf8e' }]}
+                  colors={on ? ['rgba(34,209,90,0.20)', 'rgba(22,163,74,0.08)'] : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']}
+                  style={[prs.actCard, on && { borderColor: '#22d15a' }]}
                 >
-                  <Text style={[prs.actText, on && { color: '#3ecf8e' }]}>{sw ? a.labelSw : a.labelEn}</Text>
+                  <Text style={[prs.actText, on && { color: '#22d15a' }]}>{sw ? a.labelSw : a.labelEn}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             );
@@ -619,7 +619,7 @@ function PersonaliseStep({
         ].map((t, i) => (
           <View key={i} style={prs.toggleRow}>
             <Text style={prs.toggleLabel}>{t.label}</Text>
-            <Switch value={t.val} onValueChange={t.set} trackColor={{ false: '#e2e8f0', true: '#3ecf8e' }} thumbColor="#fff" />
+            <Switch value={t.val} onValueChange={t.set} trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#22d15a' }} thumbColor="#fff" />
           </View>
         ))}
       </motion.View>
@@ -631,17 +631,17 @@ function PersonaliseStep({
 
 const prs = StyleSheet.create({
   eyebrow:    { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10, marginTop: 4 },
-  eyebrowText:{ color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2 },
-  title:      { fontSize: 30, fontFamily: 'Inter_900Black', color: '#0f172a', letterSpacing: -0.8, lineHeight: 36 },
-  sub:        { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#475569', marginTop: 6, marginBottom: 4 },
-  label:      { color: '#94a3b8', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 20, marginBottom: 10, textTransform: 'uppercase' },
+  eyebrowText:{ color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 2 },
+  title:      { fontSize: 30, fontFamily: 'Inter_900Black', color: '#f0fff4', letterSpacing: -0.8, lineHeight: 36 },
+  sub:        { fontSize: 14, fontFamily: 'Inter_500Medium', color: '#7a9e82', marginTop: 6, marginBottom: 4 },
+  label:      { color: 'rgba(255,255,255,0.40)', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 20, marginBottom: 10, textTransform: 'uppercase' },
   sizeGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  sizeCard:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 16, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.1)' },
-  sizeText:   { color: '#334155', fontSize: 14, fontFamily: 'Inter_700Bold' },
-  actCard:    { alignItems: 'center', paddingVertical: 14, borderRadius: 14, borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.1)' },
-  actText:    { color: '#475569', fontSize: 12, fontFamily: 'Inter_700Bold', textAlign: 'center' },
-  toggleRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(0,0,0,0.08)', marginTop: 4 },
-  toggleLabel:{ color: '#0f172a', fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 },
+  sizeCard:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 16, borderRadius: 16, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)' },
+  sizeText:   { color: 'rgba(255,255,255,0.75)', fontSize: 14, fontFamily: 'Inter_700Bold' },
+  actCard:    { alignItems: 'center', paddingVertical: 14, borderRadius: 14, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)' },
+  actText:    { color: 'rgba(255,255,255,0.65)', fontSize: 12, fontFamily: 'Inter_700Bold', textAlign: 'center' },
+  toggleRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.08)', marginTop: 4 },
+  toggleLabel:{ color: '#f0fff4', fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 },
 });
 
 // ── Step 5: Success Launch ───────────────────────────────────────────────────
@@ -667,7 +667,7 @@ function SuccessStep({ lang, name, role }: { lang: AppLanguage; name: string; ro
             style={{
               position: 'absolute',
               width: r.size, height: r.size, borderRadius: r.size / 2,
-              backgroundColor: '#3ecf8e',
+              backgroundColor: '#22d15a',
             }}
           />
         ))}
@@ -678,7 +678,7 @@ function SuccessStep({ lang, name, role }: { lang: AppLanguage; name: string; ro
           transition={{ type: 'spring', damping: 14, stiffness: 120, delay: 0.2 }}
           style={ss.checkCircle}
         >
-          <LinearGradient colors={['#3ecf8e', '#0ea95b']} style={ss.checkGrad}>
+          <LinearGradient colors={['#22d15a', '#16a34a']} style={ss.checkGrad}>
             <Check size={44} color="#000" strokeWidth={3} />
           </LinearGradient>
         </motion.View>
@@ -720,7 +720,7 @@ function SuccessStep({ lang, name, role }: { lang: AppLanguage; name: string; ro
         style={{ alignSelf: 'stretch' }}
       >
         <LinearGradient colors={['rgba(62,207,142,0.14)', 'rgba(62,207,142,0.04)']} style={ss.idBadge}>
-          <Award size={16} color="#3ecf8e" />
+          <Award size={16} color="#22d15a" />
           <Text style={ss.idText}>
             {sw ? `${roleLabel(role)} · FREE TIER` : `${roleLabel(role)} · FREE TIER`}
           </Text>
@@ -733,21 +733,21 @@ function SuccessStep({ lang, name, role }: { lang: AppLanguage; name: string; ro
 }
 
 const ss = StyleSheet.create({
-  checkCircle: { width: 96, height: 96, borderRadius: 48, padding: 4, backgroundColor: 'rgba(62,207,142,0.15)' },
+  checkCircle: { width: 96, height: 96, borderRadius: 48, padding: 4, backgroundColor: 'rgba(34,209,90,0.15)' },
   checkGrad:   { flex: 1, borderRadius: 44, justifyContent: 'center', alignItems: 'center' },
-  congrats:    { fontSize: 30, fontFamily: 'Inter_900Black', color: '#0f172a', textAlign: 'center', letterSpacing: -0.5 },
-  welcomeMsg:  { fontSize: 22, fontFamily: 'Inter_800ExtraBold', color: '#3ecf8e', textAlign: 'center', marginTop: 6 },
-  sub:         { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#64748b', textAlign: 'center', marginTop: 8, lineHeight: 19 },
-  unlockedCard:{ alignSelf: 'stretch', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(0,0,0,0.08)', padding: 16, marginTop: 20, gap: 10 },
-  unlockedTitle:{ color: '#94a3b8', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginBottom: 4 },
+  congrats:    { fontSize: 30, fontFamily: 'Inter_900Black', color: '#f0fff4', textAlign: 'center', letterSpacing: -0.5 },
+  welcomeMsg:  { fontSize: 22, fontFamily: 'Inter_800ExtraBold', color: '#22d15a', textAlign: 'center', marginTop: 6 },
+  sub:         { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#7a9e82', textAlign: 'center', marginTop: 8, lineHeight: 19 },
+  unlockedCard:{ alignSelf: 'stretch', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', padding: 16, marginTop: 20, gap: 10 },
+  unlockedTitle:{ color: 'rgba(255,255,255,0.40)', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginBottom: 4 },
   featureRow:  { flexDirection: 'row', alignItems: 'center', gap: 10 },
   featureIcon: { fontSize: 18, width: 26 },
-  featureText: { flex: 1, color: '#0f172a', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  tick:        { width: 18, height: 18, borderRadius: 9, backgroundColor: '#3ecf8e', justifyContent: 'center', alignItems: 'center' },
-  idBadge:     { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(62,207,142,0.25)', padding: 12, marginTop: 14 },
-  idText:      { flex: 1, color: '#3ecf8e', fontSize: 12, fontFamily: 'Inter_700Bold' },
-  activeDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: '#3ecf8e' },
-  activeText:  { color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+  featureText: { flex: 1, color: '#f0fff4', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  tick:        { width: 18, height: 18, borderRadius: 9, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
+  idBadge:     { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(34,209,90,0.30)', padding: 12, marginTop: 14 },
+  idText:      { flex: 1, color: '#22d15a', fontSize: 12, fontFamily: 'Inter_700Bold' },
+  activeDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' },
+  activeText:  { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
 });
 
 // ── Main Orchestrator ────────────────────────────────────────────────────────
@@ -834,17 +834,17 @@ export default function OnboardingV3() {
 
   return (
     <View style={g.root}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
 
       {/* Animated background gradient */}
       <LinearGradient colors={bg} style={StyleSheet.absoluteFill} />
 
       {/* Floating orbs — persistent */}
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <FloatingOrb color="#3ecf8e18" size={380} top={-120} left={-120} delay={0} />
+        <FloatingOrb color="#22d15a18" size={380} top={-120} left={-120} delay={0} />
         <FloatingOrb color="#8b5cf618" size={280} top={SH * 0.4} left={-80} delay={1.5} />
         <FloatingOrb color="#3b82f614" size={220} top={SH * 0.1} left={SW * 0.6} delay={2.5} />
-        <FloatingOrb color="#3ecf8e10" size={160} top={SH * 0.7} left={SW * 0.55} delay={1} />
+        <FloatingOrb color="#22d15a10" size={160} top={SH * 0.7} left={SW * 0.55} delay={1} />
       </View>
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -911,7 +911,7 @@ export default function OnboardingV3() {
             accessibilityLabel={ctaLabel()}
           >
             <LinearGradient
-              colors={['#3ecf8e', '#0ea95b']}
+              colors={['#22d15a', '#16a34a']}
               style={g.ctaGrad}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             >
@@ -926,13 +926,13 @@ export default function OnboardingV3() {
 }
 
 const g = StyleSheet.create({
-  root:     { flex: 1, backgroundColor: '#f8fafc' },
+  root:     { flex: 1, backgroundColor: '#0a1a0e' },
   navRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 4 },
   backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 6, paddingHorizontal: 4, minWidth: 70 },
-  backText: { color: '#334155', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
-  stepCount:{ color: '#94a3b8', fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.5 },
+  backText: { color: 'rgba(255,255,255,0.80)', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+  stepCount:{ color: 'rgba(255,255,255,0.35)', fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.5 },
   skipBtn:  { alignItems: 'flex-end', minWidth: 70, paddingVertical: 6, paddingHorizontal: 4 },
-  skipText: { color: '#94a3b8', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  skipText: { color: 'rgba(255,255,255,0.50)', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
   footer:   { paddingHorizontal: 24, paddingBottom: Platform.OS === 'ios' ? 32 : 20, paddingTop: 10 },
   ctaWrap:  { borderRadius: 20, overflow: 'hidden' },
   ctaGrad:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 19 },

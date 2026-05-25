@@ -193,8 +193,8 @@ export default function EditProfileScreen() {
               </View>
             )}
           </View>
-          <TouchableOpacity onPress={save} style={[s.iconBtn, canSave && isDirty && { backgroundColor: 'rgba(62,207,142,0.18)' }]}>
-            <Save size={20} color={canSave && isDirty ? '#3ecf8e' : colors.textMute} />
+          <TouchableOpacity onPress={save} style={[s.iconBtn, canSave && isDirty && { backgroundColor: 'rgba(34,209,90,0.18)' }]}>
+            <Save size={20} color={canSave && isDirty ? '#22d15a' : colors.textMute} />
           </TouchableOpacity>
         </View>
 
@@ -203,7 +203,7 @@ export default function EditProfileScreen() {
             <Text style={s.sub}>{t.sub}</Text>
 
             {/* Name */}
-            <Section icon={<User size={16} color="#3ecf8e" />} label={t.name} />
+            <Section icon={<User size={16} color="#22d15a" />} label={t.name} />
             <BlurView intensity={20} tint={isDark ? 'dark' : 'light'} style={[s.inputWrap, !nameValid && name.length > 0 && s.inputErr]}>
               <TextInput
                 value={name}
@@ -227,10 +227,10 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRole(r); }}
-                  style={[s.rolePill, role === r && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.12)' }]}
+                  style={[s.rolePill, role === r && { borderColor: '#22d15a', backgroundColor: 'rgba(62,207,142,0.12)' }]}
                 >
-                  <Text style={[s.rolePillText, role === r && { color: '#3ecf8e' }]}>{roleLabel(r)}</Text>
-                  {role === r && <Check size={16} color="#3ecf8e" />}
+                  <Text style={[s.rolePillText, role === r && { color: '#22d15a' }]}>{roleLabel(r)}</Text>
+                  {role === r && <Check size={16} color="#22d15a" />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -242,9 +242,9 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
-                  style={[s.pill, region === r && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  style={[s.pill, region === r && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' }]}
                 >
-                  <Text style={[s.pillText, region === r && { color: '#3ecf8e' }]}>{r}</Text>
+                  <Text style={[s.pillText, region === r && { color: '#22d15a' }]}>{r}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -261,11 +261,11 @@ export default function EditProfileScreen() {
                     onPress={() => toggleCrop(c)}
                     style={[
                       s.cropPill,
-                      on && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' },
+                      on && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' },
                       disabled && { opacity: 0.35 },
                     ]}
                   >
-                    <Text style={[s.pillText, on && { color: '#3ecf8e' }]}>{c}</Text>
+                    <Text style={[s.pillText, on && { color: '#22d15a' }]}>{c}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -278,8 +278,8 @@ export default function EditProfileScreen() {
             )}
             {crops.length === MAX_CROPS && (
               <View style={[s.errRow, { marginTop: 6 }]}>
-                <Check size={12} color="#3ecf8e" />
-                <Text style={[s.errText, { color: '#3ecf8e' }]}>
+                <Check size={12} color="#22d15a" />
+                <Text style={[s.errText, { color: '#22d15a' }]}>
                   {lang === 'sw' ? `Mazao ${MAX_CROPS} yamechaguliwa` : `${MAX_CROPS} crops selected — max reached`}
                 </Text>
               </View>
@@ -305,9 +305,9 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={a}
                   onPress={() => { Haptics.selectionAsync(); setActivity(a); }}
-                  style={[s.actBtn, activity === a && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  style={[s.actBtn, activity === a && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' }]}
                 >
-                  <Text style={[s.pillText, activity === a && { color: '#3ecf8e' }]}>{t[a]}</Text>
+                  <Text style={[s.pillText, activity === a && { color: '#22d15a' }]}>{t[a]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -315,11 +315,11 @@ export default function EditProfileScreen() {
             {/* Toggles */}
             <View style={s.toggleRow}>
               <Text style={s.toggleLabel}>{t.livestock}</Text>
-              <Switch value={hasLivestock} onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }} trackColor={{ false: '#e2e8f0', true: '#3ecf8e' }} thumbColor="#fff" />
+              <Switch value={hasLivestock} onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }} trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#22d15a' }} thumbColor="#fff" />
             </View>
             <View style={s.toggleRow}>
               <Text style={s.toggleLabel}>{t.irrigation}</Text>
-              <Switch value={hasIrrigation} onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }} trackColor={{ false: '#e2e8f0', true: '#3ecf8e' }} thumbColor="#fff" />
+              <Switch value={hasIrrigation} onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }} trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#22d15a' }} thumbColor="#fff" />
             </View>
 
             {/* Language */}
@@ -329,9 +329,9 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={L}
                   onPress={() => { Haptics.selectionAsync(); setLang(L); }}
-                  style={[s.actBtn, lang === L && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  style={[s.actBtn, lang === L && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' }]}
                 >
-                  <Text style={[s.pillText, lang === L && { color: '#3ecf8e' }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
+                  <Text style={[s.pillText, lang === L && { color: '#22d15a' }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -344,7 +344,7 @@ export default function EditProfileScreen() {
               style={[s.saveCta, { marginTop: 32 }, !canSave && { opacity: 0.4 }]}
             >
               <LinearGradient
-                colors={['#3ecf8e', '#10b981']}
+                colors={['#22d15a', '#16a34a']}
                 style={s.saveGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -374,29 +374,29 @@ function Section({ icon, label }: { icon?: React.ReactNode; label: string }) {
 const s = StyleSheet.create({
   container:       { flex: 1 },
   header:          { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
-  iconBtn:         { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)', justifyContent: 'center', alignItems: 'center' },
-  headerTitle:     { color: '#0f172a', fontSize: 17, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
+  iconBtn:         { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.07)', justifyContent: 'center', alignItems: 'center' },
+  headerTitle:     { color: '#f0fff4', fontSize: 17, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
   dirtyBadge:      { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
   dirtyDot:        { width: 6, height: 6, borderRadius: 3, backgroundColor: '#f59e0b' },
   dirtyText:       { color: '#f59e0b', fontSize: 10, fontFamily: 'Inter_600SemiBold' },
   scroll:          { paddingHorizontal: 20, paddingBottom: 40 },
-  sub:             { color: '#475569', fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 8, lineHeight: 18 },
+  sub:             { color: '#7a9e82', fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 8, lineHeight: 18 },
   sectionLabel:    { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 24, marginBottom: 10 },
-  sectionLabelText:{ color: '#64748b', fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, textTransform: 'uppercase' },
-  inputWrap:       { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' },
+  sectionLabelText:{ color: '#7a9e82', fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, textTransform: 'uppercase' },
+  inputWrap:       { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
   inputErr:        { borderColor: '#ef4444' },
-  input:           { color: '#0f172a', fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
+  input:           { color: '#f0fff4', fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
   errRow:          { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
   errText:         { color: '#ef4444', fontSize: 11, fontFamily: 'Inter_500Medium' },
-  pill:            { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(0,0,0,0.12)' },
-  pillText:        { color: '#334155', fontSize: 13, fontFamily: 'Inter_700Bold' },
+  pill:            { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
+  pillText:        { color: 'rgba(255,255,255,0.80)', fontSize: 13, fontFamily: 'Inter_700Bold' },
   cropGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(0,0,0,0.12)' },
-  actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(0,0,0,0.12)', alignItems: 'center' },
-  rolePill:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' },
-  rolePillText:    { color: '#1e293b', fontSize: 13, fontFamily: 'Inter_700Bold', flex: 1 },
-  toggleRow:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.07)', marginTop: 6 },
-  toggleLabel:     { color: '#0f172a', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+  cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
+  actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)', alignItems: 'center' },
+  rolePill:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
+  rolePillText:    { color: '#f0fff4', fontSize: 13, fontFamily: 'Inter_700Bold', flex: 1 },
+  toggleRow:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.07)', marginTop: 6 },
+  toggleLabel:     { color: '#f0fff4', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
   saveCta:         { borderRadius: 16, overflow: 'hidden' },
   saveGrad:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
   saveText:        { color: '#000', fontSize: 16, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },

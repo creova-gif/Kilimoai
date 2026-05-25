@@ -1,9 +1,9 @@
 import { useColorScheme } from 'react-native';
 
 export const COLORS = {
-  primary: '#3ecf8e', // Emerald
-  primaryDark: '#059669',
-  primaryLight: '#d1fae5',
+  primary: '#22d15a', // Vivid forest green — matches dark-green UI reference
+  primaryDark: '#16a34a',
+  primaryLight: '#bbf7d0',
   
   // Neutral scales
   slate: {
@@ -19,9 +19,19 @@ export const COLORS = {
     900: '#0f172a',
     950: '#020617',
   },
+
+  // Deep forest green palette
+  forest: {
+    950: '#050f07',  // near-black green
+    900: '#0a1a0e',  // main background
+    800: '#0f2412',  // card background
+    700: '#163319',  // elevated card
+    600: '#1e4723',  // surface
+    mute: '#7a9e82', // muted green-gray text
+  },
   
   // Functional colors
-  success: '#10b981',
+  success: '#22d15a',
   warning: '#f59e0b',
   error: '#ef4444',
   info: '#3b82f6',
@@ -29,25 +39,23 @@ export const COLORS = {
 
 export const useTheme = () => {
   const colorScheme = useColorScheme();
-  const isDark = false;
+  const isDark = true;
   
   return {
     isDark,
     colors: {
       primary: COLORS.primary,
-      // WCAG AA compliant primary for text on backgrounds (contrast ≥4.5:1)
-      // #3ecf8e on dark bg passes; on light bg we use darker #0d9e6a (5.1:1)
-      primaryText: isDark ? COLORS.primary : '#0d9e6a',
-      background: isDark ? COLORS.slate[950] : COLORS.slate[50],
-      card: isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)',
-      cardSolid: isDark ? COLORS.slate[900] : '#ffffff',
-      text: isDark ? COLORS.slate[50] : COLORS.slate[900],
-      textMute: isDark ? COLORS.slate[400] : COLORS.slate[500],
-      border: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
-      borderSolid: isDark ? COLORS.slate[800] : COLORS.slate[200],
-      tabBar: isDark ? 'rgba(2, 6, 23, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-      glass: isDark ? 'rgba(15, 23, 42, 0.5)' : 'rgba(255, 255, 255, 0.4)',
-      glow: isDark ? 'rgba(62, 207, 142, 0.15)' : 'rgba(62, 207, 142, 0.1)',
+      primaryText: COLORS.primary,
+      background: COLORS.forest[900],
+      card: 'rgba(15, 36, 18, 0.80)',
+      cardSolid: COLORS.forest[800],
+      text: '#f0fff4',
+      textMute: COLORS.forest.mute,
+      border: 'rgba(255, 255, 255, 0.08)',
+      borderSolid: COLORS.forest[700],
+      tabBar: 'rgba(8, 20, 10, 0.95)',
+      glass: 'rgba(10, 26, 14, 0.65)',
+      glow: 'rgba(34, 209, 90, 0.20)',
       slate: COLORS.slate,
     },
     spacing: {
