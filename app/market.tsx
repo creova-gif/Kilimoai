@@ -490,7 +490,7 @@ export default function MarketScreen() {
               const isExpanded = expandedId === item.id;
               const sparkData = [40, 45, 42, 48, 52, 50, 58, 62, 60, 65].map((v) => item.positive ? v : 100 - v);
               return (
-                <motion.View key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + idx * 0.08 }} layout>
+                <motion.View key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + idx * 0.08 }} whileTap={{ scale: 0.97 }} layout>
                   <TouchableOpacity onPress={() => { setExpandedId(isExpanded ? null : item.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }} activeOpacity={0.9}>
                     <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'}
                       style={[styles.premiumCard, { borderColor: colors.border }, isExpanded && { borderColor: colors.primary + '40', borderWidth: 2 }]}>

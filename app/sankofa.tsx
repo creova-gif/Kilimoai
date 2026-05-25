@@ -80,6 +80,7 @@ export default function SankofaScreen() {
   const addNotification = useKilimoStore((s) => s.addNotification);
   const isOffline = useKilimoStore((s) => s.isOffline);
   const language = useKilimoStore((s) => s.language);
+  const agroId   = useKilimoStore((s) => s.agroId);
   const storedChat = useKilimoStore((s) => s.chatHistory);
   const addChatMessage = useKilimoStore((s) => s.addChatMessage);
   const clearChatHistory = useKilimoStore((s) => s.clearChatHistory);
@@ -437,6 +438,13 @@ export default function SankofaScreen() {
                 keyExtractor={item => item.id}
                 contentContainerStyle={styles.listPadding}
                 showsVerticalScrollIndicator={false}
+                ListEmptyComponent={
+                  <SankofaWelcomeHero
+                    colors={colors}
+                    isDark={isDark}
+                    name={agroId?.name?.split(' ')[0] ?? 'Mkulima'}
+                  />
+                }
                 ListFooterComponent={
                   <AnimatePresence>
                     {isTyping && (
@@ -540,9 +548,9 @@ export default function SankofaScreen() {
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 72}
             >
-              {/* Suggested Prompts */}
+              {/* Suggested Prompts — always visible when idle & no typed text */}
               <AnimatePresence>
-                {!isTyping && messages.length < 3 && (
+                {!isTyping && !inputText.trim() && (
                   <motion.View 
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
@@ -555,13 +563,13 @@ export default function SankofaScreen() {
                           key={index}
                           initial={{ opacity: 0, scale: 0.9, x: 20 }}
                           animate={{ opacity: 1, scale: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                          transition={{ delay: index * 0.08 }}
                         >
                           <TouchableOpacity 
                             style={[styles.suggestionBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
                             onPress={() => {
-                              setInputText(prompt);
                               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                              sendUserMessage(prompt);
                             }}
                           >
                             <Sparkles size={14} color={colors.primary} style={{ marginRight: 8 }} />
@@ -629,6 +637,75 @@ export default function SankofaScreen() {
           )}
         </AnimatePresence>
       </SafeAreaView>
+    </View>
+  );
+}
+
+function SankofaWelcomeHero({ colors, isDark, name }: { colors: any; isDark: boolean; name: string }) {
+  return (
+    <View style={{ alignItems: 'center', paddingTop: 52, paddingBottom: 36, paddingHorizontal: 32 }}>
+      {/* Animated AI sparkle orb — WhatsApp Meta AI / Gemini style */}
+      <motion.View
+        animate={{ scale: [1, 1.1, 1], rotate: [0, 6, -6, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <View style={{
+          width: 96, height: 96, borderRadius: 48,
+          backgroundColor: colors.primary + '1a',
+          borderWidth: 1.5, borderColor: colors.primary + '35',
+          alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Sparkles size={44} color={colors.primary} />
+        </View>
+      </motion.View>
+
+      {/* Greeting — springs in after orb */}
+      <motion.View
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25, type: 'spring', damping: 22, stiffness: 120 }}
+        style={{ alignItems: 'center' }}
+      >
+        <Text style={{
+          fontSize: 30, fontFamily: 'Inter_900Black', color: colors.text,
+          textAlign: 'center', marginTop: 22, letterSpacing: -0.5,
+        }}>
+          {name ? `Habari, ${name}!` : 'Habari!'}
+        </Text>
+      </motion.View>
+
+      <motion.View
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.45, type: 'spring', damping: 22, stiffness: 120 }}
+        style={{ alignItems: 'center' }}
+      >
+        <Text style={{
+          fontSize: 15, color: colors.textMute, textAlign: 'center',
+          marginTop: 10, fontFamily: 'Inter_500Medium', lineHeight: 23,
+        }}>
+          {'Mimi ni Sankofa AI, mshauri wako wa kilimo.\nNinaweza kukusaidiaje leo?'}
+        </Text>
+      </motion.View>
+
+      {/* Capability pills */}
+      <motion.View
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        style={{ flexDirection: 'row', gap: 8, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}
+      >
+        {['Mazao', 'Hali ya hewa', 'Bei za soko', 'Magonjwa'].map((cap) => (
+          <View key={cap} style={{
+            paddingHorizontal: 12, paddingVertical: 5,
+            borderRadius: 20, borderWidth: 1,
+            borderColor: colors.primary + '35',
+            backgroundColor: colors.primary + '0d',
+          }}>
+            <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 12 }}>{cap}</Text>
+          </View>
+        ))}
+      </motion.View>
     </View>
   );
 }

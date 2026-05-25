@@ -38,6 +38,7 @@ function TabIcon({ icon: Icon, color, focused, label, isDark }: {
         size={22}
         strokeWidth={focused ? 2.5 : 2}
       />
+      <View style={[ti.dot, focused ? ti.dotActive : undefined]} />
     </View>
   );
 }
@@ -121,4 +122,6 @@ const ti = StyleSheet.create({
     position: 'absolute', width: 48, height: 48, borderRadius: 16,
     shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 0 },
   },
+  dot: { width: 4, height: 4, borderRadius: 2, marginTop: 4, backgroundColor: 'transparent' },
+  dotActive: { backgroundColor: '#3ecf8e' },
 });

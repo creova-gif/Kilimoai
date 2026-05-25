@@ -47,6 +47,20 @@ import { Lightbulb } from 'lucide-react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+function getTimeGreeting(lang: string): string {
+  const h = new Date().getHours();
+  if (lang !== 'sw') {
+    if (h < 5)  return 'USIKU MWEMA,';
+    if (h < 12) return 'GOOD MORNING,';
+    if (h < 17) return 'GOOD AFTERNOON,';
+    return 'GOOD EVENING,';
+  }
+  if (h < 5)  return 'USIKU MWEMA,';
+  if (h < 12) return 'HABARI ZA ASUBUHI,';
+  if (h < 17) return 'HABARI ZA MCHANA,';
+  return 'HABARI ZA JIONI,';
+}
+
 // Deterministic sparkline heights per stat card (soil, moisture, temp, yield)
 const SPARKLINE_PATTERNS: number[][] = [
   [14, 20, 12, 24, 16],
@@ -179,7 +193,7 @@ export default function HomeScreen() {
                     {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
                   </Text>
                 </View>
-                <Text style={[styles.greeting, { color: colors.textMute }]}>KARIBU TENA,</Text>
+                <Text style={[styles.greeting, { color: colors.textMute }]}>{getTimeGreeting(language)}</Text>
                 <Text style={[styles.name, { color: colors.text }]}>{agroId?.name?.split(' ')[0] ?? 'Mkulima'}</Text>
               </View>
               <View style={styles.headerActions}>
