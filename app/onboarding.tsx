@@ -22,7 +22,13 @@ import { CanonicalRole, allRoles, roleLabel, ROLE_DESCRIPTIONS } from '../lib/ac
 
 const { width: SW } = Dimensions.get('window');
 
-const REGIONS = ['Arusha', 'Dodoma', 'Mbeya', 'Kilimanjaro', 'Morogoro', 'Iringa', 'Mwanza', 'Tanga', 'Pwani', 'Singida', 'Tabora'];
+const REGIONS = [
+  'Arusha', 'Dar es Salaam', 'Dodoma', 'Geita', 'Iringa', 'Kagera', 'Katavi',
+  'Kigoma', 'Kilimanjaro', 'Lindi', 'Manyara', 'Mara', 'Mbeya', 'Morogoro',
+  'Mtwara', 'Mwanza', 'Njombe', 'Pemba Kaskazini', 'Pemba Kusini', 'Pwani',
+  'Rukwa', 'Ruvuma', 'Shinyanga', 'Simiyu', 'Singida', 'Songwe', 'Tabora',
+  'Tanga', 'Unguja Kaskazini', 'Unguja Kusini', 'Mjini Magharibi',
+];
 const CROPS   = ['Mahindi', 'Maharage', 'Mpunga', 'Kahawa', 'Pamba', 'Alizeti', 'Mihogo', 'Viazi', 'Nyanya', 'Vitunguu', 'Karanga', 'Ndizi'];
 
 const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }> = {
@@ -104,8 +110,11 @@ export default function OnboardingWizard() {
   function finish() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setFarmProfile({ primaryCrops: crops, region, farmSizeAcres: parseFloat(acres) || 0, mainActivity: activity, hasLivestock, hasIrrigation });
+    const uid = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID().replace(/-/g, '').slice(0, 10).toUpperCase()
+      : `${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
     setAgroId({
-      id: `KILIMO-${Math.floor(1000 + Math.random() * 9000)}-${Math.random().toString(36).slice(2, 4).toUpperCase()}`,
+      id: `KILIMO-${uid.slice(0, 4)}-${uid.slice(4, 8)}`,
       name: name.trim() || 'Mkulima',
       role,
       location: region,

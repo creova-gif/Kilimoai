@@ -186,9 +186,9 @@ export const useKilimoStore = create<KilimoState>()(
       unreadCount: 2,
 
       wallet: {
-        balanceTZS: 2450000,
-        mpesaPhone: '+255 712 345 678',
-        lastTransaction: 'Co-op Payment - KES 5,000',
+        balanceTZS: 0,
+        mpesaPhone: undefined,
+        lastTransaction: undefined,
         currency: 'TZS',
       },
 
@@ -287,16 +287,23 @@ export const useKilimoStore = create<KilimoState>()(
     {
       name: 'kilimo-ai-store',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 2,
-      // Backfill: pre-v2 stores didn't have `onboardingComplete`. Returning
-      // authenticated users (have agroId or were marked authenticated) should
-      // skip onboarding instead of being forced back through it.
-      migrate: (persisted: any, _version) => {
+      version: 3,
+      migrate: (persisted: any, fromVersion) => {
         if (!persisted) return persisted;
+        // v1→v2: backfill onboardingComplete
         if (persisted.onboardingComplete == null) {
           persisted.onboardingComplete = Boolean(
             persisted.agroId || persisted.isAuthenticated || persisted.farmProfile
           );
+        }
+        // v2→v3: clear fake mock wallet balance & phone
+        if (fromVersion < 3) {
+          persisted.wallet = {
+            balanceTZS: 0,
+            mpesaPhone: undefined,
+            lastTransaction: undefined,
+            currency: persisted.wallet?.currency ?? 'TZS',
+          };
         }
         return persisted;
       },

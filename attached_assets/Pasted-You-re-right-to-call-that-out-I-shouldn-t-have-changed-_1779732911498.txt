@@ -1,0 +1,290 @@
+You’re right to call that out — I shouldn’t have changed your product name. I’ll lock it correctly as **Kilimo AI** and treat everything consistently.
+
+Here’s your **corrected, unified master prompt** (including onboarding + first start screen request):
+
+---
+
+PROMPT:
+
+You are a senior product designer, AI systems architect, UX strategist, and full-stack AI product engineer.
+
+Your task is to design the complete UX + onboarding + system architecture for an AI-powered application called:
+
+# 🌿 KILIMO AI
+
+Kilimo AI is a full-stack AI-native platform focused on:
+
+* AI (LLMs, RAG systems, agents)
+* Smart agriculture intelligence systems
+* Emerging market problem-solving (especially Africa + Canada use cases)
+* Cybersecurity + AI infrastructure protection
+* Data-driven decision systems
+* Real-time AI assistance for users
+* Scalable backend + API-first architecture
+* Mobile + web-first experience
+
+---
+
+# CORE OBJECTIVE
+
+Design the FULL EXPERIENCE of Kilimo AI, including:
+
+1. First startup / splash screen
+2. Full onboarding flow
+3. Role-based user system
+4. Core dashboard experience
+5. “One button access” AI command system (unified feature entry)
+6. System architecture (frontend + backend + AI layer)
+7. RAG + LLM integration design
+8. Cybersecurity layer design
+9. Data + analytics layer
+10. Mobile + desktop UX behavior
+
+---
+
+# 1. FIRST START SCREEN (CRITICAL)
+
+Design the FIRST SCREEN users see when opening Kilimo AI.
+
+It must include:
+
+### VISUAL STYLE:
+
+* AI-native futuristic design
+* clean agricultural intelligence aesthetic
+* data-driven + minimal + high-tech
+* subtle motion/animation feel (not static)
+
+### CONTENT:
+
+* Logo: KILIMO AI
+* Tagline options (choose strongest):
+
+  * “Intelligence for the future of agriculture”
+  * “AI systems for emerging economies”
+  * “Smart farming powered by intelligence systems”
+* Short description:
+  Explain that Kilimo AI helps users use AI systems (LLMs + RAG + data tools) to solve real-world agricultural and emerging market challenges.
+
+### INTERACTION:
+
+* Primary button: “Get Started”
+* Secondary: “Sign in”
+* Optional: “Explore Demo Mode”
+
+### MOTION:
+
+* subtle background data flow animation
+* slow grid / crop-field data overlay
+* AI node network animation
+
+---
+
+# 2. ONBOARDING FLOW (FULL SYSTEM)
+
+Design a multi-step onboarding system:
+
+### STEP 1: User Role Selection
+
+* Farmer / Agribusiness
+* Researcher
+* Developer
+* Government / Policy
+* Startup / Innovator
+* Student
+
+### STEP 2: Region Selection
+
+* Africa
+* Canada
+* Other emerging markets
+
+### STEP 3: Problem Focus
+
+* Crop optimization
+* Market access
+* Climate data
+* Supply chain
+* AI research
+* Cybersecurity systems
+* General AI exploration
+
+### STEP 4: AI Personalization Setup
+
+* preferred language
+* data access level
+* notification style
+* AI assistance level
+
+### STEP 5: Dashboard Preview
+
+---
+
+# 3. CORE FEATURE: ONE AI ACCESS BUTTON
+
+Create a SINGLE unified button:
+
+> “AI Command Center”
+
+This button gives access to ALL features based on:
+
+* user role
+* permissions
+* past behavior
+* AI suggestions
+* active tasks
+
+It should behave like:
+
+* command palette (Notion / VSCode style)
+* AI assistant
+* system navigator
+* workflow launcher
+
+Must include:
+
+* search everything
+* ask AI anything
+* run workflows
+* access tools
+* generate reports
+* view analytics
+* execute tasks
+
+---
+
+# 4. AI SYSTEM DESIGN (LLM + RAG)
+
+Design Kilimo AI’s intelligence layer:
+
+Must include:
+
+* LLM orchestration layer
+* RAG pipeline (vector database + retrieval system)
+* context memory system
+* data ingestion pipelines
+* multi-agent AI structure
+* API layer for external integrations
+
+Explain:
+
+* how data is stored
+* how queries are retrieved
+* how AI generates responses
+* how memory persists per user
+* how hallucinations are reduced
+
+---
+
+# 5. FULL-STACK ARCHITECTURE
+
+Design system architecture including:
+
+Frontend:
+
+* mobile app (React Native or similar)
+* web dashboard (React / Next.js)
+
+Backend:
+
+* API gateway
+* authentication system
+* database (SQL + vector DB)
+* AI inference server
+
+AI Layer:
+
+* LLM provider integration
+* RAG engine
+* agent system
+
+Infrastructure:
+
+* cloud deployment
+* scalability plan
+* latency optimization
+
+---
+
+# 6. CYBERSECURITY + AI LAYER
+
+Include:
+
+* prompt injection protection
+* data encryption
+* user access control
+* AI abuse prevention
+* secure API handling
+* anomaly detection systems
+* model safety filters
+
+---
+
+# 7. EMERGING MARKET INTELLIGENCE FUNCTION
+
+Kilimo AI must include intelligence for:
+
+* Africa agricultural systems
+* Canada agricultural systems
+* climate variation analysis
+* supply chain insights
+* market pricing prediction
+* infrastructure gaps
+
+Explain:
+
+* how AI adapts to low-data environments
+* how localized models work
+* how multilingual support is handled
+
+---
+
+# 8. UX BEHAVIOR RULES
+
+The system must feel:
+
+* AI-native
+* simple but powerful
+* command-driven
+* fast
+* adaptive
+
+Reduce friction:
+
+* minimal clicks
+* predictive suggestions
+* auto workflows
+* smart defaults
+
+---
+
+# 9. OUTPUT EXPECTATION
+
+Generate:
+
+1. Full onboarding UI flow
+2. First startup screen design (detailed)
+3. AI Command Center system design
+4. Full system architecture diagram (described)
+5. RAG + LLM explanation system
+6. Cybersecurity framework
+7. UX behavior model
+8. Mobile + web interaction logic
+9. Data flow architecture
+10. AI personalization logic
+
+---
+
+# FINAL PRODUCT VISION
+
+Kilimo AI should feel like:
+
+> “A next-generation AI operating system for agriculture and emerging markets, combining intelligence, automation, and real-world decision systems.”
+
+It is NOT just an app.
+
+It is:
+
+* an AI infrastructure layer
+* a decision intelligence system
+* a real-world impact platform for emerging economies

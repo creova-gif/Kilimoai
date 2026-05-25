@@ -41,40 +41,20 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { motion, AnimatePresence } from "motion/react";
 import { useKilimoStore } from '../../store/useKilimoStore';
+import NeuralOrb from '../../components/NeuralOrb';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Lightbulb } from 'lucide-react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Background Orb Component
-const NeuralOrb = ({ color, size, delay, x, y }: any) => {
-  return (
-    <motion.View
-      initial={{ x, y, opacity: 0, scale: 0.8 }}
-      animate={{ 
-        x: [x, x + 50, x - 30, x],
-        y: [y, y - 60, y + 40, y],
-        opacity: [0.1, 0.2, 0.15, 0.1],
-        scale: [1, 1.15, 0.95, 1]
-      }}
-      transition={{
-        duration: 18 + delay / 1000,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-      style={[
-        styles.bgOrb,
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: color,
-          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
-        },
-      ]}
-    />
-  );
-};
+// Deterministic sparkline heights per stat card (soil, moisture, temp, yield)
+const SPARKLINE_PATTERNS: number[][] = [
+  [14, 20, 12, 24, 16],
+  [10, 18, 22, 14, 20],
+  [20, 14, 18, 10, 22],
+  [16, 22, 12, 20, 14],
+];
+
 
 const INITIAL_ACTIVITIES = [
   { id: '1', title: 'Soil Scan Complete', route: '/scan', time: '2h ago', icon: <Microscope size={16} color="#3ecf8e" />, status: 'Optimal', detail: 'Nitrogen levels at 92%' },
@@ -141,11 +121,14 @@ export default function HomeScreen() {
     { id: 'yield', label: 'Mavuno', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
   ];
 
+  const updateFarmVitals = useKilimoStore((s) => s.updateFarmVitals);
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setTimeout(() => setRefreshing(false), 1500);
-  }, []);
+    // Simulate sensor telemetry refresh — real sensors wired in useFarmVitals hook
+    updateFarmVitals({});
+    setTimeout(() => setRefreshing(false), 1200);
+  }, [updateFarmVitals]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -219,10 +202,15 @@ export default function HomeScreen() {
                   style={[styles.avatarContainer, { borderColor: colors.primary + '40' }]}
                   onPress={() => router.push('/(tabs)/profile' as any)}
                 >
-                  <Image 
-                    source={{ uri: agroId?.avatarUrl ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400' }} 
-                    style={styles.avatar}
-                  />
+                  {agroId?.avatarUrl ? (
+                    <Image source={{ uri: agroId.avatarUrl }} style={styles.avatar} />
+                  ) : (
+                    <View style={[styles.avatar, { backgroundColor: colors.primary + '22', alignItems: 'center', justifyContent: 'center' }]}>
+                      <Text style={{ color: colors.primary, fontFamily: 'Inter_900Black', fontSize: 16 }}>
+                        {(agroId?.name ?? 'M').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
               </View>
             </motion.View>
@@ -379,18 +367,17 @@ export default function HomeScreen() {
                     <Text style={[styles.statValue, { color: colors.text }]}>{stat.value}</Text>
                     <Text style={[styles.statLabel, { color: colors.textMute }]}>{stat.label}</Text>
                     <View style={styles.miniGraph}>
-                      {[...Array(5)].map((_, i) => (
-                        <motion.View 
-                          key={i} 
-                          animate={{ height: 10 + Math.random() * 20 }}
-                          transition={{ duration: 2.5, repeat: Infinity, repeatType: "reverse", delay: i * 0.15 }}
+                      {SPARKLINE_PATTERNS[idx].map((h, i) => (
+                        <View
+                          key={i}
                           style={[
-                            styles.graphBar, 
-                            { 
+                            styles.graphBar,
+                            {
+                              height: h,
                               backgroundColor: stat.color,
-                              opacity: 0.4 + (i * 0.15)
+                              opacity: 0.35 + (i * 0.13),
                             }
-                          ]} 
+                          ]}
                         />
                       ))}
                     </View>
@@ -494,10 +481,17 @@ export default function HomeScreen() {
 
             <View style={styles.activityList}>
               {activities.length === 0 && (
-                <Pressable onPress={() => setActivities(INITIAL_ACTIVITIES)} style={{ alignItems: 'center', paddingVertical: 24 }}>
-                  <RefreshCw size={20} color={colors.textMute} />
-                  <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 8 }}>Gonga kurejeza shughuli</Text>
-                </Pressable>
+                <View style={{ alignItems: 'center', paddingVertical: 32, gap: 10 }}>
+                  <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary + '14', alignItems: 'center', justifyContent: 'center' }}>
+                    <RefreshCw size={22} color={colors.textMute} />
+                  </View>
+                  <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 14 }}>
+                    {language === 'sw' ? 'Hakuna shughuli za hivi karibuni' : 'No recent activity'}
+                  </Text>
+                  <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium', fontSize: 12, textAlign: 'center' }}>
+                    {language === 'sw' ? 'Tumia vipengele vya app kuona shughuli hapa.' : 'Use the app features to see activity here.'}
+                  </Text>
+                </View>
               )}
               {activities.map((activity, index) => (
                 <motion.View 
@@ -549,10 +543,6 @@ const styles = StyleSheet.create({
   },
   bgOrb: {
     position: 'absolute',
-    width: 400,
-    height: 400,
-    borderRadius: 200,
-    filter: 'blur(100px)',
   },
   bgGradient: {
     position: 'absolute',

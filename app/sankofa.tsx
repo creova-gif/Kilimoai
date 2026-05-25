@@ -75,10 +75,11 @@ export default function SankofaScreen() {
   
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [voiceState, setVoiceState] = useState<VoiceState>('IDLE');
   const addNotification = useKilimoStore((s) => s.addNotification);
+  const isOffline = useKilimoStore((s) => s.isOffline);
+  const language = useKilimoStore((s) => s.language);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -261,7 +262,8 @@ export default function SankofaScreen() {
       const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
       if (stale()) return;
       const mimeType = uri.toLowerCase().endsWith('.wav') ? 'audio/wav' : 'audio/m4a';
-      const transcript = await transcribeAudio(base64, { mimeType, language: 'sw' });
+      const sttLang = language === 'en' ? 'en-US' : 'sw-KE';
+      const transcript = await transcribeAudio(base64, { mimeType, language: sttLang });
       if (stale()) return;
 
       if (!transcript || !transcript.trim()) {
@@ -386,12 +388,9 @@ export default function SankofaScreen() {
               </View>
             </View>
  
-            <TouchableOpacity onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setIsOffline(!isOffline);
-            }} style={styles.iconBtn} accessibilityLabel="Toggle offline mode">
+            <View style={styles.iconBtn}>
               {isOffline ? <CloudOff size={20} color="#ef4444" /> : <MoreVertical size={20} color={colors.text} />}
-            </TouchableOpacity>
+            </View>
           </BlurView>
         </motion.View>
 

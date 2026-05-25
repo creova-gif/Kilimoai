@@ -64,7 +64,7 @@ export default function ScanScreen() {
   const agroId = useKilimoStore((s) => s.agroId);
 
   const [phase, setPhase] = useState<ScanPhase>('IDLE');
-  const [isOffline, setIsOffline] = useState(false); // Mock offline state
+  const isOffline = useKilimoStore((s) => s.isOffline);
   const [analysisText, setAnalysisText] = useState('Initiating quantum analysis...');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [diagnosis, setDiagnosis] = useState<VisionDiagnosis | null>(null);
@@ -247,11 +247,6 @@ export default function ScanScreen() {
     setErrorMsg(null);
   };
 
-  const toggleNetwork = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setIsOffline(!isOffline);
-  };
-
   // Advanced Neural Orb for background aesthetics
   const NeuralOrb = ({ color, size, delay, x, y }: any) => (
     <motion.View
@@ -351,11 +346,9 @@ export default function ScanScreen() {
             </BlurView>
           </View>
 
-          <TouchableOpacity onPress={toggleNetwork} activeOpacity={0.7} accessibilityLabel="Toggle offline mode">
-            <BlurView intensity={40} tint="dark" style={[styles.iconButton, isOffline && { borderColor: '#ef4444' }]}>
-              {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Zap size={22} color={colors.primary} />}
-            </BlurView>
-          </TouchableOpacity>
+          <View style={styles.iconButton}>
+            {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Zap size={22} color={colors.primary} />}
+          </View>
         </motion.View>
 
         {/* Offline Warning Toast */}
