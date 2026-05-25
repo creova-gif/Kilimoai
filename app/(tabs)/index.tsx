@@ -44,6 +44,7 @@ import { useKilimoStore } from '../../store/useKilimoStore';
 import NeuralOrb from '../../components/NeuralOrb';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Lightbulb } from 'lucide-react-native';
+import SwipeCardDeck3D, { SwipeCard } from '../../components/SwipeCardDeck3D';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -76,12 +77,12 @@ const INITIAL_ACTIVITIES = [
   { id: '3', title: 'Market Price Alert', route: '/market', time: '6h ago', icon: <BarChart3 size={16} color="#f59e0b" />, status: 'High', detail: 'Maize up 12% in Mbeya' },
 ];
 
-const QUICK_ACTIONS = [
-  { id: 'scan', label: 'Uchunguzi wa Mazao', icon: <Camera size={24} color="#fff" />, color: '#3ecf8e', desc: 'AI Crop Scan' },
-  { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={24} color="#fff" />, color: '#3b82f6', desc: 'Farm Tasks' },
-  { id: 'market', label: 'Soko', icon: <TrendingUp size={24} color="#fff" />, color: '#f59e0b', desc: 'Market Prices' },
-  { id: 'crop-planning', label: 'Panga Mazao', icon: <Leaf size={24} color="#fff" />, color: '#22c55e', desc: 'AI Crop Planning' },
-  { id: 'contracts', label: 'Mikataba', icon: <BarChart3 size={24} color="#fff" />, color: '#8b5cf6', desc: 'Contract Farming' },
+const QUICK_ACTIONS: SwipeCard[] = [
+  { id: 'scan',      label: 'Uchunguzi wa Mazao', desc: 'AI Crop Scan',        emoji: '🌿', gradientColors: ['#3ecf8e', '#10b981'], route: '/scan',      icon: <Camera    size={24} color="#fff" /> },
+  { id: 'tasks',     label: 'Usimamizi wa Shamba', desc: 'Farm Task Manager',   emoji: '📋', gradientColors: ['#3b82f6', '#2563eb'], route: '/tasks',     icon: <LayoutGrid size={24} color="#fff" /> },
+  { id: 'market',    label: 'Bei za Soko',          desc: 'Live Market Prices', emoji: '📊', gradientColors: ['#f59e0b', '#d97706'], route: '/market',    icon: <TrendingUp size={24} color="#fff" /> },
+  { id: 'analytics', label: 'Uchambuzi wa AI',      desc: 'Predictive Analytics',emoji: '🧠', gradientColors: ['#8b5cf6', '#7c3aed'], route: '/analytics', icon: <BarChart3  size={24} color="#fff" /> },
+  { id: 'contracts', label: 'Mikataba ya Kilimo',   desc: 'Contract Farming',   emoji: '🤝', gradientColors: ['#ec4899', '#db2777'], route: '/contracts', icon: <Leaf       size={24} color="#fff" /> },
 ];
 
 // Variants for staggered entrance
@@ -234,6 +235,19 @@ export default function HomeScreen() {
                   )}
                 </TouchableOpacity>
               </View>
+            </motion.View>
+
+            {/* Quick Actions — CRED 3D swipe deck */}
+            <motion.View variants={itemVariants} style={[styles.sectionHeader, { marginBottom: 10 }]}>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Vitendo vya Haraka' : 'Quick Actions'}
+              </Text>
+              <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 11, letterSpacing: 1 }}>
+                SWIPE →
+              </Text>
+            </motion.View>
+            <motion.View variants={itemVariants} style={{ marginHorizontal: -20 }}>
+              <SwipeCardDeck3D cards={QUICK_ACTIONS} />
             </motion.View>
 
             {/* Agro ID & Mobile Money Wallet Card */}
@@ -407,48 +421,6 @@ export default function HomeScreen() {
               ))}
             </View>
 
-            {/* Quick Action Matrix */}
-            <motion.View variants={itemVariants}>
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false} 
-                contentContainerStyle={styles.actionScroll}
-                snapToInterval={SCREEN_WIDTH * 0.65 + 16}
-                decelerationRate="fast"
-              >
-                {QUICK_ACTIONS.map((action, idx) => (
-                  <TouchableOpacity 
-                    key={action.id}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                      router.push(`/${action.id}` as any);
-                    }}
-                    style={styles.actionCardWrapper}
-                  >
-                    <LinearGradient
-                      colors={[action.color, action.color + 'dd']}
-                      style={styles.actionCard}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                    >
-                      <View style={styles.actionIconOuter}>
-                        <View style={styles.actionIconInner}>
-                          {action.icon}
-                        </View>
-                      </View>
-                      <View>
-                        <Text style={styles.actionLabel}>{action.label}</Text>
-                        <Text style={styles.actionDesc}>{action.desc}</Text>
-                      </View>
-                      <View style={styles.actionArrow}>
-                        <ArrowRight size={18} color="#fff" />
-                      </View>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </motion.View>
 
             {/* AI-06 — Sankofa AI personalized recommendations */}
             <motion.View variants={itemVariants} style={styles.sectionHeader}>
@@ -902,57 +874,6 @@ const styles = StyleSheet.create({
   graphBar: {
     width: 6,
     borderRadius: 3,
-  },
-  actionScroll: {
-    paddingRight: 40,
-    marginBottom: 36,
-    gap: 16,
-  },
-  actionCardWrapper: {
-    width: SCREEN_WIDTH * 0.65,
-  },
-  actionCard: {
-    padding: 24,
-    borderRadius: 32,
-    height: 160,
-    justifyContent: 'space-between',
-  },
-  actionIconOuter: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    padding: 2,
-  },
-  actionIconInner: {
-    flex: 1,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  actionLabel: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: 'Inter_900Black',
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  actionDesc: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  actionArrow: {
-    position: 'absolute',
-    top: 24,
-    right: 24,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   activityList: {
     gap: 12,
