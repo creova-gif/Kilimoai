@@ -227,7 +227,7 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRole(r); }}
-                  style={[s.rolePill, role === r && { borderColor: '#22d15a', backgroundColor: 'rgba(62,207,142,0.12)' }]}
+                  style={[s.rolePill, role === r && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.12)' }]}
                 >
                   <Text style={[s.rolePillText, role === r && { color: '#22d15a' }]}>{roleLabel(r)}</Text>
                   {role === r && <Check size={16} color="#22d15a" />}
@@ -250,7 +250,7 @@ export default function EditProfileScreen() {
             </ScrollView>
 
             {/* Crops */}
-            <Section icon={<Sprout size={16} color="#10b981" />} label={t.crops} />
+            <Section icon={<Sprout size={16} color="#22d15a" />} label={t.crops} />
             <View style={s.cropGrid}>
               {CROPS.map((c) => {
                 const on = crops.includes(c);
@@ -344,7 +344,7 @@ export default function EditProfileScreen() {
               style={[s.saveCta, { marginTop: 32 }, !canSave && { opacity: 0.4 }]}
             >
               <LinearGradient
-                colors={['#22d15a', '#16a34a']}
+                colors={['#22d15a', '#22d15a']}
                 style={s.saveGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}

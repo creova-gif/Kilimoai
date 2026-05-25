@@ -112,8 +112,8 @@ export default function FarmTwinList() {
           {/* Metric rows with mini bars */}
           <View style={s.metricRow}>
             <Text style={[s.metricLabel, { color: colors.textMute }]}>Mavuno</Text>
-            <MiniBar value={output.totalYieldTonnes} max={maxYield} color="#3ecf8e" />
-            <Text style={[s.metricValue, { color: '#3ecf8e' }]}>{output.totalYieldTonnes}t</Text>
+            <MiniBar value={output.totalYieldTonnes} max={maxYield} color="#22d15a" />
+            <Text style={[s.metricValue, { color: '#22d15a' }]}>{output.totalYieldTonnes}t</Text>
           </View>
           <View style={s.metricRow}>
             <Text style={[s.metricLabel, { color: colors.textMute }]}>Faida</Text>

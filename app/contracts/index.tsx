@@ -99,7 +99,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
             </View>
 
             {/* Crop */}
-            <LabelRow icon={<Wheat size={13} color="#10b981" />} label="ZAO" />
+            <LabelRow icon={<Wheat size={13} color="#22d15a" />} label="ZAO" />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {CROPS.map((c) => (
                 <TouchableOpacity key={c} onPress={() => { Haptics.selectionAsync(); setCrop(c); }}
@@ -234,7 +234,7 @@ export default function ContractsScreen() {
               <GlassCard style={s.summaryCard}>
                 <SummaryPill count={contracts.length} label="Mikataba Yote" color={colors.primary} />
                 <View style={[s.vr, { backgroundColor: colors.border }]} />
-                <SummaryPill count={active} label="Inaendelea" color="#10b981" />
+                <SummaryPill count={active} label="Inaendelea" color="#22d15a" />
                 <View style={[s.vr, { backgroundColor: colors.border }]} />
                 <SummaryPill count={pending} label="Inakaguliwa" color="#f59e0b" />
               </GlassCard>

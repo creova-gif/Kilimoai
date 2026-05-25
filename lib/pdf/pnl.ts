@@ -76,8 +76,8 @@ function renderHtml(r: PnlReport): string {
   <style>
     * { box-sizing: border-box; }
     body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; color: #0f172a; margin: 0; padding: 48px; background: #ffffff; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #3ecf8e; padding-bottom: 24px; margin-bottom: 32px; }
-    .brand { font-size: 13px; font-weight: 900; letter-spacing: 2px; color: #3ecf8e; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #22d15a; padding-bottom: 24px; margin-bottom: 32px; }
+    .brand { font-size: 13px; font-weight: 900; letter-spacing: 2px; color: #22d15a; }
     .title { font-size: 30px; font-weight: 900; margin: 6px 0 0; letter-spacing: -1px; }
     .sub { font-size: 13px; color: #64748b; margin-top: 4px; }
     .meta { text-align: right; font-size: 11px; color: #475569; line-height: 1.6; }
@@ -98,9 +98,9 @@ function renderHtml(r: PnlReport): string {
     .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
     .card .k { font-size: 10px; letter-spacing: 1.5px; font-weight: 700; color: #64748b; text-transform: uppercase; }
     .card .v { font-size: 22px; font-weight: 900; margin-top: 4px; }
-    .card.income .v { color: #10b981; }
+    .card.income .v { color: #22d15a; }
     .card.expense .v { color: #ef4444; }
-    .card.net .v { color: ${net >= 0 ? '#10b981' : '#ef4444'}; }
+    .card.net .v { color: ${net >= 0 ? '#22d15a' : '#ef4444'}; }
 
     h2 { font-size: 16px; margin: 32px 0 12px; color: #0f172a; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -108,7 +108,7 @@ function renderHtml(r: PnlReport): string {
     tbody td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
     tbody tr:nth-child(even) td { background: #fafbfc; }
     td.amt { text-align: right; font-weight: 700; }
-    td.amt.pos { color: #10b981; }
+    td.amt.pos { color: #22d15a; }
     td.amt.neg { color: #ef4444; }
 
     .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center; line-height: 1.6; }

@@ -53,7 +53,7 @@ const SEASONS: { key: Season; label: string; sublabel: string; months: string; i
 const CROP_DATA: Record<Season, CropRec[]> = {
   masika: [
     { id: 'm1', name: 'Maize', nameSw: 'Mahindi', emoji: '🌽', daysToHarvest: 120, yieldPerAcre: '2.5 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Tumia mbegu ya DK8031 au H614D', 'Weka CAN wiki 4 baada ya kupanda', 'Dhibiti wadudu wa buni mapema'] },
-    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#10b981', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
+    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
     { id: 'm3', name: 'Paddy Rice', nameSw: 'Mpunga', emoji: '🌾', daysToHarvest: 150, yieldPerAcre: '3.0 tani', price: 'TZS 120,000/mfuko', water: 'Juu', risk: 'Wastani', color: '#3b82f6', plantWeeks: 3, growWeeks: 16, harvestWeeks: 2, tips: ['Hitaji mfumo mzuri wa umwagiliaji', 'Tumia mbegu SARO 5 au TXD 306', 'Kagua mara kwa mara kwa magonjwa ya majani'] },
     { id: 'm4', name: 'Tomatoes', nameSw: 'Nyanya', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '5.0 tani', price: 'TZS 38,000/crate', water: 'Wastani', risk: 'Juu', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu kwanza wiki 3', 'Weka steki na uunganishe sawa', 'Dhibiti kuoza kwa mwisho (Blossom End Rot)'] },
   ],
@@ -61,7 +61,7 @@ const CROP_DATA: Record<Season, CropRec[]> = {
     { id: 'v1', name: 'Short Maize', nameSw: 'Mahindi (Mfupi)', emoji: '🌽', daysToHarvest: 90, yieldPerAcre: '2.0 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 1, tips: ['Chagua aina ya siku 90 (SEEDCO SC403)', 'Panda siku 1-3 za mvua za kwanza', 'Funika udongo (mulching) kudumisha unyevu'] },
     { id: 'v2', name: 'Onions', nameSw: 'Vitunguu', emoji: '🧅', daysToHarvest: 120, yieldPerAcre: '4.0 tani', price: 'TZS 45,000/net 20kg', water: 'Wastani', risk: 'Wastani', color: '#a855f7', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Anzisha katika kitalu wiki 4-6 mapema', 'Hitaji udongo wenye rutuba na mifereji mizuri', 'Kausha vizuri kabla ya kuhifadhi'] },
     { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 tani', price: 'TZS 15,000/kichwa', water: 'Wastani', risk: 'Chini', color: '#22c55e', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 3 mapema', 'Weka mbolea ya CAN mara kwa mara', 'Dhibiti viwavi (caterpillars) mapema'] },
-    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#10b981', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
+    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
   ],
   kiangazi: [
     { id: 'k1', name: 'Sunflower', nameSw: 'Alizeti', emoji: '🌻', daysToHarvest: 95, yieldPerAcre: '0.5 tani mbegu', price: 'TZS 95,000/mfuko', water: 'Chini', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 2, tips: ['Faa kwa maeneo kame na hata ya kiangazi', 'Umbali wa kupanda: 75cm × 30cm', 'Fua mbegu vizuri kabla ya kuuza'] },
@@ -148,7 +148,7 @@ export default function CropPlanningScreen() {
 
       <View style={StyleSheet.absoluteFill}>
         <NeuralOrb color={activeSeason.color} size={480} x={-120} y={80} />
-        <NeuralOrb color="#10b981" size={320} x={SCREEN_WIDTH - 100} y={400} delay={4000} />
+        <NeuralOrb color="#22d15a" size={320} x={SCREEN_WIDTH - 100} y={400} delay={4000} />
         <LinearGradient colors={[isDark ? '#020617' : '#ffffff', isDark ? '#020617ee' : '#ffffffee', 'transparent']} style={{ position: 'absolute', top: 0, left: 0, right: 0, height: SCREEN_HEIGHT }} />
       </View>
 

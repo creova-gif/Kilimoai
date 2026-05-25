@@ -59,7 +59,7 @@ export default function ProfileScreen() {
     {
       title: 'AGRO ID & FEDHA',
       items: [
-        { id: 'wallet',   label: 'M-Pesa Wallet Sync',  icon: <Wallet size={18} color="#10b981" />,    icolor: '#10b981', isSwitch: false, value: 'Linked',      onPress: () => router.push('/wallet-admin' as any) },
+        { id: 'wallet',   label: 'M-Pesa Wallet Sync',  icon: <Wallet size={18} color="#22d15a" />,    icolor: '#22d15a', isSwitch: false, value: 'Linked',      onPress: () => router.push('/wallet-admin' as any) },
         { id: 'identity', label: 'Biometric Identity',   icon: <Fingerprint size={18} color="#3b82f6" />, icolor: '#3b82f6', isSwitch: true,  switchVal: biometric, onSwitch: (v: boolean) => { updateAgroId({ biometricEnabled: v }); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } },
         { id: 'coop',     label: 'Cooperative Dues',     icon: <CreditCard size={18} color="#f59e0b" />, icolor: '#f59e0b', isSwitch: false, value: 'Up to date', onPress: () => router.push('/wallet-admin' as any) },
       ],
@@ -87,7 +87,7 @@ export default function ProfileScreen() {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* ── Ambient orbs ── */}
-      <View style={[s.orb1, { backgroundColor: '#3ecf8e12' }]} />
+      <View style={[s.orb1, { backgroundColor: '#22d15a12' }]} />
       <View style={[s.orb2, { backgroundColor: '#3b82f610' }]} />
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -122,7 +122,7 @@ export default function ProfileScreen() {
                 ? ['#052e16', '#0d1117', '#1e1b4b']
                 : ['#f0fdf4', '#eff6ff', '#f8fafc']}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-              style={[s.idCard, { borderColor: isDark ? 'rgba(62,207,142,0.18)' : 'rgba(62,207,142,0.25)' }]}
+              style={[s.idCard, { borderColor: isDark ? 'rgba(34,209,90,0.18)' : 'rgba(34,209,90,0.25)' }]}
             >
               {/* Subtle grid lines for depth */}
               <View style={s.gridLines} pointerEvents="none">
@@ -134,7 +134,7 @@ export default function ProfileScreen() {
               {/* Top row: badge + ID number */}
               <View style={s.idTopRow}>
                 <View style={s.agroIdBadge}>
-                  <Fingerprint size={11} color="#3ecf8e" />
+                  <Fingerprint size={11} color="#22d15a" />
                   <Text style={s.agroIdBadgeText}>AGRO ID</Text>
                 </View>
                 <Text style={[s.idNumber, { color: colors.textMute }]}>{D.id}</Text>
@@ -147,13 +147,13 @@ export default function ProfileScreen() {
                     name={D.name}
                     avatarUrl={(D as any).avatarUrl ?? null}
                     size={68}
-                    primaryColor="#3ecf8e"
+                    primaryColor="#22d15a"
                   />
-                  <View style={[s.avatarRing, { borderColor: '#3ecf8e60' }]} />
+                  <View style={[s.avatarRing, { borderColor: '#22d15a60' }]} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[s.userName, { color: colors.text }]}>{D.name}</Text>
-                  <Text style={[s.userRole, { color: '#3ecf8e' }]}>{roleLabel(role)}</Text>
+                  <Text style={[s.userRole, { color: '#22d15a' }]}>{roleLabel(role)}</Text>
                   <View style={s.locationRow}>
                     <MapPin size={11} color={colors.textMute} />
                     <Text style={[s.locationText, { color: colors.textMute }]}>{D.location}</Text>
@@ -164,7 +164,7 @@ export default function ProfileScreen() {
               {/* Stats strip */}
               <View style={[s.statsStrip, { borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]}>
                 <View style={s.statItem}>
-                  <Leaf size={14} color="#3ecf8e" />
+                  <Leaf size={14} color="#22d15a" />
                   <Text style={[s.statVal, { color: colors.text }]}>{cropCount || 3}</Text>
                   <Text style={[s.statLbl, { color: colors.textMute }]}>Mazao</Text>
                 </View>
@@ -217,7 +217,7 @@ export default function ProfileScreen() {
                       {item.isSwitch ? (
                         <Switch
                           value={(item as any).switchVal}
-                          trackColor={{ false: colors.border, true: '#3ecf8e' }}
+                          trackColor={{ false: colors.border, true: '#22d15a' }}
                           thumbColor={Platform.OS === 'android' ? '#fff' : undefined}
                           onValueChange={(item as any).onSwitch}
                         />
@@ -310,8 +310,8 @@ const s = StyleSheet.create({
   gridLine:    { position: 'absolute', left: 0, right: 0, height: 1 },
 
   idTopRow:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
-  agroIdBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(62,207,142,0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-  agroIdBadgeText: { color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1 },
+  agroIdBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(34,209,90,0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  agroIdBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1 },
   idNumber:    { fontSize: 11, fontFamily: 'Inter_600SemiBold', letterSpacing: 2 },
 
   avatarRow:   { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 20 },

@@ -15,7 +15,7 @@ const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
 const STATUS_META = {
   browse: { color: '#94a3b8', label: 'Available' },
   pending: { color: '#f59e0b', label: 'Pending' },
-  active: { color: '#10b981', label: 'Active' },
+  active: { color: '#22d15a', label: 'Active' },
   expired: { color: '#64748b', label: 'Expired' },
   claimed: { color: '#3b82f6', label: 'Claim Filed' },
 };

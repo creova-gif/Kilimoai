@@ -250,6 +250,6 @@ const styles = StyleSheet.create({
   statLabel: { fontSize: 9, fontFamily: 'Inter_900Black', marginBottom: 8, letterSpacing: 1 },
   statValue: { fontSize: 20, fontFamily: 'Inter_900Black' },
   divider: { width: 1, height: '60%', alignSelf: 'center', opacity: 0.2 },
-  fullAnalysisBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(62, 207, 142, 0.2)' },
+  fullAnalysisBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.2)' },
   fullAnalysisText: { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
 });

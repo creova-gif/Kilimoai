@@ -15,7 +15,7 @@ const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
 const STATUS_META = {
   requested: { color: '#f59e0b', label: 'Imeombwa' },
   scheduled: { color: '#3b82f6', label: 'Imepangwa' },
-  completed: { color: '#10b981', label: 'Imekamilika' },
+  completed: { color: '#22d15a', label: 'Imekamilika' },
   cancelled: { color: '#ef4444', label: 'Imefutwa' },
   available: { color: '#94a3b8', label: 'Inapatikana' },
 };

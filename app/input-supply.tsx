@@ -16,7 +16,7 @@ const ORDER_STATUS = {
   cart: { color: '#94a3b8', label: 'Cart' },
   placed: { color: '#3b82f6', label: 'Imewekwa' },
   dispatched: { color: '#f59e0b', label: 'Inasafirishwa' },
-  delivered: { color: '#10b981', label: 'Imefika' },
+  delivered: { color: '#22d15a', label: 'Imefika' },
   cancelled: { color: '#ef4444', label: 'Imefutwa' },
 };
 
@@ -63,9 +63,9 @@ export default function InputSupplyScreen() {
                   <View style={s.nameRow}>
                     <Text style={[s.supName, { color: colors.text }]} numberOfLines={1}>{sup.name}</Text>
                     {sup.vetted && (
-                      <View style={[s.vetBadge, { backgroundColor: '#10b98125' }]}>
-                        <ShieldCheck size={9} color="#10b981" />
-                        <Text style={[s.vetText, { color: '#10b981' }]}>VETTED</Text>
+                      <View style={[s.vetBadge, { backgroundColor: '#22d15a25' }]}>
+                        <ShieldCheck size={9} color="#22d15a" />
+                        <Text style={[s.vetText, { color: '#22d15a' }]}>VETTED</Text>
                       </View>
                     )}
                   </View>
@@ -114,9 +114,9 @@ function OrderCard({ order, onAdvance }: { order: InputOrder; onAdvance: (id: st
       {order.status === 'dispatched' && (
         <TouchableOpacity
           onPress={() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); onAdvance(order.id, 'delivered'); }}
-          style={[s.confirmBtn, { backgroundColor: '#10b98125' }]}
+          style={[s.confirmBtn, { backgroundColor: '#22d15a25' }]}
         >
-          <Text style={[s.confirmText, { color: '#10b981' }]}>Confirm Delivery</Text>
+          <Text style={[s.confirmText, { color: '#22d15a' }]}>Confirm Delivery</Text>
         </TouchableOpacity>
       )}
     </GlassCard>

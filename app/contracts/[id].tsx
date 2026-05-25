@@ -91,7 +91,7 @@ export default function ContractDetail() {
             return (
               <View key={step} style={s.lifecycleRow}>
                 <View style={[s.lifecycleDot, {
-                  backgroundColor: done ? '#10b981' : current ? STATUS_COLOR[step] : colors.border,
+                  backgroundColor: done ? '#22d15a' : current ? STATUS_COLOR[step] : colors.border,
                   borderColor: current ? STATUS_COLOR[step] : 'transparent',
                   borderWidth: current ? 3 : 0,
                 }]}>
@@ -105,7 +105,7 @@ export default function ContractDetail() {
                     {STATUS_LABEL[step]}
                   </Text>
                 </View>
-                {i < LIFECYCLE.length - 1 && <View style={[s.lifecycleConnector, { backgroundColor: done ? '#10b981' : colors.border }]} />}
+                {i < LIFECYCLE.length - 1 && <View style={[s.lifecycleConnector, { backgroundColor: done ? '#22d15a' : colors.border }]} />}
               </View>
             );
           })}
@@ -161,7 +161,7 @@ export default function ContractDetail() {
               <GlassCard key={m.id} style={{ padding: 16 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {m.paid
-                    ? <CheckCircle2 size={20} color="#10b981" />
+                    ? <CheckCircle2 size={20} color="#22d15a" />
                     : <Circle size={20} color={colors.textMute} />}
                   <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text style={[s.milestoneLabel, { color: colors.text }]}>{m.label}</Text>
@@ -199,8 +199,8 @@ function SignatureRow({ label, when }: { label: string; when?: string }) {
       <Text style={[s.sigLabel, { color: colors.textMute }]}>{label}</Text>
       {when ? (
         <View style={s.sigDone}>
-          <CheckCircle2 size={14} color="#10b981" />
-          <Text style={[s.sigDoneText, { color: '#10b981' }]}>
+          <CheckCircle2 size={14} color="#22d15a" />
+          <Text style={[s.sigDoneText, { color: '#22d15a' }]}>
             Signed {new Date(when).toLocaleDateString('en-GB')}
           </Text>
         </View>

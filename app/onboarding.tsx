@@ -63,7 +63,7 @@ const VISUAL_ROLES: {
     descSw: 'Ninolima mazao — kidogo au kwa wingi',
     descEn: 'I grow crops — small or large scale',
     icon: <Sprout size={32} color="#22d15a" />,
-    gradient: ['rgba(62,207,142,0.18)', 'rgba(16,185,129,0.06)'],
+    gradient: ['rgba(34,209,90,0.18)', 'rgba(34,209,90,0.06)'],
     glow: '#22d15a',
   },
   {
@@ -111,8 +111,8 @@ const TRUST = [
 
 // Features for Welcome step
 const FEATURES = [
-  { icon: <Sparkles size={22} color="#22d15a" />, bg: 'rgba(62,207,142,0.12)', border: 'rgba(62,207,142,0.2)',  labelSw: 'Sankofa AI',    subSw: 'Mshauri wa AI',         labelEn: 'Sankofa AI',    subEn: 'AI farming advisor' },
-  { icon: <Camera size={22} color="#10b981" />,   bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.2)',  labelSw: 'Skani Mazao',   subSw: 'Tambua magonjwa',       labelEn: 'Crop Scan',     subEn: 'Disease diagnosis' },
+  { icon: <Sparkles size={22} color="#22d15a" />, bg: 'rgba(34,209,90,0.12)', border: 'rgba(34,209,90,0.2)',  labelSw: 'Sankofa AI',    subSw: 'Mshauri wa AI',         labelEn: 'Sankofa AI',    subEn: 'AI farming advisor' },
+  { icon: <Camera size={22} color="#22d15a" />,   bg: 'rgba(34,209,90,0.12)', border: 'rgba(34,209,90,0.2)',  labelSw: 'Skani Mazao',   subSw: 'Tambua magonjwa',       labelEn: 'Crop Scan',     subEn: 'Disease diagnosis' },
   { icon: <TrendingUp size={22} color="#3b82f6" />,bg: 'rgba(59,130,246,0.12)',border: 'rgba(59,130,246,0.2)',  labelSw: 'Bei za Soko',   subSw: 'Masoko ya Tanzania',    labelEn: 'Market Prices', subEn: 'Live market data' },
   { icon: <ShieldCheck size={22} color="#f59e0b" />,bg:'rgba(245,158,11,0.12)',border: 'rgba(245,158,11,0.2)',  labelSw: 'Bima ya Mazao', subSw: 'Ulinzi wa mavuno',      labelEn: 'Crop Insurance',subEn: 'Protect your harvest' },
   { icon: <BarChart3 size={22} color="#8b5cf6" />, bg: 'rgba(139,92,246,0.12)',border: 'rgba(139,92,246,0.2)',  labelSw: 'Uchanganuzi',   subSw: 'Utabiri wa AI',         labelEn: 'Analytics',     subEn: 'AI-powered forecasts' },
@@ -163,7 +163,7 @@ function ProgressBar({ step }: { step: number }) {
         transition={{ type: 'spring', damping: 22, stiffness: 140 }}
         style={pb.fill}
       >
-        <LinearGradient colors={['#22d15a', '#16a34a']} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
+        <LinearGradient colors={['#22d15a', '#22d15a']} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} />
       </motion.View>
     </View>
   );
@@ -186,7 +186,7 @@ function PowerEntry({ lang, setLang }: { lang: AppLanguage; setLang: (l: AppLang
           transition={{ type: 'spring', damping: 18, stiffness: 120, delay: 0.1 }}
           style={pe.logoWrap}
         >
-          <LinearGradient colors={['rgba(62,207,142,0.25)', 'rgba(16,185,129,0.08)']} style={pe.logoGrad}>
+          <LinearGradient colors={['rgba(34,209,90,0.25)', 'rgba(34,209,90,0.08)']} style={pe.logoGrad}>
             <Sparkles size={44} color="#22d15a" />
           </LinearGradient>
           {/* Pulse ring */}
@@ -283,7 +283,7 @@ function WelcomeStep({ lang }: { lang: AppLanguage }) {
           transition={{ type: 'spring', damping: 16, stiffness: 120 }}
           style={ws.heroWrap}
         >
-          <LinearGradient colors={['rgba(62,207,142,0.2)', 'rgba(62,207,142,0.04)']} style={ws.heroGrad}>
+          <LinearGradient colors={['rgba(34,209,90,0.2)', 'rgba(34,209,90,0.04)']} style={ws.heroGrad}>
             <Sprout size={52} color="#22d15a" />
           </LinearGradient>
           <motion.View
@@ -678,7 +678,7 @@ function SuccessStep({ lang, name, role }: { lang: AppLanguage; name: string; ro
           transition={{ type: 'spring', damping: 14, stiffness: 120, delay: 0.2 }}
           style={ss.checkCircle}
         >
-          <LinearGradient colors={['#22d15a', '#16a34a']} style={ss.checkGrad}>
+          <LinearGradient colors={['#22d15a', '#22d15a']} style={ss.checkGrad}>
             <Check size={44} color="#000" strokeWidth={3} />
           </LinearGradient>
         </motion.View>
@@ -719,7 +719,7 @@ function SuccessStep({ lang, name, role }: { lang: AppLanguage; name: string; ro
         transition={{ delay: 0.9 }}
         style={{ alignSelf: 'stretch' }}
       >
-        <LinearGradient colors={['rgba(62,207,142,0.14)', 'rgba(62,207,142,0.04)']} style={ss.idBadge}>
+        <LinearGradient colors={['rgba(34,209,90,0.14)', 'rgba(34,209,90,0.04)']} style={ss.idBadge}>
           <Award size={16} color="#22d15a" />
           <Text style={ss.idText}>
             {sw ? `${roleLabel(role)} · FREE TIER` : `${roleLabel(role)} · FREE TIER`}
@@ -911,7 +911,7 @@ export default function OnboardingV3() {
             accessibilityLabel={ctaLabel()}
           >
             <LinearGradient
-              colors={['#22d15a', '#16a34a']}
+              colors={['#22d15a', '#22d15a']}
               style={g.ctaGrad}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             >

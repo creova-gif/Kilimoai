@@ -20,7 +20,7 @@ import { Gate } from '../lib/access';
 
 // ─── Category config ──────────────────────────────────────────────────────────
 const CATEGORIES: { key: InventoryItem['category']; label: string; swahili: string; color: string; icon: any }[] = [
-  { key: 'seed',       label: 'Seed',       swahili: 'Mbegu',     color: '#10b981', icon: Wheat },
+  { key: 'seed',       label: 'Seed',       swahili: 'Mbegu',     color: '#22d15a', icon: Wheat },
   { key: 'fertilizer', label: 'Fertilizer', swahili: 'Mbolea',    color: '#3b82f6', icon: Sprout },
   { key: 'pesticide',  label: 'Pesticide',  swahili: 'Dawa',      color: '#f59e0b', icon: Syringe },
   { key: 'feed',       label: 'Feed',       swahili: 'Chakula',   color: '#8b5cf6', icon: Beef },
@@ -340,7 +340,7 @@ export default function InventoryScreen() {
               <GlassCard style={s.summaryCard}>
                 <SummaryCol label="Bidhaa Zote" value={String(items.length)} color={colors.primary} />
                 <View style={[s.divider, { backgroundColor: colors.border }]} />
-                <SummaryCol label="Stock Chini" value={String(lowStock.length)} color={lowStock.length > 0 ? '#ef4444' : '#10b981'} />
+                <SummaryCol label="Stock Chini" value={String(lowStock.length)} color={lowStock.length > 0 ? '#ef4444' : '#22d15a'} />
                 <View style={[s.divider, { backgroundColor: colors.border }]} />
                 <SummaryCol label="Thamani Yote" value={`TZS ${fmt(totalValue)}`} color={colors.text} small />
               </GlassCard>

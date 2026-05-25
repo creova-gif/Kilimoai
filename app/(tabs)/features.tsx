@@ -38,15 +38,15 @@ type FeatureEntry = {
 
 const ALL_FEATURES: FeatureEntry[] = [
   // AI
-  { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/sankofa',         icon: null, color: '#3ecf8e',  pinned: true },
-  { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',      sub: 'Tambua magonjwa ya mazao',    route: '/scan',            icon: null, color: '#10b981',  pinned: true },
+  { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/sankofa',         icon: null, color: '#22d15a',  pinned: true },
+  { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',      sub: 'Tambua magonjwa ya mazao',    route: '/scan',            icon: null, color: '#22d15a',  pinned: true },
   { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI',   sub: 'Utabiri na takwimu',          route: '/analytics',       icon: null, color: '#f97316' },
   { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',       sub: 'Mfano wa kidijiti',           route: '/farm-twin',       icon: null, color: '#6366f1' },
   { feature: 'crop_planning',        label: 'Upangaji Mazao',      sub: 'Panga mzunguko wa mazao',     route: '/crop-planning',   icon: null, color: '#22c55e' },
   // Market
   { feature: 'market_prices',        label: 'Bei za Soko',         sub: 'Bei za mazao ya sasa hivi',   route: '/market',          icon: null, color: '#3b82f6',  pinned: true },
   { feature: 'contract_farming',     label: 'Mikataba',            sub: 'Mkataba wa ukulima',          route: '/contracts',       icon: null, color: '#8b5cf6' },
-  { feature: 'input_supply',         label: 'Wauzaji',             sub: 'Vifaa vya kilimo',            route: '/input-supply',    icon: null, color: '#10b981' },
+  { feature: 'input_supply',         label: 'Wauzaji',             sub: 'Vifaa vya kilimo',            route: '/input-supply',    icon: null, color: '#22d15a' },
   { feature: 'marketplace',          label: 'Soko la Bidhaa',      sub: 'Nunua na uza mazao',          route: '/market',          icon: null, color: '#ec4899' },
   // Farm
   { feature: 'farm_mapping',         label: 'Ramani ya Shamba',    sub: 'GPS na safu za NDVI',         route: '/map',             icon: null, color: '#0ea5e9',  pinned: true },
@@ -56,7 +56,7 @@ const ALL_FEATURES: FeatureEntry[] = [
   // Finance
   { feature: 'wallet_admin',         label: 'Pochi Msimamizi',     sub: 'Malipo na akaunti',           route: '/wallet-admin',    icon: null, color: '#14b8a6' },
   { feature: 'insurance',            label: 'Bima',                sub: 'Ulinzi wa mazao yako',        route: '/insurance',       icon: null, color: '#0ea5e9' },
-  { feature: 'agro_id',              label: 'Agro ID',             sub: 'Kitambulisho · PDF ya P&L',   route: '/agro-id',         icon: null, color: '#3ecf8e' },
+  { feature: 'agro_id',              label: 'Agro ID',             sub: 'Kitambulisho · PDF ya P&L',   route: '/agro-id',         icon: null, color: '#22d15a' },
   // Community
   { feature: 'peer_groups',          label: 'Vikundi',             sub: 'Vikundi vya wakulima',        route: '/peer-groups',     icon: null, color: '#ec4899' },
   { feature: 'expert_consultations', label: 'Wataalamu',           sub: 'Ushauri wa wataalamu',        route: '/consultations',   icon: null, color: '#a855f7' },
@@ -64,14 +64,14 @@ const ALL_FEATURES: FeatureEntry[] = [
 ];
 
 const ICONS: Record<Feature, React.ReactNode> = {
-  ai_chat:              <Sparkles size={20} color="#3ecf8e" />,
-  photo_diagnosis:      <Camera size={20} color="#10b981" />,
+  ai_chat:              <Sparkles size={20} color="#22d15a" />,
+  photo_diagnosis:      <Camera size={20} color="#22d15a" />,
   analytics_predictive: <BarChart3 size={20} color="#f97316" />,
   digital_farm_twin:    <Cpu size={20} color="#6366f1" />,
   crop_planning:        <Sprout size={20} color="#22c55e" />,
   market_prices:        <TrendingUp size={20} color="#3b82f6" />,
   contract_farming:     <FileText size={20} color="#8b5cf6" />,
-  input_supply:         <Truck size={20} color="#10b981" />,
+  input_supply:         <Truck size={20} color="#22d15a" />,
   marketplace:          <ShoppingBag size={20} color="#ec4899" />,
   farm_mapping:         <MapPin size={20} color="#0ea5e9" />,
   livestock:            <Beef size={20} color="#f59e0b" />,
@@ -79,14 +79,14 @@ const ICONS: Record<Feature, React.ReactNode> = {
   task_management:      <ClipboardList size={20} color="#64748b" />,
   wallet_admin:         <Wallet size={20} color="#14b8a6" />,
   insurance:            <ShieldCheck size={20} color="#0ea5e9" />,
-  agro_id:              <User size={20} color="#3ecf8e" />,
+  agro_id:              <User size={20} color="#22d15a" />,
   peer_groups:          <Users size={20} color="#ec4899" />,
   expert_consultations: <GraduationCap size={20} color="#a855f7" />,
   weather_alerts:       <Bell size={20} color="#f97316" />,
   // extras not in features list but in Feature type
   voice_assistant:      <Zap size={20} color="#f59e0b" />,
   finance_tracker:      <BarChart3 size={20} color="#3b82f6" />,
-  mobile_money:         <Wallet size={20} color="#10b981" />,
+  mobile_money:         <Wallet size={20} color="#22d15a" />,
   offline_mode:         <Zap size={20} color="#64748b" />,
 };
 
@@ -95,7 +95,7 @@ const CATEGORIES = [
     key: 'ai',
     title: 'Akili Bandia',
     titleEn: 'AI & Intelligence',
-    color: '#3ecf8e',
+    color: '#22d15a',
     features: ['ai_chat', 'photo_diagnosis', 'analytics_predictive', 'digital_farm_twin', 'crop_planning'] as Feature[],
   },
   {
@@ -211,7 +211,7 @@ export default function FeaturesScreen() {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Ambient glow */}
-      <View style={[s.orb1, { backgroundColor: isDark ? '#3ecf8e10' : '#3ecf8e08' }]} />
+      <View style={[s.orb1, { backgroundColor: isDark ? '#22d15a10' : '#22d15a08' }]} />
       <View style={[s.orb2, { backgroundColor: isDark ? '#6366f110' : '#6366f108' }]} />
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -225,11 +225,11 @@ export default function FeaturesScreen() {
           >
             <LinearGradient
               colors={isDark ? ['#052e16', '#0a0a0f'] : ['#f0fdf4', '#f8fafc']}
-              style={[s.hero, { borderColor: isDark ? 'rgba(62,207,142,0.15)' : 'rgba(62,207,142,0.2)' }]}
+              style={[s.hero, { borderColor: isDark ? 'rgba(34,209,90,0.15)' : 'rgba(34,209,90,0.2)' }]}
             >
               <View style={s.heroLeft}>
                 <View style={s.heroBadge}>
-                  <Sparkles size={12} color="#3ecf8e" />
+                  <Sparkles size={12} color="#22d15a" />
                   <Text style={s.heroBadgeText}>FEATURES HUB</Text>
                 </View>
                 <Text style={[s.heroTitle, { color: colors.text }]}>
@@ -240,7 +240,7 @@ export default function FeaturesScreen() {
                 </Text>
               </View>
               <View style={s.heroRight}>
-                <LinearGradient colors={['#3ecf8e', '#10b981']} style={s.heroCircle}>
+                <LinearGradient colors={['#22d15a', '#22d15a']} style={s.heroCircle}>
                   <LayoutGrid size={26} color="#000" strokeWidth={2.5} />
                 </LinearGradient>
               </View>
@@ -321,8 +321,8 @@ const s = StyleSheet.create({
   // Hero
   hero:       { borderRadius: 24, borderWidth: 1, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   heroLeft:   { flex: 1, gap: 4 },
-  heroBadge:  { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(62,207,142,0.12)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
-  heroBadgeText: { color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.2 },
+  heroBadge:  { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34,209,90,0.12)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
+  heroBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.2 },
   heroTitle:  { fontSize: 26, fontFamily: 'Inter_900Black', letterSpacing: -0.8, marginTop: 8 },
   heroRole:   { fontSize: 12, fontFamily: 'Inter_600SemiBold', textTransform: 'capitalize', marginTop: 2 },
   heroRight:  { marginLeft: 16 },

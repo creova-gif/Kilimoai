@@ -159,7 +159,7 @@ export default function ForecastScreen() {
       tip: 'Nzuri kwa: kukausha mazao, kupanda mbegu, kunyunyizia dawa (asubuhi mapema), kuvuna.',
     };
     return {
-      emoji: '🌤️', label: 'HALI YA KAWAIDA', color: '#10b981', urgency: 'ok',
+      emoji: '🌤️', label: 'HALI YA KAWAIDA', color: '#22d15a', urgency: 'ok',
       tip: 'Endelea na shughuli za kawaida. Angalia mabadiliko ya hali ya hewa mchana.',
     };
   };
@@ -257,8 +257,8 @@ export default function ForecastScreen() {
                     <Text style={[styles.statLabel, { color: colors.textMute }]}>Unyevunyevu</Text>
                   </View>
                   <View style={styles.statItem}>
-                    <View style={[styles.statIcon, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
-                      <Wind size={18} color="#10b981" />
+                    <View style={[styles.statIcon, { backgroundColor: 'rgba(34, 209, 90, 0.1)' }]}>
+                      <Wind size={18} color="#22d15a" />
                     </View>
                     <Text style={[styles.statVal, { color: colors.text }]}>
                       {current ? `${current.windKph} km/h` : '—'}
@@ -315,7 +315,7 @@ export default function ForecastScreen() {
                     <View style={styles.insightHeader}>
                       <Text style={{ fontSize: 16 }}>{adv.emoji}</Text>
                       <Text style={[styles.insightTitle, { color: adv.color }]}>{adv.label}</Text>
-                      <View style={[styles.urgencyBadge, { backgroundColor: adv.urgency === 'warning' ? '#ef4444' : adv.urgency === 'caution' ? '#f59e0b' : '#10b981' }]}>
+                      <View style={[styles.urgencyBadge, { backgroundColor: adv.urgency === 'warning' ? '#ef4444' : adv.urgency === 'caution' ? '#f59e0b' : '#22d15a' }]}>
                         <Text style={styles.urgencyText}>{adv.urgency === 'warning' ? 'HATUA HARAKA' : adv.urgency === 'caution' ? 'TAHADHARI' : 'SALAMA'}</Text>
                       </View>
                     </View>

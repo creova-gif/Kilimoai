@@ -44,8 +44,8 @@ const TIERS = [
     label: 'Premium',
     labelSw: 'Premium',
     price: 'TZS 15,000 / mwezi',
-    color: '#3ecf8e',
-    icon: <Zap size={22} color="#3ecf8e" />,
+    color: '#22d15a',
+    icon: <Zap size={22} color="#22d15a" />,
     badge: 'BORA ZAIDI',
     features: [
       'Unlimited AI diagnoses',

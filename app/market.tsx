@@ -69,7 +69,7 @@ const IntelligenceBento = ({ isDark, colors, router }: any) => (
   <View style={styles.bentoContainer}>
     <motion.View initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 120 }} style={[styles.bentoMain, { borderColor: colors.border }]}>
       <BlurView intensity={isDark ? 25 : 85} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-      <LinearGradient colors={isDark ? ['rgba(62,207,142,0.15)', 'rgba(15,23,42,0.9)'] : ['rgba(62,207,142,0.1)', 'rgba(255,255,255,0.9)']} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={isDark ? ['rgba(34,209,90,0.15)', 'rgba(15,23,42,0.9)'] : ['rgba(34,209,90,0.1)', 'rgba(255,255,255,0.9)']} style={StyleSheet.absoluteFill} />
       <View style={styles.bentoHeader}>
         <View style={styles.intelBadge}><Cpu size={14} color={colors.primary} /><Text style={[styles.intelBadgeText, { color: colors.primary }]}>AI ENGINE V4.5</Text></View>
         <motion.View animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}><Sparkles size={20} color={colors.primary} opacity={0.6} /></motion.View>
@@ -102,7 +102,7 @@ const NeuralSparkline = ({ data, positive }: any) => {
     <View style={styles.sparklineOuter}>
       {data.map((val: number, i: number) => (
         <motion.View key={i} initial={{ height: 0, opacity: 0 }} animate={{ height: ((val - min) / range) * 30 + 5, opacity: 1 }} transition={{ delay: 0.2 + i * 0.05, type: 'spring', damping: 15 }}
-          style={[styles.sparkBar, { backgroundColor: positive ? '#10b981' : '#ef4444', opacity: 0.3 + (i / data.length) * 0.7 }]} />
+          style={[styles.sparkBar, { backgroundColor: positive ? '#22d15a' : '#ef4444', opacity: 0.3 + (i / data.length) * 0.7 }]} />
       ))}
     </View>
   );
@@ -138,7 +138,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
             <ScrollView style={{ maxHeight: 200 }} showsVerticalScrollIndicator={false}>
               {alerts.map((a: PriceAlert) => (
                 <View key={a.id} style={[pm.alertRow, { borderColor: colors.border }]}>
-                  <View style={[pm.alertDot, { backgroundColor: a.direction === 'above' ? '#10b981' : '#ef4444' }]} />
+                  <View style={[pm.alertDot, { backgroundColor: a.direction === 'above' ? '#22d15a' : '#ef4444' }]} />
                   <Text style={[pm.alertText, { color: colors.text }]}>{a.crop} — {a.direction === 'above' ? 'zaidi ya' : 'chini ya'} TZS {fmt(a.threshold)}</Text>
                   <TouchableOpacity onPress={() => { Haptics.selectionAsync(); onDelete(a.id); }}><X size={16} color={colors.textMute} /></TouchableOpacity>
                 </View>
@@ -160,9 +160,9 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 {(['above', 'below'] as const).map((d) => (
                   <TouchableOpacity key={d} onPress={() => { setDirection(d); Haptics.selectionAsync(); }} style={{ flex: 1 }}>
-                    <View style={[pm.dirBtn, { borderColor: direction === d ? (d === 'above' ? '#10b981' : '#ef4444') : colors.border, backgroundColor: direction === d ? (d === 'above' ? '#10b98118' : '#ef444418') : 'transparent' }]}>
-                      {d === 'above' ? <TrendingUp size={14} color={direction === d ? '#10b981' : colors.textMute} /> : <TrendingDown size={14} color={direction === d ? '#ef4444' : colors.textMute} />}
-                      <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: direction === d ? (d === 'above' ? '#10b981' : '#ef4444') : colors.textMute }}>
+                    <View style={[pm.dirBtn, { borderColor: direction === d ? (d === 'above' ? '#22d15a' : '#ef4444') : colors.border, backgroundColor: direction === d ? (d === 'above' ? '#22d15a18' : '#ef444418') : 'transparent' }]}>
+                      {d === 'above' ? <TrendingUp size={14} color={direction === d ? '#22d15a' : colors.textMute} /> : <TrendingDown size={14} color={direction === d ? '#ef4444' : colors.textMute} />}
+                      <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: direction === d ? (d === 'above' ? '#22d15a' : '#ef4444') : colors.textMute }}>
                         {d === 'above' ? 'Zaidi ya' : 'Chini ya'}
                       </Text>
                     </View>
@@ -296,8 +296,8 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification }:
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {CROPS_SELL.map((c) => (
                 <TouchableOpacity key={c} onPress={() => { setCrop(c); Haptics.selectionAsync(); }}
-                  style={[pm.pill, { borderColor: crop === c ? '#10b981' : colors.border, backgroundColor: crop === c ? '#10b98118' : 'transparent' }]}>
-                  <Text style={[pm.pillText, { color: crop === c ? '#10b981' : colors.textMute }]}>{c}</Text>
+                  style={[pm.pill, { borderColor: crop === c ? '#22d15a' : colors.border, backgroundColor: crop === c ? '#22d15a18' : 'transparent' }]}>
+                  <Text style={[pm.pillText, { color: crop === c ? '#22d15a' : colors.textMute }]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -319,11 +319,11 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification }:
             <View style={{ gap: 8 }}>
               {GRADES.map((g) => (
                 <TouchableOpacity key={g} onPress={() => { setGrade(g); Haptics.selectionAsync(); }}
-                  style={[pm.gradeRow, { borderColor: grade === g ? '#10b981' : colors.border, backgroundColor: grade === g ? '#10b98110' : 'transparent' }]}>
-                  <View style={[pm.gradeRadio, { borderColor: grade === g ? '#10b981' : colors.border }]}>
-                    {grade === g && <View style={[pm.gradeInner, { backgroundColor: '#10b981' }]} />}
+                  style={[pm.gradeRow, { borderColor: grade === g ? '#22d15a' : colors.border, backgroundColor: grade === g ? '#22d15a10' : 'transparent' }]}>
+                  <View style={[pm.gradeRadio, { borderColor: grade === g ? '#22d15a' : colors.border }]}>
+                    {grade === g && <View style={[pm.gradeInner, { backgroundColor: '#22d15a' }]} />}
                   </View>
-                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: grade === g ? '#10b981' : colors.text }}>{g}</Text>
+                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: grade === g ? '#22d15a' : colors.text }}>{g}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -332,12 +332,12 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification }:
               <TextInput value={notes} onChangeText={setNotes} multiline style={[pm.input, { color: colors.text }]} placeholderTextColor={colors.textMute} placeholder="Hali ya mazao, usafirishaji, mawasiliano..." />
             </View>
             {qty && price && parseFloat(qty) > 0 && parseFloat(price) > 0 && (
-              <View style={[pm.preview, { backgroundColor: '#10b98112', borderColor: '#10b98130' }]}>
+              <View style={[pm.preview, { backgroundColor: '#22d15a12', borderColor: '#22d15a30' }]}>
                 <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 11 }}>Thamani ya tangazo</Text>
-                <Text style={{ color: '#10b981', fontFamily: 'Inter_900Black', fontSize: 18 }}>TZS {fmt(parseFloat(qty) * parseFloat(price))}</Text>
+                <Text style={{ color: '#22d15a', fontFamily: 'Inter_900Black', fontSize: 18 }}>TZS {fmt(parseFloat(qty) * parseFloat(price))}</Text>
               </View>
             )}
-            <TouchableOpacity onPress={publish} style={[pm.saveBtn, { backgroundColor: '#10b981', marginTop: 16 }]}>
+            <TouchableOpacity onPress={publish} style={[pm.saveBtn, { backgroundColor: '#22d15a', marginTop: 16 }]}>
               <Globe size={16} color="#000" /><Text style={{ color: '#000', fontFamily: 'Inter_900Black', fontSize: 15 }}>Chapisha Tangazo</Text>
             </TouchableOpacity>
             <View style={{ height: 32 }} />
@@ -370,7 +370,7 @@ export default function MarketScreen() {
     const bullish  = MARKET_DATA.filter((d) => d.outlook === 'Bullish' && d.positive);
     const volatile = MARKET_DATA.filter((d) => d.volatility === 'High');
     const bearish  = MARKET_DATA.filter((d) => d.outlook === 'Neutral' && !d.positive);
-    if (bullish.length >= 2) return { emoji: '🟢', title: 'Wakati Mzuri wa Kuuza', tip: `${bullish.map((d) => d.name.split(' ')[0]).join(', ')} viko juu sasa. Wasiliana na mnunuzi haraka kabla bei haijashuka.`, color: '#10b981' };
+    if (bullish.length >= 2) return { emoji: '🟢', title: 'Wakati Mzuri wa Kuuza', tip: `${bullish.map((d) => d.name.split(' ')[0]).join(', ')} viko juu sasa. Wasiliana na mnunuzi haraka kabla bei haijashuka.`, color: '#22d15a' };
     if (volatile.length >= 2) return { emoji: '🟡', title: 'Bei Zina Kushuka Kupanda', tip: `${volatile.map((d) => d.name.split(' ')[0]).join(', ')} vina bei zisizo imara. Angalia kila siku kabla ya kuuza.`, color: '#f59e0b' };
     if (bearish.length >= 2) return { emoji: '🔴', title: 'Bei Zimeshuka — Subiri', tip: `${bearish.map((d) => d.name.split(' ')[0]).join(', ')} — bei za chini sasa. Hifadhi kwa wiki 2–3 kama unaweza.`, color: '#ef4444' };
     return { emoji: '⚪', title: 'Bei za Wastani', tip: 'Bei ziko imara kwa sasa. Hakikisha bei za soko la karibu nawe kabla ya kuuza.', color: '#64748b' };
@@ -418,7 +418,7 @@ export default function MarketScreen() {
           <View style={styles.headerCenter}>
             <Text style={[styles.headerTitle, { color: colors.text }]}>Soko & Intel</Text>
             <View style={styles.locationContainer}>
-              <View style={[styles.statusDot, { backgroundColor: '#10b981' }]} />
+              <View style={[styles.statusDot, { backgroundColor: '#22d15a' }]} />
               <Text style={[styles.locationText, { color: colors.textMute }]}>EAST AFRICA FEED</Text>
             </View>
           </View>
@@ -477,7 +477,7 @@ export default function MarketScreen() {
               {/* UZA pill */}
               <motion.View initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
                 <TouchableOpacity onPress={() => { setShowSell(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }}>
-                  <View style={[styles.categoryPill, { backgroundColor: '#10b981', borderRadius: 20 }]}>
+                  <View style={[styles.categoryPill, { backgroundColor: '#22d15a', borderRadius: 20 }]}>
                     <Tag size={14} color="#000" />
                     <Text style={[styles.categoryText, { color: '#000', fontFamily: 'Inter_800ExtraBold' }]}>UZA MAZAO</Text>
                   </View>
@@ -553,8 +553,8 @@ export default function MarketScreen() {
                           <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
                           <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market} · {item.region}</Text>
                         </View>
-                        <View style={[styles.volatilityBadge, { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#10b98115' }]}>
-                          <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#10b981' }]}>{item.volatility}</Text>
+                        <View style={[styles.volatilityBadge, { backgroundColor: item.volatility === 'High' ? '#ef444415' : '#22d15a15' }]}>
+                          <Text style={[styles.volatilityText, { color: item.volatility === 'High' ? '#ef4444' : '#22d15a' }]}>{item.volatility}</Text>
                         </View>
                       </View>
                       <View style={styles.cardBody}>
@@ -564,9 +564,9 @@ export default function MarketScreen() {
                         </View>
                         <View style={styles.trendArea}>
                           <NeuralSparkline data={sparkData} positive={item.positive} />
-                          <View style={[styles.trendPill, { backgroundColor: item.positive ? '#10b98120' : '#ef444420' }]}>
-                            {item.positive ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
-                            <Text style={[styles.trendPercent, { color: item.positive ? '#10b981' : '#ef4444' }]}>{item.trend}</Text>
+                          <View style={[styles.trendPill, { backgroundColor: item.positive ? '#22d15a20' : '#ef444420' }]}>
+                            {item.positive ? <TrendingUp size={12} color="#22d15a" /> : <TrendingDown size={12} color="#ef4444" />}
+                            <Text style={[styles.trendPercent, { color: item.positive ? '#22d15a' : '#ef4444' }]}>{item.trend}</Text>
                           </View>
                         </View>
                       </View>
@@ -629,7 +629,7 @@ export default function MarketScreen() {
         {/* Sell FAB */}
         <motion.View initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.5, type: 'spring', stiffness: 120 }} style={styles.fab}>
           <TouchableOpacity onPress={() => { setShowSell(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); }} activeOpacity={0.85}>
-            <LinearGradient colors={['#10b981', '#059669']} style={styles.fabGrad}>
+            <LinearGradient colors={['#22d15a', '#059669']} style={styles.fabGrad}>
               <Package size={20} color="#fff" />
               <Text style={styles.fabText}>UZA</Text>
             </LinearGradient>
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
   bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 200 },
   bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
   bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(62,207,142,0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34,209,90,0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   intelBadgeText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
   bentoTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', marginTop: 12, marginBottom: 4 },
   bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   analysisRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   analysisItem: { flex: 1 },
   analysisLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
-  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(62,207,142,0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
+  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(34,209,90,0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
   outlookText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
   analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
   actionGrid: { flexDirection: 'row', gap: 12 },

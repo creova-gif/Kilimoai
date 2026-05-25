@@ -102,7 +102,7 @@ export default function PageScaffold({
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <NeuralOrb color="#3ecf8e" size={340} x={-60} y={-40} delay={0} />
+        <NeuralOrb color="#22d15a" size={340} x={-60} y={-40} delay={0} />
         <NeuralOrb color="#3b82f6" size={280} x={SW - 160} y={SH * 0.5} delay={2000} />
         <LinearGradient
           colors={[isDark ? '#020617' : '#f8fafc', 'transparent']}

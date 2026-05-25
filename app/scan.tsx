@@ -516,7 +516,7 @@ export default function ScanScreen() {
                       : (diagnosis?.raw?.slice(0, 280) ?? FALLBACK_RESULT.recommendation);
                     const conf = diagnosis?.confidence;
                     const confLabel = conf === 'high' ? 'UHAKIKA: JUU' : conf === 'medium' ? 'UHAKIKA: WASTANI' : conf === 'low' ? 'UHAKIKA: CHINI' : 'AI Diagnosis';
-                    const confBadgeColor = conf === 'high' ? '#10b981' : conf === 'low' ? '#ef4444' : '#f59e0b';
+                    const confBadgeColor = conf === 'high' ? '#22d15a' : conf === 'low' ? '#ef4444' : '#f59e0b';
                     const imgQuality = diagnosis?.imageQuality;
                     const needsExpert = diagnosis?.consultExpert === true || sev === 'critical' || sev === 'high' || conf === 'low';
                     return (
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
   scanLine: {
     width: '100%',
     height: 6,
-    shadowColor: "#3ecf8e",
+    shadowColor: "#22d15a",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 25,
@@ -834,14 +834,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#3ecf8e',
+    backgroundColor: '#22d15a',
     marginBottom: 12,
   },
   markerTextContainer: {
     alignItems: 'center',
   },
   markerText: {
-    color: '#3ecf8e',
+    color: '#22d15a',
     fontSize: 10,
     fontFamily: 'Inter_900Black',
     letterSpacing: 2,
@@ -875,8 +875,8 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 2,
-    borderColor: 'rgba(62, 207, 142, 0.3)',
-    borderTopColor: '#3ecf8e',
+    borderColor: 'rgba(34, 209, 90, 0.3)',
+    borderTopColor: '#22d15a',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
@@ -888,7 +888,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   analyzingSubtitle: {
-    color: '#3ecf8e',
+    color: '#22d15a',
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
     textAlign: 'center',
@@ -918,7 +918,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: "#3ecf8e",
+    shadowColor: "#22d15a",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 24,
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     borderRadius: 28,
     marginBottom: 16,
-    shadowColor: "#3ecf8e",
+    shadowColor: "#22d15a",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,

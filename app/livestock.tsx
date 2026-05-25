@@ -20,7 +20,7 @@ import { Gate } from '../lib/access';
 
 // ─── Species config ───────────────────────────────────────────────────────────
 const SPECIES: { key: LivestockSpecies; label: string; swahili: string; color: string }[] = [
-  { key: 'cattle', label: 'Cattle', swahili: 'Ng\'ombe', color: '#10b981' },
+  { key: 'cattle', label: 'Cattle', swahili: 'Ng\'ombe', color: '#22d15a' },
   { key: 'goat',   label: 'Goat',   swahili: 'Mbuzi',    color: '#f59e0b' },
   { key: 'sheep',  label: 'Sheep',  swahili: 'Kondoo',   color: '#8b5cf6' },
   { key: 'poultry',label: 'Poultry',swahili: 'Kuku',     color: '#3b82f6' },
@@ -28,7 +28,7 @@ const SPECIES: { key: LivestockSpecies; label: string; swahili: string; color: s
 ];
 
 const HEALTH: { key: LivestockAnimal['healthStatus']; label: string; color: string; icon: any }[] = [
-  { key: 'healthy',   label: 'Mzima',     color: '#10b981', icon: CheckCircle2 },
+  { key: 'healthy',   label: 'Mzima',     color: '#22d15a', icon: CheckCircle2 },
   { key: 'attention', label: 'Tahadhari', color: '#f59e0b', icon: AlertTriangle },
   { key: 'sick',      label: 'Mgonjwa',   color: '#ef4444', icon: HeartPulse },
 ];
@@ -181,7 +181,7 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
   const HealthIcon = healthMeta.icon;
 
   const vacDays = a.nextVaccineDue ? daysUntil(a.nextVaccineDue) : null;
-  const vacColor = vacDays !== null ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#10b981') : colors.textMute;
+  const vacColor = vacDays !== null ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#22d15a') : colors.textMute;
 
   function cycleHealth() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -308,7 +308,7 @@ export default function LivestockScreen() {
           <View style={{ paddingHorizontal: 24 }}>
             <motion.View initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
               <GlassCard style={s.summaryCard}>
-                <SummaryPill count={healthy}   label="Wazima"     color="#10b981" />
+                <SummaryPill count={healthy}   label="Wazima"     color="#22d15a" />
                 <SummaryPill count={attention} label="Tahadhari"  color="#f59e0b" />
                 <SummaryPill count={sick}      label="Wagonjwa"   color="#ef4444" />
                 {dueSoon.length > 0 && <SummaryPill count={dueSoon.length} label="Chanjo Hivi Karibuni" color="#3b82f6" />}

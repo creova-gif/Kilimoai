@@ -149,12 +149,12 @@ export default function AgroIdScreen() {
       <SectionHeader title="Mapato na Matumizi · P&L" />
       <View style={{ paddingHorizontal: 24, gap: 12 }}>
         <View style={s.summaryGrid}>
-          <SummaryTile label="Mapato" value={income} accent="#10b981" Icon={TrendingUp} />
+          <SummaryTile label="Mapato" value={income} accent="#22d15a" Icon={TrendingUp} />
           <SummaryTile label="Matumizi" value={expense} accent="#ef4444" Icon={TrendingDown} />
         </View>
         <GlassCard style={{ padding: 18 }}>
           <Text style={[s.netLabel, { color: colors.textMute }]}>Faida Halisi · Net Position</Text>
-          <Text style={[s.netValue, { color: net >= 0 ? '#10b981' : '#ef4444' }]}>
+          <Text style={[s.netValue, { color: net >= 0 ? '#22d15a' : '#ef4444' }]}>
             {net >= 0 ? '+' : '−'} TZS {fmt(net)}
           </Text>
           <Text style={[s.netSub, { color: colors.textMute }]}>{ledger.length} entries · ready for bank submission</Text>
@@ -188,9 +188,9 @@ export default function AgroIdScreen() {
       {/* Quick add entries */}
       <SectionHeader title="Ongeza Akaunti · Quick Entry" />
       <View style={{ paddingHorizontal: 24, flexDirection: 'row', gap: 10 }}>
-        <TouchableOpacity onPress={() => addSampleEntry(true)} style={[s.quickBtn, { backgroundColor: '#10b98120', borderColor: '#10b98140' }]}>
-          <Plus size={14} color="#10b981" />
-          <Text style={[s.quickBtnText, { color: '#10b981' }]}>Income</Text>
+        <TouchableOpacity onPress={() => addSampleEntry(true)} style={[s.quickBtn, { backgroundColor: '#22d15a20', borderColor: '#22d15a40' }]}>
+          <Plus size={14} color="#22d15a" />
+          <Text style={[s.quickBtnText, { color: '#22d15a' }]}>Income</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => addSampleEntry(false)} style={[s.quickBtn, { backgroundColor: '#ef444420', borderColor: '#ef444440' }]}>
           <Plus size={14} color="#ef4444" />
@@ -205,12 +205,12 @@ export default function AgroIdScreen() {
           {ledger.slice(0, 8).map((e, i) => (
             <View key={e.id}>
               <View style={s.ledgerRow}>
-                <View style={[s.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]} />
+                <View style={[s.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#22d15a' : '#ef4444' }]} />
                 <View style={{ flex: 1 }}>
                   <Text style={[s.ledgerDesc, { color: colors.text }]} numberOfLines={1}>{e.description}</Text>
                   <Text style={[s.ledgerCat, { color: colors.textMute }]}>{e.category} · {new Date(e.date).toLocaleDateString('en-GB')}</Text>
                 </View>
-                <Text style={[s.ledgerAmt, { color: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]}>
+                <Text style={[s.ledgerAmt, { color: e.amountTZS > 0 ? '#22d15a' : '#ef4444' }]}>
                   {e.amountTZS > 0 ? '+' : '−'} {fmt(e.amountTZS)}
                 </Text>
               </View>
@@ -254,7 +254,7 @@ function SummaryTile({ label, value, accent, Icon }: any) {
 
 const s = StyleSheet.create({
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(62,207,142,0.18)' },
+  badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(34,209,90,0.18)' },
   badgeText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.2 },
   idNum: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.5 },
   profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },

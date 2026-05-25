@@ -38,7 +38,7 @@ const TYPE_CONFIG = {
   alert:   { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
   warning: { icon: Zap,           color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
   info:    { icon: Info,          color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
-  success: { icon: CheckCircle2,  color: '#3ecf8e', bg: 'rgba(62, 207, 142, 0.12)' },
+  success: { icon: CheckCircle2,  color: '#22d15a', bg: 'rgba(34, 209, 90, 0.12)' },
 };
 
 function timeAgo(iso: string): string {
@@ -171,7 +171,7 @@ export default function NotificationsScreen() {
         <motion.View
           animate={{ x: [-20, 20, -20], y: [0, -40, 0], opacity: [0.08, 0.15, 0.08] }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          style={[styles.bgOrb, { backgroundColor: '#3ecf8e', top: -80, right: -100, width: 300, height: 300, borderRadius: 150 }]}
+          style={[styles.bgOrb, { backgroundColor: '#22d15a', top: -80, right: -100, width: 300, height: 300, borderRadius: 150 }]}
         />
         <motion.View
           animate={{ x: [0, -30, 0], y: [0, 40, 0], opacity: [0.06, 0.12, 0.06] }}
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   actionBtn: {
     width: 44, height: 44, borderRadius: 22,
     justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(62, 207, 142, 0.1)',
+    backgroundColor: 'rgba(34, 209, 90, 0.1)',
   },
   scrollContent: {
     padding: 20, paddingBottom: 60, gap: 12,

@@ -35,7 +35,7 @@ export default function TransactionsScreen() {
       ? '#ef4444'
       : item.status === 'failed' || item.status === 'reversed'
       ? '#94a3b8'
-      : '#3ecf8e';
+      : '#22d15a';
     return (
       <GlassCard style={s.card}>
         <View style={[s.icon, { backgroundColor: `${color}22` }]}>

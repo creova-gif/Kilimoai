@@ -31,10 +31,10 @@ function TabIcon({ icon: Icon, color, focused, label, isDark }: {
   return (
     <View style={[ti.wrap, focused && ti.wrapActive]}>
       {focused && (
-        <View style={[ti.glow, { shadowColor: '#3ecf8e' }]} />
+        <View style={[ti.glow, { shadowColor: '#22d15a' }]} />
       )}
       <Icon
-        color={focused ? '#3ecf8e' : isDark ? '#52525b' : '#a1a1aa'}
+        color={focused ? '#22d15a' : isDark ? '#52525b' : '#a1a1aa'}
         size={22}
         strokeWidth={focused ? 2.5 : 2}
       />
@@ -49,7 +49,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#3ecf8e',
+        tabBarActiveTintColor: '#22d15a',
         tabBarInactiveTintColor: isDark ? '#52525b' : '#a1a1aa',
         headerShown: false,
         tabBarShowLabel: false,
@@ -117,11 +117,11 @@ const tb = StyleSheet.create({
 
 const ti = StyleSheet.create({
   wrap: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  wrapActive: { backgroundColor: 'rgba(62,207,142,0.12)' },
+  wrapActive: { backgroundColor: 'rgba(34,209,90,0.12)' },
   glow: {
     position: 'absolute', width: 48, height: 48, borderRadius: 16,
     shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 0 },
   },
   dot: { width: 4, height: 4, borderRadius: 2, marginTop: 4, backgroundColor: 'transparent' },
-  dotActive: { backgroundColor: '#3ecf8e' },
+  dotActive: { backgroundColor: '#22d15a' },
 });

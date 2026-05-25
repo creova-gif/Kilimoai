@@ -62,6 +62,6 @@ const s = StyleSheet.create({
   title:     { fontSize: 24, fontFamily: 'Inter_900Black', color: '#f8fafc', marginBottom: 8, textAlign: 'center' },
   subtitle:  { fontSize: 15, color: '#94a3b8', marginBottom: 16, textAlign: 'center', fontFamily: 'Inter_500Medium' },
   errorMsg:  { fontSize: 11, color: '#ef4444', fontFamily: 'Inter_500Medium', backgroundColor: 'rgba(239,68,68,0.08)', padding: 12, borderRadius: 10, marginBottom: 24, width: '100%' },
-  btn:       { backgroundColor: '#3ecf8e', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 },
+  btn:       { backgroundColor: '#22d15a', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 },
   btnText:   { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#020617' },
 });

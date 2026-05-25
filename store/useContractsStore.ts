@@ -84,10 +84,10 @@ export const STATUS_COLOR: Record<ContractStatus, string> = {
   draft: '#94a3b8',
   sent: '#3b82f6',
   under_review: '#f59e0b',
-  signed: '#3ecf8e',
-  active: '#10b981',
+  signed: '#22d15a',
+  active: '#22d15a',
   milestone_due: '#f59e0b',
-  completed: '#10b981',
+  completed: '#22d15a',
   cancelled: '#ef4444',
   disputed: '#ef4444',
 };

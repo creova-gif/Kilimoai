@@ -72,18 +72,142 @@ const SPARKLINE_PATTERNS: number[][] = [
 
 
 const INITIAL_ACTIVITIES = [
-  { id: '1', title: 'Soil Scan Complete', route: '/scan', time: '2h ago', icon: <Microscope size={16} color="#3ecf8e" />, status: 'Optimal', detail: 'Nitrogen levels at 92%' },
+  { id: '1', title: 'Soil Scan Complete', route: '/scan', time: '2h ago', icon: <Microscope size={16} color="#22d15a" />, status: 'Optimal', detail: 'Nitrogen levels at 92%' },
   { id: '2', title: 'Irrigation Scheduled', route: '/tasks', time: '4h ago', icon: <Waves size={16} color="#3b82f6" />, status: 'Pending', detail: 'Block B - 05:00 AM' },
   { id: '3', title: 'Market Price Alert', route: '/market', time: '6h ago', icon: <BarChart3 size={16} color="#f59e0b" />, status: 'High', detail: 'Maize up 12% in Mbeya' },
 ];
 
 const QUICK_ACTIONS: SwipeCard[] = [
-  { id: 'scan',      label: 'Uchunguzi wa Mazao', desc: 'AI Crop Scan',        emoji: '🌿', gradientColors: ['#3ecf8e', '#10b981'], route: '/scan',      icon: <Camera    size={24} color="#fff" /> },
+  { id: 'scan',      label: 'Uchunguzi wa Mazao', desc: 'AI Crop Scan',        emoji: '🌿', gradientColors: ['#22d15a', '#22d15a'], route: '/scan',      icon: <Camera    size={24} color="#fff" /> },
   { id: 'tasks',     label: 'Usimamizi wa Shamba', desc: 'Farm Task Manager',   emoji: '📋', gradientColors: ['#3b82f6', '#2563eb'], route: '/tasks',     icon: <LayoutGrid size={24} color="#fff" /> },
   { id: 'market',    label: 'Bei za Soko',          desc: 'Live Market Prices', emoji: '📊', gradientColors: ['#f59e0b', '#d97706'], route: '/market',    icon: <TrendingUp size={24} color="#fff" /> },
   { id: 'analytics', label: 'Uchambuzi wa AI',      desc: 'Predictive Analytics',emoji: '🧠', gradientColors: ['#8b5cf6', '#7c3aed'], route: '/analytics', icon: <BarChart3  size={24} color="#fff" /> },
   { id: 'contracts', label: 'Mikataba ya Kilimo',   desc: 'Contract Farming',   emoji: '🤝', gradientColors: ['#ec4899', '#db2777'], route: '/contracts', icon: <Leaf       size={24} color="#fff" /> },
 ];
+
+// ── Drone Field Intelligence Panel ──────────────────────────────────────────
+const DRONE_STATS = [
+  { label: 'NDVI', value: '0.82' },
+  { label: 'UNYEVU', value: '67%' },
+  { label: 'HEWA', value: 'NZURI' },
+];
+
+function DroneFieldPanel({ language, colors, onPress }: { language: string; colors: any; onPress: () => void }) {
+  return (
+    <motion.View
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', damping: 22, stiffness: 120, delay: 0.1 }}
+      style={dp.wrapper}
+    >
+      <TouchableOpacity activeOpacity={0.92} onPress={onPress} style={dp.card}>
+        {/* Background field image */}
+        <Image
+          source={require('../../assets/drone-field.jpeg')}
+          style={dp.bgImage}
+          resizeMode="cover"
+        />
+
+        {/* Dark-to-transparent gradient overlay */}
+        <LinearGradient
+          colors={['rgba(5,15,7,0.10)', 'rgba(5,15,7,0.65)', 'rgba(5,15,7,0.92)']}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
+        />
+
+        {/* Green scan line sweeping down */}
+        <motion.View
+          animate={{ translateY: [-10, 170, -10] }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: 'linear' }}
+          style={dp.scanWrap}
+          pointerEvents="none"
+        >
+          <LinearGradient
+            colors={['transparent', 'rgba(34,209,90,0.55)', 'transparent']}
+            style={dp.scanLine}
+            start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
+          />
+        </motion.View>
+
+        {/* Corner brackets — viewfinder style */}
+        <View style={[dp.corner, dp.cornerTL]} pointerEvents="none" />
+        <View style={[dp.corner, dp.cornerTR]} pointerEvents="none" />
+        <View style={[dp.corner, dp.cornerBL]} pointerEvents="none" />
+        <View style={[dp.corner, dp.cornerBR]} pointerEvents="none" />
+
+        {/* Top-right: live badge */}
+        <View style={dp.topRow}>
+          <View style={dp.liveBadge}>
+            <motion.View
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.4, repeat: Infinity }}
+              style={dp.liveDot}
+            />
+            <Text style={dp.liveText}>DRONE VIEW</Text>
+          </View>
+          <View style={dp.signalRow}>
+            {[1, 2, 3, 4].map((b) => (
+              <View key={b} style={[dp.signalBar, { height: b * 5 + 4, opacity: b <= 3 ? 1 : 0.25 }]} />
+            ))}
+          </View>
+        </View>
+
+        {/* Bottom overlay: stats + CTA */}
+        <View style={dp.bottomRow}>
+          <View style={dp.statsRow}>
+            {DRONE_STATS.map((s) => (
+              <View key={s.label} style={dp.statChip}>
+                <Text style={dp.statChipLabel}>{s.label}</Text>
+                <Text style={dp.statChipValue}>{s.value}</Text>
+              </View>
+            ))}
+          </View>
+          <View style={dp.ctaBtn}>
+            <ArrowRight size={14} color="#000" strokeWidth={3} />
+          </View>
+        </View>
+
+        {/* Title row */}
+        <View style={dp.titleRow}>
+          <Text style={dp.panelTitle}>
+            {language === 'sw' ? 'Udhibiti wa Shamba' : 'Field Command'}
+          </Text>
+          <Text style={dp.panelSub}>
+            {language === 'sw' ? 'Drone · AI Vision · Real-time' : 'Drone · AI Vision · Real-time'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </motion.View>
+  );
+}
+
+const dp = StyleSheet.create({
+  wrapper:       { marginBottom: 28 },
+  card:          { height: 210, borderRadius: 28, overflow: 'hidden', justifyContent: 'space-between' },
+  bgImage:       { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' } as any,
+  scanWrap:      { position: 'absolute', left: 0, right: 0, top: 0 },
+  scanLine:      { height: 32, width: '100%' },
+  corner:        { position: 'absolute', width: 20, height: 20, borderColor: '#22d15a', borderWidth: 2 },
+  cornerTL:      { top: 14, left: 14, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 6 },
+  cornerTR:      { top: 14, right: 14, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 6 },
+  cornerBL:      { bottom: 14, left: 14, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 6 },
+  cornerBR:      { bottom: 14, right: 14, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 6 },
+  topRow:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, paddingBottom: 0 },
+  liveBadge:     { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34,209,90,0.20)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.40)' },
+  liveDot:       { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' },
+  liveText:      { color: '#22d15a', fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1.5 },
+  signalRow:     { flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
+  signalBar:     { width: 4, borderRadius: 2, backgroundColor: '#22d15a' },
+  titleRow:      { paddingHorizontal: 16, paddingBottom: 4 },
+  panelTitle:    { color: '#f0fff4', fontSize: 18, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  panelSub:      { color: 'rgba(255,255,255,0.50)', fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 1, marginTop: 2 },
+  bottomRow:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 14, marginTop: 4 },
+  statsRow:      { flexDirection: 'row', gap: 8 },
+  statChip:      { alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.45)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.30)' },
+  statChipLabel: { color: 'rgba(255,255,255,0.50)', fontSize: 8, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+  statChipValue: { color: '#22d15a', fontSize: 13, fontFamily: 'Inter_900Black', marginTop: 1 },
+  ctaBtn:        { width: 36, height: 36, borderRadius: 18, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
+});
 
 // Variants for staggered entrance
 const containerVariants = {
@@ -130,7 +254,7 @@ export default function HomeScreen() {
 
   // Derive dynamic farm stats from live store
   const FARM_STATS = [
-    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#3ecf8e" />, color: '#3ecf8e' },
+    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#22d15a" />, color: '#22d15a' },
     { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#3b82f6" />, color: '#3b82f6' },
     { id: 'weather', label: 'Joto', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#f59e0b" />, color: '#f59e0b' },
     { id: 'yield', label: 'Mavuno', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
@@ -188,7 +312,7 @@ export default function HomeScreen() {
             {/* Header Section */}
             <motion.View variants={itemVariants} style={styles.header}>
               <View>
-                <View style={[styles.statusBadge, { backgroundColor: isOffline ? 'rgba(239, 68, 68, 0.1)' : 'rgba(62, 207, 142, 0.1)' }]}>
+                <View style={[styles.statusBadge, { backgroundColor: isOffline ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 209, 90, 0.1)' }]}>
                   <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} />
                   <Text style={[styles.statusText, { color: isOffline ? '#ef4444' : colors.primary }]}>
                     {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
@@ -237,6 +361,13 @@ export default function HomeScreen() {
               </View>
             </motion.View>
 
+            {/* Drone Field Intelligence Panel */}
+            <DroneFieldPanel
+              language={language}
+              colors={colors}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/farm-twin' as any); }}
+            />
+
             {/* Quick Actions — CRED 3D swipe deck */}
             <motion.View variants={itemVariants} style={[styles.sectionHeader, { marginBottom: 10 }]}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -259,7 +390,7 @@ export default function HomeScreen() {
             >
               <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.walletCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                  colors={isDark ? ['rgba(34, 209, 90, 0.12)', 'rgba(10, 26, 14, 0.50)'] : ['rgba(34, 209, 90, 0.10)', 'rgba(255, 255, 255, 0.80)']}
                   style={StyleSheet.absoluteFill}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -510,7 +641,7 @@ export default function HomeScreen() {
                         </View>
                         <Text style={[styles.activityDetail, { color: colors.textMute }]}>{activity.detail}</Text>
                       </View>
-                      <View style={[styles.activityStatusTag, { backgroundColor: isDark ? 'rgba(62, 207, 142, 0.1)' : 'rgba(62, 207, 142, 0.08)' }]}>
+                      <View style={[styles.activityStatusTag, { backgroundColor: isDark ? 'rgba(34, 209, 90, 0.10)' : 'rgba(34, 209, 90, 0.08)' }]}>
                         <Text style={[styles.activityStatusText, { color: colors.primary }]}>{activity.status}</Text>
                       </View>
                     </BlurView>
@@ -663,7 +794,7 @@ const styles = StyleSheet.create({
   agroIdBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(62, 207, 142, 0.15)',
+    backgroundColor: 'rgba(34, 209, 90, 0.12)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
@@ -675,7 +806,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   mobileMoneyTag: {
-    backgroundColor: '#10b981',
+    backgroundColor: '#22d15a',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -781,13 +912,13 @@ const styles = StyleSheet.create({
   aiBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(62, 207, 142, 0.1)',
+    backgroundColor: 'rgba(34, 209, 90, 0.10)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
   },
   aiBadgeText: {
-    color: '#3ecf8e',
+    color: '#22d15a',
     fontSize: 8,
     fontFamily: 'Inter_900Black',
     marginLeft: 4,
