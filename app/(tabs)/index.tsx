@@ -122,12 +122,15 @@ export default function HomeScreen() {
   ];
 
   const updateFarmVitals = useKilimoStore((s) => s.updateFarmVitals);
+
+  // queryClient is provided by _layout.tsx's QueryClientProvider
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // Simulate sensor telemetry refresh — real sensors wired in useFarmVitals hook
+    // Trigger useFarmVitals poll cycle immediately
     updateFarmVitals({});
-    setTimeout(() => setRefreshing(false), 1200);
+    // Give hooks ~1.5s to refetch and repaint, then clear spinner
+    setTimeout(() => setRefreshing(false), 1500);
   }, [updateFarmVitals]);
 
   return (
@@ -186,6 +189,8 @@ export default function HomeScreen() {
                     router.push('/notifications' as any);
                   }}
                   style={styles.actionCircle}
+                  accessibilityLabel={`Arifa${unreadCount > 0 ? `, ${unreadCount} mpya` : ''}`}
+                  accessibilityHint="Fungua arifa"
                 >
                   <BlurView intensity={20} tint={isDark ? "dark" : "light"} style={styles.circleBlur}>
                     {isOffline ? <WifiOff size={22} color="#ef4444" /> : <Bell size={22} color={colors.text} />}
@@ -201,6 +206,8 @@ export default function HomeScreen() {
                 <TouchableOpacity 
                   style={[styles.avatarContainer, { borderColor: colors.primary + '40' }]}
                   onPress={() => router.push('/(tabs)/profile' as any)}
+                  accessibilityLabel="Wasifu wako"
+                  accessibilityHint="Fungua ukurasa wa wasifu"
                 >
                   {agroId?.avatarUrl ? (
                     <Image source={{ uri: agroId.avatarUrl }} style={styles.avatar} />

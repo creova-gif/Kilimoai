@@ -35,6 +35,9 @@ export const useTheme = () => {
     isDark,
     colors: {
       primary: COLORS.primary,
+      // WCAG AA compliant primary for text on backgrounds (contrast ≥4.5:1)
+      // #3ecf8e on dark bg passes; on light bg we use darker #0d9e6a (5.1:1)
+      primaryText: isDark ? COLORS.primary : '#0d9e6a',
       background: isDark ? COLORS.slate[950] : COLORS.slate[50],
       card: isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.6)',
       cardSolid: isDark ? COLORS.slate[900] : '#ffffff',

@@ -5,12 +5,12 @@
 import React, { useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, TouchableOpacity,
-  Dimensions, SafeAreaView, StatusBar, Image, Switch, Platform, Alert,
+  Dimensions, SafeAreaView, StatusBar, Switch, Platform, Alert,
 } from 'react-native';
 import {
-  Settings, ShieldCheck, CreditCard, Bell, HelpCircle, LogOut,
+  ShieldCheck, CreditCard, Bell, HelpCircle, LogOut,
   ChevronRight, Database, Fingerprint, WifiOff, CloudSun, Wallet,
-  Edit3, MapPin, Leaf, Star,
+  Edit3, MapPin, Leaf, Star, Zap,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -20,6 +20,7 @@ import { useTheme } from '../../constants/Theme';
 import { motion } from 'motion/react';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { roleLabel } from '../../lib/access';
+import { InitialsAvatar } from '../../components/InitialsAvatar';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -44,13 +45,14 @@ export default function ProfileScreen() {
   const resetOnboarding = useKilimoStore((s) => s.resetOnboarding);
   const unreadCount   = useKilimoStore((s) => s.unreadCount);
 
-  const [biometric,       setBiometric]       = useState(true);
+  const updateAgroId    = useKilimoStore((s) => s.updateAgroId);
   const [pushNotifs,      setPushNotifs]       = useState(true);
   const [weatherTelemetry,setWeatherTelemetry] = useState(true);
 
   const D = storedAgroId ?? AGRO_ID_FALLBACK;
   const role = (D.role ?? 'farmer') as any;
   const cropCount = farmProfile?.primaryCrops?.length ?? 0;
+  const biometric = (storedAgroId as any)?.biometricEnabled ?? false;
 
   // ─────────────────────────────────────────
   const SECTIONS = [
@@ -58,7 +60,7 @@ export default function ProfileScreen() {
       title: 'AGRO ID & FEDHA',
       items: [
         { id: 'wallet',   label: 'M-Pesa Wallet Sync',  icon: <Wallet size={18} color="#10b981" />,    icolor: '#10b981', isSwitch: false, value: 'Linked',      onPress: () => router.push('/wallet-admin' as any) },
-        { id: 'identity', label: 'Biometric Identity',   icon: <Fingerprint size={18} color="#3b82f6" />, icolor: '#3b82f6', isSwitch: true,  switchVal: biometric, onSwitch: (v: boolean) => { setBiometric(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } },
+        { id: 'identity', label: 'Biometric Identity',   icon: <Fingerprint size={18} color="#3b82f6" />, icolor: '#3b82f6', isSwitch: true,  switchVal: biometric, onSwitch: (v: boolean) => { updateAgroId({ biometricEnabled: v }); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } },
         { id: 'coop',     label: 'Cooperative Dues',     icon: <CreditCard size={18} color="#f59e0b" />, icolor: '#f59e0b', isSwitch: false, value: 'Up to date', onPress: () => router.push('/wallet-admin' as any) },
       ],
     },
@@ -141,9 +143,11 @@ export default function ProfileScreen() {
               {/* Avatar + name block */}
               <View style={s.avatarRow}>
                 <View style={s.avatarWrap}>
-                  <Image
-                    source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop' }}
-                    style={s.avatar}
+                  <InitialsAvatar
+                    name={D.name}
+                    avatarUrl={(D as any).avatarUrl ?? null}
+                    size={68}
+                    primaryColor="#3ecf8e"
                   />
                   <View style={[s.avatarRing, { borderColor: '#3ecf8e60' }]} />
                 </View>
@@ -230,12 +234,35 @@ export default function ProfileScreen() {
             </motion.View>
           ))}
 
+          {/* ── Upgrade plan ── */}
+          <motion.View
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...enterAnim, delay: 0.30 }}
+            style={{ marginBottom: 12 }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/upgrade' as any); }}
+              style={s.upgradeBtn}
+              accessibilityLabel="Upgrade subscription plan"
+            >
+              <Zap size={17} color="#8b5cf6" />
+              <Text style={s.upgradeBtnText}>
+                {D.tier === 'Free' ? 'Pata Premium' : D.tier === 'Premium' ? 'Pata Cooperative' : 'Dhibiti Kiwango'}
+              </Text>
+              <View style={s.upgradeBadge}>
+                <Text style={s.upgradeBadgeText}>{D.tier?.toUpperCase() ?? 'FREE'}</Text>
+              </View>
+            </TouchableOpacity>
+          </motion.View>
+
           {/* ── Logout ── */}
           <motion.View
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ ...enterAnim, delay: 0.35 }}
-            style={{ marginTop: 8, marginBottom: 8 }}
+            transition={{ ...enterAnim, delay: 0.38 }}
+            style={{ marginTop: 0, marginBottom: 8 }}
           >
             <TouchableOpacity
               activeOpacity={0.8}
@@ -251,6 +278,7 @@ export default function ProfileScreen() {
                 );
               }}
               style={s.logoutBtn}
+              accessibilityLabel="Log out"
             >
               <LogOut size={18} color="#ef4444" />
               <Text style={s.logoutText}>Ondoka (Log Out)</Text>
@@ -311,6 +339,10 @@ const s = StyleSheet.create({
   itemValue:   { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
   divider:     { height: StyleSheet.hairlineWidth },
 
+  upgradeBtn:      { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, paddingVertical: 15, borderRadius: 18, backgroundColor: 'rgba(139,92,246,0.08)', borderWidth: 1, borderColor: 'rgba(139,92,246,0.2)' },
+  upgradeBtnText:  { flex: 1, fontSize: 14, fontFamily: 'Inter_700Bold', color: '#8b5cf6' },
+  upgradeBadge:    { backgroundColor: 'rgba(139,92,246,0.15)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  upgradeBadgeText:{ fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1, color: '#8b5cf6' },
   logoutBtn:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 18, backgroundColor: 'rgba(239,68,68,0.08)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.15)', gap: 8 },
   logoutText:  { color: '#ef4444', fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
 });

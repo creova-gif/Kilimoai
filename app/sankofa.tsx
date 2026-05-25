@@ -80,15 +80,19 @@ export default function SankofaScreen() {
   const addNotification = useKilimoStore((s) => s.addNotification);
   const isOffline = useKilimoStore((s) => s.isOffline);
   const language = useKilimoStore((s) => s.language);
+  const storedChat = useKilimoStore((s) => s.chatHistory);
+  const addChatMessage = useKilimoStore((s) => s.addChatMessage);
+  const clearChatHistory = useKilimoStore((s) => s.clearChatHistory);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
-      sender: 'ai',
-      timestamp: new Date(),
-    }
-  ]);
+  // Hydrate local messages from persisted store; fall back to greeting
+  const [messages, setMessages] = useState<Message[]>(() =>
+    (storedChat ?? []).map((m) => ({
+      id: m.id,
+      text: m.text,
+      sender: m.sender,
+      timestamp: new Date(m.timestamp),
+    }))
+  );
   const flatListRef = useRef<FlatList>(null);
 
   // Auto-scroll chat
@@ -133,22 +137,25 @@ export default function SankofaScreen() {
     };
 
     const reqId = ++requestSeqRef.current;
-    // Derive snapshot deterministically from the ref — independent of React's
-    // setState callback scheduling — so history always includes the newest msg.
     const snapshot: Message[] = [...messagesRef.current, userMessage];
     messagesRef.current = snapshot;
     setMessages(snapshot);
+    // Persist user message immediately
+    addChatMessage({ text: trimmed, sender: 'user' });
     setIsTyping(true);
 
     const appendAi = (txt: string) => {
-      const next = [...messagesRef.current, {
+      const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
         text: txt,
         sender: 'ai' as const,
         timestamp: new Date(),
-      }];
+      };
+      const next = [...messagesRef.current, aiMsg];
       messagesRef.current = next;
       setMessages(next);
+      // Persist AI reply
+      addChatMessage({ text: txt, sender: 'ai' });
       if (opts.fromVoice) {
         setVoiceReply(txt);
         setVoiceState('SPEAKING');
@@ -388,9 +395,26 @@ export default function SankofaScreen() {
               </View>
             </View>
  
-            <View style={styles.iconBtn}>
-              {isOffline ? <CloudOff size={20} color="#ef4444" /> : <MoreVertical size={20} color={colors.text} />}
-            </View>
+            <TouchableOpacity
+              style={styles.iconBtn}
+              accessibilityLabel="Mazungumzo mapya"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                clearChatHistory();
+                const greeting: Message = {
+                  id: 'chat_init',
+                  text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
+                  sender: 'ai',
+                  timestamp: new Date(),
+                };
+                messagesRef.current = [greeting];
+                setMessages([greeting]);
+                setInputText('');
+                setIsTyping(false);
+              }}
+            >
+              {isOffline ? <CloudOff size={20} color="#ef4444" /> : <Plus size={20} color={colors.text} />}
+            </TouchableOpacity>
           </BlurView>
         </motion.View>
 
@@ -401,7 +425,7 @@ export default function SankofaScreen() {
               key="text-mode"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+              exit={{ opacity: 0, scale: 0.95 }}
               style={styles.chatContent}
             >
               <FlatList
@@ -434,7 +458,7 @@ export default function SankofaScreen() {
               key="voice-mode"
               initial={{ opacity: 0, scale: 1.05 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+              exit={{ opacity: 0, scale: 1.05 }}
               style={styles.voiceModeContainer}
             >
               <View style={styles.voiceHeader}>
@@ -514,7 +538,7 @@ export default function SankofaScreen() {
           {!isVoiceMode && (
             <KeyboardAvoidingView 
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 72}
             >
               {/* Suggested Prompts */}
               <AnimatePresence>

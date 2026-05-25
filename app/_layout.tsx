@@ -16,6 +16,7 @@ import { useColorScheme, View } from 'react-native';
 import { pingActivity } from '../hooks/useIdleTimeout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useKilimoStore } from '../store/useKilimoStore';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 // ── Kilimo AI Global Services ─────────────────────────────────────────────
 import { useSyncEngine } from '../hooks/useSyncEngine';
@@ -117,45 +118,43 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        {/* Bootstrap background services only after persist hydration completes —
-            otherwise their store writes can clobber persisted onboarding state. */}
-        {hydrated && <AppServices />}
-        <OnboardingGate hydrated={hydrated} />
-
-        {/* Native activity sink for AUTH-06 — any touch bubbles up and resets
-            the idle timer without swallowing child gestures. */}
-        <View style={{ flex: 1 }} onTouchStart={pingActivity}>
-        <Stack>
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="sankofa" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="scan" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
-          <Stack.Screen name="market" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="notifications" options={{ headerShown: false, presentation: 'card' }} />
-          {/* Phase 1 — full PRD features */}
-          <Stack.Screen name="agro-id" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="contracts" options={{ headerShown: false }} />
-          <Stack.Screen name="livestock" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="inventory" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="insurance" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="input-supply" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="peer-groups" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="consultations" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="crop-planning" options={{ headerShown: false, presentation: 'card' }} />
-          <Stack.Screen name="farm-twin" options={{ headerShown: false }} />
-          <Stack.Screen name="analytics" options={{ headerShown: false }} />
-          <Stack.Screen name="wallet-admin" options={{ headerShown: false }} />
-          <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
-          <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
-        </Stack>
-        </View>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          {hydrated && <AppServices />}
+          <OnboardingGate hydrated={hydrated} />
+          <View style={{ flex: 1 }} onTouchStart={pingActivity}>
+            <Stack>
+              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="sankofa" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="scan" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
+              <Stack.Screen name="market" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="notifications" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="agro-id" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="contracts" options={{ headerShown: false }} />
+              <Stack.Screen name="livestock" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="inventory" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="insurance" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="input-supply" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="peer-groups" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="consultations" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="crop-planning" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="farm-twin" options={{ headerShown: false }} />
+              <Stack.Screen name="analytics" options={{ headerShown: false }} />
+              <Stack.Screen name="wallet-admin" options={{ headerShown: false }} />
+              <Stack.Screen name="upgrade" options={{ headerShown: false, presentation: 'modal' }} />
+              <Stack.Screen name="otp-auth" options={{ headerShown: false, presentation: 'modal' }} />
+              <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
+              <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
+            </Stack>
+          </View>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
