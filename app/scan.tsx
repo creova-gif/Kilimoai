@@ -284,11 +284,10 @@ export default function ScanScreen() {
       <motion.View 
         animate={{ 
           scale: phase === 'IDLE' ? 1 : 1.05,
-          filter: phase === 'ANALYZING' || phase === 'RESULT' ? 'blur(10px)' : 'blur(0px)',
           opacity: phase === 'ANALYZING' ? 0.6 : 1
         }}
         transition={{ type: "spring", damping: 25, stiffness: 70 }}
-        style={styles.cameraView}
+        style={[styles.cameraView, Platform.OS === 'web' && (phase === 'ANALYZING' || phase === 'RESULT') ? { filter: 'blur(10px)' } as any : undefined]}
       >
         <Image
           source={{ uri: photoUri ?? MOCK_BG }}
