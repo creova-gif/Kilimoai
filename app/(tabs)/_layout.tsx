@@ -101,7 +101,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={User} color={color} focused={focused} label="NEXUS" isDark={isDark} />
+            <TabIcon icon={User} color={color} focused={focused} label="PROFAILI" isDark={isDark} />
           ),
         }}
       />

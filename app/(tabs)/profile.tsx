@@ -98,7 +98,7 @@ export default function ProfileScreen() {
             transition={enterAnim}
             style={s.headerRow}
           >
-            <Text style={[s.screenTitle, { color: colors.text }]}>Nexus</Text>
+            <Text style={[s.screenTitle, { color: colors.text }]}>Kilimo AI</Text>
             <TouchableOpacity
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }}
               style={[s.editBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
