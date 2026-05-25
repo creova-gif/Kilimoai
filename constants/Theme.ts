@@ -29,7 +29,7 @@ export const COLORS = {
 
 export const useTheme = () => {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const isDark = false;
   
   return {
     isDark,
