@@ -41,5 +41,10 @@ externalPort = 80
 localPort = 5001
 externalPort = 3000
 
+[deployment]
+deploymentTarget = "static"
+build = ["npx", "expo", "export", "--platform", "web"]
+publicDir = "dist"
+
 
 
