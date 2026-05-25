@@ -457,7 +457,7 @@ export default function MarketScreen() {
                   <TouchableOpacity onPress={() => { setActiveCategory(cat.name); Haptics.selectionAsync(); }}>
                     <BlurView intensity={activeCategory === cat.name ? 0 : (isDark ? 20 : 50)} tint={isDark ? 'dark' : 'light'}
                       style={[styles.categoryPill, activeCategory === cat.name ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }]}>
-                      {React.cloneElement(cat.icon as React.ReactElement, { color: activeCategory === cat.name ? '#000' : colors.textMute })}
+                      {React.cloneElement(cat.icon as React.ReactElement<{ color: string }>, { color: activeCategory === cat.name ? '#000' : colors.textMute })}
                       <Text style={[styles.categoryText, activeCategory === cat.name ? { color: '#000', fontFamily: 'Inter_800ExtraBold' } : { color: colors.textMute }]}>{cat.name}</Text>
                     </BlurView>
                   </TouchableOpacity>

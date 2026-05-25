@@ -8,7 +8,8 @@ import {
   Dimensions, 
   Image, 
   StatusBar, 
-  Platform 
+  Platform,
+  Alert,
 } from 'react-native';
 import { 
   X, 
