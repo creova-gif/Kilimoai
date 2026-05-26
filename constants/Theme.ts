@@ -1,18 +1,20 @@
 import { useColorScheme } from 'react-native';
 
 export const COLORS = {
-  // Brand Forest Greens
-  forestDark: '#122617',
-  forestMedium: '#1D3B23',
-  forestPrimary: '#2E6F40', // Rich agricultural forest green
-  forestBright: '#3A8D52', // Neon-tinted forest green for dark mode contrast
+  // Vibrant Leaf/Grass Greens (Envato JZV4J93 Branding)
+  brandPrimary: '#4CA137',   // Active state green (pill buttons, badges)
+  brandDarkGreen: '#1A3B14', // Deep green for chart containers, summary cards
+  brandOlive: '#2F5A27',     // Secondary dark green
   
-  // Luxury Neutrals (Warm Cream, Ivory, and Matte Charcoal)
-  creamWarm: '#FAF7F0',
-  creamDark: '#F2ECE0',
+  // Luxury Neutrals
+  bgLight: '#F3F5F2',        // Muted gray-green background
+  bgDark: '#0E130D',         // Dark mode base
+  cardLight: '#FFFFFF',      // Pure white cards
+  cardDark: '#171D15',       
+  
+  // Luxury Neutrals (Ivory and Charcoal)
   ivory: '#FCFBF7',
-  charcoalDark: '#080A08', // Luxury matte near-black
-  charcoalCard: '#131714',
+  charcoalDark: '#080A08',
   
   // Slate Gray ladder
   slate: {
@@ -30,9 +32,9 @@ export const COLORS = {
   },
   
   // Functional Accent Colors
-  success: '#2E6F40',
-  warning: '#D97706', // Harvest Amber
-  error: '#DC2626',   // Terracotta Red
+  success: '#4CA137',
+  warning: '#F59E0B',
+  error: '#DC2626',
   info: '#2563EB',
 };
 
@@ -43,23 +45,23 @@ export const useTheme = () => {
   return {
     isDark,
     colors: {
-      primary: isDark ? COLORS.forestBright : COLORS.forestPrimary,
-      primaryDark: COLORS.forestMedium,
-      primaryLight: isDark ? 'rgba(58, 141, 82, 0.2)' : 'rgba(46, 111, 64, 0.1)',
+      primary: COLORS.brandPrimary,
+      primaryDark: COLORS.brandDarkGreen,
+      primaryLight: isDark ? 'rgba(76, 161, 55, 0.2)' : 'rgba(76, 161, 55, 0.1)',
       
-      background: isDark ? COLORS.charcoalDark : COLORS.creamWarm,
-      card: isDark ? COLORS.charcoalCard : '#FFFFFF',
-      cardSolid: isDark ? COLORS.charcoalCard : '#FFFFFF',
+      background: isDark ? COLORS.bgDark : COLORS.bgLight,
+      card: isDark ? COLORS.cardDark : COLORS.cardLight,
+      cardSolid: isDark ? COLORS.cardDark : COLORS.cardLight,
       
-      text: isDark ? COLORS.ivory : '#1A211C', // Ivory vs Deep Charcoal-Green
-      textMute: isDark ? '#92A396' : '#65786C', // Sage-gray muted text
+      text: isDark ? COLORS.ivory : '#121A0F', // Ivory vs Deep Charcoal-Green
+      textMute: isDark ? '#8A9985' : '#6B7A66', // Sage-gray muted text
       
-      border: isDark ? 'rgba(58, 141, 82, 0.15)' : '#E6DFD5', // Green-tinted border vs Warm desert-sand
-      borderSolid: isDark ? '#1C241E' : '#E6DFD5',
+      border: isDark ? 'rgba(76, 161, 55, 0.15)' : '#E2E8DF', // Green-tinted border vs Muted grey-green border
+      borderSolid: isDark ? '#263322' : '#E2E8DF',
       
-      tabBar: isDark ? COLORS.charcoalDark : COLORS.creamWarm,
-      glass: isDark ? 'rgba(19, 23, 20, 0.75)' : 'rgba(255, 255, 255, 0.85)',
-      glow: isDark ? 'rgba(58, 141, 82, 0.12)' : 'rgba(46, 111, 64, 0.08)',
+      tabBar: isDark ? COLORS.bgDark : '#FFFFFF',
+      glass: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)',
+      glow: isDark ? 'rgba(76, 161, 55, 0.12)' : 'rgba(76, 161, 55, 0.08)',
       slate: COLORS.slate,
       
       success: COLORS.success,
@@ -78,37 +80,37 @@ export const useTheme = () => {
     },
     radius: {
       xs: 6,
-      sm: 8,
-      md: 12,
-      lg: 16,
-      xl: 24,
+      sm: 10,
+      md: 16,
+      lg: 24,
+      xl: 28,
       xxl: 32,
       full: 999,
     },
     shadows: {
       sm: {
-        shadowColor: '#122617',
+        shadowColor: '#1A3B14',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: isDark ? 0.2 : 0.05,
         shadowRadius: 4,
         elevation: 2,
       },
       md: {
-        shadowColor: '#122617',
+        shadowColor: '#1A3B14',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: isDark ? 0.3 : 0.08,
         shadowRadius: 8,
         elevation: 4,
       },
       lg: {
-        shadowColor: '#122617',
+        shadowColor: '#1A3B14',
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: isDark ? 0.4 : 0.12,
         shadowRadius: 16,
         elevation: 8,
       },
       premium: {
-        shadowColor: '#122617',
+        shadowColor: '#1A3B14',
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: isDark ? 0.5 : 0.15,
         shadowRadius: 24,

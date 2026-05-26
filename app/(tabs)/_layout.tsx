@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, Text } from 'react-native';
 import { Home, Bot, Tractor, Store, User } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../../constants/Theme';
@@ -13,68 +13,132 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: isDark ? '#707070' : '#9a9a9a',
+        tabBarActiveTintColor: '#FFFFFF',
+        tabBarInactiveTintColor: isDark ? '#707D6D' : '#8C9A89',
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 28 : 16,
+          left: 16,
+          right: 16,
+          height: 68,
+          borderRadius: 34,
+          elevation: 6,
+          shadowColor: '#1A3B14',
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 6 },
+          backgroundColor: isDark ? 'rgba(23, 29, 21, 0.94)' : 'rgba(255, 255, 255, 0.94)',
           borderTopWidth: 0,
-          elevation: 0,
-          height: Platform.OS === 'ios' ? 88 : 72,
-          paddingBottom: Platform.OS === 'ios' ? 32 : 16,
-          paddingTop: 12,
-          backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.card,
         },
-        tabBarBackground: () => 
-          Platform.OS === 'ios' ? (
-            <BlurView intensity={isDark ? 50 : 80} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-          ) : (
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.border }]} />
-          ),
-        tabBarLabelStyle: {
-          fontFamily: 'Inter_700Bold',
-          fontSize: 10,
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-          marginTop: 4,
-        },
+        tabBarBackground: () => (
+          <View style={{ ...StyleSheet.absoluteFillObject, borderRadius: 34, overflow: 'hidden' }}>
+            <BlurView 
+              intensity={isDark ? 30 : 80} 
+              tint={isDark ? 'dark' : 'light'} 
+              style={StyleSheet.absoluteFill} 
+            />
+          </View>
+        ),
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: language === 'sw' ? 'NYUMBANI' : 'HOME',
-          tabBarIcon: ({ color, size }) => <Home color={color} size={size - 2} strokeWidth={2.5} />,
+          tabBarIcon: ({ color, focused }) => (
+            focused ? (
+              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                <Home color="#FFFFFF" size={18} strokeWidth={2.5} />
+                <Text style={styles.activeLabel}>{language === 'sw' ? 'NYUMBANI' : 'HOME'}</Text>
+              </View>
+            ) : (
+              <Home color={color} size={22} strokeWidth={2} />
+            )
+          ),
         }}
       />
       <Tabs.Screen
         name="ai"
         options={{
-          title: 'SANKOFA',
-          tabBarIcon: ({ color, size }) => <Bot color={color} size={size - 2} strokeWidth={2.5} />,
+          tabBarIcon: ({ color, focused }) => (
+            focused ? (
+              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                <Bot color="#FFFFFF" size={18} strokeWidth={2.5} />
+                <Text style={styles.activeLabel}>SANKOFA</Text>
+              </View>
+            ) : (
+              <Bot color={color} size={22} strokeWidth={2} />
+            )
+          ),
         }}
       />
       <Tabs.Screen
         name="farm"
         options={{
-          title: language === 'sw' ? 'SHAMBA' : 'FARM',
-          tabBarIcon: ({ color, size }) => <Tractor color={color} size={size - 2} strokeWidth={2.5} />,
+          tabBarIcon: ({ color, focused }) => (
+            focused ? (
+              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                <Tractor color="#FFFFFF" size={18} strokeWidth={2.5} />
+                <Text style={styles.activeLabel}>{language === 'sw' ? 'SHAMBA' : 'FARM'}</Text>
+              </View>
+            ) : (
+              <Tractor color={color} size={22} strokeWidth={2} />
+            )
+          ),
         }}
       />
       <Tabs.Screen
         name="market"
         options={{
-          title: language === 'sw' ? 'SOKO' : 'MARKET',
-          tabBarIcon: ({ color, size }) => <Store color={color} size={size - 2} strokeWidth={2.5} />,
+          tabBarIcon: ({ color, focused }) => (
+            focused ? (
+              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                <Store color="#FFFFFF" size={18} strokeWidth={2.5} />
+                <Text style={styles.activeLabel}>{language === 'sw' ? 'SOKO' : 'MARKET'}</Text>
+              </View>
+            ) : (
+              <Store color={color} size={22} strokeWidth={2} />
+            )
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: language === 'sw' ? 'WASIFU' : 'PROFILE',
-          tabBarIcon: ({ color, size }) => <User color={color} size={size - 2} strokeWidth={2.5} />,
+          tabBarIcon: ({ color, focused }) => (
+            focused ? (
+              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                <User color="#FFFFFF" size={18} strokeWidth={2.5} />
+                <Text style={styles.activeLabel}>{language === 'sw' ? 'WASIFU' : 'PROFILE'}</Text>
+              </View>
+            ) : (
+              <User color={color} size={22} strokeWidth={2} />
+            )
+          ),
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  activePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
+    shadowColor: '#4CA137',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  activeLabel: {
+    color: '#FFFFFF',
+    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 10,
+    letterSpacing: 0.5,
+  },
+});
