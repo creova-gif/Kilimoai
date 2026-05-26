@@ -259,6 +259,9 @@ export default function OnboardingWizard() {
                   password={password}
                   setPassword={setPassword}
                   lang={lang}
+                  setUserId={setUserId}
+                  setStep={setStep}
+                  setName={setName}
                 />
               )}
               {step === 3 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} />}
@@ -430,8 +433,12 @@ function WelcomeStep({ t, lang }: any) {
 // ─────────────────────────────────────────────────────────────
 // Step 2 — Auth (Phone OTP or Email Password)
 // ─────────────────────────────────────────────────────────────
-function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail, password, setPassword, lang }: any) {
+function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail, password, setPassword, lang, setUserId, setStep, setName }: any) {
   const { colors, isDark } = useTheme();
+
+  const isSupabaseConfigured = Boolean(
+    process.env.EXPO_PUBLIC_SUPABASE_URL && process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+  );
 
   return (
     <View style={s.stepRoot}>
@@ -445,6 +452,15 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
           ? (lang === 'sw' ? 'Tutakutumia namba ya siri (OTP) kwa usalama.' : 'We will send you a secret OTP code for security.')
           : (lang === 'sw' ? 'Tumia barua pepe na neno la siri ili kuingia.' : 'Use your email and password to log in.')}
       </Text>
+
+      {!isSupabaseConfigured && (
+        <View style={[s.warnBanner, { backgroundColor: '#451a14', borderColor: '#ef4444' }]}>
+          <Text style={s.warnTitle}>⚠️ Configuration Warning</Text>
+          <Text style={s.warnBody}>
+            Supabase environment variables are missing! Authentication will fail. Add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY to your env configuration.
+          </Text>
+        </View>
+      )}
 
       {authMethod === 'phone' ? (
         <View style={{ marginTop: 24 }}>
@@ -519,6 +535,25 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
           {authMethod === 'phone'
             ? (lang === 'sw' ? 'Tumia Barua Pepe Badala yake' : 'Use Email Address Instead')
             : (lang === 'sw' ? 'Tumia Namba ya Simu Badala yake' : 'Use Phone Number Instead')}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Bypass Action Button (always active for developer fallback or if config is missing) */}
+      <TouchableOpacity
+        onPress={() => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          console.log('[OnboardingWizard] Bypassing authentication step (demo mode)');
+          setUserId('demo-user-id-' + Math.random().toString(36).substring(7));
+          setName('Justin Mafie (Demo)');
+          setStep(4); // proceed to Role step
+        }}
+        style={s.demoBypassBtn}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Bypass authentication"
+      >
+        <Text style={s.demoBypassText}>
+          {lang === 'sw' ? 'Ruka Uthibitishaji (Njia ya Jaribio)' : 'Bypass Authentication (Demo Mode)'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -911,6 +946,40 @@ const s = StyleSheet.create({
     marginTop: 24,
   },
   methodToggleText: {
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
+  },
+  warnBanner: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 16,
+    gap: 6,
+  },
+  warnTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  warnBody: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  demoBypassBtn: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    marginTop: 12,
+  },
+  demoBypassText: {
+    color: '#fff',
     fontSize: 14,
     fontFamily: 'Inter_700Bold',
   },
