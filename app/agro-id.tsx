@@ -8,7 +8,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert, Platform,
 } from 'react-native';
 import {
-  Fingerprint, ArrowDownCircle, QrCode, ShieldCheck, TrendingUp, TrendingDown,
+  Fingerprint, Download, QrCode, ShieldCheck, TrendingUp, TrendingDown,
   FileText, Wallet, MapPin, Calendar, CheckCircle2, Plus,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -181,7 +181,7 @@ export default function AgroIdScreen() {
             <Text style={[s.primaryCtaText, { color: isDark ? '#000' : '#FCFBF7' }]}>Inatayarisha PDF...</Text>
           ) : (
             <>
-              <ArrowDownCircle size={20} color={isDark ? '#000' : '#FCFBF7'} />
+              <Download size={20} color={isDark ? '#000' : '#FCFBF7'} />
               <Text style={[s.primaryCtaText, { color: isDark ? '#000' : '#FCFBF7' }]}>
                 {Platform.OS === 'web' ? 'Print / Save P&L PDF' : 'Export & Share P&L PDF'}
               </Text>

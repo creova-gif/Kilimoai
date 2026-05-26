@@ -18,7 +18,7 @@ import {
   SafeAreaView, StatusBar, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, MapPin, Save, User, Sprout, Globe, Check, AlertCircle, SquarePen } from 'lucide-react-native';
+import { ChevronLeft, MapPin, Save, User, Sprout, Globe, Check, AlertCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
@@ -57,8 +57,6 @@ export default function EditProfileScreen() {
   const [activity,     setActivity]     = useState<FarmProfile['mainActivity']>(farmProfile?.mainActivity ?? 'mazao');
   const [hasLivestock, setHasLivestock] = useState(farmProfile?.hasLivestock ?? false);
   const [hasIrrigation,setHasIrrigation]= useState(farmProfile?.hasIrrigation ?? false);
-  const [compost,     setCompost]     = useState(String(farmProfile?.compostKg ?? '0'));
-  const [urea,        setUrea]        = useState(String(farmProfile?.ureaKg ?? '0'));
   const [lang,         setLang]         = useState<AppLanguage>(language);
   const [saved,        setSaved]        = useState(false);
 
@@ -72,11 +70,9 @@ export default function EditProfileScreen() {
     if (activity !== (farmProfile?.mainActivity ?? 'mazao')) return true;
     if (hasLivestock !== (farmProfile?.hasLivestock ?? false)) return true;
     if (hasIrrigation !== (farmProfile?.hasIrrigation ?? false)) return true;
-    if (compost !== String(farmProfile?.compostKg ?? '0')) return true;
-    if (urea !== String(farmProfile?.ureaKg ?? '0')) return true;
     if (lang !== language) return true;
     return false;
-  }, [name, role, region, crops, acres, activity, hasLivestock, hasIrrigation, compost, urea, lang,
+  }, [name, role, region, crops, acres, activity, hasLivestock, hasIrrigation, lang,
       agroId, farmProfile, language]);
 
   // ── Validation ──────────────────────────────────────────────────────────────
@@ -100,13 +96,12 @@ export default function EditProfileScreen() {
   }
 
   // ── Save ────────────────────────────────────────────────────────────────────
-  async function save() {
+  function save() {
     if (!canSave) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
-    
-    // Update local store
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     updateAgroId({ name: name.trim(), role, location: region });
     setFarmProfile({
       primaryCrops: crops,
@@ -115,50 +110,8 @@ export default function EditProfileScreen() {
       mainActivity: activity,
       hasLivestock,
       hasIrrigation,
-      compostKg: parseFloat(compost) || 0,
-      ureaKg: parseFloat(urea) || 0,
     });
     setLanguage(lang);
-
-    // Save to Supabase DB (agro_profiles table)
-    try {
-      const { getSupabase } = require('../lib/supabase');
-      const sb = getSupabase();
-      if (sb && agroId?.id) {
-        console.log('[EditProfile] Writing profile update to Supabase...');
-        const payload = {
-          user_id: agroId.id,
-          name: name.trim(),
-          role: role,
-          location: region,
-          crops: crops,
-          farm_size_acres: parseFloat(acres) || 0,
-          main_activity: activity,
-          has_livestock: hasLivestock,
-          has_irrigation: hasIrrigation,
-          compost_kg: parseFloat(compost) || 0,
-          urea_kg: parseFloat(urea) || 0,
-        };
-        const { error } = await sb
-          .from('agro_profiles')
-          .upsert(payload, { onConflict: 'user_id' });
-        
-        if (error) {
-          console.warn('[EditProfile] Supabase upsert error, falling back to standard profile:', error.message);
-          const fallbackPayload = {
-            user_id: agroId.id,
-            name: name.trim(),
-            role: role,
-            location: region,
-          };
-          await sb.from('agro_profiles').upsert(fallbackPayload, { onConflict: 'user_id' });
-        }
-      }
-    } catch (dbErr) {
-      console.warn('[EditProfile] Supabase write exception:', dbErr);
-    }
-
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     addNotification({
       title: lang === 'sw' ? 'Wasifu Umehifadhiwa' : 'Profile Saved',
       body:  lang === 'sw' ? 'Mapendekezo ya AI yatabadilika papo hapo.' : 'AI recommendations will update immediately.',
@@ -189,8 +142,6 @@ export default function EditProfileScreen() {
     crops:       `Mazao makuu (chagua hadi ${MAX_CROPS})`,
     cropsErr:    'Chagua angalau zao moja',
     size:        'Ukubwa wa shamba (ekari)',
-    compost:     'Mbolea ya Samadi / Compost (kg)',
-    urea:        'Mbolea ya Urea (kg)',
     activity:    'Shughuli kuu',
     mazao:       'Mazao',
     mifugo:      'Mifugo',
@@ -211,8 +162,6 @@ export default function EditProfileScreen() {
     crops:       `Primary crops (pick up to ${MAX_CROPS})`,
     cropsErr:    'Select at least one crop',
     size:        'Farm size (acres)',
-    compost:     'Compost (kg)',
-    urea:        'Urea (kg)',
     activity:    'Main activity',
     mazao:       'Crops',
     mifugo:      'Livestock',
@@ -257,7 +206,7 @@ export default function EditProfileScreen() {
             accessibilityLabel="Save profile"
             accessibilityState={{ disabled: !(canSave && isDirty) }}
           >
-            <SquarePen size={20} color={canSave && isDirty ? '#3ecf8e' : 'rgba(255,255,255,0.3)'} />
+            <Save size={20} color={canSave && isDirty ? '#3ecf8e' : 'rgba(255,255,255,0.3)'} />
           </TouchableOpacity>
         </View>
 
@@ -373,34 +322,6 @@ export default function EditProfileScreen() {
               />
             </BlurView>
 
-            {/* Compost */}
-            <Section label={t.compost} />
-            <BlurView intensity={20} tint="dark" style={s.inputWrap}>
-              <TextInput
-                value={compost}
-                onChangeText={setCompost}
-                keyboardType="numeric"
-                placeholder="100"
-                placeholderTextColor="rgba(255,255,255,0.4)"
-                style={s.input}
-                accessibilityLabel={t.compost}
-              />
-            </BlurView>
-
-            {/* Urea */}
-            <Section label={t.urea} />
-            <BlurView intensity={20} tint="dark" style={s.inputWrap}>
-              <TextInput
-                value={urea}
-                onChangeText={setUrea}
-                keyboardType="numeric"
-                placeholder="50"
-                placeholderTextColor="rgba(255,255,255,0.4)"
-                style={s.input}
-                accessibilityLabel={t.urea}
-              />
-            </BlurView>
-
             {/* Activity */}
             <Section label={t.activity} />
             <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -473,7 +394,7 @@ export default function EditProfileScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <SquarePen size={20} color="#000" />
+                <Save size={20} color="#000" />
                 <Text style={s.saveText}>{t.save}</Text>
               </LinearGradient>
             </TouchableOpacity>

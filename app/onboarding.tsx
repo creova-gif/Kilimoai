@@ -181,33 +181,6 @@ export default function OnboardingWizard() {
     setOnboardingComplete(true);
     router.replace('/(tabs)');
   }
-  function skipOnboarding() {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setLanguage(lang);
-    setFarmProfile({ 
-      primaryCrops: ['Mahindi'], 
-      region: 'Arusha', 
-      farmSizeAcres: 2.5, 
-      mainActivity: 'mazao', 
-      hasLivestock: false, 
-      hasIrrigation: false 
-    });
-    const generatedId = 'demo-user-id-' + Math.random().toString(36).substring(7);
-    const newProfile = { 
-      id: generatedId, 
-      name: 'Justin Mafie', 
-      role: 'farmer', 
-      location: 'Arusha', 
-      tier: 'Free', 
-      joinDate: new Date().getFullYear().toString(), 
-      mpesaLinked: false, 
-      biometricEnabled: false, 
-      verificationStatus: 'unverified' 
-    } as any;
-    setAgroId(newProfile);
-    setOnboardingComplete(true);
-    router.replace('/(tabs)');
-  }
   function toggleCrop(c: string) {
     Haptics.selectionAsync();
     setCrops((p) => p.includes(c) ? p.filter((x) => x !== c) : (p.length < 4 ? [...p, c] : p));
@@ -257,13 +230,7 @@ export default function OnboardingWizard() {
                 />
               ))}
             </View>
-            {step > 0 && step < 6 ? (
-              <TouchableOpacity onPress={skipOnboarding} style={s.skipBtn} accessibilityRole="button" accessibilityLabel="Skip onboarding">
-                <Text style={[s.skipText, { color: colors.primary }]}>{lang === 'sw' ? 'Ruka' : 'Skip'}</Text>
-              </TouchableOpacity>
-            ) : (
-              <Text style={s.stepNum}>{step + 1}/7</Text>
-            )}
+            <Text style={s.stepNum}>{step + 1}/7</Text>
           </View>
         )}
 
@@ -279,7 +246,7 @@ export default function OnboardingWizard() {
               exiting={FadeOutUp}
               style={{ flex: 1 }}
             >
-              {step === 0 && <LangStep t={t.lang} lang={lang} setLang={setLang} onNext={next} onSkip={skipOnboarding} />}
+              {step === 0 && <LangStep t={t.lang} lang={lang} setLang={setLang} onNext={next} />}
               {step === 1 && <WelcomeStep t={t.welcome} lang={lang} />}
               {step === 2 && (
                 <AuthStep
@@ -351,7 +318,7 @@ export default function OnboardingWizard() {
 // ─────────────────────────────────────────────────────────────
 // Step 0 — Language (full-hero layout)
 // ─────────────────────────────────────────────────────────────
-function LangStep({ t, lang, setLang, onNext, onSkip }: any) {
+function LangStep({ t, lang, setLang, onNext }: any) {
   const { colors, isDark } = useTheme();
   return (
     <View style={s.langRoot}>
@@ -428,17 +395,6 @@ function LangStep({ t, lang, setLang, onNext, onSkip }: any) {
       <Text style={[s.langFootnote, { color: colors.textMute }]}>
         {lang === 'sw' ? 'Unaweza kubadilisha lugha wakati wowote' : 'You can change language anytime'}
       </Text>
-
-      <TouchableOpacity
-        onPress={onSkip}
-        style={s.langSkipBtn}
-        accessibilityRole="button"
-        accessibilityLabel="Skip Onboarding"
-      >
-        <Text style={[s.langSkipText, { color: colors.primary }]}>
-          {lang === 'sw' ? 'Ruka na Uingie Dashibodi' : 'Skip & Enter Dashboard'}
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -1026,23 +982,5 @@ const s = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontFamily: 'Inter_700Bold',
-  },
-  skipBtn: {
-    paddingVertical: 6,
-    paddingLeft: 8,
-    minWidth: 44,
-  },
-  skipText: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-  },
-  langSkipBtn: {
-    marginTop: 20,
-    paddingVertical: 10,
-  },
-  langSkipText: {
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-    textDecorationLine: 'underline',
   },
 });
