@@ -108,6 +108,39 @@ export function useAgroAuth() {
     }
   }, []);
 
+  // ── Email password sign-in ─────────────────────────────────────────
+  const signInWithEmail = useCallback(async (email: string, password: string) => {
+    setLoading(true);
+    try {
+      if (!supabase) throw new Error('Supabase not configured');
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      
+      // Persist session token securely
+      await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
+
+      // Check if profile exists, to hydrate if it's an existing user
+      const { data: profile, error: profileError } = await supabase
+        .from('agro_profiles')
+        .select('*')
+        .eq('user_id', data.user.id)
+        .single();
+
+      if (!profileError && profile) {
+        setAgroId(profile as AgroID);
+        return { existingUser: true, user: data.user };
+      }
+      return { existingUser: false, user: data.user };
+    } catch (err: any) {
+      throw new Error(err.message ?? 'Failed to sign in with email');
+    } finally {
+      setLoading(false);
+    }
+  }, [setAgroId]);
+
   const verifyOtp = useCallback(async (phone: string, token: string) => {
     setLoading(true);
     try {
@@ -162,6 +195,7 @@ export function useAgroAuth() {
     loading,
     biometricAvailable,
     signInWithPhone,
+    signInWithEmail,
     verifyOtp,
     signOut,
     authenticateWithBiometric,

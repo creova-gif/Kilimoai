@@ -74,12 +74,15 @@ export default function OnboardingWizard() {
   const setAgroId             = useKilimoStore((s) => s.setAgroId);
   const setFarmProfile        = useKilimoStore((s) => s.setFarmProfile);
   const setOnboardingComplete = useKilimoStore((s) => s.setOnboardingComplete);
-  const { signInWithPhone, verifyOtp, loading } = useAgroAuth();
+  const { signInWithPhone, signInWithEmail, verifyOtp, loading } = useAgroAuth();
   const { colors, isDark } = useTheme();
 
   const [step,         setStep]         = useState<Step>(0);
   const [lang,         setLang]         = useState<AppLanguage>('sw');
+  const [authMethod,   setAuthMethod]   = useState<'phone' | 'email'>('phone');
   const [phone,        setPhone]        = useState('');
+  const [email,        setEmail]        = useState('');
+  const [password,     setPassword]     = useState('');
   const [otp,          setOtp]          = useState('');
   const [userId,       setUserId]       = useState('');
   const [role,         setRole]         = useState<CanonicalRole>('farmer');
@@ -96,24 +99,45 @@ export default function OnboardingWizard() {
   const canContinue = useMemo(() => {
     if (step === 0) return true;
     if (step === 1) return true;
-    if (step === 2) return phone.length >= 9;
+    if (step === 2) {
+      if (authMethod === 'email') {
+        return email.includes('@') && password.length >= 6;
+      }
+      return phone.length >= 9;
+    }
     if (step === 3) return otp.length === 6;
     if (step === 4) return !!role;
     if (step === 5) return name.trim().length >= 2 && crops.length > 0 && parseFloat(acres) > 0;
     return true;
-  }, [step, lang, phone, otp, role, name, crops, acres]);
+  }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, password]);
 
   async function next() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (step === 0) setLanguage(lang);
     if (step === 2) {
-      try {
-        await signInWithPhone(phone);
-        setStep(3);
-      } catch (err: any) {
-        Alert.alert('Error', err.message || 'Failed to send OTP');
+      if (authMethod === 'email') {
+        try {
+          const result = await signInWithEmail(email, password);
+          if (result.existingUser) {
+            setOnboardingComplete(true);
+            router.replace('/(tabs)');
+            return;
+          }
+          setUserId(result.user.id);
+          setStep(4);
+        } catch (err: any) {
+          Alert.alert('Error', err.message || 'Failed to sign in');
+        }
+        return;
+      } else {
+        try {
+          await signInWithPhone(phone);
+          setStep(3);
+        } catch (err: any) {
+          Alert.alert('Error', err.message || 'Failed to send OTP');
+        }
+        return;
       }
-      return;
     }
     if (step === 3) {
       try {
@@ -211,7 +235,19 @@ export default function OnboardingWizard() {
             >
               {step === 0 && <LangStep t={t.lang} lang={lang} setLang={setLang} onNext={next} />}
               {step === 1 && <WelcomeStep t={t.welcome} lang={lang} />}
-              {step === 2 && <PhoneStep phone={phone} setPhone={setPhone} lang={lang} />}
+              {step === 2 && (
+                <AuthStep
+                  authMethod={authMethod}
+                  setAuthMethod={setAuthMethod}
+                  phone={phone}
+                  setPhone={setPhone}
+                  email={email}
+                  setEmail={setEmail}
+                  password={password}
+                  setPassword={setPassword}
+                  lang={lang}
+                />
+              )}
               {step === 3 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} />}
               {step === 4 && <RoleStep t={t.role} role={role} setRole={setRole} />}
               {step === 5 && (
@@ -379,29 +415,99 @@ function WelcomeStep({ t, lang }: any) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 2 — Phone
+// Step 2 — Auth (Phone OTP or Email Password)
 // ─────────────────────────────────────────────────────────────
-function PhoneStep({ phone, setPhone, lang }: any) {
+function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail, password, setPassword, lang }: any) {
   const { colors, isDark } = useTheme();
+
   return (
     <View style={s.stepRoot}>
-      <Text style={[s.h1, { color: colors.text }]}>{lang === 'sw' ? 'Namba yako ya simu' : 'Your Phone Number'}</Text>
-      <Text style={[s.sub, { color: colors.textMute }]}>{lang === 'sw' ? 'Tutakutumia namba ya siri (OTP)' : 'We will send you a secret OTP code'}</Text>
+      <Text style={[s.h1, { color: colors.text }]}>
+        {authMethod === 'phone'
+          ? (lang === 'sw' ? 'Namba yako ya simu' : 'Your Phone Number')
+          : (lang === 'sw' ? 'Ingia kwa Barua Pepe' : 'Sign in with Email')}
+      </Text>
+      <Text style={[s.sub, { color: colors.textMute }]}>
+        {authMethod === 'phone'
+          ? (lang === 'sw' ? 'Tutakutumia namba ya siri (OTP) kwa usalama.' : 'We will send you a secret OTP code for security.')
+          : (lang === 'sw' ? 'Tumia barua pepe na neno la siri ili kuingia.' : 'Use your email and password to log in.')}
+      </Text>
 
-      <FieldLabel label={lang === 'sw' ? 'SIMU' : 'PHONE'} />
-      <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
-        <TextInput 
-          value={phone} 
-          onChangeText={setPhone} 
-          placeholder="+255 7..." 
-          placeholderTextColor={colors.textMute} 
-          style={[s.input, { color: colors.text }]} 
-          keyboardType="phone-pad" 
-          autoFocus 
-          accessibilityLabel="Phone Number Input"
-          accessibilityHint="Type your phone number to authenticate"
-        />
-      </BlurView>
+      {authMethod === 'phone' ? (
+        <View style={{ marginTop: 24 }}>
+          <FieldLabel label={lang === 'sw' ? 'SIMU' : 'PHONE'} />
+          <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
+            <TextInput 
+              value={phone} 
+              onChangeText={setPhone} 
+              placeholder="+255 7..." 
+              placeholderTextColor={colors.textMute} 
+              style={[s.input, { color: colors.text }]} 
+              keyboardType="phone-pad" 
+              autoFocus 
+              accessibilityLabel="Phone Number Input"
+              accessibilityHint="Type your phone number to authenticate"
+            />
+          </BlurView>
+        </View>
+      ) : (
+        <View style={{ marginTop: 24, gap: 16 }}>
+          <View>
+            <FieldLabel label={lang === 'sw' ? 'BARUA PEPE' : 'EMAIL'} />
+            <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
+              <TextInput 
+                value={email} 
+                onChangeText={setEmail} 
+                placeholder="mkulima@kilimo.ai" 
+                placeholderTextColor={colors.textMute} 
+                style={[s.input, { color: colors.text }]} 
+                keyboardType="email-address" 
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoFocus 
+                accessibilityLabel="Email Input"
+                accessibilityHint="Type your email address to authenticate"
+              />
+            </BlurView>
+          </View>
+
+          <View>
+            <FieldLabel label={lang === 'sw' ? 'NENO LA SIRI' : 'PASSWORD'} />
+            <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
+              <TextInput 
+                value={password} 
+                onChangeText={setPassword} 
+                placeholder="••••••••" 
+                placeholderTextColor={colors.textMute} 
+                style={[s.input, { color: colors.text }]} 
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                accessibilityLabel="Password Input"
+                accessibilityHint="Type your password to authenticate"
+              />
+            </BlurView>
+          </View>
+        </View>
+      )}
+
+      {/* Toggle Method Link */}
+      <TouchableOpacity
+        onPress={() => {
+          Haptics.selectionAsync();
+          setAuthMethod(authMethod === 'phone' ? 'email' : 'phone');
+        }}
+        style={[s.methodToggle, { borderColor: colors.border, backgroundColor: colors.card }]}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel={authMethod === 'phone' ? 'Use email instead' : 'Use phone instead'}
+      >
+        <Text style={[s.methodToggleText, { color: colors.primary }]}>
+          {authMethod === 'phone'
+            ? (lang === 'sw' ? 'Tumia Barua Pepe Badala yake' : 'Use Email Address Instead')
+            : (lang === 'sw' ? 'Tumia Namba ya Simu Badala yake' : 'Use Phone Number Instead')}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -782,4 +888,17 @@ const s = StyleSheet.create({
   idBadgeText: { color: '#3ecf8e', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
   idDivider: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 14 },
   idFooter: { color: 'rgba(255,255,255,0.5)', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+  methodToggle: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginTop: 24,
+  },
+  methodToggleText: {
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
+  },
 });
