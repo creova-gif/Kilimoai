@@ -1,426 +1,783 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
-  Dimensions, 
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
   SafeAreaView,
   StatusBar,
   RefreshControl,
-  Image,
-  Pressable,
+  Modal,
+  TextInput,
+  Alert,
+  Clipboard,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { 
-  BrainCircuit, 
-  Camera, 
-  TrendingUp, 
-  Bell, 
-  LayoutGrid,
-  Sparkles,
-  Leaf,
-  Droplets,
-  Sun,
-  Microscope,
-  BarChart3,
-  Waves,
-  Fingerprint,
-  ArrowUpRight,
-  ArrowDownLeft,
-  WifiOff,
+import {
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  QrCode,
+  Plus,
   ArrowRight,
-  RefreshCw,
-  Lightbulb
+  Download,
+  MapPin,
+  ChevronRight,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '../../constants/Theme';
+import { PALETTE, TYPE, SPACE, SHADOW, RADIUS } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
-import { generateRecommendations, severityColor } from '../../lib/recommendations';
-import { Card } from '../../components/ui/Card';
-
 import { useSyncEngine } from '../../hooks/useSyncEngine';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// ─── Helpers ───────────────────────────────────────────────────────────────
 
-const QUICK_ACTIONS = [
-  { id: 'scan', label: 'Uchunguzi', icon: <Camera size={24} color="#fff" />, color: '#4CAF50', desc: 'AI Crop Scan' },
-  { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={24} color="#fff" />, color: '#3b82f6', desc: 'Farm Tasks' },
-  { id: 'market', label: 'Soko', icon: <TrendingUp size={24} color="#fff" />, color: '#f59e0b', desc: 'Market Prices' },
-  { id: 'crop-planning', label: 'Panga Mazao', icon: <Leaf size={24} color="#fff" />, color: '#22c55e', desc: 'AI Crop Planning' },
-  { id: 'contracts', label: 'Mikataba', icon: <BarChart3 size={24} color="#fff" />, color: '#8b5cf6', desc: 'Contract Farming' },
+/** Format 9850.25 → "$9.850,25" (European decimal style per design spec) */
+function formatBalance(num: number) {
+  const [int, dec] = num.toFixed(2).split('.');
+  return '$' + int.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + dec;
+}
+
+// ─── Seed data ─────────────────────────────────────────────────────────────
+
+const SEED_TRANSACTIONS = [
+  { id: 'TX-655-01', title: 'Compost Fertilizer',  amount: 120, status: 'completed', date: 'Feb 14, 2025', idLabel: '#655' },
+  { id: 'TX-655-02', title: 'Seedlings',            amount: 450, status: 'pending',   date: 'Feb 07, 2025', idLabel: '#655' },
+  { id: 'TX-655-03', title: 'Urea Fertilizer',      amount: 180, status: 'completed', date: 'Jan 31, 2025', idLabel: '#655' },
+  { id: 'TX-655-04', title: 'Compost Fertilizer',   amount: 120, status: 'completed', date: 'Jan 24, 2025', idLabel: '#655' },
 ];
 
+// ─── Sub-components ────────────────────────────────────────────────────────
+
+function Divider() {
+  return <View style={{ height: 1, backgroundColor: PALETTE.line, marginVertical: 0 }} />;
+}
+
+// ─── Main Screen ───────────────────────────────────────────────────────────
+
 export default function HomeScreen() {
-  const { colors, isDark, radius, shadows } = useTheme();
-  const router = useRouter();
-  const [refreshing, setRefreshing] = useState(false);
-  const [upgradeModalVisible, setUpgradeModalVisible] = useState(false);
-
-  const agroId = useKilimoStore((s) => s.agroId);
-  const isOffline = useKilimoStore((s) => s.isOffline);
-  const syncQueue = useKilimoStore((s) => s.syncQueue);
-  const farmVitals = useKilimoStore((s) => s.farmVitals);
-  const wallet = useKilimoStore((s) => s.wallet);
-  const unreadCount = useKilimoStore((s) => s.unreadCount);
-  const farmProfile = useKilimoStore((s) => s.farmProfile);
-  const language = useKilimoStore((s) => s.language);
-  const activities = useKilimoStore((s) => s.activities);
-  const setActivities = useKilimoStore((s) => s.setActivities);
-
-  const recommendations = useMemo(
-    () => generateRecommendations({ profile: farmProfile, vitals: farmVitals, language }),
-    [farmProfile, farmVitals, language]
-  );
-
-  const FARM_STATS = [
-    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#4CAF50" />, color: '#4CAF50' },
-    { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#3b82f6" />, color: '#3b82f6' },
-    { id: 'weather', label: 'Joto', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#f59e0b" />, color: '#f59e0b' },
-    { id: 'yield', label: 'Mavuno', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
-  ];
-
-  const setLastSyncedAt = useKilimoStore((s) => s.setLastSyncedAt);
+  const router    = useRouter();
+  const agroId    = useKilimoStore(s => s.agroId);
+  const farmProfile = useKilimoStore(s => s.farmProfile);
+  const setFarmProfile = useKilimoStore(s => s.setFarmProfile);
+  const setLastSyncedAt = useKilimoStore(s => s.setLastSyncedAt);
   const { forceSync } = useSyncEngine();
+
+  const [refreshing,  setRefreshing]  = useState(false);
+  const [salesTotal,  setSalesTotal]  = useState(9850.25);
+  const [transactions] = useState(SEED_TRANSACTIONS);
+
+  // Modals
+  const [updateVisible, setUpdateVisible] = useState(false);
+  const [invoiceVisible, setInvoiceVisible] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<typeof SEED_TRANSACTIONS[0] | null>(null);
+  const [qrVisible, setQrVisible] = useState(false);
+
+  // Update form
+  const [fCompost, setFCompost] = useState(String(farmProfile?.compostKg ?? 120));
+  const [fUrea, setFUrea]       = useState(String(farmProfile?.ureaKg ?? 50));
+  const [fSP36, setFSP36]       = useState('40');
+  const [fKCl, setFKCl]         = useState('30');
+  const [saving, setSaving]     = useState(false);
+
+  // Fetch Supabase
+  const fetchData = useCallback(async () => {
+    try {
+      const { getSupabase } = require('../../lib/supabase');
+      const sb = getSupabase();
+      if (sb && agroId?.id) {
+        const { data } = await sb
+          .from('agro_profiles')
+          .select('sales_total')
+          .eq('user_id', agroId.id)
+          .maybeSingle();
+        if (data?.sales_total != null) setSalesTotal(data.sales_total);
+      }
+    } catch { /* silent — use seed */ }
+  }, [agroId?.id]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await forceSync();
+    await fetchData();
     setLastSyncedAt(new Date().toISOString());
     setRefreshing(false);
-  }, [setLastSyncedAt, forceSync]);
+  }, [forceSync, fetchData, setLastSyncedAt]);
+
+  // Save update form
+  const handleSaveUpdate = async () => {
+    const compost = parseFloat(fCompost) || 0;
+    const urea    = parseFloat(fUrea)    || 0;
+    const sp36    = parseFloat(fSP36)    || 0;
+    const kcl     = parseFloat(fKCl)     || 0;
+    setSaving(true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setFarmProfile({
+      primaryCrops: farmProfile?.primaryCrops ?? ['Mpunga (Rice)'],
+      region: farmProfile?.region ?? 'Bali, Indonesia',
+      farmSizeAcres: farmProfile?.farmSizeAcres ?? 2.5,
+      mainActivity: 'mazao',
+      hasLivestock: false,
+      hasIrrigation: false,
+      compostKg: compost,
+      ureaKg: urea,
+    });
+    try {
+      const { getSupabase } = require('../../lib/supabase');
+      const sb = getSupabase();
+      if (sb && agroId?.id) {
+        await sb.from('agro_profiles').upsert(
+          { user_id: agroId.id, compost_kg: compost, urea_kg: urea, sp36_kg: sp36, kcl_kg: kcl },
+          { onConflict: 'user_id' }
+        );
+      }
+    } catch { /* silent */ }
+    setSaving(false);
+    setUpdateVisible(false);
+    Alert.alert('Updated', 'Farm parameters saved.');
+  };
+
+  const initials = (agroId?.name ?? 'JM').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  const firstName = agroId?.name?.split(' ')[0] ?? 'Justin';
+
+  // ── render ───────────────────────────────────────────────────────────────
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView 
+    <View style={styles.root}>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView style={styles.safe}>
+
+        {/* ── Header ───────────────────────────────────────────────────── */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greeting}>Good morning, {firstName} 👋</Text>
+            <View style={styles.locRow}>
+              <MapPin size={12} color={PALETTE.inkMute} strokeWidth={2} />
+              <Text style={styles.locText}>{farmProfile?.region ?? 'Bali, Indonesia'}</Text>
+            </View>
+          </View>
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              onPress={() => router.push('/(tabs)/profile')}
+              style={styles.avatar}
+              accessibilityRole="button"
+              accessibilityLabel="Profile"
+            >
+              <Text style={styles.avatarText}>{initials}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={PALETTE.greenAction} />
+          }
         >
-          {/* Header Section */}
-          <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
-            <View>
-              <View style={[styles.statusBadge, { backgroundColor: isOffline ? '#fee2e2' : colors.primaryLight }]}>
-                <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} />
-                <Text style={[styles.statusText, { color: isOffline ? '#ef4444' : colors.primary }]}>
-                  {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
+
+          {/* ── Crop Card ──────────────────────────────────────────────── */}
+          <Animated.View entering={FadeInDown.delay(60).springify()}>
+            <View style={styles.cropCard}>
+              <View style={styles.cropTop}>
+                <View style={styles.cropBadge}>
+                  <Text style={styles.cropBadgeText}>Your Agricultural Crops</Text>
+                </View>
+                <Text style={styles.cropTitle}>Rice Plants</Text>
+              </View>
+              <View style={styles.cropGrid}>
+                <View style={styles.cropCell}>
+                  <Text style={styles.cropCellLabel}>ORGANIC SOIL</Text>
+                  <Text style={styles.cropCellVal}>Manure</Text>
+                  <Text style={styles.cropCellSub}>Phase: Before Planting</Text>
+                </View>
+                <View style={styles.cropCellDivider} />
+                <View style={styles.cropCell}>
+                  <Text style={styles.cropCellLabel}>INPUT INGREDIENTS</Text>
+                  <Text style={styles.cropCellVal}>KCl Fertilizer</Text>
+                  <Text style={styles.cropCellSub}>Age 2–3 Weeks</Text>
+                </View>
+              </View>
+            </View>
+          </Animated.View>
+
+          {/* ── Sales Card (dark hero) ─────────────────────────────────── */}
+          <Animated.View entering={FadeInDown.delay(100).springify()}>
+            <LinearGradient
+              colors={[PALETTE.greenInk, '#0F3C14']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.salesCard}
+            >
+              <View style={styles.salesTop}>
+                <View>
+                  <Text style={styles.salesLabel}>Total Balance</Text>
+                  <Text style={styles.salesAmount}>{formatBalance(salesTotal)}</Text>
+                </View>
+                <View style={styles.trendBadge}>
+                  <TrendingUp size={12} color={PALETTE.greenAction} strokeWidth={2.5} />
+                  <Text style={styles.trendText}>+5% MoM</Text>
+                </View>
+              </View>
+
+              {/* Sparkline */}
+              <View style={styles.sparkline}>
+                {[12, 24, 18, 32, 44, 56, 48, 60].map((h, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.sparkBar,
+                      { height: h, backgroundColor: i >= 5 ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)' },
+                    ]}
+                  />
+                ))}
+              </View>
+              <Text style={styles.sparkLabel}>Sales rose 12% in 1 month</Text>
+
+              <View style={styles.salesFooter}>
+                <TouchableOpacity
+                  onPress={() => router.push('/agro-id')}
+                  style={styles.viewDetailsBtn}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.viewDetailsText}>View details</Text>
+                  <ArrowRight size={14} color="rgba(255,255,255,0.7)" strokeWidth={2} />
+                </TouchableOpacity>
+              </View>
+            </LinearGradient>
+          </Animated.View>
+
+          {/* ── Market Conditions ──────────────────────────────────────── */}
+          <Animated.View entering={FadeInDown.delay(140).springify()}>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Market Conditions</Text>
+              <View style={styles.marketRow}>
+                <View style={styles.marketCell}>
+                  <Text style={styles.marketCellLabel}>MARKET PRICE</Text>
+                  <Text style={styles.marketCellVal}>$50.00</Text>
+                </View>
+                <View style={styles.marketCellDivider} />
+                <View style={styles.marketCell}>
+                  <Text style={styles.marketCellLabel}>HIGHEST DEMAND</Text>
+                  <Text style={styles.marketCellVal}>Surabaya, Bali</Text>
+                </View>
+              </View>
+            </View>
+          </Animated.View>
+
+          {/* ── Information Card ───────────────────────────────────────── */}
+          <Animated.View entering={FadeInDown.delay(180).springify()}>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Information</Text>
+              {[
+                { k: 'Plant Age',      v: 'Week 4' },
+                { k: 'Rice Harvest',   v: '950 kg · Up 2%' },
+                { k: 'Sales Data',     v: 'Up 2% this month' },
+                { k: 'Fertilization',  v: 'Urea, SP-36, KCl, ZA' },
+                { k: 'Certification',  v: 'Land & Fertilizer' },
+              ].map(({ k, v }, i, arr) => (
+                <React.Fragment key={k}>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoKey}>{k}</Text>
+                    <Text style={styles.infoVal}>{v}</Text>
+                  </View>
+                  {i < arr.length - 1 && <Divider />}
+                </React.Fragment>
+              ))}
+            </View>
+          </Animated.View>
+
+          {/* ── Update prompt ──────────────────────────────────────────── */}
+          <Animated.View entering={FadeInDown.delay(220).springify()}>
+            <View style={styles.updateCard}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.updateTitle}>
+                  Update farm parameters to improve AI recommendations
                 </Text>
+                <Text style={styles.updateSub}>Compost, Urea, SP-36, KCl</Text>
               </View>
-              <Text style={[styles.greeting, { color: colors.textMute }]}>KARIBU TENA,</Text>
-              <Text style={[styles.name, { color: colors.text }]}>{agroId?.name?.split(' ')[0] ?? 'Mkulima'}</Text>
-            </View>
-            <View style={styles.headerActions}>
-              <TouchableOpacity 
-                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }}
-                style={[styles.actionCircle, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }]}
-                accessibilityLabel="Notifications"
+              <TouchableOpacity
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setUpdateVisible(true); }}
+                style={styles.updateBtn}
                 accessibilityRole="button"
+                accessibilityLabel="Update farm parameters"
               >
-                {isOffline ? <WifiOff size={22} color="#ef4444" /> : <Bell size={22} color={colors.text} />}
-                {unreadCount > 0 && !isOffline && (
-                  <View style={styles.notificationBadge}>
-                    <Text style={styles.notificationBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)} accessibilityLabel="Profile" accessibilityRole="button">
-                <View style={[styles.avatarContainer, { borderColor: colors.primary }]}>
-                  {agroId?.avatarUrl ? (
-                    <Image source={{ uri: agroId.avatarUrl }} style={styles.avatar} />
-                  ) : (
-                    <View style={[styles.avatar, { backgroundColor: colors.primaryLight, justifyContent: 'center', alignItems: 'center' }]}>
-                      <Text style={{ color: colors.primary, fontFamily: 'Inter_800ExtraBold', fontSize: 18 }}>
-                        {agroId?.name?.[0]?.toUpperCase() || '?'}
-                      </Text>
-                    </View>
-                  )}
-                </View>
+                <Plus size={16} color={PALETTE.greenAction} strokeWidth={2.5} />
               </TouchableOpacity>
             </View>
           </Animated.View>
 
-          {/* Wallet Card */}
-          <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <Card variant="solid" style={[styles.walletCard, { backgroundColor: colors.primary, borderColor: colors.primary, ...shadows.premium }]}>
-              <View style={styles.walletHeader}>
-                <View style={[styles.agroIdBadge, { backgroundColor: 'rgba(255, 255, 255, 0.15)' }]}>
-                  <Fingerprint size={14} color="#FCFBF7" />
-                  <Text style={[styles.agroIdText, { color: '#FCFBF7' }]}>AGRO ID SECURED</Text>
-                </View>
-                <View style={[styles.mobileMoneyTag, { backgroundColor: agroId?.mpesaLinked ? '#3A8D52' : '#D97706' }]}>
-                  <Text style={styles.mobileMoneyText}>{agroId?.mpesaLinked ? 'M-PESA LINKED' : 'LINK M-PESA'}</Text>
-                </View>
-              </View>
-
-              <Text style={[styles.balanceLabel, { color: 'rgba(252, 251, 247, 0.7)' }]}>Akiba Yako (TZS)</Text>
-              <View style={styles.balanceRow}>
-                <Text style={[styles.balanceAmount, { color: '#FCFBF7' }]}>{wallet.balanceTZS.toLocaleString()}</Text>
-                <Text style={[styles.balanceDecimals, { color: 'rgba(252, 251, 247, 0.7)' }]}>.00</Text>
-              </View>
-
-              <View style={styles.walletActions}>
+          {/* ── Transaction History ────────────────────────────────────── */}
+          <Animated.View entering={FadeInDown.delay(260).springify()}>
+            <View style={styles.card}>
+              <View style={styles.txHeader}>
+                <Text style={styles.cardTitle}>Transaction History</Text>
                 <TouchableOpacity
-                  style={[styles.walletBtn, { backgroundColor: '#FCFBF7' }]}
-                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/agro-id' as any); }}
+                  onPress={() => router.push('/agro-id')}
                   accessibilityRole="button"
-                  accessibilityLabel="Deposit funds"
+                  accessibilityLabel="View all transactions"
                 >
-                  <ArrowDownLeft size={18} color="#080A08" />
-                  <Text style={[styles.walletBtnText, { color: '#080A08' }]}>Deposit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.walletBtn, { backgroundColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)' }]}
-                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/wallet-admin' as any); }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Pay cooperative dues"
-                >
-                  <ArrowUpRight size={18} color="#FCFBF7" />
-                  <Text style={[styles.walletBtnText, { color: '#FCFBF7' }]}>Pay Co-op</Text>
+                  <Text style={styles.txSeeAll}>See all</Text>
                 </TouchableOpacity>
               </View>
-            </Card>
-          </Animated.View>
-
-          {/* Sankofa AI Hero */}
-          <Animated.View entering={FadeInDown.delay(300).springify()}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/ai'); }}
-              accessibilityRole="button"
-              accessibilityLabel="Open Sankofa AI assistant"
-              accessibilityHint="View AI crop recommendations"
-            >
-              <Card variant="glass" style={styles.aiHero}>
-                <View style={styles.aiHeroContent}>
-                  <View style={[styles.aiIconMain, { backgroundColor: colors.primaryLight }]}>
-                    <BrainCircuit size={32} color={colors.primary} />
-                  </View>
-                  <View style={styles.aiRight}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                      <Sparkles size={12} color={colors.primary} style={{ marginRight: 4 }} />
-                      <Text style={[styles.aiTitle, { color: colors.primary }]}>Sankofa AI</Text>
-                    </View>
-                    <Text style={[styles.aiMessage, { color: colors.text }]}>
-                      {language === 'sw' ? '"Unyevu wa Shamba B unashuka haraka. Napendekeza umwagiliaji..."' : '"Block B moisture dropping faster than predicted. Recommended: irrigate..."'}
-                    </Text>
-                    <View style={styles.aiActionRow}>
-                      <Text style={[styles.aiActionLabel, { color: colors.primary }]}>SOMA ZAIDI</Text>
-                      <ArrowRight size={14} color={colors.primary} />
-                    </View>
-                  </View>
-                </View>
-              </Card>
-            </TouchableOpacity>
-          </Animated.View>
-
-          {/* Quick Actions */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.actionScroll} snapToInterval={SCREEN_WIDTH * 0.65 + 16} decelerationRate="fast">
-            {QUICK_ACTIONS.map((action) => (
-              <TouchableOpacity 
-                key={action.id} 
-                activeOpacity={0.9} 
-                onPress={() => { 
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
-                  if (action.id === 'contracts' && agroId?.tier === 'Free') {
-                    setUpgradeModalVisible(true);
-                  } else {
-                    router.push(`/${action.id}` as any); 
-                  }
-                }} 
-                style={styles.actionCardWrapper}
-                accessible={true}
-                accessibilityLabel={action.label}
-                accessibilityHint={action.desc}
-                accessibilityRole="button"
-              >
-                <LinearGradient colors={[action.color, action.color + 'bb']} style={[styles.actionCard, { borderRadius: radius.lg }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-                  <View style={styles.actionIconOuter}>
-                    {action.icon}
-                  </View>
-                  <View>
-                    <Text style={styles.actionLabel}>{action.label}</Text>
-                    <Text style={styles.actionDesc}>{action.desc}</Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          {/* Farm Vitale Grid */}
-          <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Afya ya Shamba</Text>
-            <TouchableOpacity
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}
-              accessibilityRole="button"
-              accessibilityLabel="View farm sensors"
-            >
-              <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS →</Text>
-            </TouchableOpacity>
-          </Animated.View>
-          <View style={styles.statsGrid}>
-            {FARM_STATS.map((stat, idx) => (
-              <Animated.View key={stat.id} entering={FadeInDown.delay(500 + idx * 50).springify()} style={styles.statCardContainer}>
-                <Card variant="solid" style={{ padding: 16 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                    <View style={[styles.statIconBg, { backgroundColor: stat.color + '15' }]}>{stat.icon}</View>
-                    <Text style={[styles.statLabel, { color: colors.textMute, marginLeft: 8 }]}>{stat.label}</Text>
-                  </View>
-                  <Text style={[styles.statValue, { color: colors.text }]}>{stat.value}</Text>
-                </Card>
-              </Animated.View>
-            ))}
-          </View>
-
-          {/* Recommendations */}
-          <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.sectionHeader}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Lightbulb size={18} color={colors.primary} />
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Sankofa AI</Text>
-            </View>
-            <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 11 }}>{recommendations.length} NEW</Text>
-          </Animated.View>
-          <View style={{ gap: 10, marginBottom: 24 }}>
-            {recommendations.map((rec, idx) => {
-              const col = severityColor(rec.severity);
-              return (
-                <Animated.View key={rec.id} entering={FadeInDown.delay(600 + idx * 50).springify()}>
-                  <Pressable
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(rec.cta.route as any); }}
-                    accessibilityRole="button"
-                    accessibilityLabel={rec.title}
-                    accessibilityHint={rec.cta.label}
-                  >
-                    <Card variant="solid" style={[styles.recCard, { borderLeftColor: col, borderLeftWidth: 4 }]}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <Text style={[styles.recCat, { color: col }]}>{rec.category.toUpperCase()}</Text>
+              {transactions.map((tx, i) => {
+                const done = tx.status === 'completed';
+                return (
+                  <React.Fragment key={tx.id}>
+                    <TouchableOpacity
+                      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setSelectedTx(tx); setInvoiceVisible(true); }}
+                      onLongPress={() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning); Clipboard.setString(tx.id); Alert.alert('Copied', `Transaction ID ${tx.id} copied.`); }}
+                      style={styles.txRow}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${tx.title} — ${tx.status}`}
+                    >
+                      <View style={[styles.txIcon, { backgroundColor: done ? PALETTE.greenTint : PALETTE.amberTint }]}>
+                        {done
+                          ? <CheckCircle2 size={18} color={PALETTE.greenAction} strokeWidth={2} />
+                          : <Clock        size={18} color={PALETTE.amber}       strokeWidth={2} />
+                        }
                       </View>
-                      <Text style={[styles.recTitle, { color: colors.text }]}>{rec.title}</Text>
-                      <Text style={[styles.recBody, { color: colors.textMute }]}>{rec.body}</Text>
-                    </Card>
-                  </Pressable>
-                </Animated.View>
-              );
-            })}
-          </View>
-
-          {/* Telemetry Feed */}
-          <Animated.View entering={FadeInDown.delay(700).springify()} style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Shughuli za Hivi Karibuni</Text>
-            <TouchableOpacity
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActivities([]); }}
-              accessibilityRole="button"
-              accessibilityLabel="Clear all recent activities"
-            >
-              <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>CLEAR ALL</Text>
-            </TouchableOpacity>
+                      <View style={styles.txInfo}>
+                        <Text style={styles.txTitle}>{tx.title}</Text>
+                        <Text style={styles.txMeta}>{tx.date} · {tx.idLabel}</Text>
+                      </View>
+                      <View style={[styles.txStatus, { backgroundColor: done ? PALETTE.greenTint : PALETTE.amberTint }]}>
+                        <Text style={[styles.txStatusText, { color: done ? PALETTE.greenAction : PALETTE.amber }]}>
+                          {done ? 'Done' : 'Pending'}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    {i < transactions.length - 1 && <Divider />}
+                  </React.Fragment>
+                );
+              })}
+            </View>
           </Animated.View>
-          <View style={styles.activityList}>
-            {activities.length === 0 && (
-              <View style={{ alignItems: 'center', paddingVertical: 24 }}>
-                <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 8 }}>Hakuna shughuli mpya.</Text>
-              </View>
-            )}
-            {activities.map((activity, idx) => (
-              <Animated.View key={activity.id} entering={FadeInDown.delay(700 + idx * 50).springify()}>
-                <Pressable
-                  onPress={() => { Haptics.selectionAsync(); router.push(activity.route as any); }}
-                  accessibilityRole="button"
-                  accessibilityLabel={activity.title}
-                  accessibilityHint={activity.detail}
-                >
-                  <Card variant="solid" style={styles.activityItem}>
-                    <View style={[styles.activityIconWrapper, { backgroundColor: (activity.iconColor || colors.primary) + '15' }]}>
-                      {activity.iconName === 'Microscope' ? <Microscope size={16} color={activity.iconColor || colors.primary} /> : 
-                       activity.iconName === 'Waves' ? <Waves size={16} color={activity.iconColor || colors.primary} /> :
-                       activity.iconName === 'BarChart3' ? <BarChart3 size={16} color={activity.iconColor || colors.primary} /> :
-                       <Leaf size={16} color={activity.iconColor || colors.primary} />}
-                    </View>
-                    <View style={styles.activityContent}>
-                      <Text style={[styles.activityTitle, { color: colors.text }]}>{activity.title}</Text>
-                      <Text style={[styles.activityDetail, { color: colors.textMute }]}>{activity.detail}</Text>
-                    </View>
-                    <Text style={[styles.activityTime, { color: colors.textMute }]}>{activity.time}</Text>
-                  </Card>
-                </Pressable>
-              </Animated.View>
-            ))}
-          </View>
-          
+
           <View style={{ height: 100 }} />
         </ScrollView>
       </SafeAreaView>
 
+      {/* ═══════════════════════════════════════════════════════════════════
+          MODALS
+      ═══════════════════════════════════════════════════════════════════ */}
 
+      {/* Update form */}
+      <Modal visible={updateVisible} animationType="slide" transparent statusBarTranslucent>
+        <View style={styles.overlay}>
+          <View style={styles.sheet}>
+            <View style={styles.sheetHandle} />
+            <Text style={styles.sheetTitle}>Update Farm Parameters</Text>
+
+            <View style={styles.sheetFields}>
+              {[
+                { label: 'COMPOST FERTILIZER (KG)', value: fCompost, set: setFCompost },
+                { label: 'UREA FERTILIZER (KG)',    value: fUrea,    set: setFUrea    },
+                { label: 'SP-36 FERTILIZER (KG)',   value: fSP36,    set: setFSP36    },
+                { label: 'KCL FERTILIZER (KG)',     value: fKCl,     set: setFKCl     },
+              ].map(f => (
+                <View key={f.label} style={styles.sheetField}>
+                  <Text style={styles.sheetFieldLabel}>{f.label}</Text>
+                  <TextInput
+                    value={f.value}
+                    onChangeText={f.set}
+                    keyboardType="decimal-pad"
+                    style={styles.sheetInput}
+                    placeholderTextColor={PALETTE.inkMute}
+                    accessibilityLabel={f.label}
+                  />
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.sheetBtns}>
+              <TouchableOpacity
+                onPress={() => setUpdateVisible(false)}
+                style={styles.sheetCancel}
+                accessibilityRole="button"
+              >
+                <Text style={styles.sheetCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSaveUpdate}
+                style={styles.sheetSave}
+                disabled={saving}
+                accessibilityRole="button"
+              >
+                {saving
+                  ? <ActivityIndicator color={PALETTE.white} />
+                  : <Text style={styles.sheetSaveText}>Save</Text>
+                }
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Invoice */}
+      <Modal visible={invoiceVisible} animationType="fade" transparent statusBarTranslucent>
+        <View style={[styles.overlay, { justifyContent: 'center', paddingHorizontal: SPACE['4'] }]}>
+          <View style={styles.invoiceCard}>
+            <Text style={styles.invoiceTitle}>Transaction Invoice</Text>
+            {selectedTx && (
+              <View style={styles.invoiceBody}>
+                {[
+                  { k: 'Transaction ID', v: selectedTx.id },
+                  { k: 'Description',    v: selectedTx.title },
+                  { k: 'Date',           v: selectedTx.date },
+                  { k: 'Status',         v: selectedTx.status.toUpperCase() },
+                ].map(({ k, v }) => (
+                  <View key={k} style={styles.invoiceRow}>
+                    <Text style={styles.invoiceKey}>{k}</Text>
+                    <Text style={[styles.invoiceVal, k === 'Status' && { color: selectedTx.status === 'completed' ? PALETTE.greenAction : PALETTE.amber }]}>{v}</Text>
+                  </View>
+                ))}
+                <View style={styles.invoiceDivider} />
+                <View style={styles.invoiceRow}>
+                  <Text style={styles.invoiceTotalKey}>Amount</Text>
+                  <Text style={styles.invoiceTotalVal}>${selectedTx.amount.toFixed(2)}</Text>
+                </View>
+              </View>
+            )}
+            <TouchableOpacity
+              onPress={() => setInvoiceVisible(false)}
+              style={styles.invoiceClose}
+              accessibilityRole="button"
+            >
+              <Text style={styles.invoiceCloseText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* QR */}
+      <Modal visible={qrVisible} animationType="slide" transparent statusBarTranslucent>
+        <View style={styles.overlay}>
+          <View style={styles.sheet}>
+            <View style={styles.sheetHandle} />
+            <Text style={styles.sheetTitle}>Farm Scannable Passport</Text>
+            <View style={styles.qrBox}>
+              <QrCode size={160} color={PALETTE.ink} strokeWidth={1.5} />
+            </View>
+            <Text style={styles.qrNote}>
+              Show this QR to agro-vendors or loan officers to instantly share your verified crop profile.
+            </Text>
+            <TouchableOpacity
+              onPress={() => { Alert.alert('Download', 'QR saved to gallery.'); setQrVisible(false); }}
+              style={styles.sheetSave}
+              accessibilityRole="button"
+            >
+              <Download size={18} color={PALETTE.white} strokeWidth={2} />
+              <Text style={styles.sheetSaveText}>Download QR</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQrVisible(false)}
+              style={styles.sheetCancelFull}
+              accessibilityRole="button"
+            >
+              <Text style={styles.sheetCancelText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
+// ─── Styles ────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  safeArea: { flex: 1 },
-  scrollContent: { padding: 20 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  statusBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 8, alignSelf: 'flex-start' },
-  statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
-  statusText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
-  greeting: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginBottom: 2 },
-  name: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', letterSpacing: -1 },
-  headerActions: { flexDirection: 'row', alignItems: 'center' },
-  actionCircle: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
-  notificationBadge: { position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: '#ef4444' },
-  notificationBadgeText: { display: 'none' },
-  avatarContainer: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, padding: 2 },
-  avatar: { width: '100%', height: '100%', borderRadius: 20 },
-  walletCard: { marginBottom: 24, padding: 20 },
-  walletHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  agroIdBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, gap: 6 },
-  agroIdText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
-  mobileMoneyTag: { backgroundColor: '#10b981', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  mobileMoneyText: { color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
-  balanceLabel: { fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 4 },
-  balanceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 20 },
-  balanceAmount: { fontSize: 36, fontFamily: 'Inter_800ExtraBold', letterSpacing: -1 },
-  balanceDecimals: { fontSize: 18, fontFamily: 'Inter_600SemiBold' },
-  walletActions: { flexDirection: 'row', gap: 12 },
-  walletBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 12, gap: 6 },
-  walletBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold' },
-  aiHero: { marginBottom: 32, padding: 20 },
-  aiHeroContent: { flexDirection: 'row', alignItems: 'center' },
-  aiIconMain: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
-  aiRight: { flex: 1 },
-  aiTitle: { fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
-  aiMessage: { fontSize: 14, fontFamily: 'Inter_500Medium', lineHeight: 20, marginBottom: 12 },
-  aiActionRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  aiActionLabel: { fontSize: 12, fontFamily: 'Inter_700Bold' },
-  actionScroll: { paddingRight: 40, gap: 16 },
-  actionCardWrapper: { width: SCREEN_WIDTH * 0.4 },
-  actionCard: { padding: 16, height: 120, justifyContent: 'space-between' },
-  actionIconOuter: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
-  actionLabel: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold', marginBottom: 2 },
-  actionDesc: { color: 'rgba(255,255,255,0.8)', fontSize: 12, fontFamily: 'Inter_500Medium' },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  sectionTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24 },
-  statCardContainer: { width: (SCREEN_WIDTH - 52) / 2 },
-  statIconBg: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  statLabel: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  statValue: { fontSize: 22, fontFamily: 'Inter_800ExtraBold' },
-  recCard: { padding: 16, paddingLeft: 12 },
-  recCat: { fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
-  recTitle: { fontSize: 15, fontFamily: 'Inter_700Bold', marginBottom: 4 },
-  recBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 18 },
-  activityList: { gap: 12 },
-  activityItem: { flexDirection: 'row', alignItems: 'center', padding: 16 },
-  activityIconWrapper: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
-  activityContent: { flex: 1, marginLeft: 12 },
-  activityTitle: { fontSize: 14, fontFamily: 'Inter_700Bold' },
-  activityDetail: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
-  activityTime: { fontSize: 11, fontFamily: 'Inter_500Medium' },
+  root:  { flex: 1, backgroundColor: PALETTE.surface },
+  safe:  { flex: 1 },
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACE['3'],
+    paddingVertical: SPACE['2'],
+    backgroundColor: PALETTE.white,
+    borderBottomWidth: 1,
+    borderBottomColor: PALETTE.line,
+  },
+  greeting: { ...TYPE.subheading, color: PALETTE.ink, marginBottom: 2 },
+  locRow:   { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  locText:  { ...TYPE.captionMed, color: PALETTE.inkMute },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: SPACE['2'] },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: PALETTE.line,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: PALETTE.white,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: PALETTE.greenTint,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: PALETTE.greenAction,
+  },
+  avatarText: { ...TYPE.captionBold, color: PALETTE.greenInk },
+
+  // Scroll
+  scroll: { paddingTop: SPACE['3'], paddingHorizontal: SPACE['3'], gap: SPACE['2'] },
+
+  // ── Crop Card ───────────────────────────────────────────────────────────
+  cropCard: {
+    backgroundColor: PALETTE.white,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['3'],
+    ...SHADOW.sm,
+  },
+  cropTop: { marginBottom: SPACE['3'] },
+  cropBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: PALETTE.greenTint,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: RADIUS.sm,
+    marginBottom: SPACE['2'],
+  },
+  cropBadgeText: { ...TYPE.label, color: PALETTE.greenInk, letterSpacing: 0.5 },
+  cropTitle: { ...TYPE.heading, color: PALETTE.ink },
+  cropGrid: { flexDirection: 'row', gap: SPACE['3'] },
+  cropCell: { flex: 1 },
+  cropCellDivider: { width: 1, backgroundColor: PALETTE.line },
+  cropCellLabel: { ...TYPE.label, color: PALETTE.inkMute, marginBottom: 4 },
+  cropCellVal:   { ...TYPE.bodySemi, color: PALETTE.ink },
+  cropCellSub:   { ...TYPE.captionMed, color: PALETTE.inkMute, marginTop: 2 },
+
+  // ── Sales Card (dark) ───────────────────────────────────────────────────
+  salesCard: {
+    backgroundColor: PALETTE.greenInk,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['3'],
+    ...SHADOW.md,
+  },
+  salesTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: SPACE['3'],
+  },
+  salesLabel:  { ...TYPE.captionMed, color: 'rgba(255,255,255,0.55)', marginBottom: 4 },
+  salesAmount: { fontSize: 34, fontFamily: 'Inter_900Black', color: PALETTE.white, letterSpacing: -1.5 },
+  trendBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: PALETTE.greenTint,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: RADIUS.sm,
+  },
+  trendText: { ...TYPE.captionBold, color: PALETTE.greenAction },
+
+  sparkline: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 4,
+    height: 48,
+    marginBottom: SPACE['1'],
+  },
+  sparkBar: { flex: 1, borderRadius: 2 },
+  sparkLabel: { ...TYPE.captionMed, color: 'rgba(255,255,255,0.45)', marginBottom: SPACE['3'] },
+
+  salesFooter: { borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)', paddingTop: SPACE['2'] },
+  viewDetailsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    alignSelf: 'flex-end',
+    paddingVertical: 4,
+    minHeight: 36,
+  },
+  viewDetailsText: { ...TYPE.captionBold, color: 'rgba(255,255,255,0.65)' },
+
+  // ── Generic white card ──────────────────────────────────────────────────
+  card: {
+    backgroundColor: PALETTE.white,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['3'],
+    ...SHADOW.sm,
+    gap: 0,
+  },
+  cardTitle: { ...TYPE.subheading, color: PALETTE.ink, marginBottom: SPACE['2'] },
+
+  // Market
+  marketRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: SPACE['1'],
+  },
+  marketCell: { flex: 1 },
+  marketCellDivider: { width: 1, height: 32, backgroundColor: PALETTE.line, marginHorizontal: SPACE['3'] },
+  marketCellLabel: { ...TYPE.label, color: PALETTE.inkMute, marginBottom: 4 },
+  marketCellVal:   { ...TYPE.bodySemi, color: PALETTE.ink },
+
+  // Info rows
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  infoKey: { ...TYPE.bodyMed, color: PALETTE.inkMid },
+  infoVal: { ...TYPE.bodySemi, color: PALETTE.ink, textAlign: 'right', flex: 1, marginLeft: SPACE['3'] },
+
+  // Update prompt
+  updateCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: PALETTE.greenTint,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['3'],
+    gap: SPACE['3'],
+    ...SHADOW.sm,
+  },
+  updateTitle: { ...TYPE.bodyMed, color: PALETTE.greenInk, lineHeight: 20 },
+  updateSub:   { ...TYPE.captionMed, color: PALETTE.greenAction, marginTop: 2 },
+  updateBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: PALETTE.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...SHADOW.sm,
+  },
+
+  // Transactions
+  txHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACE['2'],
+  },
+  txSeeAll: { ...TYPE.captionBold, color: PALETTE.greenAction },
+  txRow:  { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
+  txIcon: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  txInfo: { flex: 1, marginLeft: SPACE['2'] },
+  txTitle:  { ...TYPE.bodySemi, color: PALETTE.ink },
+  txMeta:   { ...TYPE.captionMed, color: PALETTE.inkMute, marginTop: 2 },
+  txStatus: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: RADIUS.sm },
+  txStatusText: { ...TYPE.captionBold },
+
+  // ── Overlay / Sheet ─────────────────────────────────────────────────────
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15,25,35,0.5)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    backgroundColor: PALETTE.white,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    padding: SPACE['4'],
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: PALETTE.line,
+    alignSelf: 'center',
+    marginBottom: SPACE['4'],
+  },
+  sheetTitle: { ...TYPE.heading, color: PALETTE.ink, marginBottom: SPACE['4'] },
+  sheetFields: { gap: SPACE['3'], marginBottom: SPACE['4'] },
+  sheetField: {},
+  sheetFieldLabel: { ...TYPE.label, color: PALETTE.inkMute, marginBottom: 6 },
+  sheetInput: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: PALETTE.line,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACE['2'],
+    ...TYPE.bodySemi,
+    color: PALETTE.ink,
+  },
+  sheetBtns: { flexDirection: 'row', gap: SPACE['2'] },
+  sheetCancel: {
+    flex: 1,
+    height: 50,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: PALETTE.line,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetCancelText: { ...TYPE.bodySemi, color: PALETTE.inkMid },
+  sheetSave: {
+    flex: 1,
+    height: 50,
+    borderRadius: RADIUS.md,
+    backgroundColor: PALETTE.greenAction,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
+  },
+  sheetSaveText: { ...TYPE.bodySemi, color: PALETTE.white, fontFamily: 'Inter_700Bold' },
+  sheetCancelFull: {
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: SPACE['2'],
+  },
+
+  // Invoice
+  invoiceCard: {
+    backgroundColor: PALETTE.white,
+    borderRadius: RADIUS.xl,
+    padding: SPACE['4'],
+    ...SHADOW.lg,
+  },
+  invoiceTitle: { ...TYPE.subheading, color: PALETTE.ink, textAlign: 'center', marginBottom: SPACE['4'] },
+  invoiceBody:  { gap: SPACE['2'], marginBottom: SPACE['4'] },
+  invoiceRow:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  invoiceKey:   { ...TYPE.captionMed, color: PALETTE.inkMute },
+  invoiceVal:   { ...TYPE.captionBold, color: PALETTE.ink },
+  invoiceDivider: { height: 1, backgroundColor: PALETTE.line, marginVertical: SPACE['2'] },
+  invoiceTotalKey: { ...TYPE.bodySemi, color: PALETTE.ink },
+  invoiceTotalVal: { ...TYPE.heading, color: PALETTE.greenAction },
+  invoiceClose: {
+    height: 50,
+    borderRadius: RADIUS.md,
+    backgroundColor: PALETTE.greenAction,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  invoiceCloseText: { ...TYPE.bodySemi, color: PALETTE.white, fontFamily: 'Inter_700Bold' },
+
+  // QR
+  qrBox: {
+    padding: SPACE['3'],
+    backgroundColor: PALETTE.surface,
+    borderRadius: RADIUS.lg,
+    alignSelf: 'center',
+    marginBottom: SPACE['3'],
+    ...SHADOW.sm,
+  },
+  qrNote: {
+    ...TYPE.captionMed,
+    color: PALETTE.inkMute,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: SPACE['4'],
+    paddingHorizontal: SPACE['3'],
+  },
 });

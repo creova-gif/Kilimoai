@@ -90,6 +90,8 @@ export interface FarmProfile {
   mainActivity: 'mazao' | 'mifugo' | 'mchanganyiko';
   hasLivestock: boolean;
   hasIrrigation: boolean;
+  compostKg?: number;
+  ureaKg?: number;
 }
 
 export type AppLanguage = 'sw' | 'en';

@@ -115,7 +115,7 @@ export default function ForecastScreen() {
     return `LEO, ${d.getDate()} ${months[d.getMonth()]}`;
   }, []);
 
-  const renderWeatherIcon = (condition: string, size = 24, color = colors.text) => {
+  const renderWeatherIcon = (condition: string, size = 24, color: string = colors.text) => {
     switch (condition) {
       case 'sun': return <Sun size={size} color={color} strokeWidth={2} />;
       case 'cloud': return <CloudSun size={size} color={color} strokeWidth={2} />;

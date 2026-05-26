@@ -10,8 +10,8 @@ interface BadgeProps extends ViewProps {
 
 export function Badge({ label, variant = 'default', icon, style, ...rest }: BadgeProps) {
   const { colors } = useTheme();
-  let bgColor = colors.info + '15';
-  let textColor = colors.info;
+  let bgColor: string = colors.info + '15';
+  let textColor: string = colors.info;
 
   switch (variant) {
     case 'success':
