@@ -1,8 +1,8 @@
 import { useColorScheme } from 'react-native';
 
 export const COLORS = {
-  // Vibrant Leaf/Grass Greens (Envato JZV4J93 Branding)
-  brandPrimary: '#4CA137',   // Active state green (pill buttons, badges)
+  // Brand Deep Forest Greens (Unified Envato JZV4J93 Branding)
+  brandPrimary: '#1A3B14',   // Active state green (pill buttons, badges)
   brandDarkGreen: '#1A3B14', // Deep green for chart containers, summary cards
   brandOlive: '#2F5A27',     // Secondary dark green
   
@@ -32,7 +32,7 @@ export const COLORS = {
   },
   
   // Functional Accent Colors
-  success: '#4CA137',
+  success: '#1A3B14',
   warning: '#F59E0B',
   error: '#DC2626',
   info: '#2563EB',
@@ -47,7 +47,7 @@ export const useTheme = () => {
     colors: {
       primary: COLORS.brandPrimary,
       primaryDark: COLORS.brandDarkGreen,
-      primaryLight: isDark ? 'rgba(76, 161, 55, 0.2)' : 'rgba(76, 161, 55, 0.1)',
+      primaryLight: isDark ? 'rgba(26, 59, 20, 0.2)' : 'rgba(26, 59, 20, 0.1)',
       
       background: isDark ? COLORS.bgDark : COLORS.bgLight,
       card: isDark ? COLORS.cardDark : COLORS.cardLight,
@@ -56,12 +56,12 @@ export const useTheme = () => {
       text: isDark ? COLORS.ivory : '#121A0F', // Ivory vs Deep Charcoal-Green
       textMute: isDark ? '#8A9985' : '#6B7A66', // Sage-gray muted text
       
-      border: isDark ? 'rgba(76, 161, 55, 0.15)' : '#E2E8DF', // Green-tinted border vs Muted grey-green border
+      border: isDark ? 'rgba(26, 59, 20, 0.15)' : '#E2E8DF', // Green-tinted border vs Muted grey-green border
       borderSolid: isDark ? '#263322' : '#E2E8DF',
       
       tabBar: isDark ? COLORS.bgDark : '#FFFFFF',
       glass: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)',
-      glow: isDark ? 'rgba(76, 161, 55, 0.12)' : 'rgba(76, 161, 55, 0.08)',
+      glow: isDark ? 'rgba(26, 59, 20, 0.12)' : 'rgba(26, 59, 20, 0.08)',
       slate: COLORS.slate,
       
       success: COLORS.success,

@@ -241,7 +241,7 @@ export default function HomeScreen() {
   );
 
   const FARM_STATS = [
-    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#4CA137" />, color: '#4CA137' },
+    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary },
     { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB' },
     { id: 'weather', label: 'Temperature', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B' },
     { id: 'yield', label: 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },

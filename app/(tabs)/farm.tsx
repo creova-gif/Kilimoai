@@ -10,7 +10,7 @@ import { Card } from '../../components/ui/Card';
 
 const ZONES_DATA = [
   { level: 'Very High', rate: '70 kg/ha', area: '1.2 ha', color: '#8B5CF6', labelSw: 'Juu Sana' },
-  { level: 'High', rate: '83 kg/ha', area: '4.5 ha', color: '#10B981', labelSw: 'Juu' },
+  { level: 'High', rate: '83 kg/ha', area: '4.5 ha', color: '#1A3B14', labelSw: 'Juu' },
   { level: 'Average', rate: '100 kg/ha', area: '1.2 ha', color: '#3B82F6', labelSw: 'Wastani' },
   { level: 'Low', rate: '115 kg/ha', area: '6.2 ha', color: '#F59E0B', labelSw: 'Chini' },
 ];

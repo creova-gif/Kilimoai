@@ -53,7 +53,7 @@ export function useNotifications() {
         name: 'Kilimo AI Alerts',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#3ecf8e',
+        lightColor: '#1A3B14',
         sound: 'default',
       });
     }

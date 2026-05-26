@@ -128,6 +128,6 @@ export function generateRecommendations({ profile, vitals, language }: Inputs): 
 
 export function severityColor(sev: RecSeverity): string {
   if (sev === 'urgent') return '#ef4444';
-  if (sev === 'opportunity') return '#3ecf8e';
+  if (sev === 'opportunity') return '#1A3B14';
   return '#3b82f6';
 }

@@ -260,14 +260,14 @@ export default function AgroIdScreen() {
                   ledger.slice(0, 5).map((e, idx) => (
                     <View key={e.id}>
                       <View style={styles.ledgerRow}>
-                        <View style={[styles.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]} />
+                        <View style={[styles.ledgerDot, { backgroundColor: e.amountTZS > 0 ? colors.primary : '#ef4444' }]} />
                         <View style={{ flex: 1, marginLeft: 10 }}>
                           <Text style={[styles.ledgerDesc, { color: colors.text }]} numberOfLines={1}>{e.description}</Text>
                           <Text style={[styles.ledgerMeta, { color: colors.textMute }]}>
                             {e.category} · {new Date(e.date).toLocaleDateString('en-GB')}
                           </Text>
                         </View>
-                        <Text style={[styles.ledgerAmt, { color: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]}>
+                        <Text style={[styles.ledgerAmt, { color: e.amountTZS > 0 ? colors.primary : '#ef4444' }]}>
                           {e.amountTZS > 0 ? '+' : '−'} {fmt(e.amountTZS)}
                         </Text>
                       </View>
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(76, 161, 55, 0.08)',
+    backgroundColor: 'rgba(26, 59, 20, 0.08)',
   },
   rowDivider: {
     height: 1,

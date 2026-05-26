@@ -30,8 +30,8 @@ const REGIONS = ['Arusha', 'Dodoma', 'Mbeya', 'Kilimanjaro', 'Morogoro', 'Iringa
 const CROPS   = ['Mahindi', 'Maharage', 'Mpunga', 'Kahawa', 'Pamba', 'Alizeti', 'Mihogo', 'Viazi', 'Nyanya', 'Vitunguu', 'Karanga', 'Ndizi'];
 
 const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }> = {
-  smallholder:       { icon: <Leaf size={22} color="#3ecf8e" />,    color: '#3ecf8e' },
-  farmer:            { icon: <Sprout size={22} color="#10b981" />,   color: '#10b981' },
+  smallholder:       { icon: <Leaf size={22} color="#1A3B14" />,    color: '#1A3B14' },
+  farmer:            { icon: <Sprout size={22} color="#1A3B14" />,   color: '#1A3B14' },
   commercial_farmer: { icon: <Tractor size={22} color="#3b82f6" />,  color: '#3b82f6' },
   farm_manager:      { icon: <UserCog size={22} color="#8b5cf6" />,  color: '#8b5cf6' },
   commercial_admin:  { icon: <Building2 size={22} color="#f59e0b" />,color: '#f59e0b' },
@@ -41,8 +41,8 @@ const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }>
 };
 
 const FEATURES = [
-  { icon: <Sparkles size={20} color="#3ecf8e" />, bg: 'rgba(62,207,142,0.12)', label: 'Sankofa AI', sub: 'Ushauri wa AI' },
-  { icon: <Leaf size={20} color="#10b981" />,     bg: 'rgba(16,185,129,0.12)', label: 'Crop Scan',  sub: 'Tambua magonjwa' },
+  { icon: <Sparkles size={20} color="#1A3B14" />, bg: 'rgba(26, 59, 20, 0.12)', label: 'Sankofa AI', sub: 'Ushauri wa AI' },
+  { icon: <Leaf size={20} color="#1A3B14" />,     bg: 'rgba(26, 59, 20, 0.12)', label: 'Crop Scan',  sub: 'Tambua magonjwa' },
   { icon: <TrendingUp size={20} color="#3b82f6" />,bg:'rgba(59,130,246,0.12)', label: 'Soko',       sub: 'Bei za sasa' },
   { icon: <ShieldCheck size={20} color="#f59e0b" />,bg:'rgba(245,158,11,0.12)',label: 'Bima',       sub: 'Ulinzi wa mazao' },
 ];

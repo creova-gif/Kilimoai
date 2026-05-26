@@ -68,7 +68,7 @@ const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; co
   { key: 'livestock', label: 'Mifugo', sub: 'Livestock', route: '/livestock', color: '#f59e0b' },
   { key: 'inventory', label: 'Pembejeo', sub: 'Inventory', route: '/inventory', color: '#8b5cf6' },
   { key: 'insurance', label: 'Bima', sub: 'Insurance Hub', route: '/insurance', color: '#0ea5e9' },
-  { key: 'input', label: 'Wauzaji', sub: 'Input Supply', route: '/input-supply', color: '#10b981' },
+  { key: 'input', label: 'Wauzaji', sub: 'Input Supply', route: '/input-supply', color: '#1A3B14' },
   { key: 'peer', label: 'Vikundi', sub: 'Peer Groups', route: '/peer-groups', color: '#ec4899' },
   { key: 'expert', label: 'Wataalamu', sub: 'Consultations', route: '/consultations', color: '#a855f7' },
   { key: 'farm-twin', label: 'Shamba Dijiti', sub: 'Digital Farm Twin', route: '/farm-twin', color: '#6366f1' },
@@ -171,7 +171,7 @@ export default function ProfileScreen() {
               >
                 <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
                   <LinearGradient
-                    colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                    colors={isDark ? ['rgba(26, 59, 20, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(26, 59, 20, 0.1)', 'rgba(255, 255, 255, 0.8)']}
                     style={StyleSheet.absoluteFill}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   idBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(62, 207, 142, 0.15)',
+    backgroundColor: 'rgba(26, 59, 20, 0.15)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,

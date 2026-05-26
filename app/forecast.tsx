@@ -217,8 +217,8 @@ export default function ForecastScreen() {
                     <Text style={[styles.statLabel, { color: colors.textMute }]}>Unyevunyevu</Text>
                   </View>
                   <View style={styles.statItem}>
-                    <View style={[styles.statIcon, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
-                      <Wind size={18} color="#10b981" />
+                    <View style={[styles.statIcon, { backgroundColor: colors.primaryLight }]}>
+                      <Wind size={18} color={colors.primary} />
                     </View>
                     <Text style={[styles.statVal, { color: colors.text }]}>
                       {current ? `${current.windKph} km/h` : '—'}

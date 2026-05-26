@@ -63,7 +63,7 @@ const IntelligenceBento = ({ isDark, colors, router }: any) => (
   <View style={styles.bentoContainer}>
     <Animated.View entering={FadeInDown} style={[styles.bentoMain, { borderColor: colors.border }]}>
       <BlurView intensity={isDark ? 25 : 85} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-      <LinearGradient colors={isDark ? ['rgba(62,207,142,0.15)', 'rgba(15,23,42,0.9)'] : ['rgba(62,207,142,0.1)', 'rgba(255,255,255,0.9)']} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={isDark ? ['rgba(26, 59, 20, 0.15)', 'rgba(15, 23, 42, 0.9)'] : ['rgba(26, 59, 20, 0.1)', 'rgba(255, 255, 255, 0.9)']} style={StyleSheet.absoluteFill} />
       <View style={styles.bentoHeader}>
         <View style={styles.intelBadge}><Cpu size={14} color={colors.primary} /><Text style={[styles.intelBadgeText, { color: colors.primary }]}>AI ENGINE V4.5</Text></View>
         <Animated.View /* Reanimated Todo */><Sparkles size={20} color={colors.primary} opacity={0.6} /></Animated.View>
@@ -96,12 +96,13 @@ const IntelligenceBento = ({ isDark, colors, router }: any) => (
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
 const NeuralSparkline = ({ data, positive }: any) => {
+  const { colors } = useTheme();
   const max = Math.max(...data), min = Math.min(...data), range = max - min;
   return (
     <View style={styles.sparklineOuter}>
       {data.map((val: number, i: number) => (
         <Animated.View key={i} entering={FadeInDown}
-          style={[styles.sparkBar, { backgroundColor: positive ? '#10b981' : '#ef4444', opacity: 0.3 + (i / data.length) * 0.7 }]} />
+          style={[styles.sparkBar, { backgroundColor: positive ? colors.primary : '#ef4444', opacity: 0.3 + (i / data.length) * 0.7 }]} />
       ))}
     </View>
   );
@@ -652,9 +653,9 @@ export default function MarketScreen() {
                     accessibilityState={{ selected: activeCategory === cat.name }}
                   >
                     <BlurView intensity={activeCategory === cat.name ? 0 : (isDark ? 20 : 50)} tint={isDark ? 'dark' : 'light'}
-                      style={[styles.categoryPill, activeCategory === cat.name ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }]}>
-                      {React.cloneElement(cat.icon as any, { color: activeCategory === cat.name ? '#000' : colors.textMute })}
-                      <Text style={[styles.categoryText, activeCategory === cat.name ? { color: '#000', fontFamily: 'Inter_800ExtraBold' } : { color: colors.textMute }]}>{cat.name}</Text>
+                      style={[styles.categoryPill, activeCategory === cat.name ? { backgroundColor: colors.primary, borderColor: colors.primary, borderWidth: 1 } : { borderColor: colors.border, borderWidth: 1 }]}>
+                      {React.cloneElement(cat.icon as any, { color: activeCategory === cat.name ? '#FFFFFF' : colors.textMute })}
+                      <Text style={[styles.categoryText, activeCategory === cat.name ? { color: '#FFFFFF', fontFamily: 'Inter_800ExtraBold' } : { color: colors.textMute }]}>{cat.name}</Text>
                     </BlurView>
                   </TouchableOpacity>
                 </Animated.View>
@@ -666,9 +667,9 @@ export default function MarketScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Sell crops"
                 >
-                  <View style={[styles.categoryPill, { backgroundColor: colors.success, borderRadius: 20 }]}>
-                    <Tag size={14} color="#000" />
-                    <Text style={[styles.categoryText, { color: '#000', fontFamily: 'Inter_800ExtraBold' }]}>UZA MAZAO</Text>
+                  <View style={[styles.categoryPill, { backgroundColor: colors.primary, borderColor: colors.primary, borderWidth: 1 }]}>
+                    <Tag size={14} color="#FFFFFF" />
+                    <Text style={[styles.categoryText, { color: '#FFFFFF', fontFamily: 'Inter_800ExtraBold' }]}>UZA MAZAO</Text>
                   </View>
                 </TouchableOpacity>
               </Animated.View>
@@ -840,7 +841,7 @@ const styles = StyleSheet.create({
   bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 200 },
   bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
   bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(62,207,142,0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   intelBadgeText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
   bentoTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', marginTop: 12, marginBottom: 4 },
   bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
@@ -877,7 +878,7 @@ const styles = StyleSheet.create({
   analysisRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   analysisItem: { flex: 1 },
   analysisLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
-  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(62,207,142,0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
+  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
   outlookText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
   analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
   actionGrid: { flexDirection: 'row', gap: 12 },

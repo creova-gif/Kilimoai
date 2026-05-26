@@ -212,7 +212,7 @@ export default function TasksScreen() {
             <Animated.View style={styles.dashboard}>
               <BlurView intensity={isDark ? 20 : 90} tint={isDark ? "dark" : "light"} style={[styles.dashboardCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'transparent'] : ['rgba(62, 207, 142, 0.08)', 'transparent']}
+                  colors={isDark ? ['rgba(26, 59, 20, 0.15)', 'transparent'] : ['rgba(26, 59, 20, 0.08)', 'transparent']}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.dashboardHeader}>
@@ -231,7 +231,7 @@ export default function TasksScreen() {
                   <Animated.View 
                     style={{ height: '100%' }}
                   >
-                    <LinearGradient colors={[colors.primary, '#10b981']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
+                    <LinearGradient colors={[colors.primary, colors.primaryDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
                   </Animated.View>
                 </View>
               </BlurView>

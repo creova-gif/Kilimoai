@@ -270,7 +270,7 @@ export default function EditProfileScreen() {
             </ScrollView>
 
             {/* Crops */}
-            <Section icon={<Sprout size={16} color="#10b981" />} label={t.crops} />
+            <Section icon={<Sprout size={16} color={colors.primary} />} label={t.crops} />
             <View style={s.cropGrid}>
               {CROPS.map((c) => {
                 const on = crops.includes(c);
@@ -389,13 +389,13 @@ export default function EditProfileScreen() {
               accessibilityState={{ disabled: !canSave }}
             >
               <LinearGradient
-                colors={['#3ecf8e', '#10b981']}
+                colors={[colors.primary, colors.primaryDark]}
                 style={s.saveGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Save size={20} color="#000" />
-                <Text style={s.saveText}>{t.save}</Text>
+                <Save size={20} color="#FFFFFF" />
+                <Text style={[s.saveText, { color: '#FFFFFF' }]}>{t.save}</Text>
               </LinearGradient>
             </TouchableOpacity>
 

@@ -529,8 +529,8 @@ export default function ScanScreen() {
                       accessibilityRole="button"
                       accessibilityLabel="Speak with AI Agronomist"
                     >
-                      <Text style={[styles.primaryBtnText, { color: isDark ? '#000' : '#FCFBF7' }]}>Ask AI Agronomist</Text>
-                      <ArrowRight size={20} color={isDark ? '#000' : '#FCFBF7'} />
+                      <Text style={[styles.primaryBtnText, { color: '#FFFFFF' }]}>Ask AI Agronomist</Text>
+                      <ArrowRight size={20} color="#FFFFFF" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Retake Scan" accessibilityRole="button">
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
   scanLine: {
     width: '100%',
     height: 6,
-    shadowColor: "#3ecf8e",
+    shadowColor: "#1A3B14",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 25,
@@ -741,14 +741,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#3ecf8e',
+    backgroundColor: '#1A3B14',
     marginBottom: 12,
   },
   markerTextContainer: {
     alignItems: 'center',
   },
   markerText: {
-    color: '#3ecf8e',
+    color: '#1A3B14',
     fontSize: 10,
     fontFamily: 'Inter_900Black',
     letterSpacing: 2,
@@ -782,8 +782,8 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 2,
-    borderColor: 'rgba(62, 207, 142, 0.3)',
-    borderTopColor: '#3ecf8e',
+    borderColor: 'rgba(26, 59, 20, 0.3)',
+    borderTopColor: '#1A3B14',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
@@ -795,7 +795,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   analyzingSubtitle: {
-    color: '#3ecf8e',
+    color: '#1A3B14',
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
     textAlign: 'center',
@@ -825,7 +825,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: "#3ecf8e",
+    shadowColor: "#1A3B14",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 24,
@@ -843,7 +843,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   confText: {
-    color: '#3ecf8e',
+    color: '#1A3B14',
     fontSize: 13,
     fontFamily: 'Inter_800ExtraBold',
   },
@@ -892,7 +892,7 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     borderRadius: 28,
     marginBottom: 16,
-    shadowColor: "#3ecf8e",
+    shadowColor: "#1A3B14",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
