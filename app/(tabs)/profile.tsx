@@ -68,7 +68,19 @@ const AGRO_ID_FALLBACK = {
   joinDate: '2023',
 };
 
-
+// Routes for the PRD-mandated Quick Access shortcuts (rendered below the ID card).
+const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; color: string }[] = [
+  { key: 'contracts', label: 'Mikataba', sub: 'Contract Farming', route: '/contracts', color: '#3b82f6' },
+  { key: 'livestock', label: 'Mifugo', sub: 'Livestock', route: '/livestock', color: '#f59e0b' },
+  { key: 'inventory', label: 'Pembejeo', sub: 'Inventory', route: '/inventory', color: '#8b5cf6' },
+  { key: 'insurance', label: 'Bima', sub: 'Insurance Hub', route: '/insurance', color: '#0ea5e9' },
+  { key: 'input', label: 'Wauzaji', sub: 'Input Supply', route: '/input-supply', color: '#10b981' },
+  { key: 'peer', label: 'Vikundi', sub: 'Peer Groups', route: '/peer-groups', color: '#ec4899' },
+  { key: 'expert', label: 'Wataalamu', sub: 'Consultations', route: '/consultations', color: '#a855f7' },
+  { key: 'farm-twin', label: 'Shamba Dijiti', sub: 'Digital Farm Twin', route: '/farm-twin', color: '#6366f1' },
+  { key: 'analytics', label: 'Uchanganuzi wa AI', sub: 'Predictive Analytics', route: '/analytics', color: '#f97316' },
+  { key: 'crop-plan', label: 'Upangaji Mazao', sub: 'Crop Planning · AI', route: '/crop-planning', color: '#22c55e' },
+];
 
 // Sections built inside component to access router + store actions
 
@@ -163,43 +175,81 @@ export default function ProfileScreen() {
 
             {/* Agro ID Card */}
             <Animated.View style={styles.idCardContainer}>
-              <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
-                <LinearGradient
-                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
-                  style={StyleSheet.absoluteFill}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                />
-                
-                <View style={styles.idHeader}>
-                  <View style={styles.idBadge}>
-                    <Fingerprint size={12} color={colors.primary} />
-                    <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
+              <TouchableOpacity
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/agro-id' as any); }}
+                activeOpacity={0.92}
+                accessibilityRole="button"
+                accessibilityLabel="Open Agro ID dashboard"
+              >
+                <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
+                  <LinearGradient
+                    colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                    style={StyleSheet.absoluteFill}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  />
+                  
+                  <View style={styles.idHeader}>
+                    <View style={styles.idBadge}>
+                      <Fingerprint size={12} color={colors.primary} />
+                      <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
+                    </View>
+                    <Text style={[styles.idNumber, { color: colors.textMute }]}>{AGRO_ID_DATA.id}</Text>
                   </View>
-                  <Text style={[styles.idNumber, { color: colors.textMute }]}>{AGRO_ID_DATA.id}</Text>
-                </View>
 
-                <View style={styles.profileRow}>
-                  <View style={[styles.profileImage, { borderColor: colors.primary + '40', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
-                    <Text style={{ color: colors.text, fontSize: 24, fontFamily: 'Inter_900Black' }}>
-                      {AGRO_ID_DATA.name.split(' ').map(n => n[0]).join('').substring(0,2)}
-                    </Text>
+                  <View style={styles.profileRow}>
+                    <View style={[styles.profileImage, { borderColor: colors.primary + '40', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
+                      <Text style={{ color: colors.text, fontSize: 24, fontFamily: 'Inter_900Black' }}>
+                        {AGRO_ID_DATA.name.split(' ').map(n => n[0]).join('').substring(0,2)}
+                      </Text>
+                    </View>
+                    <View style={styles.profileInfo}>
+                      <Text style={[styles.profileName, { color: colors.text }]}>{AGRO_ID_DATA.name}</Text>
+                      <Text style={[styles.profileRole, { color: colors.textMute }]}>{AGRO_ID_DATA.role}</Text>
+                      <Text style={[styles.profileLocation, { color: colors.textMute }]}>{AGRO_ID_DATA.location}</Text>
+                    </View>
                   </View>
-                  <View style={styles.profileInfo}>
-                    <Text style={[styles.profileName, { color: colors.text }]}>{AGRO_ID_DATA.name}</Text>
-                    <Text style={[styles.profileRole, { color: colors.textMute }]}>{AGRO_ID_DATA.role}</Text>
-                    <Text style={[styles.profileLocation, { color: colors.textMute }]}>{AGRO_ID_DATA.location}</Text>
-                  </View>
-                </View>
 
-                <View style={styles.tierContainer}>
-                  <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
-                  <Text style={[styles.joinText, { color: colors.textMute }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
-                </View>
-              </BlurView>
+                  <View style={styles.tierContainer}>
+                    <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
+                    <Text style={[styles.joinText, { color: colors.textMute }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
+                  </View>
+                </BlurView>
+              </TouchableOpacity>
             </Animated.View>
 
-
+            {/* Quick Access — all PRD feature routes */}
+            <View style={styles.quickContainer}>
+              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>UFIKIAJI WA HARAKA</Text>
+              <View style={styles.quickGrid}>
+                {QUICK_ROUTES.map((q) => (
+                  <TouchableOpacity
+                    key={q.key}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(q.route as any); }}
+                    activeOpacity={0.85}
+                    style={styles.quickItem}
+                    accessibilityRole="button"
+                    accessibilityLabel={q.label}
+                    accessibilityHint={`Open ${q.sub}`}
+                  >
+                    <BlurView
+                      intensity={isDark ? 25 : 65}
+                      tint={isDark ? 'dark' : 'light'}
+                      style={[styles.quickCard, { borderColor: colors.border }]}
+                    >
+                      <View style={[styles.quickDot, { backgroundColor: q.color + '25' }]}>
+                        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: q.color }} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.quickLabel, { color: colors.text }]}>{q.label}</Text>
+                        <Text style={[styles.quickSub, { color: colors.textMute }]}>{q.sub}</Text>
+                      </View>
+                      <ArrowUpRight size={14} color={colors.textMute} />
+                    </BlurView>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
 
             {/* Sections */}
             {PROFILE_SECTIONS.map((section, sIdx) => (
@@ -284,7 +334,18 @@ export default function ProfileScreen() {
   );
 }
 
+const quickStyles = {
+  quickContainer: { marginTop: 24, paddingHorizontal: 24 } as const,
+  quickGrid: { marginTop: 12, gap: 8 } as const,
+  quickItem: { width: '100%' } as const,
+  quickCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 1, overflow: 'hidden' } as const,
+  quickDot: { width: 28, height: 28, borderRadius: 10, justifyContent: 'center', alignItems: 'center' } as const,
+  quickLabel: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' } as const,
+  quickSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 } as const,
+};
+
 const styles = StyleSheet.create({
+  ...quickStyles,
   container: {
     flex: 1,
   },
