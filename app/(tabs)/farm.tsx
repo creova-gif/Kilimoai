@@ -30,8 +30,7 @@ import {
   ChevronDown
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import { useTheme, PALETTE, RADIUS, SPACE, SHADOW } from '../../constants/Theme';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { Card } from '../../components/ui/Card';
 
@@ -58,7 +57,6 @@ export default function FarmHub() {
   const [compostInput, setCompostInput] = useState('');
   const [ureaInput, setUreaInput] = useState('');
   const [selectedCrop, setSelectedCrop] = useState(farmProfile?.primaryCrops?.[0] ?? 'Mpunga (Rice)');
-  const [isLogFormOpen, setIsLogFormOpen] = useState(false);
 
   // Calendar dates scroll
   const [timelineData, setTimelineData] = useState<TimelineEvent[]>([
@@ -223,17 +221,16 @@ export default function FarmHub() {
                     onPress={() => handleDatePress(ev)}
                     style={[
                       styles.dateCard, 
-                      { borderColor: isSelected ? PALETTE.greenAction : PALETTE.line, borderWidth: 1.5 },
-                      isSelected && { backgroundColor: PALETTE.greenTint }
+                      { borderColor: isSelected ? '#2E7D32' : '#E5E7EB', borderWidth: 1 },
+                      isSelected && { backgroundColor: '#E8F5E9' }
                     ]}
                     accessibilityRole="button"
                     accessibilityLabel={`${ev.date}: ${ev.label}`}
                   >
                     <Text style={styles.dateText}>{ev.date}</Text>
+                    <View style={[styles.indicatorDot, { backgroundColor: isUrea ? '#3b82f6' : '#2E7D32' }]} />
                     <Text style={styles.labelText}>{ev.label.split(' ')[0]}</Text>
-                    <View style={[styles.amountBadge, { backgroundColor: isUrea ? PALETTE.blueTint : PALETTE.greenTint }]}>
-                      <Text style={[styles.amountBadgeText, { color: isUrea ? PALETTE.blue : PALETTE.greenInk }]}>{ev.amount}</Text>
-                    </View>
+                    <Text style={styles.amountText}>{ev.amount}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -263,81 +260,62 @@ export default function FarmHub() {
           )}
 
           {/* Quick Log Form */}
-          <Card variant="solid" style={[styles.logCard, { borderColor: PALETTE.line, borderWidth: 1, ...shadows.sm }]}>
-            <TouchableOpacity
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setIsLogFormOpen(!isLogFormOpen); }}
-              style={styles.logCardHeader}
-              activeOpacity={0.7}
+          <Card variant="solid" style={[styles.logCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
+            <Text style={styles.cardHeading}>Log New Input Application</Text>
+
+            {/* Target crop select */}
+            <Text style={styles.inputLabel}>Target Crop</Text>
+            <View style={styles.cropSelector}>
+              {['Mpunga (Rice)', 'Mahindi (Maize)', 'Kahawa (Coffee)'].map((c) => {
+                const isSel = selectedCrop === c;
+                return (
+                  <TouchableOpacity
+                    key={c}
+                    onPress={() => { setSelectedCrop(c); Haptics.selectionAsync(); }}
+                    style={[styles.cropPill, { borderColor: isSel ? '#2E7D32' : '#E5E7EB', backgroundColor: isSel ? '#E8F5E9' : '#FFFFFF' }]}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: isSel }}
+                  >
+                    <Text style={[styles.cropPillText, { color: isSel ? '#2E7D32' : '#1E2A3E' }]}>{c}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            <View style={styles.inputGrid}>
+              <View style={styles.inputCol}>
+                <Text style={styles.inputLabel}>COMPOST (KG)</Text>
+                <TextInput
+                  value={compostInput}
+                  onChangeText={setCompostInput}
+                  keyboardType="numeric"
+                  placeholder="e.g. 120"
+                  style={styles.textInput}
+                  accessibilityLabel="Compost quantity in kilograms"
+                />
+              </View>
+              <View style={styles.inputCol}>
+                <Text style={styles.inputLabel}>UREA (KG)</Text>
+                <TextInput
+                  value={ureaInput}
+                  onChangeText={setUreaInput}
+                  keyboardType="numeric"
+                  placeholder="e.g. 50"
+                  style={styles.textInput}
+                  accessibilityLabel="Urea quantity in kilograms"
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity 
+              style={[styles.submitBtn, { backgroundColor: '#2E7D32' }]} 
+              onPress={handleLogApplication}
               accessibilityRole="button"
-              accessibilityLabel="Toggle log form"
+              accessibilityLabel="Record input log"
             >
-              <Text style={styles.cardHeading}>Log New Input Application</Text>
-              <ChevronDown
-                size={20}
-                color={PALETTE.inkMid}
-                style={{ transform: [{ rotate: isLogFormOpen ? '180deg' : '0deg' }] }}
-              />
+              <Plus size={20} color="#FFFFFF" strokeWidth={2} />
+              <Text style={styles.submitBtnText}>Log Application</Text>
             </TouchableOpacity>
-
-            {isLogFormOpen && (
-              <Animated.View entering={FadeInDown.duration(300)}>
-                {/* Target crop select */}
-                <Text style={[styles.inputLabel, { marginTop: 12 }]}>Target Crop</Text>
-                <View style={styles.cropSelector}>
-                  {['Mpunga (Rice)', 'Mahindi (Maize)', 'Kahawa (Coffee)'].map((c) => {
-                    const isSel = selectedCrop === c;
-                    return (
-                      <TouchableOpacity
-                        key={c}
-                        onPress={() => { setSelectedCrop(c); Haptics.selectionAsync(); }}
-                        style={[styles.cropPill, { borderColor: isSel ? PALETTE.greenAction : PALETTE.line, backgroundColor: isSel ? PALETTE.greenTint : PALETTE.white }]}
-                        accessibilityRole="radio"
-                        accessibilityState={{ checked: isSel }}
-                      >
-                        <Text style={[styles.cropPillText, { color: isSel ? PALETTE.greenAction : PALETTE.ink }]}>{c}</Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-
-                <View style={styles.inputGrid}>
-                  <View style={styles.inputCol}>
-                    <Text style={styles.inputLabel}>COMPOST (KG)</Text>
-                    <TextInput
-                      value={compostInput}
-                      onChangeText={setCompostInput}
-                      keyboardType="numeric"
-                      placeholder="e.g. 120"
-                      placeholderTextColor={PALETTE.inkMute}
-                      style={styles.textInput}
-                      accessibilityLabel="Compost quantity in kilograms"
-                    />
-                  </View>
-                  <View style={styles.inputCol}>
-                    <Text style={styles.inputLabel}>UREA (KG)</Text>
-                    <TextInput
-                      value={ureaInput}
-                      onChangeText={setUreaInput}
-                      keyboardType="numeric"
-                      placeholder="e.g. 50"
-                      placeholderTextColor={PALETTE.inkMute}
-                      style={styles.textInput}
-                      accessibilityLabel="Urea quantity in kilograms"
-                    />
-                  </View>
-                </View>
-
-                <TouchableOpacity 
-                  style={[styles.submitBtn, { backgroundColor: PALETTE.greenAction }]} 
-                  onPress={handleLogApplication}
-                  accessibilityRole="button"
-                  accessibilityLabel="Record input log"
-                >
-                  <Plus size={20} color="#FFFFFF" strokeWidth={2} />
-                  <Text style={styles.submitBtnText}>Log Application</Text>
-                </TouchableOpacity>
-              </Animated.View>
-            )}
           </Card>
 
           {/* Timeline History List */}
@@ -395,27 +373,18 @@ const styles = StyleSheet.create({
   sectionHeading: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 1.2, marginLeft: 4 },
   horizontalScroll: { gap: 10, paddingVertical: 4 },
   dateCard: {
-    width: 80,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-    borderRadius: 40,
+    width: 90,
+    padding: 12,
+    borderRadius: 16,
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
-    minHeight: 110
+    minHeight: 44
   },
-  dateText: { fontSize: 11, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
-  labelText: { fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginTop: 4 },
-  amountBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: RADIUS.full,
-    marginTop: 6
-  },
-  amountBadgeText: {
-    fontSize: 9,
-    fontFamily: 'Inter_800ExtraBold',
-  },
+  dateText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
+  indicatorDot: { width: 6, height: 6, borderRadius: 3, marginVertical: 6 },
+  labelText: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
+  amountText: { fontSize: 11, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 2 },
   
   // Detail card
   detailCard: { padding: 16, borderRadius: 16, gap: 12 },
@@ -431,8 +400,7 @@ const styles = StyleSheet.create({
   detailNotes: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#1E2A3E', lineHeight: 18, marginTop: 4 },
 
   logCard: { padding: 16, borderRadius: 16, gap: 12 },
-  logCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardHeading: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
+  cardHeading: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 4 },
   cropSelector: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
   cropPill: {
     paddingHorizontal: 12,
@@ -472,27 +440,22 @@ const styles = StyleSheet.create({
   
   // Timeline list
   timelineContainer: { marginTop: 12, gap: 0 },
-  timelineRow: { flexDirection: 'row', minHeight: 80 },
-  timelineLeft: { width: 30, alignItems: 'center', justifyContent: 'center' },
+  timelineRow: { flexDirection: 'row', minHeight: 70 },
+  timelineLeft: { width: 30, alignItems: 'center' },
   timelineDot: {
     width: 24,
     height: 24,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    zIndex: 2
+    zIndex: 1
   },
   timelineLine: {
     position: 'absolute',
-    top: 0,
+    top: 24,
     bottom: 0,
     width: 2,
-    backgroundColor: '#E5E7EB',
-    alignSelf: 'center',
-    zIndex: 1
+    backgroundColor: '#E5E7EB'
   },
   timelineRight: {
     flex: 1,

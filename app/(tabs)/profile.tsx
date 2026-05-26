@@ -20,21 +20,38 @@ import {
   ChevronRight,
   Database,
   Fingerprint,
-  WifiOff,
-  ArrowUpRight
+  WifiOff
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { useTheme, PALETTE, RADIUS, SPACE, SHADOW } from '../../constants/Theme';
+import { useTheme } from '../../constants/Theme';
 import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { ArrowUpRight } from 'lucide-react-native';
 import { Alert } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-
+// Background Orb Component
+const NeuralOrb = ({ color, size, delay, x, y }: any) => {
+  return (
+    <Animated.View
+      entering={FadeInDown}
+      style={[
+        styles.bgOrb,
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: color,
+          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
+        },
+      ]}
+    />
+  );
+};
 
 const AGRO_ID_FALLBACK = {
   name: 'Justin Mafie',
@@ -61,7 +78,18 @@ const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; co
 
 // Sections built inside component to access router + store actions
 
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+  }
+};
 
+const itemVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { type: "spring", damping: 25, stiffness: 120 } }
+};
 
 export default function ProfileScreen() {
   const { colors, spacing, radius, isDark } = useTheme();
@@ -141,38 +169,40 @@ export default function ProfileScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Open Agro ID dashboard"
               >
-                <LinearGradient
-                  colors={[PALETTE.greenInk, '#0F3C14']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.idCard}
-                >
+                <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
+                  <LinearGradient
+                    colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                    style={StyleSheet.absoluteFill}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  />
+                  
                   <View style={styles.idHeader}>
-                    <View style={[styles.idBadge, { backgroundColor: 'rgba(255, 255, 255, 0.12)' }]}>
-                      <Fingerprint size={12} color="#FFFFFF" />
-                      <Text style={[styles.idBadgeText, { color: '#FFFFFF' }]}>AGRO ID</Text>
+                    <View style={styles.idBadge}>
+                      <Fingerprint size={12} color={colors.primary} />
+                      <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
                     </View>
-                    <Text style={[styles.idNumber, { color: 'rgba(255, 255, 255, 0.55)' }]}>{AGRO_ID_DATA.id}</Text>
+                    <Text style={[styles.idNumber, { color: colors.textMute }]}>{AGRO_ID_DATA.id}</Text>
                   </View>
 
                   <View style={styles.profileRow}>
-                    <View style={[styles.profileImage, { borderColor: 'rgba(255, 255, 255, 0.2)', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.12)' }]}>
-                      <Text style={{ color: '#FFFFFF', fontSize: 24, fontFamily: 'Inter_900Black' }}>
+                    <View style={[styles.profileImage, { borderColor: colors.primary + '40', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
+                      <Text style={{ color: colors.text, fontSize: 24, fontFamily: 'Inter_900Black' }}>
                         {AGRO_ID_DATA.name.split(' ').map(n => n[0]).join('').substring(0,2)}
                       </Text>
                     </View>
                     <View style={styles.profileInfo}>
-                      <Text style={[styles.profileName, { color: '#FFFFFF' }]}>{AGRO_ID_DATA.name}</Text>
-                      <Text style={[styles.profileRole, { color: 'rgba(255, 255, 255, 0.65)' }]}>{AGRO_ID_DATA.role}</Text>
-                      <Text style={[styles.profileLocation, { color: 'rgba(255, 255, 255, 0.45)' }]}>{AGRO_ID_DATA.location}</Text>
+                      <Text style={[styles.profileName, { color: colors.text }]}>{AGRO_ID_DATA.name}</Text>
+                      <Text style={[styles.profileRole, { color: colors.textMute }]}>{AGRO_ID_DATA.role}</Text>
+                      <Text style={[styles.profileLocation, { color: colors.textMute }]}>{AGRO_ID_DATA.location}</Text>
                     </View>
                   </View>
 
                   <View style={styles.tierContainer}>
-                    <Text style={[styles.tierText, { color: '#FFFFFF' }]}>{AGRO_ID_DATA.tier}</Text>
-                    <Text style={[styles.joinText, { color: 'rgba(255, 255, 255, 0.45)' }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
+                    <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
+                    <Text style={[styles.joinText, { color: colors.textMute }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
                   </View>
-                </LinearGradient>
+                </BlurView>
               </TouchableOpacity>
             </Animated.View>
 
@@ -190,8 +220,12 @@ export default function ProfileScreen() {
                     accessibilityLabel={q.label}
                     accessibilityHint={`Open ${q.sub}`}
                   >
-                    <View style={[styles.quickCard, { borderColor: colors.border, backgroundColor: colors.card }]}>
-                      <View style={[styles.quickDot, { backgroundColor: q.color + '15' }]}>
+                    <BlurView
+                      intensity={isDark ? 25 : 65}
+                      tint={isDark ? 'dark' : 'light'}
+                      style={[styles.quickCard, { borderColor: colors.border }]}
+                    >
+                      <View style={[styles.quickDot, { backgroundColor: q.color + '25' }]}>
                         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: q.color }} />
                       </View>
                       <View style={{ flex: 1 }}>
@@ -199,7 +233,7 @@ export default function ProfileScreen() {
                         <Text style={[styles.quickSub, { color: colors.textMute }]}>{q.sub}</Text>
                       </View>
                       <ArrowUpRight size={14} color={colors.textMute} />
-                    </View>
+                    </BlurView>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -210,7 +244,7 @@ export default function ProfileScreen() {
               <View key={sIdx} style={styles.sectionContainer}>
                 <Text style={[styles.sectionTitle, { color: colors.textMute }]}>{section.title}</Text>
                 
-                <View style={[styles.sectionBlock, { borderColor: colors.border, backgroundColor: colors.card }]}>
+                <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.sectionBlock, { borderColor: colors.border }]}>
                   {section.items.map((item, iIdx) => (
                     <View key={item.id}>
                       <TouchableOpacity 
@@ -251,7 +285,7 @@ export default function ProfileScreen() {
                       )}
                     </View>
                   ))}
-                </View>
+                </BlurView>
               </View>
             ))}
 
@@ -289,31 +323,14 @@ export default function ProfileScreen() {
 }
 
 const quickStyles = {
-  quickContainer: { marginTop: 24 },
-  quickGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    justifyContent: 'space-between',
-    marginTop: 12,
-  },
-  quickItem: {
-    width: '48%',
-  },
-  quickCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderRadius: RADIUS.md,
-    borderWidth: 1.5,
-    backgroundColor: PALETTE.white,
-    ...SHADOW.sm,
-  },
-  quickDot: { width: 28, height: 28, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  quickLabel: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
-  quickSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
-} as const;
+  quickContainer: { marginTop: 24, paddingHorizontal: 24 } as const,
+  quickGrid: { marginTop: 12, gap: 8 } as const,
+  quickItem: { width: '100%' } as const,
+  quickCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 1, overflow: 'hidden' } as const,
+  quickDot: { width: 28, height: 28, borderRadius: 10, justifyContent: 'center', alignItems: 'center' } as const,
+  quickLabel: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' } as const,
+  quickSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 } as const,
+};
 
 const styles = StyleSheet.create({
   ...quickStyles,
@@ -322,6 +339,12 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  bgOrb: {
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
   },
   bgGradient: {
     position: 'absolute',
@@ -479,9 +502,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: 18,
     borderRadius: 20,
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
     gap: 8,
   },
   logoutText: {

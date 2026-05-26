@@ -132,7 +132,7 @@ export default function PageScaffold({
 
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
         <NeuralOrb color={colors.primary} size={340} x={-60} y={-40} delay={0} />
-        <NeuralOrb color={colors.primaryLight} size={280} x={SW - 160} y={SH * 0.5} delay={2000} />
+        <NeuralOrb color={colors.glow} size={280} x={SW - 160} y={SH * 0.5} delay={2000} />
         <LinearGradient
           colors={[colors.background, 'transparent']}
           style={{ position: 'absolute', top: 0, left: 0, right: 0, height: SH }}
