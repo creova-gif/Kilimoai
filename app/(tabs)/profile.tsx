@@ -13,20 +13,14 @@ import {
   Platform
 } from 'react-native';
 import { 
-  User, 
   Settings, 
   ShieldCheck, 
-  CreditCard, 
-  Smartphone, 
-  Bell, 
   HelpCircle, 
   LogOut, 
   ChevronRight,
   Database,
   Fingerprint,
-  WifiOff,
-  CloudSun,
-  Wallet
+  WifiOff
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -105,17 +99,14 @@ export default function ProfileScreen() {
   const setOffline = useKilimoStore((s) => s.setOffline);
   const resetOnboarding = useKilimoStore((s) => s.resetOnboarding);
   const [biometric, setBiometric] = useState(true);
-  const [pushNotifs, setPushNotifs] = useState(true);
-  const [weatherTelemetry, setWeatherTelemetry] = useState(true);
   const AGRO_ID_DATA = storedAgroId ?? AGRO_ID_FALLBACK;
 
   const PROFILE_SECTIONS = [
     {
-      title: 'AGRO ID & FEDHA',
+      title: 'AGRO ID & USALAMA',
       items: [
-        { id: 'wallet', title: 'M-Pesa Wallet Sync', icon: <Wallet size={20} color="#10b981" />, hasSwitch: false, value: 'Linked', onPress: () => router.push('/wallet-admin' as any) },
         { id: 'identity', title: 'Biometric Identity', icon: <Fingerprint size={20} color="#3b82f6" />, hasSwitch: true, switchVal: biometric, onSwitch: (v: boolean) => { setBiometric(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }, value: '' },
-        { id: 'coop', title: 'Cooperative Dues', icon: <CreditCard size={20} color="#f59e0b" />, hasSwitch: false, value: 'Up to date', onPress: () => router.push('/wallet-admin' as any) },
+        { id: 'security', title: 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
       ]
     },
     {
@@ -123,14 +114,11 @@ export default function ProfileScreen() {
       items: [
         { id: 'offline', title: 'Offline-First Mode', icon: <WifiOff size={20} color="#ef4444" />, hasSwitch: true, switchVal: isOffline, onSwitch: (v: boolean) => { setOffline(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }, value: '' },
         { id: 'sync', title: 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: 'Last sync: 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert('Sync', 'Data yako imesawazishwa kikamilifu.'); } },
-        { id: 'weather', title: 'Weather Telemetry', icon: <CloudSun size={20} color="#0ea5e9" />, hasSwitch: true, switchVal: weatherTelemetry, onSwitch: (v: boolean) => { setWeatherTelemetry(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/(tabs)/forecast' as any); }, value: '' },
       ]
     },
     {
-      title: 'MIPANGILIO YA AKAUNTI',
+      title: 'MSAADA & VIGEZO',
       items: [
-        { id: 'notifications', title: 'Push Notifications', icon: <Bell size={20} color="#64748b" />, hasSwitch: true, switchVal: pushNotifs, onSwitch: (v: boolean) => { setPushNotifs(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }, value: '' },
-        { id: 'security', title: 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
         { id: 'help', title: 'Help & Support', icon: <HelpCircle size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/terms' as any) },
       ]
     }
