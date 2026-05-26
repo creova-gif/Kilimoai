@@ -34,12 +34,8 @@
       },
       "package": "com.jaymafie.kilimoai",
       "permissions": [
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.FOREGROUND_SERVICE",
         "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA",
-        "android.permission.READ_MEDIA_IMAGES"
+        "android.permission.CAMERA"
       ],
       "versionCode": 3
     },
@@ -62,6 +58,9 @@
         "expo-font",
         {
           "fonts": [
+            "node_modules/@expo-google-fonts/inter/100Thin/Inter_100Thin.ttf",
+            "node_modules/@expo-google-fonts/inter/200ExtraLight/Inter_200ExtraLight.ttf",
+            "node_modules/@expo-google-fonts/inter/300Light/Inter_300Light.ttf",
             "node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
             "node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
             "node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",

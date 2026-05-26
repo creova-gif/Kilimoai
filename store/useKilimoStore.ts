@@ -28,6 +28,7 @@ export interface AgroID {
   phoneNumber?: string;
   biometricEnabled: boolean;
   coopId?: string;
+  verificationStatus: 'unverified' | 'pending' | 'verified';
 }
 
 export interface SyncQueueItem {
@@ -57,12 +58,22 @@ export interface Notification {
 
 export interface WalletState {
   balanceTZS: number;
-  mpesaPhone?: string;
-  lastTransaction?: string;
-  currency: 'TZS' | 'KES' | 'UGX';
+  mpesaPhone: string | null;
+  lastTransaction: string | null;
 }
 
-export interface ChatMessage {
+export interface ActivityItem {
+  id: string;
+  title: string;
+  route: string;
+  time: string;
+  iconName: string;
+  iconColor: string;
+  status: string;
+  detail: string;
+}
+
+export interface SankofaMessage {
   id: string;
   text: string;
   sender: 'user' | 'ai';
@@ -106,8 +117,11 @@ interface KilimoState {
   // Wallet / Finance
   wallet: WalletState;
 
-  // Chat history (Sankofa — last 50 messages, persisted)
-  chatHistory: ChatMessage[];
+  // AI Chat History
+  sankofaHistory: SankofaMessage[];
+
+  // Feed
+  activities: ActivityItem[];
 
   // ─── Actions ───────────────────────────────────────────────────
 
@@ -140,9 +154,12 @@ interface KilimoState {
   // Wallet
   updateWallet: (wallet: Partial<WalletState>) => void;
 
-  // Chat
-  addChatMessage: (msg: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
-  clearChatHistory: () => void;
+  // AI Chat
+  appendSankofaMessage: (msg: SankofaMessage) => void;
+  clearSankofaHistory: () => void;
+
+  // Feed
+  setActivities: (activities: ActivityItem[]) => void;
 }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -201,19 +218,20 @@ export const useKilimoStore = create<KilimoState>()(
 
       wallet: {
         balanceTZS: 0,
-        mpesaPhone: undefined,
-        lastTransaction: undefined,
-        currency: 'TZS',
+        mpesaPhone: null,
+        lastTransaction: null,
       },
 
-      chatHistory: [
+      sankofaHistory: [
         {
-          id: 'chat_init',
+          id: '1',
           text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
           sender: 'ai',
           timestamp: new Date().toISOString(),
-        },
+        }
       ],
+
+      activities: [],
 
       // ── Auth Actions ───────────────────────────────────────────
       setAgroId: (agroId) => set({ agroId, isAuthenticated: true, onboardingComplete: true }),
@@ -302,66 +320,28 @@ export const useKilimoStore = create<KilimoState>()(
         set({ notifications: [], unreadCount: 0 }),
 
       // ── Wallet Actions ─────────────────────────────────────────
-      updateWallet: (wallet) =>
-        set((state) => ({
-          wallet: { ...state.wallet, ...wallet },
-        })),
+      updateWallet: (patch) => set((s) => ({ wallet: { ...s.wallet, ...patch } })),
 
-      // ── Chat Actions ───────────────────────────────────────────
-      addChatMessage: (msg) =>
-        set((state) => ({
-          chatHistory: [
-            ...state.chatHistory.slice(-49), // cap at 50
-            {
-              ...msg,
-              id: `chat_${Date.now()}`,
-              timestamp: new Date().toISOString(),
-            },
-          ],
-        })),
-      clearChatHistory: () =>
-        set({
-          chatHistory: [
-            {
-              id: 'chat_init',
-              text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
-              sender: 'ai',
-              timestamp: new Date().toISOString(),
-            },
-          ],
-        }),
+      // ── AI Chat Actions ────────────────────────────────────────
+      appendSankofaMessage: (msg) => set((s) => ({ sankofaHistory: [...s.sankofaHistory, msg] })),
+      clearSankofaHistory: () => set({ sankofaHistory: [] }),
+
+      // ── Feed Actions ───────────────────────────────────────────
+      setActivities: (activities) => set({ activities }),
     }),
     {
       name: 'kilimo-ai-store',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 4,
-      migrate: (persisted: any, fromVersion) => {
+      version: 2,
+      // Backfill: pre-v2 stores didn't have `onboardingComplete`. Returning
+      // authenticated users (have agroId or were marked authenticated) should
+      // skip onboarding instead of being forced back through it.
+      migrate: (persisted: any, _version) => {
         if (!persisted) return persisted;
-        // v1→v2: backfill onboardingComplete
         if (persisted.onboardingComplete == null) {
           persisted.onboardingComplete = Boolean(
             persisted.agroId || persisted.isAuthenticated || persisted.farmProfile
           );
-        }
-        // v2→v3: clear fake mock wallet balance & phone
-        if (fromVersion < 3) {
-          persisted.wallet = {
-            balanceTZS: 0,
-            mpesaPhone: undefined,
-            lastTransaction: undefined,
-            currency: persisted.wallet?.currency ?? 'TZS',
-          };
-        }
-        // v3→v4: seed chatHistory if missing
-        if (fromVersion < 4 || !persisted.chatHistory) {
-          persisted.chatHistory = [
-            {
-              id: 'chat_init',
-              text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
-              sender: 'ai',
-              timestamp: new Date().toISOString(),
-            },
-          ];
         }
         return persisted;
       },
@@ -378,7 +358,6 @@ export const useKilimoStore = create<KilimoState>()(
         wallet: { ...state.wallet, mpesaPhone: undefined }, // Never persist phone
         notifications: state.notifications.slice(0, 50), // Cap at 50
         unreadCount: state.unreadCount,
-        chatHistory: state.chatHistory.slice(-50), // Cap at 50 messages
       }),
     }
   )

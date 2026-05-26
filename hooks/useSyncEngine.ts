@@ -11,17 +11,25 @@
 import { useEffect, useRef, useCallback } from 'react';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { useKilimoStore } from '../store/useKilimoStore';
-
-// ─── Mock API endpoint (replace with Supabase edge function URL) ───────────
-const SYNC_ENDPOINT = 'https://api.kilimo.ai/v1/sync';
+import { getSupabase } from '../lib/supabase';
 
 async function pushItem(item: ReturnType<typeof useKilimoStore.getState>['syncQueue'][0]): Promise<boolean> {
   try {
-    // In production: replace with actual Supabase or REST call
-    // const response = await supabase.from(item.type).upsert(item.payload);
-    // For now, simulate a 90% success rate
-    await new Promise((res) => setTimeout(res, 300 + Math.random() * 400));
-    return Math.random() > 0.1;
+    const supabase = getSupabase();
+    if (!supabase) return false;
+    
+    const { error } = await supabase.from('offline_sync_logs').insert({
+      sync_id: item.id,
+      event_type: item.type,
+      payload: item.payload,
+      created_at: item.createdAt,
+    });
+    
+    if (error) {
+      console.error('Supabase sync error:', error);
+      return false;
+    }
+    return true;
   } catch {
     return false;
   }

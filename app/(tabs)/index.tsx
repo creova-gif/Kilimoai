@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -9,10 +9,10 @@ import {
   SafeAreaView,
   StatusBar,
   RefreshControl,
-  Platform,
   Image,
   Pressable,
 } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { 
   BrainCircuit, 
   Camera, 
@@ -31,212 +31,35 @@ import {
   ArrowDownLeft,
   WifiOff,
   ArrowRight,
-  CloudOff,
-  RefreshCw
+  RefreshCw,
+  Lightbulb
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
-import { motion, AnimatePresence } from "motion/react";
 import { useKilimoStore } from '../../store/useKilimoStore';
-import NeuralOrb from '../../components/NeuralOrb';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
-import { Lightbulb } from 'lucide-react-native';
-import SwipeCardDeck3D, { SwipeCard } from '../../components/SwipeCardDeck3D';
+import { Card } from '../../components/ui/Card';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { useSyncEngine } from '../../hooks/useSyncEngine';
 
-function getTimeGreeting(lang: string): string {
-  const h = new Date().getHours();
-  if (lang !== 'sw') {
-    if (h < 5)  return 'USIKU MWEMA,';
-    if (h < 12) return 'GOOD MORNING,';
-    if (h < 17) return 'GOOD AFTERNOON,';
-    return 'GOOD EVENING,';
-  }
-  if (h < 5)  return 'USIKU MWEMA,';
-  if (h < 12) return 'HABARI ZA ASUBUHI,';
-  if (h < 17) return 'HABARI ZA MCHANA,';
-  return 'HABARI ZA JIONI,';
-}
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Deterministic sparkline heights per stat card (soil, moisture, temp, yield)
-const SPARKLINE_PATTERNS: number[][] = [
-  [14, 20, 12, 24, 16],
-  [10, 18, 22, 14, 20],
-  [20, 14, 18, 10, 22],
-  [16, 22, 12, 20, 14],
+const QUICK_ACTIONS = [
+  { id: 'scan', label: 'Uchunguzi', icon: <Camera size={24} color="#fff" />, color: '#4CAF50', desc: 'AI Crop Scan' },
+  { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={24} color="#fff" />, color: '#3b82f6', desc: 'Farm Tasks' },
+  { id: 'market', label: 'Soko', icon: <TrendingUp size={24} color="#fff" />, color: '#f59e0b', desc: 'Market Prices' },
+  { id: 'crop-planning', label: 'Panga Mazao', icon: <Leaf size={24} color="#fff" />, color: '#22c55e', desc: 'AI Crop Planning' },
+  { id: 'contracts', label: 'Mikataba', icon: <BarChart3 size={24} color="#fff" />, color: '#8b5cf6', desc: 'Contract Farming' },
 ];
-
-
-const INITIAL_ACTIVITIES = [
-  { id: '1', title: 'Soil Scan Complete', route: '/scan', time: '2h ago', icon: <Microscope size={16} color="#22d15a" />, status: 'Optimal', detail: 'Nitrogen levels at 92%' },
-  { id: '2', title: 'Irrigation Scheduled', route: '/tasks', time: '4h ago', icon: <Waves size={16} color="#3b82f6" />, status: 'Pending', detail: 'Block B - 05:00 AM' },
-  { id: '3', title: 'Market Price Alert', route: '/market', time: '6h ago', icon: <BarChart3 size={16} color="#f59e0b" />, status: 'High', detail: 'Maize up 12% in Mbeya' },
-];
-
-const QUICK_ACTIONS: SwipeCard[] = [
-  { id: 'scan',      label: 'Uchunguzi wa Mazao', desc: 'AI Crop Scan',        emoji: '🌿', gradientColors: ['#22d15a', '#22d15a'], route: '/scan',      icon: <Camera    size={24} color="#fff" /> },
-  { id: 'tasks',     label: 'Usimamizi wa Shamba', desc: 'Farm Task Manager',   emoji: '📋', gradientColors: ['#3b82f6', '#2563eb'], route: '/tasks',     icon: <LayoutGrid size={24} color="#fff" /> },
-  { id: 'market',    label: 'Bei za Soko',          desc: 'Live Market Prices', emoji: '📊', gradientColors: ['#f59e0b', '#d97706'], route: '/market',    icon: <TrendingUp size={24} color="#fff" /> },
-  { id: 'analytics', label: 'Uchambuzi wa AI',      desc: 'Predictive Analytics',emoji: '🧠', gradientColors: ['#8b5cf6', '#7c3aed'], route: '/analytics', icon: <BarChart3  size={24} color="#fff" /> },
-  { id: 'contracts', label: 'Mikataba ya Kilimo',   desc: 'Contract Farming',   emoji: '🤝', gradientColors: ['#ec4899', '#db2777'], route: '/contracts', icon: <Leaf       size={24} color="#fff" /> },
-];
-
-// ── Drone Field Intelligence Panel ──────────────────────────────────────────
-const DRONE_STATS = [
-  { label: 'NDVI', value: '0.82' },
-  { label: 'UNYEVU', value: '67%' },
-  { label: 'HEWA', value: 'NZURI' },
-];
-
-function DroneFieldPanel({ language, colors, onPress }: { language: string; colors: any; onPress: () => void }) {
-  return (
-    <motion.View
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', damping: 22, stiffness: 120, delay: 0.1 }}
-      style={dp.wrapper}
-    >
-      <TouchableOpacity activeOpacity={0.92} onPress={onPress} style={dp.card}>
-        {/* Background field image */}
-        <Image
-          source={require('../../assets/drone-field.jpeg')}
-          style={dp.bgImage}
-          resizeMode="cover"
-        />
-
-        {/* Dark-to-transparent gradient overlay */}
-        <LinearGradient
-          colors={['rgba(5,15,7,0.10)', 'rgba(5,15,7,0.65)', 'rgba(5,15,7,0.92)']}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
-        />
-
-        {/* Green scan line sweeping down */}
-        <motion.View
-          animate={{ translateY: [-10, 170, -10] }}
-          transition={{ duration: 3.8, repeat: Infinity, ease: 'linear' }}
-          style={dp.scanWrap}
-          pointerEvents="none"
-        >
-          <LinearGradient
-            colors={['transparent', 'rgba(34,209,90,0.55)', 'transparent']}
-            style={dp.scanLine}
-            start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
-          />
-        </motion.View>
-
-        {/* Corner brackets — viewfinder style */}
-        <View style={[dp.corner, dp.cornerTL]} pointerEvents="none" />
-        <View style={[dp.corner, dp.cornerTR]} pointerEvents="none" />
-        <View style={[dp.corner, dp.cornerBL]} pointerEvents="none" />
-        <View style={[dp.corner, dp.cornerBR]} pointerEvents="none" />
-
-        {/* Top-right: live badge */}
-        <View style={dp.topRow}>
-          <View style={dp.liveBadge}>
-            <motion.View
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.4, repeat: Infinity }}
-              style={dp.liveDot}
-            />
-            <Text style={dp.liveText}>DRONE VIEW</Text>
-          </View>
-          <View style={dp.signalRow}>
-            {[1, 2, 3, 4].map((b) => (
-              <View key={b} style={[dp.signalBar, { height: b * 5 + 4, opacity: b <= 3 ? 1 : 0.25 }]} />
-            ))}
-          </View>
-        </View>
-
-        {/* Bottom overlay: stats + CTA */}
-        <View style={dp.bottomRow}>
-          <View style={dp.statsRow}>
-            {DRONE_STATS.map((s) => (
-              <View key={s.label} style={dp.statChip}>
-                <Text style={dp.statChipLabel}>{s.label}</Text>
-                <Text style={dp.statChipValue}>{s.value}</Text>
-              </View>
-            ))}
-          </View>
-          <View style={dp.ctaBtn}>
-            <ArrowRight size={14} color="#000" strokeWidth={3} />
-          </View>
-        </View>
-
-        {/* Title row */}
-        <View style={dp.titleRow}>
-          <Text style={dp.panelTitle}>
-            {language === 'sw' ? 'Udhibiti wa Shamba' : 'Field Command'}
-          </Text>
-          <Text style={dp.panelSub}>
-            {language === 'sw' ? 'Drone · AI Vision · Real-time' : 'Drone · AI Vision · Real-time'}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </motion.View>
-  );
-}
-
-const dp = StyleSheet.create({
-  wrapper:       { marginBottom: 28 },
-  card:          { height: 210, borderRadius: 28, overflow: 'hidden', justifyContent: 'space-between' },
-  bgImage:       { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' } as any,
-  scanWrap:      { position: 'absolute', left: 0, right: 0, top: 0 },
-  scanLine:      { height: 32, width: '100%' },
-  corner:        { position: 'absolute', width: 20, height: 20, borderColor: '#22d15a', borderWidth: 2 },
-  cornerTL:      { top: 14, left: 14, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 6 },
-  cornerTR:      { top: 14, right: 14, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 6 },
-  cornerBL:      { bottom: 14, left: 14, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 6 },
-  cornerBR:      { bottom: 14, right: 14, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 6 },
-  topRow:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, paddingBottom: 0 },
-  liveBadge:     { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34,209,90,0.20)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.40)' },
-  liveDot:       { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' },
-  liveText:      { color: '#22d15a', fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1.5 },
-  signalRow:     { flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
-  signalBar:     { width: 4, borderRadius: 2, backgroundColor: '#22d15a' },
-  titleRow:      { paddingHorizontal: 16, paddingBottom: 4 },
-  panelTitle:    { color: '#f0fff4', fontSize: 18, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
-  panelSub:      { color: 'rgba(255,255,255,0.50)', fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 1, marginTop: 2 },
-  bottomRow:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 14, marginTop: 4 },
-  statsRow:      { flexDirection: 'row', gap: 8 },
-  statChip:      { alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.45)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.30)' },
-  statChipLabel: { color: 'rgba(255,255,255,0.50)', fontSize: 8, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
-  statChipValue: { color: '#22d15a', fontSize: 13, fontFamily: 'Inter_900Black', marginTop: 1 },
-  ctaBtn:        { width: 36, height: 36, borderRadius: 18, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
-});
-
-// Variants for staggered entrance
-const containerVariants = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    transition: { type: "spring", damping: 25, stiffness: 120 }
-  }
-};
 
 export default function HomeScreen() {
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, radius, shadows } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
+  const [upgradeModalVisible, setUpgradeModalVisible] = useState(false);
 
-  // ── Live global state ────────────────────────────────────────────────────
   const agroId = useKilimoStore((s) => s.agroId);
   const isOffline = useKilimoStore((s) => s.isOffline);
   const syncQueue = useKilimoStore((s) => s.syncQueue);
@@ -245,840 +68,359 @@ export default function HomeScreen() {
   const unreadCount = useKilimoStore((s) => s.unreadCount);
   const farmProfile = useKilimoStore((s) => s.farmProfile);
   const language = useKilimoStore((s) => s.language);
+  const activities = useKilimoStore((s) => s.activities);
+  const setActivities = useKilimoStore((s) => s.setActivities);
 
-  // AI-06 — personalized recommendations (≥3, refreshed on profile/vitals change)
-  const recommendations = React.useMemo(
+  const recommendations = useMemo(
     () => generateRecommendations({ profile: farmProfile, vitals: farmVitals, language }),
     [farmProfile, farmVitals, language]
   );
 
-  // Derive dynamic farm stats from live store
   const FARM_STATS = [
-    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#22d15a" />, color: '#22d15a' },
+    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#4CAF50" />, color: '#4CAF50' },
     { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#3b82f6" />, color: '#3b82f6' },
     { id: 'weather', label: 'Joto', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#f59e0b" />, color: '#f59e0b' },
     { id: 'yield', label: 'Mavuno', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
   ];
 
-  const updateFarmVitals = useKilimoStore((s) => s.updateFarmVitals);
+  const setLastSyncedAt = useKilimoStore((s) => s.setLastSyncedAt);
+  const { forceSync } = useSyncEngine();
 
-  // queryClient is provided by _layout.tsx's QueryClientProvider
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // Trigger useFarmVitals poll cycle immediately
-    updateFarmVitals({});
-    // Give hooks ~1.5s to refetch and repaint, then clear spinner
-    setTimeout(() => setRefreshing(false), 1500);
-  }, [updateFarmVitals]);
+    await forceSync();
+    setLastSyncedAt(new Date().toISOString());
+    setRefreshing(false);
+  }, [setLastSyncedAt, forceSync]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       
-      {/* Premium Background System */}
-      <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={400} x={-100} y={100} delay={0} />
-        <NeuralOrb color="#3b82f6" size={300} x={SCREEN_WIDTH - 150} y={300} delay={2000} />
-        <NeuralOrb color="#f59e0b" size={250} x={SCREEN_WIDTH / 2} y={SCREEN_HEIGHT - 300} delay={4000} />
-        
-        <LinearGradient
-          colors={[
-            isDark ? colors.slate[950] : '#fff',
-            isDark ? colors.slate[900] + 'ee' : colors.slate[50] + 'ee',
-            'transparent'
-          ]}
-          style={styles.bgGradient}
-        />
-      </View>
-
       <SafeAreaView style={styles.safeArea}>
         <ScrollView 
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
-          refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
-              onRefresh={onRefresh} 
-              tintColor={colors.primary} 
-            />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
         >
-          <motion.View
-            variants={containerVariants}
-            initial="initial"
-            animate="animate"
-          >
-            {/* Header Section */}
-            <motion.View variants={itemVariants} style={styles.header}>
-              <View>
-                <View style={[styles.statusBadge, { backgroundColor: isOffline ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 209, 90, 0.1)' }]}>
-                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} />
-                  <Text style={[styles.statusText, { color: isOffline ? '#ef4444' : colors.primary }]}>
-                    {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
-                  </Text>
-                </View>
-                <Text style={[styles.greeting, { color: colors.textMute }]}>{getTimeGreeting(language)}</Text>
-                <Text style={[styles.name, { color: colors.text }]}>{agroId?.name?.split(' ')[0] ?? 'Mkulima'}</Text>
+          {/* Header Section */}
+          <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
+            <View>
+              <View style={[styles.statusBadge, { backgroundColor: isOffline ? '#fee2e2' : colors.primaryLight }]}>
+                <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} />
+                <Text style={[styles.statusText, { color: isOffline ? '#ef4444' : colors.primary }]}>
+                  {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
+                </Text>
               </View>
-              <View style={styles.headerActions}>
-                <TouchableOpacity 
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    router.push('/notifications' as any);
-                  }}
-                  style={styles.actionCircle}
-                  accessibilityLabel={`Arifa${unreadCount > 0 ? `, ${unreadCount} mpya` : ''}`}
-                  accessibilityHint="Fungua arifa"
-                >
-                  <BlurView intensity={20} tint={isDark ? "dark" : "light"} style={styles.circleBlur}>
-                    {isOffline ? <WifiOff size={22} color="#ef4444" /> : <Bell size={22} color={colors.text} />}
-                    {unreadCount > 0 && !isOffline && (
-                      <View style={[styles.notificationDot, styles.notificationBadge]}>
-                        <Text style={styles.notificationBadgeText}>
-                          {unreadCount > 9 ? '9+' : unreadCount}
-                        </Text>
-                      </View>
-                    )}
-                  </BlurView>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.avatarContainer, { borderColor: colors.primary + '40' }]}
-                  onPress={() => router.push('/(tabs)/profile' as any)}
-                  accessibilityLabel="Wasifu wako"
-                  accessibilityHint="Fungua ukurasa wa wasifu"
-                >
+              <Text style={[styles.greeting, { color: colors.textMute }]}>KARIBU TENA,</Text>
+              <Text style={[styles.name, { color: colors.text }]}>{agroId?.name?.split(' ')[0] ?? 'Mkulima'}</Text>
+            </View>
+            <View style={styles.headerActions}>
+              <TouchableOpacity 
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }}
+                style={[styles.actionCircle, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }]}
+                accessibilityLabel="Notifications"
+                accessibilityRole="button"
+              >
+                {isOffline ? <WifiOff size={22} color="#ef4444" /> : <Bell size={22} color={colors.text} />}
+                {unreadCount > 0 && !isOffline && (
+                  <View style={styles.notificationBadge}>
+                    <Text style={styles.notificationBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)} accessibilityLabel="Profile" accessibilityRole="button">
+                <View style={[styles.avatarContainer, { borderColor: colors.primary }]}>
                   {agroId?.avatarUrl ? (
                     <Image source={{ uri: agroId.avatarUrl }} style={styles.avatar} />
                   ) : (
-                    <View style={[styles.avatar, { backgroundColor: colors.primary + '22', alignItems: 'center', justifyContent: 'center' }]}>
-                      <Text style={{ color: colors.primary, fontFamily: 'Inter_900Black', fontSize: 16 }}>
-                        {(agroId?.name ?? 'M').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()}
+                    <View style={[styles.avatar, { backgroundColor: colors.primaryLight, justifyContent: 'center', alignItems: 'center' }]}>
+                      <Text style={{ color: colors.primary, fontFamily: 'Inter_800ExtraBold', fontSize: 18 }}>
+                        {agroId?.name?.[0]?.toUpperCase() || '?'}
                       </Text>
                     </View>
                   )}
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+
+          {/* Wallet Card */}
+          <Animated.View entering={FadeInDown.delay(200).springify()}>
+            <Card variant="solid" style={[styles.walletCard, { backgroundColor: colors.primary, borderColor: colors.primary, ...shadows.premium }]}>
+              <View style={styles.walletHeader}>
+                <View style={[styles.agroIdBadge, { backgroundColor: 'rgba(255, 255, 255, 0.15)' }]}>
+                  <Fingerprint size={14} color="#FCFBF7" />
+                  <Text style={[styles.agroIdText, { color: '#FCFBF7' }]}>AGRO ID SECURED</Text>
+                </View>
+                <View style={[styles.mobileMoneyTag, { backgroundColor: agroId?.mpesaLinked ? '#3A8D52' : '#D97706' }]}>
+                  <Text style={styles.mobileMoneyText}>{agroId?.mpesaLinked ? 'M-PESA LINKED' : 'LINK M-PESA'}</Text>
+                </View>
+              </View>
+
+              <Text style={[styles.balanceLabel, { color: 'rgba(252, 251, 247, 0.7)' }]}>Akiba Yako (TZS)</Text>
+              <View style={styles.balanceRow}>
+                <Text style={[styles.balanceAmount, { color: '#FCFBF7' }]}>{wallet.balanceTZS.toLocaleString()}</Text>
+                <Text style={[styles.balanceDecimals, { color: 'rgba(252, 251, 247, 0.7)' }]}>.00</Text>
+              </View>
+
+              <View style={styles.walletActions}>
+                <TouchableOpacity
+                  style={[styles.walletBtn, { backgroundColor: '#FCFBF7' }]}
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/agro-id' as any); }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Deposit funds"
+                >
+                  <ArrowDownLeft size={18} color="#080A08" />
+                  <Text style={[styles.walletBtnText, { color: '#080A08' }]}>Deposit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.walletBtn, { backgroundColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)' }]}
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/wallet-admin' as any); }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Pay cooperative dues"
+                >
+                  <ArrowUpRight size={18} color="#FCFBF7" />
+                  <Text style={[styles.walletBtnText, { color: '#FCFBF7' }]}>Pay Co-op</Text>
                 </TouchableOpacity>
               </View>
-            </motion.View>
+            </Card>
+          </Animated.View>
 
-            {/* Drone Field Intelligence Panel */}
-            <DroneFieldPanel
-              language={language}
-              colors={colors}
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/farm-twin' as any); }}
-            />
-
-            {/* Quick Actions — CRED 3D swipe deck */}
-            <motion.View variants={itemVariants} style={[styles.sectionHeader, { marginBottom: 10 }]}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                {language === 'sw' ? 'Vitendo vya Haraka' : 'Quick Actions'}
-              </Text>
-              <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 11, letterSpacing: 1 }}>
-                SWIPE →
-              </Text>
-            </motion.View>
-            <motion.View variants={itemVariants} style={{ marginHorizontal: -20 }}>
-              <SwipeCardDeck3D cards={QUICK_ACTIONS} />
-            </motion.View>
-
-            {/* Agro ID & Mobile Money Wallet Card */}
-            <motion.View 
-              variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              style={styles.walletContainer}
+          {/* Sankofa AI Hero */}
+          <Animated.View entering={FadeInDown.delay(300).springify()}>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/ai'); }}
+              accessibilityRole="button"
+              accessibilityLabel="Open Sankofa AI assistant"
+              accessibilityHint="View AI crop recommendations"
             >
-              <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.walletCard, { borderColor: colors.border }]}>
-                <LinearGradient
-                  colors={isDark ? ['rgba(34, 209, 90, 0.12)', 'rgba(10, 26, 14, 0.50)'] : ['rgba(34, 209, 90, 0.10)', 'rgba(255, 255, 255, 0.80)']}
-                  style={StyleSheet.absoluteFill}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                />
-                
-                <View style={styles.walletHeader}>
-                  <View style={styles.agroIdBadge}>
-                    <Fingerprint size={14} color={colors.primary} />
-                    <Text style={[styles.agroIdText, { color: colors.primary }]}>AGRO ID SECURED</Text>
+              <Card variant="glass" style={styles.aiHero}>
+                <View style={styles.aiHeroContent}>
+                  <View style={[styles.aiIconMain, { backgroundColor: colors.primaryLight }]}>
+                    <BrainCircuit size={32} color={colors.primary} />
                   </View>
-                  <View style={styles.mobileMoneyTag}>
-                    <Text style={styles.mobileMoneyText}>
-                      {agroId?.mpesaLinked ? 'M-PESA LINKED' : 'LINK M-PESA'}
+                  <View style={styles.aiRight}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                      <Sparkles size={12} color={colors.primary} style={{ marginRight: 4 }} />
+                      <Text style={[styles.aiTitle, { color: colors.primary }]}>Sankofa AI</Text>
+                    </View>
+                    <Text style={[styles.aiMessage, { color: colors.text }]}>
+                      {language === 'sw' ? '"Unyevu wa Shamba B unashuka haraka. Napendekeza umwagiliaji..."' : '"Block B moisture dropping faster than predicted. Recommended: irrigate..."'}
                     </Text>
+                    <View style={styles.aiActionRow}>
+                      <Text style={[styles.aiActionLabel, { color: colors.primary }]}>SOMA ZAIDI</Text>
+                      <ArrowRight size={14} color={colors.primary} />
+                    </View>
                   </View>
                 </View>
+              </Card>
+            </TouchableOpacity>
+          </Animated.View>
 
-                <Text style={[styles.balanceLabel, { color: colors.textMute }]}>Akiba Yako ({wallet.currency})</Text>
-                <View style={styles.balanceRow}>
-                  <Text style={[styles.balanceAmount, { color: colors.text }]}>
-                    {wallet.balanceTZS.toLocaleString()}
-                  </Text>
-                  <Text style={[styles.balanceDecimals, { color: colors.textMute }]}>.00</Text>
-                </View>
-
-                <View style={styles.walletActions}>
-                  <TouchableOpacity
-                    style={[styles.walletBtn, { backgroundColor: colors.primary }]}
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/agro-id' as any); }}
-                  >
-                    <ArrowDownLeft size={18} color="#000" />
-                    <Text style={[styles.walletBtnText, { color: '#000' }]}>Deposit</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.walletBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/wallet-admin' as any); }}
-                  >
-                    <ArrowUpRight size={18} color={colors.text} />
-                    <Text style={[styles.walletBtnText, { color: colors.text }]}>Pay Co-op</Text>
-                  </TouchableOpacity>
-                </View>
-              </BlurView>
-            </motion.View>
-
-            {/* Sankofa AI - The Neural Hub */}
-            <motion.View 
-              variants={itemVariants}
-              whileHover={{ scale: 1.02, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-            >
+          {/* Quick Actions */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.actionScroll} snapToInterval={SCREEN_WIDTH * 0.65 + 16} decelerationRate="fast">
+            {QUICK_ACTIONS.map((action) => (
               <TouchableOpacity 
-                activeOpacity={0.95}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  router.push('/sankofa');
-                }}
-                style={styles.aiHeroContainer}
+                key={action.id} 
+                activeOpacity={0.9} 
+                onPress={() => { 
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
+                  if (action.id === 'contracts' && agroId?.tier === 'Free') {
+                    setUpgradeModalVisible(true);
+                  } else {
+                    router.push(`/${action.id}` as any); 
+                  }
+                }} 
+                style={styles.actionCardWrapper}
+                accessible={true}
+                accessibilityLabel={action.label}
+                accessibilityHint={action.desc}
+                accessibilityRole="button"
               >
-                <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.aiHero, { borderColor: colors.border }]}>
-                  <LinearGradient
-                    colors={isDark ? ['rgba(30, 41, 59, 0.4)', 'rgba(2, 6, 23, 0.6)'] : ['rgba(255, 255, 255, 0.8)', 'rgba(241, 245, 249, 0.8)']}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  
-                  <View style={styles.aiHeroContent}>
-                    <View style={styles.aiLeft}>
-                      <View style={styles.aiBrainWrapper}>
-                        <motion.View 
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                          style={styles.aiRotateContainer}
-                        >
-                          <LinearGradient
-                            colors={[colors.primary, '#3b82f6']}
-                            style={styles.aiOrbit}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                          />
-                        </motion.View>
-                        <motion.View 
-                          animate={{ 
-                            scale: [1, 1.15, 1],
-                            shadowOpacity: [0.2, 0.5, 0.2]
-                          }}
-                          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          <BlurView intensity={40} tint="dark" style={[styles.aiIconMain, { borderColor: colors.primary + '40' }]}>
-                            <BrainCircuit size={32} color={colors.primary} />
-                          </BlurView>
-                        </motion.View>
-                      </View>
-                      <motion.View 
-                        animate={{ opacity: [0.6, 1, 0.6] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        style={styles.aiBadge}
-                      >
-                        <Sparkles size={10} color={colors.primary} />
-                        <Text style={styles.aiBadgeText}>SANKOFA AI</Text>
-                      </motion.View>
-                    </View>
-                    
-                    <View style={styles.aiRight}>
-                      <Text style={[styles.aiTitle, { color: colors.text }]}>Ushauri wa AI</Text>
-                      <Text style={[styles.aiMessage, { color: colors.text }]}>
-                        {language === 'sw'
-                          ? `"Unyevu wa Shamba B unashuka haraka. Napendekeza umwagiliaji saa 12 jioni — mazao yako yatashukuru."`
-                          : `"Block B moisture dropping faster than predicted. Recommended: irrigate at 18:00 before peak heat."`}
-                      </Text>
-                      <View style={styles.aiActionRow}>
-                        <Text style={[styles.aiActionLabel, { color: colors.primary }]}>SOMA ZAIDI</Text>
-                        <ArrowRight size={14} color={colors.primary} />
-                      </View>
-                    </View>
+                <LinearGradient colors={[action.color, action.color + 'bb']} style={[styles.actionCard, { borderRadius: radius.lg }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                  <View style={styles.actionIconOuter}>
+                    {action.icon}
                   </View>
-                </BlurView>
-              </TouchableOpacity>
-            </motion.View>
-
-            {/* Farm Vitale Grid */}
-            <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Afya ya Shamba</Text>
-              <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}>
-                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS →</Text>
-              </TouchableOpacity>
-            </motion.View>
-
-            <View style={styles.statsGrid}>
-              {FARM_STATS.map((stat, idx) => (
-                <motion.View 
-                  key={stat.id}
-                  variants={itemVariants}
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={styles.statCardContainer}
-                >
-                  <BlurView intensity={isDark ? 15 : 50} tint={isDark ? "dark" : "light"} style={[styles.statCard, { borderColor: colors.border }]}>
-                    <View style={[styles.statIconBg, { backgroundColor: stat.color + '15' }]}>
-                      {stat.icon}
-                    </View>
-                    <Text style={[styles.statValue, { color: colors.text }]}>{stat.value}</Text>
-                    <Text style={[styles.statLabel, { color: colors.textMute }]}>{stat.label}</Text>
-                    <View style={styles.miniGraph}>
-                      {SPARKLINE_PATTERNS[idx].map((h, i) => (
-                        <View
-                          key={i}
-                          style={[
-                            styles.graphBar,
-                            {
-                              height: h,
-                              backgroundColor: stat.color,
-                              opacity: 0.35 + (i * 0.13),
-                            }
-                          ]}
-                        />
-                      ))}
-                    </View>
-                  </BlurView>
-                </motion.View>
-              ))}
-            </View>
-
-
-            {/* AI-06 — Sankofa AI personalized recommendations */}
-            <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Lightbulb size={18} color={colors.primary} />
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  {language === 'sw' ? 'Mapendekezo ya Sankofa AI' : 'Sankofa AI Recommendations'}
-                </Text>
-              </View>
-              <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 1 }}>
-                {recommendations.length} {language === 'sw' ? 'MAPYA' : 'NEW'}
-              </Text>
-            </motion.View>
-            <View style={{ gap: 10, marginBottom: 20 }}>
-              {recommendations.map((rec) => {
-                const col = severityColor(rec.severity);
-                return (
-                  <motion.View key={rec.id} variants={itemVariants}>
-                    <Pressable
-                      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(rec.cta.route as any); }}
-                      style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
-                    >
-                      <BlurView intensity={isDark ? 15 : 50} tint={isDark ? 'dark' : 'light'} style={[styles.recCard, { borderColor: col + '40' }]}>
-                        <View style={[styles.recBar, { backgroundColor: col }]} />
-                        <View style={{ flex: 1 }}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <View style={[styles.recDot, { backgroundColor: col }]} />
-                            <Text style={[styles.recCat, { color: col }]}>{rec.category.toUpperCase()}</Text>
-                          </View>
-                          <Text style={[styles.recTitle, { color: colors.text }]}>{rec.title}</Text>
-                          <Text style={[styles.recBody, { color: colors.textMute }]}>{rec.body}</Text>
-                          <View style={[styles.recCta, { borderColor: col + '50' }]}>
-                            <Text style={[styles.recCtaText, { color: col }]}>{rec.cta.label}</Text>
-                            <ArrowRight size={12} color={col} />
-                          </View>
-                        </View>
-                      </BlurView>
-                    </Pressable>
-                  </motion.View>
-                );
-              })}
-            </View>
-
-            {/* Telemetry Feed */}
-            <motion.View variants={itemVariants} style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Shughuli za Hivi Karibuni</Text>
-              <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActivities([]); }}>
-                <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>CLEAR ALL</Text>
-              </TouchableOpacity>
-            </motion.View>
-
-            <View style={styles.activityList}>
-              {activities.length === 0 && (
-                <View style={{ alignItems: 'center', paddingVertical: 32, gap: 10 }}>
-                  <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary + '14', alignItems: 'center', justifyContent: 'center' }}>
-                    <RefreshCw size={22} color={colors.textMute} />
+                  <View>
+                    <Text style={styles.actionLabel}>{action.label}</Text>
+                    <Text style={styles.actionDesc}>{action.desc}</Text>
                   </View>
-                  <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 14 }}>
-                    {language === 'sw' ? 'Hakuna shughuli za hivi karibuni' : 'No recent activity'}
-                  </Text>
-                  <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium', fontSize: 12, textAlign: 'center' }}>
-                    {language === 'sw' ? 'Tumia vipengele vya app kuona shughuli hapa.' : 'Use the app features to see activity here.'}
-                  </Text>
-                </View>
-              )}
-              {activities.map((activity, index) => (
-                <motion.View 
-                  key={activity.id}
-                  variants={itemVariants}
-                  layout
-                >
-                  <Pressable 
-                    style={({ pressed }) => [
-                      styles.activityItemContainer,
-                      { transform: [{ scale: pressed ? 0.98 : 1 }] }
-                    ]}
-                    onPress={() => { Haptics.selectionAsync(); router.push(activity.route as any); }}
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Farm Vitale Grid */}
+          <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Afya ya Shamba</Text>
+            <TouchableOpacity
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}
+              accessibilityRole="button"
+              accessibilityLabel="View farm sensors"
+            >
+              <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS →</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          <View style={styles.statsGrid}>
+            {FARM_STATS.map((stat, idx) => (
+              <Animated.View key={stat.id} entering={FadeInDown.delay(500 + idx * 50).springify()} style={styles.statCardContainer}>
+                <Card variant="solid" style={{ padding: 16 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                    <View style={[styles.statIconBg, { backgroundColor: stat.color + '15' }]}>{stat.icon}</View>
+                    <Text style={[styles.statLabel, { color: colors.textMute, marginLeft: 8 }]}>{stat.label}</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: colors.text }]}>{stat.value}</Text>
+                </Card>
+              </Animated.View>
+            ))}
+          </View>
+
+          {/* Recommendations */}
+          <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.sectionHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Lightbulb size={18} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Sankofa AI</Text>
+            </View>
+            <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 11 }}>{recommendations.length} NEW</Text>
+          </Animated.View>
+          <View style={{ gap: 10, marginBottom: 24 }}>
+            {recommendations.map((rec, idx) => {
+              const col = severityColor(rec.severity);
+              return (
+                <Animated.View key={rec.id} entering={FadeInDown.delay(600 + idx * 50).springify()}>
+                  <Pressable
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(rec.cta.route as any); }}
+                    accessibilityRole="button"
+                    accessibilityLabel={rec.title}
+                    accessibilityHint={rec.cta.label}
                   >
-                    <BlurView intensity={isDark ? 10 : 40} tint={isDark ? "dark" : "light"} style={[styles.activityItem, { borderColor: colors.border }]}>
-                      <View style={[styles.activityIconWrapper, { backgroundColor: activity.icon.props.color + '10', borderColor: activity.icon.props.color + '30' }]}>
-                        {activity.icon}
+                    <Card variant="solid" style={[styles.recCard, { borderLeftColor: col, borderLeftWidth: 4 }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <Text style={[styles.recCat, { color: col }]}>{rec.category.toUpperCase()}</Text>
                       </View>
-                      <View style={styles.activityContent}>
-                        <View style={styles.activityHeader}>
-                          <Text style={[styles.activityTitle, { color: colors.text }]}>{activity.title}</Text>
-                          <Text style={[styles.activityTime, { color: colors.textMute }]}>{activity.time}</Text>
-                        </View>
-                        <Text style={[styles.activityDetail, { color: colors.textMute }]}>{activity.detail}</Text>
-                      </View>
-                      <View style={[styles.activityStatusTag, { backgroundColor: isDark ? 'rgba(34, 209, 90, 0.10)' : 'rgba(34, 209, 90, 0.08)' }]}>
-                        <Text style={[styles.activityStatusText, { color: colors.primary }]}>{activity.status}</Text>
-                      </View>
-                    </BlurView>
+                      <Text style={[styles.recTitle, { color: colors.text }]}>{rec.title}</Text>
+                      <Text style={[styles.recBody, { color: colors.textMute }]}>{rec.body}</Text>
+                    </Card>
                   </Pressable>
-                </motion.View>
-              ))}
-            </View>
-          </motion.View>
+                </Animated.View>
+              );
+            })}
+          </View>
 
-          <View style={{ height: 140 }} />
+          {/* Telemetry Feed */}
+          <Animated.View entering={FadeInDown.delay(700).springify()} style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Shughuli za Hivi Karibuni</Text>
+            <TouchableOpacity
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActivities([]); }}
+              accessibilityRole="button"
+              accessibilityLabel="Clear all recent activities"
+            >
+              <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>CLEAR ALL</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          <View style={styles.activityList}>
+            {activities.length === 0 && (
+              <View style={{ alignItems: 'center', paddingVertical: 24 }}>
+                <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 8 }}>Hakuna shughuli mpya.</Text>
+              </View>
+            )}
+            {activities.map((activity, idx) => (
+              <Animated.View key={activity.id} entering={FadeInDown.delay(700 + idx * 50).springify()}>
+                <Pressable
+                  onPress={() => { Haptics.selectionAsync(); router.push(activity.route as any); }}
+                  accessibilityRole="button"
+                  accessibilityLabel={activity.title}
+                  accessibilityHint={activity.detail}
+                >
+                  <Card variant="solid" style={styles.activityItem}>
+                    <View style={[styles.activityIconWrapper, { backgroundColor: (activity.iconColor || colors.primary) + '15' }]}>
+                      {activity.iconName === 'Microscope' ? <Microscope size={16} color={activity.iconColor || colors.primary} /> : 
+                       activity.iconName === 'Waves' ? <Waves size={16} color={activity.iconColor || colors.primary} /> :
+                       activity.iconName === 'BarChart3' ? <BarChart3 size={16} color={activity.iconColor || colors.primary} /> :
+                       <Leaf size={16} color={activity.iconColor || colors.primary} />}
+                    </View>
+                    <View style={styles.activityContent}>
+                      <Text style={[styles.activityTitle, { color: colors.text }]}>{activity.title}</Text>
+                      <Text style={[styles.activityDetail, { color: colors.textMute }]}>{activity.detail}</Text>
+                    </View>
+                    <Text style={[styles.activityTime, { color: colors.textMute }]}>{activity.time}</Text>
+                  </Card>
+                </Pressable>
+              </Animated.View>
+            ))}
+          </View>
+          
+          <View style={{ height: 100 }} />
         </ScrollView>
       </SafeAreaView>
+
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  bgOrb: {
-    position: 'absolute',
-  },
-  bgGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: SCREEN_HEIGHT,
-  },
-  scrollContent: {
-    padding: 24,
-    paddingTop: 12,
-  },
-  recCard: {
-    flexDirection: 'row',
-    gap: 12,
-    padding: 14,
-    paddingLeft: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  recBar: { width: 4, borderRadius: 2, alignSelf: 'stretch' },
-  recDot: { width: 6, height: 6, borderRadius: 3 },
-  recCat: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.5 },
-  recTitle: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', marginBottom: 4 },
-  recBody: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 17, marginBottom: 10 },
-  recCta: { flexDirection: 'row', alignSelf: 'flex-start', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1 },
-  recCtaText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 12,
-    alignSelf: 'flex-start',
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1,
-  },
-  greeting: {
-    fontSize: 12,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: 2,
-    marginBottom: 4,
-  },
-  name: {
-    fontSize: 34,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -1.5,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  actionCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    overflow: 'hidden',
-    marginRight: 12,
-  },
-  circleBlur: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notificationDot: {
-    position: 'absolute',
-    top: 14,
-    right: 14,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#ef4444',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  avatarContainer: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    borderWidth: 2,
-    padding: 2,
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 25,
-  },
-  walletContainer: {
-    marginBottom: 28,
-  },
-  walletCard: {
-    borderRadius: 36,
-    padding: 24,
-    overflow: 'hidden',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 8,
-  },
-  walletHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  agroIdBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(34, 209, 90, 0.12)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    gap: 6,
-  },
-  agroIdText: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1,
-  },
-  mobileMoneyTag: {
-    backgroundColor: '#22d15a',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  mobileMoneyText: {
-    color: '#fff',
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 0.5,
-  },
-  balanceLabel: {
-    fontSize: 14,
-    fontFamily: 'Inter_600SemiBold',
-    marginBottom: 4,
-  },
-  balanceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 24,
-  },
-  balanceAmount: {
-    fontSize: 42,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -2,
-  },
-  balanceDecimals: {
-    fontSize: 20,
-    fontFamily: 'Inter_700Bold',
-  },
-  walletActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  walletBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 20,
-    gap: 8,
-  },
-  walletBtnText: {
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.5,
-  },
-  aiHeroContainer: {
-    marginBottom: 36,
-  },
-  aiHero: {
-    borderRadius: 36,
-    padding: 24,
-    overflow: 'hidden',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 8,
-  },
-  aiHeroContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  aiLeft: {
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  aiBrainWrapper: {
-    width: 70,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  aiRotateContainer: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  aiOrbit: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 40,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    borderStyle: 'dashed',
-    opacity: 0.5,
-  },
-  aiIconMain: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  aiBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(34, 209, 90, 0.10)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  aiBadgeText: {
-    color: '#22d15a',
-    fontSize: 8,
-    fontFamily: 'Inter_900Black',
-    marginLeft: 4,
-    letterSpacing: 0.5,
-  },
-  aiRight: {
-    flex: 1,
-  },
-  aiTitle: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.5,
-    marginBottom: 6,
-  },
-  aiMessage: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 18,
-    marginBottom: 12,
-    opacity: 0.8,
-  },
-  aiActionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  aiActionLabel: {
-    fontSize: 11,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 0.5,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.5,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 32,
-  },
-  statCardContainer: {
-    width: (SCREEN_WIDTH - 64) / 2,
-    marginBottom: 16,
-  },
-  statCard: {
-    padding: 20,
-    borderRadius: 28,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  statIconBg: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  statValue: {
-    fontSize: 22,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: -0.5,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-    opacity: 0.7,
-    marginBottom: 12,
-  },
-  miniGraph: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  graphBar: {
-    width: 6,
-    borderRadius: 3,
-  },
-  activityList: {
-    gap: 12,
-  },
-  activityItemContainer: {
-    borderRadius: 24,
-    overflow: 'hidden',
-  },
-  activityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 24,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  activityIconWrapper: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  activityContent: {
-    flex: 1,
-    marginLeft: 14,
-    marginRight: 8,
-  },
-  activityHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  activityTitle: {
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.3,
-  },
-  activityTime: {
-    fontSize: 10,
-    fontFamily: 'Inter_600SemiBold',
-    opacity: 0.5,
-  },
-  activityDetail: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    opacity: 0.6,
-  },
-  activityStatusTag: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  activityStatusText: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  notificationBadge: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#ef4444',
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: -4,
-    right: -4,
-  },
-  notificationBadgeText: {
-    color: '#fff',
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-  },
+  container: { flex: 1 },
+  safeArea: { flex: 1 },
+  scrollContent: { padding: 20 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  statusBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 8, alignSelf: 'flex-start' },
+  statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
+  statusText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
+  greeting: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginBottom: 2 },
+  name: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', letterSpacing: -1 },
+  headerActions: { flexDirection: 'row', alignItems: 'center' },
+  actionCircle: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
+  notificationBadge: { position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: '#ef4444' },
+  notificationBadgeText: { display: 'none' },
+  avatarContainer: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, padding: 2 },
+  avatar: { width: '100%', height: '100%', borderRadius: 20 },
+  walletCard: { marginBottom: 24, padding: 20 },
+  walletHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  agroIdBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, gap: 6 },
+  agroIdText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
+  mobileMoneyTag: { backgroundColor: '#10b981', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+  mobileMoneyText: { color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  balanceLabel: { fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 4 },
+  balanceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 20 },
+  balanceAmount: { fontSize: 36, fontFamily: 'Inter_800ExtraBold', letterSpacing: -1 },
+  balanceDecimals: { fontSize: 18, fontFamily: 'Inter_600SemiBold' },
+  walletActions: { flexDirection: 'row', gap: 12 },
+  walletBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 12, gap: 6 },
+  walletBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  aiHero: { marginBottom: 32, padding: 20 },
+  aiHeroContent: { flexDirection: 'row', alignItems: 'center' },
+  aiIconMain: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
+  aiRight: { flex: 1 },
+  aiTitle: { fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
+  aiMessage: { fontSize: 14, fontFamily: 'Inter_500Medium', lineHeight: 20, marginBottom: 12 },
+  aiActionRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  aiActionLabel: { fontSize: 12, fontFamily: 'Inter_700Bold' },
+  actionScroll: { paddingRight: 40, gap: 16 },
+  actionCardWrapper: { width: SCREEN_WIDTH * 0.4 },
+  actionCard: { padding: 16, height: 120, justifyContent: 'space-between' },
+  actionIconOuter: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  actionLabel: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold', marginBottom: 2 },
+  actionDesc: { color: 'rgba(255,255,255,0.8)', fontSize: 12, fontFamily: 'Inter_500Medium' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  sectionTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24 },
+  statCardContainer: { width: (SCREEN_WIDTH - 52) / 2 },
+  statIconBg: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  statLabel: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  statValue: { fontSize: 22, fontFamily: 'Inter_800ExtraBold' },
+  recCard: { padding: 16, paddingLeft: 12 },
+  recCat: { fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  recTitle: { fontSize: 15, fontFamily: 'Inter_700Bold', marginBottom: 4 },
+  recBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 18 },
+  activityList: { gap: 12 },
+  activityItem: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  activityIconWrapper: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  activityContent: { flex: 1, marginLeft: 12 },
+  activityTitle: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  activityDetail: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  activityTime: { fontSize: 11, fontFamily: 'Inter_500Medium' },
 });

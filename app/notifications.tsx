@@ -30,7 +30,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
-import { motion, AnimatePresence } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useTheme } from '../constants/Theme';
 import { useKilimoStore, Notification } from '../store/useKilimoStore';
 
@@ -38,7 +38,7 @@ const TYPE_CONFIG = {
   alert:   { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
   warning: { icon: Zap,           color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
   info:    { icon: Info,          color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
-  success: { icon: CheckCircle2,  color: '#22d15a', bg: 'rgba(34, 209, 90, 0.12)' },
+  success: { icon: CheckCircle2,  color: '#3ecf8e', bg: 'rgba(62, 207, 142, 0.12)' },
 };
 
 function timeAgo(iso: string): string {
@@ -70,11 +70,8 @@ function NotificationItem({
   const Icon = cfg.icon;
 
   return (
-    <motion.View
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20, height: 0 }}
-      transition={{ delay: index * 0.06, type: 'spring', damping: 22 }}
+    <Animated.View
+      entering={FadeInDown} exiting={FadeOut}
       style={styles.notifWrapper}
     >
       <TouchableOpacity
@@ -83,6 +80,9 @@ function NotificationItem({
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           onRead(item.id);
         }}
+        accessibilityRole="button"
+        accessibilityLabel={item.read ? item.title : `Unread: ${item.title}`}
+        accessibilityHint="Tap to mark as read"
       >
         <BlurView
           intensity={isDark ? 20 : 60}
@@ -137,13 +137,15 @@ function NotificationItem({
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 onDelete(item.id);
               }}
+              accessibilityRole="button"
+              accessibilityLabel={`Delete notification: ${item.title}`}
             >
               <Trash2 size={14} color={colors.textMute} />
             </TouchableOpacity>
           </View>
         </BlurView>
       </TouchableOpacity>
-    </motion.View>
+    </Animated.View>
   );
 }
 
@@ -168,24 +170,20 @@ export default function NotificationsScreen() {
 
       {/* Background Orbs */}
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <motion.View
-          animate={{ x: [-20, 20, -20], y: [0, -40, 0], opacity: [0.08, 0.15, 0.08] }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          style={[styles.bgOrb, { backgroundColor: '#22d15a', top: -80, right: -100, width: 300, height: 300, borderRadius: 150 }]}
+        <Animated.View
+          /* Reanimated Todo */
+          style={[styles.bgOrb, { backgroundColor: '#3ecf8e', top: -80, right: -100, width: 300, height: 300, borderRadius: 150 }]}
         />
-        <motion.View
-          animate={{ x: [0, -30, 0], y: [0, 40, 0], opacity: [0.06, 0.12, 0.06] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+        <Animated.View
+          /* Reanimated Todo */
           style={[styles.bgOrb, { backgroundColor: '#3b82f6', bottom: 100, left: -80, width: 250, height: 250, borderRadius: 125 }]}
         />
       </View>
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
-        <motion.View
-          initial={{ y: -40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 120 }}
+        <Animated.View
+          entering={FadeInDown}
         >
           <BlurView
             intensity={isDark ? 20 : 80}
@@ -195,6 +193,7 @@ export default function NotificationsScreen() {
             <TouchableOpacity
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.back(); }}
               style={styles.backBtn}
+              accessibilityRole="button"
               accessibilityLabel="Go back"
             >
               <ChevronLeft size={24} color={colors.text} />
@@ -215,37 +214,37 @@ export default function NotificationsScreen() {
                 markAllRead();
               }}
               style={styles.actionBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Mark all notifications as read"
             >
               <CheckCheck size={20} color={colors.primary} />
             </TouchableOpacity>
           </BlurView>
-        </motion.View>
+        </Animated.View>
 
         {/* List */}
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <AnimatePresence>
+          
             {notifications.length === 0 ? (
               /* Empty State */
-              <motion.View
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+              <Animated.View
+                entering={FadeInDown}
                 style={styles.emptyState}
               >
-                <motion.View
-                  animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.8, 0.4] }}
-                  transition={{ duration: 3, repeat: Infinity }}
+                <Animated.View
+                  /* Reanimated Todo */
                   style={[styles.emptyIcon, { backgroundColor: colors.primary + '15' }]}
                 >
                   <BellRing size={40} color={colors.primary} />
-                </motion.View>
+                </Animated.View>
                 <Text style={[styles.emptyTitle, { color: colors.text }]}>Hakuna Arifa</Text>
                 <Text style={[styles.emptySubtitle, { color: colors.textMute }]}>
                   Arifa zako zote zitaonekana hapa. Sankofa AI itakutumia ujumbe muhimu.
                 </Text>
-              </motion.View>
+              </Animated.View>
             ) : (
               notifications.map((notif, i) => (
                 <NotificationItem
@@ -259,7 +258,7 @@ export default function NotificationsScreen() {
                 />
               ))
             )}
-          </AnimatePresence>
+          
 
           {notifications.length > 0 && (
             <TouchableOpacity
@@ -268,6 +267,8 @@ export default function NotificationsScreen() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 clearNotifications();
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Clear all notifications"
             >
               <Text style={[styles.clearAllText, { color: colors.textMute }]}>
                 Futa Arifa Zote
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
   actionBtn: {
     width: 44, height: 44, borderRadius: 22,
     justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(34, 209, 90, 0.1)',
+    backgroundColor: 'rgba(62, 207, 142, 0.1)',
   },
   scrollContent: {
     padding: 20, paddingBottom: 60, gap: 12,

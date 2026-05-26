@@ -7,7 +7,7 @@ import {
   StyleSheet, View, Text, ScrollView, TouchableOpacity, SafeAreaView,
   Dimensions, StatusBar, Platform, Alert,
 } from 'react-native';
-import { motion, AnimatePresence } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import {
   ChevronLeft, Sparkles, Leaf, Droplets, AlertCircle, CheckCircle2,
   Plus, TrendingUp, Sun, Cloud, CloudRain, Calendar, Target, ArrowRight,
@@ -53,7 +53,7 @@ const SEASONS: { key: Season; label: string; sublabel: string; months: string; i
 const CROP_DATA: Record<Season, CropRec[]> = {
   masika: [
     { id: 'm1', name: 'Maize', nameSw: 'Mahindi', emoji: '🌽', daysToHarvest: 120, yieldPerAcre: '2.5 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Tumia mbegu ya DK8031 au H614D', 'Weka CAN wiki 4 baada ya kupanda', 'Dhibiti wadudu wa buni mapema'] },
-    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
+    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#10b981', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
     { id: 'm3', name: 'Paddy Rice', nameSw: 'Mpunga', emoji: '🌾', daysToHarvest: 150, yieldPerAcre: '3.0 tani', price: 'TZS 120,000/mfuko', water: 'Juu', risk: 'Wastani', color: '#3b82f6', plantWeeks: 3, growWeeks: 16, harvestWeeks: 2, tips: ['Hitaji mfumo mzuri wa umwagiliaji', 'Tumia mbegu SARO 5 au TXD 306', 'Kagua mara kwa mara kwa magonjwa ya majani'] },
     { id: 'm4', name: 'Tomatoes', nameSw: 'Nyanya', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '5.0 tani', price: 'TZS 38,000/crate', water: 'Wastani', risk: 'Juu', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu kwanza wiki 3', 'Weka steki na uunganishe sawa', 'Dhibiti kuoza kwa mwisho (Blossom End Rot)'] },
   ],
@@ -61,7 +61,7 @@ const CROP_DATA: Record<Season, CropRec[]> = {
     { id: 'v1', name: 'Short Maize', nameSw: 'Mahindi (Mfupi)', emoji: '🌽', daysToHarvest: 90, yieldPerAcre: '2.0 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 1, tips: ['Chagua aina ya siku 90 (SEEDCO SC403)', 'Panda siku 1-3 za mvua za kwanza', 'Funika udongo (mulching) kudumisha unyevu'] },
     { id: 'v2', name: 'Onions', nameSw: 'Vitunguu', emoji: '🧅', daysToHarvest: 120, yieldPerAcre: '4.0 tani', price: 'TZS 45,000/net 20kg', water: 'Wastani', risk: 'Wastani', color: '#a855f7', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Anzisha katika kitalu wiki 4-6 mapema', 'Hitaji udongo wenye rutuba na mifereji mizuri', 'Kausha vizuri kabla ya kuhifadhi'] },
     { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 tani', price: 'TZS 15,000/kichwa', water: 'Wastani', risk: 'Chini', color: '#22c55e', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 3 mapema', 'Weka mbolea ya CAN mara kwa mara', 'Dhibiti viwavi (caterpillars) mapema'] },
-    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
+    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#10b981', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
   ],
   kiangazi: [
     { id: 'k1', name: 'Sunflower', nameSw: 'Alizeti', emoji: '🌻', daysToHarvest: 95, yieldPerAcre: '0.5 tani mbegu', price: 'TZS 95,000/mfuko', water: 'Chini', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 2, tips: ['Faa kwa maeneo kame na hata ya kiangazi', 'Umbali wa kupanda: 75cm × 30cm', 'Fua mbegu vizuri kabla ya kuuza'] },
@@ -73,10 +73,8 @@ const CROP_DATA: Record<Season, CropRec[]> = {
 
 // ─── Background orb ───────────────────────────────────────────────────────────
 const NeuralOrb = ({ color, size, x, y, delay = 0 }: any) => (
-  <motion.View
-    initial={{ x, y, opacity: 0, scale: 0.8 }}
-    animate={{ x: [x, x + 40, x - 30, x], y: [y, y - 60, y + 40, y], opacity: [0.08, 0.18, 0.12, 0.08], scale: [1, 1.12, 0.95, 1] }}
-    transition={{ duration: 22 + delay / 1000, repeat: Infinity, ease: 'easeInOut' }}
+  <Animated.View
+    entering={FadeInDown}
     style={[styles.orb, { width: size, height: size, borderRadius: size / 2, backgroundColor: color, filter: Platform.OS === 'web' ? 'blur(100px)' : undefined }]}
   />
 );
@@ -93,9 +91,9 @@ function PlantingTimeline({ crop }: { crop: CropRec }) {
         <Text style={tl.label}>KALENDA YA KILIMO ({crop.daysToHarvest} siku)</Text>
       </View>
       <View style={{ flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden', gap: 2 }}>
-        <motion.View initial={{ flex: 0 }} animate={{ flex: plantPct / 100 }} transition={{ type: 'spring', delay: 0.3 }} style={{ backgroundColor: '#22c55e', borderRadius: 5 }} />
-        <motion.View initial={{ flex: 0 }} animate={{ flex: growPct / 100 }} transition={{ type: 'spring', delay: 0.5 }} style={{ backgroundColor: '#f59e0b', borderRadius: 5 }} />
-        <motion.View initial={{ flex: 0 }} animate={{ flex: harvestPct / 100 }} transition={{ type: 'spring', delay: 0.7 }} style={{ backgroundColor: '#f97316', borderRadius: 5 }} />
+        <Animated.View entering={FadeInDown} style={{ backgroundColor: '#22c55e', borderRadius: 5 }} />
+        <Animated.View entering={FadeInDown} style={{ backgroundColor: '#f59e0b', borderRadius: 5 }} />
+        <Animated.View entering={FadeInDown} style={{ backgroundColor: '#f97316', borderRadius: 5 }} />
       </View>
       <View style={{ flexDirection: 'row', gap: 16, marginTop: 8 }}>
         {[{ label: 'Upanzi', color: '#22c55e', weeks: crop.plantWeeks }, { label: 'Ukuaji', color: '#f59e0b', weeks: crop.growWeeks }, { label: 'Mavuno', color: '#f97316', weeks: crop.harvestWeeks }].map((phase) => (
@@ -147,15 +145,20 @@ export default function CropPlanningScreen() {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={activeSeason.color} size={480} x={-120} y={80} />
-        <NeuralOrb color="#22d15a" size={320} x={SCREEN_WIDTH - 100} y={400} delay={4000} />
+        
+        
         <LinearGradient colors={[isDark ? '#020617' : '#ffffff', isDark ? '#020617ee' : '#ffffffee', 'transparent']} style={{ position: 'absolute', top: 0, left: 0, right: 0, height: SCREEN_HEIGHT }} />
       </View>
 
       <SafeAreaView style={styles.safe}>
         {/* Header */}
-        <motion.View initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+        <Animated.View entering={FadeInDown} style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconBtn, { borderColor: colors.border }]}>
               <ChevronLeft size={24} color={colors.text} />
             </BlurView>
@@ -166,19 +169,31 @@ export default function CropPlanningScreen() {
             </View>
             <Text style={[styles.title, { color: colors.text }]}>Upangaji Mazao</Text>
           </View>
-          <TouchableOpacity onPress={() => router.push('/tasks')} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={() => router.push('/tasks')}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="View farm tasks calendar"
+          >
             <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconBtn, { borderColor: colors.border }]}>
               <Calendar size={20} color={colors.primary} />
             </BlurView>
           </TouchableOpacity>
-        </motion.View>
+        </Animated.View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
           {/* Season selector */}
-          <motion.View initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={styles.seasonRow}>
+          <Animated.View entering={FadeInDown} style={styles.seasonRow}>
             {SEASONS.map((s) => (
-              <TouchableOpacity key={s.key} onPress={() => { setSeason(s.key); setExpanded(null); Haptics.selectionAsync(); }} style={{ flex: 1 }}>
+              <TouchableOpacity
+              key={s.key}
+              onPress={() => { setSeason(s.key); setExpanded(null); Haptics.selectionAsync(); }}
+              style={{ flex: 1 }}
+              accessibilityRole="button"
+              accessibilityLabel={`${s.label} season, ${s.months}`}
+              accessibilityState={{ selected: season === s.key }}
+            >
                 <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'}
                   style={[styles.seasonTab, { borderColor: season === s.key ? s.color : colors.border, borderWidth: season === s.key ? 2 : 1 }]}>
                   <LinearGradient colors={season === s.key ? [s.color + '22', s.color + '08'] : ['transparent', 'transparent']} style={StyleSheet.absoluteFill} />
@@ -188,10 +203,10 @@ export default function CropPlanningScreen() {
                 </BlurView>
               </TouchableOpacity>
             ))}
-          </motion.View>
+          </Animated.View>
 
           {/* Season info banner */}
-          <motion.View key={season} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', damping: 25 }}
+          <Animated.View key={season} entering={FadeInDown}
             style={[styles.banner, { borderColor: activeSeason.color + '40', backgroundColor: activeSeason.color + '12' }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               {activeSeason.icon}
@@ -204,7 +219,7 @@ export default function CropPlanningScreen() {
               <Sparkles size={12} color={colors.primary} />
               <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 10, color: colors.primary }}>AI IMEPENDEKEZA</Text>
             </View>
-          </motion.View>
+          </Animated.View>
 
           {/* Section heading */}
           <View style={styles.sectionRow}>
@@ -213,13 +228,20 @@ export default function CropPlanningScreen() {
           </View>
 
           {/* Crop cards */}
-          <AnimatePresence mode="sync">
+          
             {crops.map((crop, idx) => {
               const isOpen = expanded === crop.id;
               const isPlanned = !!planning[crop.id];
               return (
-                <motion.View key={crop.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ delay: idx * 0.08, type: 'spring', damping: 22 }} style={{ marginBottom: 16 }}>
-                  <TouchableOpacity onPress={() => { setExpanded(isOpen ? null : crop.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }} activeOpacity={0.88}>
+                <Animated.View key={crop.id} entering={FadeInDown} exiting={FadeOut} style={{ marginBottom: 16 }}>
+                  <TouchableOpacity
+                    onPress={() => { setExpanded(isOpen ? null : crop.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                    activeOpacity={0.88}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${crop.nameSw} — ${crop.daysToHarvest} days to harvest`}
+                    accessibilityHint={isOpen ? 'Collapse crop details' : 'Expand crop details'}
+                    accessibilityState={{ expanded: isOpen }}
+                  >
                     <BlurView intensity={isDark ? 20 : 65} tint={isDark ? 'dark' : 'light'}
                       style={[styles.card, { borderColor: isOpen ? crop.color + '50' : colors.border, borderWidth: isOpen ? 2 : 1 }]}>
 
@@ -264,9 +286,9 @@ export default function CropPlanningScreen() {
                       </View>
 
                       {/* Expanded section */}
-                      <AnimatePresence>
+                      
                         {isOpen && (
-                          <motion.View initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
+                          <Animated.View entering={FadeInDown} exiting={FadeOut} style={{ overflow: 'hidden' }}>
                             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
                             {/* Planting timeline */}
@@ -282,16 +304,22 @@ export default function CropPlanningScreen() {
                             ))}
 
                             {/* Plan button */}
-                            <TouchableOpacity onPress={() => planCrop(crop)} disabled={isPlanned}
-                              style={[styles.planBtn, { backgroundColor: isPlanned ? '#22c55e30' : crop.color, opacity: isPlanned ? 0.85 : 1 }]}>
-                              {isPlanned ? <CheckCircle2 size={18} color="#22c55e" /> : <Plus size={18} color="#fff" />}
-                              <Text style={[styles.planBtnText, { color: isPlanned ? '#22c55e' : '#fff' }]}>
+                            <TouchableOpacity
+                              onPress={() => planCrop(crop)}
+                              disabled={isPlanned}
+                              style={[styles.planBtn, { backgroundColor: isPlanned ? '#22c55e30' : colors.primary, opacity: isPlanned ? 0.85 : 1 }]}
+                              accessibilityRole="button"
+                              accessibilityLabel={isPlanned ? `${crop.nameSw} tayari imepangwa` : `Panga kazi za ${crop.nameSw}`}
+                              accessibilityState={{ disabled: isPlanned }}
+                            >
+                              {isPlanned ? <CheckCircle2 size={18} color="#22c55e" /> : <Plus size={18} color={isDark ? '#000' : '#FCFBF7'} />}
+                              <Text style={[styles.planBtnText, { color: isPlanned ? '#22c55e' : (isDark ? '#000' : '#FCFBF7') }]}>
                                 {isPlanned ? 'Kazi Zimeongezwa kwenye Ratiba' : `Panga Kazi za ${crop.nameSw}`}
                               </Text>
                             </TouchableOpacity>
-                          </motion.View>
+                          </Animated.View>
                         )}
-                      </AnimatePresence>
+                      
 
                       {/* Collapsed footer */}
                       {!isOpen && (
@@ -302,13 +330,13 @@ export default function CropPlanningScreen() {
                       )}
                     </BlurView>
                   </TouchableOpacity>
-                </motion.View>
+                </Animated.View>
               );
             })}
-          </AnimatePresence>
+          
 
           {/* Bottom tips card */}
-          <motion.View initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+          <Animated.View entering={FadeInDown}>
             <BlurView intensity={isDark ? 15 : 50} tint={isDark ? 'dark' : 'light'} style={[styles.tipCard, { borderColor: colors.border }]}>
               <LinearGradient colors={[colors.primary + '14', colors.primary + '04']} style={StyleSheet.absoluteFill} />
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 }}>
@@ -318,12 +346,17 @@ export default function CropPlanningScreen() {
               <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 13, color: colors.textMute, lineHeight: 20 }}>
                 Msimu wa <Text style={{ fontWeight: '700', color: colors.text }}>{activeSeason.label}</Text> ni wakati mzuri wa kupanda mazao yanayohitaji <Text style={{ fontWeight: '700', color: activeSeason.color }}>mvua {activeSeason.key === 'kiangazi' ? 'kidogo au umwagiliaji' : activeSeason.key === 'masika' ? 'nyingi na ya uhakika' : 'wastani'}</Text>. Tembelea soko lako la karibu au tumia <Text style={{ fontWeight: '700', color: colors.primary }}>Soko la KILIMO AI</Text> kupata bei za moja kwa moja.
               </Text>
-              <TouchableOpacity onPress={() => router.push('/market')} style={[styles.mktBtn, { borderColor: colors.primary }]}>
+              <TouchableOpacity
+                onPress={() => router.push('/market')}
+                style={[styles.mktBtn, { borderColor: colors.primary }]}
+                accessibilityRole="button"
+                accessibilityLabel="Check current market prices"
+              >
                 <TrendingUp size={14} color={colors.primary} />
                 <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: colors.primary }}>Angalia Bei za Soko</Text>
               </TouchableOpacity>
             </BlurView>
-          </motion.View>
+          </Animated.View>
 
           <View style={{ height: 80 }} />
         </ScrollView>

@@ -103,7 +103,7 @@ export function generateRecommendations({ profile, vitals, language }: Inputs): 
     recs.push({
       id: 'rec-plan', category: 'planning', severity: 'info',
       ...t.plan_season(primaryCrop),
-      cta: { label: language === 'sw' ? 'Panga Mazao' : 'Plan Crops', route: '/crop-planning' },
+      cta: { label: language === 'sw' ? 'Panga Mazao' : 'Plan Crops', route: '/farm' },
     });
   }
 
@@ -112,7 +112,7 @@ export function generateRecommendations({ profile, vitals, language }: Inputs): 
     recs.push({
       id: 'rec-diversify', category: 'planning', severity: 'info',
       ...t.diversify(),
-      cta: { label: language === 'sw' ? 'Angalia Mazao' : 'Explore Crops', route: '/crop-planning' },
+      cta: { label: language === 'sw' ? 'Angalia Mazao' : 'Explore Crops', route: '/farm' },
     });
   }
   if (recs.length < 3) {

@@ -1,348 +1,524 @@
-/**
- * NEXUS — Identity & Settings hub
- * Premium redesign: cinematic Agro ID card + clean settings hierarchy
- */
 import React, { useState } from 'react';
-import {
-  StyleSheet, View, Text, ScrollView, TouchableOpacity,
-  Dimensions, SafeAreaView, StatusBar, Switch, Platform, Alert,
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  ScrollView, 
+  TouchableOpacity, 
+  Dimensions, 
+  SafeAreaView,
+  StatusBar,
+  Image,
+  Switch,
+  Platform
 } from 'react-native';
-import {
-  ShieldCheck, CreditCard, Bell, HelpCircle, LogOut,
-  ChevronRight, Database, Fingerprint, WifiOff, CloudSun, Wallet,
-  Edit3, MapPin, Leaf, Star, Zap,
+import { 
+  User, 
+  Settings, 
+  ShieldCheck, 
+  CreditCard, 
+  Smartphone, 
+  Bell, 
+  HelpCircle, 
+  LogOut, 
+  ChevronRight,
+  Database,
+  Fingerprint,
+  WifiOff,
+  CloudSun,
+  Wallet
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
-import { motion } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useKilimoStore } from '../../store/useKilimoStore';
-import { roleLabel } from '../../lib/access';
-import { InitialsAvatar } from '../../components/InitialsAvatar';
+import { ArrowUpRight } from 'lucide-react-native';
+import { Alert } from 'react-native';
 
-const { width: SW, height: SH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// Background Orb Component
+const NeuralOrb = ({ color, size, delay, x, y }: any) => {
+  return (
+    <Animated.View
+      entering={FadeInDown}
+      style={[
+        styles.bgOrb,
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: color,
+          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
+        },
+      ]}
+    />
+  );
+};
 
 const AGRO_ID_FALLBACK = {
   name: 'Justin Mafie',
-  role: 'farmer' as const,
-  location: 'Arusha',
+  role: 'Mkulima Mkuu',
+  location: 'Arusha, Tanzania',
   id: 'KILIMO-8492-XJ',
-  tier: 'Free',
-  joinDate: '2024',
+  tier: 'Premium Co-op Member',
+  joinDate: '2023',
 };
 
-const enterAnim = { type: 'spring', damping: 26, stiffness: 170 } as const;
+// Routes for the PRD-mandated Quick Access shortcuts (rendered below the ID card).
+const QUICK_ROUTES: { key: string; label: string; sub: string; route: string; color: string }[] = [
+  { key: 'edit', label: 'Hariri Wasifu', sub: 'Edit Farm Profile', route: '/edit-profile', color: '#22d3ee' },
+  { key: 'agro', label: 'Agro ID', sub: 'P&L · PDF export', route: '/agro-id', color: '#3ecf8e' },
+  { key: 'contracts', label: 'Mikataba', sub: 'Contract Farming', route: '/contracts', color: '#3b82f6' },
+  { key: 'livestock', label: 'Mifugo', sub: 'Livestock', route: '/livestock', color: '#f59e0b' },
+  { key: 'inventory', label: 'Pembejeo', sub: 'Inventory', route: '/inventory', color: '#8b5cf6' },
+  { key: 'insurance', label: 'Bima', sub: 'Insurance Hub', route: '/insurance', color: '#0ea5e9' },
+  { key: 'input', label: 'Wauzaji', sub: 'Input Supply', route: '/input-supply', color: '#10b981' },
+  { key: 'peer', label: 'Vikundi', sub: 'Peer Groups', route: '/peer-groups', color: '#ec4899' },
+  { key: 'expert', label: 'Wataalamu', sub: 'Consultations', route: '/consultations', color: '#a855f7' },
+  { key: 'wallet-admin', label: 'Pochi Msimamizi', sub: 'Wallet Admin', route: '/wallet-admin', color: '#14b8a6' },
+  { key: 'farm-twin', label: 'Shamba Dijiti', sub: 'Digital Farm Twin', route: '/farm-twin', color: '#6366f1' },
+  { key: 'analytics', label: 'Uchanganuzi wa AI', sub: 'Predictive Analytics', route: '/analytics', color: '#f97316' },
+  { key: 'crop-plan', label: 'Upangaji Mazao', sub: 'Crop Planning · AI', route: '/crop-planning', color: '#22c55e' },
+];
+
+// Sections built inside component to access router + store actions
+
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { type: "spring", damping: 25, stiffness: 120 } }
+};
 
 export default function ProfileScreen() {
-  const { colors, isDark } = useTheme();
+  const { colors, spacing, radius, isDark } = useTheme();
   const router = useRouter();
-  const storedAgroId  = useKilimoStore((s) => s.agroId);
-  const farmProfile   = useKilimoStore((s) => s.farmProfile);
-  const isOffline     = useKilimoStore((s) => s.isOffline);
-  const setOffline    = useKilimoStore((s) => s.setOffline);
+  const storedAgroId = useKilimoStore((s) => s.agroId);
+  const isOffline = useKilimoStore((s) => s.isOffline);
+  const setOffline = useKilimoStore((s) => s.setOffline);
   const resetOnboarding = useKilimoStore((s) => s.resetOnboarding);
-  const unreadCount   = useKilimoStore((s) => s.unreadCount);
+  const [biometric, setBiometric] = useState(true);
+  const [pushNotifs, setPushNotifs] = useState(true);
+  const [weatherTelemetry, setWeatherTelemetry] = useState(true);
+  const AGRO_ID_DATA = storedAgroId ?? AGRO_ID_FALLBACK;
 
-  const updateAgroId    = useKilimoStore((s) => s.updateAgroId);
-  const [pushNotifs,      setPushNotifs]       = useState(true);
-  const [weatherTelemetry,setWeatherTelemetry] = useState(true);
-
-  const D = storedAgroId ?? AGRO_ID_FALLBACK;
-  const role = (D.role ?? 'farmer') as any;
-  const cropCount = farmProfile?.primaryCrops?.length ?? 0;
-  const biometric = (storedAgroId as any)?.biometricEnabled ?? false;
-
-  // ─────────────────────────────────────────
-  const SECTIONS = [
+  const PROFILE_SECTIONS = [
     {
       title: 'AGRO ID & FEDHA',
       items: [
-        { id: 'wallet',   label: 'M-Pesa Wallet Sync',  icon: <Wallet size={18} color="#22d15a" />,    icolor: '#22d15a', isSwitch: false, value: 'Linked',      onPress: () => router.push('/wallet-admin' as any) },
-        { id: 'identity', label: 'Biometric Identity',   icon: <Fingerprint size={18} color="#3b82f6" />, icolor: '#3b82f6', isSwitch: true,  switchVal: biometric, onSwitch: (v: boolean) => { updateAgroId({ biometricEnabled: v }); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } },
-        { id: 'coop',     label: 'Cooperative Dues',     icon: <CreditCard size={18} color="#f59e0b" />, icolor: '#f59e0b', isSwitch: false, value: 'Up to date', onPress: () => router.push('/wallet-admin' as any) },
-      ],
+        { id: 'wallet', title: 'M-Pesa Wallet Sync', icon: <Wallet size={20} color="#10b981" />, hasSwitch: false, value: 'Linked', onPress: () => router.push('/wallet-admin' as any) },
+        { id: 'identity', title: 'Biometric Identity', icon: <Fingerprint size={20} color="#3b82f6" />, hasSwitch: true, switchVal: biometric, onSwitch: (v: boolean) => { setBiometric(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }, value: '' },
+        { id: 'coop', title: 'Cooperative Dues', icon: <CreditCard size={20} color="#f59e0b" />, hasSwitch: false, value: 'Up to date', onPress: () => router.push('/wallet-admin' as any) },
+      ]
     },
     {
       title: 'MIFUMO & MTANDAO',
       items: [
-        { id: 'offline', label: 'Offline-First Mode',    icon: <WifiOff size={18} color="#ef4444" />,   icolor: '#ef4444', isSwitch: true,  switchVal: isOffline,       onSwitch: (v: boolean) => { setOffline(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } },
-        { id: 'sync',    label: 'Local Cache Sync',       icon: <Database size={18} color="#8b5cf6" />, icolor: '#8b5cf6', isSwitch: false, value: 'Synced 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert('Sync', 'Data yako imesawazishwa kikamilifu.'); } },
-        { id: 'weather', label: 'Weather Telemetry',      icon: <CloudSun size={18} color="#0ea5e9" />, icolor: '#0ea5e9', isSwitch: true,  switchVal: weatherTelemetry, onSwitch: (v: boolean) => { setWeatherTelemetry(v); router.push('/(tabs)/forecast' as any); } },
-      ],
+        { id: 'offline', title: 'Offline-First Mode', icon: <WifiOff size={20} color="#ef4444" />, hasSwitch: true, switchVal: isOffline, onSwitch: (v: boolean) => { setOffline(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }, value: '' },
+        { id: 'sync', title: 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: 'Last sync: 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert('Sync', 'Data yako imesawazishwa kikamilifu.'); } },
+        { id: 'weather', title: 'Weather Telemetry', icon: <CloudSun size={20} color="#0ea5e9" />, hasSwitch: true, switchVal: weatherTelemetry, onSwitch: (v: boolean) => { setWeatherTelemetry(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/(tabs)/forecast' as any); }, value: '' },
+      ]
     },
     {
       title: 'MIPANGILIO YA AKAUNTI',
       items: [
-        { id: 'notifications', label: 'Push Notifications',  icon: <Bell size={18} color="#f59e0b" />,       icolor: '#f59e0b', isSwitch: true, switchVal: pushNotifs, onSwitch: (v: boolean) => { setPushNotifs(v); router.push('/notifications' as any); } },
-        { id: 'security',      label: 'Security & Privacy',  icon: <ShieldCheck size={18} color="#3b82f6" />, icolor: '#3b82f6', isSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
-        { id: 'help',          label: 'Help & Support',      icon: <HelpCircle size={18} color="#64748b" />, icolor: '#64748b', isSwitch: false, value: '', onPress: () => router.push('/terms' as any) },
-      ],
-    },
+        { id: 'notifications', title: 'Push Notifications', icon: <Bell size={20} color="#64748b" />, hasSwitch: true, switchVal: pushNotifs, onSwitch: (v: boolean) => { setPushNotifs(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }, value: '' },
+        { id: 'security', title: 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
+        { id: 'help', title: 'Help & Support', icon: <HelpCircle size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/terms' as any) },
+      ]
+    }
   ];
 
   return (
-    <View style={[s.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      
+      {/* Cinematic Background */}
+      <View style={StyleSheet.absoluteFill}>
+        
+        
+        
+        <LinearGradient
+          colors={[
+            isDark ? colors.slate[950] : '#f8fafc',
+            isDark ? colors.slate[900] + 'ee' : colors.slate[50] + 'ee',
+            'transparent'
+          ]}
+          style={styles.bgGradient}
+        />
+      </View>
 
-      {/* ── Ambient orbs ── */}
-      <View style={[s.orb1, { backgroundColor: '#22d15a12' }]} />
-      <View style={[s.orb2, { backgroundColor: '#3b82f610' }]} />
-
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
-
-          {/* ── Header row ── */}
-          <motion.View
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={enterAnim}
-            style={s.headerRow}
-          >
-            <Text style={[s.screenTitle, { color: colors.text }]}>kilimo ai</Text>
-            <TouchableOpacity
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View>
+            {/* Header */}
+            <Animated.View style={styles.header}>
+              <Text style={[styles.headerTitle, { color: colors.text }]}>Identity</Text>
+              <TouchableOpacity
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }}
-              style={[s.editBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+              accessibilityRole="button"
+              accessibilityLabel="Edit profile settings"
             >
-              <Edit3 size={16} color={colors.text} />
-              <Text style={[s.editBtnText, { color: colors.text }]}>Hariri</Text>
-            </TouchableOpacity>
-          </motion.View>
+                <Settings size={24} color={colors.text} />
+              </TouchableOpacity>
+            </Animated.View>
 
-          {/* ── Agro ID card ── */}
-          <motion.View
-            initial={{ opacity: 0, scale: 0.96, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ ...enterAnim, delay: 0.05 }}
-            style={s.cardWrap}
-          >
-            <LinearGradient
-              colors={isDark
-                ? ['#052e16', '#0d1117', '#1e1b4b']
-                : ['#f0fdf4', '#eff6ff', '#f8fafc']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-              style={[s.idCard, { borderColor: isDark ? 'rgba(34,209,90,0.18)' : 'rgba(34,209,90,0.25)' }]}
-            >
-              {/* Subtle grid lines for depth */}
-              <View style={s.gridLines} pointerEvents="none">
-                {[0,1,2,3].map(i => (
-                  <View key={i} style={[s.gridLine, { top: i * 32, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }]} />
-                ))}
-              </View>
-
-              {/* Top row: badge + ID number */}
-              <View style={s.idTopRow}>
-                <View style={s.agroIdBadge}>
-                  <Fingerprint size={11} color="#22d15a" />
-                  <Text style={s.agroIdBadgeText}>AGRO ID</Text>
+            {/* Agro ID Card */}
+            <Animated.View style={styles.idCardContainer}>
+              <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
+                <LinearGradient
+                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(62, 207, 142, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                  style={StyleSheet.absoluteFill}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
+                
+                <View style={styles.idHeader}>
+                  <View style={styles.idBadge}>
+                    <Fingerprint size={12} color={colors.primary} />
+                    <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
+                  </View>
+                  <Text style={[styles.idNumber, { color: colors.textMute }]}>{AGRO_ID_DATA.id}</Text>
                 </View>
-                <Text style={[s.idNumber, { color: colors.textMute }]}>{D.id}</Text>
-              </View>
 
-              {/* Avatar + name block */}
-              <View style={s.avatarRow}>
-                <View style={s.avatarWrap}>
-                  <InitialsAvatar
-                    name={D.name}
-                    avatarUrl={(D as any).avatarUrl ?? null}
-                    size={68}
-                    primaryColor="#22d15a"
-                  />
-                  <View style={[s.avatarRing, { borderColor: '#22d15a60' }]} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={[s.userName, { color: colors.text }]}>{D.name}</Text>
-                  <Text style={[s.userRole, { color: '#22d15a' }]}>{roleLabel(role)}</Text>
-                  <View style={s.locationRow}>
-                    <MapPin size={11} color={colors.textMute} />
-                    <Text style={[s.locationText, { color: colors.textMute }]}>{D.location}</Text>
+                <View style={styles.profileRow}>
+                  <View style={[styles.profileImage, { borderColor: colors.primary + '40', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
+                    <Text style={{ color: colors.text, fontSize: 24, fontFamily: 'Inter_900Black' }}>
+                      {AGRO_ID_DATA.name.split(' ').map(n => n[0]).join('').substring(0,2)}
+                    </Text>
+                  </View>
+                  <View style={styles.profileInfo}>
+                    <Text style={[styles.profileName, { color: colors.text }]}>{AGRO_ID_DATA.name}</Text>
+                    <Text style={[styles.profileRole, { color: colors.textMute }]}>{AGRO_ID_DATA.role}</Text>
+                    <Text style={[styles.profileLocation, { color: colors.textMute }]}>{AGRO_ID_DATA.location}</Text>
                   </View>
                 </View>
-              </View>
 
-              {/* Stats strip */}
-              <View style={[s.statsStrip, { borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]}>
-                <View style={s.statItem}>
-                  <Leaf size={14} color="#22d15a" />
-                  <Text style={[s.statVal, { color: colors.text }]}>{cropCount || 3}</Text>
-                  <Text style={[s.statLbl, { color: colors.textMute }]}>Mazao</Text>
+                <View style={styles.tierContainer}>
+                  <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
+                  <Text style={[styles.joinText, { color: colors.textMute }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
                 </View>
-                <View style={[s.statDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }]} />
-                <View style={s.statItem}>
-                  <Star size={14} color="#f59e0b" />
-                  <Text style={[s.statVal, { color: colors.text }]}>{D.tier}</Text>
-                  <Text style={[s.statLbl, { color: colors.textMute }]}>Kiwango</Text>
-                </View>
-                <View style={[s.statDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }]} />
-                <View style={s.statItem}>
-                  <Text style={[s.statVal, { color: colors.text }]}>{D.joinDate}</Text>
-                  <Text style={[s.statLbl, { color: colors.textMute }]}>Mwaka</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </motion.View>
+              </BlurView>
+            </Animated.View>
 
-          {/* ── Settings sections ── */}
-          {SECTIONS.map((sec, si) => (
-            <motion.View
-              key={sec.title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...enterAnim, delay: 0.1 + si * 0.06 }}
-              style={s.section}
-            >
-              <Text style={[s.secLabel, { color: colors.textMute }]}>{sec.title}</Text>
-              <BlurView
-                intensity={isDark ? 18 : 55}
-                tint={isDark ? 'dark' : 'light'}
-                style={[s.secCard, { borderColor: colors.border }]}
-              >
-                {sec.items.map((item, ii) => (
-                  <View key={item.id}>
-                    <TouchableOpacity
-                      activeOpacity={item.isSwitch ? 1 : 0.72}
-                      onPress={() => { if (!item.isSwitch && (item as any).onPress) { Haptics.selectionAsync(); (item as any).onPress(); } }}
-                      style={s.itemRow}
+            {/* Quick Access — all PRD feature routes */}
+            <View style={styles.quickContainer}>
+              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>UFIKIAJI WA HARAKA</Text>
+              <View style={styles.quickGrid}>
+                {QUICK_ROUTES.map((q) => (
+                  <TouchableOpacity
+                    key={q.key}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(q.route as any); }}
+                    activeOpacity={0.85}
+                    style={styles.quickItem}
+                    accessibilityRole="button"
+                    accessibilityLabel={q.label}
+                    accessibilityHint={`Open ${q.sub}`}
+                  >
+                    <BlurView
+                      intensity={isDark ? 25 : 65}
+                      tint={isDark ? 'dark' : 'light'}
+                      style={[styles.quickCard, { borderColor: colors.border }]}
                     >
-                      <View style={[s.itemIcon, { backgroundColor: (item as any).icolor + '18' }]}>
-                        {item.icon}
+                      <View style={[styles.quickDot, { backgroundColor: q.color + '25' }]}>
+                        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: q.color }} />
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={[s.itemLabel, { color: colors.text }]}>{item.label}</Text>
-                        {!item.isSwitch && (item as any).value ? (
-                          <Text style={[s.itemValue, { color: colors.textMute }]}>{(item as any).value}</Text>
-                        ) : null}
+                        <Text style={[styles.quickLabel, { color: colors.text }]}>{q.label}</Text>
+                        <Text style={[styles.quickSub, { color: colors.textMute }]}>{q.sub}</Text>
                       </View>
-                      {item.isSwitch ? (
-                        <Switch
-                          value={(item as any).switchVal}
-                          trackColor={{ false: colors.border, true: '#22d15a' }}
-                          thumbColor={Platform.OS === 'android' ? '#fff' : undefined}
-                          onValueChange={(item as any).onSwitch}
-                        />
-                      ) : (
-                        <ChevronRight size={17} color={colors.textMute} />
-                      )}
-                    </TouchableOpacity>
-                    {ii < sec.items.length - 1 && (
-                      <View style={[s.divider, { backgroundColor: colors.border, marginLeft: 68 }]} />
-                    )}
-                  </View>
+                      <ArrowUpRight size={14} color={colors.textMute} />
+                    </BlurView>
+                  </TouchableOpacity>
                 ))}
-              </BlurView>
-            </motion.View>
-          ))}
-
-          {/* ── Upgrade plan ── */}
-          <motion.View
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...enterAnim, delay: 0.30 }}
-            style={{ marginBottom: 12 }}
-          >
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/upgrade' as any); }}
-              style={s.upgradeBtn}
-              accessibilityLabel="Upgrade subscription plan"
-            >
-              <Zap size={17} color="#8b5cf6" />
-              <Text style={s.upgradeBtnText}>
-                {D.tier === 'Free' ? 'Pata Premium' : D.tier === 'Premium' ? 'Pata Cooperative' : 'Dhibiti Kiwango'}
-              </Text>
-              <View style={s.upgradeBadge}>
-                <Text style={s.upgradeBadgeText}>{D.tier?.toUpperCase() ?? 'FREE'}</Text>
               </View>
-            </TouchableOpacity>
-          </motion.View>
+            </View>
 
-          {/* ── Logout ── */}
-          <motion.View
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ ...enterAnim, delay: 0.38 }}
-            style={{ marginTop: 0, marginBottom: 8 }}
-          >
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                Alert.alert(
-                  'Ondoka',
-                  'Una uhakika unataka kutoka? Utahitaji kuingia tena.',
-                  [
-                    { text: 'Ghairi', style: 'cancel' },
-                    { text: 'Ondoka', style: 'destructive', onPress: () => { resetOnboarding(); router.replace('/onboarding' as any); } },
-                  ]
-                );
-              }}
-              style={s.logoutBtn}
-              accessibilityLabel="Log out"
-            >
-              <LogOut size={18} color="#ef4444" />
-              <Text style={s.logoutText}>Ondoka (Log Out)</Text>
-            </TouchableOpacity>
-          </motion.View>
+            {/* Sections */}
+            {PROFILE_SECTIONS.map((section, sIdx) => (
+              <View key={sIdx} style={styles.sectionContainer}>
+                <Text style={[styles.sectionTitle, { color: colors.textMute }]}>{section.title}</Text>
+                
+                <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.sectionBlock, { borderColor: colors.border }]}>
+                  {section.items.map((item, iIdx) => (
+                    <View key={item.id}>
+                      <TouchableOpacity 
+                        activeOpacity={item.hasSwitch ? 1 : 0.7}
+                        onPress={() => { if (!item.hasSwitch && (item as any).onPress) { Haptics.selectionAsync(); (item as any).onPress(); } }}
+                        style={styles.itemRow}
+                        accessibilityRole={item.hasSwitch ? 'none' : 'button'}
+                        accessibilityLabel={item.title}
+                        accessibilityHint={!item.hasSwitch && item.value ? item.value : undefined}
+                      >
+                        <View style={[styles.itemIconBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
+                          {item.icon}
+                        </View>
+                        <View style={styles.itemContent}>
+                          <Text style={[styles.itemTitle, { color: colors.text }]}>{item.title}</Text>
+                          {!item.hasSwitch && item.value ? (
+                            <Text style={[styles.itemValue, { color: colors.textMute }]}>{item.value}</Text>
+                          ) : null}
+                        </View>
+                        
+                        {item.hasSwitch ? (
+                          <Switch 
+                            value={(item as any).switchVal as boolean}
+                            trackColor={{ false: isDark ? '#1C241E' : '#E6DFD5', true: colors.primary }}
+                            thumbColor="#fff"
+                            onValueChange={(v) => (item as any).onSwitch?.(v)}
+                            accessibilityLabel={item.title}
+                            accessibilityRole="switch"
+                            accessibilityState={{ checked: (item as any).switchVal as boolean }}
+                          />
+                        ) : (
+                          <ChevronRight size={20} color={colors.textMute} />
+                        )}
+                      </TouchableOpacity>
+                      
+                      {iIdx < section.items.length - 1 && (
+                        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                      )}
+                    </View>
+                  ))}
+                </BlurView>
+              </View>
+            ))}
 
-          <View style={{ height: 110 }} />
+            {/* Logout */}
+            <View>
+              <TouchableOpacity 
+                activeOpacity={0.8}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                  Alert.alert(
+                    'Ondoka',
+                    'Una uhakika unataka kutoka? Utahitaji kuingia tena.',
+                    [
+                      { text: 'Ghairi', style: 'cancel' },
+                      { text: 'Ondoka', style: 'destructive', onPress: () => { resetOnboarding(); router.replace('/onboarding' as any); } },
+                    ]
+                  );
+                }}
+                style={styles.logoutBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Log out"
+                accessibilityHint="Signs you out and returns to the login screen"
+              >
+                <LogOut size={20} color="#ef4444" />
+                <Text style={styles.logoutText}>Ondoka (Log Out)</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={{ height: 100 }} />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 }
 
-const s = StyleSheet.create({
-  root:        { flex: 1 },
-  orb1:        { position: 'absolute', width: 420, height: 420, borderRadius: 210, top: -100, right: -100 },
-  orb2:        { position: 'absolute', width: 320, height: 320, borderRadius: 160, bottom: 80, left: -100 },
-  scroll:      { paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 4 : 12, paddingBottom: 40 },
+const quickStyles = {
+  quickContainer: { marginTop: 24, paddingHorizontal: 24 } as const,
+  quickGrid: { marginTop: 12, gap: 8 } as const,
+  quickItem: { width: '100%' } as const,
+  quickCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 1, overflow: 'hidden' } as const,
+  quickDot: { width: 28, height: 28, borderRadius: 10, justifyContent: 'center', alignItems: 'center' } as const,
+  quickLabel: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' } as const,
+  quickSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 } as const,
+};
 
-  headerRow:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  screenTitle: { fontSize: 30, fontFamily: 'Inter_900Black', letterSpacing: -1 },
-  editBtn:     { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
-  editBtnText: { fontSize: 13, fontFamily: 'Inter_700Bold' },
-
-  // ID Card
-  cardWrap:    { marginBottom: 28 },
-  idCard:      { borderRadius: 28, borderWidth: 1, padding: 20, overflow: 'hidden', position: 'relative' },
-  gridLines:   { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
-  gridLine:    { position: 'absolute', left: 0, right: 0, height: 1 },
-
-  idTopRow:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
-  agroIdBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(34,209,90,0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-  agroIdBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1 },
-  idNumber:    { fontSize: 11, fontFamily: 'Inter_600SemiBold', letterSpacing: 2 },
-
-  avatarRow:   { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 20 },
-  avatarWrap:  { position: 'relative' },
-  avatar:      { width: 68, height: 68, borderRadius: 22 },
-  avatarRing:  { position: 'absolute', top: -3, left: -3, right: -3, bottom: -3, borderRadius: 25, borderWidth: 2 },
-  userName:    { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.5, marginBottom: 3 },
-  userRole:    { fontSize: 13, fontFamily: 'Inter_700Bold', marginBottom: 5, textTransform: 'capitalize' },
-  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  locationText:{ fontSize: 12, fontFamily: 'Inter_500Medium' },
-
-  statsStrip:  { flexDirection: 'row', alignItems: 'center', paddingTop: 16, borderTopWidth: 1 },
-  statItem:    { flex: 1, alignItems: 'center', gap: 2 },
-  statDivider: { width: 1, height: 32, borderRadius: 1 },
-  statVal:     { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
-  statLbl:     { fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 },
-
-  // Sections
-  section:     { marginBottom: 22 },
-  secLabel:    { fontSize: 11, fontFamily: 'Inter_900Black', letterSpacing: 1.5, marginBottom: 10, marginLeft: 4 },
-  secCard:     { borderRadius: 20, borderWidth: 1, overflow: 'hidden' },
-  itemRow:     { flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 14 },
-  itemIcon:    { width: 38, height: 38, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
-  itemLabel:   { fontSize: 14, fontFamily: 'Inter_600SemiBold' },
-  itemValue:   { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
-  divider:     { height: StyleSheet.hairlineWidth },
-
-  upgradeBtn:      { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, paddingVertical: 15, borderRadius: 18, backgroundColor: 'rgba(139,92,246,0.08)', borderWidth: 1, borderColor: 'rgba(139,92,246,0.2)' },
-  upgradeBtnText:  { flex: 1, fontSize: 14, fontFamily: 'Inter_700Bold', color: '#8b5cf6' },
-  upgradeBadge:    { backgroundColor: 'rgba(139,92,246,0.15)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  upgradeBadgeText:{ fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1, color: '#8b5cf6' },
-  logoutBtn:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 18, backgroundColor: 'rgba(239,68,68,0.08)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.15)', gap: 8 },
-  logoutText:  { color: '#ef4444', fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
+const styles = StyleSheet.create({
+  ...quickStyles,
+  container: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  bgOrb: {
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    filter: 'blur(100px)',
+  },
+  bgGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: SCREEN_HEIGHT,
+  },
+  scrollContent: {
+    padding: 24,
+    paddingTop: 12,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -1,
+  },
+  idCardContainer: {
+    marginBottom: 32,
+  },
+  idCard: {
+    borderRadius: 32,
+    padding: 24,
+    overflow: 'hidden',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  idHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  idBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(62, 207, 142, 0.15)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 6,
+  },
+  idBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1,
+  },
+  idNumber: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 2,
+  },
+  profileRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  profileImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 24,
+    borderWidth: 2,
+  },
+  profileInfo: {
+    marginLeft: 16,
+    flex: 1,
+  },
+  profileName: {
+    fontSize: 24,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  profileRole: {
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+    marginBottom: 2,
+  },
+  profileLocation: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    opacity: 0.7,
+  },
+  tierContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  tierText: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+  },
+  joinText: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+  },
+  sectionContainer: {
+    marginBottom: 28,
+  },
+  sectionTitle: {
+    fontSize: 11,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1.5,
+    marginBottom: 12,
+    marginLeft: 8,
+  },
+  sectionBlock: {
+    borderRadius: 24,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  itemIconBg: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemContent: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  itemTitle: {
+    fontSize: 15,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  itemValue: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 2,
+  },
+  divider: {
+    height: 1,
+    marginLeft: 72,
+  },
+  logoutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    borderRadius: 20,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    gap: 8,
+  },
+  logoutText: {
+    color: '#ef4444',
+    fontSize: 15,
+    fontFamily: 'Inter_800ExtraBold',
+  },
 });

@@ -38,7 +38,7 @@ const MAX_CROPS = 4;
 
 export default function EditProfileScreen() {
   const router = useRouter();
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
 
   const agroId        = useKilimoStore((s) => s.agroId);
   const updateAgroId  = useKilimoStore((s) => s.updateAgroId);
@@ -175,14 +175,20 @@ export default function EditProfileScreen() {
 
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle="dark-content" />
-      <LinearGradient colors={isDark ? ['#022c22', '#0a0a0f', '#1e1b4b'] : ['#f0fdf4', '#f8fafc', '#eff6ff']} style={StyleSheet.absoluteFill} />
+      <StatusBar barStyle="light-content" />
+      <LinearGradient colors={['#022c22', '#0a0a0f', '#1e1b4b']} style={StyleSheet.absoluteFill} />
 
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={handleBack} style={s.iconBtn}>
-            <ChevronLeft size={22} color={colors.text} />
+          <TouchableOpacity
+            onPress={handleBack}
+            style={s.iconBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            accessibilityHint={isDirty ? 'You have unsaved changes' : undefined}
+          >
+            <ChevronLeft size={22} color="#fff" />
           </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
             <Text style={s.headerTitle}>{t.title}</Text>
@@ -193,8 +199,14 @@ export default function EditProfileScreen() {
               </View>
             )}
           </View>
-          <TouchableOpacity onPress={save} style={[s.iconBtn, canSave && isDirty && { backgroundColor: 'rgba(34,209,90,0.18)' }]}>
-            <Save size={20} color={canSave && isDirty ? '#22d15a' : colors.textMute} />
+          <TouchableOpacity
+            onPress={save}
+            style={[s.iconBtn, canSave && isDirty && { backgroundColor: 'rgba(62,207,142,0.18)' }]}
+            accessibilityRole="button"
+            accessibilityLabel="Save profile"
+            accessibilityState={{ disabled: !(canSave && isDirty) }}
+          >
+            <Save size={20} color={canSave && isDirty ? '#3ecf8e' : 'rgba(255,255,255,0.3)'} />
           </TouchableOpacity>
         </View>
 
@@ -203,14 +215,16 @@ export default function EditProfileScreen() {
             <Text style={s.sub}>{t.sub}</Text>
 
             {/* Name */}
-            <Section icon={<User size={16} color="#22d15a" />} label={t.name} />
-            <BlurView intensity={20} tint={isDark ? 'dark' : 'light'} style={[s.inputWrap, !nameValid && name.length > 0 && s.inputErr]}>
+            <Section icon={<User size={16} color="#3ecf8e" />} label={t.name} />
+            <BlurView intensity={20} tint="dark" style={[s.inputWrap, !nameValid && name.length > 0 && s.inputErr]}>
               <TextInput
                 value={name}
                 onChangeText={setName}
                 placeholder={t.namePh}
-                placeholderTextColor={colors.textMute}
-                style={[s.input, { color: colors.text }]}
+                placeholderTextColor="rgba(255,255,255,0.4)"
+                style={s.input}
+                accessibilityLabel={t.name}
+                accessibilityHint={!nameValid && name.length > 0 ? t.nameErr : undefined}
               />
             </BlurView>
             {!nameValid && name.length > 0 && (
@@ -227,10 +241,13 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRole(r); }}
-                  style={[s.rolePill, role === r && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.12)' }]}
+                  style={[s.rolePill, role === r && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.12)' }]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={roleLabel(r)}
+                  accessibilityState={{ checked: role === r }}
                 >
-                  <Text style={[s.rolePillText, role === r && { color: '#22d15a' }]}>{roleLabel(r)}</Text>
-                  {role === r && <Check size={16} color="#22d15a" />}
+                  <Text style={[s.rolePillText, role === r && { color: '#3ecf8e' }]}>{roleLabel(r)}</Text>
+                  {role === r && <Check size={16} color="#3ecf8e" />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -242,15 +259,18 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
-                  style={[s.pill, region === r && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' }]}
+                  style={[s.pill, region === r && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={r}
+                  accessibilityState={{ checked: region === r }}
                 >
-                  <Text style={[s.pillText, region === r && { color: '#22d15a' }]}>{r}</Text>
+                  <Text style={[s.pillText, region === r && { color: '#3ecf8e' }]}>{r}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
 
             {/* Crops */}
-            <Section icon={<Sprout size={16} color="#22d15a" />} label={t.crops} />
+            <Section icon={<Sprout size={16} color="#10b981" />} label={t.crops} />
             <View style={s.cropGrid}>
               {CROPS.map((c) => {
                 const on = crops.includes(c);
@@ -261,11 +281,14 @@ export default function EditProfileScreen() {
                     onPress={() => toggleCrop(c)}
                     style={[
                       s.cropPill,
-                      on && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' },
+                      on && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' },
                       disabled && { opacity: 0.35 },
                     ]}
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={c}
+                    accessibilityState={{ checked: on, disabled }}
                   >
-                    <Text style={[s.pillText, on && { color: '#22d15a' }]}>{c}</Text>
+                    <Text style={[s.pillText, on && { color: '#3ecf8e' }]}>{c}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -278,8 +301,8 @@ export default function EditProfileScreen() {
             )}
             {crops.length === MAX_CROPS && (
               <View style={[s.errRow, { marginTop: 6 }]}>
-                <Check size={12} color="#22d15a" />
-                <Text style={[s.errText, { color: '#22d15a' }]}>
+                <Check size={12} color="#3ecf8e" />
+                <Text style={[s.errText, { color: '#3ecf8e' }]}>
                   {lang === 'sw' ? `Mazao ${MAX_CROPS} yamechaguliwa` : `${MAX_CROPS} crops selected — max reached`}
                 </Text>
               </View>
@@ -287,14 +310,15 @@ export default function EditProfileScreen() {
 
             {/* Farm size */}
             <Section label={t.size} />
-            <BlurView intensity={20} tint={isDark ? 'dark' : 'light'} style={s.inputWrap}>
+            <BlurView intensity={20} tint="dark" style={s.inputWrap}>
               <TextInput
                 value={acres}
                 onChangeText={setAcres}
                 keyboardType="decimal-pad"
                 placeholder="2.5"
-                placeholderTextColor={colors.textMute}
-                style={[s.input, { color: colors.text }]}
+                placeholderTextColor="rgba(255,255,255,0.4)"
+                style={s.input}
+                accessibilityLabel={t.size}
               />
             </BlurView>
 
@@ -305,9 +329,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={a}
                   onPress={() => { Haptics.selectionAsync(); setActivity(a); }}
-                  style={[s.actBtn, activity === a && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' }]}
+                  style={[s.actBtn, activity === a && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={(t as any)[a]}
+                  accessibilityState={{ checked: activity === a }}
                 >
-                  <Text style={[s.pillText, activity === a && { color: '#22d15a' }]}>{t[a]}</Text>
+                  <Text style={[s.pillText, activity === a && { color: '#3ecf8e' }]}>{(t as any)[a]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -315,11 +342,23 @@ export default function EditProfileScreen() {
             {/* Toggles */}
             <View style={s.toggleRow}>
               <Text style={s.toggleLabel}>{t.livestock}</Text>
-              <Switch value={hasLivestock} onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }} trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#22d15a' }} thumbColor="#fff" />
+            <Switch
+              value={hasLivestock}
+              onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }}
+              trackColor={{ false: '#333', true: '#3ecf8e' }}
+              accessibilityLabel={t.livestock}
+              accessibilityRole="switch"
+            />
             </View>
             <View style={s.toggleRow}>
               <Text style={s.toggleLabel}>{t.irrigation}</Text>
-              <Switch value={hasIrrigation} onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }} trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#22d15a' }} thumbColor="#fff" />
+            <Switch
+              value={hasIrrigation}
+              onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }}
+              trackColor={{ false: '#333', true: '#3ecf8e' }}
+              accessibilityLabel={t.irrigation}
+              accessibilityRole="switch"
+            />
             </View>
 
             {/* Language */}
@@ -329,9 +368,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={L}
                   onPress={() => { Haptics.selectionAsync(); setLang(L); }}
-                  style={[s.actBtn, lang === L && { borderColor: '#22d15a', backgroundColor: 'rgba(34,209,90,0.18)' }]}
+                  style={[s.actBtn, lang === L && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={L === 'sw' ? 'Kiswahili' : 'English'}
+                  accessibilityState={{ checked: lang === L }}
                 >
-                  <Text style={[s.pillText, lang === L && { color: '#22d15a' }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
+                  <Text style={[s.pillText, lang === L && { color: '#3ecf8e' }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -342,9 +384,12 @@ export default function EditProfileScreen() {
               disabled={!canSave}
               activeOpacity={0.85}
               style={[s.saveCta, { marginTop: 32 }, !canSave && { opacity: 0.4 }]}
+              accessibilityRole="button"
+              accessibilityLabel={t.save}
+              accessibilityState={{ disabled: !canSave }}
             >
               <LinearGradient
-                colors={['#22d15a', '#22d15a']}
+                colors={['#3ecf8e', '#10b981']}
                 style={s.saveGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -374,29 +419,29 @@ function Section({ icon, label }: { icon?: React.ReactNode; label: string }) {
 const s = StyleSheet.create({
   container:       { flex: 1 },
   header:          { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
-  iconBtn:         { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.07)', justifyContent: 'center', alignItems: 'center' },
-  headerTitle:     { color: '#f0fff4', fontSize: 17, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
+  iconBtn:         { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.06)', justifyContent: 'center', alignItems: 'center' },
+  headerTitle:     { color: '#fff', fontSize: 17, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
   dirtyBadge:      { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
   dirtyDot:        { width: 6, height: 6, borderRadius: 3, backgroundColor: '#f59e0b' },
   dirtyText:       { color: '#f59e0b', fontSize: 10, fontFamily: 'Inter_600SemiBold' },
   scroll:          { paddingHorizontal: 20, paddingBottom: 40 },
-  sub:             { color: '#7a9e82', fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 8, lineHeight: 18 },
+  sub:             { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 8, lineHeight: 18 },
   sectionLabel:    { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 24, marginBottom: 10 },
-  sectionLabelText:{ color: '#7a9e82', fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, textTransform: 'uppercase' },
-  inputWrap:       { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
+  sectionLabelText:{ color: 'rgba(255,255,255,0.55)', fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, textTransform: 'uppercase' },
+  inputWrap:       { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   inputErr:        { borderColor: '#ef4444' },
-  input:           { color: '#f0fff4', fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
+  input:           { color: '#fff', fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
   errRow:          { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
   errText:         { color: '#ef4444', fontSize: 11, fontFamily: 'Inter_500Medium' },
-  pill:            { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
-  pillText:        { color: 'rgba(255,255,255,0.80)', fontSize: 13, fontFamily: 'Inter_700Bold' },
+  pill:            { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  pillText:        { color: 'rgba(255,255,255,0.75)', fontSize: 13, fontFamily: 'Inter_700Bold' },
   cropGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
-  actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)', alignItems: 'center' },
-  rolePill:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
-  rolePillText:    { color: '#f0fff4', fontSize: 13, fontFamily: 'Inter_700Bold', flex: 1 },
-  toggleRow:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.07)', marginTop: 6 },
-  toggleLabel:     { color: '#f0fff4', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+  cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center' },
+  rolePill:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  rolePillText:    { color: 'rgba(255,255,255,0.8)', fontSize: 13, fontFamily: 'Inter_700Bold', flex: 1 },
+  toggleRow:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', marginTop: 6 },
+  toggleLabel:     { color: '#fff', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
   saveCta:         { borderRadius: 16, overflow: 'hidden' },
   saveGrad:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
   saveText:        { color: '#000', fontSize: 16, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },

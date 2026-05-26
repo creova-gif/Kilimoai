@@ -12,7 +12,7 @@ import {
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
-import { motion } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import PageScaffold, { GlassCard, SectionHeader, EmptyState } from '../components/PageScaffold';
 import { useTheme } from '../constants/Theme';
 import { useFarmDataStore, InventoryItem, InventoryUnit } from '../store/useFarmDataStore';
@@ -204,10 +204,8 @@ function ItemCard({ item, idx, adjust, remove }: {
   }
 
   return (
-    <motion.View
-      initial={{ opacity: 0, x: -20, scale: 0.97 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      transition={{ type: 'spring', stiffness: 110, damping: 18, delay: idx * 0.05 }}
+    <Animated.View
+      entering={FadeInDown}
     >
       <GlassCard style={{ padding: 0, overflow: 'hidden' }}>
         {/* Left accent bar */}
@@ -247,10 +245,7 @@ function ItemCard({ item, idx, adjust, remove }: {
 
           {/* Progress bar */}
           <View style={[ic.progressTrack, { backgroundColor: colors.border }]}>
-            <motion.View
-              initial={{ width: '0%' }}
-              animate={{ width: `${Math.round(progress * 100)}%` as any }}
-              transition={{ type: 'spring', stiffness: 80, damping: 20, delay: idx * 0.05 + 0.2 }}
+            <Animated.View
               style={[ic.progressFill, { backgroundColor: progressColor }]}
             />
           </View>
@@ -289,7 +284,7 @@ function ItemCard({ item, idx, adjust, remove }: {
           )}
         </View>
       </GlassCard>
-    </motion.View>
+    </Animated.View>
   );
 }
 
@@ -336,7 +331,7 @@ export default function InventoryScreen() {
         {/* Summary ribbon */}
         {items.length > 0 && (
           <View style={{ paddingHorizontal: 24 }}>
-            <motion.View initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Animated.View entering={FadeInDown}>
               <GlassCard style={s.summaryCard}>
                 <SummaryCol label="Bidhaa Zote" value={String(items.length)} color={colors.primary} />
                 <View style={[s.divider, { backgroundColor: colors.border }]} />
@@ -344,7 +339,7 @@ export default function InventoryScreen() {
                 <View style={[s.divider, { backgroundColor: colors.border }]} />
                 <SummaryCol label="Thamani Yote" value={`TZS ${fmt(totalValue)}`} color={colors.text} small />
               </GlassCard>
-            </motion.View>
+            </Animated.View>
           </View>
         )}
 

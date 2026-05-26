@@ -20,7 +20,7 @@ import { useKilimoStore } from '../store/useKilimoStore';
 import { useFarmDataStore } from '../store/useFarmDataStore';
 import { exportPnlPdf, PnlReport } from '../lib/pdf/pnl';
 import { Gate } from '../lib/access';
-import { motion } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 const fmt = (n: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Math.abs(n));
 
@@ -87,7 +87,7 @@ export default function AgroIdScreen() {
     <PageScaffold title="Agro ID" subtitle="Hati yako ya kidijiti ya kifedha" badge="VERIFIED IDENTITY">
       {/* The Identity Card */}
       <View style={{ paddingHorizontal: 24 }}>
-        <motion.View initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', damping: 22, stiffness: 90 }}>
+        <Animated.View entering={FadeInDown}>
           <GlassCard style={{ padding: 24 }}>
             <LinearGradient
               colors={[colors.primary + '22', 'transparent']}
@@ -102,10 +102,15 @@ export default function AgroIdScreen() {
             </View>
 
             <View style={s.profileRow}>
-              <Image
-                source={{ uri: agroId.avatarUrl ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400' }}
-                style={[s.avatar, { borderColor: colors.primary + '60' }]}
-              />
+                {agroId.avatarUrl ? (
+                  <Image source={{ uri: agroId.avatarUrl }} style={[s.avatar, { borderColor: colors.primary }]} />
+                ) : (
+                  <View style={[s.avatar, { borderColor: colors.primary, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
+                    <Text style={{ color: colors.text, fontSize: 32, fontFamily: 'Inter_900Black' }}>
+                      {agroId.name.split(' ').map(n => n[0]).join('').substring(0,2)}
+                    </Text>
+                  </View>
+                )}
               <View style={{ flex: 1, marginLeft: 16 }}>
                 <Text style={[s.name, { color: colors.text }]}>{agroId.name}</Text>
                 <Text style={[s.role, { color: colors.textMute }]}>{agroId.role}</Text>
@@ -142,19 +147,19 @@ export default function AgroIdScreen() {
               </View>
             </View>
           </GlassCard>
-        </motion.View>
+        </Animated.View>
       </View>
 
       {/* P&L Summary */}
       <SectionHeader title="Mapato na Matumizi · P&L" />
       <View style={{ paddingHorizontal: 24, gap: 12 }}>
         <View style={s.summaryGrid}>
-          <SummaryTile label="Mapato" value={income} accent="#22d15a" Icon={TrendingUp} />
+          <SummaryTile label="Mapato" value={income} accent="#10b981" Icon={TrendingUp} />
           <SummaryTile label="Matumizi" value={expense} accent="#ef4444" Icon={TrendingDown} />
         </View>
         <GlassCard style={{ padding: 18 }}>
           <Text style={[s.netLabel, { color: colors.textMute }]}>Faida Halisi · Net Position</Text>
-          <Text style={[s.netValue, { color: net >= 0 ? '#22d15a' : '#ef4444' }]}>
+          <Text style={[s.netValue, { color: net >= 0 ? '#10b981' : '#ef4444' }]}>
             {net >= 0 ? '+' : '−'} TZS {fmt(net)}
           </Text>
           <Text style={[s.netSub, { color: colors.textMute }]}>{ledger.length} entries · ready for bank submission</Text>
@@ -168,13 +173,16 @@ export default function AgroIdScreen() {
           disabled={exporting}
           activeOpacity={0.85}
           style={[s.primaryCta, { backgroundColor: colors.primary, opacity: exporting ? 0.6 : 1 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Export Profit and Loss statements to PDF"
+          accessibilityState={{ disabled: exporting }}
         >
           {exporting ? (
-            <Text style={s.primaryCtaText}>Inatayarisha PDF...</Text>
+            <Text style={[s.primaryCtaText, { color: isDark ? '#000' : '#FCFBF7' }]}>Inatayarisha PDF...</Text>
           ) : (
             <>
-              <Download size={20} color="#000" />
-              <Text style={s.primaryCtaText}>
+              <Download size={20} color={isDark ? '#000' : '#FCFBF7'} />
+              <Text style={[s.primaryCtaText, { color: isDark ? '#000' : '#FCFBF7' }]}>
                 {Platform.OS === 'web' ? 'Print / Save P&L PDF' : 'Export & Share P&L PDF'}
               </Text>
             </>
@@ -188,13 +196,25 @@ export default function AgroIdScreen() {
       {/* Quick add entries */}
       <SectionHeader title="Ongeza Akaunti · Quick Entry" />
       <View style={{ paddingHorizontal: 24, flexDirection: 'row', gap: 10 }}>
-        <TouchableOpacity onPress={() => addSampleEntry(true)} style={[s.quickBtn, { backgroundColor: '#22d15a20', borderColor: '#22d15a40' }]}>
-          <Plus size={14} color="#22d15a" />
-          <Text style={[s.quickBtnText, { color: '#22d15a' }]}>Income</Text>
+        <TouchableOpacity
+          onPress={() => addSampleEntry(true)}
+          style={[s.quickBtn, { backgroundColor: colors.success + '20', borderColor: colors.success + '40' }]}
+          accessibilityRole="button"
+          accessibilityLabel="Quick add income transaction"
+          accessibilityHint="Adds a sample Mauzo ya soko entry"
+        >
+          <Plus size={14} color={colors.success} />
+          <Text style={[s.quickBtnText, { color: colors.success }]}>Income</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => addSampleEntry(false)} style={[s.quickBtn, { backgroundColor: '#ef444420', borderColor: '#ef444440' }]}>
-          <Plus size={14} color="#ef4444" />
-          <Text style={[s.quickBtnText, { color: '#ef4444' }]}>Expense</Text>
+        <TouchableOpacity
+          onPress={() => addSampleEntry(false)}
+          style={[s.quickBtn, { backgroundColor: colors.error + '20', borderColor: colors.error + '40' }]}
+          accessibilityRole="button"
+          accessibilityLabel="Quick add expense transaction"
+          accessibilityHint="Adds a sample Manunuzi ya pembejeo entry"
+        >
+          <Plus size={14} color={colors.error} />
+          <Text style={[s.quickBtnText, { color: colors.error }]}>Expense</Text>
         </TouchableOpacity>
       </View>
 
@@ -205,12 +225,12 @@ export default function AgroIdScreen() {
           {ledger.slice(0, 8).map((e, i) => (
             <View key={e.id}>
               <View style={s.ledgerRow}>
-                <View style={[s.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#22d15a' : '#ef4444' }]} />
+                <View style={[s.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]} />
                 <View style={{ flex: 1 }}>
                   <Text style={[s.ledgerDesc, { color: colors.text }]} numberOfLines={1}>{e.description}</Text>
                   <Text style={[s.ledgerCat, { color: colors.textMute }]}>{e.category} · {new Date(e.date).toLocaleDateString('en-GB')}</Text>
                 </View>
-                <Text style={[s.ledgerAmt, { color: e.amountTZS > 0 ? '#22d15a' : '#ef4444' }]}>
+                <Text style={[s.ledgerAmt, { color: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]}>
                   {e.amountTZS > 0 ? '+' : '−'} {fmt(e.amountTZS)}
                 </Text>
               </View>
@@ -254,7 +274,7 @@ function SummaryTile({ label, value, accent, Icon }: any) {
 
 const s = StyleSheet.create({
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(34,209,90,0.18)' },
+  badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(62,207,142,0.18)' },
   badgeText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.2 },
   idNum: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.5 },
   profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },

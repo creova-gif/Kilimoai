@@ -90,44 +90,53 @@ export function useAgroAuth() {
     return result.success;
   }, [biometricAvailable]);
 
-  // ── Email / phone sign-in ────────────────────────────────────────────────
-  const signIn = useCallback(async (email: string, password: string) => {
+  // ── Phone OTP sign-in ────────────────────────────────────────────────────
+  const signInWithPhone = useCallback(async (phone: string) => {
     setLoading(true);
     try {
       if (!supabase) throw new Error('Supabase not configured');
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithOtp({
+        phone,
+        options: { channel: 'sms' },
+      });
       if (error) throw error;
+      await SecureStore.setItemAsync('kilimo_phone', phone);
+    } catch (err: any) {
+      throw new Error(err.message ?? 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  const verifyOtp = useCallback(async (phone: string, token: string) => {
+    setLoading(true);
+    try {
+      if (!supabase) throw new Error('Supabase not configured');
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token,
+        type: 'sms',
+      });
+      if (error) throw error;
+      
       // Persist session token securely
       await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
 
-      // Fetch Agro ID profile
+      // We don't create the profile here anymore. Onboarding wizard will create it.
+      // Just check if profile exists, to hydrate if it's an existing user.
       const { data: profile, error: profileError } = await supabase
         .from('agro_profiles')
         .select('*')
         .eq('user_id', data.user.id)
         .single();
 
-      if (profileError || !profile) {
-        // First-time user — create a new Agro ID
-        const newProfile: AgroID = {
-          id: `KILIMO-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-          name: data.user.user_metadata?.name ?? 'Mkulima',
-          role: 'Mkulima',
-          location: 'Tanzania',
-          tier: 'Free',
-          joinDate: new Date().getFullYear().toString(),
-          mpesaLinked: false,
-          biometricEnabled: false,
-        };
-        await supabase.from('agro_profiles').insert({ ...newProfile, user_id: data.user.id });
-        setAgroId(newProfile);
-      } else {
+      if (!profileError && profile) {
         setAgroId(profile as AgroID);
+        return { existingUser: true, user: data.user };
       }
+      return { existingUser: false, user: data.user };
     } catch (err: any) {
-      throw new Error(err.message ?? 'Sign-in failed');
+      throw new Error(err.message ?? 'Failed to verify OTP');
     } finally {
       setLoading(false);
     }
@@ -152,7 +161,8 @@ export function useAgroAuth() {
     isAuthenticated,
     loading,
     biometricAvailable,
-    signIn,
+    signInWithPhone,
+    verifyOtp,
     signOut,
     authenticateWithBiometric,
   };

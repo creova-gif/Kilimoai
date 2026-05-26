@@ -15,22 +15,22 @@ import { Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useKilimoStore } from '../store/useKilimoStore';
 
-// Display notifications in foreground (Expo SDK 54 requires all five fields)
+// Display notifications in foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
 export function useNotifications() {
   const router = useRouter();
   const { addNotification, markAllRead, unreadCount } = useKilimoStore();
-  const notificationListener = useRef<Notifications.EventSubscription | undefined>(undefined);
-  const responseListener = useRef<Notifications.EventSubscription | undefined>(undefined);
+  const notificationListener = useRef<Notifications.EventSubscription | null>(null);
+  const responseListener = useRef<Notifications.EventSubscription | null>(null);
 
   async function registerForPushNotifications(): Promise<string | null> {
     if (!Device.isDevice) return null;

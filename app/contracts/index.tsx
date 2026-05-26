@@ -11,13 +11,14 @@ import { useRouter } from 'expo-router';
 import { Plus, Handshake, ChevronRight, X, FileText, User, MapPin, Wheat } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
-import { motion } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import PageScaffold, { GlassCard, SectionHeader, EmptyState } from '../../components/PageScaffold';
 import { useTheme } from '../../constants/Theme';
 import {
   useContractsStore, STATUS_LABEL, STATUS_COLOR, Contract, ContractStatus,
 } from '../../store/useContractsStore';
 import { Gate } from '../../lib/access';
+import { RequireVerification } from '../../components/RequireVerification';
 
 const FILTERS: { label: string; status: 'all' | ContractStatus }[] = [
   { label: 'Yote', status: 'all' },
@@ -208,6 +209,7 @@ export default function ContractsScreen() {
         </PageScaffold>
       }
     >
+      <RequireVerification>
       <CreateContractModal
         visible={showModal}
         onClose={() => setShowModal(false)}
@@ -230,7 +232,7 @@ export default function ContractsScreen() {
         {/* Summary */}
         {contracts.length > 0 && (
           <View style={{ paddingHorizontal: 24 }}>
-            <motion.View initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Animated.View entering={FadeInDown}>
               <GlassCard style={s.summaryCard}>
                 <SummaryPill count={contracts.length} label="Mikataba Yote" color={colors.primary} />
                 <View style={[s.vr, { backgroundColor: colors.border }]} />
@@ -238,7 +240,7 @@ export default function ContractsScreen() {
                 <View style={[s.vr, { backgroundColor: colors.border }]} />
                 <SummaryPill count={pending} label="Inakaguliwa" color="#f59e0b" />
               </GlassCard>
-            </motion.View>
+            </Animated.View>
           </View>
         )}
 
@@ -275,18 +277,17 @@ export default function ContractsScreen() {
         ) : (
           <View style={{ paddingHorizontal: 24, gap: 10 }}>
             {filtered.map((c, idx) => (
-              <motion.View
+              <Animated.View
                 key={c.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 100, damping: 18, delay: idx * 0.06 }}
+                entering={FadeInDown}
               >
                 <ContractRow c={c} onPress={() => router.push(`/contracts/${c.id}` as any)} />
-              </motion.View>
+              </Animated.View>
             ))}
           </View>
         )}
       </PageScaffold>
+      </RequireVerification>
     </Gate>
   );
 }

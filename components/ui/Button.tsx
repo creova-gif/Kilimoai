@@ -1,95 +1,127 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, TouchableOpacityProps, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '../../constants/Theme';
 
-interface ButtonProps {
-  onPress: () => void;
-  title: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+interface ButtonProps extends TouchableOpacityProps {
+  label: string;
+  variant?: 'primary' | 'secondary' | 'destructive' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-  disabled?: boolean;
+  icon?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({ 
-  onPress, 
-  title, 
-  variant = 'primary', 
-  loading = false, 
-  style, 
-  textStyle,
-  disabled = false
-}) => {
-  const getButtonStyle = () => {
-    switch (variant) {
-      case 'secondary': return styles.secondary;
-      case 'outline': return styles.outline;
-      case 'ghost': return styles.ghost;
-      default: return styles.primary;
-    }
+export function Button({
+  label,
+  variant = 'primary',
+  size = 'md',
+  loading,
+  icon,
+  disabled,
+  style,
+  onPress,
+  ...rest
+}: ButtonProps) {
+  const { colors } = useTheme();
+
+  const handlePress = (e: any) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (onPress) onPress(e);
   };
 
-  const getTextStyle = () => {
-    switch (variant) {
-      case 'outline': return styles.outlineText;
-      case 'ghost': return styles.ghostText;
-      default: return styles.primaryText;
-    }
-  };
+  const isPrimary = variant === 'primary';
+  const isDestructive = variant === 'destructive';
+  const isSecondary = variant === 'secondary';
+  const isOutline = variant === 'outline';
+  const isGhost = variant === 'ghost';
+
+  const textColor = 
+    isPrimary ? '#000' : 
+    isDestructive ? '#fff' : 
+    (isSecondary || isOutline || isGhost) ? colors.text : 
+    colors.text;
+
+  const btnContent = (
+    <View style={[styles.inner, size === 'sm' && styles.innerSm, size === 'lg' && styles.innerLg]}>
+      {loading ? (
+        <ActivityIndicator color={textColor} />
+      ) : (
+        <>
+          {icon && <View style={styles.iconWrap}>{icon}</View>}
+          <Text
+            style={[
+              styles.text,
+              { color: textColor },
+              size === 'sm' && styles.textSm,
+              size === 'lg' && styles.textLg,
+              isPrimary && styles.textPrimary,
+            ]}
+          >
+            {label}
+          </Text>
+        </>
+      )}
+    </View>
+  );
 
   return (
-    <TouchableOpacity 
-      onPress={onPress} 
-      style={[styles.base, getButtonStyle(), style, (disabled || loading) && styles.disabled]}
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={handlePress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={rest.accessibilityLabel || label}
+      accessibilityState={{ disabled: Boolean(disabled || loading), busy: Boolean(loading) }}
+      style={[
+        styles.root,
+        isSecondary && { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border },
+        isOutline && { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.border },
+        isGhost && { backgroundColor: 'transparent' },
+        (disabled || loading) && styles.disabled,
+        style,
+      ]}
+      {...rest}
     >
-      {loading ? (
-        <ActivityIndicator color={variant === 'outline' ? '#22c55e' : '#ffffff'} />
+      {isPrimary ? (
+        <LinearGradient colors={[colors.primary, colors.primaryDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.gradient}>
+          {btnContent}
+        </LinearGradient>
+      ) : isDestructive ? (
+        <LinearGradient colors={['#ef4444', '#dc2626']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.gradient}>
+          {btnContent}
+        </LinearGradient>
       ) : (
-        <Text style={[styles.textBase, getTextStyle(), textStyle]}>{title}</Text>
+        btnContent
       )}
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  base: {
-    height: 52,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+  root: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  gradient: {
+    width: '100%',
+  },
+  inner: {
     flexDirection: 'row',
-    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
-  textBase: {
-    fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
+  innerSm: { paddingVertical: 8, paddingHorizontal: 12 },
+  innerLg: { paddingVertical: 18, paddingHorizontal: 24 },
+  text: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 15,
   },
-  primary: {
-    backgroundColor: '#22c55e',
-  },
-  primaryText: {
-    color: '#ffffff',
-  },
-  secondary: {
-    backgroundColor: '#18181b',
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: '#22c55e',
-  },
-  outlineText: {
-    color: '#22c55e',
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-  },
-  ghostText: {
-    color: '#71717a',
-  },
-  disabled: {
-    opacity: 0.5,
-  },
+  textSm: { fontSize: 13 },
+  textLg: { fontSize: 17 },
+  textPrimary: { fontFamily: 'Inter_900Black' },
+  disabled: { opacity: 0.5 },
+  iconWrap: { marginRight: 8 },
 });

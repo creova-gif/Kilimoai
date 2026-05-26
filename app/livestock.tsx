@@ -12,7 +12,7 @@ import {
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
-import { motion, AnimatePresence } from 'motion/react';
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import PageScaffold, { GlassCard, SectionHeader, EmptyState } from '../components/PageScaffold';
 import { useTheme } from '../constants/Theme';
 import { useFarmDataStore, LivestockAnimal, LivestockSpecies } from '../store/useFarmDataStore';
@@ -199,10 +199,8 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
   }
 
   return (
-    <motion.View
-      initial={{ opacity: 0, y: 24, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 18, delay: idx * 0.06 }}
+    <Animated.View
+      entering={FadeInDown}
     >
       <GlassCard style={{ padding: 0, overflow: 'hidden' }}>
         {/* Color bar */}
@@ -257,7 +255,7 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
           )}
         </View>
       </GlassCard>
-    </motion.View>
+    </Animated.View>
   );
 }
 
@@ -306,14 +304,14 @@ export default function LivestockScreen() {
         {/* Summary ribbon */}
         {animals.length > 0 && (
           <View style={{ paddingHorizontal: 24 }}>
-            <motion.View initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Animated.View entering={FadeInDown}>
               <GlassCard style={s.summaryCard}>
                 <SummaryPill count={healthy}   label="Wazima"     color="#22d15a" />
                 <SummaryPill count={attention} label="Tahadhari"  color="#f59e0b" />
                 <SummaryPill count={sick}      label="Wagonjwa"   color="#ef4444" />
                 {dueSoon.length > 0 && <SummaryPill count={dueSoon.length} label="Chanjo Hivi Karibuni" color="#3b82f6" />}
               </GlassCard>
-            </motion.View>
+            </Animated.View>
           </View>
         )}
 

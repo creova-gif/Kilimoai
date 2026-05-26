@@ -10,7 +10,7 @@
  *   </PageScaffold>
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView,
   Dimensions, StatusBar, Platform, RefreshControl,
@@ -21,29 +21,57 @@ import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import { motion } from 'motion/react';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  withSequence,
+  Easing 
+} from 'react-native-reanimated';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
-const NeuralOrb = ({ color, size, x, y, delay }: any) => (
-  <motion.View
-    initial={{ x, y, opacity: 0, scale: 0.8 }}
-    animate={{
-      x: [x, x + 30, x - 20, x],
-      y: [y, y - 40, y + 30, y],
-      opacity: [0.08, 0.18, 0.12, 0.08],
-      scale: [1, 1.1, 0.95, 1],
-    }}
-    transition={{ duration: 20 + delay / 1000, repeat: Infinity, ease: 'easeInOut' }}
-    style={[
-      styles.orb,
-      {
-        width: size, height: size, borderRadius: size / 2, backgroundColor: color,
-        filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
-      },
-    ]}
-  />
-);
+const NeuralOrb = ({ color, size, x, y, delay }: any) => {
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    // A simple floating animation loop
+    const duration = 20000 + delay;
+    progress.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: x + progress.value * 30 },
+        { translateY: y - progress.value * 40 },
+        { scale: 0.95 + progress.value * 0.15 }
+      ] as any,
+      opacity: 0.08 + progress.value * 0.1,
+    };
+  });
+
+  return (
+    <Animated.View
+      style={[
+        styles.orb,
+        {
+          width: size, height: size, borderRadius: size / 2, backgroundColor: color,
+        },
+        Platform.OS === 'web' && { filter: 'blur(100px)' as any },
+        animatedStyle
+      ]}
+    />
+  );
+};
 
 export interface PageScaffoldProps {
   title: string;
@@ -69,6 +97,7 @@ export default function PageScaffold({
         <TouchableOpacity
           onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.back(); }}
           activeOpacity={0.7}
+          accessibilityRole="button"
           accessibilityLabel="Go back"
         >
           <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconBtn, { borderColor: colors.border }]}>
@@ -102,10 +131,10 @@ export default function PageScaffold({
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <NeuralOrb color="#22d15a" size={340} x={-60} y={-40} delay={0} />
-        <NeuralOrb color="#3b82f6" size={280} x={SW - 160} y={SH * 0.5} delay={2000} />
+        <NeuralOrb color={colors.primary} size={340} x={-60} y={-40} delay={0} />
+        <NeuralOrb color={colors.glow} size={280} x={SW - 160} y={SH * 0.5} delay={2000} />
         <LinearGradient
-          colors={[isDark ? '#020617' : '#f8fafc', 'transparent']}
+          colors={[colors.background, 'transparent']}
           style={{ position: 'absolute', top: 0, left: 0, right: 0, height: SH }}
         />
       </View>

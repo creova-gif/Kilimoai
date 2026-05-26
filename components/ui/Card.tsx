@@ -1,38 +1,68 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, useColorScheme } from 'react-native';
+import { View, StyleSheet, ViewProps } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { useTheme } from '../../constants/Theme';
 
-interface CardProps {
+interface CardProps extends ViewProps {
+  variant?: 'glass' | 'solid';
+  intensity?: number;
+  tint?: 'light' | 'dark' | 'default';
   children: React.ReactNode;
-  style?: ViewStyle;
 }
 
-export const Card: React.FC<CardProps> = ({ children, style }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+export function Card({
+  variant = 'glass',
+  intensity = 20,
+  tint,
+  style,
+  children,
+  ...rest
+}: CardProps) {
+  const { colors, isDark, shadows } = useTheme();
+
+  if (variant === 'solid') {
+    return (
+      <View
+        style={[
+          styles.card, 
+          { 
+            backgroundColor: colors.card, 
+            borderColor: colors.border,
+            ...shadows.sm
+          }, 
+          style
+        ]}
+        {...rest}
+      >
+        {children}
+      </View>
+    );
+  }
 
   return (
-    <View style={[
-      styles.card, 
-      { backgroundColor: isDark ? '#18181b' : '#ffffff' },
-      !isDark && styles.shadow,
-      style
-    ]}>
+    <BlurView
+      intensity={isDark ? 20 : 60}
+      tint={tint || (isDark ? 'dark' : 'light')}
+      style={[
+        styles.card, 
+        { 
+          borderColor: colors.border,
+          backgroundColor: isDark ? 'rgba(19, 23, 20, 0.45)' : 'rgba(255, 255, 255, 0.65)'
+        }, 
+        style
+      ]}
+      {...rest}
+    >
       {children}
-    </View>
+    </BlurView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   card: {
     borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
     padding: 16,
-    marginBottom: 16,
-  },
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 3,
   },
 });

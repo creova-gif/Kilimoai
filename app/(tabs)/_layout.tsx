@@ -1,127 +1,80 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet, View, Text } from 'react-native';
-import { LayoutDashboard, CloudRain, LayoutGrid, User } from 'lucide-react-native';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Home, Bot, Tractor, Store, User } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../constants/Theme';
-
-function TabBackground({ isDark }: { isDark: boolean }) {
-  return (
-    <View style={[StyleSheet.absoluteFill, tb.wrap]}>
-      <BlurView
-        intensity={isDark ? 80 : 90}
-        tint={isDark ? 'dark' : 'light'}
-        style={StyleSheet.absoluteFill}
-      />
-      <LinearGradient
-        colors={isDark
-          ? ['rgba(10,26,14,0.88)', 'rgba(5,15,7,0.96)']
-          : ['rgba(255,255,255,0.75)', 'rgba(248,250,252,0.85)']}
-        style={StyleSheet.absoluteFill}
-      />
-      <View style={[StyleSheet.absoluteFill, tb.border]} />
-    </View>
-  );
-}
-
-function TabIcon({ icon: Icon, color, focused, label, isDark }: {
-  icon: any; color: string; focused: boolean; label: string; isDark: boolean;
-}) {
-  return (
-    <View style={[ti.wrap, focused && ti.wrapActive]}>
-      {focused && (
-        <View style={[ti.glow, { shadowColor: '#22d15a' }]} />
-      )}
-      <Icon
-        color={focused ? '#22d15a' : isDark ? '#52525b' : '#a1a1aa'}
-        size={22}
-        strokeWidth={focused ? 2.5 : 2}
-      />
-      <View style={[ti.dot, focused ? ti.dotActive : undefined]} />
-    </View>
-  );
-}
+import { useKilimoStore } from '../../store/useKilimoStore';
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
-
+  const language = useKilimoStore((s) => s.language);
+  
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#22d15a',
-        tabBarInactiveTintColor: isDark ? '#52525b' : '#a1a1aa',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: isDark ? '#707070' : '#9a9a9a',
         headerShown: false,
-        tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: Platform.OS === 'ios' ? 28 : 20,
-          left: 20,
-          right: 20,
-          borderRadius: 30,
-          height: 66,
           borderTopWidth: 0,
           elevation: 0,
-          backgroundColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 12 },
-          shadowOpacity: isDark ? 0.5 : 0.15,
-          shadowRadius: 28,
+          height: Platform.OS === 'ios' ? 88 : 72,
+          paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+          paddingTop: 12,
+          backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.card,
         },
-        tabBarBackground: () => <TabBackground isDark={isDark} />,
-        tabBarItemStyle: {
-          paddingVertical: 8,
+        tabBarBackground: () => 
+          Platform.OS === 'ios' ? (
+            <BlurView intensity={isDark ? 50 : 80} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+          ) : (
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.border }]} />
+          ),
+        tabBarLabelStyle: {
+          fontFamily: 'Inter_700Bold',
+          fontSize: 10,
+          textTransform: 'uppercase',
+          letterSpacing: 0.5,
+          marginTop: 4,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={LayoutDashboard} color={color} focused={focused} label="HUB" isDark={isDark} />
-          ),
+          title: language === 'sw' ? 'NYUMBANI' : 'HOME',
+          tabBarIcon: ({ color, size }) => <Home color={color} size={size - 2} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
-        name="forecast"
+        name="ai"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={CloudRain} color={color} focused={focused} label="CLIMATE" isDark={isDark} />
-          ),
+          title: 'SANKOFA',
+          tabBarIcon: ({ color, size }) => <Bot color={color} size={size - 2} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
-        name="features"
+        name="farm"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={LayoutGrid} color={color} focused={focused} label="FEATURES" isDark={isDark} />
-          ),
+          title: language === 'sw' ? 'SHAMBA' : 'FARM',
+          tabBarIcon: ({ color, size }) => <Tractor color={color} size={size - 2} strokeWidth={2.5} />,
+        }}
+      />
+      <Tabs.Screen
+        name="market"
+        options={{
+          title: language === 'sw' ? 'SOKO' : 'MARKET',
+          tabBarIcon: ({ color, size }) => <Store color={color} size={size - 2} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={User} color={color} focused={focused} label="PROFAILI" isDark={isDark} />
-          ),
+          title: language === 'sw' ? 'WASIFU' : 'PROFILE',
+          tabBarIcon: ({ color, size }) => <User color={color} size={size - 2} strokeWidth={2.5} />,
         }}
       />
     </Tabs>
   );
 }
-
-const tb = StyleSheet.create({
-  wrap: { borderRadius: 30, overflow: 'hidden' },
-  border: { borderRadius: 30, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)' },
-});
-
-const ti = StyleSheet.create({
-  wrap: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  wrapActive: { backgroundColor: 'rgba(34,209,90,0.12)' },
-  glow: {
-    position: 'absolute', width: 48, height: 48, borderRadius: 16,
-    shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 0 },
-  },
-  dot: { width: 4, height: 4, borderRadius: 2, marginTop: 4, backgroundColor: 'transparent' },
-  dotActive: { backgroundColor: '#22d15a' },
-});

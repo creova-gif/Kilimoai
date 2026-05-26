@@ -31,7 +31,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import { motion, AnimatePresence } from "motion/react";
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -98,9 +98,9 @@ export default function MapScreen() {
       />
 
       <SafeAreaView style={styles.overlay}>
-        <motion.View variants={containerVariants} initial="initial" animate="animate" style={{ flex: 1 }}>
+        <Animated.View style={{ flex: 1 }}>
           
-          <motion.View variants={itemVariants} style={styles.header}>
+          <Animated.View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
               <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
                 <ChevronLeft size={24} color="#fff" />
@@ -123,9 +123,9 @@ export default function MapScreen() {
                 <Settings size={20} color="#fff" />
               </BlurView>
             </TouchableOpacity>
-          </motion.View>
+          </Animated.View>
 
-          <motion.View variants={controlVariants} style={styles.mapControls}>
+          <Animated.View style={styles.mapControls}>
             <TouchableOpacity onPress={handleLayers} style={styles.controlItem}>
               <BlurView intensity={40} tint="dark" style={[styles.controlInner, activeLayer !== 'standard' && { borderColor: colors.primary }]}>
                 <Layers size={22} color={activeLayer !== 'standard' ? colors.primary : '#fff'} />
@@ -141,18 +141,15 @@ export default function MapScreen() {
                 <Locate size={22} color={colors.primary} />
               </BlurView>
             </TouchableOpacity>
-          </motion.View>
+          </Animated.View>
 
-          <motion.View 
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.6, type: "spring", damping: 15 }}
+          <Animated.View 
+            entering={FadeInDown}
             style={[styles.pin, { top: '42%', left: '46%' }]}
           >
             <View style={styles.pinWrapper}>
-              <motion.View 
-                animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+              <Animated.View 
+                /* Reanimated Todo */
                 style={[styles.pinPulse, { borderColor: colors.primary }]} 
               />
               <View style={[styles.pinCircle, { backgroundColor: colors.primary }]}>
@@ -162,12 +159,10 @@ export default function MapScreen() {
             <BlurView intensity={20} tint="dark" style={styles.pinLabel}>
               <Text style={styles.pinText}>Eneo Kuu (Mahindi)</Text>
             </BlurView>
-          </motion.View>
+          </Animated.View>
 
-          <motion.View 
-            initial={{ y: 300 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.4, type: "spring", damping: 20, stiffness: 100 }}
+          <Animated.View 
+            entering={FadeInDown}
             style={styles.bottomSheet}
           >
             <BlurView intensity={90} tint={isDark ? "dark" : "light"} style={[styles.sheetContent, { borderColor: colors.border }]}>
@@ -209,8 +204,8 @@ export default function MapScreen() {
                 <Text style={[styles.fullAnalysisText, { color: colors.primary }]}>Anzisha Uchambuzi Kamili wa AI</Text>
               </TouchableOpacity>
             </BlurView>
-          </motion.View>
-        </motion.View>
+          </Animated.View>
+        </Animated.View>
       </SafeAreaView>
     </View>
   );

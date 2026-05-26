@@ -17,6 +17,7 @@ import PageScaffold, { GlassCard, SectionHeader } from '../../components/PageSca
 import { useTheme } from '../../constants/Theme';
 import { Gate } from '../../lib/access';
 import { useWalletAdminStore } from '../../store/useWalletAdminStore';
+import { RequireVerification } from '../../components/RequireVerification';
 
 const fmt = (n: number) => `TSh ${new Intl.NumberFormat('en-US').format(n)}`;
 
@@ -50,6 +51,7 @@ export default function WalletAdminOverview() {
         </PageScaffold>
       }
     >
+      <RequireVerification>
       <PageScaffold title="Pochi ya Msimamizi" subtitle="Wallet Admin" badge="ENTERPRISE">
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
           {/* Hero — total balance */}
@@ -159,6 +161,7 @@ export default function WalletAdminOverview() {
           </GlassCard>
         </ScrollView>
       </PageScaffold>
+      </RequireVerification>
     </Gate>
   );
 }

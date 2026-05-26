@@ -35,7 +35,7 @@ import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { TextInput, Modal, Alert } from 'react-native';
 import { useTheme } from '../constants/Theme';
-import { motion, AnimatePresence } from "motion/react";
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { springs, transitions } from '../constants/MotionTokens';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { useTasks, TaskCategory, TaskPriority } from '../hooks/useTasks';
@@ -60,19 +60,8 @@ const containerVariants = {
 
 const NeuralOrb = ({ color, size, delay, x, y }: any) => {
   return (
-    <motion.View
-      initial={{ x, y, opacity: 0, scale: 0.8 }}
-      animate={{ 
-        x: [x, x + 40, x - 20, x],
-        y: [y, y - 50, y + 30, y],
-        opacity: [0.08, 0.15, 0.1, 0.08],
-        scale: [1, 1.1, 0.95, 1]
-      }}
-      transition={{
-        duration: 20 + delay / 1000,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
+    <Animated.View
+      entering={FadeInDown}
       style={[
         styles.bgOrb,
         {
@@ -169,8 +158,8 @@ export default function TasksScreen() {
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
       <View style={StyleSheet.absoluteFill}>
-        <NeuralOrb color={colors.primary} size={400} x={-100} y={50} delay={0} />
-        <NeuralOrb color="#8b5cf6" size={350} x={SCREEN_WIDTH - 150} y={300} delay={2000} />
+        
+        
         
         <LinearGradient
           colors={[
@@ -183,10 +172,15 @@ export default function TasksScreen() {
       </View>
 
       <SafeAreaView style={styles.safeArea}>
-        <motion.View variants={containerVariants} initial="initial" animate="animate" style={{ flex: 1 }}>
+        <Animated.View style={{ flex: 1 }}>
           
-          <motion.View variants={itemVariants} style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+          <Animated.View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+            >
               <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: colors.border }]}>
                 <ChevronLeft size={24} color={colors.text} />
               </BlurView>
@@ -200,54 +194,54 @@ export default function TasksScreen() {
               <Text style={[styles.headerTitle, { color: colors.text }]}>Kazi za Shamba</Text>
             </View>
 
-            <TouchableOpacity onPress={() => { if (isOffline) { Alert.alert('Nje ya Mtandao', 'Kazi itahifadhiwa na kutumwa baadaye.'); } setShowCreate(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }} activeOpacity={0.7}>
+            <TouchableOpacity
+              onPress={() => { if (isOffline) { Alert.alert('Nje ya Mtandao', 'Kazi itahifadhiwa na kutumwa baadaye.'); } setShowCreate(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={isOffline ? 'Offline: new task will be queued' : 'Add new task'}
+            >
               <BlurView intensity={25} tint={isDark ? "dark" : "light"} style={[styles.headerBtn, { borderColor: isOffline ? '#ef444450' : colors.border }]}>
                 {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Plus size={24} color={colors.primary} />}
               </BlurView>
             </TouchableOpacity>
-          </motion.View>
+          </Animated.View>
 
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
             
             {/* Gamification Dashboard */}
-            <motion.View variants={itemVariants} style={styles.dashboard}>
+            <Animated.View style={styles.dashboard}>
               <BlurView intensity={isDark ? 20 : 90} tint={isDark ? "dark" : "light"} style={[styles.dashboardCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={isDark ? ['rgba(34, 209, 90, 0.15)', 'transparent'] : ['rgba(34, 209, 90, 0.08)', 'transparent']}
+                  colors={isDark ? ['rgba(62, 207, 142, 0.15)', 'transparent'] : ['rgba(62, 207, 142, 0.08)', 'transparent']}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.dashboardHeader}>
                   <View style={{ flex: 1 }}>
-                    <motion.Text animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 3, repeat: Infinity }} style={[styles.dashboardLabel, { color: colors.primary }]}>
+                    <Animated.Text /* Reanimated Todo */ style={[styles.dashboardLabel, { color: colors.primary }]}>
                       UFANISI WA LEO
-                    </motion.Text>
+                    </Animated.Text>
                     <Text style={[styles.dashboardTitle, { color: colors.text }]}>Maendeleo ya Kazi</Text>
                     <Text style={[styles.dashboardSubtitle, { color: colors.textMute }]}>Kazi {completedTasks.length} zimekamilika kati ya {tasks.length}</Text>
                   </View>
-                  <motion.View whileHover={{ scale: 1.05 }} style={[styles.progressCircle, { borderColor: colors.primary + '30' }]}>
+                  <Animated.View style={[styles.progressCircle, { borderColor: colors.primary + '30' }]}>
                     <Text style={[styles.progressText, { color: colors.primary }]}>{progress}%</Text>
-                  </motion.View>
+                  </Animated.View>
                 </View>
                 <View style={[styles.progressTrack, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
-                  <motion.View 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={springs.gentle}
+                  <Animated.View 
                     style={{ height: '100%' }}
                   >
-                    <LinearGradient colors={[colors.primary, '#22d15a']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
-                  </motion.View>
+                    <LinearGradient colors={[colors.primary, '#10b981']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
+                  </Animated.View>
                 </View>
               </BlurView>
-            </motion.View>
+            </Animated.View>
 
             {/* Offline Sync Warning */}
-            <AnimatePresence>
+            
               {isOffline && (
-                <motion.View 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
+                <Animated.View 
+                  entering={FadeInDown} exiting={FadeOut}
                   style={{ overflow: 'hidden', marginBottom: 24 }}
                 >
                   <View style={[styles.offlineCard, { backgroundColor: '#ef444415', borderColor: '#ef444430' }]}>
@@ -257,17 +251,19 @@ export default function TasksScreen() {
                       <Text style={[styles.offlineDesc, { color: isDark ? '#fca5a5' : '#b91c1c' }]}>Upo nje ya mtandao. Kazi zitahifadhiwa kwenye simu na kutumwa baadaye.</Text>
                     </View>
                   </View>
-                </motion.View>
+                </Animated.View>
               )}
-            </AnimatePresence>
+            
 
-            <motion.View variants={itemVariants} style={styles.queueHeader}>
+            <Animated.View style={styles.queueHeader}>
               <Text style={[styles.queueTitle, { color: colors.text }]}>Orodha ya Kazi</Text>
               <View style={{ flexDirection: 'row', gap: 6 }}>
                 {/* Calendar / List toggle */}
                 <TouchableOpacity
                   onPress={() => { setViewMode(v => v === 'list' ? 'calendar' : 'list'); setSelectedDay(null); Haptics.selectionAsync(); }}
                   style={[styles.filterBtn, { backgroundColor: viewMode === 'calendar' ? colors.primary + '20' : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), borderColor: viewMode === 'calendar' ? colors.primary : colors.border }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={viewMode === 'calendar' ? 'Switch to list view' : 'Switch to calendar view'}
                 >
                   {viewMode === 'calendar' ? <LayoutGrid size={18} color={colors.primary} /> : <CalendarIcon size={18} color={colors.textMute} />}
                 </TouchableOpacity>
@@ -280,6 +276,9 @@ export default function TasksScreen() {
                       borderColor: filter === f ? colors.primary : colors.border,
                       paddingHorizontal: 10,
                     }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={f === 'all' ? 'Show all tasks' : f === 'pending' ? 'Show pending tasks' : 'Show completed tasks'}
+                    accessibilityState={{ selected: filter === f }}
                   >
                     <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: filter === f ? '#000' : colors.textMute }}>
                       {f === 'all' ? 'ZOTE' : f === 'pending' ? 'ZINAZO' : 'ZIMEKAM'}
@@ -287,15 +286,13 @@ export default function TasksScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
-            </motion.View>
+            </Animated.View>
 
             {/* ── Month Calendar View ─────────────────────────────── */}
-            <AnimatePresence>
+            
               {viewMode === 'calendar' && (
-                <motion.View
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
+                <Animated.View
+                  entering={FadeInDown} exiting={FadeOut}
                   style={{ overflow: 'hidden', marginBottom: 24 }}
                 >
                   <BlurView intensity={isDark ? 18 : 55} tint={isDark ? 'dark' : 'light'} style={[styles.calCard, { borderColor: colors.border }]}>
@@ -338,9 +335,16 @@ export default function TasksScreen() {
                               const isSel = day === selectedDay;
                               const dayTasks = tasksByDay[day] || [];
                               return (
-                                <TouchableOpacity key={day} onPress={() => { setSelectedDay(isSel ? null : day); Haptics.selectionAsync(); }} style={styles.calCell}>
+                                <TouchableOpacity
+                                  key={day}
+                                  onPress={() => { setSelectedDay(isSel ? null : day); Haptics.selectionAsync(); }}
+                                  style={styles.calCell}
+                                  accessibilityRole="button"
+                                  accessibilityLabel={`Day ${day}${dayTasks.length > 0 ? `, ${dayTasks.length} tasks` : ''}`}
+                                  accessibilityState={{ selected: isSel }}
+                                >
                                   <View style={[styles.calDayNum, isToday && { backgroundColor: colors.primary + '25' }, isSel && { backgroundColor: colors.primary }]}>
-                                    <Text style={{ fontSize: 13, fontFamily: isToday ? 'Inter_900Black' : 'Inter_500Medium', color: isSel ? '#000' : isToday ? colors.primary : colors.text }}>{day}</Text>
+                                    <Text style={{ fontSize: 13, fontFamily: isToday ? 'Inter_900Black' : 'Inter_500Medium', color: isSel ? (isDark ? '#000' : '#FCFBF7') : isToday ? colors.primary : colors.text }}>{day}</Text>
                                   </View>
                                   {dayTasks.length > 0 && (
                                     <View style={styles.calDots}>
@@ -359,21 +363,31 @@ export default function TasksScreen() {
                               <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.primary }}>
                                 {selectedDay} {monthNames[month]} — kazi {displayTasks.length}
                               </Text>
-                              <TouchableOpacity onPress={() => setSelectedDay(null)}><X size={14} color={colors.primary} /></TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => setSelectedDay(null)}
+                                accessibilityRole="button"
+                                accessibilityLabel="Clear selected day"
+                              ><X size={14} color={colors.primary} /></TouchableOpacity>
                             </View>
                           )}
                         </>
                       );
                     })()}
                   </BlurView>
-                </motion.View>
+                </Animated.View>
               )}
-            </AnimatePresence>
+            
 
             <View style={styles.taskList}>
               {displayTasks.map((task) => (
-                <motion.View key={task.id} variants={itemVariants} layout>
-                  <TouchableOpacity onPress={() => handleToggleTask(task.id)} activeOpacity={0.85}>
+                <Animated.View key={task.id} >
+                  <TouchableOpacity
+                    onPress={() => handleToggleTask(task.id)}
+                    activeOpacity={0.85}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${task.status === 'done' ? 'Mark incomplete' : 'Mark complete'}: ${task.titleSw ?? task.title}`}
+                    accessibilityState={{ checked: task.status === 'done' }}
+                  >
                     <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[
                       styles.taskCard, 
                       { borderColor: colors.border },
@@ -399,14 +413,14 @@ export default function TasksScreen() {
                       </View>
                       
                       <View style={styles.taskBody}>
-                        <motion.View 
+                        <Animated.View 
                           style={[
                             styles.checkCircle, 
                             { backgroundColor: task.status === 'done' ? colors.primary : 'transparent', borderColor: task.status === 'done' ? colors.primary : colors.border }
                           ]}
                         >
-                          {task.status === 'done' && <Check size={16} color="#000" strokeWidth={3} />}
-                        </motion.View>
+                          {task.status === 'done' && <Check size={16} color={isDark ? '#000' : '#FCFBF7'} strokeWidth={3} />}
+                        </Animated.View>
                         <View style={styles.taskInfo}>
                           <Text style={[styles.taskTitle, { color: colors.text }, task.status === 'done' && { textDecorationLine: 'line-through' }]}>
                             {task.titleSw ?? task.title}
@@ -437,13 +451,13 @@ export default function TasksScreen() {
                       </View>
                     </BlurView>
                   </TouchableOpacity>
-                </motion.View>
+                </Animated.View>
               ))}
             </View>
 
             <View style={{ height: 120 }} />
           </ScrollView>
-        </motion.View>
+        </Animated.View>
       </SafeAreaView>
 
       {/* ── Create Task Modal ──────────────────────────────── */}
@@ -452,7 +466,11 @@ export default function TasksScreen() {
           <View style={{ backgroundColor: isDark ? '#0f172a' : '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 40, gap: 16 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontFamily: 'Inter_900Black', fontSize: 20, color: colors.text }}>Kazi Mpya</Text>
-              <TouchableOpacity onPress={() => setShowCreate(false)}>
+              <TouchableOpacity
+                onPress={() => setShowCreate(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close create task modal"
+              >
                 <X size={22} color={colors.textMute} />
               </TouchableOpacity>
             </View>
@@ -463,6 +481,7 @@ export default function TasksScreen() {
               placeholder="Jina la kazi (English)"
               placeholderTextColor={colors.textMute}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, fontFamily: 'Inter_600SemiBold', fontSize: 15, color: colors.text, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}
+              accessibilityLabel="Task name in English"
             />
             <TextInput
               value={newTitleSw}
@@ -470,6 +489,7 @@ export default function TasksScreen() {
               placeholder="Jina kwa Kiswahili (hiari)"
               placeholderTextColor={colors.textMute}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, fontFamily: 'Inter_600SemiBold', fontSize: 15, color: colors.text, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}
+              accessibilityLabel="Task name in Swahili (optional)"
             />
             <TextInput
               value={newBlock}
@@ -477,14 +497,21 @@ export default function TasksScreen() {
               placeholder="Eneo la shamba (hiari, mfano: Block A)"
               placeholderTextColor={colors.textMute}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 14, fontFamily: 'Inter_600SemiBold', fontSize: 15, color: colors.text, backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}
+              accessibilityLabel="Farm block or area (optional)"
             />
 
             <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.textMute, letterSpacing: 1 }}>AINA YA KAZI</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 {CATEGORIES.map((c) => (
-                  <TouchableOpacity key={c} onPress={() => setNewCat(c)}
-                    style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: newCat === c ? colors.primary : colors.border, backgroundColor: newCat === c ? colors.primary + '20' : 'transparent' }}>
+                  <TouchableOpacity
+                    key={c}
+                    onPress={() => setNewCat(c)}
+                    style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: newCat === c ? colors.primary : colors.border, backgroundColor: newCat === c ? colors.primary + '20' : 'transparent' }}
+                    accessibilityRole="button"
+                    accessibilityLabel={CAT_LABEL[c]}
+                    accessibilityState={{ selected: newCat === c }}
+                  >
                     <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: newCat === c ? colors.primary : colors.textMute }}>{CAT_LABEL[c]}</Text>
                   </TouchableOpacity>
                 ))}
@@ -494,15 +521,26 @@ export default function TasksScreen() {
             <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.textMute, letterSpacing: 1 }}>KIPAUMBELE</Text>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {PRIORITIES.map((p) => (
-                <TouchableOpacity key={p} onPress={() => setNewPri(p)}
-                  style={{ flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, alignItems: 'center', borderColor: newPri === p ? PRI_COLOR[p] : colors.border, backgroundColor: newPri === p ? PRI_COLOR[p] + '20' : 'transparent' }}>
+                <TouchableOpacity
+                  key={p}
+                  onPress={() => setNewPri(p)}
+                  style={{ flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, alignItems: 'center', borderColor: newPri === p ? PRI_COLOR[p] : colors.border, backgroundColor: newPri === p ? PRI_COLOR[p] + '20' : 'transparent' }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Set priority to ${p}`}
+                  accessibilityState={{ selected: newPri === p }}
+                >
                   <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 11, color: newPri === p ? PRI_COLOR[p] : colors.textMute, textTransform: 'uppercase' }}>{p}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <TouchableOpacity onPress={handleCreate} style={{ backgroundColor: colors.primary, borderRadius: 16, padding: 18, alignItems: 'center', marginTop: 4 }}>
-              <Text style={{ fontFamily: 'Inter_900Black', fontSize: 16, color: '#000' }}>Ongeza Kazi</Text>
+            <TouchableOpacity
+              onPress={handleCreate}
+              style={{ backgroundColor: colors.primary, borderRadius: 16, padding: 18, alignItems: 'center', marginTop: 4 }}
+              accessibilityRole="button"
+              accessibilityLabel="Add new task"
+            >
+              <Text style={{ fontFamily: 'Inter_900Black', fontSize: 16, color: isDark ? '#000' : '#FCFBF7' }}>Ongeza Kazi</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -9,7 +9,7 @@ import {
   Image, 
   StatusBar, 
   Platform,
-  Alert,
+  Alert
 } from 'react-native';
 import { 
   X, 
@@ -25,17 +25,14 @@ import {
   Camera,
   CloudOff,
   CheckCircle2,
-  Activity,
-  Phone,
-  ShieldAlert,
-  ImageOff,
+  Activity
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import { motion, AnimatePresence } from "motion/react";
+import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useTasks } from '../hooks/useTasks';
 import { useNotifications } from '../hooks/useNotifications';
 import { useKilimoStore } from '../store/useKilimoStore';
@@ -68,7 +65,7 @@ export default function ScanScreen() {
   const agroId = useKilimoStore((s) => s.agroId);
 
   const [phase, setPhase] = useState<ScanPhase>('IDLE');
-  const isOffline = useKilimoStore((s) => s.isOffline);
+  const [isOffline, setIsOffline] = useState(false); // Mock offline state
   const [analysisText, setAnalysisText] = useState('Initiating quantum analysis...');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [diagnosis, setDiagnosis] = useState<VisionDiagnosis | null>(null);
@@ -251,21 +248,15 @@ export default function ScanScreen() {
     setErrorMsg(null);
   };
 
+  const toggleNetwork = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsOffline(!isOffline);
+  };
+
   // Advanced Neural Orb for background aesthetics
   const NeuralOrb = ({ color, size, delay, x, y }: any) => (
-    <motion.View
-      initial={{ x, y, opacity: 0, scale: 0.8 }}
-      animate={{ 
-        x: [x, x + 40, x - 20, x],
-        y: [y, y - 50, y + 30, y],
-        opacity: [0.08, 0.15, 0.1, 0.08],
-        scale: [1, 1.1, 0.95, 1]
-      }}
-      transition={{
-        duration: 20 + delay / 1000,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
+    <Animated.View
+      entering={FadeInDown}
       style={[
         styles.bgOrb,
         {
@@ -284,13 +275,9 @@ export default function ScanScreen() {
       <StatusBar barStyle="light-content" />
       
       {/* Cinematic Camera View */}
-      <motion.View 
-        animate={{ 
-          scale: phase === 'IDLE' ? 1 : 1.05,
-          opacity: phase === 'ANALYZING' ? 0.6 : 1
-        }}
-        transition={{ type: "spring", damping: 25, stiffness: 70 }}
-        style={[styles.cameraView, Platform.OS === 'web' && (phase === 'ANALYZING' || phase === 'RESULT') ? { filter: 'blur(10px)' } as any : undefined]}
+      <Animated.View 
+        /* Reanimated Todo */
+        style={styles.cameraView}
       >
         <Image
           source={{ uri: photoUri ?? MOCK_BG }}
@@ -298,19 +285,14 @@ export default function ScanScreen() {
         />
         
         {/* Dynamic Scan Line Overlay */}
-        <AnimatePresence>
+        
           {phase === 'SCANNING' && (
-            <motion.View 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <Animated.View 
+              entering={FadeInDown} exiting={FadeOut}
               style={StyleSheet.absoluteFill}
             >
-              <motion.View 
-                animate={{ 
-                  y: [SCREEN_HEIGHT * 0.15, SCREEN_HEIGHT * 0.75, SCREEN_HEIGHT * 0.15] 
-                }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+              <Animated.View 
+                /* Reanimated Todo */
                 style={styles.scanOverlay}
               >
                 <LinearGradient
@@ -319,24 +301,23 @@ export default function ScanScreen() {
                   start={{ x: 0, y: 0.5 }}
                   end={{ x: 1, y: 0.5 }}
                 />
-                <motion.View 
-                  animate={{ opacity: [0.1, 0.5, 0.1], scaleY: [1, 2, 1] }}
-                  transition={{ duration: 1.1, repeat: Infinity }}
+                <Animated.View 
+                  /* Reanimated Todo */
                   style={[styles.scanGlow, { backgroundColor: colors.primary + '30' }]} 
                 />
-              </motion.View>
-            </motion.View>
+              </Animated.View>
+            </Animated.View>
           )}
-        </AnimatePresence>
-      </motion.View>
+        
+      </Animated.View>
 
       <SafeAreaView style={styles.safeArea}>
         {/* Floating Header */}
-        <motion.View 
-          animate={{ opacity: phase === 'IDLE' ? 1 : 0, y: phase === 'IDLE' ? 0 : -20 }}
+        <Animated.View 
+          /* Reanimated Todo */
           style={styles.header}
         >
-          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} accessibilityLabel="Go back">
+          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} accessibilityLabel="Go back" accessibilityRole="button">
             <BlurView intensity={40} tint="dark" style={styles.iconButton}>
               <X size={24} color="#ffffff" />
             </BlurView>
@@ -349,116 +330,101 @@ export default function ScanScreen() {
             </BlurView>
           </View>
 
-          <View style={styles.iconButton}>
-            {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Zap size={22} color={colors.primary} />}
-          </View>
-        </motion.View>
+          <TouchableOpacity onPress={toggleNetwork} activeOpacity={0.7} accessibilityLabel="Toggle offline mode" accessibilityRole="button">
+            <BlurView intensity={40} tint="dark" style={[styles.iconButton, isOffline && { borderColor: '#ef4444' }]}>
+              {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Zap size={22} color={colors.primary} />}
+            </BlurView>
+          </TouchableOpacity>
+        </Animated.View>
 
         {/* Offline Warning Toast */}
-        <AnimatePresence>
+        
           {isOffline && phase === 'IDLE' && (
-            <motion.View
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+            <Animated.View
+              entering={FadeInDown} exiting={FadeOut}
               style={styles.offlineToast}
             >
               <BlurView intensity={60} tint="dark" style={styles.offlineInner}>
                 <CloudOff size={16} color="#fbbf24" />
                 <Text style={styles.offlineText}>Offline Mode: Diagnosis will be queued and synced.</Text>
               </BlurView>
-            </motion.View>
+            </Animated.View>
           )}
-        </AnimatePresence>
+        
 
         <View style={styles.content}>
-          <AnimatePresence mode="wait">
+          
             
             {/* IDLE / SCANNING PHASE */}
             {(phase === 'IDLE' || phase === 'SCANNING') && (
-              <motion.View 
+              <Animated.View 
                 key="scanner"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
+                entering={FadeInDown} exiting={FadeOut}
                 style={styles.scannerInterface}
               >
                 {/* Aiming Reticle */}
                 <View style={styles.reticleContainer}>
                   {[styles.tl, styles.tr, styles.bl, styles.br].map((posStyle, idx) => (
-                    <motion.View 
+                    <Animated.View 
                       key={idx}
-                      animate={{ 
-                        scale: phase === 'SCANNING' ? 1.08 : 1,
-                        opacity: phase === 'SCANNING' ? [0.4, 1, 0.4] : 1,
-                        borderColor: phase === 'SCANNING' ? colors.primary : '#ffffff'
-                      }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: idx * 0.1 }}
+                      /* Reanimated Todo */
                       style={[styles.corner, posStyle]} 
                     />
                   ))}
                   
-                  <AnimatePresence>
+                  
                     {phase === 'SCANNING' && (
-                      <motion.View 
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
+                      <Animated.View 
+                        entering={FadeInDown} exiting={FadeOut}
                         style={styles.aiMarkers}
                       >
-                        <motion.View 
-                          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.3, 1] }}
-                          transition={{ duration: 0.8, repeat: Infinity }}
+                        <Animated.View 
+                          /* Reanimated Todo */
                           style={styles.markerPulse} 
                         />
                         <View style={styles.markerTextContainer}>
                           <Text style={styles.markerText}>LOCKING TARGET</Text>
                         </View>
-                      </motion.View>
+                      </Animated.View>
                     )}
-                  </AnimatePresence>
+                  
                 </View>
 
-                <motion.View animate={{ y: phase === 'SCANNING' ? 20 : 0 }} style={styles.instructions}>
+                <Animated.View /* Reanimated Todo */ style={styles.instructions}>
                   <Text style={styles.instructionLarge}>
                     {phase === 'SCANNING' ? 'Hold Steady' : 'Target Crop Anomaly'}
                   </Text>
                   <Text style={styles.instructionSmall}>
                     {phase === 'SCANNING' ? 'Kilimo AI is capturing hyperspectral data...' : 'Ensure the affected leaf is well-lit and in focus.'}
                   </Text>
-                </motion.View>
-              </motion.View>
+                </Animated.View>
+              </Animated.View>
             )}
 
             {/* ANALYZING PHASE */}
             {phase === 'ANALYZING' && (
-              <motion.View 
+              <Animated.View 
                 key="analyzing"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, y: -20 }}
+                entering={FadeInDown} exiting={FadeOut}
                 style={styles.analyzingContainer}
               >
-                <NeuralOrb color={colors.primary} size={250} x={0} y={0} delay={0} />
-                <motion.View
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                
+                <Animated.View
+                  /* Reanimated Todo */
                   style={styles.analyzingRings}
                 >
                   <Activity size={48} color={colors.primary} />
-                </motion.View>
+                </Animated.View>
                 <Text style={styles.analyzingTitle}>AI Agronomist Active</Text>
                 <Text style={styles.analyzingSubtitle}>{analysisText}</Text>
-              </motion.View>
+              </Animated.View>
             )}
 
             {/* ERROR PHASE */}
             {phase === 'ERROR' && (
-              <motion.View
+              <Animated.View
                 key="error"
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0 }}
+                entering={FadeInDown} exiting={FadeOut}
                 style={styles.resultWrapper}
               >
                 <BlurView intensity={isDark ? 40 : 90} tint={isDark ? 'dark' : 'light'} style={[styles.resultCard, { borderColor: 'rgba(239,68,68,0.3)' }]}>
@@ -474,22 +440,19 @@ export default function ScanScreen() {
                   <View style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}>
                     <Text style={[styles.detailBody, { color: colors.textMute }]}>{errorMsg ?? 'Hitilafu isiyojulikana.'}</Text>
                   </View>
-                  <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Try again">
+                  <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Try again" accessibilityRole="button">
                     <RotateCw size={18} color={colors.textMute} />
                     <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Jaribu Tena</Text>
                   </TouchableOpacity>
                 </BlurView>
-              </motion.View>
+              </Animated.View>
             )}
 
             {/* RESULT PHASE */}
             {phase === 'RESULT' && (
-              <motion.View 
+              <Animated.View 
                 key="result"
-                initial={{ opacity: 0, y: 80, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 50 }}
-                transition={{ type: "spring", damping: 22, stiffness: 90 }}
+                entering={FadeInDown} exiting={FadeOut}
                 style={styles.resultWrapper}
               >
                 <BlurView intensity={isDark ? 40 : 90} tint={isDark ? "dark" : "light"} style={[styles.resultCard, { borderColor: 'rgba(255,255,255,0.1)' }]}>
@@ -504,73 +467,45 @@ export default function ScanScreen() {
                       : sev === 'high' ? '#f97316'
                       : sev === 'medium' ? '#eab308'
                       : '#22c55e';
-                    const sevLabel = sev === 'critical' ? 'Hatari Kubwa'
-                      : sev === 'high' ? 'Tatizo Kubwa'
-                      : sev === 'medium' ? 'Tatizo la Wastani'
-                      : 'Tatizo Dogo';
+                    const sevLabel = sev === 'critical' ? 'Critical Priority'
+                      : sev === 'high' ? 'High Priority'
+                      : sev === 'medium' ? 'Medium Priority'
+                      : 'Low Priority';
                     const disease = diagnosis?.disease ?? FALLBACK_RESULT.disease;
                     const cropLine = diagnosis?.crop ? `${diagnosis.crop} · ` : '';
                     const actions = diagnosis?.actions ?? [];
                     const body = actions.length > 0
                       ? actions.map((a) => `• ${a}`).join('\n')
                       : (diagnosis?.raw?.slice(0, 280) ?? FALLBACK_RESULT.recommendation);
-                    const conf = diagnosis?.confidence;
-                    const confLabel = conf === 'high' ? 'UHAKIKA: JUU' : conf === 'medium' ? 'UHAKIKA: WASTANI' : conf === 'low' ? 'UHAKIKA: CHINI' : 'AI Diagnosis';
-                    const confBadgeColor = conf === 'high' ? '#22d15a' : conf === 'low' ? '#ef4444' : '#f59e0b';
-                    const imgQuality = diagnosis?.imageQuality;
-                    const needsExpert = diagnosis?.consultExpert === true || sev === 'critical' || sev === 'high' || conf === 'low';
                     return (
                       <>
                         <View style={styles.resultHeader}>
-                          <motion.View
-                            initial={{ rotate: -20, scale: 0.5 }}
-                            animate={{ rotate: 0, scale: 1 }}
-                            transition={{ type: 'spring', delay: 0.2 }}
+                          <Animated.View
+                            entering={FadeInDown}
                             style={[styles.resultIcon, { backgroundColor: colors.primary }]}
                           >
-                            <BrainCircuit size={32} color="#000" />
-                          </motion.View>
+                            <BrainCircuit size={32} color={isDark ? '#000' : '#FCFBF7'} />
+                          </Animated.View>
                           <View style={styles.resultMeta}>
                             <Text style={[styles.resultName, { color: colors.text }]}>{disease}</Text>
-                            <View style={styles.confBadgeRow}>
-                              <motion.View
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.4 }}
-                                style={[styles.confBadge, { backgroundColor: confBadgeColor + '20', borderColor: confBadgeColor + '40' }]}
-                              >
-                                <Text style={[styles.confText, { color: confBadgeColor }]}>{confLabel}</Text>
-                              </motion.View>
-                              <motion.View
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                style={[styles.sevChip, { backgroundColor: sevColor + '18' }]}
-                              >
-                                <Text style={[styles.sevChipText, { color: sevColor }]}>{cropLine.replace(' · ', '')}</Text>
-                              </motion.View>
-                            </View>
+                            <Animated.View
+                              entering={FadeInDown}
+                              style={styles.confBadge}
+                            >
+                              <Text style={styles.confText}>{cropLine}AI Diagnosis</Text>
+                            </Animated.View>
                           </View>
                         </View>
 
-                        {imgQuality === 'poor' || imgQuality === 'unusable' ? (
-                          <motion.View initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} style={styles.imgQualityWarn}>
-                            <ImageOff size={14} color="#f59e0b" />
-                            <Text style={styles.imgQualityText}>Picha si wazi — piga tena kwa mwanga mzuri, umbali wa sm 15–30, kuzingatia majani yenye tatizo.</Text>
-                          </motion.View>
-                        ) : null}
-
                         {isOffline && (
-                          <motion.View initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.offlineNoticeBox}>
+                          <Animated.View entering={FadeInDown} style={styles.offlineNoticeBox}>
                             <CloudOff size={16} color="#fbbf24" />
                             <Text style={styles.offlineNoticeText}>Saved locally. Will sync to your Agro ID when online.</Text>
-                          </motion.View>
+                          </Animated.View>
                         )}
 
-                        <motion.View
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 }}
+                        <Animated.View
+                          entering={FadeInDown}
                           style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}
                         >
                           <View style={styles.detailTitleRow}>
@@ -578,39 +513,12 @@ export default function ScanScreen() {
                             <Text style={[styles.detailTitle, { color: colors.text }]}>{sevLabel}</Text>
                           </View>
                           <Text style={[styles.detailBody, { color: colors.textMute }]}>{body}</Text>
-                        </motion.View>
-
-                        {needsExpert && (
-                          <motion.View initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, type: 'spring', damping: 22 }} style={styles.expertCard}>
-                            <LinearGradient colors={['#f9731620', 'transparent']} style={StyleSheet.absoluteFill} />
-                            <View style={styles.expertRow}>
-                              <View style={[styles.expertIconBox, { backgroundColor: '#f9731620' }]}>
-                                <ShieldAlert size={20} color="#f97316" />
-                              </View>
-                              <View style={{ flex: 1 }}>
-                                <Text style={styles.expertTitle}>Wasiliana na Afisa Ugani</Text>
-                                <Text style={[styles.expertBody, { color: colors.textMute }]}>
-                                  {sev === 'critical' ? 'Ugonjwa huu ni hatari — usichelewe kuwasiliana na mtaalamu wa kilimo ndani ya masaa 24.'
-                                    : conf === 'low' ? 'Picha haikutosha kwa utambuzi sahihi. Mtaalamu ataona mmea moja kwa moja.'
-                                    : 'Tatizo hili linahitaji msaada wa mtaalamu kwa ushauri sahihi wa matibabu.'}
-                                </Text>
-                              </View>
-                            </View>
-                            <TouchableOpacity
-                              style={[styles.expertBtn, { borderColor: '#f97316' + '50' }]}
-                              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/consultations' as any); }}
-                              activeOpacity={0.8}
-                            >
-                              <Phone size={14} color="#f97316" />
-                              <Text style={styles.expertBtnText}>Omba Mshauri wa Kilimo</Text>
-                            </TouchableOpacity>
-                          </motion.View>
-                        )}
+                        </Animated.View>
                       </>
                     );
                   })()}
 
-                  <motion.View initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+                  <Animated.View entering={FadeInDown}>
                     <TouchableOpacity 
                       style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
                       activeOpacity={0.8}
@@ -618,33 +526,32 @@ export default function ScanScreen() {
                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                          router.push('/sankofa');
                       }}
+                      accessibilityRole="button"
                       accessibilityLabel="Speak with AI Agronomist"
                     >
-                      <Text style={styles.primaryBtnText}>Ask AI Agronomist</Text>
-                      <ArrowRight size={20} color="#000" />
+                      <Text style={[styles.primaryBtnText, { color: isDark ? '#000' : '#FCFBF7' }]}>Ask AI Agronomist</Text>
+                      <ArrowRight size={20} color={isDark ? '#000' : '#FCFBF7'} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Retake Scan">
+                    <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Retake Scan" accessibilityRole="button">
                       <RotateCw size={18} color={colors.textMute} />
                       <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Scan Another Plant</Text>
                     </TouchableOpacity>
-                  </motion.View>
+                  </Animated.View>
                 </BlurView>
-              </motion.View>
+              </Animated.View>
             )}
-          </AnimatePresence>
+          
         </View>
 
         {/* Shutter Controls */}
-        <AnimatePresence>
+        
           {phase === 'IDLE' && (
-            <motion.View 
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
+            <Animated.View 
+              entering={FadeInDown} exiting={FadeOut}
               style={styles.footer}
             >
-              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Open gallery" onPress={handlePickFromGallery}>
+              <TouchableOpacity style={styles.auxBtn} accessibilityRole="button" accessibilityLabel="Open gallery" onPress={handlePickFromGallery}>
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
                   <ImageIcon size={24} color="#ffffff" />
                 </BlurView>
@@ -654,24 +561,24 @@ export default function ScanScreen() {
                 style={[styles.shutterRing, { borderColor: colors.primary }]}
                 onPress={handleScan}
                 activeOpacity={0.8}
+                accessibilityRole="button"
                 accessibilityLabel="Take picture for AI diagnosis"
               >
-                <motion.View 
-                  whileTap={{ scale: 0.9 }}
+                <Animated.View 
                   style={[styles.shutterCore, { backgroundColor: '#ffffff' }]}
                 >
                   <Camera size={34} color="#000" />
-                </motion.View>
+                </Animated.View>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.auxBtn} accessibilityLabel="Scanning tips" onPress={() => { Haptics.selectionAsync(); Alert.alert('Vidokezo vya Skanning', '• Hakikisha taa ya kutosha\n• Shika simu umbali wa sm 15-30\n• Zingatia majani yenye dalili\n• Epuka mwanga mkali nyuma\n• Piga picha moja kwa wakati mmoja'); }}>
+              <TouchableOpacity style={styles.auxBtn} accessibilityRole="button" accessibilityLabel="Scanning tips" onPress={() => { Haptics.selectionAsync(); Alert.alert('Vidokezo vya Skanning', '• Hakikisha taa ya kutosha\n• Shika simu umbali wa sm 15-30\n• Zingatia majani yenye dalili\n• Epuka mwanga mkali nyuma\n• Piga picha moja kwa wakati mmoja'); }}>
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
                   <Info size={24} color="#ffffff" />
                 </BlurView>
               </TouchableOpacity>
-            </motion.View>
+            </Animated.View>
           )}
-        </AnimatePresence>
+        
       </SafeAreaView>
     </View>
   );
@@ -705,7 +612,7 @@ const styles = StyleSheet.create({
   scanLine: {
     width: '100%',
     height: 6,
-    shadowColor: "#22d15a",
+    shadowColor: "#3ecf8e",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 25,
@@ -834,14 +741,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#22d15a',
+    backgroundColor: '#3ecf8e',
     marginBottom: 12,
   },
   markerTextContainer: {
     alignItems: 'center',
   },
   markerText: {
-    color: '#22d15a',
+    color: '#3ecf8e',
     fontSize: 10,
     fontFamily: 'Inter_900Black',
     letterSpacing: 2,
@@ -875,8 +782,8 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 2,
-    borderColor: 'rgba(34, 209, 90, 0.3)',
-    borderTopColor: '#22d15a',
+    borderColor: 'rgba(62, 207, 142, 0.3)',
+    borderTopColor: '#3ecf8e',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
@@ -888,7 +795,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   analyzingSubtitle: {
-    color: '#22d15a',
+    color: '#3ecf8e',
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
     textAlign: 'center',
@@ -918,7 +825,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: "#22d15a",
+    shadowColor: "#3ecf8e",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 24,
@@ -932,96 +839,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
   },
-  confBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    gap: 8,
-    flexWrap: 'wrap',
-  },
   confBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-    borderWidth: 1,
+    marginTop: 8,
   },
   confText: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 0.5,
-  },
-  sevChip: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  sevChipText: {
-    fontSize: 10,
-    fontFamily: 'Inter_700Bold',
-  },
-  imgQualityWarn: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    backgroundColor: 'rgba(245,158,11,0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(245,158,11,0.25)',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
-  },
-  imgQualityText: {
-    flex: 1,
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-    color: '#f59e0b',
-    lineHeight: 18,
-  },
-  expertCard: {
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(249,115,22,0.3)',
-    padding: 18,
-    marginBottom: 20,
-    overflow: 'hidden',
-  },
-  expertRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-    marginBottom: 14,
-  },
-  expertIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  expertTitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_900Black',
-    color: '#f97316',
-    marginBottom: 4,
-  },
-  expertBody: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 18,
-  },
-  expertBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-  },
-  expertBtnText: {
-    fontSize: 14,
+    color: '#3ecf8e',
+    fontSize: 13,
     fontFamily: 'Inter_800ExtraBold',
-    color: '#f97316',
   },
   offlineNoticeBox: {
     flexDirection: 'row',
@@ -1068,7 +892,7 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     borderRadius: 28,
     marginBottom: 16,
-    shadowColor: "#22d15a",
+    shadowColor: "#3ecf8e",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
