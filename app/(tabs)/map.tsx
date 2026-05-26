@@ -1,285 +1,241 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  Dimensions, 
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
   ScrollView,
   StatusBar,
   Alert,
   Modal,
-  TextInput
+  TextInput,
 } from 'react-native';
-import { 
-  ChevronLeft, 
-  Layers, 
-  Locate, 
-  Plus,
-  MapPin,
-  Settings,
-  Info,
-  Maximize2,
-  Navigation,
-  Globe,
-  Map as MapIcon,
-  TrendingUp,
-  Sliders,
-  Calendar,
-  CloudRain,
-  Activity,
-  Edit,
+import {
   SlidersHorizontal,
-  Compass,
-  ArrowRight
+  CloudRain,
+  TrendingUp,
+  ArrowRight,
+  X,
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '../../constants/Theme';
-import { Card } from '../../components/ui/Card';
+import { PALETTE, TYPE, SPACE, SHADOW, RADIUS } from '../../constants/Theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: W } = Dimensions.get('window');
+
+// ─── Data ──────────────────────────────────────────────────────────────────
 
 const INITIAL_ZONES = [
-  { zone: 'Zone 8', status: 'Optimal Yield', rate: 150, area: '0.6 ha', color: '#2E7D32' },
-  { zone: 'Zone 7', status: 'High Yield', rate: 125, area: '0.5 ha', color: '#4CAF50' },
-  { zone: 'Zone 6', status: 'Above Avg', rate: 100, area: '0.4 ha', color: '#8BC34A' },
-  { zone: 'Zone 5', status: 'Average', rate: 80, area: '0.4 ha', color: '#CDDC39' },
-  { zone: 'Zone 4', status: 'Below Avg', rate: 60, area: '0.3 ha', color: '#FFC107' },
-  { zone: 'Zone 3', status: 'Low Yield', rate: 40, area: '0.2 ha', color: '#FF5722' },
+  { id: 'z8', label: 'Zone 8', status: 'Optimal',   rate: 150, area: '0.6 ha', hex: '#1B5E20' },
+  { id: 'z7', label: 'Zone 7', status: 'High',       rate: 125, area: '0.5 ha', hex: '#2E7D32' },
+  { id: 'z6', label: 'Zone 6', status: 'Above Avg',  rate: 100, area: '0.4 ha', hex: '#4CAF50' },
+  { id: 'z5', label: 'Zone 5', status: 'Average',    rate: 80,  area: '0.4 ha', hex: '#8BC34A' },
+  { id: 'z4', label: 'Zone 4', status: 'Below Avg',  rate: 60,  area: '0.3 ha', hex: '#D97706' },
+  { id: 'z3', label: 'Zone 3', status: 'Low Yield',  rate: 40,  area: '0.2 ha', hex: '#DC2626' },
 ];
 
+const FILTERS = [
+  { id: 'all',   label: 'All Fields' },
+  { id: 'empty', label: 'Empty · 15 ha' },
+  { id: 'corn',  label: 'Corn · 12 ha' },
+];
+
+const FORECAST = [
+  { day: 'Mon', cond: 'Rainy',        temp: '+16° / +10°' },
+  { day: 'Tue', cond: 'Cloudy',       temp: '+17° / +11°' },
+  { day: 'Wed', cond: 'Partly Sunny', temp: '+18° / +12°' },
+  { day: 'Thu', cond: 'Sunny',        temp: '+19° / +11°' },
+  { day: 'Fri', cond: 'Heavy Rain',   temp: '+15° / +9°'  },
+  { day: 'Sat', cond: 'Overcast',     temp: '+14° / +8°'  },
+  { day: 'Sun', cond: 'Showers',      temp: '+16° / +10°' },
+];
+
+// ─── Component ─────────────────────────────────────────────────────────────
+
 export default function MapScreen() {
-  const router = useRouter();
-  const { colors, radius, shadows } = useTheme();
+  const [zones,        setZones]        = useState(INITIAL_ZONES);
+  const [filter,       setFilter]       = useState('all');
+  const [activeZone,   setActiveZone]   = useState<typeof INITIAL_ZONES[0] | null>(null);
+  const [editRate,     setEditRate]     = useState('');
+  const [editVisible,  setEditVisible]  = useState(false);
+  const [wxVisible,    setWxVisible]    = useState(false);
 
-  // Screen state
-  const [zones, setZones] = useState(INITIAL_ZONES);
-  const [selectedZone, setSelectedZone] = useState<any>(null);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [newRateInput, setNewRateInput] = useState('');
-  const [mapFilter, setMapFilter] = useState<'all'|'empty'|'corn'>('all');
-  const [weatherForecastVisible, setWeatherForecastVisible] = useState(false);
-  const [activeLayer, setActiveLayer] = useState<'standard'|'ndvi'|'moisture'>('standard');
+  const visibleZones = zones.filter(z => {
+    if (filter === 'empty') return z.id === 'z3' || z.id === 'z4';
+    if (filter === 'corn')  return z.id === 'z7' || z.id === 'z8';
+    return true;
+  });
 
-  // Highlights
-  const [highlightedZone, setHighlightedZone] = useState<string | null>(null);
-
-  // Trigger rate edit for a zone
-  const handleZonePress = (zoneItem: any) => {
+  const openEdit = (z: typeof INITIAL_ZONES[0]) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedZone(zoneItem);
-    setNewRateInput(String(zoneItem.rate));
-    setHighlightedZone(zoneItem.zone);
-    setEditModalVisible(true);
+    setActiveZone(z);
+    setEditRate(String(z.rate));
+    setEditVisible(true);
   };
 
-  // Save new zone rate
-  const handleSaveRate = () => {
-    const rateVal = parseFloat(newRateInput);
-    if (isNaN(rateVal) || rateVal < 0) {
-      Alert.alert('Error', 'Please enter a valid rate.');
-      return;
-    }
-
-    setZones(prev => prev.map(z => z.zone === selectedZone.zone ? { ...z, rate: rateVal } : z));
+  const saveRate = () => {
+    const v = parseFloat(editRate);
+    if (!activeZone || isNaN(v) || v < 0) { Alert.alert('Invalid', 'Enter a valid rate.'); return; }
+    setZones(prev => prev.map(z => z.id === activeZone.id ? { ...z, rate: v } : z));
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setEditModalVisible(false);
-    Alert.alert('Updated', `${selectedZone.zone} prescription rate set to ${rateVal} kg/ha.`);
+    setEditVisible(false);
+    Alert.alert('Saved', `${activeZone.label} rate set to ${v} kg/ha.`);
   };
+
+  // ── render ─────────────────────────────────────────────────────────────
 
   return (
-    <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
+    <View style={styles.root}>
       <StatusBar barStyle="dark-content" />
-      
-      <SafeAreaView style={styles.safeArea}>
-        
-        {/* Header bar */}
+      <SafeAreaView style={styles.safe}>
+
+        {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Back">
-            <ChevronLeft size={22} color="#1E2A3E" strokeWidth={2} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>VRA Spatial Map</Text>
-          <TouchableOpacity onPress={() => router.push('/edit-profile')} style={styles.backBtn} accessibilityRole="button" accessibilityLabel="Settings">
-            <Settings size={20} color="#1E2A3E" strokeWidth={2} />
+          <View>
+            <Text style={styles.headerTitle}>VRA Spatial Map</Text>
+            <Text style={styles.headerSub}>Variable Rate Application · 2024 Season</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setWxVisible(true); }}
+            style={styles.wxBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Weather forecast"
+          >
+            <CloudRain size={18} color={PALETTE.greenAction} strokeWidth={2} />
+            <Text style={styles.wxBtnText}>+16°</Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          
-          {/* Field Summary Card (Pills / Indicators filter map) */}
-          <Animated.View entering={FadeInDown.delay(100).springify()}>
-            <Card variant="solid" style={[styles.fieldSummaryCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <Text style={styles.cardHeading}>Field Summary</Text>
-              <View style={styles.pillsRow}>
-                <TouchableOpacity
-                  onPress={() => { setMapFilter('all'); Haptics.selectionAsync(); }}
-                  style={[styles.filterPill, mapFilter === 'all' && styles.filterPillActive]}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: mapFilter === 'all' }}
-                >
-                  <Text style={[styles.pillText, mapFilter === 'all' && styles.pillTextActive]}>All Fields</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => { setMapFilter('empty'); Haptics.selectionAsync(); }}
-                  style={[styles.filterPill, mapFilter === 'empty' && styles.filterPillActive]}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: mapFilter === 'empty' }}
-                >
-                  <Text style={[styles.pillText, mapFilter === 'empty' && styles.pillTextActive]}>Empty Field 15 ha</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => { setMapFilter('corn'); Haptics.selectionAsync(); }}
-                  style={[styles.filterPill, mapFilter === 'corn' && styles.filterPillActive]}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: mapFilter === 'corn' }}
-                >
-                  <Text style={[styles.pillText, mapFilter === 'corn' && styles.pillTextActive]}>Corn Field 12 ha</Text>
-                </TouchableOpacity>
-              </View>
-            </Card>
+
+          {/* Filter pills */}
+          <Animated.View entering={FadeInDown.delay(60).springify()} style={styles.filterRow}>
+            {FILTERS.map(f => (
+              <TouchableOpacity
+                key={f.id}
+                onPress={() => { setFilter(f.id); Haptics.selectionAsync(); }}
+                style={[styles.filterPill, filter === f.id && styles.filterPillActive]}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: filter === f.id }}
+              >
+                <Text style={[styles.filterText, filter === f.id && styles.filterTextActive]}>
+                  {f.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </Animated.View>
 
-          {/* Interactive Vector Map Grid Representation */}
-          <Animated.View entering={FadeInDown.delay(150).springify()}>
-            <Card variant="solid" style={[styles.mapContainer, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.mapHeaderRow}>
-                <Compass size={18} color="#2E7D32" strokeWidth={2} />
-                <Text style={styles.mapTitle}>GIS Zoning Grid ({mapFilter === 'all' ? 'All' : mapFilter === 'empty' ? 'Empty' : 'Corn'})</Text>
+          {/* GIS zone grid */}
+          <Animated.View entering={FadeInDown.delay(100).springify()}>
+            <View style={styles.card}>
+              <View style={styles.cardHeaderRow}>
+                <Text style={styles.cardTitle}>GIS Zoning Grid</Text>
+                <TouchableOpacity
+                  style={styles.legendBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel="Zone legend"
+                >
+                  <SlidersHorizontal size={16} color={PALETTE.inkMute} strokeWidth={2} />
+                </TouchableOpacity>
               </View>
-              
-              <View style={styles.vectorMap}>
-                {zones.map((zone) => {
-                  const isHighlighted = highlightedZone === zone.zone;
-                  // Apply filters visually
-                  const isHidden = (mapFilter === 'empty' && zone.zone !== 'Zone 3' && zone.zone !== 'Zone 4') ||
-                                   (mapFilter === 'corn' && zone.zone !== 'Zone 8' && zone.zone !== 'Zone 7');
-                  
+
+              <View style={styles.zoneGrid}>
+                {INITIAL_ZONES.map(z => {
+                  const hidden = !visibleZones.find(v => v.id === z.id);
                   return (
                     <TouchableOpacity
-                      key={zone.zone}
-                      onPress={() => handleZonePress(zone)}
+                      key={z.id}
+                      onPress={() => openEdit(z)}
+                      activeOpacity={0.8}
                       style={[
-                        styles.vectorZoneBlock, 
-                        { backgroundColor: zone.color },
-                        isHighlighted && styles.highlightedZoneBlock,
-                        isHidden && { opacity: 0.15 }
+                        styles.zoneBlock,
+                        { backgroundColor: z.hex },
+                        hidden && styles.zoneBlockHidden,
                       ]}
                       accessibilityRole="button"
-                      accessibilityLabel={`${zone.zone} details`}
+                      accessibilityLabel={`${z.label} — ${z.rate} kg/ha`}
                     >
-                      <Text style={styles.zoneBlockText}>{zone.zone}</Text>
-                      <Text style={styles.zoneBlockSub}>{zone.rate} kg/ha</Text>
+                      <Text style={styles.zoneBlockLabel}>{z.label}</Text>
+                      <Text style={styles.zoneBlockRate}>{z.rate} kg/ha</Text>
                     </TouchableOpacity>
                   );
                 })}
               </View>
-              <Text style={styles.tapInstruction}>Tap any zone on the grid map to adjust custom rates</Text>
-            </Card>
+              <Text style={styles.zoneHint}>Tap any zone to adjust the prescription rate</Text>
+            </View>
           </Animated.View>
 
-          {/* 3 Grid Statistics Widgets: Growth, Notes, Standard Rate */}
-          <View style={styles.vitalsRow}>
-            {/* Growth Rate Card */}
-            <Card variant="solid" style={[styles.vitalCard, { flex: 1, borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.vitalHeader}>
-                <Text style={styles.vitalLabel}>GROWTH RATE</Text>
-                <TrendingUp size={14} color="#2E7D32" strokeWidth={2.5} />
+          {/* Stats row */}
+          <Animated.View entering={FadeInDown.delay(140).springify()} style={styles.statsRow}>
+            <View style={[styles.statCard, { flex: 1 }]}>
+              <Text style={styles.statLabel}>GROWTH RATE</Text>
+              <Text style={styles.statVal}>0.75</Text>
+              <View style={styles.statDateRow}>
+                <Text style={styles.statDate}>Jul 24</Text>
+                <ArrowRight size={10} color={PALETTE.inkMute} />
+                <Text style={styles.statDate}>Aug 25</Text>
               </View>
-              <Text style={styles.vitalVal}>0.75</Text>
-              <View style={styles.datesRow}>
-                <Text style={styles.dateSub}>July 24</Text>
-                <ArrowRight size={10} color="#6B7280" />
-                <Text style={styles.dateSub}>August 25</Text>
-              </View>
-            </Card>
-
-            {/* Notes Card */}
-            <Card variant="solid" style={[styles.vitalCard, { flex: 1, borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.vitalHeader}>
-                <Text style={styles.vitalLabel}>NOTES</Text>
-                <Calendar size={14} color="#6B7280" strokeWidth={2} />
-              </View>
-              <Text style={styles.vitalVal}>Active</Text>
-              <Text style={styles.dateSub}>Date: 24.03.2023</Text>
-            </Card>
-          </View>
-
-          {/* Standard Rate Card */}
-          <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <Card variant="solid" style={[styles.standardRateCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.vitalHeader}>
-                <Text style={styles.vitalLabel}>STANDARD RATE</Text>
-                <SlidersHorizontal size={14} color="#2E7D32" strokeWidth={2} />
-              </View>
-              <View style={styles.rateRow}>
-                <Text style={styles.rateValText}>100</Text>
-                <View style={styles.rateUnits}>
-                  <Text style={styles.unitText}>kg/ha</Text>
-                  <Text style={styles.unitText}>L/ha</Text>
-                </View>
-              </View>
-            </Card>
+            </View>
+            <View style={[styles.statCard, { flex: 1 }]}>
+              <Text style={styles.statLabel}>STD. RATE</Text>
+              <Text style={styles.statVal}>100</Text>
+              <Text style={styles.statDate}>kg/ha</Text>
+            </View>
+            <View style={[styles.statCard, { flex: 1 }]}>
+              <Text style={styles.statLabel}>COVERAGE</Text>
+              <Text style={styles.statVal}>2.4</Text>
+              <Text style={styles.statDate}>hectares</Text>
+            </View>
           </Animated.View>
 
-          {/* Productivity Zones Card (Zones 3-8 list) */}
-          <Animated.View entering={FadeInDown.delay(250).springify()}>
-            <Card variant="solid" style={[styles.zonesCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <Text style={styles.cardHeading}>Productivity Zones</Text>
-              <View style={styles.zonesList}>
-                {zones.map((z) => (
-                  <TouchableOpacity 
-                    key={z.zone} 
-                    onPress={() => handleZonePress(z)}
-                    style={[styles.zoneRow, { borderBottomColor: '#E5E7EB', borderBottomWidth: 1 }]}
+          {/* Productivity zones list */}
+          <Animated.View entering={FadeInDown.delay(180).springify()}>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Productivity Zones</Text>
+              {zones.map((z, i) => (
+                <React.Fragment key={z.id}>
+                  <TouchableOpacity
+                    onPress={() => openEdit(z)}
+                    style={styles.zoneRow}
                     accessibilityRole="button"
+                    accessibilityLabel={`${z.label} — ${z.status}`}
                   >
-                    <View style={styles.zoneRowLeft}>
-                      <View style={[styles.zoneColorBadge, { backgroundColor: z.color }]} />
-                      <View style={{ marginLeft: 12 }}>
-                        <Text style={styles.zoneNameText}>{z.zone}</Text>
-                        <Text style={styles.zoneStatusText}>{z.status}</Text>
-                      </View>
+                    <View style={[styles.zoneColorPin, { backgroundColor: z.hex }]} />
+                    <View style={styles.zoneRowInfo}>
+                      <Text style={styles.zoneRowLabel}>{z.label}</Text>
+                      <Text style={styles.zoneRowStatus}>{z.status}</Text>
                     </View>
                     <View style={styles.zoneRowRight}>
-                      <Text style={styles.zoneValueText}>{z.rate} kg/ha</Text>
-                      <Text style={styles.zoneAreaText}>{z.area}</Text>
+                      <Text style={styles.zoneRowRate}>{z.rate} kg/ha</Text>
+                      <Text style={styles.zoneRowArea}>{z.area}</Text>
                     </View>
                   </TouchableOpacity>
-                ))}
-              </View>
-            </Card>
+                </React.Fragment>
+              ))}
+            </View>
           </Animated.View>
 
-          {/* Weather Card */}
-          <Animated.View entering={FadeInDown.delay(300).springify()}>
-            <TouchableOpacity 
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setWeatherForecastVisible(true); }}
+          {/* Weather card (tap for forecast) */}
+          <Animated.View entering={FadeInDown.delay(220).springify()}>
+            <TouchableOpacity
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setWxVisible(true); }}
+              activeOpacity={0.85}
+              style={styles.wxCard}
               accessibilityRole="button"
               accessibilityLabel="View weather forecast"
             >
-              <Card variant="solid" style={[styles.weatherCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-                <View style={styles.weatherTop}>
-                  <View>
-                    <Text style={styles.weatherLocation}>Vymyk, Lviv Oblast, Ukraine</Text>
-                    <Text style={styles.weatherTempRange}>H: +16°  L: +10°</Text>
-                  </View>
-                  <CloudRain size={28} color="#2E7D32" strokeWidth={2} />
+              <View style={styles.wxLeft}>
+                <Text style={styles.wxLocation}>Vymyk, Lviv Oblast</Text>
+                <Text style={styles.wxTemp}>H: +16°  L: +10°</Text>
+              </View>
+              <View style={styles.wxRight}>
+                <CloudRain size={32} color={PALETTE.greenAction} strokeWidth={1.5} />
+                <View style={styles.wxStats}>
+                  <Text style={styles.wxStatLabel}>5mm · 1019 hPa</Text>
                 </View>
-                <View style={styles.weatherExtraRow}>
-                  <View style={styles.weatherExtraItem}>
-                    <Text style={styles.extraLabel}>PRECIPITATION</Text>
-                    <Text style={styles.extraVal}>5mm</Text>
-                  </View>
-                  <View style={styles.weatherExtraItem}>
-                    <Text style={styles.extraLabel}>PRESSURE</Text>
-                    <Text style={styles.extraVal}>1019 hPa</Text>
-                  </View>
-                </View>
-              </Card>
+              </View>
             </TouchableOpacity>
           </Animated.View>
 
@@ -287,180 +243,255 @@ export default function MapScreen() {
         </ScrollView>
       </SafeAreaView>
 
-      {/* ZONE RATE EDIT MODAL */}
-      <Modal visible={editModalVisible} animationType="fade" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.editCard}>
-            <Text style={styles.modalHeading}>Adjust Prescription Rate</Text>
-            {selectedZone && (
-              <View style={styles.modalBody}>
-                <Text style={styles.zoneDetailsLabel}>Zone: {selectedZone.zone} ({selectedZone.status})</Text>
-                <Text style={styles.inputLabel}>PRESCRIPTION RATE (KG/HA)</Text>
+      {/* ═══════════ ZONE EDIT MODAL ═══════════ */}
+      <Modal visible={editVisible} animationType="slide" transparent statusBarTranslucent>
+        <View style={styles.overlay}>
+          <View style={styles.sheet}>
+            <View style={styles.sheetHandle} />
+
+            {activeZone && (
+              <>
+                <View style={styles.sheetTitleRow}>
+                  <View>
+                    <Text style={styles.sheetTitle}>Adjust Rate</Text>
+                    <Text style={styles.sheetSub}>{activeZone.label} · {activeZone.status}</Text>
+                  </View>
+                  <View style={[styles.zoneColorPin, { width: 20, height: 20, borderRadius: 10, backgroundColor: activeZone.hex }]} />
+                </View>
+
+                <Text style={styles.fieldLabel}>PRESCRIPTION RATE (KG/HA)</Text>
                 <TextInput
-                  value={newRateInput}
-                  onChangeText={setNewRateInput}
-                  keyboardType="numeric"
-                  style={styles.rateInput}
+                  value={editRate}
+                  onChangeText={setEditRate}
+                  keyboardType="decimal-pad"
+                  style={styles.input}
+                  accessibilityLabel="Prescription rate"
                 />
-              </View>
+
+                <View style={styles.btnRow}>
+                  <TouchableOpacity
+                    onPress={() => setEditVisible(false)}
+                    style={styles.cancelBtn}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={saveRate}
+                    style={styles.saveBtn}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.saveText}>Save Rate</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
             )}
-            <View style={styles.modalBtnRow}>
-              <TouchableOpacity 
-                style={styles.cancelBtn} 
-                onPress={() => setEditModalVisible(false)}
-                accessibilityRole="button"
-              >
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.saveBtn, { backgroundColor: '#2E7D32' }]} 
-                onPress={handleSaveRate}
-                accessibilityRole="button"
-              >
-                <Text style={styles.saveBtnText}>Save Rate</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </Modal>
 
-      {/* 7-DAY WEATHER FORECAST MODAL */}
-      <Modal visible={weatherForecastVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.forecastSheet}>
+      {/* ═══════════ FORECAST MODAL ═══════════ */}
+      <Modal visible={wxVisible} animationType="slide" transparent statusBarTranslucent>
+        <View style={styles.overlay}>
+          <View style={styles.sheet}>
             <View style={styles.sheetHandle} />
-            <Text style={styles.forecastTitle}>7-Day Weather Forecast</Text>
-            
-            <ScrollView style={styles.forecastList} showsVerticalScrollIndicator={false}>
-              {[
-                { day: 'Mon', temp: '+16° / +10°', cond: 'Rainy' },
-                { day: 'Tue', temp: '+17° / +11°', cond: 'Cloudy' },
-                { day: 'Wed', temp: '+18° / +12°', cond: 'Partly Sunny' },
-                { day: 'Thu', temp: '+19° / +11°', cond: 'Sunny' },
-                { day: 'Fri', temp: '+15° / +9°', cond: 'Heavy Rain' },
-                { day: 'Sat', temp: '+14° / +8°', cond: 'Overcast' },
-                { day: 'Sun', temp: '+16° / +10°', cond: 'Showers' },
-              ].map((item, idx) => (
-                <View key={idx} style={[styles.forecastRow, { borderBottomColor: '#E5E7EB', borderBottomWidth: 1 }]}>
-                  <Text style={styles.forecastDay}>{item.day}</Text>
-                  <Text style={styles.forecastCond}>{item.cond}</Text>
-                  <Text style={styles.forecastTemp}>{item.temp}</Text>
+            <View style={styles.sheetTitleRow}>
+              <Text style={styles.sheetTitle}>7-Day Forecast</Text>
+              <TouchableOpacity
+                onPress={() => setWxVisible(false)}
+                style={styles.closeIconBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+              >
+                <X size={20} color={PALETTE.inkMute} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+            {FORECAST.map((f, i) => (
+              <React.Fragment key={f.day}>
+                <View style={styles.wxRow}>
+                  <Text style={styles.wxDay}>{f.day}</Text>
+                  <Text style={styles.wxCond}>{f.cond}</Text>
+                  <Text style={styles.wxTempRange}>{f.temp}</Text>
                 </View>
-              ))}
-            </ScrollView>
-
-            <TouchableOpacity 
-              style={[styles.closeForecastBtn, { backgroundColor: '#2E7D32' }]} 
-              onPress={() => setWeatherForecastVisible(false)}
+                {i < FORECAST.length - 1 && <View style={styles.divider} />}
+              </React.Fragment>
+            ))}
+            <TouchableOpacity
+              onPress={() => setWxVisible(false)}
+              style={[styles.saveBtn, { marginTop: SPACE['3'] }]}
               accessibilityRole="button"
             >
-              <Text style={styles.closeForecastBtnText}>Close Forecast</Text>
+              <Text style={styles.saveText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }
 
+// ─── Styles ────────────────────────────────────────────────────────────────
+
+const ZONE_W = (W - SPACE['3'] * 2 - SPACE['2'] * 2) / 3;
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  safeArea: { flex: 1 },
+  root: { flex: 1, backgroundColor: PALETTE.surface },
+  safe: { flex: 1 },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 56,
+    paddingHorizontal: SPACE['3'],
+    paddingVertical: SPACE['2'],
+    backgroundColor: PALETTE.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: PALETTE.line,
   },
-  backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
-  headerTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  scroll: { paddingHorizontal: 16, paddingTop: 16 },
-  
-  // Field summary card
-  fieldSummaryCard: { padding: 16, borderRadius: 16, marginBottom: 16 },
-  cardHeading: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 12 },
-  pillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  filterPill: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#FFFFFF' },
-  filterPillActive: { borderColor: '#2E7D32', backgroundColor: '#E8F5E9' },
-  pillText: { fontSize: 13, fontFamily: 'Inter_700Bold', color: '#6B7280' },
-  pillTextActive: { color: '#2E7D32' },
+  headerTitle: { ...TYPE.subheading, color: PALETTE.ink },
+  headerSub:   { ...TYPE.captionMed, color: PALETTE.inkMute, marginTop: 2 },
+  wxBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: RADIUS.full,
+    backgroundColor: PALETTE.greenTint,
+    minHeight: 36,
+  },
+  wxBtnText: { ...TYPE.captionBold, color: PALETTE.greenInk },
 
-  // GIS Zoning grid
-  mapContainer: { padding: 16, borderRadius: 16, marginBottom: 16 },
-  mapHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  mapTitle: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  vectorMap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between' },
-  vectorZoneBlock: { width: (SCREEN_WIDTH - 64) / 3, height: 72, borderRadius: 12, padding: 8, justifyContent: 'space-between', borderWidth: 2, borderColor: 'transparent' },
-  highlightedZoneBlock: { borderColor: '#1E2A3E' },
-  zoneBlockText: { color: '#FFFFFF', fontSize: 12, fontFamily: 'Inter_900Black' },
-  zoneBlockSub: { color: '#FFFFFF', fontSize: 10, fontFamily: 'Inter_700Bold' },
-  tapInstruction: { fontSize: 11, fontFamily: 'Inter_600SemiBold', color: '#6B7280', textAlign: 'center', marginTop: 12 },
+  scroll: { padding: SPACE['3'], gap: SPACE['2'] },
 
-  // Stats Row
-  vitalsRow: { flexDirection: 'row', gap: 12, marginBottom: 16 },
-  vitalCard: { padding: 12, borderRadius: 16, gap: 6 },
-  vitalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  vitalLabel: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 0.5 },
-  vitalVal: { fontSize: 20, fontFamily: 'Inter_900Black', color: '#1E2A3E' },
-  datesRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  dateSub: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
+  // Filter pills
+  filterRow: { flexDirection: 'row', gap: SPACE['2'], flexWrap: 'wrap' },
+  filterPill: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: RADIUS.full,
+    borderWidth: 1.5,
+    borderColor: PALETTE.line,
+    backgroundColor: PALETTE.white,
+    minHeight: 36,
+  },
+  filterPillActive: { borderColor: PALETTE.greenAction, backgroundColor: PALETTE.greenTint },
+  filterText:       { ...TYPE.captionBold, color: PALETTE.inkMid },
+  filterTextActive: { color: PALETTE.greenInk },
 
-  // Standard Rate Card
-  standardRateCard: { padding: 12, borderRadius: 16, marginBottom: 16 },
-  rateRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 12, marginTop: 4 },
-  rateValText: { fontSize: 24, fontFamily: 'Inter_900Black', color: '#1E2A3E' },
-  rateUnits: { flexDirection: 'row', gap: 6, marginBottom: 2 },
-  unitText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#6B7280', backgroundColor: '#F3F4F6', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  // Card
+  card: {
+    backgroundColor: PALETTE.white,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['3'],
+    ...SHADOW.sm,
+  },
+  cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACE['3'] },
+  cardTitle:     { ...TYPE.subheading, color: PALETTE.ink },
+  legendBtn:     { width: 36, height: 36, justifyContent: 'center', alignItems: 'center' },
 
-  // Productivity Zones Card
-  zonesCard: { padding: 16, borderRadius: 16, marginBottom: 16 },
-  zonesList: { gap: 10 },
-  zoneRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
-  zoneRowLeft: { flexDirection: 'row', alignItems: 'center' },
-  zoneColorBadge: { width: 14, height: 14, borderRadius: 7 },
-  zoneNameText: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  zoneStatusText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#6B7280', marginTop: 2 },
-  zoneRowRight: { alignItems: 'flex-end' },
-  zoneValueText: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  zoneAreaText: { fontSize: 11, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 2 },
+  // Zone grid
+  zoneGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACE['2'],
+    marginBottom: SPACE['2'],
+  },
+  zoneBlock: {
+    width: ZONE_W,
+    height: 80,
+    borderRadius: RADIUS.md,
+    padding: 10,
+    justifyContent: 'space-between',
+  },
+  zoneBlockHidden: { opacity: 0.12 },
+  zoneBlockLabel:  { ...TYPE.captionBold, color: PALETTE.white },
+  zoneBlockRate:   { ...TYPE.label, color: 'rgba(255,255,255,0.75)', letterSpacing: 0.3 },
+  zoneHint:        { ...TYPE.captionMed, color: PALETTE.inkMute, textAlign: 'center' },
 
-  // Weather Card
-  weatherCard: { padding: 16, borderRadius: 16, marginBottom: 16, gap: 12 },
-  weatherTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  weatherLocation: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  weatherTempRange: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#6B7280', marginTop: 2 },
-  weatherExtraRow: { flexDirection: 'row', gap: 24, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#E5E7EB' },
-  weatherExtraItem: { flex: 1 },
-  extraLabel: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 0.5 },
-  extraVal: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginTop: 4 },
+  // Stats row
+  statsRow: { flexDirection: 'row', gap: SPACE['2'] },
+  statCard: {
+    backgroundColor: PALETTE.white,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['2'],
+    ...SHADOW.sm,
+    gap: 2,
+  },
+  statLabel: { ...TYPE.label, color: PALETTE.inkMute, letterSpacing: 0.5, marginBottom: 2 },
+  statVal:   { ...TYPE.heading, color: PALETTE.ink },
+  statDateRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  statDate:  { ...TYPE.captionMed, color: PALETTE.inkMute },
 
-  // Edit Card Modal
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  editCard: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20 },
-  modalHeading: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 16 },
-  modalBody: { gap: 12, marginBottom: 20 },
-  zoneDetailsLabel: { fontSize: 14, fontFamily: 'Inter_700Bold', color: '#6B7280' },
-  inputLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 0.5 },
-  rateInput: { borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, fontSize: 16, fontFamily: 'Inter_700Bold', color: '#1E2A3E' },
-  modalBtnRow: { flexDirection: 'row', gap: 12 },
-  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', alignItems: 'center', justifyContent: 'center', minHeight: 48 },
-  cancelBtnText: { fontSize: 15, fontFamily: 'Inter_700Bold', color: '#6B7280' },
-  saveBtn: { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: 'center', justifyContent: 'center', minHeight: 48 },
-  saveBtnText: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#FFFFFF' },
+  // Zone list rows
+  zoneRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
+  zoneColorPin: { width: 14, height: 14, borderRadius: 7 },
+  zoneRowInfo:  { flex: 1, marginLeft: SPACE['2'] },
+  zoneRowLabel:  { ...TYPE.bodySemi, color: PALETTE.ink },
+  zoneRowStatus: { ...TYPE.captionMed, color: PALETTE.inkMute, marginTop: 1 },
+  zoneRowRight:  { alignItems: 'flex-end' },
+  zoneRowRate:   { ...TYPE.bodySemi, color: PALETTE.ink },
+  zoneRowArea:   { ...TYPE.captionMed, color: PALETTE.inkMute, marginTop: 1 },
+  divider: { height: 1, backgroundColor: PALETTE.line },
 
-  // Forecast Sheet
-  forecastSheet: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, maxHeight: '80%' },
-  sheetHandle: { width: 40, height: 5, borderRadius: 3, backgroundColor: '#E5E7EB', alignSelf: 'center', marginBottom: 20 },
-  forecastTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 16 },
-  forecastList: { gap: 12, marginBottom: 20 },
-  forecastRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12 },
-  forecastDay: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  forecastCond: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
-  forecastTemp: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  closeForecastBtn: { paddingVertical: 14, borderRadius: 12, alignItems: 'center', justifyContent: 'center', minHeight: 48 },
-  closeForecastBtnText: { color: '#FFFFFF', fontSize: 15, fontFamily: 'Inter_800ExtraBold' }
+  // Weather card
+  wxCard: {
+    backgroundColor: PALETTE.white,
+    borderRadius: RADIUS.lg,
+    padding: SPACE['3'],
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    ...SHADOW.sm,
+  },
+  wxLeft: { flex: 1 },
+  wxLocation: { ...TYPE.subheading, color: PALETTE.ink },
+  wxTemp:     { ...TYPE.bodyMed, color: PALETTE.inkMute, marginTop: 4 },
+  wxRight:    { alignItems: 'flex-end', gap: 4 },
+  wxStats:    {},
+  wxStatLabel:{ ...TYPE.captionMed, color: PALETTE.inkMute },
+
+  // Overlay / sheet
+  overlay: { flex: 1, backgroundColor: 'rgba(15,25,35,0.5)', justifyContent: 'flex-end' },
+  sheet: {
+    backgroundColor: PALETTE.white,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    padding: SPACE['4'],
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: PALETTE.line,
+    alignSelf: 'center',
+    marginBottom: SPACE['4'],
+  },
+  sheetTitleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACE['3'] },
+  sheetTitle: { ...TYPE.subheading, color: PALETTE.ink },
+  sheetSub:   { ...TYPE.captionMed, color: PALETTE.inkMute, marginTop: 2 },
+  closeIconBtn: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center' },
+
+  fieldLabel: { ...TYPE.label, color: PALETTE.inkMute, marginBottom: SPACE['2'] },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: PALETTE.line,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACE['2'],
+    ...TYPE.heading,
+    color: PALETTE.ink,
+    marginBottom: SPACE['4'],
+  },
+  btnRow:     { flexDirection: 'row', gap: SPACE['2'] },
+  cancelBtn:  { flex: 1, height: 50, borderRadius: RADIUS.md, borderWidth: 1, borderColor: PALETTE.line, justifyContent: 'center', alignItems: 'center' },
+  cancelText: { ...TYPE.bodySemi, color: PALETTE.inkMid },
+  saveBtn:    { flex: 1, height: 50, borderRadius: RADIUS.md, backgroundColor: PALETTE.greenAction, justifyContent: 'center', alignItems: 'center' },
+  saveText:   { ...TYPE.bodySemi, color: PALETTE.white, fontFamily: 'Inter_700Bold' },
+
+  // Forecast rows
+  wxRow:      { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
+  wxDay:      { ...TYPE.bodySemi, color: PALETTE.ink, width: 40 },
+  wxCond:     { ...TYPE.bodyMed, color: PALETTE.inkMid, flex: 1 },
+  wxTempRange:{ ...TYPE.bodySemi, color: PALETTE.ink },
 });
