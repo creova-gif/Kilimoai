@@ -24,23 +24,23 @@ import {
   Database,
   ArrowRight,
   TrendingUp,
-  MapPin,
-  Clock,
-  Sliders,
-  ChevronDown
+  MapPin
 } from 'lucide-react-native';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { Card } from '../../components/ui/Card';
 
-interface TimelineEvent {
+interface FertilizerLog {
+  id: string;
   date: string;
-  label: string; // e.g. "Compost Fertilizer"
-  amount: string;
+  label: string; // e.g. "Urea" or "Compost"
+  amount: string; // e.g. "50 kg"
   crop: string;
-  notes: string;
   synced: boolean;
+  notes?: string;
 }
 
 export default function FarmHub() {
@@ -53,23 +53,19 @@ export default function FarmHub() {
   const addToSyncQueue = useKilimoStore((s) => s.addToSyncQueue);
   const addNotification = useKilimoStore((s) => s.addNotification);
 
-  // Form input states
+  // Form states
   const [compostInput, setCompostInput] = useState('');
   const [ureaInput, setUreaInput] = useState('');
-  const [selectedCrop, setSelectedCrop] = useState(farmProfile?.primaryCrops?.[0] ?? 'Mpunga (Rice)');
+  const [selectedCrop, setSelectedCrop] = useState(farmProfile?.primaryCrops?.[0] ?? 'Mahindi');
 
-  // Calendar dates scroll
-  const [timelineData, setTimelineData] = useState<TimelineEvent[]>([
-    { date: 'Feb 10', label: 'Compost Fertilizer', amount: '120 kg', crop: 'Mpunga (Rice)', notes: 'Pre-planting manure application', synced: true },
-    { date: 'Feb 17', label: 'Superior Seeds', amount: '20 kg', crop: 'Mpunga (Rice)', notes: 'Sowing High-yielding IR64 Rice Seeds', synced: true },
-    { date: 'Feb 24', label: 'KCl Fertilizer', amount: '40 kg', crop: 'Mpunga (Rice)', notes: 'Initial top-dressing for vegetative growth', synced: true },
-    { date: 'Mar 03', label: 'SP-36 Fertilizer', amount: '35 kg', crop: 'Mpunga (Rice)', notes: 'Phosphate supplement applied', synced: true },
-    { date: 'Mar 10', label: 'Urea Fertilizer', amount: '50 kg', crop: 'Mpunga (Rice)', notes: 'Nitrogen boost applied to active tillers', synced: true },
-    { date: 'Mar 17', label: 'Compost Fertilizer', amount: '80 kg', crop: 'Mpunga (Rice)', notes: 'Organic compost secondary layer', synced: true },
+  // Logs state
+  const [logs, setLogs] = useState<FertilizerLog[]>([
+    { id: '1', date: 'May 26', label: 'Urea', amount: '50 kg', crop: 'Mahindi', synced: true },
+    { id: '2', date: 'May 25', label: 'Compost', amount: '120 kg', crop: 'Maharage', synced: true },
+    { id: '3', date: 'May 24', label: 'Urea', amount: '40 kg', crop: 'Mpunga', synced: true },
+    { id: '4', date: 'May 22', label: 'Compost', amount: '80 kg', crop: 'Mahindi', synced: true },
+    { id: '5', date: 'May 20', label: 'Urea', amount: '30 kg', crop: 'Kahawa', synced: true },
   ]);
-
-  // Selected date to view details
-  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent>(timelineData[0]);
 
   // Fetch logs from Supabase
   const fetchLogs = useCallback(async () => {
@@ -85,18 +81,15 @@ export default function FarmHub() {
 
         if (!error && data && data.length > 0) {
           const mapped = data.map((d: any) => ({
+            id: d.id,
             date: new Date(d.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            label: d.type === 'urea' ? 'Urea Fertilizer' : 'Compost Fertilizer',
+            label: d.type === 'urea' ? 'Urea' : 'Compost',
             amount: `${d.amount} kg`,
-            crop: d.crop || 'Mpunga (Rice)',
-            notes: d.notes || 'Logged via Farm Management Console',
-            synced: true
+            crop: d.crop || 'Mahindi',
+            synced: true,
+            notes: d.notes
           }));
-          
-          // Merge with static seeds/SP-36 ones to preserve variety
-          const staticEvents = timelineData.filter(e => e.label === 'Superior Seeds' || e.label === 'SP-36 Fertilizer');
-          setTimelineData([...mapped, ...staticEvents]);
-          setSelectedEvent(mapped[0]);
+          setLogs(mapped);
         }
       }
     } catch (err) {
@@ -108,179 +101,155 @@ export default function FarmHub() {
     fetchLogs();
   }, [fetchLogs]);
 
-  // Add a new log
+  // Log Application action
   const handleLogApplication = async () => {
     const compostVal = parseFloat(compostInput) || 0;
     const ureaVal = parseFloat(ureaInput) || 0;
 
     if (compostVal === 0 && ureaVal === 0) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      Alert.alert('Enter Quantities', 'Please enter a quantity for compost or urea.');
+      Alert.alert(
+        language === 'sw' ? 'Weka Vipimo' : 'Enter Quantities',
+        language === 'sw' ? 'Tafadhali weka kiasi cha mbolea ya samadi au urea.' : 'Please enter a quantity for compost or urea.'
+      );
       return;
     }
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    const newEvents: TimelineEvent[] = [];
+    const newLogs: FertilizerLog[] = [];
     const timestamp = new Date().toISOString();
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
     if (compostVal > 0) {
-      newEvents.push({
+      newLogs.push({
+        id: `compost_${Date.now()}`,
         date: dateStr,
-        label: 'Compost Fertilizer',
+        label: 'Compost',
         amount: `${compostVal} kg`,
         crop: selectedCrop,
-        notes: 'Manual log entry',
         synced: !isOffline
       });
     }
 
     if (ureaVal > 0) {
-      newEvents.push({
+      newLogs.push({
+        id: `urea_${Date.now()}`,
         date: dateStr,
-        label: 'Urea Fertilizer',
+        label: 'Urea',
         amount: `${ureaVal} kg`,
         crop: selectedCrop,
-        notes: 'Manual log entry',
         synced: !isOffline
       });
     }
 
     // Update local state
-    setTimelineData((prev) => [...newEvents, ...prev]);
-    setSelectedEvent(newEvents[0]);
+    setLogs((prev) => [...newLogs, ...prev]);
     setCompostInput('');
     setUreaInput('');
 
-    // Write to Supabase or Queue
+    // Write to Supabase or Sync Queue
     try {
       const { getSupabase } = require('../../lib/supabase');
       const sb = getSupabase();
 
-      for (const ev of newEvents) {
+      for (const logItem of newLogs) {
         const payload = {
           user_id: agroId?.id || 'demo-user-id',
-          type: ev.label.toLowerCase().includes('urea') ? 'urea' : 'compost',
-          amount: parseFloat(ev.amount),
-          crop: ev.crop,
-          notes: ev.notes,
+          type: logItem.label.toLowerCase(),
+          amount: parseFloat(logItem.amount),
+          crop: logItem.crop,
           created_at: timestamp
         };
 
         if (isOffline || !sb) {
+          // Add to offline sync queue
           addToSyncQueue({
-            type: 'irrigation_log',
+            type: 'irrigation_log', // maps to log event in queue
             payload
           });
         } else {
-          await sb.from('fertilizer_logs').insert(payload);
+          // Direct write
+          const { error } = await sb.from('fertilizer_logs').insert(payload);
+          if (error) {
+            console.warn('[TrackRecords] Failed to save log directly, queuing offline:', error.message);
+            addToSyncQueue({
+              type: 'irrigation_log',
+              payload
+            });
+          }
         }
       }
 
       addNotification({
-        title: 'Mbolea Imerekodiwa',
-        body: 'Kumbukumbu za matumizi ya mbolea zimesasishwa.',
+        title: language === 'sw' ? 'Mbolea Imerekodiwa' : 'Fertilizer Logged',
+        body: language === 'sw' ? 'Kumbukumbu zako za mbolea zimesasishwa.' : 'Your fertilizer track records have been updated.',
         type: 'success'
       });
 
     } catch (err) {
-      console.warn('[TrackRecords] Database write exception:', err);
+      console.warn('[TrackRecords] Database write exception, queueing offline:', err);
     }
-  };
-
-  const handleDatePress = (eventItem: TimelineEvent) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedEvent(eventItem);
   };
 
   return (
     <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.safe}>
-        
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: '#1E2A3E' }]}>Track Records</Text>
+          <Text style={[styles.title, { color: '#1E2A3E' }]}>
+            {language === 'sw' ? 'Kumbukumbu za Mbolea' : 'Fertilizer Track Records'}
+          </Text>
           <Text style={styles.subtitle}>
-            {language === 'sw' ? 'Fuatilia na kupanga matumizi ya shamba' : 'Monitor and plan farm input applications'}
+            {language === 'sw' ? 'Fuatilia matumizi ya mbolea ya samadi na urea' : 'Monitor compost and urea applications over time'}
           </Text>
         </View>
 
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          
           {/* Horizontal scroll with exact dates and stacked labels */}
           <View style={styles.horizontalSection}>
-            <Text style={styles.sectionHeading}>APPLICATION CALENDAR</Text>
+            <Text style={styles.sectionHeading}>
+              {language === 'sw' ? 'KALENDA YA MATUMIZI' : 'APPLICATION CALENDAR'}
+            </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
-              {timelineData.map((ev, idx) => {
-                const isSelected = selectedEvent.date === ev.date && selectedEvent.label === ev.label;
-                const isUrea = ev.label.includes('Urea') || ev.label.includes('KCl');
+              {logs.map((log) => (
+                <View key={log.id} style={[styles.dateCard, { borderColor: '#E2E8F0', borderWidth: 1 }]}>
+                  <Text style={styles.dateText}>{log.date}</Text>
+                  <View style={[styles.indicatorDot, { backgroundColor: log.label === 'Urea' ? '#3b82f6' : '#2E7D32' }]} />
+                  <Text style={styles.labelText}>{log.label}</Text>
+                  <Text style={styles.amountText}>{log.amount}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+
+          {/* Quick Log Form */}
+          <Card variant="solid" style={[styles.logCard, { borderColor: '#E2E8F0', borderWidth: 1, ...shadows.sm }]}>
+            <Text style={styles.cardHeading}>
+              {language === 'sw' ? 'Weka Kumbukumbu Mpya' : 'Log New Application'}
+            </Text>
+
+            {/* Crop selector */}
+            <Text style={styles.inputLabel}>{language === 'sw' ? 'Zao lililowekewa' : 'Target Crop'}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cropSelector}>
+              {(farmProfile?.primaryCrops ?? ['Mahindi', 'Maharage', 'Mpunga']).map((crop) => {
+                const isSelected = selectedCrop === crop;
                 return (
                   <TouchableOpacity
-                    key={`${ev.date}-${idx}`}
-                    onPress={() => handleDatePress(ev)}
+                    key={crop}
+                    onPress={() => { Haptics.selectionAsync(); setSelectedCrop(crop); }}
                     style={[
-                      styles.dateCard, 
-                      { borderColor: isSelected ? '#2E7D32' : '#E5E7EB', borderWidth: 1 },
-                      isSelected && { backgroundColor: '#E8F5E9' }
+                      styles.cropPill,
+                      { borderColor: isSelected ? '#2E7D32' : '#E2E8F0', backgroundColor: isSelected ? '#E8F5E9' : '#FFFFFF' }
                     ]}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${ev.date}: ${ev.label}`}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: isSelected }}
                   >
-                    <Text style={styles.dateText}>{ev.date}</Text>
-                    <View style={[styles.indicatorDot, { backgroundColor: isUrea ? '#3b82f6' : '#2E7D32' }]} />
-                    <Text style={styles.labelText}>{ev.label.split(' ')[0]}</Text>
-                    <Text style={styles.amountText}>{ev.amount}</Text>
+                    <Text style={[styles.cropPillText, { color: isSelected ? '#2E7D32' : '#1E2A3E' }]}>{crop}</Text>
                   </TouchableOpacity>
                 );
               })}
             </ScrollView>
-          </View>
-
-          {/* Expanded Event Detail Card */}
-          {selectedEvent && (
-            <Card variant="solid" style={[styles.detailCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.detailHeaderRow}>
-                <View style={styles.detailTitleCol}>
-                  <Text style={styles.detailLabel}>{selectedEvent.date} Application</Text>
-                  <Text style={styles.detailTitle}>{selectedEvent.label}</Text>
-                </View>
-                <View style={[styles.badgeGreen, { backgroundColor: '#E8F5E9' }]}>
-                  <Text style={styles.badgeTextGreen}>{selectedEvent.amount}</Text>
-                </View>
-              </View>
-              <View style={styles.detailBody}>
-                <View style={styles.detailMetaRow}>
-                  <Sprout size={14} color="#6B7280" strokeWidth={2} />
-                  <Text style={styles.detailMetaText}>Target Crop: {selectedEvent.crop}</Text>
-                </View>
-                <Text style={styles.detailNotes}>{selectedEvent.notes}</Text>
-              </View>
-            </Card>
-          )}
-
-          {/* Quick Log Form */}
-          <Card variant="solid" style={[styles.logCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-            <Text style={styles.cardHeading}>Log New Input Application</Text>
-
-            {/* Target crop select */}
-            <Text style={styles.inputLabel}>Target Crop</Text>
-            <View style={styles.cropSelector}>
-              {['Mpunga (Rice)', 'Mahindi (Maize)', 'Kahawa (Coffee)'].map((c) => {
-                const isSel = selectedCrop === c;
-                return (
-                  <TouchableOpacity
-                    key={c}
-                    onPress={() => { setSelectedCrop(c); Haptics.selectionAsync(); }}
-                    style={[styles.cropPill, { borderColor: isSel ? '#2E7D32' : '#E5E7EB', backgroundColor: isSel ? '#E8F5E9' : '#FFFFFF' }]}
-                    accessibilityRole="radio"
-                    accessibilityState={{ checked: isSel }}
-                  >
-                    <Text style={[styles.cropPillText, { color: isSel ? '#2E7D32' : '#1E2A3E' }]}>{c}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
 
             <View style={styles.inputGrid}>
               <View style={styles.inputCol}>
@@ -289,7 +258,7 @@ export default function FarmHub() {
                   value={compostInput}
                   onChangeText={setCompostInput}
                   keyboardType="numeric"
-                  placeholder="e.g. 120"
+                  placeholder="e.g. 50"
                   style={styles.textInput}
                   accessibilityLabel="Compost quantity in kilograms"
                 />
@@ -300,7 +269,7 @@ export default function FarmHub() {
                   value={ureaInput}
                   onChangeText={setUreaInput}
                   keyboardType="numeric"
-                  placeholder="e.g. 50"
+                  placeholder="e.g. 25"
                   style={styles.textInput}
                   accessibilityLabel="Urea quantity in kilograms"
                 />
@@ -311,25 +280,28 @@ export default function FarmHub() {
               style={[styles.submitBtn, { backgroundColor: '#2E7D32' }]} 
               onPress={handleLogApplication}
               accessibilityRole="button"
-              accessibilityLabel="Record input log"
+              accessibilityLabel="Save application log"
             >
               <Plus size={20} color="#FFFFFF" strokeWidth={2} />
-              <Text style={styles.submitBtnText}>Log Application</Text>
+              <Text style={styles.submitBtnText}>
+                {language === 'sw' ? 'Rekodi Matumizi' : 'Log Application'}
+              </Text>
             </TouchableOpacity>
           </Card>
 
-          {/* Timeline History List */}
-          <Text style={[styles.sectionHeading, { marginTop: 16 }]}>APPLICATION HISTORY</Text>
+          {/* Timeline list */}
+          <Text style={[styles.sectionHeading, { marginTop: 16 }]}>
+            {language === 'sw' ? 'HISTORIA YA MATUMIZI' : 'APPLICATION HISTORY'}
+          </Text>
 
           <View style={styles.timelineContainer}>
-            {timelineData.map((ev, idx) => {
-              const isLast = idx === timelineData.length - 1;
-              const isUrea = ev.label.includes('Urea') || ev.label.includes('KCl');
+            {logs.map((log, idx) => {
+              const isLast = idx === logs.length - 1;
               return (
-                <View key={`${ev.date}-${idx}`} style={styles.timelineRow}>
-                  {/* Left lines */}
+                <View key={log.id} style={styles.timelineRow}>
+                  {/* Timeline lines and dots */}
                   <View style={styles.timelineLeft}>
-                    <View style={[styles.timelineDot, { backgroundColor: isUrea ? '#3b82f6' : '#2E7D32' }]}>
+                    <View style={[styles.timelineDot, { backgroundColor: log.label === 'Urea' ? '#3b82f6' : '#2E7D32' }]}>
                       <Calendar size={12} color="#FFFFFF" strokeWidth={2} />
                     </View>
                     {!isLast && <View style={styles.timelineLine} />}
@@ -337,16 +309,18 @@ export default function FarmHub() {
 
                   <View style={styles.timelineRight}>
                     <View style={styles.timelineHeaderRow}>
-                      <Text style={styles.timelineTitle}>{ev.label}</Text>
-                      <Text style={styles.timelineDate}>{ev.date}</Text>
+                      <Text style={styles.timelineTitle}>
+                        {log.label} Application
+                      </Text>
+                      <Text style={styles.timelineDate}>{log.date}</Text>
                     </View>
                     <Text style={styles.timelineDetail}>
-                      {ev.amount} applied on {ev.crop}
+                      {log.amount} applied on {log.crop}
                     </Text>
                     <View style={styles.syncBadgeRow}>
-                      <Database size={10} color={ev.synced ? '#2E7D32' : '#F59E0B'} strokeWidth={2} />
-                      <Text style={[styles.syncText, { color: ev.synced ? '#2E7D32' : '#D97706' }]}>
-                        {ev.synced ? 'Synced to Cloud' : 'Offline Queue'}
+                      <Database size={10} color={log.synced ? '#2E7D32' : '#F59E0B'} strokeWidth={2} />
+                      <Text style={[styles.syncText, { color: log.synced ? '#2E7D32' : '#D97706' }]}>
+                        {log.synced ? 'Synced to Cloud' : 'Offline Queue'}
                       </Text>
                     </View>
                   </View>
@@ -367,10 +341,10 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   header: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
   title: { fontSize: 28, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
-  subtitle: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 4 },
+  subtitle: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#5A6E85', marginTop: 4 },
   scroll: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100, gap: 16 },
   horizontalSection: { gap: 8 },
-  sectionHeading: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 1.2, marginLeft: 4 },
+  sectionHeading: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#5A6E85', letterSpacing: 1.2, marginLeft: 4 },
   horizontalScroll: { gap: 10, paddingVertical: 4 },
   dateCard: {
     width: 90,
@@ -378,53 +352,36 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    minHeight: 44
+    justifyContent: 'center'
   },
-  dateText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
+  dateText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#5A6E85' },
   indicatorDot: { width: 6, height: 6, borderRadius: 3, marginVertical: 6 },
   labelText: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  amountText: { fontSize: 11, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 2 },
-  
-  // Detail card
-  detailCard: { padding: 16, borderRadius: 16, gap: 12 },
-  detailHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  detailTitleCol: { flex: 1 },
-  detailLabel: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', textTransform: 'uppercase', letterSpacing: 0.5 },
-  detailTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginTop: 2 },
-  badgeGreen: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
-  badgeTextGreen: { fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: '#2E7D32' },
-  detailBody: { gap: 8 },
-  detailMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  detailMetaText: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
-  detailNotes: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#1E2A3E', lineHeight: 18, marginTop: 4 },
-
+  amountText: { fontSize: 11, fontFamily: 'Inter_500Medium', color: '#5A6E85', marginTop: 2 },
   logCard: { padding: 16, borderRadius: 16, gap: 12 },
   cardHeading: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 4 },
-  cropSelector: { flexDirection: 'row', gap: 8, paddingVertical: 4 },
+  cropSelector: { gap: 8, paddingVertical: 4 },
   cropPill: {
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    alignItems: 'center',
-    minHeight: 44
+    alignItems: 'center'
   },
   cropPillText: { fontSize: 13, fontFamily: 'Inter_700Bold' },
   inputGrid: { flexDirection: 'row', gap: 12 },
   inputCol: { flex: 1, gap: 6 },
-  inputLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 1 },
+  inputLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#5A6E85', letterSpacing: 1 },
   textInput: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#E2E8F0',
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
     color: '#1E2A3E',
     fontFamily: 'Inter_600SemiBold',
-    backgroundColor: '#FFFFFF',
-    minHeight: 44
+    backgroundColor: '#FFFFFF'
   },
   submitBtn: {
     flexDirection: 'row',
@@ -433,12 +390,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
-    marginTop: 8,
-    minHeight: 48
+    marginTop: 8
   },
   submitBtnText: { color: '#FFFFFF', fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
-  
-  // Timeline list
   timelineContainer: { marginTop: 12, gap: 0 },
   timelineRow: { flexDirection: 'row', minHeight: 70 },
   timelineLeft: { width: 30, alignItems: 'center' },
@@ -455,19 +409,19 @@ const styles = StyleSheet.create({
     top: 24,
     bottom: 0,
     width: 2,
-    backgroundColor: '#E5E7EB'
+    backgroundColor: '#E2E8F0'
   },
   timelineRight: {
     flex: 1,
     marginLeft: 12,
     paddingBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
+    borderBottomColor: '#E2E8F0'
   },
   timelineHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   timelineTitle: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  timelineDate: { fontSize: 12, fontFamily: 'Inter_500Medium', color: '#6B7280' },
-  timelineDetail: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 4 },
+  timelineDate: { fontSize: 12, fontFamily: 'Inter_500Medium', color: '#5A6E85' },
+  timelineDetail: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#5A6E85', marginTop: 4 },
   syncBadgeRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 },
   syncText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold' }
 });

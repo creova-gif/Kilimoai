@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -11,10 +11,6 @@ import {
   RefreshControl,
   Image,
   Pressable,
-  Modal,
-  TextInput,
-  Alert,
-  Clipboard
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { 
@@ -46,28 +42,32 @@ import {
   ArrowRight, 
   RefreshCw, 
   Lightbulb,
-  CloudRain,
-  Plus,
-  Info,
-  ChevronRight,
-  Download,
-  AlertCircle,
-  MapPin
+  CloudRain
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Card } from '../../components/ui/Card';
 import { useSyncEngine } from '../../hooks/useSyncEngine';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+const QUICK_ACTIONS = [
+  { id: 'scan', label: 'Uchunguzi', icon: <Camera size={24} color="#fff" strokeWidth={2} />, color: '#2E7D32', desc: 'AI Crop Scan' },
+  { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={24} color="#fff" strokeWidth={2} />, color: '#3b82f6', desc: 'Farm Tasks' },
+  { id: 'market', label: 'Soko', icon: <TrendingUp size={24} color="#fff" strokeWidth={2} />, color: '#f59e0b', desc: 'Market Prices' },
+  { id: 'crop-planning', label: 'Panga Mazao', icon: <Leaf size={24} color="#fff" strokeWidth={2} />, color: '#10b981', desc: 'AI Crop Planning' },
+  { id: 'contracts', label: 'Mikataba', icon: <BarChart3 size={24} color="#fff" strokeWidth={2} />, color: '#8b5cf6', desc: 'Contract Farming' },
+];
+
 export default function HomeScreen() {
   const { colors, radius, shadows } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const [upgradeModalVisible, setUpgradeModalVisible] = useState(false);
 
   const agroId = useKilimoStore((s) => s.agroId);
   const isOffline = useKilimoStore((s) => s.isOffline);
@@ -76,29 +76,27 @@ export default function HomeScreen() {
   const unreadCount = useKilimoStore((s) => s.unreadCount);
   const farmProfile = useKilimoStore((s) => s.farmProfile);
   const language = useKilimoStore((s) => s.language);
-  const setFarmProfile = useKilimoStore((s) => s.setFarmProfile);
 
   // Supabase states
   const [salesTotal, setSalesTotal] = useState<number>(9850.25);
   const [dbTransactions, setDbTransactions] = useState<any[]>([
-    { id: 'TX-655-01', title: 'Compost Fertilizer', amount: 120, type: 'expense', status: 'completed', date: 'Feb 14, 2025', idLabel: '#655' },
-    { id: 'TX-655-02', title: 'Seedlings', amount: 450, type: 'expense', status: 'pending', date: 'Feb 07, 2025', idLabel: '#655' },
-    { id: 'TX-655-03', title: 'Urea Fertilizer', amount: 180, type: 'expense', status: 'completed', date: 'Jan 31, 2025', idLabel: '#655' },
-    { id: 'TX-655-04', title: 'Compost Fertilizer', amount: 120, type: 'expense', status: 'completed', date: 'Jan 24, 2025', idLabel: '#655' },
+    { id: '1', title: 'Compost Sale', amount: 1200.00, type: 'sale', status: 'completed', created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString() },
+    { id: '2', title: 'Urea Purchase', amount: 350.00, type: 'expense', status: 'completed', created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
+    { id: '3', title: 'Crop Insurance', amount: 150.00, type: 'expense', status: 'pending', created_at: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString() },
+    { id: '4', title: 'Maize Harvest Sale', amount: 8150.25, type: 'sale', status: 'completed', created_at: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString() },
   ]);
 
-  // Modal States
-  const [updateModalVisible, setUpdateModalVisible] = useState(false);
-  const [txModalVisible, setTxModalVisible] = useState(false);
-  const [selectedTx, setSelectedTx] = useState<any>(null);
-  const [qrModalVisible, setQrModalVisible] = useState(false);
+  const recommendations = useMemo(
+    () => generateRecommendations({ profile: farmProfile, vitals: farmVitals, language }),
+    [farmProfile, farmVitals, language]
+  );
 
-  // Form input states
-  const [formCompost, setFormCompost] = useState(String(farmProfile?.compostKg ?? '120'));
-  const [formUrea, setFormUrea] = useState(String(farmProfile?.ureaKg ?? '50'));
-  const [formSP36, setFormSP36] = useState('40');
-  const [formKCl, setFormKCl] = useState('30');
-  const [updating, setUpdating] = useState(false);
+  const FARM_STATS = [
+    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color="#2E7D32" strokeWidth={2} />, color: '#2E7D32' },
+    { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#3b82f6" strokeWidth={2} />, color: '#3b82f6' },
+    { id: 'weather', label: 'Joto', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#f59e0b" strokeWidth={2} />, color: '#f59e0b' },
+    { id: 'yield', label: 'Mavuno', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" strokeWidth={2} />, color: '#8b5cf6' },
+  ];
 
   const setLastSyncedAt = useKilimoStore((s) => s.setLastSyncedAt);
   const { forceSync } = useSyncEngine();
@@ -112,468 +110,340 @@ export default function HomeScreen() {
   }, []);
 
   // Fetch from Supabase
-  const fetchData = useCallback(async () => {
+  const fetchDataFromSupabase = useCallback(async () => {
     try {
       const { getSupabase } = require('../../lib/supabase');
       const sb = getSupabase();
       if (sb && agroId?.id) {
-        const { data: profileData } = await sb
+        // 1. Fetch sales_total
+        const { data: profileData, error: profileErr } = await sb
           .from('agro_profiles')
           .select('sales_total')
           .eq('user_id', agroId.id)
           .maybeSingle();
 
-        if (profileData && profileData.sales_total !== undefined && profileData.sales_total !== null) {
+        if (!profileErr && profileData && profileData.sales_total !== undefined && profileData.sales_total !== null) {
           setSalesTotal(profileData.sales_total);
+        }
+
+        // 2. Fetch transactions
+        const { data: transData, error: transErr } = await sb
+          .from('transactions')
+          .select('*')
+          .eq('user_id', agroId.id)
+          .order('created_at', { ascending: false })
+          .limit(4);
+
+        if (!transErr && transData && transData.length > 0) {
+          setDbTransactions(transData);
         }
       }
     } catch (err) {
-      console.warn('[HomeScreen] Supabase fetch error, using robust local data:', err);
+      console.warn('[HomeScreen] Supabase fetch error, using robust fallback data:', err);
     }
   }, [agroId?.id]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchDataFromSupabase();
+  }, [fetchDataFromSupabase]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await forceSync();
-    await fetchData();
+    await fetchDataFromSupabase();
     setLastSyncedAt(new Date().toISOString());
     setRefreshing(false);
-  }, [setLastSyncedAt, forceSync, fetchData]);
-
-  // Handle Save Info Form
-  const handleUpdateSave = async () => {
-    const compostVal = parseFloat(formCompost) || 0;
-    const ureaVal = parseFloat(formUrea) || 0;
-    const sp36Val = parseFloat(formSP36) || 0;
-    const kclVal = parseFloat(formKCl) || 0;
-
-    if (compostVal < 0 || ureaVal < 0 || sp36Val < 0 || kclVal < 0) {
-      Alert.alert('Error', 'Please enter positive numbers.');
-      return;
-    }
-
-    setUpdating(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-    // Save locally
-    setFarmProfile({
-      primaryCrops: farmProfile?.primaryCrops ?? ['Mpunga (Rice)'],
-      region: farmProfile?.region ?? 'Bali, Indonesia',
-      farmSizeAcres: farmProfile?.farmSizeAcres ?? 2.5,
-      mainActivity: 'mazao',
-      hasLivestock: false,
-      hasIrrigation: false,
-      compostKg: compostVal,
-      ureaKg: ureaVal,
-    });
-
-    // Write to Supabase
-    try {
-      const { getSupabase } = require('../../lib/supabase');
-      const sb = getSupabase();
-      if (sb && agroId?.id) {
-        const payload = {
-          user_id: agroId.id,
-          compost_kg: compostVal,
-          urea_kg: ureaVal,
-          sp36_kg: sp36Val,
-          kcl_kg: kclVal
-        };
-        await sb.from('agro_profiles').upsert(payload, { onConflict: 'user_id' });
-      }
-    } catch (dbErr) {
-      console.warn('[UpdateModal] Supabase save failed:', dbErr);
-    }
-
-    setUpdating(false);
-    setUpdateModalVisible(false);
-    Alert.alert('Success', 'Farm parameters updated successfully.');
-  };
-
-  // Handle Transaction Click
-  const handleTxPress = (tx: any) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedTx(tx);
-    txModalVisible ? setTxModalVisible(false) : setTxModalVisible(true);
-  };
-
-  // Copy TX ID
-  const handleTxLongPress = (tx: any) => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    Clipboard.setString(tx.id);
-    Alert.alert('Copied', `Transaction ID ${tx.id} copied to clipboard.`);
-  };
-
-  // Download QR Code
-  const handleDownloadQR = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert('Download', 'QR Code saved to gallery successfully.');
-    setQrModalVisible(false);
-  };
+  }, [setLastSyncedAt, forceSync, fetchDataFromSupabase]);
 
   return (
     <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
       <StatusBar barStyle="dark-content" />
       
       <SafeAreaView style={styles.safeArea}>
-        {/* Location / Search Header Bar */}
-        <View style={styles.locationHeader}>
-          <View style={styles.locLeft}>
-            <MapPin size={18} color="#2E7D32" strokeWidth={2.5} style={{ marginRight: 6 }} />
-            <Text style={styles.locationText}>Bali, Indonesia</Text>
-          </View>
-          <View style={styles.locRight}>
-            <TouchableOpacity 
-              onPress={() => setQrModalVisible(true)}
-              style={[styles.qrIconBtn, { borderColor: '#E5E7EB', borderWidth: 1 }]}
-              accessibilityRole="button"
-              accessibilityLabel="Open QR Codes"
-            >
-              <QrCode size={20} color="#1E2A3E" strokeWidth={2} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} accessibilityRole="button" accessibilityLabel="Profile">
-              <View style={styles.profileAvatar}>
-                <Text style={styles.avatarText}>JM</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         <ScrollView 
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2E7D32" />}
         >
-          {/* Crop Card (Two-column layout hero card) */}
-          <Animated.View entering={FadeInDown.delay(100).springify()}>
-            <Card variant="solid" style={[styles.cropCard, { ...shadows.sm }]}>
-              <View style={styles.cropCardHeader}>
-                <View style={styles.badgePrimary}>
-                  <Text style={styles.badgePrimaryText}>Your Agricultural Crops</Text>
-                </View>
-                <Text style={styles.cropTitle}>Rice Plants</Text>
+          {/* Header Section */}
+          <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.header}>
+            <View>
+              <View style={[styles.statusBadge, { backgroundColor: isOffline ? '#fee2e2' : '#E8F5E9' }]}>
+                <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#2E7D32' }]} />
+                <Text style={[styles.statusText, { color: isOffline ? '#ef4444' : '#2E7D32' }]}>
+                  {isOffline ? `OFFLINE • ${syncQueue.length} IN QUEUE` : 'SYSTEMS OPTIMAL'}
+                </Text>
               </View>
-
-              <View style={styles.twoColumnGrid}>
-                {/* Left Column */}
-                <View style={styles.columnItem}>
-                  <Text style={styles.colLabel}>ORGANIC SOIL</Text>
-                  <Text style={styles.colVal}>Manure</Text>
-                  <Text style={styles.colSubLabel}>Phase: Before Planting</Text>
+              <Text style={[styles.greeting, { color: '#5A6E85' }]}>KARIBU TENA,</Text>
+              <Text style={[styles.name, { color: '#1E2A3E' }]}>{agroId?.name?.split(' ')[0] ?? 'Mkulima'}</Text>
+            </View>
+            <View style={styles.headerActions}>
+              <TouchableOpacity 
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }}
+                style={[styles.actionCircle, { backgroundColor: '#FFFFFF', borderColor: '#E2E8F0', borderWidth: 1 }]}
+                accessibilityLabel="Notifications"
+                accessibilityRole="button"
+              >
+                {isOffline ? <WifiOff size={22} color="#ef4444" strokeWidth={2} /> : <Bell size={22} color="#1E2A3E" strokeWidth={2} />}
+                {unreadCount > 0 && !isOffline && (
+                  <View style={styles.notificationBadge}>
+                    <Text style={styles.notificationBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)} accessibilityLabel="Profile" accessibilityRole="button">
+                <View style={[styles.avatarContainer, { borderColor: '#2E7D32' }]}>
+                  {agroId?.avatarUrl ? (
+                    <Image source={{ uri: agroId.avatarUrl }} style={styles.avatar} />
+                  ) : (
+                    <View style={[styles.avatar, { backgroundColor: '#E8F5E9', justifyContent: 'center', alignItems: 'center' }]}>
+                      <Text style={{ color: '#2E7D32', fontFamily: 'Inter_800ExtraBold', fontSize: 18 }}>
+                        {agroId?.name?.[0]?.toUpperCase() || '?'}
+                      </Text>
+                    </View>
+                  )}
                 </View>
-                {/* Right Column */}
-                <View style={styles.columnItem}>
-                  <Text style={styles.colLabel}>INPUT INGREDIENTS</Text>
-                  <Text style={styles.colVal}>KCl Fertilizer</Text>
-                  <Text style={styles.colSubLabel}>Age 2-3 Weeks</Text>
-                </View>
-              </View>
-            </Card>
+              </TouchableOpacity>
+            </View>
           </Animated.View>
 
-          {/* Sales Card (Dashboard card showing $9.850,25) */}
-          <Animated.View entering={FadeInDown.delay(150).springify()}>
-            <Card variant="solid" style={[styles.salesCard, { ...shadows.sm }]}>
-              <View style={styles.salesHeader}>
-                <View>
-                  <Text style={styles.salesLabel}>Total Balance</Text>
-                  <Text style={styles.salesAmount}>{formatSales(salesTotal)}</Text>
+          {/* Sales Card Dashboard */}
+          <Animated.View entering={FadeInDown.delay(200).springify()}>
+            <Card variant="solid" style={[styles.walletCard, { backgroundColor: '#2E7D32', borderColor: '#2E7D32', ...shadows.sm }]}>
+              <View style={styles.walletHeader}>
+                <View style={[styles.agroIdBadge, { backgroundColor: 'rgba(255, 255, 255, 0.15)' }]}>
+                  <Fingerprint size={14} color="#FFFFFF" strokeWidth={2} />
+                  <Text style={[styles.agroIdText, { color: '#FFFFFF' }]}>AGRO ID SECURED</Text>
                 </View>
-                <View style={styles.salesRoseBadge}>
-                  <TrendingUp size={14} color="#2E7D32" strokeWidth={2.5} style={{ marginRight: 4 }} />
-                  <Text style={styles.salesRoseText}>Up 5% from last month</Text>
-                </View>
-              </View>
-
-              {/* Sparkline Graph Visualizer */}
-              <View style={styles.sparklineContainer}>
-                <Text style={styles.sparklineText}>Sales Rose 12% in 1 Month</Text>
-                <View style={styles.sparkline}>
-                  <View style={[styles.sparklineBar, { height: 12, backgroundColor: '#E8F5E9' }]} />
-                  <View style={[styles.sparklineBar, { height: 24, backgroundColor: '#E8F5E9' }]} />
-                  <View style={[styles.sparklineBar, { height: 18, backgroundColor: '#E8F5E9' }]} />
-                  <View style={[styles.sparklineBar, { height: 32, backgroundColor: '#E8F5E9' }]} />
-                  <View style={[styles.sparklineBar, { height: 44, backgroundColor: '#2E7D32' }]} />
-                  <View style={[styles.sparklineBar, { height: 56, backgroundColor: '#2E7D32' }]} />
+                <View style={[styles.mobileMoneyTag, { backgroundColor: agroId?.mpesaLinked ? '#1B5E20' : '#F59E0B' }]}>
+                  <Text style={styles.mobileMoneyText}>{agroId?.mpesaLinked ? 'M-PESA LINKED' : 'LINK M-PESA'}</Text>
                 </View>
               </View>
 
-              <View style={styles.salesFooter}>
-                <TouchableOpacity 
-                  onPress={() => router.push('/agro-id')}
-                  style={styles.detailsBtn}
+              <Text style={[styles.balanceLabel, { color: 'rgba(255, 255, 255, 0.8)' }]}>Sales Total (USD)</Text>
+              <View style={styles.balanceRow}>
+                <Text style={[styles.balanceAmount, { color: '#FFFFFF' }]}>{formatSales(salesTotal)}</Text>
+              </View>
+
+              <View style={styles.walletActions}>
+                <TouchableOpacity
+                  style={[styles.walletBtn, { backgroundColor: '#FFFFFF' }]}
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/agro-id' as any); }}
                   accessibilityRole="button"
+                  accessibilityLabel="Deposit funds"
                 >
-                  <Text style={styles.detailsBtnText}>View details</Text>
-                  <ArrowRight size={14} color="#2E7D32" strokeWidth={2.5} />
+                  <ArrowDownLeft size={18} color="#2E7D32" strokeWidth={2} />
+                  <Text style={[styles.walletBtnText, { color: '#2E7D32' }]}>Deposit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.walletBtn, { backgroundColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)' }]}
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/wallet-admin' as any); }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Pay cooperative dues"
+                >
+                  <ArrowUpRight size={18} color="#FFFFFF" strokeWidth={2} />
+                  <Text style={[styles.walletBtnText, { color: '#FFFFFF' }]}>Pay Co-op</Text>
                 </TouchableOpacity>
               </View>
             </Card>
           </Animated.View>
 
-          {/* Market Conditions Card */}
-          <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <Card variant="solid" style={[styles.marketCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.cardHeaderRow}>
-                <TrendingUp size={20} color="#2E7D32" strokeWidth={2} />
-                <Text style={styles.cardHeaderTitle}>Market Conditions</Text>
-              </View>
-              <View style={styles.marketDetails}>
-                <View style={styles.marketItem}>
-                  <Text style={styles.marketLabelText}>Market Price</Text>
-                  <Text style={styles.marketValText}>$50.00</Text>
-                </View>
-                <View style={styles.marketDivider} />
-                <View style={styles.marketItem}>
-                  <Text style={styles.marketLabelText}>Highest Demand</Text>
-                  <Text style={styles.marketValText}>Surabaya, Bali, etc.</Text>
-                </View>
-              </View>
-            </Card>
-          </Animated.View>
-
-          {/* Information Card */}
+          {/* Premium Weather Card */}
           <Animated.View entering={FadeInDown.delay(250).springify()}>
-            <Card variant="solid" style={[styles.infoCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.cardHeaderRow}>
-                <Info size={20} color="#2E7D32" strokeWidth={2} />
-                <Text style={styles.cardHeaderTitle}>Information</Text>
+            <Card variant="solid" style={[styles.weatherCard, { borderColor: '#E2E8F0', borderWidth: 1, ...shadows.sm }]}>
+              <View style={styles.weatherHeader}>
+                <View>
+                  <Text style={styles.weatherLocation}>Vymyk, Lviv Oblast, Ukraine</Text>
+                  <Text style={styles.weatherStatus}>Rainy / Overcast</Text>
+                </View>
+                <View style={styles.weatherTempBadge}>
+                  <CloudRain size={28} color="#2E7D32" strokeWidth={2} />
+                  <Text style={styles.weatherTemp}>+16° / +10°</Text>
+                </View>
               </View>
-              <View style={styles.infoGrid}>
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoKey}>Plant Age</Text>
-                  <Text style={styles.infoVal}>Week 4</Text>
+              <View style={styles.weatherDetails}>
+                <View style={styles.weatherDetailItem}>
+                  <Text style={styles.weatherDetailLabel}>HUMIDITY</Text>
+                  <Text style={styles.weatherDetailVal}>82%</Text>
                 </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoKey}>Rice Harvest</Text>
-                  <Text style={styles.infoVal}>950kg (Up 2% from last month)</Text>
+                <View style={styles.weatherDetailDivider} />
+                <View style={styles.weatherDetailItem}>
+                  <Text style={styles.weatherDetailLabel}>WIND</Text>
+                  <Text style={styles.weatherDetailVal}>14 km/h</Text>
                 </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoKey}>Sales Data</Text>
-                  <Text style={styles.infoVal}>Up 2%</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoKey}>Fertilization</Text>
-                  <Text style={styles.infoVal}>Urea, SP-36, KCl, and ZA</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoKey}>Certification</Text>
-                  <Text style={styles.infoVal}>Land and Fertilizer</Text>
+                <View style={styles.weatherDetailDivider} />
+                <View style={styles.weatherDetailItem}>
+                  <Text style={styles.weatherDetailLabel}>PRECIP</Text>
+                  <Text style={styles.weatherDetailVal}>65%</Text>
                 </View>
               </View>
             </Card>
           </Animated.View>
 
-          {/* Update Card */}
+          {/* Sankofa AI Hero */}
           <Animated.View entering={FadeInDown.delay(300).springify()}>
-            <Card variant="solid" style={[styles.updateCard, { backgroundColor: '#E8F5E9', borderColor: '#2E7D32', borderWidth: 1, ...shadows.sm }]}>
-              <View style={styles.updateCardContent}>
-                <Text style={styles.updateTitle}>Update Your Farm Information To Increase Total Balance Productivity</Text>
-              </View>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); router.push('/ai'); }}
+              accessibilityRole="button"
+              accessibilityLabel="Open Sankofa AI assistant"
+              accessibilityHint="View AI crop recommendations"
+            >
+              <Card variant="glass" style={[styles.aiHero, { borderColor: '#E2E8F0', borderWidth: 1, ...shadows.sm }]}>
+                <View style={styles.aiHeroContent}>
+                  <View style={[styles.aiIconMain, { backgroundColor: '#E8F5E9' }]}>
+                    <BrainCircuit size={32} color="#2E7D32" strokeWidth={2} />
+                  </View>
+                  <View style={styles.aiRight}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                      <Sparkles size={12} color="#2E7D32" style={{ marginRight: 4 }} />
+                      <Text style={[styles.aiTitle, { color: '#2E7D32' }]}>Sankofa AI</Text>
+                    </View>
+                    <Text style={[styles.aiMessage, { color: '#1E2A3E' }]}>
+                      {language === 'sw' ? '"Unyevu wa Shamba B unashuka haraka. Napendekeza umwagiliaji..."' : '"Block B moisture dropping faster than predicted. Recommended: irrigate..."'}
+                    </Text>
+                    <View style={styles.aiActionRow}>
+                      <Text style={[styles.aiActionLabel, { color: '#2E7D32' }]}>SOMA ZAIDI</Text>
+                      <ArrowRight size={14} color="#2E7D32" strokeWidth={2} />
+                    </View>
+                  </View>
+                </View>
+              </Card>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Quick Actions */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.actionScroll} snapToInterval={SCREEN_WIDTH * 0.65 + 16} decelerationRate="fast">
+            {QUICK_ACTIONS.map((action) => (
               <TouchableOpacity 
-                style={styles.updateBtn}
-                onPress={() => setUpdateModalVisible(true)}
+                key={action.id} 
+                activeOpacity={0.9} 
+                onPress={() => { 
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
+                  if (action.id === 'contracts' && agroId?.tier === 'Free') {
+                    setUpgradeModalVisible(true);
+                  } else {
+                    router.push(`/${action.id}` as any); 
+                  }
+                }} 
+                style={styles.actionCardWrapper}
+                accessible={true}
+                accessibilityLabel={action.label}
+                accessibilityHint={action.desc}
                 accessibilityRole="button"
               >
-                <Plus size={18} color="#FFFFFF" strokeWidth={2.5} style={{ marginRight: 6 }} />
-                <Text style={styles.updateBtnText}>Update Information</Text>
+                <LinearGradient colors={[action.color, action.color + 'cc']} style={[styles.actionCard, { borderRadius: radius.lg }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                  <View style={styles.actionIconOuter}>
+                    {action.icon}
+                  </View>
+                  <View>
+                    <Text style={styles.actionLabel}>{action.label}</Text>
+                    <Text style={styles.actionDesc}>{action.desc}</Text>
+                  </View>
+                </LinearGradient>
               </TouchableOpacity>
-            </Card>
-          </Animated.View>
+            ))}
+          </ScrollView>
 
-          {/* Transaction History Card */}
-          <Animated.View entering={FadeInDown.delay(350).springify()}>
-            <Card variant="solid" style={[styles.txCard, { borderColor: '#E5E7EB', borderWidth: 1, ...shadows.sm }]}>
-              <Text style={styles.cardHeaderTitle}>Transaction History</Text>
-              <View style={styles.txList}>
-                {dbTransactions.map((tx) => {
-                  const isCompleted = tx.status === 'completed';
-                  return (
-                    <TouchableOpacity 
-                      key={tx.id}
-                      onPress={() => handleTxPress(tx)}
-                      onLongPress={() => handleTxLongPress(tx)}
-                      style={[styles.txItem, { borderBottomColor: '#E5E7EB', borderBottomWidth: 1 }]}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${tx.title} transaction`}
-                    >
-                      <View style={[styles.txIcon, { backgroundColor: isCompleted ? '#E8F5E9' : '#FEF3C7' }]}>
-                        {isCompleted ? (
-                          <CheckCircle2 size={18} color="#2E7D32" strokeWidth={2} />
-                        ) : (
-                          <Clock size={18} color="#F59E0B" strokeWidth={2} />
-                        )}
-                      </View>
-                      <View style={styles.txInfo}>
-                        <Text style={styles.txTitle}>{tx.title}</Text>
-                        <Text style={styles.txMeta}>{tx.date} • ID: {tx.idLabel}</Text>
-                      </View>
-                      <View style={[styles.statusBadge, { backgroundColor: isCompleted ? '#E8F5E9' : '#FEF3C7' }]}>
-                        <Text style={[styles.statusText, { color: isCompleted ? '#2E7D32' : '#D97706' }]}>
-                          {isCompleted ? 'Completed' : 'Pending'}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </Card>
+          {/* Transaction History Section */}
+          <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: '#1E2A3E' }]}>Kumbukumbu za Malipo (Transactions)</Text>
           </Animated.View>
+          <View style={styles.transactionList}>
+            {dbTransactions.map((tx) => {
+              const isCompleted = tx.status === 'completed';
+              const isSale = tx.type === 'sale';
+              return (
+                <Card key={tx.id} variant="solid" style={[styles.txItem, { borderColor: '#E2E8F0', borderWidth: 1 }]}>
+                  <View style={[styles.txIconBg, { backgroundColor: isCompleted ? '#E8F5E9' : '#FEF3C7' }]}>
+                    {isCompleted ? (
+                      <CheckCircle2 size={20} color="#2E7D32" strokeWidth={2} />
+                    ) : (
+                      <Clock size={20} color="#F59E0B" strokeWidth={2} />
+                    )}
+                  </View>
+                  <View style={styles.txInfo}>
+                    <Text style={[styles.txTitle, { color: '#1E2A3E' }]}>{tx.title}</Text>
+                    <Text style={[styles.txDate, { color: '#5A6E85' }]}>
+                      {new Date(tx.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </Text>
+                  </View>
+                  <View style={styles.txAmountWrapper}>
+                    <Text style={[styles.txAmount, { color: isSale ? '#2E7D32' : '#EF4444' }]}>
+                      {isSale ? '+' : '-'}{formatSales(tx.amount)}
+                    </Text>
+                    <View style={[styles.txBadge, { backgroundColor: isCompleted ? '#E8F5E9' : '#FEF3C7' }]}>
+                      <Text style={[styles.txBadgeText, { color: isCompleted ? '#2E7D32' : '#D97706' }]}>
+                        {isCompleted ? 'COMPLETED' : 'PENDING'}
+                      </Text>
+                    </View>
+                  </View>
+                </Card>
+              );
+            })}
+          </View>
 
+          {/* Farm Vitale Grid */}
+          <Animated.View entering={FadeInDown.delay(500).springify()} style={[styles.sectionHeader, { marginTop: 24 }]}>
+            <Text style={[styles.sectionTitle, { color: '#1E2A3E' }]}>Afya ya Shamba</Text>
+            <TouchableOpacity
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}
+              accessibilityRole="button"
+              accessibilityLabel="View farm sensors"
+            >
+              <Text style={{ color: '#2E7D32', fontFamily: 'Inter_700Bold', fontSize: 13 }}>SENSORS →</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          <View style={styles.statsGrid}>
+            {FARM_STATS.map((stat, idx) => (
+              <Animated.View key={stat.id} entering={FadeInDown.delay(500 + idx * 50).springify()} style={styles.statCardContainer}>
+                <Card variant="solid" style={{ padding: 12, borderColor: '#E2E8F0', borderWidth: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <View style={[styles.statIconBg, { backgroundColor: '#E8F5E9' }]}>{stat.icon}</View>
+                    <Text style={[styles.statLabel, { color: '#5A6E85', marginLeft: 8 }]}>{stat.label}</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: '#1E2A3E' }]}>{stat.value}</Text>
+                </Card>
+              </Animated.View>
+            ))}
+          </View>
+
+          {/* Recommendations */}
+          <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.sectionHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Lightbulb size={18} color="#2E7D32" strokeWidth={2} />
+              <Text style={[styles.sectionTitle, { color: '#1E2A3E' }]}>Sankofa AI</Text>
+            </View>
+            <Text style={{ color: '#5A6E85', fontFamily: 'Inter_700Bold', fontSize: 11 }}>{recommendations.length} NEW</Text>
+          </Animated.View>
+          <View style={{ gap: 10, marginBottom: 24 }}>
+            {recommendations.map((rec, idx) => {
+              const col = severityColor(rec.severity);
+              return (
+                <Animated.View key={rec.id} entering={FadeInDown.delay(600 + idx * 50).springify()}>
+                  <Pressable
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(rec.cta.route as any); }}
+                    accessibilityRole="button"
+                    accessibilityLabel={rec.title}
+                    accessibilityHint={rec.cta.label}
+                  >
+                    <Card variant="solid" style={[styles.recCard, { borderLeftColor: col, borderLeftWidth: 4, borderColor: '#E2E8F0', borderWidth: 1 }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <Text style={[styles.recCat, { color: col }]}>{rec.category.toUpperCase()}</Text>
+                      </View>
+                      <Text style={[styles.recTitle, { color: '#1E2A3E' }]}>{rec.title}</Text>
+                      <Text style={[styles.recBody, { color: '#5A6E85' }]}>{rec.body}</Text>
+                    </Card>
+                  </Pressable>
+                </Animated.View>
+              );
+            })}
+          </View>
+          
           <View style={{ height: 100 }} />
         </ScrollView>
       </SafeAreaView>
-
-      {/* UPDATE MODAL FORM */}
-      <Modal visible={updateModalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <View style={styles.sheetHandle} />
-            <Text style={styles.modalTitle}>Update Farm Parameters</Text>
-            
-            <View style={styles.formScroll}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>COMPOST FERTILIZER (KG)</Text>
-                <TextInput 
-                  value={formCompost} 
-                  onChangeText={setFormCompost} 
-                  keyboardType="numeric" 
-                  style={styles.formInput} 
-                />
-              </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>UREA FERTILIZER (KG)</Text>
-                <TextInput 
-                  value={formUrea} 
-                  onChangeText={setFormUrea} 
-                  keyboardType="numeric" 
-                  style={styles.formInput} 
-                />
-              </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>SP-36 FERTILIZER (KG)</Text>
-                <TextInput 
-                  value={formSP36} 
-                  onChangeText={setFormSP36} 
-                  keyboardType="numeric" 
-                  style={styles.formInput} 
-                />
-              </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>KCL FERTILIZER (KG)</Text>
-                <TextInput 
-                  value={formKCl} 
-                  onChangeText={setFormKCl} 
-                  keyboardType="numeric" 
-                  style={styles.formInput} 
-                />
-              </View>
-            </View>
-
-            <View style={styles.modalBtnRow}>
-              <TouchableOpacity 
-                style={styles.cancelBtn} 
-                onPress={() => setUpdateModalVisible(false)}
-                accessibilityRole="button"
-              >
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.saveBtn, { backgroundColor: '#2E7D32' }]} 
-                onPress={handleUpdateSave}
-                disabled={updating}
-                accessibilityRole="button"
-              >
-                <Text style={styles.saveBtnText}>{updating ? 'Saving...' : 'Save Parameters'}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* TRANSACTION DETAIL MODAL */}
-      <Modal visible={txModalVisible} animationType="fade" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.txDetailCard}>
-            <Text style={styles.detailHeader}>Transaction Invoice</Text>
-            {selectedTx && (
-              <View style={styles.invoiceContent}>
-                <View style={styles.invoiceRow}>
-                  <Text style={styles.invKey}>Transaction ID</Text>
-                  <Text style={styles.invVal}>{selectedTx.id}</Text>
-                </View>
-                <View style={styles.invoiceRow}>
-                  <Text style={styles.invKey}>Description</Text>
-                  <Text style={styles.invVal}>{selectedTx.title}</Text>
-                </View>
-                <View style={styles.invoiceRow}>
-                  <Text style={styles.invKey}>Date</Text>
-                  <Text style={styles.invVal}>{selectedTx.date}</Text>
-                </View>
-                <View style={styles.invoiceRow}>
-                  <Text style={styles.invKey}>Status</Text>
-                  <Text style={[styles.invVal, { color: selectedTx.status === 'completed' ? '#2E7D32' : '#F59E0B' }]}>
-                    {selectedTx.status.toUpperCase()}
-                  </Text>
-                </View>
-                <View style={styles.invoiceDivider} />
-                <View style={styles.invoiceRow}>
-                  <Text style={styles.invTotalLabel}>Amount Paid</Text>
-                  <Text style={styles.invTotalVal}>${selectedTx.amount.toFixed(2)}</Text>
-                </View>
-              </View>
-            )}
-            <TouchableOpacity 
-              style={[styles.closeInvoiceBtn, { backgroundColor: '#2E7D32' }]} 
-              onPress={() => setTxModalVisible(false)}
-              accessibilityRole="button"
-            >
-              <Text style={styles.closeInvoiceBtnText}>Close Invoice</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* QR CODE MODAL */}
-      <Modal visible={qrModalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.qrSheet}>
-            <View style={styles.sheetHandle} />
-            <Text style={styles.qrSheetTitle}>Farm Scannable Passport</Text>
-            
-            <View style={styles.qrPlaceholder}>
-              <QrCode size={180} color="#1E2A3E" strokeWidth={1.5} />
-            </View>
-            
-            <Text style={styles.qrInstructions}>
-              Show this QR code to agro-vendors or loan officers to instantly share verified crop profiles.
-            </Text>
-
-            <TouchableOpacity 
-              style={[styles.qrDownloadBtn, { backgroundColor: '#2E7D32' }]} 
-              onPress={handleDownloadQR}
-              accessibilityRole="button"
-            >
-              <Download size={20} color="#FFFFFF" strokeWidth={2} />
-              <Text style={styles.qrDownloadText}>Download QR</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.qrCloseBtn} 
-              onPress={() => setQrModalVisible(false)}
-              accessibilityRole="button"
-            >
-              <Text style={styles.qrCloseText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
     </View>
   );
 }
@@ -581,131 +451,75 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   safeArea: { flex: 1 },
-  locationHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 56,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  locLeft: { flexDirection: 'row', alignItems: 'center' },
-  locationText: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  locRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  qrIconBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
-  profileAvatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#E8F5E9', justifyContent: 'center', alignItems: 'center' },
-  avatarText: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#2E7D32' },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 16 },
-  
-  // Crop Card
-  cropCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 16, padding: 16, marginBottom: 16 },
-  cropCardHeader: { marginBottom: 16 },
-  badgePrimary: { backgroundColor: '#E8F5E9', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start', marginBottom: 6 },
-  badgePrimaryText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#2E7D32', textTransform: 'uppercase' },
-  cropTitle: { fontSize: 24, fontFamily: 'Inter_900Black', color: '#1E2A3E' },
-  twoColumnGrid: { flexDirection: 'row', gap: 12 },
-  columnItem: { flex: 1, backgroundColor: '#FAFBFD', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
-  colLabel: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 0.5, marginBottom: 4 },
-  colVal: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  colSubLabel: { fontSize: 11, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 2 },
-
-  // Sales Card
-  salesCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 16, padding: 16, marginBottom: 16 },
-  salesHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  salesLabel: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
-  salesAmount: { fontSize: 32, fontFamily: 'Inter_900Black', color: '#1E2A3E', marginTop: 4, letterSpacing: -1 },
-  salesRoseBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#E8F5E9', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  salesRoseText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#2E7D32' },
-  sparklineContainer: { marginBottom: 16 },
-  sparklineText: { fontSize: 14, fontFamily: 'Inter_700Bold', color: '#6B7280', marginBottom: 10 },
-  sparkline: { flexDirection: 'row', gap: 6, alignItems: 'flex-end', height: 60 },
-  sparklineBar: { flex: 1, borderRadius: 3 },
-  salesFooter: { borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 12, alignItems: 'flex-end' },
-  detailsBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 8, paddingHorizontal: 12, minWidth: 44, minHeight: 44 },
-  detailsBtnText: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#2E7D32' },
-
-  // Market Card
-  marketCard: { padding: 16, borderRadius: 16, marginBottom: 16 },
-  cardHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  cardHeaderTitle: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  marketDetails: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
-  marketItem: { flex: 1, alignItems: 'center' },
-  marketLabelText: { fontSize: 11, fontFamily: 'Inter_600SemiBold', color: '#6B7280', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  marketValText: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  marketDivider: { width: 1, height: 32, backgroundColor: '#E5E7EB' },
-
-  // Info Card
-  infoCard: { padding: 16, borderRadius: 16, marginBottom: 16 },
-  infoGrid: { gap: 10 },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4 },
-  infoKey: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
-  infoVal: { fontSize: 13, fontFamily: 'Inter_700Bold', color: '#1E2A3E', textAlign: 'right', flex: 1, marginLeft: 12 },
-
-  // Update Card
-  updateCard: { padding: 16, borderRadius: 16, marginBottom: 16, gap: 14 },
-  updateCardContent: { marginBottom: 4 },
-  updateTitle: { fontSize: 15, fontFamily: 'Inter_700Bold', color: '#1E2A3E', lineHeight: 22 },
-  updateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 12, backgroundColor: '#2E7D32', minHeight: 48 },
-  updateBtnText: { color: '#FFFFFF', fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
-
-  // Transaction Card
-  txCard: { padding: 16, borderRadius: 16, marginBottom: 16 },
-  txList: { gap: 12, marginTop: 12 },
-  txItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
-  txIcon: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 12 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  statusBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 8, alignSelf: 'flex-start' },
+  statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
+  statusText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
+  greeting: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginBottom: 2 },
+  name: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', letterSpacing: -1 },
+  headerActions: { flexDirection: 'row', alignItems: 'center' },
+  actionCircle: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  notificationBadge: { position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: '#ef4444' },
+  notificationBadgeText: { display: 'none' },
+  avatarContainer: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, padding: 2 },
+  avatar: { width: '100%', height: '100%', borderRadius: 20 },
+  walletCard: { marginBottom: 16, padding: 16, borderRadius: 16 },
+  walletHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  agroIdBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, gap: 6 },
+  agroIdText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
+  mobileMoneyTag: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+  mobileMoneyText: { color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  balanceLabel: { fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 4 },
+  balanceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 20 },
+  balanceAmount: { fontSize: 36, fontFamily: 'Inter_800ExtraBold', letterSpacing: -1 },
+  walletActions: { flexDirection: 'row', gap: 12 },
+  walletBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 12, gap: 6 },
+  walletBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  weatherCard: { marginBottom: 16, padding: 16, borderRadius: 16 },
+  weatherHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  weatherLocation: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
+  weatherStatus: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#5A6E85', marginTop: 2 },
+  weatherTempBadge: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  weatherTemp: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
+  weatherDetails: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingTop: 12, borderTopWidth: 1, borderTopColor: '#E2E8F0' },
+  weatherDetailItem: { alignItems: 'center' },
+  weatherDetailLabel: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#5A6E85', marginBottom: 4 },
+  weatherDetailVal: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
+  weatherDetailDivider: { width: 1, height: 24, backgroundColor: '#E2E8F0' },
+  aiHero: { marginBottom: 24, padding: 16, borderRadius: 16 },
+  aiHeroContent: { flexDirection: 'row', alignItems: 'center' },
+  aiIconMain: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
+  aiRight: { flex: 1 },
+  aiTitle: { fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
+  aiMessage: { fontSize: 14, fontFamily: 'Inter_500Medium', lineHeight: 20, marginBottom: 12 },
+  aiActionRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  aiActionLabel: { fontSize: 12, fontFamily: 'Inter_700Bold' },
+  actionScroll: { paddingRight: 40, gap: 12, marginBottom: 24 },
+  actionCardWrapper: { width: SCREEN_WIDTH * 0.4 },
+  actionCard: { padding: 16, height: 120, justifyContent: 'space-between' },
+  actionIconOuter: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  actionLabel: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold', marginBottom: 2 },
+  actionDesc: { color: 'rgba(255,255,255,0.8)', fontSize: 12, fontFamily: 'Inter_500Medium' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24, gap: 8 },
+  statCardContainer: { width: (SCREEN_WIDTH - 40) / 2 },
+  statIconBg: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  statLabel: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  statValue: { fontSize: 22, fontFamily: 'Inter_800ExtraBold' },
+  recCard: { padding: 12, borderRadius: 16 },
+  recCat: { fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  recTitle: { fontSize: 15, fontFamily: 'Inter_700Bold', marginBottom: 4 },
+  recBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 18 },
+  transactionList: { gap: 8 },
+  txItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 16 },
+  txIconBg: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
   txInfo: { flex: 1, marginLeft: 12 },
-  txTitle: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  txMeta: { fontSize: 12, fontFamily: 'Inter_500Medium', color: '#6B7280', marginTop: 2 },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  statusText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
-
-  // Modal Overlays
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalSheet: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, maxHeight: '80%' },
-  sheetHandle: { width: 40, height: 5, borderRadius: 3, backgroundColor: '#E5E7EB', alignSelf: 'center', marginBottom: 20 },
-  modalTitle: { fontSize: 20, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 20 },
-  formScroll: { gap: 16, marginBottom: 24 },
-  formInput: { borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, fontFamily: 'Inter_600SemiBold', color: '#1E2A3E' },
-  inputGroup: { marginBottom: 16 },
-  inputLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#6B7280', letterSpacing: 0.5, marginBottom: 6 },
-  modalBtnRow: { flexDirection: 'row', gap: 12 },
-  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', alignItems: 'center', justifyContent: 'center', minHeight: 48 },
-  cancelBtnText: { fontSize: 15, fontFamily: 'Inter_700Bold', color: '#6B7280' },
-  saveBtn: { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: 'center', justifyContent: 'center', minHeight: 48 },
-  saveBtnText: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#FFFFFF' },
-
-  // Invoice Card
-  txDetailCard: { 
-    backgroundColor: '#FFFFFF', 
-    marginHorizontal: 24, 
-    marginVertical: 'auto', 
-    borderRadius: 24, 
-    padding: 20, 
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.05, 
-    shadowRadius: 8, 
-    elevation: 2 
-  },
-  detailHeader: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', textAlign: 'center', marginBottom: 20 },
-  invoiceContent: { gap: 14, marginBottom: 24 },
-  invoiceRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  invKey: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#6B7280' },
-  invVal: { fontSize: 13, fontFamily: 'Inter_700Bold', color: '#1E2A3E' },
-  invoiceDivider: { height: 1, backgroundColor: '#E5E7EB', marginVertical: 12 },
-  invTotalLabel: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E' },
-  invTotalVal: { fontSize: 18, fontFamily: 'Inter_900Black', color: '#2E7D32' },
-  closeInvoiceBtn: { paddingVertical: 14, borderRadius: 12, alignItems: 'center', justifyContent: 'center', minHeight: 48 },
-  closeInvoiceBtnText: { color: '#FFFFFF', fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
-
-  // QR Modal
-  qrSheet: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, alignItems: 'center' },
-  qrSheetTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#1E2A3E', marginBottom: 20 },
-  qrPlaceholder: { padding: 16, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 20, marginBottom: 20 },
-  qrInstructions: { fontSize: 13, fontFamily: 'Inter_500Medium', color: '#6B7280', textAlign: 'center', lineHeight: 20, marginBottom: 24, paddingHorizontal: 16 },
-  qrDownloadBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: 24, borderRadius: 12, width: '100%', justifyContent: 'center', minHeight: 48 },
-  qrDownloadText: { color: '#FFFFFF', fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
-  qrCloseBtn: { paddingVertical: 12, marginTop: 8, width: '100%', alignItems: 'center', minHeight: 44 },
-  qrCloseText: { fontSize: 14, fontFamily: 'Inter_700Bold', color: '#6B7280' }
+  txTitle: { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
+  txDate: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  txAmountWrapper: { alignItems: 'flex-end' },
+  txAmount: { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
+  txBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, marginTop: 4 },
+  txBadgeText: { fontSize: 8, fontFamily: 'Inter_800ExtraBold' }
 });
