@@ -110,18 +110,28 @@ export function useAgroAuth() {
 
   // ── Email password sign-in ─────────────────────────────────────────
   const signInWithEmail = useCallback(async (email: string, password: string) => {
+    console.log('[AgroAuth] signInWithEmail starting for:', email);
     setLoading(true);
     try {
-      if (!supabase) throw new Error('Supabase not configured');
+      if (!supabase) {
+        console.warn('[AgroAuth] Supabase client is not initialized!');
+        throw new Error('Supabase not configured');
+      }
+      console.log('[AgroAuth] Calling Supabase signInWithPassword...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      if (error) throw error;
+      if (error) {
+        console.error('[AgroAuth] Supabase signInWithPassword returned error:', error);
+        throw error;
+      }
+      console.log('[AgroAuth] Supabase sign-in successful. User ID:', data.user?.id);
       
       // Persist session token securely
       await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
 
+      console.log('[AgroAuth] Checking database for existing agro_profile...');
       // Check if profile exists, to hydrate if it's an existing user
       const { data: profile, error: profileError } = await supabase
         .from('agro_profiles')
@@ -129,12 +139,19 @@ export function useAgroAuth() {
         .eq('user_id', data.user.id)
         .single();
 
+      if (profileError) {
+        console.log('[AgroAuth] Profile query error (might be a new user):', profileError.message);
+      }
+
       if (!profileError && profile) {
+        console.log('[AgroAuth] Existing profile found. Hydrating user state:', profile.name);
         setAgroId(profile as AgroID);
         return { existingUser: true, user: data.user };
       }
+      console.log('[AgroAuth] No existing profile found. Proceeding as new user.');
       return { existingUser: false, user: data.user };
     } catch (err: any) {
+      console.error('[AgroAuth] signInWithEmail exception caught:', err);
       throw new Error(err.message ?? 'Failed to sign in with email');
     } finally {
       setLoading(false);

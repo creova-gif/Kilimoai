@@ -101,9 +101,13 @@ export default function OnboardingWizard() {
     if (step === 1) return true;
     if (step === 2) {
       if (authMethod === 'email') {
-        return email.includes('@') && password.length >= 6;
+        const isOk = email.includes('@') && password.trim().length > 0;
+        console.log('[OnboardingWizard] canContinue Step 2 Email validation:', { email, passwordLength: password.length, isOk });
+        return isOk;
       }
-      return phone.length >= 9;
+      const isOk = phone.length >= 9;
+      console.log('[OnboardingWizard] canContinue Step 2 Phone validation:', { phone, isOk });
+      return isOk;
     }
     if (step === 3) return otp.length === 6;
     if (step === 4) return !!role;
@@ -112,28 +116,37 @@ export default function OnboardingWizard() {
   }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, password]);
 
   async function next() {
+    console.log('[OnboardingWizard] next() called for step:', step, 'authMethod:', authMethod);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (step === 0) setLanguage(lang);
     if (step === 2) {
       if (authMethod === 'email') {
+        console.log('[OnboardingWizard] Executing signInWithEmail with:', email);
         try {
           const result = await signInWithEmail(email, password);
+          console.log('[OnboardingWizard] signInWithEmail returned result:', result);
           if (result.existingUser) {
+            console.log('[OnboardingWizard] Existing user. Redirecting directly to dashboard...');
             setOnboardingComplete(true);
             router.replace('/(tabs)');
             return;
           }
+          console.log('[OnboardingWizard] New user. Proceeding to role selection (Step 4)');
           setUserId(result.user.id);
           setStep(4);
         } catch (err: any) {
+          console.error('[OnboardingWizard] signInWithEmail threw error:', err);
           Alert.alert('Error', err.message || 'Failed to sign in');
         }
         return;
       } else {
+        console.log('[OnboardingWizard] Executing signInWithPhone with:', phone);
         try {
           await signInWithPhone(phone);
+          console.log('[OnboardingWizard] Phone sign-in request sent. Proceeding to OTP validation (Step 3)');
           setStep(3);
         } catch (err: any) {
+          console.error('[OnboardingWizard] signInWithPhone threw error:', err);
           Alert.alert('Error', err.message || 'Failed to send OTP');
         }
         return;
