@@ -40,79 +40,86 @@ export const useTheme = () => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   
+  // Branding overrides for YCombinator audit:
+  // Background: #FFFFFF
+  // Primary green: #2E7D32
+  // Secondary green: #E8F5E9
+  // Text: #1E2A3E
+  // Spacing: 16px margins, 12px card padding, 8px gaps
+  // Cards: border-radius 16px, shadow 0 2px 8px rgba(0,0,0,0.05)
   return {
-    isDark,
+    isDark: false, // force clean light mode matching screenshots
     colors: {
-      primary: isDark ? COLORS.forestBright : COLORS.forestPrimary,
-      primaryDark: COLORS.forestMedium,
-      primaryLight: isDark ? 'rgba(58, 141, 82, 0.2)' : 'rgba(46, 111, 64, 0.1)',
+      primary: '#2E7D32',
+      primaryDark: '#1B5E20',
+      primaryLight: '#E8F5E9',
       
-      background: isDark ? COLORS.charcoalDark : COLORS.creamWarm,
-      card: isDark ? COLORS.charcoalCard : '#FFFFFF',
-      cardSolid: isDark ? COLORS.charcoalCard : '#FFFFFF',
+      background: '#FFFFFF',
+      card: '#FFFFFF',
+      cardSolid: '#FFFFFF',
       
-      text: isDark ? COLORS.ivory : '#1A211C', // Ivory vs Deep Charcoal-Green
-      textMute: isDark ? '#92A396' : '#65786C', // Sage-gray muted text
+      text: '#1E2A3E',
+      textMute: '#5A6E85', // Slate gray
       
-      border: isDark ? 'rgba(58, 141, 82, 0.15)' : '#E6DFD5', // Green-tinted border vs Warm desert-sand
-      borderSolid: isDark ? '#1C241E' : '#E6DFD5',
+      border: '#E2E8F0',
+      borderSolid: '#E2E8F0',
       
-      tabBar: isDark ? COLORS.charcoalDark : COLORS.creamWarm,
-      glass: isDark ? 'rgba(19, 23, 20, 0.75)' : 'rgba(255, 255, 255, 0.85)',
-      glow: isDark ? 'rgba(58, 141, 82, 0.12)' : 'rgba(46, 111, 64, 0.08)',
+      tabBar: '#FFFFFF',
+      glass: 'rgba(255, 255, 255, 0.95)',
+      glow: 'rgba(46, 125, 50, 0.05)',
       slate: COLORS.slate,
       
-      success: COLORS.success,
-      warning: COLORS.warning,
-      error: COLORS.error,
-      info: COLORS.info,
+      success: '#2E7D32',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      info: '#3B82F6',
     },
     spacing: {
       xs: 4,
-      sm: 8,
-      md: 12,
-      lg: 16,
+      sm: 8,   // 8px gaps
+      md: 12,  // 12px card padding
+      lg: 16,  // 16px margins
       xl: 24,
       xxl: 32,
       huge: 48,
     },
     radius: {
-      xs: 6,
+      xs: 4,
       sm: 8,
       md: 12,
-      lg: 16,
-      xl: 24,
-      xxl: 32,
+      lg: 16,  // 16px border-radius
+      xl: 20,
+      xxl: 24,
       full: 999,
     },
     shadows: {
       sm: {
-        shadowColor: '#122617',
+        shadowColor: 'rgba(0,0,0,0.05)',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: isDark ? 0.2 : 0.05,
-        shadowRadius: 4,
+        shadowOpacity: 1,
+        shadowRadius: 8,
         elevation: 2,
       },
       md: {
-        shadowColor: '#122617',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: isDark ? 0.3 : 0.08,
+        shadowColor: 'rgba(0,0,0,0.05)',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
         shadowRadius: 8,
         elevation: 4,
       },
       lg: {
-        shadowColor: '#122617',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: isDark ? 0.4 : 0.12,
-        shadowRadius: 16,
+        shadowColor: 'rgba(0,0,0,0.05)',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius: 8,
         elevation: 8,
       },
       premium: {
-        shadowColor: '#122617',
-        shadowOffset: { width: 0, height: 12 },
-        shadowOpacity: isDark ? 0.5 : 0.15,
-        shadowRadius: 24,
-        elevation: 12,
+        shadowColor: 'rgba(0,0,0,0.05)',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius: 8,
+        elevation: 8,
       }
     }
   };

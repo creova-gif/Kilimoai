@@ -345,7 +345,6 @@ const styles = StyleSheet.create({
     width: 400,
     height: 400,
     borderRadius: 200,
-    filter: 'blur(100px)',
   },
   bgGradient: {
     position: 'absolute',
