@@ -1,35 +1,45 @@
-/**
- * Agro ID — full identity passport with P&L PDF export
- * P0 Story: "...export them as a PDF via my Agro ID so that I can apply for a bank loan."
- */
-
 import React, { useMemo, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert, Platform,
+  View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert, Platform, StatusBar, SafeAreaView, Modal, Dimensions
 } from 'react-native';
 import {
-  Fingerprint, Download, QrCode, ShieldCheck, TrendingUp, TrendingDown,
-  FileText, Wallet, MapPin, Calendar, CheckCircle2, Plus,
+  ChevronLeft, MapPin, Calendar, QrCode, ShieldCheck, Download, Plus, Info, Check, Trash2, ArrowUpRight, ChevronRight, Layers, AlertCircle
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import * as Haptics from 'expo-haptics';
-import PageScaffold, { GlassCard, SectionHeader } from '../components/PageScaffold';
 import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { useFarmDataStore } from '../store/useFarmDataStore';
 import { exportPnlPdf, PnlReport } from '../lib/pdf/pnl';
 import { Gate } from '../lib/access';
-import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
+import { Card } from '../components/ui/Card';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const fmt = (n: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Math.abs(n));
 
+const TRACK_RECORDS = [
+  { date: 'Feb 10', title: 'Compost', subtitle: 'Fertilizer', completed: true },
+  { date: 'Feb 17', title: 'Superior', subtitle: 'Seeds', completed: true },
+  { date: 'Feb 24', title: 'KCl', subtitle: 'Fertilizer', completed: true },
+  { date: 'Mar 03', title: 'SP-36', subtitle: 'Fertilizer', completed: false },
+];
+
 export default function AgroIdScreen() {
-  const { colors, isDark } = useTheme();
+  const router = useRouter();
+  const { colors, isDark, radius } = useTheme();
   const agroId = useKilimoStore((s) => s.agroId);
+  const farmProfile = useKilimoStore((s) => s.farmProfile);
   const ledger = useFarmDataStore((s) => s.ledger);
   const addLedgerEntry = useFarmDataStore((s) => s.addLedgerEntry);
+  const language = useKilimoStore((s) => s.language);
   const [exporting, setExporting] = useState(false);
+  const [qrModalVisible, setQrModalVisible] = useState(false);
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
 
   const { income, expense, net } = useMemo(() => {
     const inc = ledger.filter((e) => e.amountTZS > 0).reduce((s, e) => s + e.amountTZS, 0);
@@ -74,238 +84,667 @@ export default function AgroIdScreen() {
     });
   }
 
+  const handleInfoPress = (label: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Alert.alert(label, language === 'sw' ? 'Maelezo ya ziada kuhusu kitalu chako yaliyothibitishwa na Ushirika wako.' : 'Verified details retrieved from your cooperative farm profile.');
+  };
+
   if (!agroId) {
     return (
-      <PageScaffold title="Agro ID" subtitle="Tafadhali ingia kwanza" badge="AGRO ID">
-        <Text style={{ textAlign: 'center', color: colors.textMute, marginTop: 40 }}>Sign in to view your Agro ID.</Text>
-      </PageScaffold>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ color: colors.textMute }}>Sign in to view your Agro ID.</Text>
+      </SafeAreaView>
     );
   }
 
   return (
-    <Gate feature="agro_id" fallback={<PageScaffold title="Agro ID" badge="VERIFIED IDENTITY"><AgroIdDenied /></PageScaffold>}>
-    <PageScaffold title="Agro ID" subtitle="Hati yako ya kidijiti ya kifedha" badge="VERIFIED IDENTITY">
-      {/* The Identity Card */}
-      <View style={{ paddingHorizontal: 24 }}>
-        <Animated.View entering={FadeInDown}>
-          <GlassCard style={{ padding: 24 }}>
+    <Gate feature="agro_id" fallback={
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', padding: 24 }]}>
+        <Card variant="solid" style={{ padding: 24, alignItems: 'center' }}>
+          <ShieldCheck size={32} color={colors.textMute} />
+          <Text style={{ color: colors.text, fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 }}>Access Denied</Text>
+          <Text style={{ color: colors.textMute, textAlign: 'center', marginTop: 8 }}>Your tier does not support Agro ID verification passport.</Text>
+        </Card>
+      </SafeAreaView>
+    }>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="light-content" />
+
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+          {/* Top Hero Photo */}
+          <View style={styles.heroWrapper}>
+            <Image 
+              source={require('../assets/images/rice-field-bg.png')} 
+              style={styles.heroImage} 
+            />
             <LinearGradient
-              colors={[colors.primary + '22', 'transparent']}
+              colors={['rgba(0,0,0,0.4)', 'transparent', 'rgba(0,0,0,0.1)']}
               style={StyleSheet.absoluteFill}
             />
-            <View style={s.cardHeader}>
-              <View style={s.badge}>
-                <ShieldCheck size={12} color={colors.primary} />
-                <Text style={[s.badgeText, { color: colors.primary }]}>VERIFIED</Text>
-              </View>
-              <Text style={[s.idNum, { color: colors.textMute }]}>{agroId.id}</Text>
-            </View>
 
-            <View style={s.profileRow}>
-                {agroId.avatarUrl ? (
-                  <Image source={{ uri: agroId.avatarUrl }} style={[s.avatar, { borderColor: colors.primary }]} />
+            <SafeAreaView style={styles.heroHeader}>
+              <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+                <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
+                  <ChevronLeft size={22} color="#fff" />
+                </BlurView>
+              </TouchableOpacity>
+
+              <View style={[styles.locationPill, { backgroundColor: 'rgba(0,0,0,0.4)' }]}>
+                <MapPin size={12} color={colors.primary} />
+                <Text style={styles.locationText}>{farmProfile?.region || agroId?.location || 'Bali, Indonesia'}</Text>
+              </View>
+
+              <View style={styles.heroAvatarBorder}>
+                {agroId?.avatarUrl ? (
+                  <Image source={{ uri: agroId.avatarUrl }} style={styles.heroAvatar} />
                 ) : (
-                  <View style={[s.avatar, { borderColor: colors.primary, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
-                    <Text style={{ color: colors.text, fontSize: 32, fontFamily: 'Inter_900Black' }}>
-                      {agroId.name.split(' ').map(n => n[0]).join('').substring(0,2)}
-                    </Text>
+                  <View style={[styles.heroAvatar, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.heroAvatarText}>{agroId?.name?.[0]}</Text>
                   </View>
                 )}
-              <View style={{ flex: 1, marginLeft: 16 }}>
-                <Text style={[s.name, { color: colors.text }]}>{agroId.name}</Text>
-                <Text style={[s.role, { color: colors.textMute }]}>{agroId.role}</Text>
-                <View style={s.metaRow}>
-                  <MapPin size={11} color={colors.textMute} />
-                  <Text style={[s.metaText, { color: colors.textMute }]}>{agroId.location}</Text>
-                  <Calendar size={11} color={colors.textMute} style={{ marginLeft: 10 }} />
-                  <Text style={[s.metaText, { color: colors.textMute }]}>Since {agroId.joinDate}</Text>
-                </View>
               </View>
-            </View>
+            </SafeAreaView>
+          </View>
 
-            <View style={s.qrSection}>
-              <View style={[s.qrWrap, { backgroundColor: '#fff' }]}>
-                <QRCode value={qrPayload} size={120} backgroundColor="#fff" color="#000" />
-              </View>
-              <View style={{ flex: 1, marginLeft: 16 }}>
-                <Text style={[s.qrTitle, { color: colors.text }]}>Scannable Identity</Text>
-                <Text style={[s.qrBody, { color: colors.textMute }]}>
-                  Banks and buyers scan this code to instantly verify your farm record, certifications, and P&L history.
-                </Text>
-                <View style={s.chipRow}>
-                  <View style={[s.chip, { backgroundColor: colors.primary + '20' }]}>
-                    <Fingerprint size={10} color={colors.primary} />
-                    <Text style={[s.chipText, { color: colors.primary }]}>{agroId.tier}</Text>
+          {/* Details Card Content (mokupoku UI) */}
+          <View style={[styles.contentCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.cropTitle, { color: colors.text }]}>
+              {farmProfile?.primaryCrops?.[0] ? `${farmProfile.primaryCrops[0]} Farming` : 'Rice Farming'}
+            </Text>
+
+            {/* Section 1: Market Conditions */}
+            <View style={styles.section}>
+              <Text style={[styles.sectionHeader, { color: colors.textMute }]}>MARKET CONDITIONS</Text>
+              <View style={[styles.cardBlock, { borderColor: colors.border }]}>
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Market Price</Text>
+                  <View style={styles.detailRight}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>$50.00 / TZS 120k</Text>
+                    <TouchableOpacity onPress={() => handleInfoPress('Market Price')} style={styles.infoCircle}>
+                      <Info size={12} color={colors.primary} />
+                    </TouchableOpacity>
                   </View>
-                  {agroId.mpesaLinked && (
-                    <View style={[s.chip, { backgroundColor: '#3b82f620' }]}>
-                      <Wallet size={10} color="#3b82f6" />
-                      <Text style={[s.chipText, { color: '#3b82f6' }]}>M-Pesa</Text>
-                    </View>
-                  )}
+                </View>
+                <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Highest Demand</Text>
+                  <View style={styles.detailRight}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>Mbeya, Arusha, Bali</Text>
+                    <TouchableOpacity onPress={() => handleInfoPress('Highest Demand')} style={styles.infoCircle}>
+                      <Info size={12} color={colors.primary} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </View>
-          </GlassCard>
-        </Animated.View>
-      </View>
 
-      {/* P&L Summary */}
-      <SectionHeader title="Mapato na Matumizi · P&L" />
-      <View style={{ paddingHorizontal: 24, gap: 12 }}>
-        <View style={s.summaryGrid}>
-          <SummaryTile label="Mapato" value={income} accent="#10b981" Icon={TrendingUp} />
-          <SummaryTile label="Matumizi" value={expense} accent="#ef4444" Icon={TrendingDown} />
-        </View>
-        <GlassCard style={{ padding: 18 }}>
-          <Text style={[s.netLabel, { color: colors.textMute }]}>Faida Halisi · Net Position</Text>
-          <Text style={[s.netValue, { color: net >= 0 ? '#10b981' : '#ef4444' }]}>
-            {net >= 0 ? '+' : '−'} TZS {fmt(net)}
-          </Text>
-          <Text style={[s.netSub, { color: colors.textMute }]}>{ledger.length} entries · ready for bank submission</Text>
-        </GlassCard>
-      </View>
-
-      {/* Primary CTA — PDF Export */}
-      <View style={{ paddingHorizontal: 24, marginTop: 20 }}>
-        <TouchableOpacity
-          onPress={handleExport}
-          disabled={exporting}
-          activeOpacity={0.85}
-          style={[s.primaryCta, { backgroundColor: colors.primary, opacity: exporting ? 0.6 : 1 }]}
-          accessibilityRole="button"
-          accessibilityLabel="Export Profit and Loss statements to PDF"
-          accessibilityState={{ disabled: exporting }}
-        >
-          {exporting ? (
-            <Text style={[s.primaryCtaText, { color: isDark ? '#000' : '#FCFBF7' }]}>Inatayarisha PDF...</Text>
-          ) : (
-            <>
-              <Download size={20} color={isDark ? '#000' : '#FCFBF7'} />
-              <Text style={[s.primaryCtaText, { color: isDark ? '#000' : '#FCFBF7' }]}>
-                {Platform.OS === 'web' ? 'Print / Save P&L PDF' : 'Export & Share P&L PDF'}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
-        <Text style={[s.disclaimer, { color: colors.textMute }]}>
-          PDF imeundwa na sahihi ya QR · Tamper-evident · Inakubaliwa na NMB, CRDB, na taasisi nyingine.
-        </Text>
-      </View>
-
-      {/* Quick add entries */}
-      <SectionHeader title="Ongeza Akaunti · Quick Entry" />
-      <View style={{ paddingHorizontal: 24, flexDirection: 'row', gap: 10 }}>
-        <TouchableOpacity
-          onPress={() => addSampleEntry(true)}
-          style={[s.quickBtn, { backgroundColor: colors.success + '20', borderColor: colors.success + '40' }]}
-          accessibilityRole="button"
-          accessibilityLabel="Quick add income transaction"
-          accessibilityHint="Adds a sample Mauzo ya soko entry"
-        >
-          <Plus size={14} color={colors.success} />
-          <Text style={[s.quickBtnText, { color: colors.success }]}>Income</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => addSampleEntry(false)}
-          style={[s.quickBtn, { backgroundColor: colors.error + '20', borderColor: colors.error + '40' }]}
-          accessibilityRole="button"
-          accessibilityLabel="Quick add expense transaction"
-          accessibilityHint="Adds a sample Manunuzi ya pembejeo entry"
-        >
-          <Plus size={14} color={colors.error} />
-          <Text style={[s.quickBtnText, { color: colors.error }]}>Expense</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Recent ledger */}
-      <SectionHeader title={`Ledger · ${ledger.length} entries`} />
-      <View style={{ paddingHorizontal: 24 }}>
-        <GlassCard>
-          {ledger.slice(0, 8).map((e, i) => (
-            <View key={e.id}>
-              <View style={s.ledgerRow}>
-                <View style={[s.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]} />
-                <View style={{ flex: 1 }}>
-                  <Text style={[s.ledgerDesc, { color: colors.text }]} numberOfLines={1}>{e.description}</Text>
-                  <Text style={[s.ledgerCat, { color: colors.textMute }]}>{e.category} · {new Date(e.date).toLocaleDateString('en-GB')}</Text>
+            {/* Section 2: Information */}
+            <View style={styles.section}>
+              <Text style={[styles.sectionHeader, { color: colors.textMute }]}>INFORMATION</Text>
+              <View style={[styles.cardBlock, { borderColor: colors.border }]}>
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Plant Age</Text>
+                  <View style={styles.detailRight}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>Week 4</Text>
+                  </View>
                 </View>
-                <Text style={[s.ledgerAmt, { color: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]}>
-                  {e.amountTZS > 0 ? '+' : '−'} {fmt(e.amountTZS)}
+                <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Fertilization</Text>
+                  <View style={styles.detailRight}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>Urea, SP-36, KCl and ZA</Text>
+                    <TouchableOpacity onPress={() => handleInfoPress('Fertilization')} style={styles.infoCircle}>
+                      <Info size={12} color={colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Certification</Text>
+                  <View style={styles.detailRight}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>Land and Fertilizer</Text>
+                    <TouchableOpacity onPress={() => handleInfoPress('Certification')} style={styles.infoCircle}>
+                      <Info size={12} color={colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Section 3: Track Records timeline */}
+            <View style={styles.section}>
+              <Text style={[styles.sectionHeader, { color: colors.textMute }]}>TRACK RECORDS</Text>
+              <View style={{ position: 'relative', marginTop: 12 }}>
+                {/* Dotted Line */}
+                <View style={[styles.trackBgLine, { backgroundColor: isDark ? '#263322' : '#E2E8DF' }]} />
+                
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
+                  {TRACK_RECORDS.map((item, idx) => (
+                    <View key={idx} style={styles.trackStep}>
+                      <View style={[
+                        styles.stepDot, 
+                        { 
+                          backgroundColor: item.completed ? colors.primary : isDark ? '#171D15' : '#FFFFFF',
+                          borderColor: item.completed ? colors.primary : isDark ? '#2A3326' : '#C4D0C0',
+                          borderWidth: 2,
+                        }
+                      ]}>
+                        {item.completed && <View style={styles.activeDotInner} />}
+                      </View>
+                      <Text style={[styles.stepDate, { color: colors.textMute }]}>{item.date}</Text>
+                      <Text style={[styles.stepMainTitle, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
+                      <Text style={[styles.stepSubtitle, { color: colors.textMute }]} numberOfLines={1}>{item.subtitle}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+
+            {/* Ledger P&L summary list */}
+            <View style={[styles.section, { marginTop: 8 }]}>
+              <View style={styles.ledgerHeader}>
+                <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>
+                  {language === 'sw' ? 'RIPOTI YA MAPATO NA MATUMIZI' : 'FINANCIAL PASSPORT LEDGER'}
+                </Text>
+                <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: colors.primary }}>
+                  NET: TZS {fmt(net)}
                 </Text>
               </View>
-              {i < Math.min(7, ledger.length - 1) && <View style={[s.divider, { backgroundColor: colors.border }]} />}
+              
+              <View style={[styles.cardBlock, { borderColor: colors.border, padding: 12 }]}>
+                {ledger.length === 0 ? (
+                  <Text style={{ color: colors.textMute, fontSize: 12, textAlign: 'center', paddingVertical: 12 }}>
+                    No financial records found. Tap Update Info to add.
+                  </Text>
+                ) : (
+                  ledger.slice(0, 5).map((e, idx) => (
+                    <View key={e.id}>
+                      <View style={styles.ledgerRow}>
+                        <View style={[styles.ledgerDot, { backgroundColor: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]} />
+                        <View style={{ flex: 1, marginLeft: 10 }}>
+                          <Text style={[styles.ledgerDesc, { color: colors.text }]} numberOfLines={1}>{e.description}</Text>
+                          <Text style={[styles.ledgerMeta, { color: colors.textMute }]}>
+                            {e.category} · {new Date(e.date).toLocaleDateString('en-GB')}
+                          </Text>
+                        </View>
+                        <Text style={[styles.ledgerAmt, { color: e.amountTZS > 0 ? '#10b981' : '#ef4444' }]}>
+                          {e.amountTZS > 0 ? '+' : '−'} {fmt(e.amountTZS)}
+                        </Text>
+                      </View>
+                      {idx < Math.min(4, ledger.length - 1) && (
+                        <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
+                      )}
+                    </View>
+                  ))
+                )}
+              </View>
             </View>
-          ))}
-        </GlassCard>
+
+            {/* Bottom Actions Row */}
+            <View style={styles.actionsRow}>
+              <TouchableOpacity 
+                style={[styles.downloadBtn, { backgroundColor: isDark ? '#263322' : '#D4E9CD' }]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setQrModalVisible(true);
+                }}
+              >
+                <QrCode size={18} color={isDark ? '#FFFFFF' : '#1A3B14'} />
+                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : '#1A3B14' }]}>Download QR</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[styles.updateBtn, { backgroundColor: colors.primaryDark }]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setUpdateModalVisible(true);
+                }}
+              >
+                <Plus size={18} color="#FFFFFF" />
+                <Text style={styles.updateText}>Update Info</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          
+          <View style={{ height: 100 }} />
+        </ScrollView>
+
+        {/* Modal 1: Scannable QR ID Modal */}
+        <Modal
+          visible={qrModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setQrModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
+            <View style={[styles.modalCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={styles.modalHeader}>
+                <ShieldCheck size={24} color={colors.primary} />
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Verified Crop Passport</Text>
+              </View>
+              <Text style={[styles.modalDesc, { color: colors.textMute }]}>
+                ID: {agroId.id} • {agroId.name}
+              </Text>
+              
+              <View style={styles.modalQrContainer}>
+                <QRCode value={qrPayload} size={160} backgroundColor="#fff" color="#000" />
+              </View>
+              
+              <Text style={[styles.modalHint, { color: colors.textMute }]}>
+                Banks, buyers, and agricultural cooperatives scan this code to instantly verify your farm record, certifications, and P&L history.
+              </Text>
+
+              <TouchableOpacity 
+                style={[styles.modalCtaBtn, { backgroundColor: colors.primary, opacity: exporting ? 0.6 : 1 }]}
+                onPress={() => {
+                  setQrModalVisible(false);
+                  handleExport();
+                }}
+                disabled={exporting}
+              >
+                <Download size={18} color="#FFFFFF" />
+                <Text style={styles.modalCtaText}>
+                  {exporting ? 'Exporting PDF...' : 'Download Verified PDF'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.modalCloseBtn}
+                onPress={() => setQrModalVisible(false)}
+              >
+                <Text style={[styles.modalCloseText, { color: colors.textMute }]}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal 2: Update Ledger entry Modal */}
+        <Modal
+          visible={updateModalVisible}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setUpdateModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
+            <View style={[styles.modalCard, { backgroundColor: colors.card, borderColor: colors.border, width: '90%' }]}>
+              <View style={styles.modalHeader}>
+                <Layers size={22} color={colors.primary} />
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Ongeza Muamala (Add Entry)</Text>
+              </View>
+              <Text style={[styles.modalDesc, { color: colors.textMute }]}>
+                Select entry type to update your verified crop passport ledger.
+              </Text>
+              
+              <View style={styles.ledgerActionRow}>
+                <TouchableOpacity
+                  onPress={() => {
+                    addSampleEntry(true);
+                    setUpdateModalVisible(false);
+                    Alert.alert('Mauzo', 'Muamala wa mapato umeongezwa kikamilifu.');
+                  }}
+                  style={[styles.quickBtn, { backgroundColor: colors.success + '15', borderColor: colors.success + '40', paddingVertical: 16 }]}
+                >
+                  <Plus size={16} color={colors.success} />
+                  <Text style={[styles.quickBtnText, { color: colors.success, fontSize: 13 }]}>Income (Mauzo)</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  onPress={() => {
+                    addSampleEntry(false);
+                    setUpdateModalVisible(false);
+                    Alert.alert('Gharama', 'Muamala wa gharama umeongezwa kikamilifu.');
+                  }}
+                  style={[styles.quickBtn, { backgroundColor: colors.error + '15', borderColor: colors.error + '40', paddingVertical: 16 }]}
+                >
+                  <Plus size={16} color={colors.error} />
+                  <Text style={[styles.quickBtnText, { color: colors.error, fontSize: 13 }]}>Expense (Pembejeo)</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity 
+                style={[styles.modalCloseBtn, { marginTop: 16 }]}
+                onPress={() => setUpdateModalVisible(false)}
+              >
+                <Text style={[styles.modalCloseText, { color: colors.textMute }]}>Ghairi (Cancel)</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
       </View>
-    </PageScaffold>
     </Gate>
   );
 }
 
-function AgroIdDenied() {
-  const { colors } = useTheme();
-  return (
-    <View style={{ padding: 24 }}>
-      <GlassCard style={{ padding: 24, alignItems: 'center' }}>
-        <ShieldCheck size={32} color={colors.textMute} />
-        <Text style={{ color: colors.text, fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 }}>Hairuhusiwi</Text>
-        <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 6, textAlign: 'center' }}>
-          Akaunti yako haina ufikiaji wa Agro ID. Wasiliana na msimamizi wa ushirika wako.
-        </Text>
-      </GlassCard>
-    </View>
-  );
-}
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scroll: { paddingTop: 0 },
+  
+  // Hero Image
+  heroWrapper: {
+    height: 250,
+    width: '100%',
+    position: 'relative',
+    justifyContent: 'space-between',
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  heroHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 12 : 36,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+  },
+  locationPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+  },
+  locationText: {
+    color: '#fff',
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+  heroAvatarBorder: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    borderWidth: 2,
+    padding: 1.5,
+  },
+  heroAvatar: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 17,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  heroAvatarText: {
+    color: '#FFFFFF',
+    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 14,
+  },
 
-function SummaryTile({ label, value, accent, Icon }: any) {
-  const { colors } = useTheme();
-  return (
-    <GlassCard style={{ flex: 1, padding: 18 }}>
-      <View style={s.summaryRow}>
-        <Icon size={16} color={accent} />
-        <Text style={[s.summaryLabel, { color: colors.textMute }]}>{label}</Text>
-      </View>
-      <Text style={[s.summaryValue, { color: colors.text }]}>TZS {fmt(value)}</Text>
-    </GlassCard>
-  );
-}
+  // Content Overlay Card
+  contentCard: {
+    marginTop: -30,
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
+    padding: 20,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+  },
+  cropTitle: {
+    fontSize: 24,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+    marginBottom: 20,
+  },
+  
+  // Grouped rows block
+  section: {
+    marginBottom: 20,
+  },
+  sectionHeader: {
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  cardBlock: {
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  detailLabel: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  detailRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  detailValue: {
+    fontSize: 13,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  infoCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(76, 161, 55, 0.08)',
+  },
+  rowDivider: {
+    height: 1,
+  },
 
-const s = StyleSheet.create({
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(62,207,142,0.18)' },
-  badgeText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.2 },
-  idNum: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.5 },
-  profileRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  avatar: { width: 64, height: 64, borderRadius: 22, borderWidth: 2 },
-  name: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
-  role: { fontSize: 13, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 6 },
-  metaText: { fontSize: 11, fontFamily: 'Inter_500Medium' },
-  qrSection: { flexDirection: 'row', alignItems: 'center', paddingTop: 18, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)' },
-  qrWrap: { padding: 8, borderRadius: 12 },
-  qrTitle: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', marginBottom: 4 },
-  qrBody: { fontSize: 11, fontFamily: 'Inter_500Medium', lineHeight: 16 },
-  chipRow: { flexDirection: 'row', gap: 6, marginTop: 10 },
-  chip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  chipText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
-  summaryGrid: { flexDirection: 'row', gap: 12 },
-  summaryRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  summaryLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
-  summaryValue: { fontSize: 18, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
-  netLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
-  netValue: { fontSize: 30, fontFamily: 'Inter_900Black', letterSpacing: -1, marginTop: 6 },
-  netSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 4 },
-  primaryCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: 18 },
-  primaryCtaText: { color: '#000', fontSize: 15, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },
-  disclaimer: { fontSize: 11, fontFamily: 'Inter_500Medium', textAlign: 'center', marginTop: 10, lineHeight: 16 },
-  quickBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, borderRadius: 14, borderWidth: 1 },
-  quickBtnText: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  ledgerRow: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
-  ledgerDot: { width: 8, height: 8, borderRadius: 4 },
-  ledgerDesc: { fontSize: 13, fontFamily: 'Inter_700Bold' },
-  ledgerCat: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
-  ledgerAmt: { fontSize: 13, fontFamily: 'Inter_900Black' },
-  divider: { height: 1, marginLeft: 34 },
+  // Track records
+  trackBgLine: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
+    right: 20,
+    height: 1,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderRadius: 1,
+    borderColor: '#C4D0C0',
+  },
+  trackScroll: {
+    paddingRight: 20,
+  },
+  trackStep: {
+    width: 90,
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  stepDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+    zIndex: 3,
+  },
+  activeDotInner: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#FFFFFF',
+  },
+  stepDate: {
+    fontSize: 9,
+    fontFamily: 'Inter_600SemiBold',
+    marginBottom: 1,
+  },
+  stepMainTitle: {
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  stepSubtitle: {
+    fontSize: 9,
+    fontFamily: 'Inter_500Medium',
+  },
+
+  // Ledger summary
+  ledgerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  ledgerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  ledgerDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  ledgerDesc: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+  ledgerMeta: {
+    fontSize: 10,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 1,
+  },
+  ledgerAmt: {
+    fontSize: 12,
+    fontFamily: 'Inter_900Black',
+  },
+
+  // Bottom action buttons
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  downloadBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 20,
+    gap: 6,
+  },
+  downloadText: {
+    fontSize: 13,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  updateBtn: {
+    flex: 1.2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 20,
+    gap: 6,
+  },
+  updateText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+
+  // Modals Styles
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCard: {
+    width: '85%',
+    padding: 24,
+    borderRadius: 28,
+    borderWidth: 1,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.2,
+  },
+  modalDesc: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalQrContainer: {
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 20,
+  },
+  modalHint: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 16,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  modalCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    width: '100%',
+    borderRadius: 16,
+    gap: 6,
+    marginBottom: 12,
+  },
+  modalCtaText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  modalCloseBtn: {
+    paddingVertical: 8,
+  },
+  modalCloseText: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+  },
+  ledgerActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+  },
+  quickBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 14,
+    borderWidth: 1,
+    gap: 4,
+  },
+  quickBtnText: {
+    fontFamily: 'Inter_800ExtraBold',
+  },
 });

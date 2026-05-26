@@ -278,6 +278,27 @@ export default function HomeScreen() {
             style={StyleSheet.absoluteFill}
           />
           
+          {/* Crop Overlay Visual Telemetry Markers */}
+          <View style={StyleSheet.absoluteFill}>
+            {/* Left Marker: Manure */}
+            <View style={[styles.markerLabelContainer, { left: '8%', top: 120 }]}>
+              <Text style={styles.markerLabelTitle}>Manure</Text>
+              <Text style={styles.markerLabelSub}>Before Planting</Text>
+            </View>
+            <View style={[styles.markerLineH, { left: '26%', top: 132, width: '20%' }]} />
+            <View style={[styles.markerLineV, { left: '46%', top: 132, height: 42 }]} />
+            <View style={[styles.markerDot, { left: '45%', top: 174, borderColor: colors.primary }]} />
+
+            {/* Right Marker: KCl Fertilizer */}
+            <View style={[styles.markerLabelContainer, { right: '6%', top: 88, alignItems: 'flex-end' }]}>
+              <Text style={styles.markerLabelTitle}>KCl Fertilizer</Text>
+              <Text style={styles.markerLabelSub}>Age 2 - 3 Weeks</Text>
+            </View>
+            <View style={[styles.markerLineH, { right: '28%', top: 100, width: '18%' }]} />
+            <View style={[styles.markerLineV, { right: '46%', top: 100, height: 48 }]} />
+            <View style={[styles.markerDot, { right: '45.1%', top: 148, borderColor: colors.primary }]} />
+          </View>
+          
           <SafeAreaView style={styles.heroHeader}>
             <View style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}>
               <MapPin size={14} color={colors.primary} />
@@ -527,6 +548,48 @@ const styles = StyleSheet.create({
     position: 'relative',
     justifyContent: 'space-between',
     paddingBottom: 20,
+  },
+  markerLabelContainer: {
+    position: 'absolute',
+    zIndex: 2,
+  },
+  markerLabelTitle: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontFamily: 'Inter_800ExtraBold',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  markerLabelSub: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 8,
+    fontFamily: 'Inter_600SemiBold',
+    marginTop: 1,
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  markerLineH: {
+    position: 'absolute',
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    zIndex: 1,
+  },
+  markerLineV: {
+    position: 'absolute',
+    width: 1,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    zIndex: 1,
+  },
+  markerDot: {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    zIndex: 3,
   },
   heroImage: {
     width: '100%',
