@@ -979,8 +979,9 @@ const s = StyleSheet.create({
   },
   // Welcome Splash Styles
   welcomeHeroRoot: {
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
+    flex: 1,
+    width: '100%',
+    height: '100%',
     justifyContent: 'flex-end',
   },
   welcomeHeroContent: {
