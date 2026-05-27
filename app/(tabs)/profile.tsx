@@ -23,7 +23,8 @@ import {
   WifiOff,
   Globe,
   Bot,
-  Award
+  Award,
+  Tv
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -129,6 +130,7 @@ export default function ProfileScreen() {
       items: [
         { id: 'ai-hub', title: language === 'sw' ? 'Mafunzo ya Sankofa AI' : 'Sankofa AI Training Hub', icon: <Award size={20} color="#eab308" />, hasSwitch: false, value: aiCertified ? (language === 'sw' ? 'Imethibitishwa' : 'Certified') : (language === 'sw' ? 'Anza' : 'Start'), onPress: () => router.push('/ai-training-hub' as any) },
         { id: 'ai-admin', title: language === 'sw' ? 'Usimamizi wa Sankofa' : 'AI Admin Console', icon: <Bot size={20} color="#10b981" />, hasSwitch: false, value: '', onPress: () => router.push('/ai-admin' as any) },
+        { id: 'video-hub', title: language === 'sw' ? 'Maktaba ya Video' : 'Agriculture Video Hub', icon: <Tv size={20} color="#ef4444" />, hasSwitch: false, value: '', onPress: () => router.push('/video-hub' as any) },
       ]
     },
     {
