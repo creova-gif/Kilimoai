@@ -84,7 +84,7 @@ const COPY = {
   },
 };
 
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type Step = 0 | 1 | 2 | 3 | 4 | 5;
 
 export default function OnboardingWizard() {
   const router = useRouter();
@@ -115,29 +115,32 @@ export default function OnboardingWizard() {
   const t = COPY[lang];
 
   const canContinue = useMemo(() => {
-    if (step === 0) return true;
-    if (step === 1) return true;
-    if (step === 2) {
+    if (step === 0) return true; // Welcome Step
+    if (step === 1) { // Auth Step
       if (authMethod === 'email') {
         const isOk = email.includes('@') && password.trim().length > 0;
-        console.log('[OnboardingWizard] canContinue Step 2 Email validation:', { email, passwordLength: password.length, isOk });
+        console.log('[OnboardingWizard] canContinue Step 1 Email validation:', { email, passwordLength: password.length, isOk });
         return isOk;
       }
       const isOk = phone.length >= 9;
-      console.log('[OnboardingWizard] canContinue Step 2 Phone validation:', { phone, isOk });
+      console.log('[OnboardingWizard] canContinue Step 1 Phone validation:', { phone, isOk });
       return isOk;
     }
-    if (step === 3) return otp.length === 6;
-    if (step === 4) return !!role;
-    if (step === 5) return name.trim().length >= 2 && crops.length > 0 && parseFloat(acres) > 0;
-    return true;
+    if (step === 2) return otp.length === 6; // OTP Step
+    if (step === 3) return !!role; // Role Step
+    if (step === 4) return name.trim().length >= 2 && crops.length > 0 && parseFloat(acres) > 0; // Profile Step
+    return true; // Done Step
   }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, password]);
 
   async function next() {
     console.log('[OnboardingWizard] next() called for step:', step, 'authMethod:', authMethod);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (step === 0) setLanguage(lang);
-    if (step === 2) {
+    if (step === 0) {
+      setLanguage(lang);
+      setStep(1); // Go to Auth step
+      return;
+    }
+    if (step === 1) {
       if (authMethod === 'email') {
         console.log('[OnboardingWizard] Executing signInWithEmail with:', email);
         try {
@@ -149,9 +152,9 @@ export default function OnboardingWizard() {
             router.replace('/(tabs)');
             return;
           }
-          console.log('[OnboardingWizard] New user. Proceeding to role selection (Step 4)');
+          console.log('[OnboardingWizard] New user. Proceeding to role selection (Step 3)');
           setUserId(result.user.id);
-          setStep(4);
+          setStep(3); // Role selection
         } catch (err: any) {
           console.error('[OnboardingWizard] signInWithEmail threw error:', err);
           Alert.alert('Error', err.message || 'Failed to sign in');
@@ -161,8 +164,8 @@ export default function OnboardingWizard() {
         console.log('[OnboardingWizard] Executing signInWithPhone with:', phone);
         try {
           await signInWithPhone(phone);
-          console.log('[OnboardingWizard] Phone sign-in request sent. Proceeding to OTP validation (Step 3)');
-          setStep(3);
+          console.log('[OnboardingWizard] Phone sign-in request sent. Proceeding to OTP validation (Step 2)');
+          setStep(2); // OTP step
         } catch (err: any) {
           console.error('[OnboardingWizard] signInWithPhone threw error:', err);
           Alert.alert('Error', err.message || 'Failed to send OTP');
@@ -170,7 +173,7 @@ export default function OnboardingWizard() {
         return;
       }
     }
-    if (step === 3) {
+    if (step === 2) {
       try {
         const result = await verifyOtp(phone, otp);
         if (result.existingUser) {
@@ -179,17 +182,21 @@ export default function OnboardingWizard() {
           return;
         }
         setUserId(result.user.id);
-        setStep(4);
+        setStep(3); // Role selection
       } catch (err: any) {
         Alert.alert('Error', err.message || 'Invalid OTP');
       }
       return;
     }
-    if (step < 6) setStep((s) => Math.min(6, s + 1) as Step);
+    if (step < 5) setStep((s) => Math.min(5, s + 1) as Step);
   }
   function back() {
     Haptics.selectionAsync();
-    if (step > 0) setStep((s) => Math.max(0, s - 1) as Step);
+    if (step === 3 && authMethod === 'email') {
+      setStep(1); // Go back to AuthStep directly (skips OTP step since it was not visited)
+    } else if (step > 0) {
+      setStep((s) => Math.max(0, s - 1) as Step);
+    }
   }
   function finish() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -203,15 +210,14 @@ export default function OnboardingWizard() {
     Haptics.selectionAsync();
     setCrops((p) => p.includes(c) ? p.filter((x) => x !== c) : (p.length < 4 ? [...p, c] : p));
   }
+  const isWelcomeStep = step === 0;
 
-  const isLangStep = step === 0;
-
-  if (step === 1) {
+  if (isWelcomeStep) {
     return (
       <View style={[s.root, { backgroundColor: colors.background }]}>
         <StatusBar barStyle="light-content" />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <WelcomeStep t={t.welcome} lang={lang} onNext={next} />
+          <WelcomeStep t={t.welcome} lang={lang} setLang={setLang} onNext={next} />
         </KeyboardAvoidingView>
       </View>
     );
@@ -239,33 +245,31 @@ export default function OnboardingWizard() {
       </View>
 
       <SafeAreaView style={{ flex: 1 }}>
-        {/* ── Progress + nav bar (hidden on step 0) ───────── */}
-        {!isLangStep && (
-          <View style={s.topBar}>
-            <TouchableOpacity onPress={back} style={s.backBtn} activeOpacity={0.7} accessibilityRole="button" accessibilityLabel="Go back">
-              <ChevronLeft size={18} color={colors.textMute} />
-              <Text style={[s.backText, { color: colors.textMute }]}>{t.back}</Text>
-            </TouchableOpacity>
-            <View style={s.progressPills}>
-              {([0,1,2,3,4,5,6] as Step[]).map((i) => (
-                <View
-                  key={i}
-                  style={[
-                    s.progressPill,
-                    { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' },
-                    i === step   && [s.progressActive, { backgroundColor: colors.primary }],
-                    i < step     && [s.progressDone, { backgroundColor: colors.primary + '80' }],
-                  ]}
-                />
-              ))}
-            </View>
-            <Text style={s.stepNum}>{step + 1}/7</Text>
+        {/* ── Progress + nav bar ───────── */}
+        <View style={s.topBar}>
+          <TouchableOpacity onPress={back} style={s.backBtn} activeOpacity={0.7} accessibilityRole="button" accessibilityLabel="Go back">
+            <ChevronLeft size={18} color={colors.textMute} />
+            <Text style={[s.backText, { color: colors.textMute }]}>{t.back}</Text>
+          </TouchableOpacity>
+          <View style={s.progressPills}>
+            {([1, 2, 3, 4, 5] as Step[]).map((i) => (
+              <View
+                key={i}
+                style={[
+                  s.progressPill,
+                  { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' },
+                  i === step   && [s.progressActive, { backgroundColor: colors.primary }],
+                  i < step     && [s.progressDone, { backgroundColor: colors.primary + '80' }],
+                ]}
+              />
+            ))}
           </View>
-        )}
+          <Text style={s.stepNum}>{step}/5</Text>
+        </View>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
           <ScrollView
-            contentContainerStyle={[s.scroll, isLangStep && s.scrollLang]}
+            contentContainerStyle={s.scroll}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
@@ -275,8 +279,7 @@ export default function OnboardingWizard() {
               exiting={FadeOutUp}
               style={{ flex: 1 }}
             >
-              {step === 0 && <LangStep t={t.lang} lang={lang} setLang={setLang} onNext={next} />}
-              {step === 2 && (
+              {step === 1 && (
                 <AuthStep
                   authMethod={authMethod}
                   setAuthMethod={setAuthMethod}
@@ -292,9 +295,9 @@ export default function OnboardingWizard() {
                   setName={setName}
                 />
               )}
-              {step === 3 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} />}
-              {step === 4 && <RoleStep t={t.role} role={role} setRole={setRole} />}
-              {step === 5 && (
+              {step === 2 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} />}
+              {step === 3 && <RoleStep t={t.role} role={role} setRole={setRole} />}
+              {step === 4 && (
                 <ProfileStep
                   t={t.profile} name={name} setName={setName}
                   region={region} setRegion={setRegion}
@@ -305,132 +308,45 @@ export default function OnboardingWizard() {
                   hasIrrigation={hasIrrigation} setHasIrrigation={setHasIrrigation}
                 />
               )}
-              {step === 6 && <DoneStep t={t.done} name={name || 'Mkulima'} role={role} lang={lang} />}
+              {step === 5 && <DoneStep t={t.done} name={name || 'Mkulima'} role={role} lang={lang} />}
             </Animated.View>
-
           </ScrollView>
         </KeyboardAvoidingView>
 
-        {/* ── Footer CTA (hidden on step 0 — it has inline CTAs) ── */}
-        {!isLangStep && (
-          <View style={s.footer}>
-            <TouchableOpacity
-              onPress={step === 6 ? finish : next}
-              disabled={!canContinue || loading}
-              activeOpacity={0.88}
-              style={[s.ctaWrap, (!canContinue || loading) && { opacity: 0.38 }]}
-              accessibilityRole="button"
-              accessibilityLabel={loading ? 'Loading' : (step === 6 ? t.done.cta : t.next)}
-              accessibilityState={{ disabled: !canContinue || loading }}
+        {/* ── Footer CTA ── */}
+        <View style={s.footer}>
+          <TouchableOpacity
+            onPress={step === 5 ? finish : next}
+            disabled={!canContinue || loading}
+            activeOpacity={0.88}
+            style={[s.ctaWrap, (!canContinue || loading) && { opacity: 0.38 }]}
+            accessibilityRole="button"
+            accessibilityLabel={loading ? 'Loading' : (step === 5 ? t.done.cta : t.next)}
+            accessibilityState={{ disabled: !canContinue || loading }}
+          >
+            <LinearGradient
+              colors={[colors.primary, colors.primaryDark]}
+              style={s.ctaGrad}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             >
-              <LinearGradient
-                colors={[colors.primary, colors.primaryDark]}
-                style={s.ctaGrad}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-              >
-                <Text style={[s.ctaText, { color: isDark ? '#000' : '#fff' }]}>
-                  {loading ? 'Subiri...' : (step === 6 ? t.done.cta : t.next)}
-                </Text>
-                <View style={s.ctaArrow}>
-                  <ChevronRight size={18} color={isDark ? '#000' : '#fff'} strokeWidth={3} />
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        )}
+              <Text style={[s.ctaText, { color: isDark ? '#000' : '#fff' }]}>
+                {loading ? 'Subiri...' : (step === 5 ? t.done.cta : t.next)}
+              </Text>
+              <View style={s.ctaArrow}>
+                <ChevronRight size={18} color={isDark ? '#000' : '#fff'} strokeWidth={3} />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </View>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 0 — Language (full-hero layout)
+// Step 0 — Welcome
 // ─────────────────────────────────────────────────────────────
-function LangStep({ t, lang, setLang, onNext }: any) {
-  const { colors, isDark } = useTheme();
-  return (
-    <View style={s.langRoot}>
-      {/* Logo mark */}
-      <View style={s.logoWrap}>
-        <LinearGradient colors={[colors.primary, colors.primaryDark]} style={s.logoGrad}>
-          <Sparkles size={38} color={isDark ? '#000' : '#fff'} strokeWidth={1.8} />
-        </LinearGradient>
-        {/* Glow ring */}
-        <View style={[s.logoRing, { borderColor: colors.primary + '40' }]} />
-      </View>
-
-      {/* Brand wordmark */}
-      <Text style={[s.langHeadline, { color: colors.text }]}>{t.headline}</Text>
-      <View style={s.taglineRow}>
-        <View style={[s.taglineDot, { backgroundColor: colors.primary }]} />
-        <Text style={[s.langTagline, { color: colors.textMute }]}>{t.tagline}</Text>
-        <View style={[s.taglineDot, { backgroundColor: colors.primary }]} />
-      </View>
-
-      {/* Divider */}
-      <View style={[s.langDivider, { backgroundColor: colors.border }]} />
-
-      <Text style={[s.langPick, { color: colors.textMute }]}>{t.pick}</Text>
-
-      {/* Language cards */}
-      <View style={s.langCards}>
-        {(['sw', 'en'] as const).map((L) => {
-          const active = lang === L;
-          return (
-            <TouchableOpacity
-              key={L}
-              onPress={() => { Haptics.selectionAsync(); setLang(L); }}
-              activeOpacity={0.82}
-              style={{ flex: 1 }}
-              accessibilityRole="button"
-              accessibilityLabel={L === 'sw' ? t.sw : t.en}
-              accessibilityState={{ selected: active }}
-            >
-              <LinearGradient
-                colors={active ? [colors.primary + '22', colors.primaryDark + '14'] : ['rgba(255,255,255,0.04)', 'rgba(255,255,255,0.02)']}
-                style={[s.langCard, active && { borderColor: colors.primary }, { borderColor: colors.border }]}
-              >
-                <Text style={s.langFlag}>{L === 'sw' ? '🇹🇿' : '🇬🇧'}</Text>
-                <Text style={[s.langLabel, { color: colors.text }, active && { color: colors.primary }]}>
-                  {L === 'sw' ? t.sw : t.en}
-                </Text>
-                {active
-                  ? <View style={[s.langCheck, { backgroundColor: colors.primary }]}><Check size={14} color={isDark ? '#000' : '#fff'} strokeWidth={3} /></View>
-                  : <View style={[s.langCheckEmpty, { borderColor: colors.border }]} />
-                }
-              </LinearGradient>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Inline CTA */}
-      <TouchableOpacity
-        onPress={onNext}
-        activeOpacity={0.88}
-        style={s.langCtaWrap}
-        accessibilityRole="button"
-        accessibilityLabel="Continue"
-      >
-        <LinearGradient colors={[colors.primary, colors.primaryDark]} style={s.langCta} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-          <Text style={[s.langCtaText, { color: isDark ? '#000' : '#fff' }]}>{lang === 'sw' ? 'Endelea' : 'Continue'}</Text>
-          <View style={s.ctaArrow}>
-            <ChevronRight size={18} color={isDark ? '#000' : '#fff'} strokeWidth={3} />
-          </View>
-        </LinearGradient>
-      </TouchableOpacity>
-
-      <Text style={[s.langFootnote, { color: colors.textMute }]}>
-        {lang === 'sw' ? 'Unaweza kubadilisha lugha wakati wowote' : 'You can change language anytime'}
-      </Text>
-    </View>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Step 1 — Welcome
-// ─────────────────────────────────────────────────────────────
-function WelcomeStep({ t, lang, onNext }: any) {
+function WelcomeStep({ t, lang, setLang, onNext }: any) {
   const { colors, isDark } = useTheme();
 
   // Localized strings to match the mockup exactly
@@ -455,6 +371,32 @@ function WelcomeStep({ t, lang, onNext }: any) {
         style={StyleSheet.absoluteFillObject}
         locations={[0, 0.35, 0.75]}
       />
+
+      {/* Floating Language Switcher */}
+      <SafeAreaView style={s.welcomeLangSafeArea}>
+        <BlurView intensity={Platform.OS === 'ios' ? 25 : 80} tint="dark" style={s.welcomeLangBlur}>
+          {(['sw', 'en'] as const).map((L) => {
+            const active = lang === L;
+            return (
+              <TouchableOpacity
+                key={L}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setLang(L);
+                }}
+                style={[s.welcomeLangTab, active && s.welcomeLangTabActive]}
+                accessibilityRole="button"
+                accessibilityLabel={L === 'sw' ? 'Kiswahili' : 'English'}
+                accessibilityState={{ selected: active }}
+              >
+                <Text style={[s.welcomeLangTabText, active && s.welcomeLangTabTextActive]}>
+                  {L === 'sw' ? 'Kiswahili' : 'English'}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </BlurView>
+      </SafeAreaView>
 
       <View style={s.welcomeHeroContent}>
         {/* Title */}
@@ -1086,9 +1028,40 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  welcomeLangSafeArea: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 20,
+    right: 20,
+    zIndex: 100,
+  },
+  welcomeLangBlur: {
+    flexDirection: 'row',
+    borderRadius: 20,
+    overflow: 'hidden',
+    padding: 3,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+  },
+  welcomeLangTab: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 17,
+  },
+  welcomeLangTabActive: {
+    backgroundColor: '#1A3B14',
+  },
+  welcomeLangTabText: {
+    color: 'rgba(252, 251, 247, 0.6)',
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  welcomeLangTabTextActive: {
+    color: '#FCFBF7',
+  },
   stepIllustration: {
     width: '100%',
-    height: 180,
+    height: 220,
     borderRadius: 20,
     marginBottom: 20,
   },
