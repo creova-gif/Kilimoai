@@ -25,9 +25,27 @@ import { useTheme } from '../constants/Theme';
 const { width: SW } = Dimensions.get('window');
 
 const LOGO = require('../assets/icon.png');
+const AUTH_ILLUSTRATION = require('../assets/images/onboarding_auth.png');
+const ROLES_ILLUSTRATION = require('../assets/images/onboarding_roles.png');
+const PROFILE_ILLUSTRATION = require('../assets/images/onboarding_profile.png');
+const DONE_ILLUSTRATION = require('../assets/images/onboarding_done.png');
 
-const REGIONS = ['Arusha', 'Dodoma', 'Mbeya', 'Kilimanjaro', 'Morogoro', 'Iringa', 'Mwanza', 'Tanga', 'Pwani', 'Singida', 'Tabora'];
-const CROPS   = ['Mahindi', 'Maharage', 'Mpunga', 'Kahawa', 'Pamba', 'Alizeti', 'Mihogo', 'Viazi', 'Nyanya', 'Vitunguu', 'Karanga', 'Ndizi'];
+const REGIONS = [
+  'Arusha', 'Dar es Salaam', 'Dodoma', 'Geita', 'Iringa', 
+  'Kagera', 'Katavi', 'Kigoma', 'Kilimanjaro', 'Lindi', 
+  'Manyara', 'Mara', 'Mbeya', 'Morogoro', 'Mtwara', 
+  'Mwanza', 'Njombe', 'Pwani', 'Rukwa', 'Ruvuma', 
+  'Shinyanga', 'Simiyu', 'Singida', 'Songwe', 'Tabora', 
+  'Tanga', 'Zanzibar'
+];
+
+const CROPS = [
+  'Mahindi (Maize)', 'Mpunga (Rice)', 'Maharage (Beans)', 'Kahawa (Coffee)', 
+  'Pamba (Cotton)', 'Alizeti (Sunflower)', 'Mihogo (Cassava)', 'Viazi (Potatoes)', 
+  'Nyanya (Tomatoes)', 'Vitunguu (Onions)', 'Karanga (Groundnuts)', 'Ndizi (Bananas)', 
+  'Korosho (Cashews)', 'Mbaazi (Peas)', 'Mtama (Sorghum)', 'Ngano (Wheat)', 
+  'Chai (Tea)', 'Mboga (Vegetables)'
+];
 
 const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }> = {
   smallholder:       { icon: <Leaf size={22} color="#1A3B14" />,    color: '#1A3B14' },
@@ -477,6 +495,7 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
 
   return (
     <View style={s.stepRoot}>
+      <Image source={AUTH_ILLUSTRATION} style={s.stepIllustration} resizeMode="contain" />
       <Text style={[s.h1, { color: colors.text }]}>
         {authMethod === 'phone'
           ? (lang === 'sw' ? 'Namba yako ya simu' : 'Your Phone Number')
@@ -631,6 +650,7 @@ function RoleStep({ t, role, setRole }: any) {
   const { colors, isDark } = useTheme();
   return (
     <View style={s.stepRoot}>
+      <Image source={ROLES_ILLUSTRATION} style={s.stepIllustration} resizeMode="contain" />
       <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
       <View style={{ gap: 8, marginTop: 20 }}>
@@ -674,6 +694,7 @@ function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, a
 
   return (
     <View style={s.stepRoot}>
+      <Image source={PROFILE_ILLUSTRATION} style={s.stepIllustration} resizeMode="contain" />
       <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
 
@@ -821,12 +842,8 @@ function DoneStep({ t, name, role, lang }: any) {
 
   return (
     <View style={[s.stepRoot, { alignItems: 'center', paddingTop: 16 }]}>
-      {/* Success ring */}
-      <View style={[s.doneRingOuter, { backgroundColor: colors.primaryLight }]}>
-        <LinearGradient colors={[colors.primary, colors.primaryDark]} style={s.doneRingInner}>
-          <Check size={44} color={isDark ? '#000' : '#fff'} strokeWidth={3} />
-        </LinearGradient>
-      </View>
+      {/* Success Badge Illustration */}
+      <Image source={DONE_ILLUSTRATION} style={s.doneIllustration} resizeMode="contain" />
 
       <Text style={[s.h1, { textAlign: 'center', marginTop: 24, color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { textAlign: 'center', color: colors.textMute }]}>{t.subtitle}</Text>
@@ -1068,5 +1085,17 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(26, 59, 20, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  stepIllustration: {
+    width: '100%',
+    height: 180,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  doneIllustration: {
+    width: 160,
+    height: 160,
+    borderRadius: 24,
+    marginBottom: 16,
   },
 });
