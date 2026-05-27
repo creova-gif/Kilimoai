@@ -39,6 +39,7 @@ type FeatureEntry = {
 const ALL_FEATURES: FeatureEntry[] = [
   // AI
   { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/(tabs)/ai',         icon: null, color: '#1A3B14',  pinned: true },
+  { feature: 'voice_assistant',      label: 'Sauti AI',            sub: 'Ongea na AI kwa sauti',       route: '/ai-voice',        icon: null, color: '#F59E0B' },
   { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',      sub: 'Tambua magonjwa ya mazao',    route: '/scan',            icon: null, color: '#2E5A27',  pinned: true },
   { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI',   sub: 'Utabiri na takwimu',          route: '/analytics',       icon: null, color: '#F59E0B' },
   { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',       sub: 'Mfano wa kidijiti',           route: '/farm-twin',       icon: null, color: '#4B773E' },
@@ -53,7 +54,10 @@ const ALL_FEATURES: FeatureEntry[] = [
   { feature: 'livestock',            label: 'Mifugo',              sub: 'Simamia mifugo yako',         route: '/livestock',       icon: null, color: '#F59E0B' },
   { feature: 'inventory',            label: 'Pembejeo',            sub: 'Ghala na vifaa',              route: '/inventory',       icon: null, color: '#4B773E' },
   { feature: 'task_management',      label: 'Kazi',                sub: 'Orodha ya kazi za shamba',    route: '/tasks',           icon: null, color: '#64748b' },
+  { feature: 'offline_mode',         label: 'Nje ya Mtandao',      sub: 'Skani bila mtandao',          route: '/offline-queue',   icon: null, color: '#64748b' },
   // Finance
+  { feature: 'finance_tracker',      label: 'Daftari la Fedha',    sub: 'Matumizi na mapato',          route: '/finance',         icon: null, color: '#1A3B14',  pinned: true },
+  { feature: 'mobile_money',         label: 'M-Pesa / Airtel',     sub: 'Tuma na pokea pesa',          route: '/mobile-money',    icon: null, color: '#1A3B14' },
   { feature: 'wallet_admin',         label: 'Pochi Msimamizi',     sub: 'Malipo na akaunti',           route: '/wallet-admin',    icon: null, color: '#1A3B14' },
   { feature: 'insurance',            label: 'Bima',                sub: 'Ulinzi wa mazao yako',        route: '/insurance',       icon: null, color: '#4B773E' },
   { feature: 'agro_id',              label: 'Agro ID',             sub: 'Kitambulisho · PDF ya P&L',   route: '/agro-id',         icon: null, color: '#2E5A27' },
@@ -96,7 +100,7 @@ const CATEGORIES = [
     title: 'Akili Bandia',
     titleEn: 'AI & Intelligence',
     color: '#1A3B14',
-    features: ['ai_chat', 'photo_diagnosis', 'analytics_predictive', 'digital_farm_twin', 'crop_planning'] as Feature[],
+    features: ['ai_chat', 'voice_assistant', 'photo_diagnosis', 'analytics_predictive', 'digital_farm_twin', 'crop_planning'] as Feature[],
   },
   {
     key: 'market',
@@ -110,14 +114,14 @@ const CATEGORIES = [
     title: 'Shamba',
     titleEn: 'Farm Management',
     color: '#F59E0B',
-    features: ['farm_mapping', 'livestock', 'inventory', 'task_management'] as Feature[],
+    features: ['farm_mapping', 'livestock', 'inventory', 'task_management', 'offline_mode'] as Feature[],
   },
   {
     key: 'finance',
     title: 'Fedha',
     titleEn: 'Finance & ID',
     color: '#4B773E',
-    features: ['wallet_admin', 'insurance', 'agro_id'] as Feature[],
+    features: ['finance_tracker', 'mobile_money', 'wallet_admin', 'insurance', 'agro_id'] as Feature[],
   },
   {
     key: 'community',
