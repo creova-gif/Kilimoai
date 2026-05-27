@@ -437,7 +437,7 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
 
   return (
     <View style={s.stepRoot}>
-      <Image source={AUTH_ILLUSTRATION} style={s.stepIllustration} resizeMode="contain" />
+      <Image source={AUTH_ILLUSTRATION} style={s.stepIllustration} resizeMode="cover" />
       <Text style={[s.h1, { color: colors.text }]}>
         {authMethod === 'phone'
           ? (lang === 'sw' ? 'Namba yako ya simu' : 'Your Phone Number')
@@ -592,7 +592,7 @@ function RoleStep({ t, role, setRole }: any) {
   const { colors, isDark } = useTheme();
   return (
     <View style={s.stepRoot}>
-      <Image source={ROLES_ILLUSTRATION} style={s.stepIllustration} resizeMode="contain" />
+      <Image source={ROLES_ILLUSTRATION} style={s.stepIllustration} resizeMode="cover" />
       <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
       <View style={{ gap: 8, marginTop: 20 }}>
@@ -636,7 +636,7 @@ function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, a
 
   return (
     <View style={s.stepRoot}>
-      <Image source={PROFILE_ILLUSTRATION} style={s.stepIllustration} resizeMode="contain" />
+      <Image source={PROFILE_ILLUSTRATION} style={s.stepIllustration} resizeMode="cover" />
       <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
 
@@ -785,7 +785,7 @@ function DoneStep({ t, name, role, lang }: any) {
   return (
     <View style={[s.stepRoot, { alignItems: 'center', paddingTop: 16 }]}>
       {/* Success Badge Illustration */}
-      <Image source={DONE_ILLUSTRATION} style={s.doneIllustration} resizeMode="contain" />
+      <Image source={DONE_ILLUSTRATION} style={s.doneIllustration} resizeMode="cover" />
 
       <Text style={[s.h1, { textAlign: 'center', marginTop: 24, color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { textAlign: 'center', color: colors.textMute }]}>{t.subtitle}</Text>

@@ -1,711 +1,835 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+  Dimensions,
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import { Sprout, Box, Activity, ChevronRight, ChevronLeft, ChevronDown, Check, AlertTriangle, Layers } from 'lucide-react-native';
+import {
+  Search,
+  Plus,
+  Minus,
+  Droplets,
+  AlertTriangle,
+  Target,
+  Menu,
+  Bell,
+  Info,
+  Check,
+  ChevronRight,
+  Sparkles,
+} from 'lucide-react-native';
+import Svg, {
+  Path,
+  Polygon,
+  G,
+  Circle,
+  Text as SvgText,
+  Defs,
+  LinearGradient as SvgLinearGradient,
+  Stop,
+} from 'react-native-svg';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
-import { Card } from '../../components/ui/Card';
 
-const ZONES_DATA = [
-  { level: 'Very High', rate: '70 kg/ha', area: '1.2 ha', color: '#8B5CF6', labelSw: 'Juu Sana' },
-  { level: 'High', rate: '83 kg/ha', area: '4.5 ha', color: '#1A3B14', labelSw: 'Juu' },
-  { level: 'Average', rate: '100 kg/ha', area: '1.2 ha', color: '#3B82F6', labelSw: 'Wastani' },
-  { level: 'Low', rate: '115 kg/ha', area: '6.2 ha', color: '#F59E0B', labelSw: 'Chini' },
+const { width: SW, height: SH } = Dimensions.get('window');
+
+// Data representing the farm zones (fields)
+interface ZoneData {
+  id: number;
+  nameEn: string;
+  nameSw: string;
+  cropEn: string;
+  cropSw: string;
+  area: string;
+  center: { x: number; y: number };
+  points: string;
+  // Metrics
+  productivity: 'High' | 'Average' | 'Low';
+  productivitySw: 'Juu' | 'Wastani' | 'Chini';
+  ndvi: number;
+  ph: number;
+  moisture: string;
+  nitrogen: { statusEn: string; statusSw: string; value: string; color: string };
+  phosphorus: { statusEn: string; statusSw: string; value: string; color: string };
+  potassium: { statusEn: string; statusSw: string; value: string; color: string };
+  // Messages & Alerts
+  messageEn: string;
+  messageSw: string;
+  alertType?: 'warning' | 'info';
+}
+
+const ZONES: ZoneData[] = [
+  {
+    id: 42,
+    nameEn: 'Zone 42 - Cornfield',
+    nameSw: 'Ukanda 42 - Shamba la Mahindi',
+    cropEn: 'Corn',
+    cropSw: 'Mahindi',
+    area: '4.5 ha',
+    points: '40,60 180,30 200,160 60,180',
+    center: { x: 120, y: 110 },
+    productivity: 'High',
+    productivitySw: 'Juu',
+    ndvi: 0.82,
+    ph: 6.2,
+    moisture: '68%',
+    nitrogen: { statusEn: 'Optimal', statusSw: 'Safi', value: '85%', color: '#1A3B14' },
+    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '78%', color: '#1A3B14' },
+    potassium: { statusEn: 'Optimal', statusSw: 'Safi', value: '80%', color: '#1A3B14' },
+    messageEn: 'High Productivity Zone',
+    messageSw: 'Ukanda wenye Uzalishaji wa Juu',
+  },
+  {
+    id: 12,
+    nameEn: 'Zone 12 - Wheatfield',
+    nameSw: 'Ukanda 12 - Shamba la Ngano',
+    cropEn: 'Wheat',
+    cropSw: 'Ngano',
+    area: '6.2 ha',
+    points: '180,30 320,50 300,180 200,160',
+    center: { x: 250, y: 100 },
+    productivity: 'Low',
+    productivitySw: 'Chini',
+    ndvi: 0.45,
+    ph: 5.5,
+    moisture: '52%',
+    nitrogen: { statusEn: 'Low (-15%)', statusSw: 'Chini (-15%)', value: '40%', color: '#D97706' },
+    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '70%', color: '#1A3B14' },
+    potassium: { statusEn: 'Optimal', statusSw: 'Safi', value: '65%', color: '#1A3B14' },
+    messageEn: 'Low Nitrogen detected. Apply Urea.',
+    messageSw: 'Nitrojeni iko chini. Weka mbolea ya Urea.',
+    alertType: 'warning',
+  },
+  {
+    id: 8,
+    nameEn: 'Zone 8 - Ricefield',
+    nameSw: 'Ukanda 8 - Shamba la Mpunga',
+    cropEn: 'Rice',
+    cropSw: 'Mpunga',
+    area: '1.2 ha',
+    points: '60,180 200,160 170,290 30,260',
+    center: { x: 115, y: 220 },
+    productivity: 'Average',
+    productivitySw: 'Wastani',
+    ndvi: 0.68,
+    ph: 6.8,
+    moisture: '82%',
+    nitrogen: { statusEn: 'Optimal', statusSw: 'Safi', value: '75%', color: '#1A3B14' },
+    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '82%', color: '#1A3B14' },
+    potassium: { statusEn: 'Optimal', statusSw: 'Safi', value: '74%', color: '#1A3B14' },
+    messageEn: 'High moisture level ideal for rice.',
+    messageSw: 'Unyevu wa juu unaofaa kwa mpunga.',
+    alertType: 'info',
+  },
+  {
+    id: 5,
+    nameEn: 'Zone 5 - Veggie Patch',
+    nameSw: 'Ukanda 5 - Kiriba cha Mboga',
+    cropEn: 'Vegetables',
+    cropSw: 'Mboga',
+    area: '1.2 ha',
+    points: '200,160 300,180 280,310 170,290',
+    center: { x: 240, y: 230 },
+    productivity: 'Low',
+    productivitySw: 'Chini',
+    ndvi: 0.55,
+    ph: 7.2,
+    moisture: '40%',
+    nitrogen: { statusEn: 'Optimal', statusSw: 'Safi', value: '68%', color: '#1A3B14' },
+    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '66%', color: '#1A3B14' },
+    potassium: { statusEn: 'Deficient (-22%)', statusSw: 'Pungufu (-22%)', value: '25%', color: '#DC2626' },
+    messageEn: 'Potassium deficiency. Boost suggested.',
+    messageSw: 'Upungufu wa Potasiamu. Ongeza mbolea.',
+    alertType: 'warning',
+  },
 ];
+
+type MapFilter = 'productivity' | 'ndvi' | 'ph';
 
 export default function FarmHub() {
   const router = useRouter();
-  const { colors, isDark, radius } = useTheme();
+  const { colors, isDark } = useTheme();
   const language = useKilimoStore((s) => s.language);
-  const [selectedCrop, setSelectedCrop] = useState('Corn, grain');
-  const [selectedZone, setSelectedZone] = useState(4);
-  const [showCropDropdown, setShowCropDropdown] = useState(false);
+  const agroId = useKilimoStore((s) => s.agroId);
 
-  const features = [
-    {
-      id: 'crop-planning',
-      title: language === 'sw' ? 'Upangaji Mazao' : 'Crop Planning',
-      subtitle: language === 'sw' ? 'Kalenda na ushauri wa kupanda' : 'AI-assisted seasonal crop calendar',
-      icon: <Sprout size={22} color={colors.primary} />,
-      color: colors.primary,
-      route: '/crop-planning' as any,
-    },
-    {
-      id: 'inventory',
-      title: language === 'sw' ? 'Ghala & Vifaa' : 'Inventory',
-      subtitle: language === 'sw' ? 'Fuatilia mbegu, mbolea na mazao' : 'Track seeds, fertilizer, and yield',
-      icon: <Box size={22} color={colors.warning} />,
-      color: colors.warning,
-      route: '/inventory' as any,
-    },
-    {
-      id: 'livestock',
-      title: language === 'sw' ? 'Mifugo' : 'Livestock',
-      subtitle: language === 'sw' ? 'Afya, chanjo na uzalishaji' : 'Health, vaccination, and production',
-      icon: <Activity size={22} color={colors.info} />,
-      color: colors.info,
-      route: '/livestock' as any,
-    },
-  ];
+  const [activeZoneId, setActiveZoneId] = useState<number>(42);
+  const [activeFilter, setActiveFilter] = useState<MapFilter>('productivity');
+  const [zoomLevel, setZoomLevel] = useState<number>(1.0);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Localized Farm Name
+  const farmName = useMemo(() => {
+    if (agroId?.name) {
+      return language === 'sw' ? `Shamba la ${agroId.name}` : `${agroId.name} Farm`;
+    }
+    return language === 'sw' ? 'Shamba la North Valleya' : 'North Valleya Farm';
+  }, [agroId, language]);
+
+  // Zoom configuration coordinates
+  const viewBox = useMemo(() => {
+    const defaultW = 350;
+    const defaultH = 420;
+    const scale = 1 / zoomLevel;
+    const w = defaultW * scale;
+    const h = defaultH * scale;
+
+    // Pan to center of active zone if zoomed in
+    const activeZone = ZONES.find((z) => z.id === activeZoneId);
+    let x = 0;
+    let y = 0;
+    if (activeZone && zoomLevel > 1.0) {
+      x = Math.max(0, Math.min(defaultW - w, activeZone.center.x - w / 2));
+      y = Math.max(0, Math.min(defaultH - h, activeZone.center.y - h / 2));
+    }
+    return `${x} ${y} ${w} ${h}`;
+  }, [zoomLevel, activeZoneId]);
+
+  const activeZone = useMemo(() => {
+    return ZONES.find((z) => z.id === activeZoneId) || ZONES[0];
+  }, [activeZoneId]);
+
+  // Filtered zones based on search query
+  const filteredZones = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return ZONES;
+    return ZONES.filter(
+      (z) =>
+        z.nameEn.toLowerCase().includes(query) ||
+        z.nameSw.toLowerCase().includes(query) ||
+        z.cropEn.toLowerCase().includes(query) ||
+        z.cropSw.toLowerCase().includes(query) ||
+        z.id.toString() === query
+    );
+  }, [searchQuery]);
+
+  // Function to determine polygon color depending on active filter and zone values
+  const getZoneColor = (zone: ZoneData) => {
+    if (activeFilter === 'productivity') {
+      if (zone.productivity === 'High') return '#1A3B14';
+      if (zone.productivity === 'Average') return '#3D7A29';
+      return '#F59E0B'; // Low
+    }
+    if (activeFilter === 'ndvi') {
+      if (zone.ndvi >= 0.8) return '#0D3807';
+      if (zone.ndvi >= 0.6) return '#246219';
+      if (zone.ndvi >= 0.5) return '#4B8D3D';
+      return '#8EBD81';
+    }
+    // Soil pH
+    if (zone.ph < 6.0) return '#EA580C'; // Acidic (Orange)
+    if (zone.ph <= 7.0) return '#1A3B14'; // Optimal (Green)
+    return '#0891B2'; // Alkaline (Teal)
+  };
+
+  const handleZoneSelect = (id: number) => {
+    Haptics.selectionAsync();
+    setActiveZoneId(id);
+  };
+
+  const handleZoom = (type: 'in' | 'out') => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setZoomLevel((prev) => {
+      if (type === 'in') return Math.min(2.5, prev + 0.3);
+      return Math.max(1.0, prev - 0.3);
+    });
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={styles.safe}>
+        
+        {/* ── Top Header ───────────────────────────────────────── */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>
-            {language === 'sw' ? 'Usimamizi wa Shamba' : 'Farm Management'}
-          </Text>
+          <TouchableOpacity style={styles.iconBtn} accessibilityRole="button" accessibilityLabel="Menu">
+            <Menu size={22} color={colors.text} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{farmName}</Text>
+          <TouchableOpacity style={styles.iconBtn} accessibilityRole="button" accessibilityLabel="Notifications">
+            <Bell size={22} color={colors.text} />
+          </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          
-          {/* Crop Selector Dropdown Card */}
-          <Card variant="solid" style={[styles.selectorCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.selectLabel, { color: colors.textMute }]}>SELECTED CROP / CROP TYPE</Text>
-            <TouchableOpacity 
-              style={[styles.selectRow, { borderColor: colors.border }]} 
-              onPress={() => setShowCropDropdown(!showCropDropdown)}
-            >
-              <Text style={[styles.selectValue, { color: colors.text }]}>
-                {language === 'sw' && selectedCrop === 'Corn, grain' ? 'Mahindi, nafaka' : selectedCrop}
-              </Text>
-              <ChevronDown size={18} color={colors.textMute} />
-            </TouchableOpacity>
+        <View style={styles.mainContent}>
+          {/* ── Search Input overlay ────────────────────────────── */}
+          <BlurView intensity={isDark ? 16 : 40} tint={isDark ? 'dark' : 'light'} style={[styles.searchBar, { borderColor: colors.border }]}>
+            <Search size={18} color={colors.textMute} style={styles.searchIcon} />
+            <TextInput
+              style={[styles.searchInput, { color: colors.text }]}
+              placeholder={language === 'sw' ? 'Tafuta maeneo, ukanda au sensa..' : 'Search fields, zone or sensor..'}
+              placeholderTextColor={colors.textMute}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              accessibilityLabel="Search Fields"
+            />
+          </BlurView>
 
-            {showCropDropdown && (
-              <View style={styles.dropdownContent}>
-                {['Corn, grain', 'Rice, plants', 'Beans, legumes'].map((crop) => (
-                  <TouchableOpacity 
-                    key={crop} 
-                    style={styles.dropdownItem}
-                    onPress={() => {
-                      setSelectedCrop(crop);
-                      setShowCropDropdown(false);
-                    }}
-                  >
-                    <Text style={[styles.dropdownItemText, { color: colors.text }]}>
-                      {language === 'sw' && crop === 'Corn, grain' ? 'Mahindi, nafaka' : crop}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+          {/* ── Filter Selectors (Pills) ───────────────────────── */}
+          <View style={styles.filterContainer}>
+            {(['productivity', 'ndvi', 'ph'] as MapFilter[]).map((filter) => {
+              const active = activeFilter === filter;
+              let label = '';
+              if (filter === 'productivity') label = language === 'sw' ? 'Uzalishaji' : 'Productivity';
+              if (filter === 'ndvi') label = 'NDVI Index';
+              if (filter === 'ph') label = 'Soil pH';
+
+              return (
+                <TouchableOpacity
+                  key={filter}
+                  onPress={() => {
+                    Haptics.selectionAsync();
+                    setActiveFilter(filter);
+                  }}
+                  activeOpacity={0.8}
+                  style={[
+                    styles.filterPill,
+                    { borderColor: colors.border, backgroundColor: colors.card },
+                    active && { backgroundColor: '#1A3B14', borderColor: '#1A3B14' },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={label}
+                  accessibilityState={{ selected: active }}
+                >
+                  <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : colors.textMute }]}>
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* ── SVG Map Visualizer ───────────────────────────────── */}
+          <View style={styles.mapContainer}>
+            <Svg viewBox={viewBox} style={StyleSheet.absoluteFill}>
+              {/* Grid Overlay / Terrain lines */}
+              <G opacity={isDark ? 0.08 : 0.15}>
+                <Path d="M 0 50 Q 100 80, 200 40 T 350 70" stroke={colors.text} strokeWidth="1" fill="none" />
+                <Path d="M 0 120 Q 150 140, 250 90 T 350 110" stroke={colors.text} strokeWidth="1" fill="none" />
+                <Path d="M 0 200 Q 100 230, 220 180 T 350 210" stroke={colors.text} strokeWidth="1" fill="none" />
+                <Path d="M 0 290 Q 120 310, 260 270 T 350 280" stroke={colors.text} strokeWidth="1" fill="none" />
+                <Path d="M 0 370 Q 110 390, 240 360 T 350 370" stroke={colors.text} strokeWidth="1" fill="none" />
+              </G>
+
+              {/* Road representation */}
+              <Path
+                d="M 0 180 Q 180 200, 350 240"
+                stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}
+                strokeWidth="10"
+                fill="none"
+              />
+              <Path
+                d="M 0 180 Q 180 200, 350 240"
+                stroke={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}
+                strokeWidth="2"
+                strokeDasharray="4 4"
+                fill="none"
+              />
+
+              {/* River representation */}
+              <Path
+                d="M 120 0 C 135 100, 150 220, 185 420"
+                stroke="#2563EB"
+                strokeWidth="3"
+                opacity={isDark ? 0.3 : 0.4}
+                fill="none"
+              />
+
+              {/* Zone Polygons */}
+              {filteredZones.map((zone) => {
+                const isSelected = activeZoneId === zone.id;
+                const fillColor = getZoneColor(zone);
+
+                return (
+                  <G key={zone.id}>
+                    <Polygon
+                      points={zone.points}
+                      fill={fillColor}
+                      fillOpacity={isSelected ? 0.75 : 0.35}
+                      stroke={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
+                      strokeWidth={isSelected ? '3.5' : '1.5'}
+                      onPress={() => handleZoneSelect(zone.id)}
+                    />
+                    
+                    {/* Zone ID label */}
+                    <SvgText
+                      x={zone.center.x}
+                      y={zone.center.y}
+                      fill="#FFFFFF"
+                      fontSize="10"
+                      fontWeight="bold"
+                      textAnchor="middle"
+                      pointerEvents="none"
+                      opacity={isSelected ? 1.0 : 0.7}
+                    >
+                      {language === 'sw' ? `Kanda ${zone.id}` : `Zone ${zone.id}`}
+                    </SvgText>
+                    
+                    {/* Crop indicator under text */}
+                    <SvgText
+                      x={zone.center.x}
+                      y={zone.center.y + 11}
+                      fill="rgba(255,255,255,0.8)"
+                      fontSize="8"
+                      textAnchor="middle"
+                      pointerEvents="none"
+                    >
+                      {language === 'sw' ? zone.cropSw : zone.cropEn}
+                    </SvgText>
+                  </G>
+                );
+              })}
+            </Svg>
+
+            {/* ── Map HUD Floating Indicators (tethers on map zones) ── */}
+            {/* Zone 8 Droplets / Humidity Indicator */}
+            {filteredZones.some(z => z.id === 8) && (
+              <View style={[styles.hudBadge, { left: 90 * zoomLevel, top: 180 * zoomLevel }]}>
+                <View style={styles.hudBadgeIcon}>
+                  <Droplets size={10} color="#3b82f6" />
+                </View>
+                <Text style={styles.hudBadgeText}>{language === 'sw' ? 'Unyevu 82%' : '82% Humidity'}</Text>
               </View>
             )}
-          </Card>
 
-          {/* Productivity Zones selector segment */}
-          <View style={styles.segmentBlock}>
-            <Text style={[styles.sectionSubtitle, { color: colors.textMute }]}>PRODUCTIVITY ZONES</Text>
-            <View style={[styles.segmentContainer, { backgroundColor: isDark ? '#121711' : '#EDF1EC' }]}>
-              {[3, 4, 5, 6, 7, 8, 9].map((num) => (
-                <TouchableOpacity
-                  key={num}
-                  onPress={() => setSelectedZone(num)}
-                  style={[
-                    styles.segmentCircle,
-                    { 
-                      backgroundColor: selectedZone === num ? colors.primary : 'transparent',
-                    }
-                  ]}
-                >
-                  <Text style={[
-                    styles.segmentText,
-                    { 
-                      color: selectedZone === num ? '#FFFFFF' : colors.text,
-                      fontFamily: selectedZone === num ? 'Inter_900Black' : 'Inter_600SemiBold'
-                    }
-                  ]}>
-                    {num}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            {/* Zone 12 Low Nitrogen warning banner */}
+            {filteredZones.some(z => z.id === 12) && (
+              <View style={[styles.hudLabel, { left: 210 * zoomLevel, top: 110 * zoomLevel }]}>
+                <Text style={styles.hudLabelText}>{language === 'sw' ? 'Nitrojeni Chini' : 'Low Nitrogen'}</Text>
+              </View>
+            )}
+
+            {/* Zone 5 Potassium warning Alert icon */}
+            {filteredZones.some(z => z.id === 5) && (
+              <TouchableOpacity
+                onPress={() => handleZoneSelect(5)}
+                style={[styles.hudWarningDot, { left: 240 * zoomLevel, top: 250 * zoomLevel }]}
+              >
+                <AlertTriangle size={12} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
+
+            {/* ── Zoom Controls ───────────────────────────────────── */}
+            <View style={styles.zoomControls}>
+              <TouchableOpacity
+                onPress={() => handleZoom('in')}
+                style={[styles.zoomBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+                accessibilityRole="button"
+                accessibilityLabel="Zoom In"
+              >
+                <Plus size={20} color={colors.text} />
+              </TouchableOpacity>
+              <View style={[styles.zoomDivider, { backgroundColor: colors.border }]} />
+              <TouchableOpacity
+                onPress={() => handleZoom('out')}
+                style={[styles.zoomBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+                accessibilityRole="button"
+                accessibilityLabel="Zoom Out"
+              >
+                <Minus size={20} color={colors.text} />
+              </TouchableOpacity>
             </View>
           </View>
 
-          {/* Productivity Zones Breakdown list */}
-          <Card variant="solid" style={[styles.zonesCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.zonesHeader}>
-              <Layers size={18} color={colors.primary} />
-              <Text style={[styles.zonesTitle, { color: colors.text }]}>
-                {language === 'sw' ? 'Mchanganuo wa Maeneo' : 'Zones Rate Breakdown'}
-              </Text>
-            </View>
-            <View style={styles.zonesList}>
-              {ZONES_DATA.map((zone, idx) => (
-                <View key={zone.level}>
-                  <View style={styles.zoneRow}>
-                    <View style={styles.zoneLeft}>
-                      <View style={[styles.statusBadgeDot, { backgroundColor: zone.color }]} />
-                      <Text style={[styles.zoneLabelText, { color: colors.text }]}>
-                        {language === 'sw' ? zone.labelSw : zone.level}
-                      </Text>
-                    </View>
-                    <View style={styles.zoneRight}>
-                      <Text style={[styles.zoneRateText, { color: colors.text }]}>{zone.rate}</Text>
-                      <Text style={[styles.zoneAreaText, { color: colors.textMute }]}>{zone.area}</Text>
-                    </View>
-                  </View>
-                  {idx < ZONES_DATA.length - 1 && (
-                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
-                  )}
-                </View>
-              ))}
-            </View>
-          </Card>
-
-          {/* Soil Nutrient Analysis */}
-          <Card variant="solid" style={[styles.nutrientCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.nutrientHeader}>
-              <Text style={[styles.nutrientTitle, { color: colors.text }]}>
-                {language === 'sw' ? 'Uchambuzi wa Virutubisho vya Udongo' : 'Soil Nutrient Analysis'}
-              </Text>
-              <View style={[styles.updateBadge, { backgroundColor: colors.primaryLight }]}>
-                <Text style={[styles.updateBadgeText, { color: colors.primary }]}>
-                  {language === 'sw' ? 'Kusasishwa masaa 2' : 'Update 2h'}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.nutrientGrid}>
-              {/* Nitrogen (N) */}
-              <View style={[styles.nutrientCol, { backgroundColor: isDark ? '#211812' : '#FDF6E2', borderColor: isDark ? '#5B3E12' : '#F0C987' }]}>
-                <Text style={[styles.nutrientElem, { color: colors.text }]}>Nitrogen (N)</Text>
-                <Text style={[styles.nutrientStatus, { color: '#D97706' }]}>
-                  {language === 'sw' ? 'Chini (-15%)' : 'Low (-15%)'}
-                </Text>
-                <View style={styles.miniProgressBg}>
-                  <View style={[styles.miniProgressFill, { width: '40%', backgroundColor: '#D97706' }]} />
-                </View>
-              </View>
-
-              {/* Phosphorus (P) */}
-              <View style={[styles.nutrientCol, { backgroundColor: isDark ? '#111C11' : '#E8F5E9', borderColor: isDark ? '#1C3B1C' : '#A5D6A7' }]}>
-                <Text style={[styles.nutrientElem, { color: colors.text }]}>Phosphorus (P)</Text>
-                <Text style={[styles.nutrientStatus, { color: colors.primary }]}>
-                  {language === 'sw' ? 'Safi (Imara)' : 'Optimal (Stable)'}
-                </Text>
-                <View style={styles.miniProgressBg}>
-                  <View style={[styles.miniProgressFill, { width: '85%', backgroundColor: colors.primary }]} />
-                </View>
-              </View>
-
-              {/* Potassium (K) */}
-              <View style={[styles.nutrientCol, { backgroundColor: isDark ? '#221111' : '#FFEBEE', borderColor: isDark ? '#5B1E1E' : '#FFCDD2' }]}>
-                <Text style={[styles.nutrientElem, { color: colors.text }]}>Potassium (K)</Text>
-                <Text style={[styles.nutrientStatus, { color: '#EF4444' }]}>
-                  {language === 'sw' ? 'Pungufu (-22%)' : 'Deficient (-22%)'}
-                </Text>
-                <View style={styles.miniProgressBg}>
-                  <View style={[styles.miniProgressFill, { width: '25%', backgroundColor: '#EF4444' }]} />
-                </View>
-              </View>
-            </View>
-          </Card>
-
-          {/* Urgent Recommendations */}
-          <View style={styles.recSection}>
-            <Text style={[styles.sectionSubtitle, { color: colors.textMute, marginLeft: 4 }]}>
-              {language === 'sw' ? 'MAPENDEKEZO YA HARAKA' : 'URGENT RECOMMENDATIONS'}
-            </Text>
-            <View style={{ gap: 12, marginTop: 8 }}>
-              {/* Recommendation 1 */}
-              <Card variant="solid" style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <View style={styles.recHeader}>
-                  <View style={[styles.bulletPoint, { backgroundColor: '#D97706' }]} />
-                  <Text style={[styles.recTitle, { color: colors.text }]}>
-                    {language === 'sw' ? 'Weka Naitrojeni (Urea)' : 'Apply Nitrogen (Urea)'}
+          {/* ── Active Selection Bottom Details Card ────────────── */}
+          <View style={styles.bottomSheetContainer}>
+            <LinearGradient
+              colors={isDark ? ['rgba(26, 59, 20, 0.95)', 'rgba(10, 15, 10, 0.99)'] : ['#FAF7F0', '#FFFFFF']}
+              style={[styles.bottomSheet, { borderColor: colors.border }]}
+            >
+              <View style={styles.sheetTopRow}>
+                <View>
+                  <Text style={styles.activeSelectionLabel}>
+                    {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
+                  </Text>
+                  <Text style={[styles.activeZoneTitle, { color: colors.text }]}>
+                    {language === 'sw' ? activeZone.nameSw : activeZone.nameEn}
                   </Text>
                 </View>
-                <Text style={[styles.recBody, { color: colors.textMute }]}>
-                  {language === 'sw'
-                    ? 'Mkulima anapima unyevu wa udongo kwenye shamba la ngano akitumia kipimo cha kidijitali.'
-                    : 'A farmer tests soil moisture in a wheat field using a digital meter.'}
-                </Text>
-                <View style={styles.recActionRow}>
-                  <TouchableOpacity style={[styles.recBtnFilled, { backgroundColor: colors.primary }]} activeOpacity={0.8}>
-                    <Text style={styles.recBtnTextFilled}>
-                      {language === 'sw' ? 'Weka Sasa' : 'Apply Now'}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.recBtnOutlined, { borderColor: colors.border }]} activeOpacity={0.8}>
-                    <Text style={[styles.recBtnTextOutlined, { color: colors.text }]}>
-                      {language === 'sw' ? 'Maelezo' : 'Details'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </Card>
-
-              {/* Recommendation 2 */}
-              <Card variant="solid" style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <View style={styles.recHeader}>
-                  <View style={[styles.bulletPoint, { backgroundColor: '#EF4444' }]} />
-                  <Text style={[styles.recTitle, { color: colors.text }]}>
-                    {language === 'sw' ? 'Kiongeza Potash (Potash Booster)' : 'Potash Booster'}
-                  </Text>
-                </View>
-                <Text style={[styles.recBody, { color: colors.textMute }]}>
-                  {language === 'sw'
-                    ? 'Mtu aliyeshika mimea mibichi ya basil yenye mizizi inayoonekana, akiwa amevaa aproni ya kijani.'
-                    : 'Person holding fresh basil plants with visible roots, wearing a green apron.'}
-                </Text>
-                <View style={styles.recActionRow}>
-                  <TouchableOpacity style={[styles.recBtnFilled, { backgroundColor: colors.primary }]} activeOpacity={0.8}>
-                    <Text style={styles.recBtnTextFilled}>
-                      {language === 'sw' ? 'Ratiba' : 'Schedule'}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.recBtnOutlined, { borderColor: colors.border }]} activeOpacity={0.8}>
-                    <Text style={[styles.recBtnTextOutlined, { color: colors.text }]}>
-                      {language === 'sw' ? 'Maelezo' : 'Details'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </Card>
-            </View>
-          </View>
-
-          {/* Application Schedule Calendar */}
-          <Card variant="solid" style={[styles.scheduleCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.scheduleHeader}>
-              <Text style={[styles.scheduleTitle, { color: colors.text }]}>
-                {language === 'sw' ? 'Ratiba ya Uwekaji' : 'Application Schedule'}
-              </Text>
-              <View style={styles.scheduleNav}>
-                <TouchableOpacity style={styles.arrowBtn}>
-                  <ChevronLeft size={16} color={colors.textMute} />
-                </TouchableOpacity>
-                <Text style={[styles.monthLabel, { color: colors.text }]}>
-                  {language === 'sw' ? 'Oktoba 2024' : 'October 2024'}
-                </Text>
-                <TouchableOpacity style={styles.arrowBtn}>
-                  <ChevronRight size={16} color={colors.textMute} />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.calendarStrip}>
-              {/* Day headers */}
-              <View style={styles.dayNamesRow}>
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
-                  <Text key={idx} style={[styles.dayNameLabel, { color: colors.textMute }]}>
-                    {day}
-                  </Text>
-                ))}
-              </View>
-              {/* Day numbers */}
-              <View style={styles.dayNumbersRow}>
-                {[
-                  { num: '28', active: false },
-                  { num: '29', active: false },
-                  { num: '1', active: false },
-                  { num: '2', active: false },
-                  { num: '3', active: true },
-                  { num: '4', active: false },
-                  { num: '5', active: false }
-                ].map((item, idx) => (
-                  <View key={idx} style={styles.dayNumCell}>
-                    <TouchableOpacity
-                      style={[
-                        styles.dayCircle,
-                        item.active && { backgroundColor: colors.primary }
-                      ]}
-                      disabled={!item.active}
-                    >
-                      <Text
-                        style={[
-                          styles.dayNumText,
-                          { color: item.active ? '#FFFFFF' : colors.text },
-                          item.active && { fontFamily: 'Inter_900Black' }
-                        ]}
-                      >
-                        {item.num}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </Card>
-
-
-          {/* Core features listing (Crop planning, inventory, livestock) */}
-          <View style={{ marginTop: 8 }}>
-            <Text style={[styles.sectionSubtitle, { color: colors.textMute, marginLeft: 4 }]}>
-              {language === 'sw' ? 'VIFAA NA USIMAMIZI' : 'TOOLS & SERVICES'}
-            </Text>
-            <View style={{ gap: 12, marginTop: 8 }}>
-              {features.map((item) => (
                 <TouchableOpacity
-                  key={item.id}
-                  onPress={() => router.push(item.route)}
-                  activeOpacity={0.8}
+                  onPress={() => {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    setZoomLevel(1.5);
+                  }}
+                  style={[styles.recenterBtn, { backgroundColor: colors.primaryLight }]}
                   accessibilityRole="button"
-                  accessibilityLabel={item.title}
-                  accessibilityHint={item.subtitle}
+                  accessibilityLabel="Recenter map"
                 >
-                  <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.featCard, { borderColor: colors.border }]}>
-                    <LinearGradient colors={[item.color + '10', 'transparent']} style={StyleSheet.absoluteFill} />
-                    <View style={[styles.iconBox, { backgroundColor: item.color + '15' }]}>
-                      {item.icon}
-                    </View>
-                    <View style={styles.cardContent}>
-                      <Text style={[styles.cardTitle, { color: colors.text }]}>{item.title}</Text>
-                      <Text style={[styles.cardSubtitle, { color: colors.textMute }]}>{item.subtitle}</Text>
-                    </View>
-                    <ChevronRight size={18} color={colors.textMute} />
-                  </BlurView>
+                  <Target size={16} color="#1A3B14" />
                 </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+              </View>
 
-          <View style={{ height: 110 }} />
-        </ScrollView>
+              {/* Status Message */}
+              <View style={styles.statusRow}>
+                <View style={[styles.statusDot, { backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : '#1A3B14' }]} />
+                <Text style={[styles.statusText, { color: colors.text }]}>
+                  {language === 'sw' ? activeZone.messageSw : activeZone.messageEn}
+                </Text>
+              </View>
+
+              {/* Grid Readings */}
+              <View style={styles.metricsGrid}>
+                {/* Metric 1 */}
+                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                  <Text style={styles.metricName}>{language === 'sw' ? 'Ukubwa' : 'Size'}</Text>
+                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.area}</Text>
+                </View>
+                {/* Metric 2 */}
+                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                  <Text style={styles.metricName}>NDVI</Text>
+                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.ndvi}</Text>
+                </View>
+                {/* Metric 3 */}
+                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                  <Text style={styles.metricName}>pH ya Udongo</Text>
+                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.ph}</Text>
+                </View>
+                {/* Metric 4 */}
+                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                  <Text style={styles.metricName}>{language === 'sw' ? 'Unyevu' : 'Moisture'}</Text>
+                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.moisture}</Text>
+                </View>
+              </View>
+
+              {/* Advanced Nutrients Bar */}
+              <View style={[styles.nutrientsBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <View style={styles.nutrientsHeader}>
+                  <Sparkles size={14} color="#1A3B14" />
+                  <Text style={[styles.nutrientsTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Uchambuzi wa Virutubisho' : 'Soil Nutrient Analysis'}
+                  </Text>
+                </View>
+                <View style={styles.nutrientsRow}>
+                  {/* Nitrogen */}
+                  <View style={styles.nutrientElem}>
+                    <Text style={styles.nutrientLabel}>N</Text>
+                    <Text style={[styles.nutrientVal, { color: activeZone.nitrogen.color }]}>
+                      {language === 'sw' ? activeZone.nitrogen.statusSw : activeZone.nitrogen.statusEn}
+                    </Text>
+                  </View>
+                  <View style={styles.elemDivider} />
+                  {/* Phosphorus */}
+                  <View style={styles.nutrientElem}>
+                    <Text style={styles.nutrientLabel}>P</Text>
+                    <Text style={[styles.nutrientVal, { color: activeZone.phosphorus.color }]}>
+                      {language === 'sw' ? activeZone.phosphorus.statusSw : activeZone.phosphorus.statusEn}
+                    </Text>
+                  </View>
+                  <View style={styles.elemDivider} />
+                  {/* Potassium */}
+                  <View style={styles.nutrientElem}>
+                    <Text style={styles.nutrientLabel}>K</Text>
+                    <Text style={[styles.nutrientVal, { color: activeZone.potassium.color }]}>
+                      {language === 'sw' ? activeZone.potassium.statusSw : activeZone.potassium.statusEn}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+            </LinearGradient>
+          </View>
+        </View>
+
+        {/* Floating circular Add (+) button */}
+        <TouchableOpacity
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            router.push('/crop-planning');
+          }}
+          activeOpacity={0.85}
+          style={styles.floatingAddBtn}
+          accessibilityRole="button"
+          accessibilityLabel="Add Field"
+        >
+          <Plus size={24} color="#FCFBF7" />
+        </TouchableOpacity>
+
       </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  safe: { flex: 1 },
-  header: { paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 8 : 24, paddingBottom: 10 },
-  title: { fontSize: 28, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
-  scroll: { paddingHorizontal: 16, paddingTop: 12, gap: 16 },
-  
-  // Selector Card
-  selectorCard: {
-    padding: 16,
+  container: {
+    flex: 1,
   },
-  selectLabel: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1,
-    marginBottom: 8,
+  safe: {
+    flex: 1,
   },
-  selectRow: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 8 : 16,
+    paddingBottom: 8,
+  },
+  iconBtn: {
+    padding: 6,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 14,
     borderWidth: 1,
-  },
-  selectValue: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-  },
-  dropdownContent: {
+    paddingHorizontal: 12,
+    height: 48,
     marginTop: 8,
-    borderRadius: 12,
     overflow: 'hidden',
   },
-  dropdownItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+  searchIcon: {
+    marginRight: 8,
   },
-  dropdownItemText: {
+  searchInput: {
+    flex: 1,
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
+    height: '100%',
   },
-
-  // Segment Block
-  segmentBlock: {
-    marginTop: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 9,
-    fontFamily: 'Inter_900Black',
-    letterSpacing: 1,
-    marginBottom: 10,
-  },
-  segmentContainer: {
+  filterContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 4,
-    borderRadius: 24,
+    gap: 8,
+    marginTop: 12,
+    marginBottom: 8,
   },
-  segmentCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  filterPill: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  filterText: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+  filterTextActive: {
+    color: '#FCFBF7',
+  },
+  mapContainer: {
+    flex: 1,
+    borderRadius: 24,
+    overflow: 'hidden',
+    marginTop: 6,
+    marginBottom: 20,
+    backgroundColor: '#0c0f0a',
+    position: 'relative',
+  },
+  zoomControls: {
+    position: 'absolute',
+    bottom: 20,
+    right: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+    zIndex: 10,
+    elevation: 3,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  zoomBtn: {
+    width: 38,
+    height: 38,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  segmentText: {
-    fontSize: 13,
-  },
-
-  // Zones Card List
-  zonesCard: {
-    padding: 16,
-  },
-  zonesHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
-  },
-  zonesTitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.2,
-  },
-  zonesList: {
-    gap: 12,
-  },
-  zoneRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  zoneLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  statusBadgeDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  zoneLabelText: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-  },
-  zoneRight: {
-    alignItems: 'flex-end',
-  },
-  zoneRateText: {
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  zoneAreaText: {
-    fontSize: 11,
-    fontFamily: 'Inter_500Medium',
-    marginTop: 2,
-  },
-  divider: {
+  zoomDivider: {
     height: 1,
-    marginTop: 8,
   },
-
-  // Nutrient Card
-  nutrientCard: {
-    padding: 16,
-  },
-  nutrientHeader: {
+  hudBadge: {
+    position: 'absolute',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
-  },
-  nutrientTitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.2,
-  },
-  updateBadge: {
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
-  },
-  updateBadgeText: {
-    fontSize: 10,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: 0.5,
-  },
-  nutrientGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  nutrientCol: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: 8,
-  },
-  nutrientElem: {
-    fontSize: 11,
-    fontFamily: 'Inter_700Bold',
-  },
-  nutrientStatus: {
-    fontSize: 12,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  miniProgressBg: {
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(0,0,0,0.06)',
-    overflow: 'hidden',
-  },
-  miniProgressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-
-  // Urgent recommendations
-  recSection: {
-    marginTop: 4,
-  },
-  recCard: {
-    padding: 16,
-    gap: 8,
-  },
-  recHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  bulletPoint: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  recTitle: {
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  recBody: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 18,
-  },
-  recActionRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
-  },
-  recBtnFilled: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  recBtnTextFilled: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  recBtnOutlined: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  recBtnTextOutlined: {
-    fontSize: 12,
-    fontFamily: 'Inter_700Bold',
-  },
-
-  // Calendar Schedule
-  scheduleCard: {
-    padding: 16,
-  },
-  scheduleTitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.2,
-    marginBottom: 12,
-  },
-  scheduleHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  scheduleNav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  arrowBtn: {
-    padding: 4,
-  },
-  monthLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  calendarStrip: {
-    gap: 12,
-  },
-  dayNamesRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-  },
-  dayNameLabel: {
-    width: 32,
-    textAlign: 'center',
-    fontSize: 11,
-    fontFamily: 'Inter_700Bold',
-  },
-  dayNumbersRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-  },
-  dayNumCell: {
-    alignItems: 'center',
     gap: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
-  dayCircle: {
+  hudBadgeIcon: {
+    marginRight: 2,
+  },
+  hudBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+  },
+  hudLabel: {
+    position: 'absolute',
+    backgroundColor: 'rgba(217, 119, 6, 0.9)',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+  },
+  hudLabelText: {
+    color: '#FFFFFF',
+    fontSize: 8,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  hudWarningDot: {
+    position: 'absolute',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#EA580C',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+  },
+  bottomSheetContainer: {
+    position: 'absolute',
+    bottom: 28,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+  },
+  bottomSheet: {
+    borderRadius: 24,
+    borderWidth: 1.5,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  sheetTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  activeSelectionLabel: {
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
+    color: '#1A3B14',
+    letterSpacing: 1.2,
+  },
+  activeZoneTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter_800ExtraBold',
+    marginTop: 2,
+  },
+  recenterBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  dayNumText: {
-    fontSize: 12,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  activeDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    marginTop: 2,
-  },
-
-  // Feat Card bottom list
-  featCard: {
+  statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 24,
-    borderWidth: 1,
-    overflow: 'hidden',
+    gap: 6,
+    marginTop: 10,
   },
-  iconBox: {
-    width: 44,
-    height: 44,
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusText: {
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+    opacity: 0.8,
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 14,
+  },
+  metricBox: {
+    flex: 1,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 10,
+    alignItems: 'center',
+  },
+  metricName: {
+    fontSize: 8,
+    fontFamily: 'Inter_700Bold',
+    color: 'rgba(255,255,255,0.4)',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  metricValue: {
+    fontSize: 12,
+    fontFamily: 'Inter_800ExtraBold',
+    marginTop: 4,
+  },
+  nutrientsBar: {
     borderRadius: 14,
+    borderWidth: 1,
+    padding: 10,
+    marginTop: 10,
+  },
+  nutrientsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 8,
+  },
+  nutrientsTitle: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+  },
+  nutrientsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 6,
+  },
+  nutrientElem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  nutrientLabel: {
+    fontSize: 11,
+    fontFamily: 'Inter_900Black',
+    color: 'rgba(255,255,255,0.4)',
+  },
+  nutrientVal: {
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  elemDivider: {
+    width: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    marginVertical: 2,
+  },
+  floatingAddBtn: {
+    position: 'absolute',
+    bottom: -10,
+    alignSelf: 'center',
+    backgroundColor: '#1A3B14',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: -0.2,
-    marginBottom: 3,
-  },
-  cardSubtitle: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 30,
   },
 });
