@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Sprout, Box, Activity, ChevronRight, ChevronDown, Check, AlertTriangle, Layers } from 'lucide-react-native';
+import { Sprout, Box, Activity, ChevronRight, ChevronLeft, ChevronDown, Check, AlertTriangle, Layers } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../constants/Theme';
@@ -155,32 +155,180 @@ export default function FarmHub() {
             </View>
           </Card>
 
-          {/* Soil Nutrition checklist */}
-          <Card variant="solid" style={[styles.nutritionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.nutritionTitle, { color: colors.text }]}>
-              {language === 'sw' ? 'Tathmini ya Mbolea & Virutubisho' : 'Soil Nutrition Checklist'}
+          {/* Soil Nutrient Analysis */}
+          <Card variant="solid" style={[styles.nutrientCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.nutrientHeader}>
+              <Text style={[styles.nutrientTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Uchambuzi wa Virutubisho vya Udongo' : 'Soil Nutrient Analysis'}
+              </Text>
+              <View style={[styles.updateBadge, { backgroundColor: colors.primaryLight }]}>
+                <Text style={[styles.updateBadgeText, { color: colors.primary }]}>
+                  {language === 'sw' ? 'Kusasishwa masaa 2' : 'Update 2h'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.nutrientGrid}>
+              {/* Nitrogen (N) */}
+              <View style={[styles.nutrientCol, { backgroundColor: isDark ? '#211812' : '#FDF6E2', borderColor: isDark ? '#5B3E12' : '#F0C987' }]}>
+                <Text style={[styles.nutrientElem, { color: colors.text }]}>Nitrogen (N)</Text>
+                <Text style={[styles.nutrientStatus, { color: '#D97706' }]}>
+                  {language === 'sw' ? 'Chini (-15%)' : 'Low (-15%)'}
+                </Text>
+                <View style={styles.miniProgressBg}>
+                  <View style={[styles.miniProgressFill, { width: '40%', backgroundColor: '#D97706' }]} />
+                </View>
+              </View>
+
+              {/* Phosphorus (P) */}
+              <View style={[styles.nutrientCol, { backgroundColor: isDark ? '#111C11' : '#E8F5E9', borderColor: isDark ? '#1C3B1C' : '#A5D6A7' }]}>
+                <Text style={[styles.nutrientElem, { color: colors.text }]}>Phosphorus (P)</Text>
+                <Text style={[styles.nutrientStatus, { color: colors.primary }]}>
+                  {language === 'sw' ? 'Safi (Imara)' : 'Optimal (Stable)'}
+                </Text>
+                <View style={styles.miniProgressBg}>
+                  <View style={[styles.miniProgressFill, { width: '85%', backgroundColor: colors.primary }]} />
+                </View>
+              </View>
+
+              {/* Potassium (K) */}
+              <View style={[styles.nutrientCol, { backgroundColor: isDark ? '#221111' : '#FFEBEE', borderColor: isDark ? '#5B1E1E' : '#FFCDD2' }]}>
+                <Text style={[styles.nutrientElem, { color: colors.text }]}>Potassium (K)</Text>
+                <Text style={[styles.nutrientStatus, { color: '#EF4444' }]}>
+                  {language === 'sw' ? 'Pungufu (-22%)' : 'Deficient (-22%)'}
+                </Text>
+                <View style={styles.miniProgressBg}>
+                  <View style={[styles.miniProgressFill, { width: '25%', backgroundColor: '#EF4444' }]} />
+                </View>
+              </View>
+            </View>
+          </Card>
+
+          {/* Urgent Recommendations */}
+          <View style={styles.recSection}>
+            <Text style={[styles.sectionSubtitle, { color: colors.textMute, marginLeft: 4 }]}>
+              {language === 'sw' ? 'MAPENDEKEZO YA HARAKA' : 'URGENT RECOMMENDATIONS'}
             </Text>
-            <View style={styles.nutritionGrid}>
-              <View style={styles.nutritionCol}>
-                <Text style={styles.nutritionHeaderLow}>LOW (Pungufu)</Text>
-                {['Phosphorus', 'Magnesium', 'Acidity', 'Quality seeds'].map((item) => (
-                  <View key={item} style={styles.nutritionItem}>
-                    <AlertTriangle size={12} color="#EF4444" />
-                    <Text style={[styles.nutritionItemText, { color: colors.text }]}>{item}</Text>
-                  </View>
+            <View style={{ gap: 12, marginTop: 8 }}>
+              {/* Recommendation 1 */}
+              <Card variant="solid" style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <View style={styles.recHeader}>
+                  <View style={[styles.bulletPoint, { backgroundColor: '#D97706' }]} />
+                  <Text style={[styles.recTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Weka Naitrojeni (Urea)' : 'Apply Nitrogen (Urea)'}
+                  </Text>
+                </View>
+                <Text style={[styles.recBody, { color: colors.textMute }]}>
+                  {language === 'sw'
+                    ? 'Mkulima anapima unyevu wa udongo kwenye shamba la ngano akitumia kipimo cha kidijitali.'
+                    : 'A farmer tests soil moisture in a wheat field using a digital meter.'}
+                </Text>
+                <View style={styles.recActionRow}>
+                  <TouchableOpacity style={[styles.recBtnFilled, { backgroundColor: colors.primary }]} activeOpacity={0.8}>
+                    <Text style={styles.recBtnTextFilled}>
+                      {language === 'sw' ? 'Weka Sasa' : 'Apply Now'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.recBtnOutlined, { borderColor: colors.border }]} activeOpacity={0.8}>
+                    <Text style={[styles.recBtnTextOutlined, { color: colors.text }]}>
+                      {language === 'sw' ? 'Maelezo' : 'Details'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </Card>
+
+              {/* Recommendation 2 */}
+              <Card variant="solid" style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <View style={styles.recHeader}>
+                  <View style={[styles.bulletPoint, { backgroundColor: '#EF4444' }]} />
+                  <Text style={[styles.recTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Kiongeza Potash (Potash Booster)' : 'Potash Booster'}
+                  </Text>
+                </View>
+                <Text style={[styles.recBody, { color: colors.textMute }]}>
+                  {language === 'sw'
+                    ? 'Mtu aliyeshika mimea mibichi ya basil yenye mizizi inayoonekana, akiwa amevaa aproni ya kijani.'
+                    : 'Person holding fresh basil plants with visible roots, wearing a green apron.'}
+                </Text>
+                <View style={styles.recActionRow}>
+                  <TouchableOpacity style={[styles.recBtnFilled, { backgroundColor: colors.primary }]} activeOpacity={0.8}>
+                    <Text style={styles.recBtnTextFilled}>
+                      {language === 'sw' ? 'Ratiba' : 'Schedule'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.recBtnOutlined, { borderColor: colors.border }]} activeOpacity={0.8}>
+                    <Text style={[styles.recBtnTextOutlined, { color: colors.text }]}>
+                      {language === 'sw' ? 'Maelezo' : 'Details'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </Card>
+            </View>
+          </View>
+
+          {/* Application Schedule Calendar */}
+          <Card variant="solid" style={[styles.scheduleCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.scheduleHeader}>
+              <Text style={[styles.scheduleTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Ratiba ya Uwekaji' : 'Application Schedule'}
+              </Text>
+              <View style={styles.scheduleNav}>
+                <TouchableOpacity style={styles.arrowBtn}>
+                  <ChevronLeft size={16} color={colors.textMute} />
+                </TouchableOpacity>
+                <Text style={[styles.monthLabel, { color: colors.text }]}>
+                  {language === 'sw' ? 'Oktoba 2024' : 'October 2024'}
+                </Text>
+                <TouchableOpacity style={styles.arrowBtn}>
+                  <ChevronRight size={16} color={colors.textMute} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.calendarStrip}>
+              {/* Day headers */}
+              <View style={styles.dayNamesRow}>
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+                  <Text key={idx} style={[styles.dayNameLabel, { color: colors.textMute }]}>
+                    {day}
+                  </Text>
                 ))}
               </View>
-              <View style={styles.nutritionCol}>
-                <Text style={[styles.nutritionHeaderOk, { color: colors.primary }]}>HIGH (Inatosha)</Text>
-                {['Nitrogen', 'Potassium'].map((item) => (
-                  <View key={item} style={styles.nutritionItem}>
-                    <Check size={12} color={colors.primary} />
-                    <Text style={[styles.nutritionItemText, { color: colors.text }]}>{item}</Text>
+              {/* Day numbers */}
+              <View style={styles.dayNumbersRow}>
+                {[
+                  { num: '28', active: false },
+                  { num: '29', active: false },
+                  { num: '1', active: false },
+                  { num: '2', active: false },
+                  { num: '3', active: true },
+                  { num: '4', active: false },
+                  { num: '5', active: false }
+                ].map((item, idx) => (
+                  <View key={idx} style={styles.dayNumCell}>
+                    <TouchableOpacity
+                      style={[
+                        styles.dayCircle,
+                        item.active && { backgroundColor: colors.primary }
+                      ]}
+                      disabled={!item.active}
+                    >
+                      <Text
+                        style={[
+                          styles.dayNumText,
+                          { color: item.active ? '#FFFFFF' : colors.text },
+                          item.active && { fontFamily: 'Inter_900Black' }
+                        ]}
+                      >
+                        {item.num}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
             </View>
           </Card>
+
 
           {/* Core features listing (Crop planning, inventory, livestock) */}
           <View style={{ marginTop: 8 }}>
@@ -348,43 +496,186 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  // Nutrition checklist
-  nutritionCard: {
+  // Nutrient Card
+  nutrientCard: {
     padding: 16,
   },
-  nutritionTitle: {
+  nutrientHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  nutrientTitle: {
     fontSize: 15,
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: -0.2,
-    marginBottom: 14,
   },
-  nutritionGrid: {
+  updateBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  updateBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
+  },
+  nutrientGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  nutritionCol: {
-    flex: 1,
     gap: 8,
   },
-  nutritionHeaderLow: {
-    color: '#EF4444',
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    marginBottom: 4,
+  nutrientCol: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 8,
   },
-  nutritionHeaderOk: {
-    fontSize: 10,
-    fontFamily: 'Inter_900Black',
-    marginBottom: 4,
+  nutrientElem: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
   },
-  nutritionItem: {
+  nutrientStatus: {
+    fontSize: 12,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  miniProgressBg: {
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(0,0,0,0.06)',
+    overflow: 'hidden',
+  },
+  miniProgressFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+
+  // Urgent recommendations
+  recSection: {
+    marginTop: 4,
+  },
+  recCard: {
+    padding: 16,
+    gap: 8,
+  },
+  recHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
-  nutritionItemText: {
-    fontSize: 13,
+  bulletPoint: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  recTitle: {
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  recBody: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  recActionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  recBtnFilled: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recBtnTextFilled: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  recBtnOutlined: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recBtnTextOutlined: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+
+  // Calendar Schedule
+  scheduleCard: {
+    padding: 16,
+  },
+  scheduleTitle: {
+    fontSize: 15,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: -0.2,
+    marginBottom: 12,
+  },
+  scheduleHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  scheduleNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  arrowBtn: {
+    padding: 4,
+  },
+  monthLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  calendarStrip: {
+    gap: 12,
+  },
+  dayNamesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+  },
+  dayNameLabel: {
+    width: 32,
+    textAlign: 'center',
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+  },
+  dayNumbersRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+  },
+  dayNumCell: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  dayCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dayNumText: {
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 2,
   },
 
   // Feat Card bottom list

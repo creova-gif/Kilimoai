@@ -63,8 +63,10 @@ export default function ScanScreen() {
   const { scheduleReminder } = useNotifications();
   const addNotification = useKilimoStore((s) => s.addNotification);
   const agroId = useKilimoStore((s) => s.agroId);
+  const language = useKilimoStore((s) => s.language);
 
   const [phase, setPhase] = useState<ScanPhase>('IDLE');
+  const [analysisProgress, setAnalysisProgress] = useState(0);
   const [isOffline, setIsOffline] = useState(false); // Mock offline state
   const [analysisText, setAnalysisText] = useState('Initiating quantum analysis...');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -126,23 +128,21 @@ export default function ScanScreen() {
     setPhotoUri(asset.uri);
     setErrorMsg(null);
     setDiagnosis(null);
+    setAnalysisProgress(0);
     setPhase('SCANNING');
 
-    // Brief cinematic scan -> analyzing transition
-    await new Promise((r) => setTimeout(r, 800));
+    // Brief transition to trigger analysis
+    await new Promise((r) => setTimeout(r, 600));
     if (scanSeq.current !== seq) return;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setPhase('ANALYZING');
 
-    try {
-      let result: VisionDiagnosis;
-
+    // Start AI analysis in the background
+    const aiPromise = (async () => {
       if (!aiConfigured()) {
-        // Demo mode: realistic simulated diagnosis without any API call.
-        result = await demoDiagnosis();
+        // Simulated network delay for demo
+        await new Promise((r) => setTimeout(r, 1200));
+        return await demoDiagnosis();
       } else {
-        // Read picked file as base64 for the vision proxy. On web, expo-image-picker
-        // returns data: URIs which fail readAsStringAsync — handle both paths.
         let base64: string;
         let mimeType = 'image/jpeg';
         if (asset.uri.startsWith('data:')) {
@@ -151,7 +151,6 @@ export default function ScanScreen() {
           mimeType = m[1];
           base64 = m[2];
         } else {
-          // Hard cap at 5MB raw to protect lower-end devices from OOM crashes.
           try {
             const info = await FileSystem.getInfoAsync(asset.uri);
             if (info.exists && typeof info.size === 'number' && info.size > 5_000_000) {
@@ -159,14 +158,24 @@ export default function ScanScreen() {
             }
           } catch (e) {
             if (e instanceof AIError) throw e;
-            // getInfoAsync may fail on some URIs; proceed and let the read fail.
           }
           base64 = await FileSystem.readAsStringAsync(asset.uri, { encoding: FileSystem.EncodingType.Base64 });
           if (asset.uri.toLowerCase().endsWith('.png')) mimeType = 'image/png';
         }
-        result = await diagnoseCropPhoto(base64, { mimeType });
+        return await diagnoseCropPhoto(base64, { mimeType });
       }
+    })();
 
+    // Animate progress up to 100%
+    for (let p = 10; p <= 100; p += 10) {
+      await new Promise((r) => setTimeout(r, 130));
+      if (scanSeq.current !== seq) return;
+      setAnalysisProgress(p);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
+    try {
+      const result = await aiPromise;
       if (scanSeq.current !== seq) return; // stale
 
       setDiagnosis(result);
@@ -355,8 +364,8 @@ export default function ScanScreen() {
         <View style={styles.content}>
           
             
-            {/* IDLE / SCANNING PHASE */}
-            {(phase === 'IDLE' || phase === 'SCANNING') && (
+            {/* IDLE PHASE */}
+            {phase === 'IDLE' && (
               <Animated.View 
                 key="scanner"
                 entering={FadeInDown} exiting={FadeOut}
@@ -367,56 +376,87 @@ export default function ScanScreen() {
                   {[styles.tl, styles.tr, styles.bl, styles.br].map((posStyle, idx) => (
                     <Animated.View 
                       key={idx}
-                      /* Reanimated Todo */
                       style={[styles.corner, posStyle]} 
                     />
                   ))}
-                  
-                  
-                    {phase === 'SCANNING' && (
-                      <Animated.View 
-                        entering={FadeInDown} exiting={FadeOut}
-                        style={styles.aiMarkers}
-                      >
-                        <Animated.View 
-                          /* Reanimated Todo */
-                          style={styles.markerPulse} 
-                        />
-                        <View style={styles.markerTextContainer}>
-                          <Text style={styles.markerText}>LOCKING TARGET</Text>
-                        </View>
-                      </Animated.View>
-                    )}
-                  
                 </View>
 
-                <Animated.View /* Reanimated Todo */ style={styles.instructions}>
+                <Animated.View style={styles.instructions}>
                   <Text style={styles.instructionLarge}>
-                    {phase === 'SCANNING' ? 'Hold Steady' : 'Target Crop Anomaly'}
+                    {language === 'sw' ? 'Mlengelwe Kwenye Jani' : 'Target Crop Anomaly'}
                   </Text>
                   <Text style={styles.instructionSmall}>
-                    {phase === 'SCANNING' ? 'Kilimo AI is capturing hyperspectral data...' : 'Ensure the affected leaf is well-lit and in focus.'}
+                    {language === 'sw' ? 'Hakikisha jani lililoathirika lina mwanga wa kutosha.' : 'Ensure the affected leaf is well-lit and in focus.'}
                   </Text>
                 </Animated.View>
               </Animated.View>
             )}
 
-            {/* ANALYZING PHASE */}
-            {phase === 'ANALYZING' && (
+            {/* SCANNING & ANALYZING PHASE */}
+            {(phase === 'SCANNING' || phase === 'ANALYZING') && (
               <Animated.View 
-                key="analyzing"
+                key="scanning_hud"
                 entering={FadeInDown} exiting={FadeOut}
-                style={styles.analyzingContainer}
+                style={styles.hudOverlayContainer}
               >
-                
-                <Animated.View
-                  /* Reanimated Todo */
-                  style={styles.analyzingRings}
+                {/* Crop Target Box */}
+                <View style={styles.hudTargetBox}>
+                  {/* Corners for Target Box */}
+                  <View style={[styles.targetCorner, { top: -2, left: -2, borderTopWidth: 4, borderLeftWidth: 4 }]} />
+                  <View style={[styles.targetCorner, { top: -2, right: -2, borderTopWidth: 4, borderRightWidth: 4 }]} />
+                  <View style={[styles.targetCorner, { bottom: -2, left: -2, borderBottomWidth: 4, borderLeftWidth: 4 }]} />
+                  <View style={[styles.targetCorner, { bottom: -2, right: -2, borderBottomWidth: 4, borderRightWidth: 4 }]} />
+
+                  {/* Progress Badge */}
+                  <View style={[styles.hudProgressBadge, { backgroundColor: colors.primary }]}>
+                    <Sparkles size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
+                    <Text style={styles.hudProgressText}>
+                      {analysisProgress}% {language === 'sw' ? 'Uchambuzi' : 'Analyse'}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Segmented Progress Loader */}
+                <View style={styles.segmentedLoader}>
+                  {Array.from({ length: 10 }).map((_, idx) => {
+                    const isActive = analysisProgress >= (idx + 1) * 10;
+                    return (
+                      <View
+                        key={idx}
+                        style={[
+                          styles.loaderSegment,
+                          {
+                            backgroundColor: isActive 
+                              ? colors.primary 
+                              : 'rgba(255, 255, 255, 0.2)'
+                          }
+                        ]}
+                      />
+                    );
+                  })}
+                </View>
+
+                {/* Status / Instructions Text */}
+                <Text style={styles.hudStatusText}>
+                  {phase === 'SCANNING'
+                    ? (language === 'sw' ? 'Inafunga Shabaha...' : 'LOCKING TARGET...')
+                    : (language === 'sw' ? 'Inachambua jani...' : 'ANALYZING LEAF PATTERNS...')}
+                </Text>
+
+                {/* Cancel Button at bottom */}
+                <TouchableOpacity
+                  onPress={handleReset}
+                  activeOpacity={0.85}
+                  style={styles.hudCancelBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancel scan"
                 >
-                  <Activity size={48} color={colors.primary} />
-                </Animated.View>
-                <Text style={styles.analyzingTitle}>AI Agronomist Active</Text>
-                <Text style={styles.analyzingSubtitle}>{analysisText}</Text>
+                  <BlurView intensity={30} tint="dark" style={styles.hudCancelInner}>
+                    <Text style={styles.hudCancelText}>
+                      {language === 'sw' ? 'Ghairi' : 'Cancel'}
+                    </Text>
+                  </BlurView>
+                </TouchableOpacity>
               </Animated.View>
             )}
 
@@ -950,5 +990,84 @@ const styles = StyleSheet.create({
     borderRadius: 44,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // HUD styles
+  hudOverlayContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hudTargetBox: {
+    width: SCREEN_WIDTH * 0.72,
+    height: SCREEN_WIDTH * 0.72,
+    borderRadius: 36,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+  },
+  targetCorner: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderColor: '#FFFFFF',
+  },
+  hudProgressBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  hudProgressText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
+  },
+  segmentedLoader: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 32,
+    width: SCREEN_WIDTH * 0.72,
+    justifyContent: 'center',
+  },
+  loaderSegment: {
+    width: 14,
+    height: 6,
+    borderRadius: 3,
+  },
+  hudStatusText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 1.8,
+    marginTop: 24,
+    textAlign: 'center',
+  },
+  hudCancelBtn: {
+    marginTop: 48,
+    width: SCREEN_WIDTH * 0.72,
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  hudCancelInner: {
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 24,
+  },
+  hudCancelText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontFamily: 'Inter_700Bold',
   },
 });

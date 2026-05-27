@@ -188,6 +188,17 @@ export default function OnboardingWizard() {
 
   const isLangStep = step === 0;
 
+  if (step === 1) {
+    return (
+      <View style={[s.root, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="light-content" />
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+          <WelcomeStep t={t.welcome} lang={lang} onNext={next} />
+        </KeyboardAvoidingView>
+      </View>
+    );
+  }
+
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
@@ -247,7 +258,6 @@ export default function OnboardingWizard() {
               style={{ flex: 1 }}
             >
               {step === 0 && <LangStep t={t.lang} lang={lang} setLang={setLang} onNext={next} />}
-              {step === 1 && <WelcomeStep t={t.welcome} lang={lang} />}
               {step === 2 && (
                 <AuthStep
                   authMethod={authMethod}
@@ -402,29 +412,54 @@ function LangStep({ t, lang, setLang, onNext }: any) {
 // ─────────────────────────────────────────────────────────────
 // Step 1 — Welcome
 // ─────────────────────────────────────────────────────────────
-function WelcomeStep({ t, lang }: any) {
-  const { colors } = useTheme();
+function WelcomeStep({ t, lang, onNext }: any) {
+  const { colors, isDark } = useTheme();
+
+  // Localized strings to match the mockup exactly
+  const title = lang === 'sw' ? 'SHAMBA LAKO,\nKWA AKILI.' : 'YOUR FARM,\nSMARTER.';
+  const subtitle = lang === 'sw'
+    ? 'Fuatilia afya ya mazao, boresha rasilimali, na uongeze mavuno kwa ushauri na uchambuzi makini.'
+    : 'Monitor crop health, optimize resources, and increase yield with data driven insights.';
+  const btnText = lang === 'sw' ? 'Anza Sasa' : 'Get Started';
+
   return (
-    <View style={s.stepRoot}>
-      {/* Logo */}
-      <View style={[s.welcomeLogoWrap, { borderColor: colors.border }]}>
-        <BlurView intensity={20} tint="dark" style={s.welcomeLogoBg}>
-          <Image source={LOGO} style={s.welcomeLogoImg} resizeMode="contain" />
-        </BlurView>
-      </View>
+    <View style={s.welcomeHeroRoot}>
+      {/* Background Image */}
+      <Image
+        source={require('../assets/drone-field.jpeg')}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      />
 
-      <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
-      <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
+      {/* Dark gradient overlay for text readability */}
+      <LinearGradient
+        colors={['transparent', 'rgba(14, 19, 13, 0.45)', 'rgba(14, 19, 13, 0.98)']}
+        style={StyleSheet.absoluteFillObject}
+        locations={[0, 0.35, 0.75]}
+      />
 
-      {/* Feature grid */}
-      <View style={s.featureGrid}>
-        {FEATURES.map((f, i) => (
-          <View key={i} style={[s.featureCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={[s.featureIcon, { backgroundColor: colors.primaryLight }]}>{React.cloneElement(f.icon as any, { color: colors.primary })}</View>
-            <Text style={[s.featureLabel, { color: colors.text }]}>{f.label}</Text>
-            <Text style={[s.featureSub, { color: colors.textMute }]}>{lang === 'sw' ? f.sub : f.label}</Text>
+      <View style={s.welcomeHeroContent}>
+        {/* Title */}
+        <Text style={s.welcomeHeroTitle}>{title}</Text>
+
+        {/* Description */}
+        <Text style={s.welcomeHeroSubtitle}>{subtitle}</Text>
+
+        {/* Get Started Button */}
+        <TouchableOpacity
+          onPress={onNext}
+          activeOpacity={0.88}
+          style={s.welcomeCtaBtn}
+          accessibilityRole="button"
+          accessibilityLabel={btnText}
+        >
+          <View style={s.welcomeCtaInner}>
+            <Text style={s.welcomeCtaText}>{btnText}</Text>
+            <View style={s.welcomeCtaArrowCircle}>
+              <ChevronRight size={18} color="#1A3B14" strokeWidth={3} />
+            </View>
           </View>
-        ))}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -982,5 +1017,56 @@ const s = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontFamily: 'Inter_700Bold',
+  },
+  // Welcome Splash Styles
+  welcomeHeroRoot: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+    justifyContent: 'flex-end',
+  },
+  welcomeHeroContent: {
+    paddingHorizontal: 28,
+    paddingBottom: Platform.OS === 'ios' ? 70 : 50,
+    gap: 20,
+  },
+  welcomeHeroTitle: {
+    color: '#FCFBF7',
+    fontSize: 42,
+    fontFamily: 'Inter_900Black',
+    lineHeight: 48,
+    letterSpacing: -1,
+  },
+  welcomeHeroSubtitle: {
+    color: 'rgba(252, 251, 247, 0.75)',
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 24,
+  },
+  welcomeCtaBtn: {
+    marginTop: 10,
+    backgroundColor: '#FCFBF7',
+    borderRadius: 30,
+    overflow: 'hidden',
+  },
+  welcomeCtaInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+  },
+  welcomeCtaText: {
+    color: '#1A3B14',
+    fontSize: 16,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 0.5,
+  },
+  welcomeCtaArrowCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(26, 59, 20, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
