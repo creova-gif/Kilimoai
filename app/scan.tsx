@@ -9,7 +9,8 @@ import {
   Image, 
   StatusBar, 
   Platform,
-  Alert
+  Alert,
+  Modal
 } from 'react-native';
 import { 
   X, 
@@ -25,14 +26,28 @@ import {
   Camera,
   CloudOff,
   CheckCircle2,
-  Activity
+  Activity,
+  Sun,
+  Leaf
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { 
+  FadeIn, 
+  FadeOut, 
+  FadeInDown, 
+  FadeInUp,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+  SlideInRight,
+  SlideOutLeft
+} from 'react-native-reanimated';
 import { useTasks } from '../hooks/useTasks';
 import { useNotifications } from '../hooks/useNotifications';
 import { useKilimoStore } from '../store/useKilimoStore';
@@ -65,6 +80,10 @@ export default function ScanScreen() {
   const agroId = useKilimoStore((s) => s.agroId);
   const language = useKilimoStore((s) => s.language);
 
+  // Custom Animated Tips State
+  const [showTipsModal, setShowTipsModal] = useState(false);
+  const [activeTipsStep, setActiveTipsStep] = useState(0);
+
   const [phase, setPhase] = useState<ScanPhase>('IDLE');
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [isOffline, setIsOffline] = useState(false); // Mock offline state
@@ -74,6 +93,56 @@ export default function ScanScreen() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   // Versioning so a stale vision response cannot overwrite a newer one
   const scanSeq = React.useRef(0);
+
+  // Scanning Tips Animation Shared Values
+  const tipsDistanceVal = useSharedValue(0);
+  const tipsLightVal = useSharedValue(0.5);
+  const tipsReticleVal = useSharedValue(1);
+
+  useEffect(() => {
+    if (showTipsModal) {
+      tipsDistanceVal.value = withRepeat(
+        withSequence(
+          withTiming(15, { duration: 1200 }),
+          withTiming(-15, { duration: 1200 })
+        ),
+        -1,
+        true
+      );
+      tipsLightVal.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 1000 }),
+          withTiming(0.4, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+      tipsReticleVal.value = withRepeat(
+        withSequence(
+          withTiming(1.15, { duration: 900 }),
+          withTiming(0.95, { duration: 900 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      tipsDistanceVal.value = 0;
+      tipsLightVal.value = 0.5;
+      tipsReticleVal.value = 1;
+    }
+  }, [showTipsModal]);
+
+  const animatedDistanceStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: tipsDistanceVal.value }]
+  }));
+
+  const animatedLightStyle = useAnimatedStyle(() => ({
+    opacity: tipsLightVal.value
+  }));
+
+  const animatedReticleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: tipsReticleVal.value }]
+  }));
 
   // Cycle through analysis text to feel agentic
   useEffect(() => {
@@ -611,7 +680,16 @@ export default function ScanScreen() {
                 </Animated.View>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.auxBtn} accessibilityRole="button" accessibilityLabel="Scanning tips" onPress={() => { Haptics.selectionAsync(); Alert.alert('Vidokezo vya Skanning', '• Hakikisha taa ya kutosha\n• Shika simu umbali wa sm 15-30\n• Zingatia majani yenye dalili\n• Epuka mwanga mkali nyuma\n• Piga picha moja kwa wakati mmoja'); }}>
+              <TouchableOpacity 
+                style={styles.auxBtn} 
+                accessibilityRole="button" 
+                accessibilityLabel="Scanning tips" 
+                onPress={() => { 
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setActiveTipsStep(0);
+                  setShowTipsModal(true); 
+                }}
+              >
                 <BlurView intensity={40} tint="dark" style={styles.auxInner}>
                   <Info size={24} color="#ffffff" />
                 </BlurView>
@@ -620,6 +698,182 @@ export default function ScanScreen() {
           )}
         
       </SafeAreaView>
+
+      {/* ── Custom Animated Scanner Tips Modal ────────────────── */}
+      <Modal
+        visible={showTipsModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowTipsModal(false)}
+      >
+        <View style={styles.tipsModalContainer}>
+          <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
+          
+          <BlurView 
+            intensity={isDark ? 30 : 80} 
+            tint={isDark ? "dark" : "light"} 
+            style={[styles.tipsSheet, { backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)', borderColor: colors.border }]}
+          >
+            {/* Grabber indicator */}
+            <View style={[styles.tipsSheetGrabber, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
+
+            {/* Header */}
+            <View style={styles.tipsHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Sparkles size={18} color={colors.primary} />
+                <Text style={[styles.tipsTitleText, { color: colors.text }]}>
+                  {language === 'sw' ? 'Vidokezo vya Uchunguzi' : 'AI Scanning Guidelines'}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setShowTipsModal(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close tips"
+                style={[styles.tipsCloseBtn, { borderColor: colors.border }]}
+              >
+                <X size={16} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Indicator Row */}
+            <View style={styles.tipsIndicatorRow}>
+              {[0, 1, 2].map((step) => {
+                const isActive = activeTipsStep === step;
+                return (
+                  <View 
+                    key={step} 
+                    style={[
+                      styles.tipsIndicatorBar, 
+                      { 
+                        backgroundColor: isActive ? colors.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
+                        flex: 1
+                      }
+                    ]} 
+                  />
+                );
+              })}
+            </View>
+
+            {/* Step Body */}
+            <View style={styles.tipsContentBox}>
+              {activeTipsStep === 0 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.tipsSlide}>
+                  {/* Distance Animation */}
+                  <View style={styles.tipsAnimWindow}>
+                    <Animated.View style={[styles.tipsPhoneContainer, animatedDistanceStyle]}>
+                      <Camera size={44} color={colors.primary} />
+                    </Animated.View>
+                    <Leaf size={48} color="#22c55e" style={styles.tipsLeafBg} />
+                  </View>
+                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>HATUA YA 1: UMBALI SAHIHI</Text>
+                  <Text style={[styles.tipsStepHeading, { color: colors.text }]}>
+                    {language === 'sw' ? 'Shika Simu sm 15-30' : 'Maintain 15-30cm Distance'}
+                  </Text>
+                  <Text style={[styles.tipsStepBody, { color: colors.textMute }]}>
+                    {language === 'sw' 
+                      ? 'Weka kamera ya simu yako umbali wa sm 15 hadi 30 (nusu rula) kutoka kwenye jani. Kaa karibu vya kutosha kuona maelezo lakini usikaribie sana hadi picha izibwe.'
+                      : 'Position your device camera 15 to 30 cm away from the target leaf. Close enough to capture fine details, but far enough to avoid lens distortion or shadows.'}
+                  </Text>
+                </Animated.View>
+              )}
+
+              {activeTipsStep === 1 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.tipsSlide}>
+                  {/* Lighting Animation */}
+                  <View style={styles.tipsAnimWindow}>
+                    <Animated.View style={[styles.tipsSunGlow, animatedLightStyle]}>
+                      <Sun size={52} color="#f59e0b" />
+                    </Animated.View>
+                  </View>
+                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>HATUA YA 2: MWANGA WA KUTOSHA</Text>
+                  <Text style={[styles.tipsStepHeading, { color: colors.text }]}>
+                    {language === 'sw' ? 'Mwangaza Mzuri wa Jua' : 'Ensure Optimal Lighting'}
+                  </Text>
+                  <Text style={[styles.tipsStepBody, { color: colors.textMute }]}>
+                    {language === 'sw' 
+                      ? 'Piga picha wakati kuna mwanga wa jua lakini epuka kivuli cha simu yako au mwili wako kuangukia kwenye jani. Usipige picha gizani.'
+                      : 'Take photos under bright, indirect sunlight. Ensure your own body shadow or device shadow does not drape over the leaf block.'}
+                  </Text>
+                </Animated.View>
+              )}
+
+              {activeTipsStep === 2 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.tipsSlide}>
+                  {/* Reticle / Anomaly Animation */}
+                  <View style={styles.tipsAnimWindow}>
+                    <Animated.View style={[styles.tipsReticleBox, animatedReticleStyle, { borderColor: colors.primary }]}>
+                      <View style={[styles.tipsReticleTarget, { backgroundColor: '#ef4444' }]} />
+                    </Animated.View>
+                    <Leaf size={48} color="#22c55e" style={styles.tipsLeafBgCenter} />
+                  </View>
+                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>HATUA YA 3: ZINGATIA ALAMA YA UGONJWA</Text>
+                  <Text style={[styles.tipsStepHeading, { color: colors.text }]}>
+                    {language === 'sw' ? 'Weka Doa Katikati' : 'Center the Leaf Anomaly'}
+                  </Text>
+                  <Text style={[styles.tipsStepBody, { color: colors.textMute }]}>
+                    {language === 'sw' 
+                      ? 'Lenga doa au sehemu iliyoathirika ya jani iwe katikati ya kisanduku cha kulenga. AI inategemea alama hiyo kufanya uchambuzi sahihi.'
+                      : 'Lock the camera focus precisely on the diseased spot or leaf damage. Centering the anomaly ensures the neural model scans the correct pixels.'}
+                  </Text>
+                </Animated.View>
+              )}
+            </View>
+
+            {/* Footer Buttons */}
+            <View style={styles.tipsFooter}>
+              {activeTipsStep > 0 ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setActiveTipsStep((prev) => prev - 1);
+                  }}
+                  style={[styles.tipsFooterBtnSec, { borderColor: colors.border }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Back"
+                >
+                  <Text style={[styles.tipsFooterBtnTextSec, { color: colors.text }]}>
+                    {language === 'sw' ? 'Nyuma' : 'Back'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={{ flex: 1 }} />
+              )}
+
+              {activeTipsStep < 2 ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    setActiveTipsStep((prev) => prev + 1);
+                  }}
+                  style={[styles.tipsFooterBtnPrim, { backgroundColor: colors.primary }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Next"
+                >
+                  <Text style={[styles.tipsFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}>
+                    {language === 'sw' ? 'Mbele' : 'Next'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    setShowTipsModal(false);
+                  }}
+                  style={[styles.tipsFooterBtnPrim, { backgroundColor: colors.primary }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Done"
+                >
+                  <Text style={[styles.tipsFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}>
+                    {language === 'sw' ? 'Nimeelewa' : 'Got It'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+          </BlurView>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -1069,5 +1323,152 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontFamily: 'Inter_700Bold',
+  },
+
+  // Tips Drawer Modal Styles
+  tipsModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  tipsSheet: {
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
+    borderWidth: 1.5,
+    borderBottomWidth: 0,
+    padding: 24,
+    paddingBottom: 40,
+    gap: 16,
+    maxHeight: '85%',
+  },
+  tipsSheetGrabber: {
+    width: 40,
+    height: 5,
+    borderRadius: 2.5,
+    alignSelf: 'center',
+    marginBottom: 8,
+  },
+  tipsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  tipsTitleText: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+  },
+  tipsCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tipsIndicatorRow: {
+    flexDirection: 'row',
+    height: 4,
+    gap: 6,
+    marginVertical: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  tipsIndicatorBar: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  tipsContentBox: {
+    minHeight: 280,
+    justifyContent: 'center',
+  },
+  tipsSlide: {
+    alignItems: 'center',
+    gap: 12,
+  },
+  tipsAnimWindow: {
+    height: 110,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    marginBottom: 8,
+  },
+  tipsPhoneContainer: {
+    zIndex: 2,
+  },
+  tipsLeafBg: {
+    position: 'absolute',
+    bottom: 20,
+    opacity: 0.8,
+  },
+  tipsSunGlow: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tipsReticleBox: {
+    width: 70,
+    height: 70,
+    borderRadius: 16,
+    borderWidth: 3,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  tipsReticleTarget: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+  },
+  tipsLeafBgCenter: {
+    position: 'absolute',
+    opacity: 0.6,
+  },
+  tipsStepBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1,
+  },
+  tipsStepHeading: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.3,
+    textAlign: 'center',
+  },
+  tipsStepBody: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+    textAlign: 'center',
+  },
+  tipsFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 10,
+    paddingHorizontal: 0,
+    paddingBottom: 0,
+  },
+  tipsFooterBtnPrim: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  tipsFooterBtnTextPrim: {
+    fontSize: 14,
+    fontFamily: 'Inter_900Black',
+  },
+  tipsFooterBtnSec: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  tipsFooterBtnTextSec: {
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
   },
 });

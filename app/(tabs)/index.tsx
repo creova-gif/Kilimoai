@@ -13,7 +13,9 @@ import {
   Pressable,
   Platform,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
+  Modal,
+  Alert
 } from 'react-native';
 import Animated, { 
   FadeInDown, 
@@ -21,7 +23,9 @@ import Animated, {
   useAnimatedStyle, 
   withRepeat, 
   withTiming, 
-  withSequence 
+  withSequence,
+  SlideInRight,
+  SlideOutLeft
 } from 'react-native-reanimated';
 import { 
   BrainCircuit, 
@@ -51,11 +55,13 @@ import {
   Globe
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { useTasks } from '../../hooks/useTasks';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Card } from '../../components/ui/Card';
 import { useSyncEngine } from '../../hooks/useSyncEngine';
@@ -428,6 +434,12 @@ export default function HomeScreen() {
   const unreadCount = useKilimoStore((s) => s.unreadCount);
   const farmProfile = useKilimoStore((s) => s.farmProfile);
   const language = useKilimoStore((s) => s.language);
+  const addNotification = useKilimoStore((s) => s.addNotification);
+  const { createTask } = useTasks();
+
+  // Guide Modal State
+  const [activeGuideModal, setActiveGuideModal] = useState(false);
+  const [activeGuideStep, setActiveGuideStep] = useState(0);
 
   // RAG Search State
   const [searchQuery, setSearchQuery] = useState('');
@@ -894,6 +906,47 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
+          {/* Farming Guides / Miongozo ya Kilimo */}
+          <Animated.View entering={FadeInDown.delay(100).springify()} style={{ marginVertical: 8 }}>
+            <Text style={[styles.bentoSectionTitle, { color: colors.textMute, marginLeft: 4 }]}>
+              {language === 'sw' ? 'MIONGOZO YA KILIMO' : 'FARMING GUIDES'}
+            </Text>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setActiveGuideStep(0);
+                setActiveGuideModal(true);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Mwongozo wa Kupanda Mahindi' : 'Maize Planting Guide'}
+              style={[styles.guideCard, { borderColor: colors.border, backgroundColor: colors.card }]}
+            >
+              <Image
+                source={require('../../assets/images/maize_planting_guide.png')}
+                style={styles.guideCardImage}
+              />
+              <LinearGradient
+                colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.85)']}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={styles.guideCardContent}>
+                <View style={[styles.guideBadge, { backgroundColor: colors.primary }]}>
+                  <Sparkles size={10} color="#FCFBF7" />
+                  <Text style={styles.guideBadgeText}>TARI RECOMMENDED</Text>
+                </View>
+                <Text style={styles.guideCardTitle}>
+                  {language === 'sw' ? 'Jinsi ya Kupanda Mahindi' : 'How to Plant Maize'}
+                </Text>
+                <Text style={styles.guideCardDesc}>
+                  {language === 'sw' 
+                    ? 'Mwongozo kamili wa nafasi, kina, mbolea na maandalizi ya udongo.' 
+                    : 'Full step-by-step guide on spacing, depth, fertilizing and soil prep.'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+
           {/* Growth Rate Chart */}
           <GrowthChart colors={colors} isDark={isDark} language={language} />
 
@@ -1144,12 +1197,257 @@ export default function HomeScreen() {
         </View>
         <View style={{ height: 110 }} />
       </ScrollView>
+
+      {/* ── Farming Guide Modal ────────────────────────────── */}
+      <Modal
+        visible={activeGuideModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setActiveGuideModal(false)}
+      >
+        <View style={styles.guideModalContainer}>
+          <BlurView intensity={35} tint="dark" style={StyleSheet.absoluteFill} />
+          <View style={[styles.guideModalContent, { backgroundColor: isDark ? '#0c0f0a' : '#FCFBF7', borderColor: colors.border }]}>
+            {/* Header */}
+            <View style={styles.guideModalHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Leaf size={20} color={colors.primary} />
+                <View>
+                  <Text style={[styles.guideModalTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Kupanda Mahindi' : 'Maize Planting Guide'}
+                  </Text>
+                  <Text style={[styles.guideModalSub, { color: colors.textMute }]}>
+                    {language === 'sw' ? 'Mwongozo wa Kilimo wa TARI' : 'TARI Agronomy Guideline'}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => setActiveGuideModal(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close Guide"
+                style={[styles.guideModalCloseBtn, { borderColor: colors.border }]}
+              >
+                <X size={20} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Steps Progress Indicator */}
+            <View style={styles.guideStepIndicatorRow}>
+              {[0, 1, 2, 3].map((step) => {
+                const isCompleted = activeGuideStep > step;
+                const isActive = activeGuideStep === step;
+                return (
+                  <View 
+                    key={step} 
+                    style={[
+                      styles.guideStepDot, 
+                      { 
+                        backgroundColor: isCompleted ? colors.primary : isActive ? colors.primary : (isDark ? '#2D352B' : '#E2E8DF'),
+                        flex: 1,
+                        height: 4,
+                        borderRadius: 2,
+                        marginHorizontal: 2
+                      }
+                    ]} 
+                  />
+                );
+              })}
+            </View>
+
+            {/* Active Step Panel */}
+            <View style={styles.guideStepContent}>
+              {activeGuideStep === 0 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
+                  {/* Visual animation - compost pile pulsing */}
+                  <View style={styles.animationContainer}>
+                    <View style={[styles.animatedCompostCircle, { backgroundColor: colors.primary + '20' }]}>
+                      <Leaf size={32} color={colors.primary} />
+                    </View>
+                  </View>
+                  <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 1: MAANDALIZI YA UDONGO</Text>
+                  <Text style={[styles.guideStepTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Kutayarisha Udongo & Rutuba' : 'Soil Preparation & Tillage'}
+                  </Text>
+                  <Text style={[styles.guideStepBody, { color: colors.text }]}>
+                    {language === 'sw' 
+                      ? 'Tayarisha shamba lako wiki 2-3 kabla ya msimu wa mvua kuanza ili kuruhusu udongo kupumua. Palilia na utishe udongo vizuri kwa kina cha kutosha. Changanya samadi au mboji tani 8-16 kwa hekta kuboresha unyevu na muundo wa udongo.'
+                      : 'Tillage and prepare your field 2-3 weeks before the onset of rains to allow aeration. Weed and loosen the soil. Incorporate 8-16 tonnes of compost or farmyard manure per hectare to enhance organic content.'}
+                  </Text>
+                </Animated.View>
+              )}
+
+              {activeGuideStep === 1 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
+                  {/* Visual animation - seed dropping */}
+                  <View style={styles.animationContainer}>
+                    <View style={styles.animatedSoilLayer}>
+                      {/* Spacing lines */}
+                      <View style={styles.spacingIndicatorLine} />
+                      <Text style={styles.spacingIndicatorText}>75cm</Text>
+                      {/* Seed dropping */}
+                      <View style={[styles.animatedSeed, { backgroundColor: '#F59E0B' }]} />
+                    </View>
+                  </View>
+                  <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 2: NAFASI NA KINA YA UPANDAJI</Text>
+                  <Text style={[styles.guideStepTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Nafasi ya Kupanda & Mbegu' : 'Planting Spacing & Seed Rate'}
+                  </Text>
+                  <Text style={[styles.guideStepBody, { color: colors.text }]}>
+                    {language === 'sw' 
+                      ? 'Chimba mashimo yenye kina cha sm 2-5. Weka nafasi ya sm 75 kati ya mistari ya mashimo na sm 25-30 kutoka shimo hadi shimo ndani ya mstari mmoja. Panda mbegu 2 kwa kila shimo; baadaye utapunguza na kubakiza mmea mmoja wenye nguvu.'
+                      : 'Dig planting holes at a depth of 2-5 cm. Space them exactly 75 cm between rows and 25-30 cm between plants within each row. Place 2 seeds per hole, then thin to 1 strong plant after germination.'}
+                  </Text>
+                </Animated.View>
+              )}
+
+              {activeGuideStep === 2 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
+                  {/* Visual animation - fertilizer placement */}
+                  <View style={styles.animationContainer}>
+                    <View style={styles.fertilizerPlacementDiagram}>
+                      <View style={[styles.animatedSeedStatic, { backgroundColor: '#F59E0B' }]} />
+                      <View style={[styles.animatedFertilizerStatic, { backgroundColor: colors.primary }]} />
+                      <View style={styles.fertilizerOffsetLine} />
+                      <Text style={styles.fertilizerOffsetText}>5cm</Text>
+                    </View>
+                  </View>
+                  <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 3: MBOLEA YA AWALI (BASAL)</Text>
+                  <Text style={[styles.guideStepTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Uwekaji wa Mbolea ya Kwanza' : 'Basal Fertilizer Placement'}
+                  </Text>
+                  <Text style={[styles.guideStepBody, { color: colors.text }]}>
+                    {language === 'sw' 
+                      ? 'Weka mbolea yenye Fosforasi (kama DAP, NPK 17-17-17, au Minjingu Nafaka) wakati wa kupanda. Weka kwenye shimo umbali wa sm 5 pembeni mwa mbegu na ufunike kwa udongo kabla ya kuweka mbegu ili kuzuia mizizi kuungua.'
+                      : 'Apply a phosphorus-rich fertilizer (like DAP, NPK 17-17-17, or Minjingu Nafaka) at planting. Place the fertilizer in a hole 5 cm away from the seed and cover with soil first to prevent direct seed contact.'}
+                  </Text>
+                </Animated.View>
+              )}
+
+              {activeGuideStep === 3 && (
+                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
+                  {/* Visual animation - growing maize shoot */}
+                  <View style={styles.animationContainer}>
+                    <View style={styles.growingMaizeContainer}>
+                      <View style={[styles.maizeShootLeaf1, { backgroundColor: colors.primary }]} />
+                      <View style={[styles.maizeShootLeaf2, { backgroundColor: colors.primary }]} />
+                      <View style={[styles.maizeShootStem, { backgroundColor: colors.primary }]} />
+                    </View>
+                  </View>
+                  <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 4: PALIZI NA MBOLEA YA JUU</Text>
+                  <Text style={[styles.guideStepTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Kupalilia & Uwekaji wa Urea' : 'Weeding & Top-Dressing'}
+                  </Text>
+                  <Text style={[styles.guideStepBody, { color: colors.text }]}>
+                    {language === 'sw' 
+                      ? 'Palilia shamba ndani ya wiki 2-3 baada ya kuota ili kuzuia magugu. Wiki ya 4-6 (urefu wa goti), weka mbolea ya Nitrojeni kama Urea au CAN (kilo 50 kwa ekari). Weka wakati udongo una unyevu na baada tu ya kupalilia.'
+                      : 'Weed the field 2-3 weeks post-germination. At week 4-6 (knee-high stage), apply nitrogen top-dressing such as Urea or CAN (50kg/acre). Ensure application is done immediately after weeding on moist soils.'}
+                  </Text>
+                </Animated.View>
+              )}
+            </View>
+
+            {/* Footer Buttons */}
+            <View style={styles.guideModalFooter}>
+              {activeGuideStep > 0 ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setActiveGuideStep((prev) => prev - 1);
+                  }}
+                  style={[styles.guideFooterBtnSec, { borderColor: colors.border }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Back"
+                >
+                  <Text style={[styles.guideFooterBtnTextSec, { color: colors.text }]}>
+                    {language === 'sw' ? 'Nyuma' : 'Back'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={{ flex: 1 }} />
+              )}
+
+              {activeGuideStep < 3 ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    setActiveGuideStep((prev) => prev + 1);
+                  }}
+                  style={[styles.guideFooterBtnPrim, { backgroundColor: colors.primary }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Next"
+                >
+                  <Text style={[styles.guideFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}>
+                    {language === 'sw' ? 'Mbele' : 'Next'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    // Add planting tasks to task list!
+                    createTask({
+                      title: 'Maize Planting: Land Preparation (TARI Guide)',
+                      titleSw: 'Upandaji Mahindi: Maandalizi ya Udongo',
+                      category: 'planting',
+                      priority: 'high',
+                      status: 'pending',
+                      xpReward: 25,
+                      dueDate: new Date(Date.now() + 24 * 3600_000).toISOString()
+                    });
+                    createTask({
+                      title: 'Maize Planting: Basal DAP/NPK Application',
+                      titleSw: 'Upandaji Mahindi: Kuweka Mbolea ya DAP/NPK',
+                      category: 'planting',
+                      priority: 'high',
+                      status: 'pending',
+                      xpReward: 30,
+                      dueDate: new Date(Date.now() + 2 * 24 * 3600_000).toISOString()
+                    });
+                    createTask({
+                      title: 'Maize Care: Weed Field and Apply Urea/CAN (Week 4)',
+                      titleSw: 'Matunzo ya Mahindi: Palizi na Urea/CAN',
+                      category: 'scouting',
+                      priority: 'critical',
+                      status: 'pending',
+                      xpReward: 40,
+                      dueDate: new Date(Date.now() + 28 * 24 * 3600_000).toISOString()
+                    });
+
+                    addNotification({
+                      title: language === 'sw' ? '📅 Ratiba ya Mahindi Imewekwa' : '📅 Maize Schedule Configured',
+                      body: language === 'sw' ? 'Kazi 3 za miongozo ya TARI zimeongezwa kwenye ratiba yako!' : '3 tasks from TARI planting guides have been added to your schedule!',
+                      type: 'success'
+                    });
+
+                    setActiveGuideModal(false);
+                    Alert.alert(
+                      language === 'sw' ? 'Kazi Zimeongezwa!' : 'Tasks Scheduled!',
+                      language === 'sw' 
+                        ? 'Ratiba ya kazi za kupanda mahindi kulingana na TARI imeongezwa kwenye ukurasa wako wa Kazi.'
+                        : 'A schedule of maize planting tasks matching TARI guidelines has been added to your Tasks tab.',
+                      [{ text: 'Sawa' }]
+                    );
+                  }}
+                  style={[styles.guideFooterBtnPrim, { backgroundColor: colors.primary }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Add to Tasks"
+                >
+                  <Text style={[styles.guideFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}>
+                    {language === 'sw' ? 'Weka Kazi' : 'Schedule Tasks'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  guideStepDot: {},
   scrollContent: { paddingTop: 0 },
   
   // Hero Styles
@@ -1913,5 +2211,272 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 16,
+  },
+
+  // Guide Card Styles
+  guideCard: {
+    borderRadius: 24,
+    height: 180,
+    overflow: 'hidden',
+    borderWidth: 1,
+    position: 'relative',
+    justifyContent: 'flex-end',
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  guideCardImage: {
+    ...StyleSheet.absoluteFillObject,
+    resizeMode: 'cover',
+  },
+  guideCardContent: {
+    zIndex: 2,
+    gap: 6,
+  },
+  guideBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
+    alignSelf: 'flex-start',
+  },
+  guideBadgeText: {
+    color: '#FCFBF7',
+    fontSize: 9,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
+  },
+  guideCardTitle: {
+    color: '#FCFBF7',
+    fontSize: 20,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+  },
+  guideCardDesc: {
+    color: 'rgba(252,251,247,0.8)',
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 16,
+  },
+
+  // Guide Modal Styles
+  guideModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  guideModalContent: {
+    width: SCREEN_WIDTH * 0.9,
+    borderRadius: 36,
+    borderWidth: 1.5,
+    padding: 24,
+    gap: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.3,
+    shadowRadius: 24,
+    elevation: 10,
+  },
+  guideModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  guideModalTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.5,
+  },
+  guideModalSub: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    marginTop: 2,
+  },
+  guideModalCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  guideStepIndicatorRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 2,
+    marginVertical: 4,
+  },
+  guideStepContent: {
+    minHeight: 280,
+    justifyContent: 'center',
+  },
+  guideStepSlide: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 12,
+  },
+  animationContainer: {
+    height: 100,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  animatedCompostCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  animatedSoilLayer: {
+    height: 60,
+    width: 200,
+    borderBottomWidth: 4,
+    borderColor: '#8B5A2B',
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  spacingIndicatorLine: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 20,
+    height: 2,
+    backgroundColor: '#3b82f6',
+    borderStyle: 'dashed',
+    borderWidth: 1,
+  },
+  spacingIndicatorText: {
+    position: 'absolute',
+    bottom: 26,
+    color: '#3b82f6',
+    fontSize: 10,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  animatedSeed: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    bottom: 10,
+  },
+  fertilizerPlacementDiagram: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 60,
+    width: 200,
+    borderBottomWidth: 4,
+    borderColor: '#8B5A2B',
+    position: 'relative',
+  },
+  animatedSeedStatic: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 40,
+  },
+  animatedFertilizerStatic: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  fertilizerOffsetLine: {
+    position: 'absolute',
+    left: 88,
+    right: 76,
+    bottom: 14,
+    height: 1,
+    backgroundColor: '#ef4444',
+  },
+  fertilizerOffsetText: {
+    position: 'absolute',
+    bottom: 20,
+    color: '#ef4444',
+    fontSize: 9,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  growingMaizeContainer: {
+    height: 80,
+    width: 80,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  maizeShootStem: {
+    width: 6,
+    height: 40,
+    borderRadius: 3,
+  },
+  maizeShootLeaf1: {
+    position: 'absolute',
+    width: 20,
+    height: 8,
+    borderRadius: 4,
+    transform: [{ rotate: '-30deg' }],
+    bottom: 28,
+    left: 18,
+  },
+  maizeShootLeaf2: {
+    position: 'absolute',
+    width: 20,
+    height: 8,
+    borderRadius: 4,
+    transform: [{ rotate: '30deg' }],
+    bottom: 34,
+    right: 18,
+  },
+  guideStepNumText: {
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 1,
+  },
+  guideStepTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    textAlign: 'center',
+    letterSpacing: -0.3,
+  },
+  guideStepBody: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+    textAlign: 'center',
+    opacity: 0.85,
+  },
+  guideModalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 10,
+  },
+  guideFooterBtnPrim: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  guideFooterBtnTextPrim: {
+    fontSize: 14,
+    fontFamily: 'Inter_900Black',
+  },
+  guideFooterBtnSec: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  guideFooterBtnTextSec: {
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
   },
 });

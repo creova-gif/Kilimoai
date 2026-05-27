@@ -80,29 +80,121 @@ const NeuralOrb = ({ color, size, x, y, delay = 0 }: any) => (
 );
 
 // ─── Planting timeline bar ─────────────────────────────────────────────────────
-function PlantingTimeline({ crop }: { crop: CropRec }) {
+function PlantingTimeline({ crop, language }: { crop: CropRec; language: 'en' | 'sw' }) {
+  const [activePhase, setActivePhase] = useState<'planting' | 'growing' | 'harvesting'>('planting');
   const total = crop.plantWeeks + crop.growWeeks + crop.harvestWeeks;
   const plantPct = (crop.plantWeeks / total) * 100;
   const growPct = (crop.growWeeks / total) * 100;
   const harvestPct = (crop.harvestWeeks / total) * 100;
+
   return (
     <View style={{ marginTop: 12 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-        <Text style={tl.label}>KALENDA YA KILIMO ({crop.daysToHarvest} siku)</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
+        <Text style={tl.label}>
+          {language === 'sw' ? `KALENDA YA KILIMO (${crop.daysToHarvest} siku)` : `AGRICULTURAL CALENDAR (${crop.daysToHarvest} days)`}
+        </Text>
+        <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#1A3B14' }}>
+          {language === 'sw' ? 'Gusa hatua kuona maelezo' : 'Tap phase for instructions'}
+        </Text>
       </View>
-      <View style={{ flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden', gap: 2 }}>
-        <Animated.View entering={FadeInDown} style={{ backgroundColor: '#22c55e', borderRadius: 5 }} />
-        <Animated.View entering={FadeInDown} style={{ backgroundColor: '#f59e0b', borderRadius: 5 }} />
-        <Animated.View entering={FadeInDown} style={{ backgroundColor: '#f97316', borderRadius: 5 }} />
+
+      {/* Interactive Timeline Bar */}
+      <View style={{ flexDirection: 'row', height: 16, borderRadius: 8, overflow: 'hidden', gap: 3, backgroundColor: 'transparent' }}>
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          onPress={() => { Haptics.selectionAsync(); setActivePhase('planting'); }}
+          style={{ width: `${plantPct}%`, height: '100%' }}
+          accessibilityRole="button"
+          accessibilityLabel="Planting Phase"
+        >
+          <View style={{ flex: 1, backgroundColor: '#22c55e', borderRadius: 4, opacity: activePhase === 'planting' ? 1.0 : 0.45 }} />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          onPress={() => { Haptics.selectionAsync(); setActivePhase('growing'); }}
+          style={{ width: `${growPct}%`, height: '100%' }}
+          accessibilityRole="button"
+          accessibilityLabel="Growth Phase"
+        >
+          <View style={{ flex: 1, backgroundColor: '#f59e0b', borderRadius: 4, opacity: activePhase === 'growing' ? 1.0 : 0.45 }} />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          onPress={() => { Haptics.selectionAsync(); setActivePhase('harvesting'); }}
+          style={{ width: `${harvestPct}%`, height: '100%' }}
+          accessibilityRole="button"
+          accessibilityLabel="Harvest Phase"
+        >
+          <View style={{ flex: 1, backgroundColor: '#f97316', borderRadius: 4, opacity: activePhase === 'harvesting' ? 1.0 : 0.45 }} />
+        </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', gap: 16, marginTop: 8 }}>
-        {[{ label: 'Upanzi', color: '#22c55e', weeks: crop.plantWeeks }, { label: 'Ukuaji', color: '#f59e0b', weeks: crop.growWeeks }, { label: 'Mavuno', color: '#f97316', weeks: crop.harvestWeeks }].map((phase) => (
-          <View key={phase.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+
+      {/* Legend Labels */}
+      <View style={{ flexDirection: 'row', gap: 16, marginTop: 10, marginBottom: 12 }}>
+        {[
+          { key: 'planting', label: language === 'sw' ? 'Upanzi' : 'Planting', color: '#22c55e', weeks: crop.plantWeeks },
+          { key: 'growing', label: language === 'sw' ? 'Ukuaji' : 'Growing', color: '#f59e0b', weeks: crop.growWeeks },
+          { key: 'harvesting', label: language === 'sw' ? 'Mavuno' : 'Harvest', color: '#f97316', weeks: crop.harvestWeeks }
+        ].map((phase) => (
+          <TouchableOpacity 
+            key={phase.key} 
+            onPress={() => { Haptics.selectionAsync(); setActivePhase(phase.key as any); }}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 4, opacity: activePhase === phase.key ? 1.0 : 0.5 }}
+            accessibilityRole="button"
+          >
             <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: phase.color }} />
-            <Text style={tl.phaseLbl}>{phase.label} ({phase.weeks}w)</Text>
-          </View>
+            <Text style={[tl.phaseLbl, activePhase === phase.key && { fontWeight: '800', color: '#1A3B14' }]}>
+              {phase.label} ({phase.weeks}w)
+            </Text>
+          </TouchableOpacity>
         ))}
       </View>
+
+      {/* Interactive Phase Info Box */}
+      <Animated.View 
+        entering={FadeInDown.springify()} 
+        key={activePhase}
+        style={tl.infoBox}
+      >
+        {activePhase === 'planting' && (
+          <View style={{ gap: 4 }}>
+            <Text style={[tl.infoTitle, { color: '#22c55e' }]}>
+              {language === 'sw' ? '1. Hatua ya Upanzi' : '1. Planting Phase'}
+            </Text>
+            <Text style={tl.infoBody}>
+              {language === 'sw'
+                ? `Inachukua wiki 1 hadi ${crop.plantWeeks}. Chimba mashimo kwa usawa, weka mbolea ya chini (basal DAP/NPK) na ufunike kwa udongo kidogo, kisha panda mbegu kwenye kina cha sm 2-5.`
+                : `Spans week 1 to ${crop.plantWeeks}. Dig holes, place basal phosphorus fertilizer (DAP/NPK) and cover with soil, then plant seeds at a depth of 2-5 cm.`}
+            </Text>
+          </View>
+        )}
+        {activePhase === 'growing' && (
+          <View style={{ gap: 4 }}>
+            <Text style={[tl.infoTitle, { color: '#f59e0b' }]}>
+              {language === 'sw' ? '2. Hatua ya Ukuaji na Matunzo' : '2. Growth & Crop Care'}
+            </Text>
+            <Text style={tl.infoBody}>
+              {language === 'sw'
+                ? `Inachukua wiki ${crop.growWeeks}. Palilia shamba ndani ya wiki 2-3 kuzuia ushindani wa virutubisho, na weka mbolea ya Urea/CAN wakati wa wiki ya 4-6 baada ya kuota wakati kuna unyevu.`
+                : `Spans ${crop.growWeeks} weeks. Keep weed-free in first 2-3 weeks, and apply nitrogen top-dressing (Urea/CAN) at week 4-6 on moist soil after weeding.`}
+            </Text>
+          </View>
+        )}
+        {activePhase === 'harvesting' && (
+          <View style={{ gap: 4 }}>
+            <Text style={[tl.infoTitle, { color: '#f97316' }]}>
+              {language === 'sw' ? '3. Hatua ya Mavuno na Kuhifadhi' : '3. Harvesting & Storage'}
+            </Text>
+            <Text style={tl.infoBody}>
+              {language === 'sw'
+                ? `Inachukua wiki ${crop.harvestWeeks}. Mavuno bora hufanyika siku ya ${crop.daysToHarvest}. Kausha mazao yako vizuri kwenye unyevu wa chini ya 15% kuzuia sumu ya kuvu (aflatoxin).`
+                : `Spans ${crop.harvestWeeks} weeks. Dry grains properly below 15% moisture content to prevent mold or aflatoxin contamination.`}
+            </Text>
+          </View>
+        )}
+      </Animated.View>
     </View>
   );
 }
@@ -110,6 +202,27 @@ function PlantingTimeline({ crop }: { crop: CropRec }) {
 const tl = StyleSheet.create({
   label: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1.5, color: '#6b7280' },
   phaseLbl: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#6b7280' },
+  infoBox: {
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: 'rgba(26,59,20,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(26,59,20,0.12)',
+    marginTop: 2,
+    marginBottom: 8,
+  },
+  infoTitle: {
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  infoBody: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+    color: '#4b5563',
+  }
 });
 
 // ─── Water / risk badge ────────────────────────────────────────────────────────
@@ -122,6 +235,7 @@ export default function CropPlanningScreen() {
   const router = useRouter();
   const { createTask } = useTasks();
   const addNotification = useKilimoStore((s) => s.addNotification);
+  const language = useKilimoStore((s) => s.language);
   const [season, setSeason] = useState<Season>('masika');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [planning, setPlanning] = useState<Record<string, boolean>>({});
@@ -292,7 +406,7 @@ export default function CropPlanningScreen() {
                             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
                             {/* Planting timeline */}
-                            <PlantingTimeline crop={crop} />
+                            <PlantingTimeline crop={crop} language={language} />
 
                             {/* Tips */}
                             <Text style={[styles.tipsTitle, { color: colors.textMute }]}>VIDOKEZO VYA AI</Text>

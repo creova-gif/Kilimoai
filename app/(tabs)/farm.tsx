@@ -40,6 +40,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  withSequence,
+  FadeIn,
+  FadeInDown
+} from 'react-native-reanimated';
+
+const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
+const AnimatedG = Animated.createAnimatedComponent(G);
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -166,6 +178,34 @@ export default function FarmHub() {
   const [activeFilter, setActiveFilter] = useState<MapFilter>('productivity');
   const [zoomLevel, setZoomLevel] = useState<number>(1.0);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Pulsing Warnings Shared Values
+  const pulseVal = useSharedValue(0.9);
+  const pulseOpacity = useSharedValue(0.7);
+
+  React.useEffect(() => {
+    pulseVal.value = withRepeat(
+      withSequence(
+        withTiming(1.25, { duration: 900 }),
+        withTiming(0.9, { duration: 900 })
+      ),
+      -1,
+      true
+    );
+    pulseOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.3, { duration: 900 }),
+        withTiming(0.7, { duration: 900 })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedPulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseVal.value }],
+    opacity: pulseOpacity.value,
+  }));
 
   // Localized Farm Name
   const farmName = useMemo(() => {
@@ -310,93 +350,95 @@ export default function FarmHub() {
 
           {/* ── SVG Map Visualizer ───────────────────────────────── */}
           <View style={styles.mapContainer}>
-            <Svg viewBox={viewBox} style={StyleSheet.absoluteFill}>
-              {/* Grid Overlay / Terrain lines */}
-              <G opacity={isDark ? 0.08 : 0.15}>
-                <Path d="M 0 50 Q 100 80, 200 40 T 350 70" stroke={colors.text} strokeWidth="1" fill="none" />
-                <Path d="M 0 120 Q 150 140, 250 90 T 350 110" stroke={colors.text} strokeWidth="1" fill="none" />
-                <Path d="M 0 200 Q 100 230, 220 180 T 350 210" stroke={colors.text} strokeWidth="1" fill="none" />
-                <Path d="M 0 290 Q 120 310, 260 270 T 350 280" stroke={colors.text} strokeWidth="1" fill="none" />
-                <Path d="M 0 370 Q 110 390, 240 360 T 350 370" stroke={colors.text} strokeWidth="1" fill="none" />
-              </G>
+            <Animated.View entering={FadeIn.duration(800)} style={StyleSheet.absoluteFill}>
+              <Svg viewBox={viewBox} style={StyleSheet.absoluteFill}>
+                {/* Grid Overlay / Terrain lines */}
+                <G opacity={isDark ? 0.08 : 0.15}>
+                  <Path d="M 0 50 Q 100 80, 200 40 T 350 70" stroke={colors.text} strokeWidth="1" fill="none" />
+                  <Path d="M 0 120 Q 150 140, 250 90 T 350 110" stroke={colors.text} strokeWidth="1" fill="none" />
+                  <Path d="M 0 200 Q 100 230, 220 180 T 350 210" stroke={colors.text} strokeWidth="1" fill="none" />
+                  <Path d="M 0 290 Q 120 310, 260 270 T 350 280" stroke={colors.text} strokeWidth="1" fill="none" />
+                  <Path d="M 0 370 Q 110 390, 240 360 T 350 370" stroke={colors.text} strokeWidth="1" fill="none" />
+                </G>
 
-              {/* Road representation */}
-              <Path
-                d="M 0 180 Q 180 200, 350 240"
-                stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}
-                strokeWidth="10"
-                fill="none"
-              />
-              <Path
-                d="M 0 180 Q 180 200, 350 240"
-                stroke={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                fill="none"
-              />
+                {/* Road representation */}
+                <Path
+                  d="M 0 180 Q 180 200, 350 240"
+                  stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}
+                  strokeWidth="10"
+                  fill="none"
+                />
+                <Path
+                  d="M 0 180 Q 180 200, 350 240"
+                  stroke={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}
+                  strokeWidth="2"
+                  strokeDasharray="4 4"
+                  fill="none"
+                />
 
-              {/* River representation */}
-              <Path
-                d="M 120 0 C 135 100, 150 220, 185 420"
-                stroke="#2563EB"
-                strokeWidth="3"
-                opacity={isDark ? 0.3 : 0.4}
-                fill="none"
-              />
+                {/* River representation */}
+                <Path
+                  d="M 120 0 C 135 100, 150 220, 185 420"
+                  stroke="#2563EB"
+                  strokeWidth="3"
+                  opacity={isDark ? 0.3 : 0.4}
+                  fill="none"
+                />
 
-              {/* Zone Polygons */}
-              {filteredZones.map((zone) => {
-                const isSelected = activeZoneId === zone.id;
-                const fillColor = getZoneColor(zone);
+                {/* Zone Polygons */}
+                {filteredZones.map((zone) => {
+                  const isSelected = activeZoneId === zone.id;
+                  const fillColor = getZoneColor(zone);
 
-                return (
-                  <G key={zone.id}>
-                    <Polygon
-                      points={zone.points}
-                      fill={fillColor}
-                      fillOpacity={isSelected ? 0.75 : 0.35}
-                      stroke={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
-                      strokeWidth={isSelected ? '3.5' : '1.5'}
-                      onPress={() => handleZoneSelect(zone.id)}
-                    />
-                    
-                    {/* Zone ID label */}
-                    <SvgText
-                      x={zone.center.x}
-                      y={zone.center.y}
-                      fill="#FFFFFF"
-                      fontSize="10"
-                      fontWeight="bold"
-                      textAnchor="middle"
-                      pointerEvents="none"
-                      opacity={isSelected ? 1.0 : 0.7}
-                    >
-                      {language === 'sw' ? `Kanda ${zone.id}` : `Zone ${zone.id}`}
-                    </SvgText>
-                    
-                    {/* Crop indicator under text */}
-                    <SvgText
-                      x={zone.center.x}
-                      y={zone.center.y + 11}
-                      fill="rgba(255,255,255,0.8)"
-                      fontSize="8"
-                      textAnchor="middle"
-                      pointerEvents="none"
-                    >
-                      {language === 'sw' ? zone.cropSw : zone.cropEn}
-                    </SvgText>
-                  </G>
-                );
-              })}
-            </Svg>
+                  return (
+                    <G key={zone.id}>
+                      <AnimatedPolygon
+                        points={zone.points}
+                        fill={fillColor}
+                        fillOpacity={isSelected ? 0.75 : 0.35}
+                        stroke={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
+                        strokeWidth={isSelected ? 3.5 : 1.5}
+                        onPress={() => handleZoneSelect(zone.id)}
+                      />
+                      
+                      {/* Zone ID label */}
+                      <SvgText
+                        x={zone.center.x}
+                        y={zone.center.y}
+                        fill="#FFFFFF"
+                        fontSize="10"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        pointerEvents="none"
+                        opacity={isSelected ? 1.0 : 0.7}
+                      >
+                        {language === 'sw' ? `Kanda ${zone.id}` : `Zone ${zone.id}`}
+                      </SvgText>
+                      
+                      {/* Crop indicator under text */}
+                      <SvgText
+                        x={zone.center.x}
+                        y={zone.center.y + 11}
+                        fill="rgba(255,255,255,0.8)"
+                        fontSize="8"
+                        textAnchor="middle"
+                        pointerEvents="none"
+                      >
+                        {language === 'sw' ? zone.cropSw : zone.cropEn}
+                      </SvgText>
+                    </G>
+                  );
+                })}
+              </Svg>
+            </Animated.View>
 
             {/* ── Map HUD Floating Indicators (tethers on map zones) ── */}
             {/* Zone 8 Droplets / Humidity Indicator */}
             {filteredZones.some(z => z.id === 8) && (
               <View style={[styles.hudBadge, { left: 90 * zoomLevel, top: 180 * zoomLevel }]}>
-                <View style={styles.hudBadgeIcon}>
+                <Animated.View style={[styles.hudBadgeIcon, animatedPulseStyle]}>
                   <Droplets size={10} color="#3b82f6" />
-                </View>
+                </Animated.View>
                 <Text style={styles.hudBadgeText}>{language === 'sw' ? 'Unyevu 82%' : '82% Humidity'}</Text>
               </View>
             )}
@@ -404,6 +446,7 @@ export default function FarmHub() {
             {/* Zone 12 Low Nitrogen warning banner */}
             {filteredZones.some(z => z.id === 12) && (
               <View style={[styles.hudLabel, { left: 210 * zoomLevel, top: 110 * zoomLevel }]}>
+                <Animated.View style={[styles.hudLabelPulse, animatedPulseStyle]} />
                 <Text style={styles.hudLabelText}>{language === 'sw' ? 'Nitrojeni Chini' : 'Low Nitrogen'}</Text>
               </View>
             )}
@@ -412,9 +455,12 @@ export default function FarmHub() {
             {filteredZones.some(z => z.id === 5) && (
               <TouchableOpacity
                 onPress={() => handleZoneSelect(5)}
-                style={[styles.hudWarningDot, { left: 240 * zoomLevel, top: 250 * zoomLevel }]}
+                style={[styles.hudWarningDotContainer, { left: 240 * zoomLevel, top: 250 * zoomLevel }]}
               >
-                <AlertTriangle size={12} color="#FFFFFF" />
+                <Animated.View style={[styles.hudWarningRingPulse, animatedPulseStyle]} />
+                <View style={styles.hudWarningDot}>
+                  <AlertTriangle size={12} color="#FFFFFF" />
+                </View>
               </TouchableOpacity>
             )}
 
@@ -831,5 +877,30 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     zIndex: 30,
+  },
+
+  // Map HUD Pulsing Indicator Styles
+  hudLabelPulse: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#EA580C',
+    backgroundColor: 'rgba(234, 88, 12, 0.15)',
+  },
+  hudWarningDotContainer: {
+    position: 'absolute',
+    width: 22,
+    height: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  hudWarningRingPulse: {
+    position: 'absolute',
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 2,
+    borderColor: '#EA580C',
+    backgroundColor: 'rgba(234, 88, 12, 0.25)',
   },
 });
