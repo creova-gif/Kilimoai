@@ -38,6 +38,7 @@ const AUTH_ILLUSTRATION = require('../assets/images/onboarding_auth.png');
 const ROLES_ILLUSTRATION = require('../assets/images/onboarding_roles.png');
 const PROFILE_ILLUSTRATION = require('../assets/images/onboarding_profile.png');
 const DONE_ILLUSTRATION = require('../assets/images/onboarding_done.png');
+const WELCOME_BG = require('../assets/images/welcome_bg.png');
 
 const REGIONS = [
   'Arusha', 'Dar es Salaam', 'Dodoma', 'Geita', 'Iringa', 
@@ -261,32 +262,49 @@ export default function OnboardingWizard() {
       <View style={[s.root, { backgroundColor: colors.background }]}>
         <StatusBar barStyle="light-content" />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <WelcomeStep lang={lang} setLang={setLang} crops={crops} toggleCrop={toggleCrop} onNext={next} />
+          <WelcomeStep lang={lang} setLang={setLang} onNext={next} />
         </KeyboardAvoidingView>
       </View>
     );
   }
 
+  // Determine full-screen background image for current step
+  const stepBgImage = useMemo(() => {
+    switch (step) {
+      case 1:
+      case 2:
+        return AUTH_ILLUSTRATION;
+      case 3:
+        return ROLES_ILLUSTRATION;
+      case 4:
+      case 5:
+        return PROFILE_ILLUSTRATION;
+      case 6:
+        return DONE_ILLUSTRATION;
+      default:
+        return WELCOME_BG;
+    }
+  }, [step]);
+
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
 
-      {/* Background gradient */}
-      <LinearGradient
-        colors={isDark ? ['#080A08', '#122617', '#080A08'] : ['#FAF7F0', '#F2ECE0', '#FAF7F0']}
-        locations={[0, 0.55, 1]}
-        style={StyleSheet.absoluteFill}
+      {/* Dynamic Background Image */}
+      <Image
+        source={stepBgImage}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
       />
 
-      {/* Decorative orbs */}
-      <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <View style={[s.orb, { backgroundColor: colors.primary, width: 320, height: 320, top: -100, right: -120, opacity: 0.07 }]} />
-        <View style={[s.orb, { backgroundColor: colors.primaryDark, width: 280, height: 280, bottom: 80, left: -120, opacity: 0.08 }]} />
-        <View style={[s.orb, { backgroundColor: colors.glow, width: 200, height: 200, bottom: -60, right: -60, opacity: 0.05 }]} />
-        {/* Subtle grid lines */}
-        <View style={s.gridLine1} />
-        <View style={s.gridLine2} />
-      </View>
+      {/* Dark/Light overlay gradient for text and input readability */}
+      <LinearGradient
+        colors={isDark 
+          ? ['rgba(0,0,0,0.55)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.85)'] 
+          : ['rgba(255,255,255,0.55)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0.85)']
+        }
+        style={StyleSheet.absoluteFillObject}
+      />
 
       <SafeAreaView style={{ flex: 1 }}>
         {/* ── Progress + nav bar ───────── */}
@@ -412,74 +430,36 @@ export default function OnboardingWizard() {
 // ─────────────────────────────────────────────────────────────
 // Step 0 — Welcome
 // ─────────────────────────────────────────────────────────────
-function WelcomeStep({ lang, setLang, crops, toggleCrop, onNext }: any) {
+// Step 0 — Welcome Redesigned
+// ─────────────────────────────────────────────────────────────
+function WelcomeStep({ lang, setLang, onNext }: any) {
   const { colors, isDark } = useTheme();
 
   // Localized strings
-  const title = lang === 'sw' ? 'Boresha Kilimo Chako\nkwa Teknolojia ya AI' : 'Grow Smarter with\nAI-Powered Farming';
+  const titleLine1 = lang === 'sw' ? 'KILIMO CHAKO,' : 'YOUR FARM,';
+  const titleLine2 = lang === 'sw' ? 'KWA AKILI.' : 'SMARTER.';
   const subtitle = lang === 'sw'
     ? 'Fuatilia afya ya mazao, gundua magonjwa, na upate bei za soko kwa ushauri wa AI mkononi mwako.'
-    : 'Monitor crop health, diagnose diseases, and access live market prices with AI at your fingertips.';
+    : 'Monitor crop health, optimize resources, and increase yield with data driven insights.';
   const btnText = lang === 'sw' ? 'Anza Sasa' : 'Get Started';
-  const cropTitle = lang === 'sw' ? 'Chagua Mazao ya Maslahi:' : 'Select Crops of Interest:';
-
-  // Animation values for subtle motion illustration (pulsing leaf diagnostic rings)
-  const pulseValue = useSharedValue(1);
-  const ringScale = useSharedValue(1);
-  const ringOpacity = useSharedValue(0.6);
-
-  React.useEffect(() => {
-    pulseValue.value = withRepeat(
-      withSequence(
-        withTiming(1.08, { duration: 1200, easing: Easing.ease }),
-        withTiming(1.0, { duration: 1200, easing: Easing.ease })
-      ),
-      -1,
-      true
-    );
-
-    ringScale.value = withRepeat(
-      withTiming(2.2, { duration: 2400, easing: Easing.out(Easing.ease) }),
-      -1,
-      false
-    );
-
-    ringOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.6, { duration: 0 }),
-        withTiming(0, { duration: 2400, easing: Easing.out(Easing.ease) })
-      ),
-      -1,
-      false
-    );
-  }, []);
-
-  const animatedIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: pulseValue.value }]
-    };
-  });
-
-  const animatedRingStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: ringScale.value }],
-      opacity: ringOpacity.value
-    };
-  });
-
-  const basicCrops = ['Mahindi (Maize)', 'Mpunga (Rice)', 'Nyanya (Tomatoes)', 'Maharage (Beans)'];
 
   return (
     <View style={s.welcomeHeroRoot}>
-      {/* Background Gradient */}
+      {/* Background Image */}
+      <Image
+        source={WELCOME_BG}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      />
+      {/* Dark overlay to make text highly readable */}
       <LinearGradient
-        colors={isDark ? ['#050805', '#0f2012', '#050805'] : ['#f8fafc', '#e2e8f0', '#f8fafc']}
+        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.85)']}
         style={StyleSheet.absoluteFillObject}
       />
 
       {/* Floating Language Switcher */}
       <SafeAreaView style={s.welcomeLangSafeArea}>
-        <BlurView intensity={Platform.OS === 'ios' ? 25 : 80} tint={isDark ? "dark" : "light"} style={s.welcomeLangBlur}>
+        <BlurView intensity={Platform.OS === 'ios' ? 25 : 80} tint="dark" style={s.welcomeLangBlur}>
           {(['sw', 'en'] as const).map((L) => {
             const active = lang === L;
             return (
@@ -503,70 +483,33 @@ function WelcomeStep({ lang, setLang, crops, toggleCrop, onNext }: any) {
         </BlurView>
       </SafeAreaView>
 
-      <ScrollView contentContainerStyle={s.welcomeScroll} showsVerticalScrollIndicator={false}>
-        {/* Subtle Motion Illustration (Pulsing Leaf & diagnostic scan ring) */}
-        <View style={s.illustrationContainer}>
-          <Animated.View style={[s.pulseRing, { borderColor: colors.primary }, animatedRingStyle]} />
-          <Animated.View style={[s.iconCircle, { backgroundColor: isDark ? 'rgba(26,59,20,0.3)' : 'rgba(26,59,20,0.1)', borderColor: colors.primary }, animatedIconStyle]}>
-            <Sprout size={48} color={colors.primary} />
-          </Animated.View>
+      <View style={s.welcomeHeroContent}>
+        {/* Headline Value Prop */}
+        <View style={{ gap: 4 }}>
+          <Text style={s.welcomeHeroTitle}>{titleLine1}</Text>
+          <Text style={s.welcomeHeroTitle}>{titleLine2}</Text>
         </View>
 
-        <View style={s.welcomeHeroContent}>
-          {/* Headline Value Prop */}
-          <Text style={[s.welcomeHeroTitle, { color: colors.text }]}>{title}</Text>
+        {/* Description */}
+        <Text style={s.welcomeHeroSubtitle}>{subtitle}</Text>
 
-          {/* Description */}
-          <Text style={[s.welcomeHeroSubtitle, { color: colors.textMute }]}>{subtitle}</Text>
-
-          {/* Basic Crop Interest Selector */}
-          <View style={s.cropInterestContainer}>
-            <Text style={[s.cropInterestTitle, { color: colors.text }]}>{cropTitle}</Text>
-            <View style={s.cropInterestGrid}>
-              {basicCrops.map((c) => {
-                const isSelected = crops.includes(c);
-                return (
-                  <TouchableOpacity
-                    key={c}
-                    style={[
-                      s.cropChip,
-                      {
-                        borderColor: isSelected ? colors.primary : colors.border,
-                        backgroundColor: isSelected
-                          ? (isDark ? 'rgba(26,59,20,0.2)' : 'rgba(26,59,20,0.08)')
-                          : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)')
-                      }
-                    ]}
-                    onPress={() => toggleCrop(c)}
-                    accessibilityRole="checkbox"
-                    accessibilityState={{ checked: isSelected }}
-                  >
-                    <Text style={[s.cropChipText, { color: isSelected ? colors.text : colors.textMute }]}>
-                      {c}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+        {/* Get Started Button matching screenshot */}
+        <TouchableOpacity
+          onPress={onNext}
+          activeOpacity={0.88}
+          style={[s.welcomeCtaBtn, { backgroundColor: '#5DA035' }]}
+          accessibilityRole="button"
+          accessibilityLabel={btnText}
+        >
+          <View style={s.welcomeCtaInner}>
+            <View style={s.welcomeArrowCircle}>
+              <ChevronRight size={18} color="#1A3B14" strokeWidth={3.5} />
             </View>
+            <Text style={s.welcomeCtaText}>{btnText}</Text>
+            <Text style={s.welcomeCarats}>&gt;&gt;&gt;</Text>
           </View>
-
-          {/* Get Started Button */}
-          <TouchableOpacity
-            onPress={onNext}
-            activeOpacity={0.88}
-            style={[s.welcomeCtaBtn, { backgroundColor: colors.primary }]}
-            accessibilityRole="button"
-            accessibilityLabel={btnText}
-          >
-            <View style={s.welcomeCtaInner}>
-              <Text style={s.welcomeCtaText}>{btnText}</Text>
-              <View style={s.welcomeCtaArrowCircle}>
-                <ChevronRight size={18} color="#fff" strokeWidth={3} />
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -582,8 +525,11 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
   );
 
   return (
-    <View style={s.stepRoot}>
-      <Image source={AUTH_ILLUSTRATION} style={s.stepIllustration} resizeMode="cover" />
+    <BlurView
+      intensity={Platform.OS === 'ios' ? 25 : 80}
+      tint={isDark ? "dark" : "light"}
+      style={[s.glassCard, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(8,12,8,0.45)' : 'rgba(255,255,255,0.45)' }]}
+    >
       <Text style={[s.h1, { color: colors.text }]}>
         {authMethod === 'phone'
           ? (lang === 'sw' ? 'Namba yako ya simu' : 'Your Phone Number')
@@ -680,7 +626,7 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
           {lang === 'sw' ? 'Ruka Uthibitishaji (Njia ya Jaribio)' : 'Bypass Authentication (Demo Mode)'}
         </Text>
       </TouchableOpacity>
-    </View>
+    </BlurView>
   );
 }
 
@@ -713,7 +659,11 @@ function OtpStep({ otp, setOtp, lang, contact, onResend }: any) {
     : (isEmail ? `Enter the 6-digit code we sent to your email: ${contact}` : `Enter the 6-digit code we sent to your phone: ${contact}`);
 
   return (
-    <View style={s.stepRoot}>
+    <BlurView
+      intensity={Platform.OS === 'ios' ? 25 : 80}
+      tint={isDark ? "dark" : "light"}
+      style={[s.glassCard, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(8,12,8,0.45)' : 'rgba(255,255,255,0.45)' }]}
+    >
       <Text style={[s.h1, { color: colors.text }]}>{lang === 'sw' ? 'Namba ya siri' : 'Secret Code'}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{descText}</Text>
 
@@ -755,7 +705,7 @@ function OtpStep({ otp, setOtp, lang, contact, onResend }: any) {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </BlurView>
   );
 }
 
@@ -765,8 +715,11 @@ function OtpStep({ otp, setOtp, lang, contact, onResend }: any) {
 function RoleStep({ t, role, setRole }: any) {
   const { colors, isDark } = useTheme();
   return (
-    <View style={s.stepRoot}>
-      <Image source={ROLES_ILLUSTRATION} style={s.stepIllustration} resizeMode="cover" />
+    <BlurView
+      intensity={Platform.OS === 'ios' ? 25 : 80}
+      tint={isDark ? "dark" : "light"}
+      style={[s.glassCard, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(8,12,8,0.45)' : 'rgba(255,255,255,0.45)' }]}
+    >
       <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
       <View style={{ gap: 8, marginTop: 20 }}>
@@ -798,7 +751,7 @@ function RoleStep({ t, role, setRole }: any) {
           );
         })}
       </View>
-    </View>
+    </BlurView>
   );
 }
 
@@ -809,8 +762,11 @@ function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, a
   const { colors, isDark } = useTheme();
 
   return (
-    <View style={s.stepRoot}>
-      <Image source={PROFILE_ILLUSTRATION} style={s.stepIllustration} resizeMode="cover" />
+    <BlurView
+      intensity={Platform.OS === 'ios' ? 25 : 80}
+      tint={isDark ? "dark" : "light"}
+      style={[s.glassCard, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(8,12,8,0.45)' : 'rgba(255,255,255,0.45)' }]}
+    >
       <Text style={[s.h1, { color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { color: colors.textMute }]}>{t.subtitle}</Text>
 
@@ -945,7 +901,7 @@ function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, a
           accessibilityState={{ checked: hasIrrigation }}
         />
       </View>
-    </View>
+    </BlurView>
   );
 }
 
@@ -957,11 +913,12 @@ function DoneStep({ t, name, role, lang }: any) {
   const { colors, isDark } = useTheme();
 
   return (
-    <View style={[s.stepRoot, { alignItems: 'center', paddingTop: 16 }]}>
-      {/* Success Badge Illustration */}
-      <Image source={DONE_ILLUSTRATION} style={s.doneIllustration} resizeMode="cover" />
-
-      <Text style={[s.h1, { textAlign: 'center', marginTop: 24, color: colors.text }]}>{t.title}</Text>
+    <BlurView
+      intensity={Platform.OS === 'ios' ? 25 : 80}
+      tint={isDark ? "dark" : "light"}
+      style={[s.glassCard, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(8,12,8,0.45)' : 'rgba(255,255,255,0.45)' }]}
+    >
+      <Text style={[s.h1, { textAlign: 'center', color: colors.text }]}>{t.title}</Text>
       <Text style={[s.sub, { textAlign: 'center', color: colors.textMute }]}>{t.subtitle}</Text>
 
       {/* ID card preview */}
@@ -986,7 +943,7 @@ function DoneStep({ t, name, role, lang }: any) {
           {lang === 'sw' ? '🌿 Agro ID yako imesajiliwa' : '🌿 Your Agro ID is registered'}
         </Text>
       </LinearGradient>
-    </View>
+    </BlurView>
   );
 }
 
@@ -1177,31 +1134,41 @@ const s = StyleSheet.create({
     lineHeight: 24,
   },
   welcomeCtaBtn: {
-    marginTop: 10,
-    backgroundColor: '#FCFBF7',
-    borderRadius: 30,
+    marginTop: 20,
+    borderRadius: 35,
     overflow: 'hidden',
+    height: 64,
+    justifyContent: 'center',
+    width: '100%',
   },
   welcomeCtaInner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: 8,
   },
   welcomeCtaText: {
-    color: '#1A3B14',
-    fontSize: 16,
+    color: '#FCFBF7',
+    fontSize: 18,
     fontFamily: 'Inter_900Black',
     letterSpacing: 0.5,
+    flex: 1,
+    textAlign: 'center',
   },
-  welcomeCtaArrowCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(26, 59, 20, 0.1)',
+  welcomeArrowCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FCFBF7',
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 4,
+  },
+  welcomeCarats: {
+    color: 'rgba(252, 251, 247, 0.4)',
+    fontSize: 16,
+    fontFamily: 'Inter_800ExtraBold',
+    marginRight: 20,
   },
   welcomeLangSafeArea: {
     position: 'absolute',
@@ -1307,13 +1274,25 @@ const s = StyleSheet.create({
     borderRadius: 24,
     marginBottom: 16,
   },
+  glassCard: {
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 20,
+    marginTop: 8,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
 });
 
 function VerificationStep({ lang, idType, setIdType, nida, setNida, license, setLicense, tin, setTin }: any) {
   const { colors, isDark } = useTheme();
 
   return (
-    <View style={s.stepRoot}>
+    <BlurView
+      intensity={Platform.OS === 'ios' ? 25 : 80}
+      tint={isDark ? "dark" : "light"}
+      style={[s.glassCard, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(8,12,8,0.45)' : 'rgba(255,255,255,0.45)' }]}
+    >
       <Text style={[s.h1, { color: colors.text }]}>
         {lang === 'sw' ? 'Uthibitisho wa Kitambulisho' : 'Identity Verification'}
       </Text>
@@ -1409,6 +1388,6 @@ function VerificationStep({ lang, idType, setIdType, nida, setNida, license, set
           </Text>
         </View>
       )}
-    </View>
+    </BlurView>
   );
 }
