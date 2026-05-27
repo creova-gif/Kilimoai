@@ -34,6 +34,7 @@ import { useTheme } from '../constants/Theme';
 import Animated, { FadeIn, FadeOut, SlideInDown } from 'react-native-reanimated';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { WebView } from 'react-native-webview';
+import { RequireVerification } from '../components/RequireVerification';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -175,7 +176,8 @@ export default function VideoHubScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <RequireVerification>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Background Gradient */}
@@ -458,6 +460,7 @@ export default function VideoHubScreen() {
         </BlurView>
       </Modal>
     </View>
+    </RequireVerification>
   );
 }
 

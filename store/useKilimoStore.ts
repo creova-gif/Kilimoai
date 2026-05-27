@@ -135,6 +135,10 @@ interface KilimoState {
   aiCertified: boolean;
   aiAccuracy: number;
 
+  // Crop Health Logs & Excel Data
+  cropHealthLogs: any[];
+  activeExcelData: any | null;
+
   // ─── Actions ───────────────────────────────────────────────────
 
   // Auth
@@ -180,6 +184,11 @@ interface KilimoState {
   removeSeededDocument: (doc: string) => void;
   completeModule: (modId: string) => void;
   setAiAccuracy: (acc: number) => void;
+
+  // Crop Health & Excel Actions
+  addCropHealthLog: (log: any) => void;
+  clearCropHealthLogs: () => void;
+  setActiveExcelData: (data: any | null) => void;
 }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -260,6 +269,9 @@ export const useKilimoStore = create<KilimoState>()(
       completedModules: [],
       aiCertified: false,
       aiAccuracy: 95.8,
+
+      cropHealthLogs: [],
+      activeExcelData: null,
 
       // ── Auth Actions ───────────────────────────────────────────
       setAgroId: (agroId) => set({ agroId, isAuthenticated: true, onboardingComplete: true }),
@@ -382,6 +394,10 @@ export const useKilimoStore = create<KilimoState>()(
         };
       }),
       setAiAccuracy: (aiAccuracy) => set({ aiAccuracy }),
+      
+      addCropHealthLog: (log) => set((s) => ({ cropHealthLogs: [log, ...s.cropHealthLogs].slice(0, 100) })),
+      clearCropHealthLogs: () => set({ cropHealthLogs: [] }),
+      setActiveExcelData: (activeExcelData) => set({ activeExcelData }),
     }),
     {
       name: 'kilimo-ai-store',
@@ -418,6 +434,7 @@ export const useKilimoStore = create<KilimoState>()(
         completedModules: state.completedModules,
         aiCertified: state.aiCertified,
         aiAccuracy: state.aiAccuracy,
+        cropHealthLogs: state.cropHealthLogs,
       }),
     }
   )

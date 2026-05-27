@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View, Text } from 'react-native';
-import { Home, Bot, Tractor, Store, User } from 'lucide-react-native';
+import { Home, Tv, GraduationCap, User, Settings, Bot, Tractor, Store, LayoutGrid } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
 function TabIcon({ focused, children }: { focused: boolean; children: React.ReactNode }) {
-  const scale = useSharedValue(focused ? 1.08 : 1.0);
+  const scale = useSharedValue(focused ? 1.15 : 1.0);
   const opacity = useSharedValue(focused ? 1.0 : 0.7);
 
   useEffect(() => {
     if (focused) {
-      scale.value = withSpring(1.08, { damping: 12, stiffness: 120 });
+      scale.value = withSpring(1.15, { damping: 10, stiffness: 100 });
       opacity.value = withTiming(1.0, { duration: 200 });
     } else {
       scale.value = withTiming(1.0, { duration: 150 });
@@ -90,51 +90,34 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ai"
+        name="video-hub"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <TabIcon focused={focused}>
               {focused ? (
                 <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <Bot color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>SANKOFA</Text>
+                  <Tv color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'VIDEO' : 'VIDEOS'}</Text>
                 </View>
               ) : (
-                <Bot color={color} size={22} strokeWidth={2} />
+                <Tv color={color} size={22} strokeWidth={2} />
               )}
             </TabIcon>
           ),
         }}
       />
       <Tabs.Screen
-        name="farm"
+        name="ai-training-hub"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <TabIcon focused={focused}>
               {focused ? (
                 <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <Tractor color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>{language === 'sw' ? 'SHAMBA' : 'FARM'}</Text>
+                  <GraduationCap color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'AI HUB' : 'AI HUB'}</Text>
                 </View>
               ) : (
-                <Tractor color={color} size={22} strokeWidth={2} />
-              )}
-            </TabIcon>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="market"
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              {focused ? (
-                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <Store color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>{language === 'sw' ? 'SOKO' : 'MARKET'}</Text>
-                </View>
-              ) : (
-                <Store color={color} size={22} strokeWidth={2} />
+                <GraduationCap color={color} size={22} strokeWidth={2} />
               )}
             </TabIcon>
           ),
@@ -152,6 +135,58 @@ export default function TabLayout() {
                 </View>
               ) : (
                 <User color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="edit-profile"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <Settings color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'MIPANGILIO' : 'SETTINGS'}</Text>
+                </View>
+              ) : (
+                <Settings color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="ai"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="farm"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="market"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="features"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <LayoutGrid color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'VIPENGELE' : 'FEATURES'}</Text>
+                </View>
+              ) : (
+                <LayoutGrid color={color} size={22} strokeWidth={2} />
               )}
             </TabIcon>
           ),

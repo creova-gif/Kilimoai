@@ -17,7 +17,7 @@ import {
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { motion } from 'motion/react';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { useAccess, useCan, Feature, roleLabel } from '../../lib/access';
@@ -38,55 +38,55 @@ type FeatureEntry = {
 
 const ALL_FEATURES: FeatureEntry[] = [
   // AI
-  { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/(tabs)/ai',         icon: null, color: '#22d15a',  pinned: true },
-  { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',      sub: 'Tambua magonjwa ya mazao',    route: '/scan',            icon: null, color: '#22d15a',  pinned: true },
-  { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI',   sub: 'Utabiri na takwimu',          route: '/analytics',       icon: null, color: '#f97316' },
-  { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',       sub: 'Mfano wa kidijiti',           route: '/farm-twin',       icon: null, color: '#6366f1' },
-  { feature: 'crop_planning',        label: 'Upangaji Mazao',      sub: 'Panga mzunguko wa mazao',     route: '/crop-planning',   icon: null, color: '#22c55e' },
+  { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/(tabs)/ai',         icon: null, color: '#1A3B14',  pinned: true },
+  { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',      sub: 'Tambua magonjwa ya mazao',    route: '/scan',            icon: null, color: '#2E5A27',  pinned: true },
+  { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI',   sub: 'Utabiri na takwimu',          route: '/analytics',       icon: null, color: '#F59E0B' },
+  { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',       sub: 'Mfano wa kidijiti',           route: '/farm-twin',       icon: null, color: '#4B773E' },
+  { feature: 'crop_planning',        label: 'Upangaji Mazao',      sub: 'Panga mzunguko wa mazao',     route: '/crop-planning',   icon: null, color: '#1A3B14' },
   // Market
-  { feature: 'market_prices',        label: 'Bei za Soko',         sub: 'Bei za mazao ya sasa hivi',   route: '/market',          icon: null, color: '#3b82f6',  pinned: true },
-  { feature: 'contract_farming',     label: 'Mikataba',            sub: 'Mkataba wa ukulima',          route: '/contracts',       icon: null, color: '#8b5cf6' },
-  { feature: 'input_supply',         label: 'Wauzaji',             sub: 'Vifaa vya kilimo',            route: '/input-supply',    icon: null, color: '#22d15a' },
-  { feature: 'marketplace',          label: 'Soko la Bidhaa',      sub: 'Nunua na uza mazao',          route: '/market',          icon: null, color: '#ec4899' },
+  { feature: 'market_prices',        label: 'Bei za Soko',         sub: 'Bei za mazao ya sasa hivi',   route: '/market',          icon: null, color: '#1A3B14',  pinned: true },
+  { feature: 'contract_farming',     label: 'Mikataba',            sub: 'Mkataba wa ukulima',          route: '/contracts',       icon: null, color: '#4B773E' },
+  { feature: 'input_supply',         label: 'Wauzaji',             sub: 'Vifaa vya kilimo',            route: '/input-supply',    icon: null, color: '#2E5A27' },
+  { feature: 'marketplace',          label: 'Soko la Bidhaa',      sub: 'Nunua na uza mazao',          route: '/market',          icon: null, color: '#1A3B14' },
   // Farm
-  { feature: 'farm_mapping',         label: 'Ramani ya Shamba',    sub: 'GPS na safu za NDVI',         route: '/map',             icon: null, color: '#0ea5e9',  pinned: true },
-  { feature: 'livestock',            label: 'Mifugo',              sub: 'Simamia mifugo yako',         route: '/livestock',       icon: null, color: '#f59e0b' },
-  { feature: 'inventory',            label: 'Pembejeo',            sub: 'Ghala na vifaa',              route: '/inventory',       icon: null, color: '#a855f7' },
+  { feature: 'farm_mapping',         label: 'Ramani ya Shamba',    sub: 'GPS na safu za NDVI',         route: '/map',             icon: null, color: '#1A3B14',  pinned: true },
+  { feature: 'livestock',            label: 'Mifugo',              sub: 'Simamia mifugo yako',         route: '/livestock',       icon: null, color: '#F59E0B' },
+  { feature: 'inventory',            label: 'Pembejeo',            sub: 'Ghala na vifaa',              route: '/inventory',       icon: null, color: '#4B773E' },
   { feature: 'task_management',      label: 'Kazi',                sub: 'Orodha ya kazi za shamba',    route: '/tasks',           icon: null, color: '#64748b' },
   // Finance
-  { feature: 'wallet_admin',         label: 'Pochi Msimamizi',     sub: 'Malipo na akaunti',           route: '/wallet-admin',    icon: null, color: '#14b8a6' },
-  { feature: 'insurance',            label: 'Bima',                sub: 'Ulinzi wa mazao yako',        route: '/insurance',       icon: null, color: '#0ea5e9' },
-  { feature: 'agro_id',              label: 'Agro ID',             sub: 'Kitambulisho · PDF ya P&L',   route: '/agro-id',         icon: null, color: '#22d15a' },
+  { feature: 'wallet_admin',         label: 'Pochi Msimamizi',     sub: 'Malipo na akaunti',           route: '/wallet-admin',    icon: null, color: '#1A3B14' },
+  { feature: 'insurance',            label: 'Bima',                sub: 'Ulinzi wa mazao yako',        route: '/insurance',       icon: null, color: '#4B773E' },
+  { feature: 'agro_id',              label: 'Agro ID',             sub: 'Kitambulisho · PDF ya P&L',   route: '/agro-id',         icon: null, color: '#2E5A27' },
   // Community
-  { feature: 'peer_groups',          label: 'Vikundi',             sub: 'Vikundi vya wakulima',        route: '/peer-groups',     icon: null, color: '#ec4899' },
-  { feature: 'expert_consultations', label: 'Wataalamu',           sub: 'Ushauri wa wataalamu',        route: '/consultations',   icon: null, color: '#a855f7' },
-  { feature: 'weather_alerts',       label: 'Hali ya Hewa',        sub: 'Utabiri wa hali ya hewa',     route: '/forecast',        icon: null, color: '#f97316' },
+  { feature: 'peer_groups',          label: 'Vikundi',             sub: 'Vikundi vya wakulima',        route: '/peer-groups',     icon: null, color: '#4B773E' },
+  { feature: 'expert_consultations', label: 'Wataalamu',           sub: 'Ushauri wa wataalamu',        route: '/consultations',   icon: null, color: '#1A3B14' },
+  { feature: 'weather_alerts',       label: 'Hali ya Hewa',        sub: 'Utabiri wa hali ya hewa',     route: '/forecast',        icon: null, color: '#F59E0B' },
 ];
 
 const ICONS: Record<Feature, React.ReactNode> = {
-  ai_chat:              <Sparkles size={20} color="#22d15a" />,
-  photo_diagnosis:      <Camera size={20} color="#22d15a" />,
-  analytics_predictive: <BarChart3 size={20} color="#f97316" />,
-  digital_farm_twin:    <Cpu size={20} color="#6366f1" />,
-  crop_planning:        <Sprout size={20} color="#22c55e" />,
-  market_prices:        <TrendingUp size={20} color="#3b82f6" />,
-  contract_farming:     <FileText size={20} color="#8b5cf6" />,
-  input_supply:         <Truck size={20} color="#22d15a" />,
-  marketplace:          <ShoppingBag size={20} color="#ec4899" />,
-  farm_mapping:         <MapPin size={20} color="#0ea5e9" />,
-  livestock:            <Beef size={20} color="#f59e0b" />,
-  inventory:            <Package size={20} color="#a855f7" />,
+  ai_chat:              <Sparkles size={20} color="#1A3B14" />,
+  photo_diagnosis:      <Camera size={20} color="#2E5A27" />,
+  analytics_predictive: <BarChart3 size={20} color="#F59E0B" />,
+  digital_farm_twin:    <Cpu size={20} color="#4B773E" />,
+  crop_planning:        <Sprout size={20} color="#1A3B14" />,
+  market_prices:        <TrendingUp size={20} color="#1A3B14" />,
+  contract_farming:     <FileText size={20} color="#4B773E" />,
+  input_supply:         <Truck size={20} color="#2E5A27" />,
+  marketplace:          <ShoppingBag size={20} color="#1A3B14" />,
+  farm_mapping:         <MapPin size={20} color="#1A3B14" />,
+  livestock:            <Beef size={20} color="#F59E0B" />,
+  inventory:            <Package size={20} color="#4B773E" />,
   task_management:      <ClipboardList size={20} color="#64748b" />,
-  wallet_admin:         <Wallet size={20} color="#14b8a6" />,
-  insurance:            <ShieldCheck size={20} color="#0ea5e9" />,
-  agro_id:              <User size={20} color="#22d15a" />,
-  peer_groups:          <Users size={20} color="#ec4899" />,
-  expert_consultations: <GraduationCap size={20} color="#a855f7" />,
-  weather_alerts:       <Bell size={20} color="#f97316" />,
+  wallet_admin:         <Wallet size={20} color="#1A3B14" />,
+  insurance:            <ShieldCheck size={20} color="#4B773E" />,
+  agro_id:              <User size={20} color="#2E5A27" />,
+  peer_groups:          <Users size={20} color="#4B773E" />,
+  expert_consultations: <GraduationCap size={20} color="#1A3B14" />,
+  weather_alerts:       <Bell size={20} color="#F59E0B" />,
   // extras not in features list but in Feature type
-  voice_assistant:      <Zap size={20} color="#f59e0b" />,
-  finance_tracker:      <BarChart3 size={20} color="#3b82f6" />,
-  mobile_money:         <Wallet size={20} color="#22d15a" />,
+  voice_assistant:      <Zap size={20} color="#F59E0B" />,
+  finance_tracker:      <BarChart3 size={20} color="#1A3B14" />,
+  mobile_money:         <Wallet size={20} color="#1A3B14" />,
   offline_mode:         <Zap size={20} color="#64748b" />,
 };
 
@@ -95,35 +95,35 @@ const CATEGORIES = [
     key: 'ai',
     title: 'Akili Bandia',
     titleEn: 'AI & Intelligence',
-    color: '#22d15a',
+    color: '#1A3B14',
     features: ['ai_chat', 'photo_diagnosis', 'analytics_predictive', 'digital_farm_twin', 'crop_planning'] as Feature[],
   },
   {
     key: 'market',
     title: 'Soko & Biashara',
     titleEn: 'Market & Trade',
-    color: '#3b82f6',
+    color: '#2E5A27',
     features: ['market_prices', 'contract_farming', 'input_supply', 'marketplace'] as Feature[],
   },
   {
     key: 'farm',
     title: 'Shamba',
     titleEn: 'Farm Management',
-    color: '#f59e0b',
+    color: '#F59E0B',
     features: ['farm_mapping', 'livestock', 'inventory', 'task_management'] as Feature[],
   },
   {
     key: 'finance',
     title: 'Fedha',
     titleEn: 'Finance & ID',
-    color: '#14b8a6',
+    color: '#4B773E',
     features: ['wallet_admin', 'insurance', 'agro_id'] as Feature[],
   },
   {
     key: 'community',
     title: 'Jamii',
     titleEn: 'Community',
-    color: '#ec4899',
+    color: '#1A3B14',
     features: ['peer_groups', 'expert_consultations', 'weather_alerts'] as Feature[],
   },
 ];
@@ -146,7 +146,7 @@ function PinnedCard({ item }: { item: FeatureEntry }) {
         style={[pc.card, { borderColor: item.color + '30' }]}
       >
         <View style={[pc.iconRing, { backgroundColor: item.color + '18', borderColor: item.color + '30' }]}>
-          {ICONS[item.feature]}
+          {React.cloneElement(ICONS[item.feature] as React.ReactElement<any>, { color: item.color })}
         </View>
         <Text style={[pc.label, { color: colors.text }]} numberOfLines={1}>{item.label}</Text>
         <Text style={[pc.sub, { color: colors.textMute }]} numberOfLines={1}>{item.sub}</Text>
@@ -169,7 +169,7 @@ function FeatureRow({ item }: { item: FeatureEntry }) {
       style={[fr.row, { opacity: locked ? 0.38 : 1 }]}
     >
       <View style={[fr.iconWrap, { backgroundColor: item.color + '15' }]}>
-        {ICONS[item.feature]}
+        {React.cloneElement(ICONS[item.feature] as React.ReactElement<any>, { color: item.color })}
       </View>
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -211,26 +211,24 @@ export default function FeaturesScreen() {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Ambient glow */}
-      <View style={[s.orb1, { backgroundColor: isDark ? '#22d15a10' : '#22d15a08' }]} />
-      <View style={[s.orb2, { backgroundColor: isDark ? '#6366f110' : '#6366f108' }]} />
+      <View style={[s.orb1, { backgroundColor: isDark ? 'rgba(26,59,20,0.1)' : 'rgba(26,59,20,0.05)' }]} />
+      <View style={[s.orb2, { backgroundColor: isDark ? 'rgba(46,90,39,0.08)' : 'rgba(46,90,39,0.04)' }]} />
 
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
 
           {/* ── Hero ─────────────────────────────────────────────────── */}
-          <motion.View
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', damping: 22, stiffness: 180 }}
+          <Animated.View
+            entering={FadeInDown.springify()}
           >
             <LinearGradient
-              colors={isDark ? ['#052e16', '#0a0a0f'] : ['#f0fdf4', '#f8fafc']}
-              style={[s.hero, { borderColor: isDark ? 'rgba(34,209,90,0.15)' : 'rgba(34,209,90,0.2)' }]}
+              colors={isDark ? ['#0c250c', '#0a0a0f'] : ['#f0fdf4', '#f8fafc']}
+              style={[s.hero, { borderColor: isDark ? 'rgba(26,59,20,0.25)' : 'rgba(26,59,20,0.15)' }]}
             >
               <View style={s.heroLeft}>
-                <View style={s.heroBadge}>
-                  <Sparkles size={12} color="#22d15a" />
-                  <Text style={s.heroBadgeText}>FEATURES HUB</Text>
+                <View style={[s.heroBadge, { backgroundColor: isDark ? 'rgba(26,59,20,0.3)' : 'rgba(26,59,20,0.1)' }]}>
+                  <Sparkles size={12} color={isDark ? '#6B9E5F' : colors.primary} />
+                  <Text style={[s.heroBadgeText, { color: isDark ? '#6B9E5F' : colors.primary }]}>FEATURES HUB</Text>
                 </View>
                 <Text style={[s.heroTitle, { color: colors.text }]}>
                   {lang === 'sw' ? 'Vipengele Vyako' : 'Your Features'}
@@ -240,12 +238,12 @@ export default function FeaturesScreen() {
                 </Text>
               </View>
               <View style={s.heroRight}>
-                <LinearGradient colors={['#22d15a', '#22d15a']} style={s.heroCircle}>
-                  <LayoutGrid size={26} color="#000" strokeWidth={2.5} />
+                <LinearGradient colors={[colors.primary, colors.primaryDark ?? '#0a1d08']} style={s.heroCircle}>
+                  <LayoutGrid size={26} color="#FCFBF7" strokeWidth={2.5} />
                 </LinearGradient>
               </View>
             </LinearGradient>
-          </motion.View>
+          </Animated.View>
 
           {/* ── Quick launch grid ────────────────────────────────────── */}
           <Text style={[s.secLabel, { color: colors.textMute, marginTop: 28 }]}>
@@ -253,24 +251,20 @@ export default function FeaturesScreen() {
           </Text>
           <View style={s.pinnedGrid}>
             {pinnedItems.map((item, i) => (
-              <motion.View
+              <Animated.View
                 key={item.feature}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.06, type: 'spring', damping: 20, stiffness: 200 }}
+                entering={FadeInDown.delay(i * 60).springify()}
               >
                 <PinnedCard item={item} />
-              </motion.View>
+              </Animated.View>
             ))}
           </View>
 
           {/* ── Category sections ────────────────────────────────────── */}
           {CATEGORIES.map((cat, catIdx) => (
-            <motion.View
+            <Animated.View
               key={cat.key}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + catIdx * 0.07, type: 'spring', damping: 22, stiffness: 160 }}
+              entering={FadeInDown.delay(100 + catIdx * 70).springify()}
               style={{ marginTop: 28 }}
             >
               {/* Section header */}
@@ -300,7 +294,7 @@ export default function FeaturesScreen() {
                   );
                 })}
               </BlurView>
-            </motion.View>
+            </Animated.View>
           ))}
 
           <View style={{ height: 110 }} />
@@ -321,8 +315,8 @@ const s = StyleSheet.create({
   // Hero
   hero:       { borderRadius: 24, borderWidth: 1, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   heroLeft:   { flex: 1, gap: 4 },
-  heroBadge:  { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34,209,90,0.12)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
-  heroBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.2 },
+  heroBadge:  { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
+  heroBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.2 },
   heroTitle:  { fontSize: 26, fontFamily: 'Inter_900Black', letterSpacing: -0.8, marginTop: 8 },
   heroRole:   { fontSize: 12, fontFamily: 'Inter_600SemiBold', textTransform: 'capitalize', marginTop: 2 },
   heroRight:  { marginLeft: 16 },

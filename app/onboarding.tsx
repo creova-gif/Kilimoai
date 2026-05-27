@@ -16,7 +16,16 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
-import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import Animated, { 
+  FadeInUp, 
+  FadeOutUp,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+  Easing
+} from 'react-native-reanimated';
 import { useKilimoStore, FarmProfile, AppLanguage } from '../store/useKilimoStore';
 import { CanonicalRole, allRoles, roleLabel, ROLE_DESCRIPTIONS } from '../lib/access';
 import { useAgroAuth } from '../hooks/useAgroAuth';
@@ -126,8 +135,8 @@ export default function OnboardingWizard() {
     if (step === 0) return true; // Welcome Step
     if (step === 1) { // Auth Step
       if (authMethod === 'email') {
-        const isOk = email.includes('@') && password.trim().length > 0;
-        console.log('[OnboardingWizard] canContinue Step 1 Email validation:', { email, passwordLength: password.length, isOk });
+        const isOk = email.includes('@') && email.trim().length > 4;
+        console.log('[OnboardingWizard] canContinue Step 1 Email validation:', { email, isOk });
         return isOk;
       }
       const isOk = phone.length >= 9;
@@ -144,7 +153,7 @@ export default function OnboardingWizard() {
       return false;
     }
     return true; // Done Step
-  }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, password, idType, nida, tin, license]);
+  }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, idType, nida, tin, license]);
 
   async function next() {
     console.log('[OnboardingWizard] next() called for step:', step, 'authMethod:', authMethod);
@@ -158,20 +167,12 @@ export default function OnboardingWizard() {
       if (authMethod === 'email') {
         console.log('[OnboardingWizard] Executing signInWithEmail with:', email);
         try {
-          const result = await signInWithEmail(email, password);
-          console.log('[OnboardingWizard] signInWithEmail returned result:', result);
-          if (result.existingUser) {
-            console.log('[OnboardingWizard] Existing user. Redirecting directly to dashboard...');
-            setOnboardingComplete(true);
-            router.replace('/(tabs)');
-            return;
-          }
-          console.log('[OnboardingWizard] New user. Proceeding to role selection (Step 3)');
-          setUserId(result.user.id);
-          setStep(3); // Role selection
+          await signInWithEmail(email);
+          console.log('[OnboardingWizard] Email sign-in OTP sent. Proceeding to OTP validation (Step 2)');
+          setStep(2); // OTP step
         } catch (err: any) {
           console.error('[OnboardingWizard] signInWithEmail threw error:', err);
-          Alert.alert('Error', err.message || 'Failed to sign in');
+          Alert.alert('Error', err.message || 'Failed to send OTP to email');
         }
         return;
       } else {
@@ -189,7 +190,8 @@ export default function OnboardingWizard() {
     }
     if (step === 2) {
       try {
-        const result = await verifyOtp(phone, otp);
+        const contact = authMethod === 'email' ? email : phone;
+        const result = await verifyOtp(contact, otp);
         if (result.existingUser) {
           setOnboardingComplete(true);
           router.replace('/(tabs)');
@@ -222,9 +224,7 @@ export default function OnboardingWizard() {
   }
   function back() {
     Haptics.selectionAsync();
-    if (step === 3 && authMethod === 'email') {
-      setStep(1); // Go back to AuthStep directly (skips OTP step since it was not visited)
-    } else if (step > 0) {
+    if (step > 0) {
       setStep((s) => Math.max(0, s - 1) as Step);
     }
   }
@@ -261,7 +261,7 @@ export default function OnboardingWizard() {
       <View style={[s.root, { backgroundColor: colors.background }]}>
         <StatusBar barStyle="light-content" />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <WelcomeStep t={t.welcome} lang={lang} setLang={setLang} onNext={next} />
+          <WelcomeStep lang={lang} setLang={setLang} crops={crops} toggleCrop={toggleCrop} onNext={next} />
         </KeyboardAvoidingView>
       </View>
     );
@@ -339,7 +339,21 @@ export default function OnboardingWizard() {
                   setName={setName}
                 />
               )}
-              {step === 2 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} onResend={() => signInWithPhone(phone)} />}
+              {step === 2 && (
+                <OtpStep
+                  otp={otp}
+                  setOtp={setOtp}
+                  lang={lang}
+                  contact={authMethod === 'email' ? email : phone}
+                  onResend={() => {
+                    if (authMethod === 'email') {
+                      signInWithEmail(email);
+                    } else {
+                      signInWithPhone(phone);
+                    }
+                  }}
+                />
+              )}
               {step === 3 && <RoleStep t={t.role} role={role} setRole={setRole} />}
               {step === 4 && (
                 <ProfileStep
@@ -398,35 +412,74 @@ export default function OnboardingWizard() {
 // ─────────────────────────────────────────────────────────────
 // Step 0 — Welcome
 // ─────────────────────────────────────────────────────────────
-function WelcomeStep({ t, lang, setLang, onNext }: any) {
+function WelcomeStep({ lang, setLang, crops, toggleCrop, onNext }: any) {
   const { colors, isDark } = useTheme();
 
-  // Localized strings to match the mockup exactly
-  const title = lang === 'sw' ? 'SHAMBA LAKO,\nKWA AKILI.' : 'YOUR FARM,\nSMARTER.';
+  // Localized strings
+  const title = lang === 'sw' ? 'Boresha Kilimo Chako\nkwa Teknolojia ya AI' : 'Grow Smarter with\nAI-Powered Farming';
   const subtitle = lang === 'sw'
-    ? 'Fuatilia afya ya mazao, boresha rasilimali, na uongeze mavuno kwa ushauri na uchambuzi makini.'
-    : 'Monitor crop health, optimize resources, and increase yield with data driven insights.';
+    ? 'Fuatilia afya ya mazao, gundua magonjwa, na upate bei za soko kwa ushauri wa AI mkononi mwako.'
+    : 'Monitor crop health, diagnose diseases, and access live market prices with AI at your fingertips.';
   const btnText = lang === 'sw' ? 'Anza Sasa' : 'Get Started';
+  const cropTitle = lang === 'sw' ? 'Chagua Mazao ya Maslahi:' : 'Select Crops of Interest:';
+
+  // Animation values for subtle motion illustration (pulsing leaf diagnostic rings)
+  const pulseValue = useSharedValue(1);
+  const ringScale = useSharedValue(1);
+  const ringOpacity = useSharedValue(0.6);
+
+  React.useEffect(() => {
+    pulseValue.value = withRepeat(
+      withSequence(
+        withTiming(1.08, { duration: 1200, easing: Easing.ease }),
+        withTiming(1.0, { duration: 1200, easing: Easing.ease })
+      ),
+      -1,
+      true
+    );
+
+    ringScale.value = withRepeat(
+      withTiming(2.2, { duration: 2400, easing: Easing.out(Easing.ease) }),
+      -1,
+      false
+    );
+
+    ringOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.6, { duration: 0 }),
+        withTiming(0, { duration: 2400, easing: Easing.out(Easing.ease) })
+      ),
+      -1,
+      false
+    );
+  }, []);
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: pulseValue.value }]
+    };
+  });
+
+  const animatedRingStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: ringScale.value }],
+      opacity: ringOpacity.value
+    };
+  });
+
+  const basicCrops = ['Mahindi (Maize)', 'Mpunga (Rice)', 'Nyanya (Tomatoes)', 'Maharage (Beans)'];
 
   return (
     <View style={s.welcomeHeroRoot}>
-      {/* Background Image */}
-      <Image
-        source={require('../assets/drone-field.jpeg')}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      />
-
-      {/* Dark gradient overlay for text readability */}
+      {/* Background Gradient */}
       <LinearGradient
-        colors={['transparent', 'rgba(14, 19, 13, 0.45)', 'rgba(14, 19, 13, 0.98)']}
+        colors={isDark ? ['#050805', '#0f2012', '#050805'] : ['#f8fafc', '#e2e8f0', '#f8fafc']}
         style={StyleSheet.absoluteFillObject}
-        locations={[0, 0.35, 0.75]}
       />
 
       {/* Floating Language Switcher */}
       <SafeAreaView style={s.welcomeLangSafeArea}>
-        <BlurView intensity={Platform.OS === 'ios' ? 25 : 80} tint="dark" style={s.welcomeLangBlur}>
+        <BlurView intensity={Platform.OS === 'ios' ? 25 : 80} tint={isDark ? "dark" : "light"} style={s.welcomeLangBlur}>
           {(['sw', 'en'] as const).map((L) => {
             const active = lang === L;
             return (
@@ -450,29 +503,70 @@ function WelcomeStep({ t, lang, setLang, onNext }: any) {
         </BlurView>
       </SafeAreaView>
 
-      <View style={s.welcomeHeroContent}>
-        {/* Title */}
-        <Text style={s.welcomeHeroTitle}>{title}</Text>
+      <ScrollView contentContainerStyle={s.welcomeScroll} showsVerticalScrollIndicator={false}>
+        {/* Subtle Motion Illustration (Pulsing Leaf & diagnostic scan ring) */}
+        <View style={s.illustrationContainer}>
+          <Animated.View style={[s.pulseRing, { borderColor: colors.primary }, animatedRingStyle]} />
+          <Animated.View style={[s.iconCircle, { backgroundColor: isDark ? 'rgba(26,59,20,0.3)' : 'rgba(26,59,20,0.1)', borderColor: colors.primary }, animatedIconStyle]}>
+            <Sprout size={48} color={colors.primary} />
+          </Animated.View>
+        </View>
 
-        {/* Description */}
-        <Text style={s.welcomeHeroSubtitle}>{subtitle}</Text>
+        <View style={s.welcomeHeroContent}>
+          {/* Headline Value Prop */}
+          <Text style={[s.welcomeHeroTitle, { color: colors.text }]}>{title}</Text>
 
-        {/* Get Started Button */}
-        <TouchableOpacity
-          onPress={onNext}
-          activeOpacity={0.88}
-          style={s.welcomeCtaBtn}
-          accessibilityRole="button"
-          accessibilityLabel={btnText}
-        >
-          <View style={s.welcomeCtaInner}>
-            <Text style={s.welcomeCtaText}>{btnText}</Text>
-            <View style={s.welcomeCtaArrowCircle}>
-              <ChevronRight size={18} color="#1A3B14" strokeWidth={3} />
+          {/* Description */}
+          <Text style={[s.welcomeHeroSubtitle, { color: colors.textMute }]}>{subtitle}</Text>
+
+          {/* Basic Crop Interest Selector */}
+          <View style={s.cropInterestContainer}>
+            <Text style={[s.cropInterestTitle, { color: colors.text }]}>{cropTitle}</Text>
+            <View style={s.cropInterestGrid}>
+              {basicCrops.map((c) => {
+                const isSelected = crops.includes(c);
+                return (
+                  <TouchableOpacity
+                    key={c}
+                    style={[
+                      s.cropChip,
+                      {
+                        borderColor: isSelected ? colors.primary : colors.border,
+                        backgroundColor: isSelected
+                          ? (isDark ? 'rgba(26,59,20,0.2)' : 'rgba(26,59,20,0.08)')
+                          : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)')
+                      }
+                    ]}
+                    onPress={() => toggleCrop(c)}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: isSelected }}
+                  >
+                    <Text style={[s.cropChipText, { color: isSelected ? colors.text : colors.textMute }]}>
+                      {c}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
-        </TouchableOpacity>
-      </View>
+
+          {/* Get Started Button */}
+          <TouchableOpacity
+            onPress={onNext}
+            activeOpacity={0.88}
+            style={[s.welcomeCtaBtn, { backgroundColor: colors.primary }]}
+            accessibilityRole="button"
+            accessibilityLabel={btnText}
+          >
+            <View style={s.welcomeCtaInner}>
+              <Text style={s.welcomeCtaText}>{btnText}</Text>
+              <View style={s.welcomeCtaArrowCircle}>
+                <ChevronRight size={18} color="#fff" strokeWidth={3} />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -480,7 +574,7 @@ function WelcomeStep({ t, lang, setLang, onNext }: any) {
 // ─────────────────────────────────────────────────────────────
 // Step 2 — Auth (Phone OTP or Email Password)
 // ─────────────────────────────────────────────────────────────
-function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail, password, setPassword, lang, setUserId, setStep, setName }: any) {
+function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail, lang, setUserId, setStep, setName }: any) {
   const { colors, isDark } = useTheme();
 
   const isSupabaseConfigured = Boolean(
@@ -493,12 +587,12 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
       <Text style={[s.h1, { color: colors.text }]}>
         {authMethod === 'phone'
           ? (lang === 'sw' ? 'Namba yako ya simu' : 'Your Phone Number')
-          : (lang === 'sw' ? 'Ingia kwa Barua Pepe' : 'Sign in with Email')}
+          : (lang === 'sw' ? 'Barua Pepe Yako' : 'Your Email Address')}
       </Text>
       <Text style={[s.sub, { color: colors.textMute }]}>
         {authMethod === 'phone'
           ? (lang === 'sw' ? 'Tutakutumia namba ya siri (OTP) kwa usalama.' : 'We will send you a secret OTP code for security.')
-          : (lang === 'sw' ? 'Tumia barua pepe na neno la siri ili kuingia.' : 'Use your email and password to log in.')}
+          : (lang === 'sw' ? 'Tutakutumia namba ya siri (OTP) kwenye barua pepe yako.' : 'We will send you a secret OTP code to your email.')}
       </Text>
 
       {!isSupabaseConfigured && (
@@ -547,24 +641,6 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
               />
             </BlurView>
           </View>
-
-          <View>
-            <FieldLabel label={lang === 'sw' ? 'NENO LA SIRI' : 'PASSWORD'} />
-            <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
-              <TextInput 
-                value={password} 
-                onChangeText={setPassword} 
-                placeholder="••••••••" 
-                placeholderTextColor={colors.textMute} 
-                style={[s.input, { color: colors.text }]} 
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-                accessibilityLabel="Password Input"
-                accessibilityHint="Type your password to authenticate"
-              />
-            </BlurView>
-          </View>
         </View>
       )}
 
@@ -593,7 +669,7 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
           console.log('[OnboardingWizard] Bypassing authentication step (demo mode)');
           setUserId('demo-user-id-' + Math.random().toString(36).substring(7));
           setName('Justin Mafie (Demo)');
-          setStep(4); // proceed to Role step
+          setStep(3); // proceed to Role Selection step
         }}
         style={s.demoBypassBtn}
         activeOpacity={0.8}
@@ -611,7 +687,7 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
 // ─────────────────────────────────────────────────────────────
 // Step 3 — OTP
 // ─────────────────────────────────────────────────────────────
-function OtpStep({ otp, setOtp, lang, onResend }: any) {
+function OtpStep({ otp, setOtp, lang, contact, onResend }: any) {
   const { colors, isDark } = useTheme();
   const [timer, setTimer] = useState(60);
 
@@ -631,10 +707,15 @@ function OtpStep({ otp, setOtp, lang, onResend }: any) {
     }
   };
 
+  const isEmail = contact?.includes('@');
+  const descText = lang === 'sw'
+    ? (isEmail ? `Ingiza tarakimu 6 tulizotuma kwenye barua pepe yako: ${contact}` : `Ingiza tarakimu 6 tulizotuma kwenye simu yako: ${contact}`)
+    : (isEmail ? `Enter the 6-digit code we sent to your email: ${contact}` : `Enter the 6-digit code we sent to your phone: ${contact}`);
+
   return (
     <View style={s.stepRoot}>
       <Text style={[s.h1, { color: colors.text }]}>{lang === 'sw' ? 'Namba ya siri' : 'Secret Code'}</Text>
-      <Text style={[s.sub, { color: colors.textMute }]}>{lang === 'sw' ? 'Ingiza tarakimu 6 tulizotuma kwenye simu yako' : 'Enter the 6-digit code we sent to your phone'}</Text>
+      <Text style={[s.sub, { color: colors.textMute }]}>{descText}</Text>
 
       <FieldLabel label="OTP" />
       <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
@@ -648,7 +729,7 @@ function OtpStep({ otp, setOtp, lang, onResend }: any) {
           maxLength={6}
           autoFocus 
           accessibilityLabel="OTP Verification Input"
-          accessibilityHint="Type the 6 digit code received via SMS"
+          accessibilityHint="Type the 6 digit code received"
         />
       </BlurView>
 
@@ -1152,6 +1233,67 @@ const s = StyleSheet.create({
   },
   welcomeLangTabTextActive: {
     color: '#FCFBF7',
+  },
+  welcomeScroll: {
+    paddingTop: 100,
+    paddingBottom: 40,
+    alignItems: 'center',
+    width: '100%',
+  },
+  illustrationContainer: {
+    width: 220,
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+    position: 'relative',
+  },
+  pulseRing: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2.5,
+  },
+  iconCircle: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 2.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  cropInterestContainer: {
+    width: '100%',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  cropInterestTitle: {
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
+    marginBottom: 12,
+  },
+  cropInterestGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  cropChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    minHeight: 40,
+    justifyContent: 'center',
+  },
+  cropChipText: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
   },
   stepIllustration: {
     width: '100%',

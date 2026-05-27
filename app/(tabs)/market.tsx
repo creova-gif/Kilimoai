@@ -90,7 +90,7 @@ const IntelligenceBento = ({ isDark, colors, router, language }: any) => (
           <Text style={styles.bentoActionText}>
             {language === 'sw' ? 'Angalia Ramani' : 'View Map'}
           </Text>
-          <ArrowUpRight size={14} color="#000" />
+          <ArrowUpRight size={14} color="#FCFBF7" />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -103,9 +103,9 @@ const IntelligenceBento = ({ isDark, colors, router, language }: any) => (
           {language === 'sw' ? 'Kadirio la Mahindi' : 'Maize Index'}
         </Text>
       </Animated.View>
-      <Animated.View entering={FadeInDown} style={[styles.bentoSmall, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)' }]}>
+      <Animated.View entering={FadeInDown} style={[styles.bentoSmall, { borderColor: colors.border }]}>
         <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-        <Activity size={20} color="#3b82f6" />
+        <Activity size={20} color={colors.primary} />
         <Text style={[styles.bentoSmallTitle, { color: colors.text }]}>
           {language === 'sw' ? 'Imara' : 'Stable'}
         </Text>
@@ -938,7 +938,7 @@ const styles = StyleSheet.create({
   categoryContent: { paddingHorizontal: 24, gap: 12 },
   categoryPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 20, gap: 8 },
   categoryText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 200 },
+  bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 230 },
   bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
   bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
@@ -947,7 +947,7 @@ const styles = StyleSheet.create({
   bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
   bentoFooter: { marginTop: 16 },
   bentoAction: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, gap: 8 },
-  bentoActionText: { color: '#000', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
+  bentoActionText: { color: '#FCFBF7', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
   bentoSidebar: { flex: 1, gap: 16 },
   bentoSmall: { flex: 1, borderRadius: 24, padding: 16, borderWidth: 1, overflow: 'hidden', justifyContent: 'center' },
   bentoSmallTitle: { fontSize: 20, fontFamily: 'Inter_900Black', marginTop: 8, marginBottom: 2 },

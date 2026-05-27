@@ -117,95 +117,77 @@ export function useAgroAuth() {
       setLoading(false);
     }
   }, []);
-
-  // ── Email password sign-in ─────────────────────────────────────────
-  const signInWithEmail = useCallback(async (email: string, password: string) => {
+  const signInWithEmail = useCallback(async (email: string) => {
     console.log('[AgroAuth] signInWithEmail starting for:', email);
     setLoading(true);
     try {
       if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating email sign in for:', email);
+        console.log('[AgroAuth MOCK] Simulating email OTP send for:', email);
         await new Promise((r) => setTimeout(r, 1000));
-        await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');
-        const mockUserId = 'mock-user-' + email.replace(/[^a-zA-Z0-9]/g, '');
-        // Check if there is already an agroId set in the store
-        const currentAgroId = useKilimoStore.getState().agroId;
-        if (currentAgroId && currentAgroId.id === mockUserId) {
-          return { existingUser: true, user: { id: mockUserId, email } };
-        }
-        return { existingUser: false, user: { id: mockUserId, email } };
+        await SecureStore.setItemAsync('kilimo_email', email);
+        const { Alert } = require('react-native');
+        Alert.alert(
+          'Kilimo AI (Mock Auth)',
+          `[DEBUG MOCK] Nambari ya siri (OTP) ya barua pepe ni: 123456\n\n[DEBUG MOCK] Your test email OTP verification code is: 123456`
+        );
+        return { success: true };
       }
-      console.log('[AgroAuth] Calling Supabase signInWithPassword...');
-      const { data, error } = await supabase.auth.signInWithPassword({
+      console.log('[AgroAuth] Calling Supabase signInWithOtp for email...');
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
       });
       if (error) {
-        console.error('[AgroAuth] Supabase signInWithPassword returned error:', error);
+        console.error('[AgroAuth] Supabase signInWithOtp returned error:', error);
         throw error;
       }
-      console.log('[AgroAuth] Supabase sign-in successful. User ID:', data.user?.id);
-      
-      // Persist session token securely
-      await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
-
-      console.log('[AgroAuth] Checking database for existing agro_profile...');
-      // Check if profile exists, to hydrate if it's an existing user
-      const { data: profile, error: profileError } = await supabase
-        .from('agro_profiles')
-        .select('*')
-        .eq('user_id', data.user.id)
-        .single();
-
-      if (profileError) {
-        console.log('[AgroAuth] Profile query error (might be a new user):', profileError.message);
-      }
-
-      if (!profileError && profile) {
-        console.log('[AgroAuth] Existing profile found. Hydrating user state:', profile.name);
-        setAgroId(profile as AgroID);
-        return { existingUser: true, user: data.user };
-      }
-      console.log('[AgroAuth] No existing profile found. Proceeding as new user.');
-      return { existingUser: false, user: data.user };
+      await SecureStore.setItemAsync('kilimo_email', email);
+      return { success: true };
     } catch (err: any) {
       console.error('[AgroAuth] signInWithEmail exception caught:', err);
-      throw new Error(err.message ?? 'Failed to sign in with email');
+      throw new Error(err.message ?? 'Failed to send OTP to email');
     } finally {
       setLoading(false);
     }
-  }, [setAgroId]);
+  }, []);
 
-  const verifyOtp = useCallback(async (phone: string, token: string) => {
+  const verifyOtp = useCallback(async (contact: string, token: string) => {
     setLoading(true);
+    const normalized = contact.trim().replace(/\s/g, '');
+    const isEmail = normalized.includes('@');
     try {
       if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating OTP verification for:', phone, 'token:', token);
+        console.log('[AgroAuth MOCK] Simulating OTP verification for:', normalized, 'token:', token);
         await new Promise((r) => setTimeout(r, 800));
         if (token === '123456') {
           await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');
-          const mockUserId = 'mock-user-' + phone.replace(/[^a-zA-Z0-9]/g, '');
+          const mockUserId = 'mock-user-' + normalized.replace(/[^a-zA-Z0-9]/g, '');
           const currentAgroId = useKilimoStore.getState().agroId;
           if (currentAgroId && currentAgroId.id === mockUserId) {
-            return { existingUser: true, user: { id: mockUserId, email: phone + '@mock.com' } };
+            return { existingUser: true, user: { id: mockUserId, email: isEmail ? normalized : normalized + '@mock.com' } };
           }
-          return { existingUser: false, user: { id: mockUserId, email: phone + '@mock.com' } };
+          return { existingUser: false, user: { id: mockUserId, email: isEmail ? normalized : normalized + '@mock.com' } };
         } else {
           throw new Error('Invalid verification code');
         }
       }
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone,
+      
+      const verifyPayload: any = {
         token,
-        type: 'sms',
-      });
+        type: isEmail ? 'email' : 'sms',
+      };
+      if (isEmail) {
+        verifyPayload.email = normalized;
+      } else {
+        verifyPayload.phone = normalized;
+      }
+
+      const { data, error } = await supabase.auth.verifyOtp(verifyPayload);
       if (error) throw error;
       
       // Persist session token securely
       await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
 
-      // We don't create the profile here anymore. Onboarding wizard will create it.
-      // Just check if profile exists, to hydrate if it's an existing user.
+      // Check if profile exists, to hydrate if it's an existing user.
       const { data: profile, error: profileError } = await supabase
         .from('agro_profiles')
         .select('*')

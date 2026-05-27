@@ -25,7 +25,8 @@ import Animated, {
   withTiming, 
   withSequence,
   SlideInRight,
-  SlideOutLeft
+  SlideOutLeft,
+  Easing
 } from 'react-native-reanimated';
 import { 
   BrainCircuit, 
@@ -330,6 +331,174 @@ const YieldChart = () => (
     </Svg>
   </View>
 );
+// ─── Step 1 Animation: Soil prep scan ring ───────────────────────────────────
+function Step1SoilPrepAnimation() {
+  const { colors } = useTheme();
+  const rotation = useSharedValue(0);
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    rotation.value = withRepeat(
+      withTiming(360, { duration: 3000, easing: Easing.linear }),
+      -1,
+      false
+    );
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.12, { duration: 1000, easing: Easing.ease }),
+        withTiming(1.0, { duration: 1000, easing: Easing.ease })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const rotateStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <View style={styles.animationContainer}>
+      <Animated.View style={[styles.scanOuterRing, { borderColor: colors.primary }, rotateStyle]} />
+      <Animated.View style={[styles.animatedCompostCircle, { backgroundColor: colors.primary + '20', borderColor: colors.primary }, pulseStyle]}>
+        <Leaf size={32} color={colors.primary} />
+      </Animated.View>
+    </View>
+  );
+}
+
+// ─── Step 2 Animation: Spacing seed-drop falling animation ───────────────────
+function Step2SpacingAnimation() {
+  const seedY = useSharedValue(-40);
+  const lineOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    seedY.value = withRepeat(
+      withTiming(35, { duration: 1500, easing: Easing.bounce }),
+      -1,
+      false
+    );
+    lineOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0, { duration: 200 }),
+        withTiming(1, { duration: 1300 })
+      ),
+      -1,
+      false
+    );
+  }, []);
+
+  const seedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: seedY.value }],
+  }));
+
+  const lineStyle = useAnimatedStyle(() => ({
+    opacity: lineOpacity.value,
+  }));
+
+  return (
+    <View style={styles.animationContainer}>
+      <View style={styles.animatedSoilLayer}>
+        {/* Spacing lines */}
+        <Animated.View style={[styles.spacingIndicatorLine, lineStyle]} />
+        <Animated.Text style={[styles.spacingIndicatorText, lineStyle]}>75cm</Animated.Text>
+        {/* Seed dropping */}
+        <Animated.View style={[styles.animatedSeed, { backgroundColor: '#F59E0B' }, seedStyle]} />
+      </View>
+    </View>
+  );
+}
+
+// ─── Step 3 Animation: Basal fertilizer side-by-side placement ────────────────
+function Step3BasalFertilizerAnimation() {
+  const { colors } = useTheme();
+  const dropY = useSharedValue(-40);
+  const lineOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    dropY.value = withRepeat(
+      withTiming(20, { duration: 1800, easing: Easing.out(Easing.quad) }),
+      -1,
+      false
+    );
+    lineOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0, { duration: 500 }),
+        withTiming(1, { duration: 1300 })
+      ),
+      -1,
+      false
+    );
+  }, []);
+
+  const dropStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: dropY.value }],
+  }));
+
+  const lineStyle = useAnimatedStyle(() => ({
+    opacity: lineOpacity.value,
+  }));
+
+  return (
+    <View style={styles.animationContainer}>
+      <View style={styles.fertilizerPlacementDiagram}>
+        <Animated.View style={[styles.animatedSeedStatic, { backgroundColor: '#F59E0B' }, dropStyle]} />
+        <Animated.View style={[styles.animatedFertilizerStatic, { backgroundColor: colors.primary }, dropStyle]} />
+        <Animated.View style={[styles.fertilizerOffsetLine, lineStyle]} />
+        <Animated.Text style={[styles.fertilizerOffsetText, lineStyle]}>5cm</Animated.Text>
+      </View>
+    </View>
+  );
+}
+
+// ─── Step 4 Animation: Weeding & top-dressing growing sprout ─────────────────
+function Step4GrowingSproutAnimation() {
+  const { colors } = useTheme();
+  const growScale = useSharedValue(0.3);
+  const growY = useSharedValue(20);
+
+  useEffect(() => {
+    growScale.value = withRepeat(
+      withSequence(
+        withTiming(0.3, { duration: 0 }),
+        withTiming(1.2, { duration: 2000, easing: Easing.out(Easing.quad) }),
+        withTiming(1.2, { duration: 1000 })
+      ),
+      -1,
+      false
+    );
+    growY.value = withRepeat(
+      withSequence(
+        withTiming(15, { duration: 0 }),
+        withTiming(0, { duration: 2000, easing: Easing.out(Easing.quad) }),
+        withTiming(0, { duration: 1000 })
+      ),
+      -1,
+      false
+    );
+  }, []);
+
+  const sproutStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: growScale.value },
+      { translateY: growY.value }
+    ] as any,
+  }));
+
+  return (
+    <View style={styles.animationContainer}>
+      <View style={styles.growingMaizeContainer}>
+        <Animated.View style={[sproutStyle, { alignItems: 'center', justifyContent: 'center' }]}>
+          <Leaf size={48} color={colors.primary} />
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
 
 // Get crop layout specifications and images based on their names
 const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
@@ -910,24 +1079,36 @@ export default function HomeScreen() {
               <TouchableOpacity
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  router.push('/crop-planning' as any);
+                  router.push('/edit-profile' as any);
                 }}
-                style={{
-                  padding: 16,
-                  backgroundColor: 'rgba(0,0,0,0.65)',
-                  borderRadius: 16,
-                  borderWidth: 1,
-                  borderColor: 'rgba(255,255,255,0.15)',
-                  alignItems: 'center',
-                }}
+                style={[
+                  styles.noCropCard,
+                  {
+                    borderColor: colors.primary + '30',
+                    backgroundColor: isDark ? 'rgba(26, 59, 20, 0.25)' : 'rgba(26, 59, 20, 0.05)',
+                  }
+                ]}
               >
-                <Leaf size={24} color={colors.primary} style={{ marginBottom: 8 }} />
-                <Text style={{ fontFamily: 'Inter_850ExtraBold', fontSize: 15, color: '#FCFBF7', textAlign: 'center', marginBottom: 4 }}>
-                  {language === 'sw' ? 'Hakuna Mazao Yaliyosajiliwa' : 'No Crops Registered'}
+                <View style={[styles.noCropWarningBadge, { backgroundColor: '#F59E0B' }]}>
+                  <Sparkles size={12} color="#000" />
+                  <Text style={styles.noCropWarningBadgeText}>
+                    {language === 'sw' ? 'MIPANGILIO INAHITAJIKA' : 'SETUP REQUIRED'}
+                  </Text>
+                </View>
+                <Text style={[styles.noCropTitle, { color: colors.text }]}>
+                  {language === 'sw' ? 'Bado Haujasajili Mazao Yako' : 'No Crops Registered Yet'}
                 </Text>
-                <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, color: 'rgba(252, 251, 247, 0.7)', textAlign: 'center' }}>
-                  {language === 'sw' ? 'Bofya hapa ili kuanza upangaji wa msimu wako.' : 'Click here to plan your season and register crops.'}
+                <Text style={[styles.noCropDesc, { color: colors.textMute }]}>
+                  {language === 'sw'
+                    ? 'Bofya hapa ili kuongeza mazao kwenye wasifu wako ili kupata miongozo na uchambuzi wa AI.'
+                    : 'Click here to configure your primary crops in Settings and unlock guides & AI analysis.'}
                 </Text>
+                <View style={[styles.noCropActionBtn, { backgroundColor: colors.primary }]}>
+                  <Text style={[styles.noCropActionBtnText, { color: '#FCFBF7' }]}>
+                    {language === 'sw' ? 'Kamilisha Wasifu' : 'Complete Profile'}
+                  </Text>
+                  <ArrowRight size={14} color="#FCFBF7" />
+                </View>
               </TouchableOpacity>
             ) : (
               <>
@@ -1115,6 +1296,12 @@ export default function HomeScreen() {
                     ? 'Mwongozo kamili wa nafasi, kina, mbolea na maandalizi ya udongo.' 
                     : 'Full step-by-step guide on spacing, depth, fertilizing and soil prep.'}
                 </Text>
+                <View style={styles.showStepsBtn}>
+                  <Text style={styles.showStepsBtnText}>
+                    {language === 'sw' ? 'Onyesha Hatua' : 'Show steps'}
+                  </Text>
+                  <ArrowRight size={12} color="#000" />
+                </View>
               </View>
             </TouchableOpacity>
           </Animated.View>
@@ -1431,11 +1618,7 @@ export default function HomeScreen() {
               {activeGuideStep === 0 && (
                 <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
                   {/* Visual animation - compost pile pulsing */}
-                  <View style={styles.animationContainer}>
-                    <View style={[styles.animatedCompostCircle, { backgroundColor: colors.primary + '20' }]}>
-                      <Leaf size={32} color={colors.primary} />
-                    </View>
-                  </View>
+                  <Step1SoilPrepAnimation />
                   <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 1: MAANDALIZI YA UDONGO</Text>
                   <Text style={[styles.guideStepTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'Kutayarisha Udongo & Rutuba' : 'Soil Preparation & Tillage'}
@@ -1451,15 +1634,7 @@ export default function HomeScreen() {
               {activeGuideStep === 1 && (
                 <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
                   {/* Visual animation - seed dropping */}
-                  <View style={styles.animationContainer}>
-                    <View style={styles.animatedSoilLayer}>
-                      {/* Spacing lines */}
-                      <View style={styles.spacingIndicatorLine} />
-                      <Text style={styles.spacingIndicatorText}>75cm</Text>
-                      {/* Seed dropping */}
-                      <View style={[styles.animatedSeed, { backgroundColor: '#F59E0B' }]} />
-                    </View>
-                  </View>
+                  <Step2SpacingAnimation />
                   <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 2: NAFASI NA KINA YA UPANDAJI</Text>
                   <Text style={[styles.guideStepTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'Nafasi ya Kupanda & Mbegu' : 'Planting Spacing & Seed Rate'}
@@ -1475,14 +1650,7 @@ export default function HomeScreen() {
               {activeGuideStep === 2 && (
                 <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
                   {/* Visual animation - fertilizer placement */}
-                  <View style={styles.animationContainer}>
-                    <View style={styles.fertilizerPlacementDiagram}>
-                      <View style={[styles.animatedSeedStatic, { backgroundColor: '#F59E0B' }]} />
-                      <View style={[styles.animatedFertilizerStatic, { backgroundColor: colors.primary }]} />
-                      <View style={styles.fertilizerOffsetLine} />
-                      <Text style={styles.fertilizerOffsetText}>5cm</Text>
-                    </View>
-                  </View>
+                  <Step3BasalFertilizerAnimation />
                   <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 3: MBOLEA YA AWALI (BASAL)</Text>
                   <Text style={[styles.guideStepTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'Uwekaji wa Mbolea ya Kwanza' : 'Basal Fertilizer Placement'}
@@ -1498,13 +1666,7 @@ export default function HomeScreen() {
               {activeGuideStep === 3 && (
                 <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.guideStepSlide}>
                   {/* Visual animation - growing maize shoot */}
-                  <View style={styles.animationContainer}>
-                    <View style={styles.growingMaizeContainer}>
-                      <View style={[styles.maizeShootLeaf1, { backgroundColor: colors.primary }]} />
-                      <View style={[styles.maizeShootLeaf2, { backgroundColor: colors.primary }]} />
-                      <View style={[styles.maizeShootStem, { backgroundColor: colors.primary }]} />
-                    </View>
-                  </View>
+                  <Step4GrowingSproutAnimation />
                   <Text style={[styles.guideStepNumText, { color: colors.primary }]}>HATUA YA 4: PALIZI NA MBOLEA YA JUU</Text>
                   <Text style={[styles.guideStepTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'Kupalilia & Uwekaji wa Urea' : 'Weeding & Top-Dressing'}
@@ -2504,7 +2666,7 @@ const styles = StyleSheet.create({
   // Guide Card Styles
   guideCard: {
     borderRadius: 24,
-    height: 180,
+    height: 220,
     overflow: 'hidden',
     borderWidth: 1,
     position: 'relative',
@@ -2765,6 +2927,81 @@ const styles = StyleSheet.create({
   },
   guideFooterBtnTextSec: {
     fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  scanOuterRing: {
+    position: 'absolute',
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+  },
+  noCropCard: {
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1.5,
+    gap: 10,
+    shadowColor: '#1A3B14',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 4,
+    marginTop: 8,
+  },
+  noCropWarningBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    gap: 4,
+  },
+  noCropWarningBadgeText: {
+    color: '#000',
+    fontSize: 9,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 0.5,
+  },
+  noCropTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: -0.3,
+  },
+  noCropDesc: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  noCropActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    gap: 6,
+    marginTop: 4,
+  },
+  noCropActionBtnText: {
+    fontSize: 12,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  showStepsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#FCFBF7',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginTop: 8,
+    gap: 4,
+  },
+  showStepsBtnText: {
+    color: '#000',
+    fontSize: 11,
     fontFamily: 'Inter_800ExtraBold',
   },
 });

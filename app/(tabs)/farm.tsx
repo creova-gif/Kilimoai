@@ -9,6 +9,7 @@ import {
   Platform,
   StatusBar,
   Dimensions,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -353,6 +354,11 @@ export default function FarmHub() {
           {/* ── SVG Map Visualizer ───────────────────────────────── */}
           <View style={styles.mapContainer}>
             <Animated.View entering={FadeIn.duration(800)} style={StyleSheet.absoluteFill}>
+              <Image
+                source={require('../../assets/images/rice-field-bg.png')}
+                style={StyleSheet.absoluteFillObject}
+                resizeMode="cover"
+              />
               <Svg viewBox={viewBox} style={StyleSheet.absoluteFill}>
                 {/* Grid Overlay / Terrain lines */}
                 <G opacity={isDark ? 0.08 : 0.15}>
@@ -397,7 +403,7 @@ export default function FarmHub() {
                       <AnimatedPolygon
                         points={zone.points}
                         fill={fillColor}
-                        fillOpacity={isSelected ? 0.75 : 0.35}
+                        fillOpacity={isSelected ? 0.55 : 0.2}
                         stroke={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
                         strokeWidth={isSelected ? 3.5 : 1.5}
                         onPress={() => handleZoneSelect(zone.id)}
