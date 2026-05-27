@@ -9,7 +9,7 @@ export default function TermsOfService() {
 
   return (
     <PageScaffold title="Vigezo na Masharti" subtitle="Terms of Service">
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
         <View style={styles.header}>
           <FileText size={48} color={colors.primary} />
           <Text style={[styles.title, { color: colors.text }]}>Kilimo AI Terms of Service</Text>
@@ -55,7 +55,7 @@ export default function TermsOfService() {
 const styles = StyleSheet.create({
   container: { padding: 24, paddingBottom: 64 },
   header: { alignItems: 'center', marginBottom: 32 },
-  title: { fontSize: 22, fontFamily: 'Inter_900Black', marginTop: 16, marginBottom: 4 },
+  title: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', marginTop: 16, marginBottom: 4 },
   lastUpdated: { fontSize: 13, fontFamily: 'Inter_500Medium' },
   card: { padding: 20 },
   heading: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', marginTop: 24, marginBottom: 8 },

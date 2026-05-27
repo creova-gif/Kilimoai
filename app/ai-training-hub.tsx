@@ -552,8 +552,7 @@ export default function AITrainingHubScreen() {
         </View>
 
         <ScrollView 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         >
           {/* TAB 1: SANKOFA AI GUIDE FLOW */}
           {currentTab === 'sankofa' && (
@@ -645,10 +644,8 @@ export default function AITrainingHubScreen() {
                 </View>
 
                 {/* Modules Carousel Tabs */}
-                <ScrollView 
-                  horizontal 
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.tabsScroll}
+                <ScrollView showsVerticalScrollIndicator={false} horizontal 
+                  showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}
                 >
                   {modules.map((m, index) => {
                     const isCompleted = completedModules.includes(m.id);
@@ -1457,7 +1454,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     textAlign: 'center',
     flex: 1,
   },
@@ -1497,7 +1494,7 @@ const styles = StyleSheet.create({
   },
   progressVal: {
     fontSize: 14,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   progressBarBg: {
     height: 6,
@@ -1559,7 +1556,7 @@ const styles = StyleSheet.create({
   },
   moduleTitle: {
     fontSize: 16,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   moduleSubtitle: {
@@ -1582,7 +1579,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 11,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1.5,
   },
   lessonText: {
@@ -1682,7 +1679,7 @@ const styles = StyleSheet.create({
   },
   certHeading: {
     fontSize: 26,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -1757,7 +1754,7 @@ const styles = StyleSheet.create({
   },
   canvasLabel: {
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
     marginBottom: 12,
     opacity: 0.5,

@@ -71,7 +71,7 @@ function PillRow<T extends string>({
 }: { options: readonly T[]; value: T; onChange: (v: T) => void }) {
   const { colors } = useTheme();
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} >
       <View style={{ flexDirection: 'row', gap: 8, paddingVertical: 8 }}>
         {options.map((o) => {
           const active = o === value;
@@ -132,7 +132,7 @@ function RiskPill({ label, score }: { label: string; score: number }) {
 const rg = StyleSheet.create({
   pill:  { flex: 1, padding: 10, borderRadius: 12, alignItems: 'center', gap: 4 },
   label: { fontFamily: 'Inter_600SemiBold', fontSize: 10 },
-  val:   { fontFamily: 'Inter_900Black', fontSize: 22 },
+  val:   { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22 },
 });
 
 // ── Main screen ───────────────────────────────────────────────────────────────
@@ -184,7 +184,7 @@ export default function ScenarioEditor() {
         </TouchableOpacity>
       }
     >
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 80 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 80 }}>
 
         {/* ── INPUTS ─────────────────────────────────────── */}
         <SectionHeader title="INGIZO (WHAT-IF)" />
@@ -332,7 +332,7 @@ const se = StyleSheet.create({
   heroRow: { flexDirection: 'row', gap: 0 },
   heroStat: { flex: 1, alignItems: 'center', gap: 4 },
   heroLabel: { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 1 },
-  heroVal: { fontFamily: 'Inter_900Black', fontSize: 26 },
+  heroVal: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 26 },
   heroSub: { fontFamily: 'Inter_500Medium', fontSize: 11 },
   heroDivider: { width: StyleSheet.hairlineWidth, backgroundColor: '#ffffff22' },
   revRow: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, marginTop: 10, borderTopWidth: StyleSheet.hairlineWidth },
@@ -340,11 +340,11 @@ const se = StyleSheet.create({
   revVal: { fontFamily: 'Inter_800ExtraBold', fontSize: 12 },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, marginTop: 8, borderTopWidth: StyleSheet.hairlineWidth },
   totalLabel: { fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 0.5 },
-  totalVal: { fontFamily: 'Inter_900Black', fontSize: 14 },
+  totalVal: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 14 },
   riskRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   overallRisk: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth },
   overallLabel: { fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 0.5 },
-  overallVal: { fontFamily: 'Inter_900Black', fontSize: 22 },
+  overallVal: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22 },
   tipRow: { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },
   tipText: { flex: 1, fontFamily: 'Inter_500Medium', fontSize: 13, lineHeight: 20 },
 });

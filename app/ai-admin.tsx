@@ -278,7 +278,7 @@ export default function AIAdminScreen() {
 
         {/* Tabs navigation */}
         <View style={styles.tabsContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
+          <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const label = language === 'sw' ? tab.labelSw : tab.labelEn;
@@ -314,8 +314,7 @@ export default function AIAdminScreen() {
 
         {/* Tab content area */}
         <ScrollView 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         >
           {activeTab === 'overview' && (
             /* 📊 OVERVIEW TAB */
@@ -607,7 +606,7 @@ export default function AIAdminScreen() {
                 </Text>
 
                 <View style={[styles.logConsole, { backgroundColor: '#090d16', borderColor: colors.border }]}>
-                  <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                  <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled style={{ maxHeight: 200 }}>
                     {logs.map((log, index) => (
                       <Text key={index} style={styles.logLine}>
                         {log}
@@ -736,7 +735,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   headerSub: {
     fontSize: 12,
@@ -788,7 +787,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 15,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   accuracyMeterRow: {
     flexDirection: 'row',
@@ -806,7 +805,7 @@ const styles = StyleSheet.create({
   },
   meterNumber: {
     fontSize: 22,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   meterSub: {
     fontSize: 8,
@@ -848,7 +847,7 @@ const styles = StyleSheet.create({
   },
   gridValue: {
     fontSize: 20,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 4,
   },
   gridSubText: {
@@ -880,7 +879,7 @@ const styles = StyleSheet.create({
   /* Prompt overridden CSS */
   inputLabel: {
     fontSize: 15,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 4,
   },
   inputHint: {

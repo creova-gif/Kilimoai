@@ -147,8 +147,7 @@ export default function ProfileScreen() {
 
       <SafeAreaView style={styles.safeArea}>
         <ScrollView 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         >
           <View>
             {/* Header */}
@@ -199,7 +198,7 @@ export default function ProfileScreen() {
 
                   <View style={styles.profileRow}>
                     <View style={[styles.profileImage, { borderColor: colors.primary + '40', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.card }]}>
-                      <Text style={{ color: colors.text, fontSize: 24, fontFamily: 'Inter_900Black' }}>
+                      <Text style={{ color: colors.text, fontSize: 24, fontFamily: 'InstrumentSerif_400Regular' }}>
                         {AGRO_ID_DATA.name.split(' ').map(n => n[0]).join('').substring(0,2)}
                       </Text>
                     </View>
@@ -337,7 +336,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -1,
   },
   idCardContainer: {
@@ -371,7 +370,7 @@ const styles = StyleSheet.create({
   },
   idBadgeText: {
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
   idNumber: {
@@ -396,7 +395,7 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 24,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
     marginBottom: 4,
   },
@@ -431,7 +430,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 11,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1.5,
     marginBottom: 12,
     marginLeft: 8,

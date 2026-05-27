@@ -11,6 +11,7 @@ import {
   Inter_800ExtraBold,
   Inter_900Black 
 } from '@expo-google-fonts/inter';
+import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useColorScheme, View } from 'react-native';
 import { pingActivity } from '../hooks/useIdleTimeout';
@@ -101,6 +102,7 @@ export default function RootLayout() {
     Inter_700Bold,
     Inter_800ExtraBold,
     Inter_900Black,
+    InstrumentSerif_400Regular,
   });
 
   useEffect(() => {

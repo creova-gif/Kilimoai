@@ -126,22 +126,22 @@ function AccessDenied() {
 }
 
 const s = StyleSheet.create({
-  topic: { fontSize: 14, fontFamily: 'Inter_900Black' },
+  topic: { fontSize: 14, fontFamily: 'InstrumentSerif_400Regular' },
   expert: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
   statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  statusText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  statusText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   schedRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 12, paddingTop: 10, borderTopWidth: 1 },
   schedText: { fontSize: 11, fontFamily: 'Inter_600SemiBold', flex: 1 },
   cancelBtn: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   cancelText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
   avatar: { width: 56, height: 56, borderRadius: 18, borderWidth: 2 },
-  expName: { fontSize: 15, fontFamily: 'Inter_900Black' },
+  expName: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular' },
   specialty: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5, marginTop: 2 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 6 },
   metaText: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
   rateRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, paddingTop: 12, borderTopWidth: 1 },
-  rate: { fontSize: 16, fontFamily: 'Inter_900Black' },
+  rate: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular' },
   rateUnit: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
   actBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1 },
-  actText: { fontSize: 11, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },
+  actText: { fontSize: 11, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
 });

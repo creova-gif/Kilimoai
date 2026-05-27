@@ -200,7 +200,7 @@ function PlantingTimeline({ crop, language }: { crop: CropRec; language: 'en' | 
 }
 
 const tl = StyleSheet.create({
-  label: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1.5, color: '#6b7280' },
+  label: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1.5, color: '#6b7280' },
   phaseLbl: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#6b7280' },
   infoBox: {
     padding: 12,
@@ -325,7 +325,7 @@ export default function CropPlanningScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               {activeSeason.icon}
               <View>
-                <Text style={{ fontFamily: 'Inter_900Black', fontSize: 14, color: activeSeason.color }}>{activeSeason.label} — {activeSeason.sublabel}</Text>
+                <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, color: activeSeason.color }}>{activeSeason.label} — {activeSeason.sublabel}</Text>
                 <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 12, color: colors.textMute }}>{activeSeason.months} · {crops.length} mazao yanayofaa</Text>
               </View>
             </View>
@@ -455,7 +455,7 @@ export default function CropPlanningScreen() {
               <LinearGradient colors={[colors.primary + '14', colors.primary + '04']} style={StyleSheet.absoluteFill} />
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 }}>
                 <Target size={20} color={colors.primary} />
-                <Text style={{ fontFamily: 'Inter_900Black', fontSize: 14, color: colors.text }}>Ushauri wa Msimu huu</Text>
+                <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, color: colors.text }}>Ushauri wa Msimu huu</Text>
               </View>
               <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 13, color: colors.textMute, lineHeight: 20 }}>
                 Msimu wa <Text style={{ fontWeight: '700', color: colors.text }}>{activeSeason.label}</Text> ni wakati mzuri wa kupanda mazao yanayohitaji <Text style={{ fontWeight: '700', color: activeSeason.color }}>mvua {activeSeason.key === 'kiangazi' ? 'kidogo au umwagiliaji' : activeSeason.key === 'masika' ? 'nyingi na ya uhakika' : 'wastani'}</Text>. Tembelea soko lako la karibu au tumia <Text style={{ fontWeight: '700', color: colors.primary }}>Soko la KILIMO AI</Text> kupata bei za moja kwa moja.
@@ -486,8 +486,8 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 14 },
   iconBtn: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
   badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 4 },
-  badgeText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1 },
-  title: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
+  badgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
+  title: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
   scroll: { paddingHorizontal: 20, paddingTop: 8 },
   seasonRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   seasonTab: { borderRadius: 20, padding: 14, alignItems: 'center', gap: 4, overflow: 'hidden' },
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   banner: { borderRadius: 20, padding: 16, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
   aiTag: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 8 },
   sectionRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  sectionTitle: { fontSize: 20, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  sectionTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   card: { borderRadius: 28, padding: 20, overflow: 'hidden' },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
   emoji: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
@@ -509,12 +509,12 @@ const styles = StyleSheet.create({
   statVal: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   statDiv: { width: 1, height: 32 },
   divider: { height: 1, marginVertical: 16 },
-  tipsTitle: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1.5, marginBottom: 10 },
+  tipsTitle: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1.5, marginBottom: 10 },
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 8 },
   tipDot: { width: 6, height: 6, borderRadius: 3, marginTop: 5 },
   tipText: { flex: 1, fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
   planBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16, marginTop: 16 },
-  planBtnText: { fontFamily: 'Inter_900Black', fontSize: 14 },
+  planBtnText: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 14 },
   colFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, marginTop: 4, borderTopWidth: 1 },
   tipCard: { borderRadius: 24, padding: 20, borderWidth: 1, overflow: 'hidden', marginBottom: 16 },
   mktBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 14, paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10, borderWidth: 1.5, alignSelf: 'flex-start' },

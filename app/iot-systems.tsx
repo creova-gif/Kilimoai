@@ -93,7 +93,7 @@ export default function IOTSystems() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} >
           {/* Drone Control Panel */}
           <Animated.View entering={FadeInDown.delay(100).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>

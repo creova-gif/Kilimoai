@@ -93,8 +93,7 @@ export default function TransactionsScreen() {
             />
           </View>
         ) : (
-          <FlatList
-            data={filtered}
+          <FlatList showsVerticalScrollIndicator={false} data={filtered}
             keyExtractor={(i) => i.id}
             renderItem={renderItem}
             contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 80 }}

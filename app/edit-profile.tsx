@@ -255,7 +255,7 @@ export default function EditProfileScreen() {
         </View>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
             <Text style={[s.sub, { color: colors.textMute }]}>{t.sub}</Text>
 
             {/* Name */}
@@ -298,7 +298,7 @@ export default function EditProfileScreen() {
 
             {/* Region */}
             <Section icon={<MapPin size={16} color="#3b82f6" />} label={t.region} />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {REGIONS.map((r) => (
                 <TouchableOpacity
                   key={r}
@@ -490,5 +490,5 @@ const s = StyleSheet.create({
   toggleLabel:     { color: '#fff', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
   saveCta:         { borderRadius: 16, overflow: 'hidden' },
   saveGrad:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
-  saveText:        { color: '#000', fontSize: 16, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },
+  saveText:        { color: '#000', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
 });

@@ -147,8 +147,7 @@ export default function ForecastScreen() {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView 
           style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false} scrollEventThrottle={16}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           contentContainerStyle={styles.scrollContent}
         >
@@ -348,8 +347,8 @@ const styles = StyleSheet.create({
   scrollContent: { padding: 24, paddingTop: 12 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 12, alignSelf: 'flex-start', gap: 6 },
-  statusText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1 },
-  headerTitle: { fontSize: 32, fontFamily: 'Inter_900Black', letterSpacing: -1.5 },
+  statusText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
+  headerTitle: { fontSize: 32, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1.5 },
   locationContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   locationText: { fontSize: 13, fontFamily: 'Inter_700Bold', marginLeft: 6, opacity: 0.8 },
   refreshAction: { width: 54, height: 54, borderRadius: 27, overflow: 'hidden' },
@@ -359,24 +358,24 @@ const styles = StyleSheet.create({
   tempSection: { flex: 1 },
   todayText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1, marginBottom: 8 },
   tempMainContainer: { flexDirection: 'row', alignItems: 'flex-start' },
-  tempMain: { fontSize: 84, fontFamily: 'Inter_900Black', letterSpacing: -3, lineHeight: 84 },
-  tempDegree: { fontSize: 32, fontFamily: 'Inter_900Black', marginTop: 4, marginLeft: 4 },
+  tempMain: { fontSize: 84, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -3, lineHeight: 84 },
+  tempDegree: { fontSize: 32, fontFamily: 'InstrumentSerif_400Regular', marginTop: 4, marginLeft: 4 },
   conditionMain: { fontSize: 22, fontFamily: 'Inter_800ExtraBold', marginTop: 8, letterSpacing: -0.5 },
   heroIconContainer: { shadowColor: "#3b82f6", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.2, shadowRadius: 20 },
   divider: { height: 1, width: '100%', marginBottom: 24, opacity: 0.05 },
   statsGrid: { flexDirection: 'row', justifyContent: 'space-between' },
   statItem: { alignItems: 'center', flex: 1 },
   statIcon: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
-  statVal: { fontSize: 17, fontFamily: 'Inter_900Black' },
+  statVal: { fontSize: 17, fontFamily: 'InstrumentSerif_400Regular' },
   statLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginTop: 2, opacity: 0.6 },
   insightCard: { padding: 20, borderRadius: 24, borderWidth: 1, marginBottom: 36, overflow: 'hidden' },
   insightHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
-  insightTitle: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1 },
+  insightTitle: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
   insightText: { fontSize: 14, fontFamily: 'Inter_600SemiBold', lineHeight: 20, opacity: 0.9 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  sectionTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
+  sectionTitle: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
   moreButton: { paddingHorizontal: 12, paddingVertical: 6 },
-  moreText: { fontSize: 11, fontFamily: 'Inter_900Black', letterSpacing: 1 },
+  moreText: { fontSize: 11, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
   forecastList: { gap: 12 },
   dayRowContainer: { borderRadius: 28, overflow: 'hidden' },
   dayRow: { flexDirection: 'row', alignItems: 'center', padding: 18, borderRadius: 28, borderWidth: 1, overflow: 'hidden' },
@@ -386,10 +385,10 @@ const styles = StyleSheet.create({
   dayIcon: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
   iconCircle: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   popBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  popText: { fontSize: 10, fontFamily: 'Inter_900Black' },
+  popText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular' },
   tempRange: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   tempLabels: { alignItems: 'flex-end' },
-  highTemp: { fontSize: 15, fontFamily: 'Inter_900Black' },
+  highTemp: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular' },
   lowTemp: { fontSize: 12, fontFamily: 'Inter_700Bold', opacity: 0.5 },
   tempBarBg: { width: 60, height: 6, borderRadius: 3, overflow: 'hidden' },
   tempBarFill: { height: '100%', borderRadius: 3 },

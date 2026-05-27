@@ -381,7 +381,7 @@ function AccessDenied() {
 const s = StyleSheet.create({
   addBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
   summaryCard: { flexDirection: 'row', padding: 16 },
-  pillCount: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  pillCount: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   pillLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginTop: 2, textAlign: 'center' },
   alertCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderWidth: 1 },
   alertTitle: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
@@ -391,11 +391,11 @@ const s = StyleSheet.create({
 const ac = StyleSheet.create({
   colorBar: { height: 3, width: '100%' },
   iconBg: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  tag: { fontSize: 15, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },
+  tag: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
   name: { fontSize: 13, fontFamily: 'Inter_700Bold' },
   species: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1, marginTop: 2 },
   healthBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 9, paddingVertical: 5, borderRadius: 10 },
-  healthText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  healthText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   vacRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingTop: 10, borderTopWidth: 1 },
   vacText: { fontSize: 11, fontFamily: 'Inter_700Bold', flex: 1 },
   expandBtn: { padding: 2 },
@@ -408,7 +408,7 @@ const m = StyleSheet.create({
   sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 32, maxHeight: '92%' },
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 4 },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 },
-  sheetTitle: { fontSize: 18, fontFamily: 'Inter_900Black' },
+  sheetTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
   closeBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   label: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 16, marginBottom: 8 },
   speciesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
@@ -420,5 +420,5 @@ const m = StyleSheet.create({
   healthPill: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 11, borderRadius: 12, borderWidth: 1.5 },
   healthText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
   saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24, paddingVertical: 16, borderRadius: 16 },
-  saveBtnText: { color: '#fff', fontSize: 15, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },
+  saveBtnText: { color: '#fff', fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
 });

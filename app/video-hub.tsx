@@ -269,7 +269,7 @@ export default function VideoHubScreen() {
           </View>
 
           {/* Category Scroller */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
+          <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
             {categories.map((cat) => {
               const isActive = selectedCategory === cat.id;
               const label = language === 'sw' ? cat.labelSw : cat.labelEn;
@@ -303,8 +303,7 @@ export default function VideoHubScreen() {
 
         {/* Video Cards list */}
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         >
           <View style={styles.videosGrid}>
             {filteredVideos.length === 0 ? (
@@ -443,7 +442,7 @@ export default function VideoHubScreen() {
             </View>
 
             {/* Video description content */}
-            <ScrollView style={styles.playerDetailsScroll}>
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.playerDetailsScroll}>
               {selectedVideo && (
                 <View style={styles.playerMetaContent}>
                   <Text style={[styles.playerUploader, { color: colors.primary }]}>{selectedVideo.uploader}</Text>
@@ -495,7 +494,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   headerSub: {
     fontSize: 12,
@@ -582,7 +581,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 16,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   emptySub: {
     fontSize: 12,
@@ -666,7 +665,7 @@ const styles = StyleSheet.create({
   },
   videoTitle: {
     fontSize: 14,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     lineHeight: 20,
   },
   videoDesc: {
@@ -715,7 +714,7 @@ const styles = StyleSheet.create({
   playerTitle: {
     color: '#fff',
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     lineHeight: 26,
   },
   playerDesc: {

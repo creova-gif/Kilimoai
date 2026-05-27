@@ -11,7 +11,7 @@ export default function TermsScreen() {
   const borderColor = isDark ? '#27272a' : '#e4e4e7';
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: bg }]}>
+    <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: bg }]}>
       <Text style={[styles.title, { color: textColor }]}>Terms of Service</Text>
       <Text style={[styles.date, { color: subTextColor }]}>Last Updated: May 25, 2026 · Effective: May 25, 2026</Text>
       <Text style={[styles.intro, { color: subTextColor }]}>

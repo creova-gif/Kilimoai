@@ -215,7 +215,7 @@ export default function FeaturesScreen() {
       <View style={[s.orb2, { backgroundColor: isDark ? 'rgba(46,90,39,0.08)' : 'rgba(46,90,39,0.04)' }]} />
 
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false} >
 
           {/* ── Hero ─────────────────────────────────────────────────── */}
           <Animated.View
@@ -317,13 +317,13 @@ const s = StyleSheet.create({
   heroLeft:   { flex: 1, gap: 4 },
   heroBadge:  { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
   heroBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.2 },
-  heroTitle:  { fontSize: 26, fontFamily: 'Inter_900Black', letterSpacing: -0.8, marginTop: 8 },
+  heroTitle:  { fontSize: 26, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8, marginTop: 8 },
   heroRole:   { fontSize: 12, fontFamily: 'Inter_600SemiBold', textTransform: 'capitalize', marginTop: 2 },
   heroRight:  { marginLeft: 16 },
   heroCircle: { width: 60, height: 60, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
 
   // Sections
-  secLabel:   { fontSize: 11, fontFamily: 'Inter_900Black', letterSpacing: 1.5, marginTop: 0, marginBottom: 10, marginLeft: 2 },
+  secLabel:   { fontSize: 11, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1.5, marginTop: 0, marginBottom: 10, marginLeft: 2 },
   pinnedGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   catHeader:  { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
   catDot:     { width: 8, height: 8, borderRadius: 4 },

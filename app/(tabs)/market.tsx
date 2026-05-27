@@ -161,7 +161,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               </Text>
             </View>
           ) : (
-            <ScrollView style={{ maxHeight: 200 }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ maxHeight: 200 }} showsVerticalScrollIndicator={false} >
               {alerts.map((a: PriceAlert) => (
                 <View key={a.id} style={[pm.alertRow, { borderColor: colors.border }]}>
                   <View style={[pm.alertDot, { backgroundColor: a.direction === 'above' ? colors.success : colors.error }]} />
@@ -184,7 +184,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               <Text style={[pm.label, { color: colors.textMute }]}>
                 {language === 'sw' ? 'ZAO' : 'CROP'}
               </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+              <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                 {CROPS_SELL.map((c) => (
                   <TouchableOpacity
                     key={c}
@@ -252,7 +252,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
                   accessibilityLabel="Save price alert"
                 >
                   <Check size={16} color={isDark ? '#000' : '#fff'} />
-                  <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'Inter_900Black' }}>
+                  <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular' }}>
                     {language === 'sw' ? 'Hifadhi Arifa' : 'Save Alert'}
                   </Text>
                 </TouchableOpacity>
@@ -266,7 +266,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               accessibilityLabel="Add price alert"
             >
               <Plus size={18} color={isDark ? '#000' : '#fff'} />
-              <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'Inter_900Black' }}>
+              <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular' }}>
                 {language === 'sw' ? 'Ongeza Arifa Mpya' : 'Add New Alert'}
               </Text>
             </TouchableOpacity>
@@ -395,7 +395,7 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                 <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 11 }}>
                   {language === 'sw' ? 'Jumla ya ofa' : 'Total offer'}
                 </Text>
-                <Text style={{ color: colors.primary, fontFamily: 'Inter_900Black', fontSize: 18 }}>TZS {fmt(Math.round(total))}</Text>
+                <Text style={{ color: colors.primary, fontFamily: 'InstrumentSerif_400Regular', fontSize: 18 }}>TZS {fmt(Math.round(total))}</Text>
               </View>
             )}
             <TouchableOpacity
@@ -405,7 +405,7 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
               accessibilityLabel="Send Offer"
             >
               <Check size={16} color={isDark ? '#000' : '#fff'} />
-              <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'Inter_900Black', fontSize: 15 }}>
+              <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 15 }}>
                 {language === 'sw' ? 'Tuma Ofa' : 'Send Offer'}
               </Text>
             </TouchableOpacity>
@@ -473,7 +473,7 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
             <Text style={[pm.label, { color: colors.textMute }]}>
               {language === 'sw' ? 'ZAO' : 'CROP'}
             </Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {CROPS_SELL.map((c) => (
                 <TouchableOpacity
                   key={c}
@@ -540,7 +540,7 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                 <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 11 }}>
                   {language === 'sw' ? 'Thamani ya tangazo' : 'Listing value'}
                 </Text>
-                <Text style={{ color: colors.success, fontFamily: 'Inter_900Black', fontSize: 18 }}>TZS {fmt(parseFloat(qty) * parseFloat(price))}</Text>
+                <Text style={{ color: colors.success, fontFamily: 'InstrumentSerif_400Regular', fontSize: 18 }}>TZS {fmt(parseFloat(qty) * parseFloat(price))}</Text>
               </View>
             )}
             <TouchableOpacity
@@ -550,7 +550,7 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
               accessibilityLabel="Publish listing"
             >
               <Globe size={16} color={isDark ? '#000' : '#fff'} />
-              <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'Inter_900Black', fontSize: 15 }}>
+              <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 15 }}>
                 {language === 'sw' ? 'Chapisha Tangazo' : 'Publish Listing'}
               </Text>
             </TouchableOpacity>
@@ -660,8 +660,7 @@ export default function MarketScreen() {
         </Animated.View>
 
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          onScroll={(e) => { const y = e.nativeEvent.contentOffset.y; if (y > 40 && !scrolled) setScrolled(true); if (y <= 40 && scrolled) setScrolled(false); }}
+          showsVerticalScrollIndicator={false} onScroll={(e) => { const y = e.nativeEvent.contentOffset.y; if (y > 40 && !scrolled) setScrolled(true); if (y <= 40 && scrolled) setScrolled(false); }}
           scrollEventThrottle={16}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           contentContainerStyle={styles.scrollContent}
@@ -714,7 +713,7 @@ export default function MarketScreen() {
 
           {/* Categories (sticky) */}
           <View style={styles.stickyCategory}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContent}>
+            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContent}>
               {CATEGORIES.map((cat) => {
                 const active = activeCategory === cat.id;
                 const label = language === 'sw' ? cat.labelSw : cat.labelEn;
@@ -921,7 +920,7 @@ const styles = StyleSheet.create({
   bgOverlay: { position: 'absolute', top: 0, left: 0, right: 0, height: SCREEN_HEIGHT },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16, zIndex: 100 },
   headerCenter: { alignItems: 'center' },
-  headerTitle: { fontSize: 24, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+  headerTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   locationContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
   locationText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
@@ -942,7 +941,7 @@ const styles = StyleSheet.create({
   bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
   bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-  intelBadgeText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  intelBadgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   bentoTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', marginTop: 12, marginBottom: 4 },
   bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
   bentoFooter: { marginTop: 16 },
@@ -950,10 +949,10 @@ const styles = StyleSheet.create({
   bentoActionText: { color: '#FCFBF7', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
   bentoSidebar: { flex: 1, gap: 16 },
   bentoSmall: { flex: 1, borderRadius: 24, padding: 16, borderWidth: 1, overflow: 'hidden', justifyContent: 'center' },
-  bentoSmallTitle: { fontSize: 20, fontFamily: 'Inter_900Black', marginTop: 8, marginBottom: 2 },
+  bentoSmallTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', marginTop: 8, marginBottom: 2 },
   bentoSmallDesc: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  sectionTitle: { fontSize: 20, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  sectionTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   marketGrid: { gap: 16 },
   premiumCard: { borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
@@ -967,7 +966,7 @@ const styles = StyleSheet.create({
   cardBody: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 },
   priceContainer: { flex: 1 },
   priceLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 4 },
-  priceBig: { fontSize: 24, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+  priceBig: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   trendArea: { alignItems: 'flex-end', gap: 8 },
   sparklineOuter: { flexDirection: 'row', alignItems: 'flex-end', height: 40, gap: 3 },
   sparkBar: { width: 4, borderRadius: 2 },
@@ -979,7 +978,7 @@ const styles = StyleSheet.create({
   analysisItem: { flex: 1 },
   analysisLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
   outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
-  outlookText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  outlookText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
   actionGrid: { flexDirection: 'row', gap: 12 },
   contractBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 16, gap: 8 },
@@ -990,14 +989,14 @@ const styles = StyleSheet.create({
   detailBtnText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   fab: { position: 'absolute', bottom: 32, right: 24 },
   fabGrad: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingVertical: 16, borderRadius: 28 },
-  fabText: { color: '#fff', fontFamily: 'Inter_900Black', fontSize: 14, letterSpacing: 0.5 },
+  fabText: { color: '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, letterSpacing: 0.5 },
 });
 
 const pm = StyleSheet.create({
   sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 16, maxHeight: '88%' },
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 4 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 },
-  title: { fontSize: 18, fontFamily: 'Inter_900Black' },
+  title: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
   closeBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   empty: { fontFamily: 'Inter_600SemiBold', fontSize: 13, marginTop: 12 },
   alertRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12, borderBottomWidth: 1 },

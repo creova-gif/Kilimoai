@@ -53,7 +53,7 @@ export default function WalletAdminOverview() {
     >
       <RequireVerification>
       <PageScaffold title="Pochi ya Msimamizi" subtitle="Wallet Admin" badge="ENTERPRISE">
-        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
           {/* Hero — total balance */}
           <GlassCard style={[s.hero, { borderColor: colors.border }]}>
             <View style={s.heroRow}>
@@ -172,7 +172,7 @@ const s = StyleSheet.create({
   hero: { padding: 18, marginBottom: 16, borderWidth: StyleSheet.hairlineWidth },
   heroRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   heroLabel: { fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 1 },
-  heroAmount: { fontFamily: 'Inter_900Black', fontSize: 28, marginTop: 8 },
+  heroAmount: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 28, marginTop: 8 },
   heroMetaRow: { flexDirection: 'row', gap: 16, marginTop: 12 },
   heroMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   heroMetaText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },

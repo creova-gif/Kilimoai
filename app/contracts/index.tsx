@@ -101,7 +101,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
 
             {/* Crop */}
             <LabelRow icon={<Wheat size={13} color="#22d15a" />} label="ZAO" />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {CROPS.map((c) => (
                 <TouchableOpacity key={c} onPress={() => { Haptics.selectionAsync(); setCrop(c); }}
                   style={[cm.pill, { borderColor: crop === c ? colors.primary : colors.border, backgroundColor: crop === c ? colors.primary + '18' : 'transparent' }]}>
@@ -119,7 +119,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
 
             {/* Region */}
             <LabelRow icon={<MapPin size={13} color="#3b82f6" />} label="MKOA" />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {REGIONS.map((r) => (
                 <TouchableOpacity key={r} onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
                   style={[cm.pill, { borderColor: region === r ? colors.primary : colors.border, backgroundColor: region === r ? colors.primary + '18' : 'transparent' }]}>
@@ -245,8 +245,7 @@ export default function ContractsScreen() {
         )}
 
         {/* Filter pills */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingVertical: 12 }}>
+        <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingVertical: 12 }}>
           {FILTERS.map((f) => {
             const active = filter === f.status;
             return (
@@ -362,7 +361,7 @@ function Metric({ label, value, highlight }: any) {
 const s = StyleSheet.create({
   addBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
   summaryCard: { flexDirection: 'row', alignItems: 'center', padding: 18 },
-  pillCount: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  pillCount: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   pillLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginTop: 3, textAlign: 'center' },
   vr: { width: 1, height: 36, marginHorizontal: 4 },
   filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 16, borderWidth: 1 },
@@ -371,8 +370,8 @@ const s = StyleSheet.create({
   rowTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 8 },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 0.8 },
-  title: { fontSize: 16, fontFamily: 'Inter_900Black', letterSpacing: -0.3 },
+  statusText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.8 },
+  title: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
   sub: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
   rowBottom: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, marginTop: 14, paddingTop: 12 },
   milestoneBar: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1 },
@@ -387,7 +386,7 @@ const cm = StyleSheet.create({
   sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 32, maxHeight: '92%' },
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 4 },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 },
-  sheetTitle: { fontSize: 18, fontFamily: 'Inter_900Black' },
+  sheetTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
   iconBg: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
   closeBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   fieldLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
@@ -397,7 +396,7 @@ const cm = StyleSheet.create({
   pillText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   previewBox: { marginTop: 16, padding: 14, borderRadius: 14, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   previewLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
-  previewValue: { fontSize: 18, fontFamily: 'Inter_900Black', letterSpacing: -0.5 },
+  previewValue: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24, paddingVertical: 16, borderRadius: 16 },
-  createBtnText: { color: '#000', fontSize: 15, fontFamily: 'Inter_900Black', letterSpacing: 0.3 },
+  createBtnText: { color: '#000', fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
 });

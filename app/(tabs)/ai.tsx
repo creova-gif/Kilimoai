@@ -578,8 +578,7 @@ ${activeExcel.summaryText}`
               entering={FadeInDown} exiting={FadeOut}
               style={styles.chatContent}
             >
-              <FlatList
-                ref={flatListRef}
+              <FlatList ref={flatListRef}
                 data={messages}
                 renderItem={({ item, index }) => (
                   <ChatMessage 
@@ -595,8 +594,7 @@ ${activeExcel.summaryText}`
                 )}
                 keyExtractor={item => item.id}
                 contentContainerStyle={styles.listPadding}
-                showsVerticalScrollIndicator={false}
-                ListFooterComponent={
+                showsVerticalScrollIndicator={false} ListFooterComponent={
                   isTyping ? (
                     <Animated.View
                       entering={FadeInDown} exiting={FadeOut}
@@ -702,7 +700,7 @@ ${activeExcel.summaryText}`
                     entering={FadeInDown} exiting={FadeOut}
                     style={styles.suggestionBox}
                   >
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionScroll}>
+                    <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionScroll}>
                       {SUGGESTED_PROMPTS.map((prompt, index) => (
                         <Animated.View
                           key={index}
@@ -943,7 +941,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, colors, isDark, language 
         <Text style={[styles.excelSectionTitle, { color: colors.textMute, marginTop: 12 }]}>
           {language === 'sw' ? 'MICHANGANUO YA KANUNI' : 'COLUMN HEADERS'}
         </Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 6 }}>
+        <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 6 }}>
           {data.headers.map((h: string, idx: number) => (
             <View key={idx} style={[styles.headerBadge, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
               <Text style={[styles.headerBadgeText, { color: colors.text }]}>{h}</Text>
@@ -967,7 +965,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, colors, isDark, language 
         </TouchableOpacity>
 
         {expanded && (
-          <ScrollView horizontal showsHorizontalScrollIndicator style={{ marginTop: 8 }}>
+          <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator style={{ marginTop: 8 }}>
             <View style={styles.table}>
               {/* Table Header Row */}
               <View style={styles.tableHeaderRow}>
@@ -1191,7 +1189,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   proBadge: {
@@ -1204,7 +1202,7 @@ const styles = StyleSheet.create({
   },
   proText: {
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
   statusRow: {
@@ -1238,7 +1236,7 @@ const styles = StyleSheet.create({
   },
   voicePhaseText: {
     fontSize: 28,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -1489,7 +1487,7 @@ const styles = StyleSheet.create({
   },
   excelSectionTitle: {
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1.2,
   },
   headerBadge: {
@@ -1533,7 +1531,7 @@ const styles = StyleSheet.create({
   },
   tableHeaderText: {
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   tableCellText: {
     fontSize: 11,
@@ -1587,7 +1585,7 @@ const styles = StyleSheet.create({
   },
   menuTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 8,
   },
   menuOption: {

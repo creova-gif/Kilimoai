@@ -218,7 +218,7 @@ export default function AgroIdScreen() {
                 {/* Dotted Line */}
                 <View style={[styles.trackBgLine, { backgroundColor: isDark ? '#263322' : '#E2E8DF' }]} />
                 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
+                <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
                   {TRACK_RECORDS.map((item, idx) => (
                     <View key={idx} style={styles.trackStep}>
                       <View style={[
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   },
   cropTitle: {
     fontSize: 24,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
     marginBottom: 20,
   },
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 9,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
     marginBottom: 8,
   },
@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   },
   ledgerAmt: {
     fontSize: 12,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
 
   // Bottom action buttons
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.2,
   },
   modalDesc: {

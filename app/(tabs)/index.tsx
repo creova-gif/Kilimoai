@@ -158,7 +158,7 @@ const TrackRecords = ({ colors, isDark, language }: any) => {
         {/* Connection Line */}
         <View style={[styles.trackBgLine, { backgroundColor: isDark ? '#263322' : '#E2E8DF' }]} />
         
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
+        <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
           {records.map((item, idx) => (
             <View key={idx} style={styles.trackStep}>
               <View style={[
@@ -997,8 +997,7 @@ export default function HomeScreen() {
       <StatusBar barStyle="light-content" />
       
       <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFFFFF" />}
       >
         {/* Immersive Hero Header */}
@@ -1218,10 +1217,8 @@ export default function HomeScreen() {
             <Text style={[styles.bentoSectionTitle, { color: colors.textMute, marginLeft: 4 }]}>
               {language === 'sw' ? 'NJIA ZA HARAKA' : 'QUICK ACTIONS'}
             </Text>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false} 
-              contentContainerStyle={styles.actionScroll}
+            <ScrollView showsVerticalScrollIndicator={false} horizontal 
+              showsHorizontalScrollIndicator={false} contentContainerStyle={styles.actionScroll}
               snapToInterval={SCREEN_WIDTH * 0.65 + 16} 
               decelerationRate="fast"
             >
@@ -2077,7 +2074,7 @@ const styles = StyleSheet.create({
   liveText: {
     color: '#ef4444',
     fontSize: 8,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   cropSelectorRow: {
     flexDirection: 'row',
@@ -2087,7 +2084,7 @@ const styles = StyleSheet.create({
   },
   cropName: {
     fontSize: 26,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     color: '#FFFFFF',
     letterSpacing: -0.5,
   },
@@ -2280,7 +2277,7 @@ const styles = StyleSheet.create({
   // Quick Action List Styles
   bentoSectionTitle: {
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1.5,
     marginBottom: 10,
   },
@@ -2332,7 +2329,7 @@ const styles = StyleSheet.create({
   },
   chartValue: {
     fontSize: 24,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   chartUnit: {
@@ -2427,7 +2424,7 @@ const styles = StyleSheet.create({
   },
   balanceAmount: {
     fontSize: 32,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   balanceDecimals: {
@@ -2498,7 +2495,7 @@ const styles = StyleSheet.create({
   },
   statValueText: {
     fontSize: 20,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   statLabelText: {
@@ -2651,7 +2648,7 @@ const styles = StyleSheet.create({
   },
   recCat: {
     fontSize: 9,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 2,
   },
   recTitle: {
@@ -2706,7 +2703,7 @@ const styles = StyleSheet.create({
   guideCardTitle: {
     color: '#FCFBF7',
     fontSize: 20,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   guideCardDesc: {
@@ -2741,7 +2738,7 @@ const styles = StyleSheet.create({
   },
   guideModalTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   guideModalSub: {
@@ -2887,12 +2884,12 @@ const styles = StyleSheet.create({
   },
   guideStepNumText: {
     fontSize: 9,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
   guideStepTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     textAlign: 'center',
     letterSpacing: -0.3,
   },
@@ -2918,7 +2915,7 @@ const styles = StyleSheet.create({
   },
   guideFooterBtnTextPrim: {
     fontSize: 14,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   guideFooterBtnSec: {
     flex: 1,
@@ -2963,12 +2960,12 @@ const styles = StyleSheet.create({
   noCropWarningBadgeText: {
     color: '#000',
     fontSize: 9,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 0.5,
   },
   noCropTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.3,
   },
   noCropDesc: {

@@ -106,7 +106,7 @@ export default function AnalyticsDashboard() {
       }
     >
       <PageScaffold title="Uchanganuzi wa AI" subtitle="Predictive Analytics" badge="ANALYTICS">
-        <ScrollView contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 80 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 80 }}>
 
           {/* ── 1. YIELD FORECAST ──────────────────────────── */}
           <SectionHeader title="UTABIRI WA MAVUNO" />
@@ -223,8 +223,8 @@ const s = StyleSheet.create({
   yieldCard:    { padding: 16 },
   yieldTop:     { flexDirection: 'row', alignItems: 'center', gap: 8 },
   yieldLabel:   { fontFamily: 'Inter_600SemiBold', fontSize: 10, letterSpacing: 0.8 },
-  yieldCurrent: { fontFamily: 'Inter_900Black', fontSize: 24, marginTop: 4 },
-  yieldForecast:{ fontFamily: 'Inter_900Black', fontSize: 24, marginTop: 4 },
+  yieldCurrent: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 24, marginTop: 4 },
+  yieldForecast:{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 24, marginTop: 4 },
   yieldArrow:   { paddingHorizontal: 4 },
   yieldMeta:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, marginTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
   confBadge:    { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
@@ -235,7 +235,7 @@ const s = StyleSheet.create({
   pestCard:     { padding: 14, gap: 10 },
   pestTop:      { flexDirection: 'row', gap: 14, alignItems: 'flex-start' },
   pestGauge:    { width: 80, alignItems: 'center', padding: 10, borderRadius: 14, gap: 4 },
-  pestScore:    { fontFamily: 'Inter_900Black', fontSize: 24 },
+  pestScore:    { fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 },
   pestLevel:    { fontFamily: 'Inter_700Bold', fontSize: 10 },
   driverRow:    { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
   driverDot:    { width: 6, height: 6, borderRadius: 3, marginTop: 5 },

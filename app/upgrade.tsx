@@ -267,7 +267,7 @@ const s = StyleSheet.create({
   tierLabel:     { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
   tierPrice:     { fontSize: 13, fontFamily: 'Inter_700Bold' },
   currentBadge:  { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  currentBadgeText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 1 },
+  currentBadgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
   checkCircle:   { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   divider:       { height: StyleSheet.hairlineWidth, marginBottom: 12 },
   featureRow:    { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },

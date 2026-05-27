@@ -26,16 +26,7 @@ import {
   ChevronRight,
   Sparkles,
 } from 'lucide-react-native';
-import Svg, {
-  Path,
-  Polygon,
-  G,
-  Circle,
-  Text as SvgText,
-  Defs,
-  LinearGradient as SvgLinearGradient,
-  Stop,
-} from 'react-native-svg';
+import MapView, { Polygon as MapPolygon, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -52,121 +43,13 @@ import Animated, {
   FadeInDown
 } from 'react-native-reanimated';
 
-const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
-const AnimatedG = Animated.createAnimatedComponent(G);
+
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
 // Data representing the farm zones (fields)
-interface ZoneData {
-  id: number;
-  nameEn: string;
-  nameSw: string;
-  cropEn: string;
-  cropSw: string;
-  area: string;
-  center: { x: number; y: number };
-  points: string;
-  // Metrics
-  productivity: 'High' | 'Average' | 'Low';
-  productivitySw: 'Juu' | 'Wastani' | 'Chini';
-  ndvi: number;
-  ph: number;
-  moisture: string;
-  nitrogen: { statusEn: string; statusSw: string; value: string; color: string };
-  phosphorus: { statusEn: string; statusSw: string; value: string; color: string };
-  potassium: { statusEn: string; statusSw: string; value: string; color: string };
-  // Messages & Alerts
-  messageEn: string;
-  messageSw: string;
-  alertType?: 'warning' | 'info';
-}
+import { ZoneData, ZONES } from '../../constants/FarmData';
 
-const ZONES: ZoneData[] = [
-  {
-    id: 42,
-    nameEn: 'Zone 42 - Cornfield',
-    nameSw: 'Ukanda 42 - Shamba la Mahindi',
-    cropEn: 'Corn',
-    cropSw: 'Mahindi',
-    area: '4.5 ha',
-    points: '40,60 180,30 200,160 60,180',
-    center: { x: 120, y: 110 },
-    productivity: 'High',
-    productivitySw: 'Juu',
-    ndvi: 0.82,
-    ph: 6.2,
-    moisture: '68%',
-    nitrogen: { statusEn: 'Optimal', statusSw: 'Safi', value: '85%', color: '#1A3B14' },
-    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '78%', color: '#1A3B14' },
-    potassium: { statusEn: 'Optimal', statusSw: 'Safi', value: '80%', color: '#1A3B14' },
-    messageEn: 'High Productivity Zone',
-    messageSw: 'Ukanda wenye Uzalishaji wa Juu',
-  },
-  {
-    id: 12,
-    nameEn: 'Zone 12 - Wheatfield',
-    nameSw: 'Ukanda 12 - Shamba la Ngano',
-    cropEn: 'Wheat',
-    cropSw: 'Ngano',
-    area: '6.2 ha',
-    points: '180,30 320,50 300,180 200,160',
-    center: { x: 250, y: 100 },
-    productivity: 'Low',
-    productivitySw: 'Chini',
-    ndvi: 0.45,
-    ph: 5.5,
-    moisture: '52%',
-    nitrogen: { statusEn: 'Low (-15%)', statusSw: 'Chini (-15%)', value: '40%', color: '#D97706' },
-    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '70%', color: '#1A3B14' },
-    potassium: { statusEn: 'Optimal', statusSw: 'Safi', value: '65%', color: '#1A3B14' },
-    messageEn: 'Low Nitrogen detected. Apply Urea.',
-    messageSw: 'Nitrojeni iko chini. Weka mbolea ya Urea.',
-    alertType: 'warning',
-  },
-  {
-    id: 8,
-    nameEn: 'Zone 8 - Ricefield',
-    nameSw: 'Ukanda 8 - Shamba la Mpunga',
-    cropEn: 'Rice',
-    cropSw: 'Mpunga',
-    area: '1.2 ha',
-    points: '60,180 200,160 170,290 30,260',
-    center: { x: 115, y: 220 },
-    productivity: 'Average',
-    productivitySw: 'Wastani',
-    ndvi: 0.68,
-    ph: 6.8,
-    moisture: '82%',
-    nitrogen: { statusEn: 'Optimal', statusSw: 'Safi', value: '75%', color: '#1A3B14' },
-    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '82%', color: '#1A3B14' },
-    potassium: { statusEn: 'Optimal', statusSw: 'Safi', value: '74%', color: '#1A3B14' },
-    messageEn: 'High moisture level ideal for rice.',
-    messageSw: 'Unyevu wa juu unaofaa kwa mpunga.',
-    alertType: 'info',
-  },
-  {
-    id: 5,
-    nameEn: 'Zone 5 - Veggie Patch',
-    nameSw: 'Ukanda 5 - Kiriba cha Mboga',
-    cropEn: 'Vegetables',
-    cropSw: 'Mboga',
-    area: '1.2 ha',
-    points: '200,160 300,180 280,310 170,290',
-    center: { x: 240, y: 230 },
-    productivity: 'Low',
-    productivitySw: 'Chini',
-    ndvi: 0.55,
-    ph: 7.2,
-    moisture: '40%',
-    nitrogen: { statusEn: 'Optimal', statusSw: 'Safi', value: '68%', color: '#1A3B14' },
-    phosphorus: { statusEn: 'Optimal', statusSw: 'Safi', value: '66%', color: '#1A3B14' },
-    potassium: { statusEn: 'Deficient (-22%)', statusSw: 'Pungufu (-22%)', value: '25%', color: '#DC2626' },
-    messageEn: 'Potassium deficiency. Boost suggested.',
-    messageSw: 'Upungufu wa Potasiamu. Ongeza mbolea.',
-    alertType: 'warning',
-  },
-];
 
 type MapFilter = 'productivity' | 'ndvi' | 'ph';
 
@@ -219,21 +102,21 @@ export default function FarmHub() {
 
   // Zoom configuration coordinates
   const viewBox = useMemo(() => {
-    const defaultW = 350;
-    const defaultH = 420;
-    const scale = 1 / zoomLevel;
-    const w = defaultW * scale;
-    const h = defaultH * scale;
-
-    // Pan to center of active zone if zoomed in
+    // Find bounding box for active zone to frame it perfectly
     const activeZone = ZONES.find((z) => z.id === activeZoneId);
-    let x = 0;
-    let y = 0;
+    let lat = -6.8280;
+    let lng = 37.6695;
     if (activeZone && zoomLevel > 1.0) {
-      x = Math.max(0, Math.min(defaultW - w, activeZone.center.x - w / 2));
-      y = Math.max(0, Math.min(defaultH - h, activeZone.center.y - h / 2));
+      lat = activeZone.centerLat;
+      lng = activeZone.centerLng;
     }
-    return `${x} ${y} ${w} ${h}`;
+    // Return Region
+    return {
+      latitude: lat,
+      longitude: lng,
+      latitudeDelta: 0.005 / zoomLevel,
+      longitudeDelta: 0.005 / zoomLevel,
+    };
   }, [zoomLevel, activeZoneId]);
 
   const activeZone = useMemo(() => {
@@ -327,190 +210,96 @@ export default function FarmHub() {
             />
           </BlurView>
 
-          {/* ── Filter Selectors (Pills) ───────────────────────── */}
-          <View style={styles.filterContainer}>
-            {(['productivity', 'ndvi', 'ph'] as MapFilter[]).map((filter) => {
-              const active = activeFilter === filter;
-              let label = '';
-              if (filter === 'productivity') label = language === 'sw' ? 'Uzalishaji' : 'Productivity';
-              if (filter === 'ndvi') label = 'NDVI Index';
-              if (filter === 'ph') label = 'Soil pH';
-
-              return (
-                <TouchableOpacity
-                  key={filter}
-                  onPress={() => {
-                    Haptics.selectionAsync();
-                    setActiveFilter(filter);
-                  }}
-                  activeOpacity={0.8}
-                  style={[
-                    styles.filterPill,
-                    { borderColor: colors.border, backgroundColor: colors.card },
-                    active && { backgroundColor: '#1A3B14', borderColor: '#1A3B14' },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={label}
-                  accessibilityState={{ selected: active }}
-                >
-                  <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : colors.textMute }]}>
-                    {label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          
 
           {/* ── SVG Map Visualizer ───────────────────────────────── */}
-          <View style={styles.mapContainer}>
-            <Animated.View entering={FadeIn.duration(800)} style={StyleSheet.absoluteFill}>
-              <Image
-                source={require('../../assets/images/rice-field-bg.png')}
-                style={StyleSheet.absoluteFillObject}
-                resizeMode="cover"
-              />
-              <Svg viewBox={viewBox} style={StyleSheet.absoluteFill}>
-                {/* Grid Overlay / Terrain lines */}
-                <G opacity={isDark ? 0.08 : 0.15}>
-                  <Path d="M 0 50 Q 100 80, 200 40 T 350 70" stroke={colors.text} strokeWidth="1" fill="none" />
-                  <Path d="M 0 120 Q 150 140, 250 90 T 350 110" stroke={colors.text} strokeWidth="1" fill="none" />
-                  <Path d="M 0 200 Q 100 230, 220 180 T 350 210" stroke={colors.text} strokeWidth="1" fill="none" />
-                  <Path d="M 0 290 Q 120 310, 260 270 T 350 280" stroke={colors.text} strokeWidth="1" fill="none" />
-                  <Path d="M 0 370 Q 110 390, 240 360 T 350 370" stroke={colors.text} strokeWidth="1" fill="none" />
-                </G>
+          <View style={[styles.mapContainer, { borderRadius: 0, marginHorizontal: -16, marginTop: -8 }]}>
+            <MapView
+              style={StyleSheet.absoluteFillObject}
+              mapType="satellite"
+              region={viewBox}
+            >
+              {filteredZones.map((zone) => {
+                const isSelected = activeZoneId === zone.id;
+                const fillColor = getZoneColor(zone);
+                
+                return (
+                  <MapPolygon
+                    key={zone.id}
+                    coordinates={(zone as any).coordinates}
+                    fillColor={isSelected ? fillColor + '80' : fillColor + '30'}
+                    strokeColor={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
+                    strokeWidth={isSelected ? 3 : 1}
+                    tappable={true}
+                    onPress={() => handleZoneSelect(zone.id)}
+                  />
+                );
+              })}
 
-                {/* Road representation */}
-                <Path
-                  d="M 0 180 Q 180 200, 350 240"
-                  stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}
-                  strokeWidth="10"
-                  fill="none"
-                />
-                <Path
-                  d="M 0 180 Q 180 200, 350 240"
-                  stroke={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}
-                  strokeWidth="2"
-                  strokeDasharray="4 4"
-                  fill="none"
-                />
+              {/* Markers for specific zones */}
+              {filteredZones.some(z => z.id === 8) && (
+                <Marker coordinate={{ latitude: -6.8290, longitude: 37.6688 }}>
+                  <View style={[styles.hudBadge, { position: 'relative', left: 0, top: 0 }]}>
+                    <Droplets size={10} color="#3b82f6" />
+                    <Text style={styles.hudBadgeText}>{language === 'sw' ? 'Unyevu 82%' : '82% Humidity'}</Text>
+                  </View>
+                </Marker>
+              )}
 
-                {/* River representation */}
-                <Path
-                  d="M 120 0 C 135 100, 150 220, 185 420"
-                  stroke="#2563EB"
-                  strokeWidth="3"
-                  opacity={isDark ? 0.3 : 0.4}
-                  fill="none"
-                />
+              {filteredZones.some(z => z.id === 12) && (
+                <Marker coordinate={{ latitude: -6.8268, longitude: 37.6705 }}>
+                  <View style={[styles.hudLabel, { position: 'relative', left: 0, top: 0 }]}>
+                    <Text style={styles.hudLabelText}>{language === 'sw' ? 'Nitrojeni Chini' : 'Low Nitrogen'}</Text>
+                  </View>
+                </Marker>
+              )}
+            </MapView>
 
-                {/* Zone Polygons */}
-                {filteredZones.map((zone) => {
-                  const isSelected = activeZoneId === zone.id;
-                  const fillColor = getZoneColor(zone);
+            {/* Filter selectors floating over map */}
+            <View style={[styles.filterContainer, { position: 'absolute', top: 10, left: 16, right: 16, zIndex: 10 }]}>
+              {(['productivity', 'ndvi', 'ph'] as MapFilter[]).map((filter) => {
+                const active = activeFilter === filter;
+                let label = '';
+                if (filter === 'productivity') label = language === 'sw' ? 'Uzalishaji' : 'Productivity';
+                if (filter === 'ndvi') label = 'NDVI Index';
+                if (filter === 'ph') label = 'Soil pH';
 
-                  return (
-                    <G key={zone.id}>
-                      <AnimatedPolygon
-                        points={zone.points}
-                        fill={fillColor}
-                        fillOpacity={isSelected ? 0.55 : 0.2}
-                        stroke={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
-                        strokeWidth={isSelected ? 3.5 : 1.5}
-                        onPress={() => handleZoneSelect(zone.id)}
-                      />
-                      
-                      {/* Zone ID label */}
-                      <SvgText
-                        x={zone.center.x}
-                        y={zone.center.y}
-                        fill="#FFFFFF"
-                        fontSize="10"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                        pointerEvents="none"
-                        opacity={isSelected ? 1.0 : 0.7}
-                      >
-                        {language === 'sw' ? `Kanda ${zone.id}` : `Zone ${zone.id}`}
-                      </SvgText>
-                      
-                      {/* Crop indicator under text */}
-                      <SvgText
-                        x={zone.center.x}
-                        y={zone.center.y + 11}
-                        fill="rgba(255,255,255,0.8)"
-                        fontSize="8"
-                        textAnchor="middle"
-                        pointerEvents="none"
-                      >
-                        {language === 'sw' ? zone.cropSw : zone.cropEn}
-                      </SvgText>
-                    </G>
-                  );
-                })}
-              </Svg>
-            </Animated.View>
-
-            {/* ── Map HUD Floating Indicators (tethers on map zones) ── */}
-            {/* Zone 8 Droplets / Humidity Indicator */}
-            {filteredZones.some(z => z.id === 8) && (
-              <View style={[styles.hudBadge, { left: 90 * zoomLevel, top: 180 * zoomLevel }]}>
-                <Animated.View style={[styles.hudBadgeIcon, animatedPulseStyle]}>
-                  <Droplets size={10} color="#3b82f6" />
-                </Animated.View>
-                <Text style={styles.hudBadgeText}>{language === 'sw' ? 'Unyevu 82%' : '82% Humidity'}</Text>
-              </View>
-            )}
-
-            {/* Zone 12 Low Nitrogen warning banner */}
-            {filteredZones.some(z => z.id === 12) && (
-              <View style={[styles.hudLabel, { left: 210 * zoomLevel, top: 110 * zoomLevel }]}>
-                <Animated.View style={[styles.hudLabelPulse, animatedPulseStyle]} />
-                <Text style={styles.hudLabelText}>{language === 'sw' ? 'Nitrojeni Chini' : 'Low Nitrogen'}</Text>
-              </View>
-            )}
-
-            {/* Zone 5 Potassium warning Alert icon */}
-            {filteredZones.some(z => z.id === 5) && (
-              <TouchableOpacity
-                onPress={() => handleZoneSelect(5)}
-                style={[styles.hudWarningDotContainer, { left: 240 * zoomLevel, top: 250 * zoomLevel }]}
-              >
-                <Animated.View style={[styles.hudWarningRingPulse, animatedPulseStyle]} />
-                <View style={styles.hudWarningDot}>
-                  <AlertTriangle size={12} color="#FFFFFF" />
-                </View>
-              </TouchableOpacity>
-            )}
-
-            {/* ── Zoom Controls ───────────────────────────────────── */}
-            <View style={styles.zoomControls}>
-              <TouchableOpacity
-                onPress={() => handleZoom('in')}
-                style={[styles.zoomBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-                accessibilityRole="button"
-                accessibilityLabel="Zoom In"
-              >
-                <Plus size={20} color={colors.text} />
-              </TouchableOpacity>
-              <View style={[styles.zoomDivider, { backgroundColor: colors.border }]} />
-              <TouchableOpacity
-                onPress={() => handleZoom('out')}
-                style={[styles.zoomBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-                accessibilityRole="button"
-                accessibilityLabel="Zoom Out"
-              >
-                <Minus size={20} color={colors.text} />
-              </TouchableOpacity>
+                return (
+                  <TouchableOpacity
+                    key={filter}
+                    onPress={() => {
+                      Haptics.selectionAsync();
+                      setActiveFilter(filter);
+                    }}
+                    style={[
+                      styles.filterPill,
+                      { borderColor: colors.border, backgroundColor: 'rgba(255,255,255,0.9)' },
+                      active && { backgroundColor: '#1A3B14', borderColor: '#1A3B14' },
+                    ]}
+                  >
+                    <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : '#1A3B14' }]}>
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
 
           {/* ── Active Selection Bottom Details Card ────────────── */}
           <View style={styles.bottomSheetContainer}>
-            <LinearGradient
-              colors={isDark ? ['rgba(26, 59, 20, 0.95)', 'rgba(10, 15, 10, 0.99)'] : ['#FAF7F0', '#FFFFFF']}
-              style={[styles.bottomSheet, { borderColor: colors.border }]}
+            <TouchableOpacity 
+              activeOpacity={0.9} 
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push(`/field/${activeZone.id}`);
+              }}
             >
-              <View style={styles.sheetTopRow}>
+              <LinearGradient
+                colors={isDark ? ['rgba(26, 59, 20, 0.95)', 'rgba(10, 15, 10, 0.99)'] : ['#FAF7F0', '#FFFFFF']}
+                style={[styles.bottomSheet, { borderColor: colors.border }]}
+              >
+                <View style={styles.sheetTopRow}>
                 <View>
                   <Text style={styles.activeSelectionLabel}>
                     {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
@@ -600,6 +389,7 @@ export default function FarmHub() {
               </View>
 
             </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -643,7 +433,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   mainContent: {
@@ -784,7 +574,7 @@ const styles = StyleSheet.create({
   },
   activeSelectionLabel: {
     fontSize: 9,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     color: '#1A3B14',
     letterSpacing: 1.2,
   },
@@ -868,7 +658,7 @@ const styles = StyleSheet.create({
   },
   nutrientLabel: {
     fontSize: 11,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     color: 'rgba(255,255,255,0.4)',
   },
   nutrientVal: {

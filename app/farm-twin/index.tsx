@@ -177,8 +177,7 @@ export default function FarmTwinList() {
         ) : (
           <>
             <SectionHeader title={`HALI ${scenarios.length}/${MAX_SCENARIOS}`} />
-            <FlatList
-              data={scenarios}
+            <FlatList showsVerticalScrollIndicator={false} data={scenarios}
               keyExtractor={(i) => i.id}
               renderItem={renderItem}
               scrollEnabled={false}

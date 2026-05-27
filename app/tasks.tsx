@@ -465,7 +465,7 @@ export default function TasksScreen() {
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' }}>
           <View style={{ backgroundColor: isDark ? '#0f172a' : '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 40, gap: 16 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontFamily: 'Inter_900Black', fontSize: 20, color: colors.text }}>Kazi Mpya</Text>
+              <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 20, color: colors.text }}>Kazi Mpya</Text>
               <TouchableOpacity
                 onPress={() => setShowCreate(false)}
                 accessibilityRole="button"
@@ -501,7 +501,7 @@ export default function TasksScreen() {
             />
 
             <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.textMute, letterSpacing: 1 }}>AINA YA KAZI</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} >
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 {CATEGORIES.map((c) => (
                   <TouchableOpacity
@@ -540,7 +540,7 @@ export default function TasksScreen() {
               accessibilityRole="button"
               accessibilityLabel="Add new task"
             >
-              <Text style={{ fontFamily: 'Inter_900Black', fontSize: 16, color: isDark ? '#000' : '#FCFBF7' }}>Ongeza Kazi</Text>
+              <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 16, color: isDark ? '#000' : '#FCFBF7' }}>Ongeza Kazi</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -558,27 +558,27 @@ const styles = StyleSheet.create({
   headerBtn: { width: 52, height: 52, borderRadius: 20, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
   headerCenter: { alignItems: 'center' },
   commandBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, marginBottom: 4 },
-  commandText: { fontSize: 9, fontFamily: 'Inter_900Black', marginLeft: 6, letterSpacing: 1 },
-  headerTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
+  commandText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', marginLeft: 6, letterSpacing: 1 },
+  headerTitle: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
   scrollContent: { padding: 20 },
   dashboard: { marginBottom: 24 },
   dashboardCard: { borderRadius: 36, padding: 28, overflow: 'hidden', borderWidth: 1 },
   dashboardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  dashboardLabel: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.2, marginBottom: 8 },
-  dashboardTitle: { fontSize: 22, fontFamily: 'Inter_900Black', marginBottom: 4, letterSpacing: -0.5 },
+  dashboardLabel: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1.2, marginBottom: 8 },
+  dashboardTitle: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', marginBottom: 4, letterSpacing: -0.5 },
   dashboardSubtitle: { fontSize: 13, fontFamily: 'Inter_500Medium', opacity: 0.6 },
   progressCircle: { width: 64, height: 64, borderRadius: 32, borderWidth: 4, justifyContent: 'center', alignItems: 'center' },
-  progressText: { fontSize: 18, fontFamily: 'Inter_900Black' },
+  progressText: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
   progressTrack: { height: 10, borderRadius: 5, width: '100%', overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 5 },
   offlineCard: { flexDirection: 'row', padding: 16, borderRadius: 20, borderWidth: 1, alignItems: 'center' },
   offlineTitle: { fontSize: 14, fontFamily: 'Inter_800ExtraBold', marginBottom: 4 },
   offlineDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 18 },
   queueHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  queueTitle: { fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.8 },
+  queueTitle: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
   filterBtn: { width: 48, height: 48, borderRadius: 16, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
   calCard: { borderRadius: 24, padding: 18, borderWidth: 1, overflow: 'hidden' },
-  calMonth: { fontSize: 16, fontFamily: 'Inter_900Black', marginBottom: 14, textAlign: 'center' },
+  calMonth: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', marginBottom: 14, textAlign: 'center' },
   calDayHdrs: { flexDirection: 'row', marginBottom: 8 },
   calDayHdr: { flex: 1, textAlign: 'center', fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
   taskCard: { borderRadius: 32, padding: 24, overflow: 'hidden', borderWidth: 1 },
   taskCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   catBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
-  catText: { fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.8 },
+  catText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.8 },
   priorityRow: { flexDirection: 'row', alignItems: 'center' },
   priorityDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
   priorityText: { fontSize: 12, fontFamily: 'Inter_700Bold', opacity: 0.6 },

@@ -224,8 +224,7 @@ export default function NotificationsScreen() {
 
         {/* List */}
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         >
           
             {notifications.length === 0 ? (
@@ -301,14 +300,14 @@ const styles = StyleSheet.create({
     flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 16, gap: 10,
   },
   headerTitle: {
-    fontSize: 22, fontFamily: 'Inter_900Black', letterSpacing: -0.5,
+    fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5,
   },
   countBadge: {
     backgroundColor: '#ef4444', borderRadius: 10,
     paddingHorizontal: 8, paddingVertical: 2,
   },
   countText: {
-    color: '#fff', fontSize: 11, fontFamily: 'Inter_900Black',
+    color: '#fff', fontSize: 11, fontFamily: 'InstrumentSerif_400Regular',
   },
   actionBtn: {
     width: 44, height: 44, borderRadius: 22,
@@ -354,7 +353,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', marginBottom: 28,
   },
   emptyTitle: {
-    fontSize: 24, fontFamily: 'Inter_900Black', letterSpacing: -0.5, marginBottom: 12,
+    fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, marginBottom: 12,
   },
   emptySubtitle: {
     fontSize: 16, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 24,

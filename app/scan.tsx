@@ -956,7 +956,7 @@ const styles = StyleSheet.create({
   badgeText: {
     color: '#ffffff',
     fontSize: 11,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 2,
   },
   offlineToast: {
@@ -1044,7 +1044,7 @@ const styles = StyleSheet.create({
   markerText: {
     color: '#1A3B14',
     fontSize: 10,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 2,
   },
   instructions: {
@@ -1054,7 +1054,7 @@ const styles = StyleSheet.create({
   instructionLarge: {
     color: '#ffffff',
     fontSize: 26,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     textAlign: 'center',
     marginBottom: 12,
     letterSpacing: -0.5,
@@ -1085,7 +1085,7 @@ const styles = StyleSheet.create({
   analyzingTitle: {
     color: '#ffffff',
     fontSize: 24,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 12,
   },
   analyzingSubtitle: {
@@ -1130,7 +1130,7 @@ const styles = StyleSheet.create({
   },
   resultName: {
     fontSize: 26,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   confBadge: {
@@ -1170,7 +1170,7 @@ const styles = StyleSheet.create({
   },
   detailTitle: {
     fontSize: 17,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginLeft: 12,
   },
   detailBody: {
@@ -1195,7 +1195,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: '#000',
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     marginRight: 12,
   },
   resetBtn: {
@@ -1354,7 +1354,7 @@ const styles = StyleSheet.create({
   },
   tipsTitleText: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.5,
   },
   tipsCloseBtn: {
@@ -1426,12 +1426,12 @@ const styles = StyleSheet.create({
   },
   tipsStepBadgeText: {
     fontSize: 9,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
   tipsStepHeading: {
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.3,
     textAlign: 'center',
   },
@@ -1458,7 +1458,7 @@ const styles = StyleSheet.create({
   },
   tipsFooterBtnTextPrim: {
     fontSize: 14,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
   },
   tipsFooterBtnSec: {
     flex: 1,

@@ -205,8 +205,7 @@ export default function PayoutsScreen() {
             />
           </View>
         ) : (
-          <FlatList
-            data={filtered}
+          <FlatList showsVerticalScrollIndicator={false} data={filtered}
             keyExtractor={(i) => i.id}
             renderItem={renderItem}
             contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 }}
@@ -274,7 +273,7 @@ const s = StyleSheet.create({
   sub:       { fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 2 },
   statusPill:{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
   statusText:{ fontFamily: 'Inter_700Bold', fontSize: 10 },
-  amount:    { fontFamily: 'Inter_900Black', fontSize: 22, marginTop: 4 },
+  amount:    { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, marginTop: 4 },
   reason:    { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 2 },
   metaRow:   { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
   metaText:  { fontFamily: 'Inter_500Medium', fontSize: 10 },

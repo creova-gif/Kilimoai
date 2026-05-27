@@ -332,8 +332,7 @@ export default function OnboardingWizard() {
           <ScrollView
             contentContainerStyle={s.scroll}
             keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+            showsVerticalScrollIndicator={false} >
             <Animated.View
               key={`step-${step}`}
               entering={FadeInUp.springify().damping(24).stiffness(200)}
@@ -791,7 +790,7 @@ function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, a
       </BlurView>
 
       <FieldLabel label={t.region} />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 2 }}>
+      <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 2 }}>
         {REGIONS.map((r) => {
           const isSelected = region === r;
           return (
@@ -984,7 +983,7 @@ const s = StyleSheet.create({
   stepRoot: { paddingTop: 8, paddingBottom: 12 },
 
   // Typography
-  h1: { color: '#fff', fontSize: 30, fontFamily: 'Inter_900Black', letterSpacing: -0.8, lineHeight: 36, marginBottom: 8 },
+  h1: { color: '#fff', fontSize: 30, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8, lineHeight: 36, marginBottom: 8 },
   sub: { color: 'rgba(255,255,255,0.6)', fontSize: 15, fontFamily: 'Inter_400Regular', lineHeight: 22 },
   fieldLabel: { color: 'rgba(255,255,255,0.45)', fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1.8, textTransform: 'uppercase', marginTop: 20, marginBottom: 8 },
 
@@ -1009,7 +1008,7 @@ const s = StyleSheet.create({
   footer: { paddingHorizontal: 22, paddingBottom: Platform.OS === 'ios' ? 32 : 22, paddingTop: 12 },
   ctaWrap: { borderRadius: 16, overflow: 'hidden' },
   ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 0, paddingVertical: 17 },
-  ctaText: { color: '#022c22', fontSize: 16, fontFamily: 'Inter_900Black', letterSpacing: 0.2 },
+  ctaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
   ctaArrow: { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.15)', justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
 
   // ── Lang step ─────────────────────────────────────────────
@@ -1018,7 +1017,7 @@ const s = StyleSheet.create({
   logoGrad: { width: 88, height: 88, borderRadius: 26, justifyContent: 'center', alignItems: 'center' },
   logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(26, 59, 20, 0.3)', top: 0, left: 0 },
   logoImg: { width: 80, height: 80 },
-  langHeadline: { color: '#fff', fontSize: 34, fontFamily: 'Inter_900Black', letterSpacing: -1.2, textAlign: 'center' },
+  langHeadline: { color: '#fff', fontSize: 34, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1.2, textAlign: 'center' },
   taglineRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
   taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#1A3B14' },
   langTagline: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 },
@@ -1032,7 +1031,7 @@ const s = StyleSheet.create({
   langCheckEmpty: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)' },
   langCtaWrap: { alignSelf: 'stretch', borderRadius: 16, overflow: 'hidden', marginTop: 28 },
   langCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 17 },
-  langCtaText: { color: '#022c22', fontSize: 16, fontFamily: 'Inter_900Black', letterSpacing: 0.2 },
+  langCtaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
   langFootnote: { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontFamily: 'Inter_400Regular', marginTop: 16, textAlign: 'center' },
 
   // ── Welcome step ──────────────────────────────────────────
@@ -1126,7 +1125,7 @@ const s = StyleSheet.create({
   welcomeHeroTitle: {
     color: '#FCFBF7',
     fontSize: 42,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     lineHeight: 48,
     letterSpacing: -1,
   },
@@ -1153,7 +1152,7 @@ const s = StyleSheet.create({
   welcomeCtaText: {
     color: '#FCFBF7',
     fontSize: 18,
-    fontFamily: 'Inter_900Black',
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 0.5,
     flex: 1,
     textAlign: 'center',

@@ -211,7 +211,7 @@ export default function MapScreen() {
 
               {/* Horizontal scroll of Fields (mokupoku UI) */}
               <View style={{ marginBottom: 18 }}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.fieldsScroll}>
+                <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.fieldsScroll}>
                   {FIELDS_LIST.map((field) => (
                     <TouchableOpacity
                       key={field.id}
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   iconBtn: { width: 44, height: 44, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   headerCenter: { flex: 1, alignItems: 'center', marginHorizontal: 10 },
   spatialBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, marginBottom: 4 },
-  spatialText: { fontSize: 8, fontFamily: 'Inter_900Black', marginLeft: 4, letterSpacing: 0.5 },
+  spatialText: { fontSize: 8, fontFamily: 'InstrumentSerif_400Regular', marginLeft: 4, letterSpacing: 0.5 },
   locationPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, gap: 4 },
   locationText: { color: '#fff', fontSize: 11, fontFamily: 'Inter_700Bold' },
   
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   weatherCard: { position: 'absolute', left: 16, top: 120, width: 140, borderRadius: 16, overflow: 'hidden' },
   weatherInner: { padding: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   weatherRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  weatherTemp: { color: '#fff', fontSize: 14, fontFamily: 'Inter_900Black' },
+  weatherTemp: { color: '#fff', fontSize: 14, fontFamily: 'InstrumentSerif_400Regular' },
   weatherDetails: { gap: 4 },
   detailItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   detailText: { color: 'rgba(255,255,255,0.8)', fontSize: 9, fontFamily: 'Inter_500Medium' },
@@ -307,18 +307,18 @@ const styles = StyleSheet.create({
   pinPulse: { position: 'absolute', width: 50, height: 50, borderRadius: 25, borderWidth: 2 },
   pinCircle: { width: 34, height: 34, borderRadius: 17, justifyContent: 'center', alignItems: 'center', borderWidth: 2.5, borderColor: '#fff', shadowColor: "#000", shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.25, shadowRadius: 10, elevation: 8 },
   pinLabel: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, marginTop: 6, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  pinText: { color: '#fff', fontSize: 9, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
+  pinText: { color: '#fff', fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   
   // Bottom Sheet
   bottomSheet: { position: 'absolute', bottom: 0, left: 0, right: 0 },
   sheetContent: { borderTopLeftRadius: 36, borderTopRightRadius: 36, padding: 20, paddingBottom: Platform.OS === 'ios' ? 36 : 20, borderWidth: 1 },
   sheetHandle: { width: 36, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
   sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  sheetTitle: { fontSize: 20, fontFamily: 'Inter_900Black', letterSpacing: -0.5, marginBottom: 2 },
+  sheetTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, marginBottom: 2 },
   metaRow: { flexDirection: 'row', alignItems: 'center' },
   metaText: { fontSize: 11, fontFamily: 'Inter_500Medium', opacity: 0.6 },
   addPlotBtn: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, gap: 4 },
-  addPlotText: { color: '#fff', fontFamily: 'Inter_900Black', fontSize: 12 },
+  addPlotText: { color: '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 12 },
   
   // Fields Scroll
   fieldsScroll: { gap: 10, paddingRight: 16 },
@@ -330,8 +330,8 @@ const styles = StyleSheet.create({
   // Stats Grid
   statsGrid: { flexDirection: 'row', justifyContent: 'space-between', padding: 14, borderRadius: 20, marginBottom: 16 },
   statItem: { flex: 1, alignItems: 'center' },
-  statLabel: { fontSize: 8, fontFamily: 'Inter_900Black', marginBottom: 4, letterSpacing: 0.5 },
-  statValue: { fontSize: 16, fontFamily: 'Inter_900Black' },
+  statLabel: { fontSize: 8, fontFamily: 'InstrumentSerif_400Regular', marginBottom: 4, letterSpacing: 0.5 },
+  statValue: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular' },
   divider: { width: 1, height: '50%', alignSelf: 'center', opacity: 0.2 },
   
   fullAnalysisBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, borderWidth: 1 },

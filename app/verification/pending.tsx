@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
   content: { flex: 1, padding: 24, justifyContent: 'center' },
   iconWrap: { alignItems: 'center', marginBottom: 32 },
   card: { padding: 24, alignItems: 'center' },
-  title: { fontSize: 20, fontFamily: 'Inter_900Black', marginBottom: 12 },
+  title: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', marginBottom: 12 },
   body: { fontSize: 14, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 22 },
 });
