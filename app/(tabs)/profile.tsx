@@ -34,28 +34,10 @@ import { useTheme } from '../../constants/Theme';
 import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { ArrowUpRight } from 'lucide-react-native';
-import { Alert } from 'react-native';
+import { Alert, AlertButton } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Background Orb Component
-const NeuralOrb = ({ color, size, delay, x, y }: any) => {
-  return (
-    <Animated.View
-      entering={FadeInDown}
-      style={[
-        styles.bgOrb,
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: color,
-          filter: Platform.OS === 'web' ? 'blur(100px)' : undefined,
-        },
-      ]}
-    />
-  );
-};
 
 const AGRO_ID_FALLBACK = {
   name: 'Justin Mafie',
@@ -66,20 +48,31 @@ const AGRO_ID_FALLBACK = {
   joinDate: '2023',
 };
 
-// Sections built inside component to access router + store actions
-
-const containerVariants = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+const showSafeAlert = (
+  title: string,
+  message: string,
+  buttons?: AlertButton[]
+) => {
+  if (Platform.OS === 'web') {
+    try {
+      const confirmResult = window.confirm(`${title}\n\n${message}`);
+      if (confirmResult) {
+        const primaryBtn = buttons?.find(b => b.style === 'destructive') || buttons?.find(b => b.text === 'Ondoka' || b.text === 'Discard' || b.text === 'Sync' || b.text === 'Kusawazisha') || buttons?.[1] || buttons?.[0];
+        primaryBtn?.onPress?.();
+      } else {
+        const cancelBtn = buttons?.find(b => b.style === 'cancel') || buttons?.[0];
+        cancelBtn?.onPress?.();
+      }
+    } catch (e) {
+      console.warn('Alert blocked by iframe sandbox, executing primary action automatically:', e);
+      const primaryBtn = buttons?.find(b => b.style === 'destructive') || buttons?.find(b => b.text === 'Ondoka' || b.text === 'Discard' || b.text === 'Sync' || b.text === 'Kusawazisha') || buttons?.[1] || buttons?.[0];
+      primaryBtn?.onPress?.();
+    }
+  } else {
+    Alert.alert(title, message, buttons);
   }
 };
 
-const itemVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0, transition: { type: "spring", damping: 25, stiffness: 120 } }
-};
 
 export default function ProfileScreen() {
   const { colors, spacing, radius, isDark } = useTheme();
@@ -126,10 +119,10 @@ export default function ProfileScreen() {
             const nextLang = language === 'sw' ? 'en' : 'sw';
             setLanguage(nextLang);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            Alert.alert(nextLang === 'sw' ? 'Lugha Imesasishwa' : 'Language Updated', nextLang === 'sw' ? 'Lugha ya programu sasa ni Kiswahili.' : 'App language is now English.');
+            showSafeAlert(nextLang === 'sw' ? 'Lugha Imesasishwa' : 'Language Updated', nextLang === 'sw' ? 'Lugha ya programu sasa ni Kiswahili.' : 'App language is now English.');
         } },
         { id: 'offline', title: language === 'sw' ? 'Njia ya Nje ya Mtandao' : 'Offline-First Mode', icon: <WifiOff size={20} color="#ef4444" />, hasSwitch: true, switchVal: isOffline, onSwitch: (v: boolean) => { setOffline(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }, value: '' },
-        { id: 'sync', title: language === 'sw' ? 'Kusawazisha Data' : 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: language === 'sw' ? 'Mwisho: saa 2 zilizopita' : 'Last sync: 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert(language === 'sw' ? 'Kusawazisha' : 'Sync', language === 'sw' ? 'Data yako imesawazishwa kikamilifu.' : 'Your data has been fully synchronized.'); } },
+        { id: 'sync', title: language === 'sw' ? 'Kusawazisha Data' : 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: language === 'sw' ? 'Mwisho: saa 2 zilizopita' : 'Last sync: 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); showSafeAlert(language === 'sw' ? 'Kusawazisha' : 'Sync', language === 'sw' ? 'Data yako imesawazishwa kikamilifu.' : 'Your data has been fully synchronized.'); } },
       ]
     },
     {
@@ -147,12 +140,8 @@ export default function ProfileScreen() {
       {/* Cinematic Background */}
       <View style={StyleSheet.absoluteFill}>
         <LinearGradient
-          colors={[
-            isDark ? colors.slate[950] : '#f8fafc',
-            isDark ? colors.slate[900] + 'ee' : colors.slate[50] + 'ee',
-            'transparent'
-          ]}
-          style={styles.bgGradient}
+          colors={isDark ? ['#080A08', '#122617', '#080A08'] : ['#FAF7F0', '#F2ECE0', '#FAF7F0']}
+          style={StyleSheet.absoluteFill}
         />
       </View>
 
@@ -221,7 +210,7 @@ export default function ProfileScreen() {
                     </View>
                   </View>
 
-                  <View style={styles.tierContainer}>
+                  <View style={[styles.tierContainer, { borderTopColor: colors.border }]}>
                     <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
                     <Text style={[styles.joinText, { color: colors.textMute }]}>
                       {language === 'sw' ? `Mwanachama tangu ${AGRO_ID_DATA.joinDate}` : `Member since ${AGRO_ID_DATA.joinDate}`}
@@ -288,7 +277,7 @@ export default function ProfileScreen() {
                 activeOpacity={0.8}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  Alert.alert(
+                  showSafeAlert(
                     'Ondoka',
                     'Una uhakika unataka kutoka? Utahitaji kuingia tena.',
                     [

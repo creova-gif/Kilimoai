@@ -15,7 +15,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput, Switch,
-  SafeAreaView, StatusBar, KeyboardAvoidingView, Platform, Alert,
+  SafeAreaView, StatusBar, KeyboardAvoidingView, Platform, Alert, AlertButton,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, MapPin, Save, User, Sprout, Globe, Check, AlertCircle } from 'lucide-react-native';
@@ -36,9 +36,34 @@ const CROPS = [
 ];
 const MAX_CROPS = 4;
 
+const showSafeAlert = (
+  title: string,
+  message: string,
+  buttons?: AlertButton[]
+) => {
+  if (Platform.OS === 'web') {
+    try {
+      const confirmResult = window.confirm(`${title}\n\n${message}`);
+      if (confirmResult) {
+        const primaryBtn = buttons?.find(b => b.style === 'destructive') || buttons?.find(b => b.text === 'Ondoka' || b.text === 'Discard' || b.text === 'Toka') || buttons?.[1] || buttons?.[0];
+        primaryBtn?.onPress?.();
+      } else {
+        const cancelBtn = buttons?.find(b => b.style === 'cancel') || buttons?.[0];
+        cancelBtn?.onPress?.();
+      }
+    } catch (e) {
+      console.warn('Alert blocked by iframe sandbox, executing primary action automatically:', e);
+      const primaryBtn = buttons?.find(b => b.style === 'destructive') || buttons?.find(b => b.text === 'Ondoka' || b.text === 'Discard' || b.text === 'Toka') || buttons?.[1] || buttons?.[0];
+      primaryBtn?.onPress?.();
+    }
+  } else {
+    Alert.alert(title, message, buttons);
+  }
+};
+
 export default function EditProfileScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   const agroId        = useKilimoStore((s) => s.agroId);
   const updateAgroId  = useKilimoStore((s) => s.updateAgroId);
@@ -82,15 +107,29 @@ export default function EditProfileScreen() {
 
   // ── Back-button guard ───────────────────────────────────────────────────────
   function handleBack() {
-    if (!isDirty || saved) { router.back(); return; }
-    Alert.alert(
+    if (!isDirty || saved) {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/(tabs)/profile');
+      }
+      return;
+    }
+    showSafeAlert(
       lang === 'sw' ? 'Toka bila Kuhifadhi?' : 'Discard changes?',
       lang === 'sw'
         ? 'Mabadiliko yako hayatahifadhiwa.'
         : 'Your unsaved changes will be lost.',
       [
         { text: lang === 'sw' ? 'Endelea Kuhariri' : 'Keep Editing', style: 'cancel' },
-        { text: lang === 'sw' ? 'Toka'            : 'Discard',       style: 'destructive', onPress: () => router.back() },
+        { text: lang === 'sw' ? 'Toka'            : 'Discard',       style: 'destructive', onPress: () => {
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/(tabs)/profile');
+            }
+          }
+        },
       ],
     );
   }
@@ -118,7 +157,11 @@ export default function EditProfileScreen() {
       type:  'success',
     });
     setSaved(true);
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)/profile');
+    }
   }
 
   function toggleCrop(c: string) {
@@ -175,23 +218,23 @@ export default function EditProfileScreen() {
 
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle="light-content" />
-      <LinearGradient colors={['#022c22', '#0a0a0f', '#1e1b4b']} style={StyleSheet.absoluteFill} />
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+      <LinearGradient colors={isDark ? ['#080A08', '#122617', '#080A08'] : ['#FAF7F0', '#F2ECE0', '#FAF7F0']} style={StyleSheet.absoluteFill} />
 
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity
             onPress={handleBack}
-            style={s.iconBtn}
+            style={[s.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             accessibilityHint={isDirty ? 'You have unsaved changes' : undefined}
           >
-            <ChevronLeft size={22} color="#fff" />
+            <ChevronLeft size={22} color={colors.text} />
           </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
-            <Text style={s.headerTitle}>{t.title}</Text>
+            <Text style={[s.headerTitle, { color: colors.text }]}>{t.title}</Text>
             {isDirty && !saved && (
               <View style={s.dirtyBadge}>
                 <View style={s.dirtyDot} />
@@ -201,28 +244,29 @@ export default function EditProfileScreen() {
           </View>
           <TouchableOpacity
             onPress={save}
-            style={[s.iconBtn, canSave && isDirty && { backgroundColor: colors.primaryLight }]}
+            disabled={!(canSave && isDirty)}
+            style={[s.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }, canSave && isDirty && { backgroundColor: colors.primaryLight }]}
             accessibilityRole="button"
             accessibilityLabel="Save profile"
             accessibilityState={{ disabled: !(canSave && isDirty) }}
           >
-            <Save size={20} color={canSave && isDirty ? colors.primary : 'rgba(255,255,255,0.3)'} />
+            <Save size={20} color={canSave && isDirty ? colors.primary : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.25)')} />
           </TouchableOpacity>
         </View>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
-            <Text style={s.sub}>{t.sub}</Text>
+            <Text style={[s.sub, { color: colors.textMute }]}>{t.sub}</Text>
 
             {/* Name */}
             <Section icon={<User size={16} color={colors.primary} />} label={t.name} />
-            <BlurView intensity={20} tint="dark" style={[s.inputWrap, !nameValid && name.length > 0 && s.inputErr]}>
+            <BlurView intensity={20} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border }, !nameValid && name.length > 0 && s.inputErr]}>
               <TextInput
                 value={name}
                 onChangeText={setName}
                 placeholder={t.namePh}
-                placeholderTextColor="rgba(255,255,255,0.4)"
-                style={s.input}
+                placeholderTextColor={isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"}
+                style={[s.input, { color: colors.text }]}
                 accessibilityLabel={t.name}
                 accessibilityHint={!nameValid && name.length > 0 ? t.nameErr : undefined}
               />
@@ -241,12 +285,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRole(r); }}
-                  style={[s.rolePill, role === r && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
+                  style={[s.rolePill, { borderColor: colors.border }, role === r && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={roleLabel(r)}
                   accessibilityState={{ checked: role === r }}
                 >
-                  <Text style={[s.rolePillText, role === r && { color: colors.primary }]}>{roleLabel(r)}</Text>
+                  <Text style={[s.rolePillText, { color: colors.text }, role === r && { color: colors.primary }]}>{roleLabel(r)}</Text>
                   {role === r && <Check size={16} color={colors.primary} />}
                 </TouchableOpacity>
               ))}
@@ -259,12 +303,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
-                  style={[s.pill, region === r && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
+                  style={[s.pill, { borderColor: colors.border }, region === r && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={r}
                   accessibilityState={{ checked: region === r }}
                 >
-                  <Text style={[s.pillText, region === r && { color: colors.primary }]}>{r}</Text>
+                  <Text style={[s.pillText, { color: colors.text }, region === r && { color: colors.primary }]}>{r}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -281,6 +325,7 @@ export default function EditProfileScreen() {
                     onPress={() => toggleCrop(c)}
                     style={[
                       s.cropPill,
+                      { borderColor: colors.border },
                       on && { borderColor: colors.primary, backgroundColor: colors.primaryLight },
                       disabled && { opacity: 0.35 },
                     ]}
@@ -288,7 +333,7 @@ export default function EditProfileScreen() {
                     accessibilityLabel={c}
                     accessibilityState={{ checked: on, disabled }}
                   >
-                    <Text style={[s.pillText, on && { color: colors.primary }]}>{c}</Text>
+                    <Text style={[s.pillText, { color: colors.text }, on && { color: colors.primary }]}>{c}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -310,14 +355,14 @@ export default function EditProfileScreen() {
 
             {/* Farm size */}
             <Section label={t.size} />
-            <BlurView intensity={20} tint="dark" style={s.inputWrap}>
+            <BlurView intensity={20} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border }]}>
               <TextInput
                 value={acres}
                 onChangeText={setAcres}
                 keyboardType="decimal-pad"
                 placeholder="2.5"
-                placeholderTextColor="rgba(255,255,255,0.4)"
-                style={s.input}
+                placeholderTextColor={isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"}
+                style={[s.input, { color: colors.text }]}
                 accessibilityLabel={t.size}
               />
             </BlurView>
@@ -329,36 +374,36 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={a}
                   onPress={() => { Haptics.selectionAsync(); setActivity(a); }}
-                  style={[s.actBtn, activity === a && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
+                  style={[s.actBtn, { borderColor: colors.border }, activity === a && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={(t as any)[a]}
                   accessibilityState={{ checked: activity === a }}
                 >
-                  <Text style={[s.pillText, activity === a && { color: colors.primary }]}>{(t as any)[a]}</Text>
+                  <Text style={[s.pillText, { color: colors.text }, activity === a && { color: colors.primary }]}>{(t as any)[a]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             {/* Toggles */}
-            <View style={s.toggleRow}>
-              <Text style={s.toggleLabel}>{t.livestock}</Text>
-            <Switch
-              value={hasLivestock}
-              onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }}
-              trackColor={{ false: '#333', true: colors.primary }}
-              accessibilityLabel={t.livestock}
-              accessibilityRole="switch"
-            />
+            <View style={[s.toggleRow, { borderBottomColor: colors.border }]}>
+              <Text style={[s.toggleLabel, { color: colors.text }]}>{t.livestock}</Text>
+              <Switch
+                value={hasLivestock}
+                onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }}
+                trackColor={{ false: isDark ? '#333' : '#E6DFD5', true: colors.primary }}
+                accessibilityLabel={t.livestock}
+                accessibilityRole="switch"
+              />
             </View>
-            <View style={s.toggleRow}>
-              <Text style={s.toggleLabel}>{t.irrigation}</Text>
-            <Switch
-              value={hasIrrigation}
-              onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }}
-              trackColor={{ false: '#333', true: colors.primary }}
-              accessibilityLabel={t.irrigation}
-              accessibilityRole="switch"
-            />
+            <View style={[s.toggleRow, { borderBottomColor: colors.border }]}>
+              <Text style={[s.toggleLabel, { color: colors.text }]}>{t.irrigation}</Text>
+              <Switch
+                value={hasIrrigation}
+                onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }}
+                trackColor={{ false: isDark ? '#333' : '#E6DFD5', true: colors.primary }}
+                accessibilityLabel={t.irrigation}
+                accessibilityRole="switch"
+              />
             </View>
 
             {/* Language */}
@@ -368,12 +413,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={L}
                   onPress={() => { Haptics.selectionAsync(); setLang(L); }}
-                  style={[s.actBtn, lang === L && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
+                  style={[s.actBtn, { borderColor: colors.border }, lang === L && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={L === 'sw' ? 'Kiswahili' : 'English'}
                   accessibilityState={{ checked: lang === L }}
                 >
-                  <Text style={[s.pillText, lang === L && { color: colors.primary }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
+                  <Text style={[s.pillText, { color: colors.text }, lang === L && { color: colors.primary }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -408,10 +453,11 @@ export default function EditProfileScreen() {
 }
 
 function Section({ icon, label }: { icon?: React.ReactNode; label: string }) {
+  const { colors } = useTheme();
   return (
     <View style={s.sectionLabel}>
       {icon}
-      <Text style={s.sectionLabelText}>{label}</Text>
+      <Text style={[s.sectionLabelText, { color: colors.textMute }]}>{label}</Text>
     </View>
   );
 }
