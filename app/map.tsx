@@ -10,7 +10,8 @@ import {
   Platform,
   StatusBar,
   Alert,
-  ScrollView
+  ScrollView,
+  TextInput
 } from 'react-native';
 import { 
   ChevronLeft, 

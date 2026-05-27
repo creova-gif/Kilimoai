@@ -90,34 +90,51 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="video-hub"
+        name="ai"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <TabIcon focused={focused}>
               {focused ? (
                 <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <Tv color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>{language === 'sw' ? 'VIDEO' : 'VIDEOS'}</Text>
+                  <Bot color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>SANKOFA AI</Text>
                 </View>
               ) : (
-                <Tv color={color} size={22} strokeWidth={2} />
+                <Bot color={color} size={22} strokeWidth={2} />
               )}
             </TabIcon>
           ),
         }}
       />
       <Tabs.Screen
-        name="ai-training-hub"
+        name="farm"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <TabIcon focused={focused}>
               {focused ? (
                 <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <GraduationCap color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>{language === 'sw' ? 'AI HUB' : 'AI HUB'}</Text>
+                  <Tractor color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'SHAMBA' : 'FARM'}</Text>
                 </View>
               ) : (
-                <GraduationCap color={color} size={22} strokeWidth={2} />
+                <Tractor color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="market"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <Store color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'SOKO' : 'MARKET'}</Text>
+                </View>
+              ) : (
+                <Store color={color} size={22} strokeWidth={2} />
               )}
             </TabIcon>
           ),
@@ -141,36 +158,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="video-hub"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="ai-training-hub"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="edit-profile"
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              {focused ? (
-                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <Settings color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>{language === 'sw' ? 'MIPANGILIO' : 'SETTINGS'}</Text>
-                </View>
-              ) : (
-                <Settings color={color} size={22} strokeWidth={2} />
-              )}
-            </TabIcon>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="ai"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="farm"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="market"
         options={{
           href: null,
         }}
@@ -178,18 +178,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="features"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              {focused ? (
-                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                  <LayoutGrid color="#FFFFFF" size={18} strokeWidth={2.5} />
-                  <Text style={styles.activeLabel}>{language === 'sw' ? 'VIPENGELE' : 'FEATURES'}</Text>
-                </View>
-              ) : (
-                <LayoutGrid color={color} size={22} strokeWidth={2} />
-              )}
-            </TabIcon>
-          ),
+          href: null,
         }}
       />
     </Tabs>

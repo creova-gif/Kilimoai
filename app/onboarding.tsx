@@ -249,7 +249,6 @@ export default function OnboardingWizard() {
     } as any;
     setAgroId(newProfile);
     setOnboardingComplete(true);
-    router.replace('/(tabs)');
   }
   function toggleCrop(c: string) {
     Haptics.selectionAsync();

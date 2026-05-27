@@ -294,11 +294,21 @@ export default function FarmHub() {
         
         {/* ── Top Header ───────────────────────────────────────── */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.iconBtn} accessibilityRole="button" accessibilityLabel="Menu">
+          <TouchableOpacity 
+            style={styles.iconBtn} 
+            accessibilityRole="button" 
+            accessibilityLabel="Menu"
+            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+          >
             <Menu size={22} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text }]}>{farmName}</Text>
-          <TouchableOpacity style={styles.iconBtn} accessibilityRole="button" accessibilityLabel="Notifications">
+          <TouchableOpacity 
+            style={styles.iconBtn} 
+            accessibilityRole="button" 
+            accessibilityLabel="Notifications"
+            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+          >
             <Bell size={22} color={colors.text} />
           </TouchableOpacity>
         </View>

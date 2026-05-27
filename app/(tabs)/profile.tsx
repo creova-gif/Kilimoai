@@ -282,7 +282,7 @@ export default function ProfileScreen() {
                     'Una uhakika unataka kutoka? Utahitaji kuingia tena.',
                     [
                       { text: 'Ghairi', style: 'cancel' },
-                      { text: 'Ondoka', style: 'destructive', onPress: () => { resetOnboarding(); router.replace('/onboarding' as any); } },
+                      { text: 'Ondoka', style: 'destructive', onPress: () => resetOnboarding() },
                     ]
                   );
                 }}

@@ -1111,7 +1111,10 @@ function ChatMessage({
             {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </Text>
           {isAi && (
-            <TouchableOpacity style={styles.infoIcon}>
+            <TouchableOpacity 
+              style={styles.infoIcon}
+              onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            >
               <Info size={12} color={colors.textMute} />
             </TouchableOpacity>
           )}
