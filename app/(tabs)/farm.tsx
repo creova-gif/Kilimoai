@@ -40,6 +40,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { RequireVerification } from '../../components/RequireVerification';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -285,8 +286,9 @@ export default function FarmHub() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+    <RequireVerification>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={styles.safe}>
         
         {/* ── Top Header ───────────────────────────────────────── */}
@@ -601,6 +603,7 @@ export default function FarmHub() {
 
       </SafeAreaView>
     </View>
+    </RequireVerification>
   );
 }
 

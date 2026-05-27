@@ -29,6 +29,9 @@ export interface AgroID {
   biometricEnabled: boolean;
   coopId?: string;
   verificationStatus: 'unverified' | 'pending' | 'verified';
+  nationalId?: string;
+  tinNumber?: string;
+  businessLicense?: string;
 }
 
 export interface SyncQueueItem {
@@ -101,6 +104,7 @@ interface KilimoState {
   onboardingComplete: boolean;
   language: AppLanguage;
   farmProfile: FarmProfile | null;
+  registeredIds: string[];
   
   // Network / Offline
   isOffline: boolean;
@@ -133,6 +137,7 @@ interface KilimoState {
   setLanguage: (lang: AppLanguage) => void;
   setFarmProfile: (profile: FarmProfile) => void;
   resetOnboarding: () => void;
+  addRegisteredId: (id: string) => void;
 
   // Network
   setOffline: (offline: boolean) => void;
@@ -175,6 +180,7 @@ export const useKilimoStore = create<KilimoState>()(
       onboardingComplete: false,
       language: 'sw',
       farmProfile: null,
+      registeredIds: ['12345678901234567890', '123456789'],
 
       isOffline: false,
       syncQueue: [],
@@ -243,6 +249,7 @@ export const useKilimoStore = create<KilimoState>()(
       setFarmProfile: (farmProfile) => set({ farmProfile }),
       resetOnboarding: () =>
         set({ onboardingComplete: false, agroId: null, farmProfile: null, isAuthenticated: false }),
+      addRegisteredId: (id) => set((state) => ({ registeredIds: [...state.registeredIds, id] })),
 
       // ── Network Actions ────────────────────────────────────────
       setOffline: (offline) => set({ isOffline: offline }),
@@ -358,6 +365,7 @@ export const useKilimoStore = create<KilimoState>()(
         wallet: { ...state.wallet, mpesaPhone: undefined }, // Never persist phone
         notifications: state.notifications.slice(0, 50), // Cap at 50
         unreadCount: state.unreadCount,
+        registeredIds: state.registeredIds,
       }),
     }
   )

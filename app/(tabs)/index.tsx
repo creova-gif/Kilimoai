@@ -52,7 +52,9 @@ import {
   MoreHorizontal,
   Search,
   X,
-  Globe
+  Globe,
+  ShieldAlert,
+  Check
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -64,6 +66,7 @@ import { useKilimoStore } from '../../store/useKilimoStore';
 import { useTasks } from '../../hooks/useTasks';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 import { useSyncEngine } from '../../hooks/useSyncEngine';
 import { chat, aiConfigured } from '../../lib/ai';
 
@@ -512,6 +515,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const agroId = useKilimoStore((s) => s.agroId);
+  const updateAgroId = useKilimoStore((s) => s.updateAgroId);
   const isOffline = useKilimoStore((s) => s.isOffline);
   const syncQueue = useKilimoStore((s) => s.syncQueue);
   const farmVitals = useKilimoStore((s) => s.farmVitals);
@@ -521,6 +525,61 @@ export default function HomeScreen() {
   const language = useKilimoStore((s) => s.language);
   const addNotification = useKilimoStore((s) => s.addNotification);
   const { createTask } = useTasks();
+
+  const [activatingHome, setActivatingHome] = useState(false);
+  const [activationFinished, setActivationFinished] = useState(false);
+  const progress = useSharedValue(0);
+  const sweepY = useSharedValue(-100);
+
+  const handleActivateHome = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    setActivatingHome(true);
+    progress.value = 0;
+    
+    // Start scanning line animation
+    sweepY.value = withRepeat(
+      withSequence(
+        withTiming(260, { duration: 1500 }),
+        withTiming(0, { duration: 0 })
+      ),
+      -1,
+      false
+    );
+
+    progress.value = withTiming(1, { duration: 1500 });
+
+    setTimeout(() => {
+      const randomDigits = Math.floor(1000 + Math.random() * 9000);
+      let idVal = 'NIDA';
+      if (agroId?.nationalId) idVal = `NIDA-${agroId.nationalId.slice(-4)}`;
+      else if (agroId?.tinNumber) idVal = `TIN-${agroId.tinNumber.slice(-4)}`;
+      else if (agroId?.businessLicense) idVal = `LIC-${agroId.businessLicense.slice(-4)}`;
+      else idVal = `REG-${randomDigits}`;
+
+      const newId = `AGRO-2026-${idVal}`;
+
+      updateAgroId({
+        verificationStatus: 'verified',
+        id: newId,
+      });
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setActivationFinished(true);
+      
+      setTimeout(() => {
+        setActivatingHome(false);
+        setActivationFinished(false);
+        progress.value = 0;
+        sweepY.value = -100;
+      }, 1000);
+    }, 1500);
+  };
+
+  const animatedLaserStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: sweepY.value }],
+    };
+  });
 
   // Guide Modal State
   const [activeGuideModal, setActiveGuideModal] = useState(false);
@@ -542,8 +601,7 @@ export default function HomeScreen() {
 
   // Crop Slideshow Selection
   const primaryCrops = useMemo(() => {
-    const crops = farmProfile?.primaryCrops || [];
-    return crops.length > 0 ? crops : ['Mpunga (Rice)'];
+    return farmProfile?.primaryCrops || [];
   }, [farmProfile]);
 
   const [activeCropIndex, setActiveCropIndex] = useState(0);
@@ -557,7 +615,7 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, [primaryCrops]);
 
-  const activeCrop = primaryCrops[activeCropIndex];
+  const activeCrop = primaryCrops[activeCropIndex] || '';
   const cropMeta = useMemo(() => getCropMetadata(activeCrop, language), [activeCrop, language]);
 
   // Translate Bento Stats
@@ -784,25 +842,27 @@ export default function HomeScreen() {
           />
           
           {/* Crop Overlay Visual Telemetry Markers */}
-          <View style={StyleSheet.absoluteFill}>
-            {/* Left Marker */}
-            <View style={[styles.markerLabelContainer, { left: cropMeta.markers.left.left as any, top: cropMeta.markers.left.top } as any]}>
-              <Text style={styles.markerLabelTitle}>{cropMeta.markers.left.title}</Text>
-              <Text style={styles.markerLabelSub}>{cropMeta.markers.left.sub}</Text>
-            </View>
-            <View style={[styles.markerLineH, { left: '26%', top: cropMeta.markers.left.top + 12, width: cropMeta.markers.left.lineW as any } as any]} />
-            <View style={[styles.markerLineV, { left: '46%', top: cropMeta.markers.left.top + 12, height: cropMeta.markers.left.lineH } as any]} />
-            <View style={[styles.markerDot, { left: '45%', top: cropMeta.markers.left.dotTop, borderColor: colors.primary } as any]} />
+          {primaryCrops.length > 0 && (
+            <View style={StyleSheet.absoluteFill}>
+              {/* Left Marker */}
+              <View style={[styles.markerLabelContainer, { left: cropMeta.markers.left.left as any, top: cropMeta.markers.left.top } as any]}>
+                <Text style={styles.markerLabelTitle}>{cropMeta.markers.left.title}</Text>
+                <Text style={styles.markerLabelSub}>{cropMeta.markers.left.sub}</Text>
+              </View>
+              <View style={[styles.markerLineH, { left: '26%', top: cropMeta.markers.left.top + 12, width: cropMeta.markers.left.lineW as any } as any]} />
+              <View style={[styles.markerLineV, { left: '46%', top: cropMeta.markers.left.top + 12, height: cropMeta.markers.left.lineH } as any]} />
+              <View style={[styles.markerDot, { left: '45%', top: cropMeta.markers.left.dotTop, borderColor: colors.primary } as any]} />
 
-            {/* Right Marker */}
-            <View style={[styles.markerLabelContainer, { right: cropMeta.markers.right.right as any, top: cropMeta.markers.right.top, alignItems: 'flex-end' } as any]}>
-              <Text style={styles.markerLabelTitle}>{cropMeta.markers.right.title}</Text>
-              <Text style={styles.markerLabelSub}>{cropMeta.markers.right.sub}</Text>
+              {/* Right Marker */}
+              <View style={[styles.markerLabelContainer, { right: cropMeta.markers.right.right as any, top: cropMeta.markers.right.top, alignItems: 'flex-end' } as any]}>
+                <Text style={styles.markerLabelTitle}>{cropMeta.markers.right.title}</Text>
+                <Text style={styles.markerLabelSub}>{cropMeta.markers.right.sub}</Text>
+              </View>
+              <View style={[styles.markerLineH, { right: '28%', top: cropMeta.markers.right.top + 12, width: cropMeta.markers.right.lineW as any } as any]} />
+              <View style={[styles.markerLineV, { right: '46%', top: cropMeta.markers.right.top + 12, height: cropMeta.markers.right.lineH } as any]} />
+              <View style={[styles.markerDot, { right: '45.1%', top: cropMeta.markers.right.dotTop, borderColor: colors.primary } as any]} />
             </View>
-            <View style={[styles.markerLineH, { right: '28%', top: cropMeta.markers.right.top + 12, width: cropMeta.markers.right.lineW as any } as any]} />
-            <View style={[styles.markerLineV, { right: '46%', top: cropMeta.markers.right.top + 12, height: cropMeta.markers.right.lineH } as any]} />
-            <View style={[styles.markerDot, { right: '45.1%', top: cropMeta.markers.right.dotTop, borderColor: colors.primary } as any]} />
-          </View>
+          )}
           
           <SafeAreaView style={styles.heroHeader}>
             <View style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}>
@@ -846,40 +906,67 @@ export default function HomeScreen() {
 
           {/* Crop Telemetry Info Overlay */}
           <View style={styles.heroCropPanel}>
-            <View style={styles.cropTitleRow}>
-              <Text style={styles.cropLabel}>
-                {language === 'sw' ? 'MAZAO YAKO YA KILIMO' : 'YOUR AGRICULTURAL CROPS'}
-              </Text>
-              <View style={[styles.liveBadge, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}>
-                <PulsingDot />
-                <Text style={styles.liveText}>LIVE</Text>
-              </View>
-            </View>
-            <View style={styles.cropSelectorRow}>
-              <Text style={styles.cropName}>{cropMeta.displayName}</Text>
-              {primaryCrops.length > 1 && (
-                <View style={styles.slideshowIndicator}>
-                  <Text style={styles.slideshowIndicatorText}>
-                    {activeCropIndex + 1}/{primaryCrops.length}
+            {primaryCrops.length === 0 ? (
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  router.push('/crop-planning' as any);
+                }}
+                style={{
+                  padding: 16,
+                  backgroundColor: 'rgba(0,0,0,0.65)',
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: 'rgba(255,255,255,0.15)',
+                  alignItems: 'center',
+                }}
+              >
+                <Leaf size={24} color={colors.primary} style={{ marginBottom: 8 }} />
+                <Text style={{ fontFamily: 'Inter_850ExtraBold', fontSize: 15, color: '#FCFBF7', textAlign: 'center', marginBottom: 4 }}>
+                  {language === 'sw' ? 'Hakuna Mazao Yaliyosajiliwa' : 'No Crops Registered'}
+                </Text>
+                <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, color: 'rgba(252, 251, 247, 0.7)', textAlign: 'center' }}>
+                  {language === 'sw' ? 'Bofya hapa ili kuanza upangaji wa msimu wako.' : 'Click here to plan your season and register crops.'}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <View style={styles.cropTitleRow}>
+                  <Text style={styles.cropLabel}>
+                    {language === 'sw' ? 'MAZAO YAKO YA KILIMO' : 'YOUR AGRICULTURAL CROPS'}
                   </Text>
+                  <View style={[styles.liveBadge, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}>
+                    <PulsingDot />
+                    <Text style={styles.liveText}>LIVE</Text>
+                  </View>
                 </View>
-              )}
-            </View>
-            
-            {/* Cycle Progress bar */}
-            <View style={styles.harvestTimeline}>
-              <View style={styles.timelineTexts}>
-                <Text style={styles.timelineLeft}>
-                  {language === 'sw' ? 'Muda wa Kuvuna' : 'Time to harvest'}
-                </Text>
-                <Text style={styles.timelineRight}>
-                  {`${cropMeta.harvestDays - cropMeta.currentDay} ${language === 'sw' ? 'siku' : 'days'} (${cropMeta.currentDay}/${cropMeta.harvestDays})`}
-                </Text>
-              </View>
-              <View style={styles.timelineProgressBg}>
-                <View style={[styles.timelineProgressFill, { backgroundColor: colors.primary, width: `${(cropMeta.currentDay / cropMeta.harvestDays) * 100}%` }]} />
-              </View>
-            </View>
+                <View style={styles.cropSelectorRow}>
+                  <Text style={styles.cropName}>{cropMeta.displayName}</Text>
+                  {primaryCrops.length > 1 && (
+                    <View style={styles.slideshowIndicator}>
+                      <Text style={styles.slideshowIndicatorText}>
+                        {activeCropIndex + 1}/{primaryCrops.length}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+                
+                {/* Cycle Progress bar */}
+                <View style={styles.harvestTimeline}>
+                  <View style={styles.timelineTexts}>
+                    <Text style={styles.timelineLeft}>
+                      {language === 'sw' ? 'Muda wa Kuvuna' : 'Time to harvest'}
+                    </Text>
+                    <Text style={styles.timelineRight}>
+                      {`${cropMeta.harvestDays - cropMeta.currentDay} ${language === 'sw' ? 'siku' : 'days'} (${cropMeta.currentDay}/${cropMeta.harvestDays})`}
+                    </Text>
+                  </View>
+                  <View style={styles.timelineProgressBg}>
+                    <View style={[styles.timelineProgressFill, { backgroundColor: colors.primary, width: `${(cropMeta.currentDay / cropMeta.harvestDays) * 100}%` }]} />
+                  </View>
+                </View>
+              </>
+            )}
           </View>
         </View>
 
@@ -1526,6 +1613,122 @@ export default function HomeScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Verification Gate Overlay */}
+      {agroId?.verificationStatus !== 'verified' && (
+        <BlurView 
+          intensity={85} 
+          tint={isDark ? "dark" : "light"} 
+          style={[StyleSheet.absoluteFill, { justifyContent: 'center', alignItems: 'center', padding: 24, zIndex: 1000 }]}
+        >
+          {/* Card containing the scanner and details */}
+          <Card 
+            variant="solid" 
+            style={{ 
+              width: '100%', 
+              maxWidth: 360, 
+              padding: 24, 
+              borderColor: colors.border, 
+              backgroundColor: colors.card, 
+              alignItems: 'center',
+              overflow: 'hidden',
+              position: 'relative'
+            }}
+          >
+            {/* Holographic Laser Scanner Line (only active when activatingHome is true) */}
+            {activatingHome && (
+              <Animated.View style={[
+                {
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  height: 3,
+                  backgroundColor: '#22c55e',
+                  shadowColor: '#22c55e',
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 1,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  zIndex: 10,
+                },
+                animatedLaserStyle
+              ]} />
+            )}
+
+            <View style={{ marginBottom: 20, alignItems: 'center', width: '100%' }}>
+              <View style={{ 
+                width: 72, 
+                height: 72, 
+                borderRadius: 36, 
+                backgroundColor: colors.primary + '15', 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                marginBottom: 16 
+              }}>
+                <Fingerprint size={36} color={colors.primary} />
+              </View>
+              <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 20, color: colors.text, textAlign: 'center', marginBottom: 8 }}>
+                {language === 'sw' ? 'Uhakiki wa Kitambulisho' : 'Identity Verification'}
+              </Text>
+              <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 13, color: colors.textMute, textAlign: 'center', lineHeight: 18 }}>
+                {language === 'sw' 
+                  ? 'Akaunti yako haijawashwa. Tafadhali bonyeza kitufe hapa chini ili kukagua na kuamsha Kitambulisho chako cha Agro ID.'
+                  : 'Your account is pending activation. Click below to scan and activate your digital Agro ID.'}
+              </Text>
+            </View>
+
+            {/* Spinner or progress */}
+            {activatingHome ? (
+              <View style={{ alignItems: 'center', marginVertical: 20, width: '100%' }}>
+                {activationFinished ? (
+                  <Animated.View entering={FadeInDown} style={{ alignItems: 'center', width: '100%' }}>
+                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#22c55e20', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
+                      <Check size={28} color="#22c55e" />
+                    </View>
+                    <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 14, color: '#22c55e', textAlign: 'center' }}>
+                      {language === 'sw' ? 'Imewezeshwa!' : 'Activated Successfully!'}
+                    </Text>
+                  </Animated.View>
+                ) : (
+                  <View style={{ alignItems: 'center', width: '100%' }}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                    <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 13, color: colors.textMute, marginTop: 12, textAlign: 'center' }}>
+                      {language === 'sw' ? 'Kuhakiki kitambulisho...' : 'Verifying credentials...'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ) : (
+              <View style={{ width: '100%', gap: 12 }}>
+                {/* Show details of their entered document */}
+                <View style={{ 
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', 
+                  borderWidth: 1, 
+                  borderColor: colors.border, 
+                  borderRadius: 12, 
+                  padding: 12,
+                  marginBottom: 8
+                }}>
+                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 11, color: colors.textMute, textTransform: 'uppercase', marginBottom: 4 }}>
+                    {language === 'sw' ? 'Hati Iliyosajiliwa' : 'Registered Document'}
+                  </Text>
+                  <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 14, color: colors.text }}>
+                    {agroId?.nationalId ? `NIDA: ${agroId.nationalId}` : 
+                     agroId?.tinNumber ? `TIN: ${agroId.tinNumber}` : 
+                     agroId?.businessLicense ? `LICENSE: ${agroId.businessLicense}` : 'NO ID REGISTERED'}
+                  </Text>
+                </View>
+
+                <Button
+                  label={language === 'sw' ? 'Anza Uhakiki wa Agro ID' : 'Begin Agro ID Activation'}
+                  onPress={handleActivateHome}
+                  style={{ width: '100%' }}
+                />
+              </View>
+            )}
+          </Card>
+        </BlurView>
+      )}
     </View>
   );
 }

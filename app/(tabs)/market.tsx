@@ -22,6 +22,7 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { RequireVerification } from '../../components/RequireVerification';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -596,8 +597,9 @@ export default function MarketScreen() {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+    <RequireVerification>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={StyleSheet.absoluteFill}>
         <LinearGradient colors={[isDark ? '#020617' : '#ffffff', isDark ? '#020617ee' : '#ffffffee', 'transparent']} style={styles.bgOverlay} />
@@ -908,6 +910,7 @@ export default function MarketScreen() {
         </Animated.View>
       </SafeAreaView>
     </View>
+    </RequireVerification>
   );
 }
 

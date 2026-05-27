@@ -41,6 +41,7 @@ import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-re
 import { chat as aiChat, transcribeAudio, aiConfigured, AIError, ChatMessage as AIChatMessage } from '../../lib/ai';
 import { demoChat } from '../../lib/ai-demo';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { RequireVerification } from '../../components/RequireVerification';
 import {
   useAudioRecorder,
   RecordingPresets,
@@ -326,8 +327,9 @@ export default function SankofaScreen() {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+    <RequireVerification>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
       {/* Immersive Neural Background */}
       <View style={StyleSheet.absoluteFill}>
@@ -602,6 +604,7 @@ export default function SankofaScreen() {
         
       </SafeAreaView>
     </View>
+    </RequireVerification>
   );
 }
 

@@ -2,7 +2,7 @@
  * Onboarding Wizard — Creative redesign
  * Steps: Language → Welcome → Role → Farm Profile → Done
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput, Switch,
   KeyboardAvoidingView, Platform, SafeAreaView, StatusBar, Dimensions, Image, Alert
@@ -84,7 +84,7 @@ const COPY = {
   },
 };
 
-type Step = 0 | 1 | 2 | 3 | 4 | 5;
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function OnboardingWizard() {
   const router = useRouter();
@@ -92,6 +92,8 @@ export default function OnboardingWizard() {
   const setAgroId             = useKilimoStore((s) => s.setAgroId);
   const setFarmProfile        = useKilimoStore((s) => s.setFarmProfile);
   const setOnboardingComplete = useKilimoStore((s) => s.setOnboardingComplete);
+  const registeredIds         = useKilimoStore((s) => s.registeredIds);
+  const addRegisteredId       = useKilimoStore((s) => s.addRegisteredId);
   const { signInWithPhone, signInWithEmail, verifyOtp, loading } = useAgroAuth();
   const { colors, isDark } = useTheme();
 
@@ -112,6 +114,12 @@ export default function OnboardingWizard() {
   const [hasLivestock, setHasLivestock] = useState(false);
   const [hasIrrigation,setHasIrrigation]= useState(false);
 
+  // ID Verification state
+  const [idType,       setIdType]       = useState<'nida' | 'tin' | 'license'>('nida');
+  const [nida,          setNida]         = useState('');
+  const [tin,           setTin]          = useState('');
+  const [license,       setLicense]      = useState('');
+
   const t = COPY[lang];
 
   const canContinue = useMemo(() => {
@@ -129,8 +137,14 @@ export default function OnboardingWizard() {
     if (step === 2) return otp.length === 6; // OTP Step
     if (step === 3) return !!role; // Role Step
     if (step === 4) return name.trim().length >= 2 && crops.length > 0 && parseFloat(acres) > 0; // Profile Step
+    if (step === 5) { // ID Verification Step
+      if (idType === 'nida') return /^\d{20}$/.test(nida.trim());
+      if (idType === 'tin') return /^\d{9}$/.test(tin.trim());
+      if (idType === 'license') return /^[a-zA-Z0-9-]{6,12}$/.test(license.trim());
+      return false;
+    }
     return true; // Done Step
-  }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, password]);
+  }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, password, idType, nida, tin, license]);
 
   async function next() {
     console.log('[OnboardingWizard] next() called for step:', step, 'authMethod:', authMethod);
@@ -188,7 +202,23 @@ export default function OnboardingWizard() {
       }
       return;
     }
-    if (step < 5) setStep((s) => Math.min(5, s + 1) as Step);
+    if (step === 5) {
+      // Perform ID uniqueness check
+      const enteredId = idType === 'nida' ? nida.trim() : (idType === 'tin' ? tin.trim() : license.trim());
+      if (registeredIds.includes(enteredId)) {
+        Alert.alert(
+          lang === 'sw' ? 'Hitilafu ya Uhakiki' : 'Verification Error',
+          lang === 'sw' 
+            ? 'Namba hii ya kitambulisho tayari imesajiliwa na akaunti nyingine!' 
+            : 'This identification number is already registered to another account!'
+        );
+        return;
+      }
+      addRegisteredId(enteredId);
+      setStep(6); // Done screen
+      return;
+    }
+    if (step < 6) setStep((s) => Math.min(6, s + 1) as Step);
   }
   function back() {
     Haptics.selectionAsync();
@@ -201,7 +231,21 @@ export default function OnboardingWizard() {
   function finish() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setFarmProfile({ primaryCrops: crops, region, farmSizeAcres: parseFloat(acres) || 0, mainActivity: activity, hasLivestock, hasIrrigation });
-    const newProfile = { id: userId, name, role, location: region, tier: 'Free', joinDate: new Date().getFullYear().toString(), mpesaLinked: false, biometricEnabled: false, verificationStatus: 'unverified' } as any;
+    const enteredId = idType === 'nida' ? nida.trim() : (idType === 'tin' ? tin.trim() : license.trim());
+    const newProfile = { 
+      id: userId || 'mock-user-id', 
+      name, 
+      role, 
+      location: region, 
+      tier: 'Free', 
+      joinDate: new Date().getFullYear().toString(), 
+      mpesaLinked: false, 
+      biometricEnabled: false, 
+      verificationStatus: 'pending',
+      nationalId: idType === 'nida' ? enteredId : undefined,
+      tinNumber: idType === 'tin' ? enteredId : undefined,
+      businessLicense: idType === 'license' ? enteredId : undefined,
+    } as any;
     setAgroId(newProfile);
     setOnboardingComplete(true);
     router.replace('/(tabs)');
@@ -252,7 +296,7 @@ export default function OnboardingWizard() {
             <Text style={[s.backText, { color: colors.textMute }]}>{t.back}</Text>
           </TouchableOpacity>
           <View style={s.progressPills}>
-            {([1, 2, 3, 4, 5] as Step[]).map((i) => (
+            {([1, 2, 3, 4, 5, 6] as Step[]).map((i) => (
               <View
                 key={i}
                 style={[
@@ -264,7 +308,7 @@ export default function OnboardingWizard() {
               />
             ))}
           </View>
-          <Text style={s.stepNum}>{step}/5</Text>
+          <Text style={s.stepNum}>{step}/6</Text>
         </View>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -295,7 +339,7 @@ export default function OnboardingWizard() {
                   setName={setName}
                 />
               )}
-              {step === 2 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} />}
+              {step === 2 && <OtpStep otp={otp} setOtp={setOtp} lang={lang} onResend={() => signInWithPhone(phone)} />}
               {step === 3 && <RoleStep t={t.role} role={role} setRole={setRole} />}
               {step === 4 && (
                 <ProfileStep
@@ -308,7 +352,15 @@ export default function OnboardingWizard() {
                   hasIrrigation={hasIrrigation} setHasIrrigation={setHasIrrigation}
                 />
               )}
-              {step === 5 && <DoneStep t={t.done} name={name || 'Mkulima'} role={role} lang={lang} />}
+              {step === 5 && (
+                <VerificationStep
+                  lang={lang} idType={idType} setIdType={setIdType}
+                  nida={nida} setNida={setNida}
+                  license={license} setLicense={setLicense}
+                  tin={tin} setTin={setTin}
+                />
+              )}
+              {step === 6 && <DoneStep t={t.done} name={name || 'Mkulima'} role={role} lang={lang} />}
             </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -316,12 +368,12 @@ export default function OnboardingWizard() {
         {/* ── Footer CTA ── */}
         <View style={s.footer}>
           <TouchableOpacity
-            onPress={step === 5 ? finish : next}
+            onPress={step === 6 ? finish : next}
             disabled={!canContinue || loading}
             activeOpacity={0.88}
             style={[s.ctaWrap, (!canContinue || loading) && { opacity: 0.38 }]}
             accessibilityRole="button"
-            accessibilityLabel={loading ? 'Loading' : (step === 5 ? t.done.cta : t.next)}
+            accessibilityLabel={loading ? 'Loading' : (step === 6 ? t.done.cta : t.next)}
             accessibilityState={{ disabled: !canContinue || loading }}
           >
             <LinearGradient
@@ -330,7 +382,7 @@ export default function OnboardingWizard() {
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             >
               <Text style={[s.ctaText, { color: isDark ? '#000' : '#fff' }]}>
-                {loading ? 'Subiri...' : (step === 5 ? t.done.cta : t.next)}
+                {loading ? 'Subiri...' : (step === 6 ? t.done.cta : t.next)}
               </Text>
               <View style={s.ctaArrow}>
                 <ChevronRight size={18} color={isDark ? '#000' : '#fff'} strokeWidth={3} />
@@ -559,12 +611,30 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
 // ─────────────────────────────────────────────────────────────
 // Step 3 — OTP
 // ─────────────────────────────────────────────────────────────
-function OtpStep({ otp, setOtp, lang }: any) {
+function OtpStep({ otp, setOtp, lang, onResend }: any) {
   const { colors, isDark } = useTheme();
+  const [timer, setTimer] = useState(60);
+
+  useEffect(() => {
+    if (timer <= 0) return;
+    const interval = setInterval(() => {
+      setTimer((t) => t - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleResend = () => {
+    if (timer > 0) return;
+    setTimer(60);
+    if (onResend) {
+      onResend();
+    }
+  };
+
   return (
     <View style={s.stepRoot}>
       <Text style={[s.h1, { color: colors.text }]}>{lang === 'sw' ? 'Namba ya siri' : 'Secret Code'}</Text>
-      <Text style={[s.sub, { color: colors.textMute }]}>{lang === 'sw' ? 'Ingiza tarakimu 6 tulizotuma' : 'Enter the 6-digit code we sent'}</Text>
+      <Text style={[s.sub, { color: colors.textMute }]}>{lang === 'sw' ? 'Ingiza tarakimu 6 tulizotuma kwenye simu yako' : 'Enter the 6-digit code we sent to your phone'}</Text>
 
       <FieldLabel label="OTP" />
       <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
@@ -581,6 +651,29 @@ function OtpStep({ otp, setOtp, lang }: any) {
           accessibilityHint="Type the 6 digit code received via SMS"
         />
       </BlurView>
+
+      <View style={{ marginTop: 20, alignItems: 'center' }}>
+        <TouchableOpacity 
+          disabled={timer > 0} 
+          onPress={handleResend}
+          style={{ 
+            paddingVertical: 10, 
+            paddingHorizontal: 20, 
+            borderRadius: 20, 
+            backgroundColor: timer > 0 ? 'transparent' : `${colors.primary}15` 
+          }}
+        >
+          <Text style={{ 
+            fontFamily: 'Inter_700Bold', 
+            fontSize: 13, 
+            color: timer > 0 ? colors.textMute : colors.primary 
+          }}>
+            {timer > 0 
+              ? (lang === 'sw' ? `Tuma tena baada ya sekunde ${timer}` : `Resend code in ${timer}s`)
+              : (lang === 'sw' ? 'Tuma tena namba ya siri' : 'Resend verification code')}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -1073,3 +1166,107 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
 });
+
+function VerificationStep({ lang, idType, setIdType, nida, setNida, license, setLicense, tin, setTin }: any) {
+  const { colors, isDark } = useTheme();
+
+  return (
+    <View style={s.stepRoot}>
+      <Text style={[s.h1, { color: colors.text }]}>
+        {lang === 'sw' ? 'Uthibitisho wa Kitambulisho' : 'Identity Verification'}
+      </Text>
+      <Text style={[s.sub, { color: colors.textMute }]}>
+        {lang === 'sw' 
+          ? 'Tafadhali chagua na uingize namba ya kitambulisho kimoja ili kuwezesha akaunti yako.' 
+          : 'Please select and enter one identification number to activate your account.'}
+      </Text>
+
+      {/* Selectors */}
+      <View style={{ flexDirection: 'row', gap: 8, marginVertical: 18 }}>
+        {(['nida', 'tin', 'license'] as const).map((type) => {
+          const isSelected = idType === type;
+          const label = type === 'nida' ? 'NIDA' : type === 'tin' ? 'TIN' : (lang === 'sw' ? 'Leseni' : 'License');
+          return (
+            <TouchableOpacity
+              key={type}
+              onPress={() => { Haptics.selectionAsync(); setIdType(type); }}
+              style={[
+                s.pill,
+                { flex: 1, borderColor: colors.border, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 12, borderWidth: 1 },
+                isSelected && { borderColor: colors.primary, backgroundColor: colors.primary + '15' }
+              ]}
+            >
+              <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: isSelected ? colors.primary : colors.textMute }}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {/* Input */}
+      {idType === 'nida' && (
+        <View>
+          <FieldLabel label={lang === 'sw' ? 'Kitambulisho cha Taifa (NIDA)' : 'National ID (NIDA)'} />
+          <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
+            <TextInput
+              value={nida}
+              onChangeText={setNida}
+              placeholder="19900101123456789012"
+              placeholderTextColor={colors.textMute}
+              style={[s.input, { color: colors.text }]}
+              keyboardType="number-pad"
+              maxLength={20}
+              accessibilityLabel="NIDA Input"
+            />
+          </BlurView>
+          <Text style={{ fontSize: 11, color: colors.textMute, marginTop: 6, fontFamily: 'Inter_500Medium' }}>
+            {lang === 'sw' ? 'Inapaswa kuwa tarakimu 20 za namba.' : 'Must be exactly 20 digits.'}
+          </Text>
+        </View>
+      )}
+
+      {idType === 'tin' && (
+        <View>
+          <FieldLabel label={lang === 'sw' ? 'Namba ya TIN' : 'TIN Number'} />
+          <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
+            <TextInput
+              value={tin}
+              onChangeText={setTin}
+              placeholder="123456789"
+              placeholderTextColor={colors.textMute}
+              style={[s.input, { color: colors.text }]}
+              keyboardType="number-pad"
+              maxLength={9}
+              accessibilityLabel="TIN Input"
+            />
+          </BlurView>
+          <Text style={{ fontSize: 11, color: colors.textMute, marginTop: 6, fontFamily: 'Inter_500Medium' }}>
+            {lang === 'sw' ? 'Inapaswa kuwa tarakimu 9 za namba.' : 'Must be exactly 9 digits.'}
+          </Text>
+        </View>
+      )}
+
+      {idType === 'license' && (
+        <View>
+          <FieldLabel label={lang === 'sw' ? 'Leseni ya Biashara' : 'Business License'} />
+          <BlurView intensity={isDark ? 16 : 40} tint={isDark ? "dark" : "light"} style={[s.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
+            <TextInput
+              value={license}
+              onChangeText={setLicense}
+              placeholder="LIC-123456"
+              placeholderTextColor={colors.textMute}
+              style={[s.input, { color: colors.text }]}
+              autoCapitalize="characters"
+              maxLength={12}
+              accessibilityLabel="Business License Input"
+            />
+          </BlurView>
+          <Text style={{ fontSize: 11, color: colors.textMute, marginTop: 6, fontFamily: 'Inter_500Medium' }}>
+            {lang === 'sw' ? 'Kati ya herufi/tarakimu 6 hadi 12.' : 'Alphanumeric, 6 to 12 characters.'}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}

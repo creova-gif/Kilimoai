@@ -1,10 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View, Text } from 'react-native';
 import { Home, Bot, Tractor, Store, User } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+
+function TabIcon({ focused, children }: { focused: boolean; children: React.ReactNode }) {
+  const scale = useSharedValue(focused ? 1.08 : 1.0);
+  const opacity = useSharedValue(focused ? 1.0 : 0.7);
+
+  useEffect(() => {
+    if (focused) {
+      scale.value = withSpring(1.08, { damping: 12, stiffness: 120 });
+      opacity.value = withTiming(1.0, { duration: 200 });
+    } else {
+      scale.value = withTiming(1.0, { duration: 150 });
+      opacity.value = withTiming(0.7, { duration: 150 });
+    }
+  }, [focused]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      opacity: opacity.value,
+    };
+  });
+
+  return (
+    <Animated.View style={[{ alignItems: 'center', justifyContent: 'center', minWidth: 48, minHeight: 48 }, animatedStyle]}>
+      {children}
+    </Animated.View>
+  );
+}
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
@@ -47,14 +76,16 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            focused ? (
-              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                <Home color="#FFFFFF" size={18} strokeWidth={2.5} />
-                <Text style={styles.activeLabel}>{language === 'sw' ? 'NYUMBANI' : 'HOME'}</Text>
-              </View>
-            ) : (
-              <Home color={color} size={22} strokeWidth={2} />
-            )
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <Home color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'NYUMBANI' : 'HOME'}</Text>
+                </View>
+              ) : (
+                <Home color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
           ),
         }}
       />
@@ -62,14 +93,16 @@ export default function TabLayout() {
         name="ai"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            focused ? (
-              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                <Bot color="#FFFFFF" size={18} strokeWidth={2.5} />
-                <Text style={styles.activeLabel}>SANKOFA</Text>
-              </View>
-            ) : (
-              <Bot color={color} size={22} strokeWidth={2} />
-            )
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <Bot color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>SANKOFA</Text>
+                </View>
+              ) : (
+                <Bot color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
           ),
         }}
       />
@@ -77,14 +110,16 @@ export default function TabLayout() {
         name="farm"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            focused ? (
-              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                <Tractor color="#FFFFFF" size={18} strokeWidth={2.5} />
-                <Text style={styles.activeLabel}>{language === 'sw' ? 'SHAMBA' : 'FARM'}</Text>
-              </View>
-            ) : (
-              <Tractor color={color} size={22} strokeWidth={2} />
-            )
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <Tractor color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'SHAMBA' : 'FARM'}</Text>
+                </View>
+              ) : (
+                <Tractor color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
           ),
         }}
       />
@@ -92,14 +127,16 @@ export default function TabLayout() {
         name="market"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            focused ? (
-              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                <Store color="#FFFFFF" size={18} strokeWidth={2.5} />
-                <Text style={styles.activeLabel}>{language === 'sw' ? 'SOKO' : 'MARKET'}</Text>
-              </View>
-            ) : (
-              <Store color={color} size={22} strokeWidth={2} />
-            )
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <Store color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'SOKO' : 'MARKET'}</Text>
+                </View>
+              ) : (
+                <Store color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
           ),
         }}
       />
@@ -107,14 +144,16 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            focused ? (
-              <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
-                <User color="#FFFFFF" size={18} strokeWidth={2.5} />
-                <Text style={styles.activeLabel}>{language === 'sw' ? 'WASIFU' : 'PROFILE'}</Text>
-              </View>
-            ) : (
-              <User color={color} size={22} strokeWidth={2} />
-            )
+            <TabIcon focused={focused}>
+              {focused ? (
+                <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                  <User color="#FFFFFF" size={18} strokeWidth={2.5} />
+                  <Text style={styles.activeLabel}>{language === 'sw' ? 'WASIFU' : 'PROFILE'}</Text>
+                </View>
+              ) : (
+                <User color={color} size={22} strokeWidth={2} />
+              )}
+            </TabIcon>
           ),
         }}
       />
