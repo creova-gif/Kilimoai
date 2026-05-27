@@ -38,7 +38,7 @@ type FeatureEntry = {
 
 const ALL_FEATURES: FeatureEntry[] = [
   // AI
-  { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/sankofa',         icon: null, color: '#22d15a',  pinned: true },
+  { feature: 'ai_chat',              label: 'Sankofa AI',          sub: 'Mshauri wako wa AI',          route: '/(tabs)/ai',         icon: null, color: '#22d15a',  pinned: true },
   { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',      sub: 'Tambua magonjwa ya mazao',    route: '/scan',            icon: null, color: '#22d15a',  pinned: true },
   { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI',   sub: 'Utabiri na takwimu',          route: '/analytics',       icon: null, color: '#f97316' },
   { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',       sub: 'Mfano wa kidijiti',           route: '/farm-twin',       icon: null, color: '#6366f1' },
@@ -60,7 +60,7 @@ const ALL_FEATURES: FeatureEntry[] = [
   // Community
   { feature: 'peer_groups',          label: 'Vikundi',             sub: 'Vikundi vya wakulima',        route: '/peer-groups',     icon: null, color: '#ec4899' },
   { feature: 'expert_consultations', label: 'Wataalamu',           sub: 'Ushauri wa wataalamu',        route: '/consultations',   icon: null, color: '#a855f7' },
-  { feature: 'weather_alerts',       label: 'Hali ya Hewa',        sub: 'Utabiri wa hali ya hewa',     route: '/(tabs)/forecast', icon: null, color: '#f97316' },
+  { feature: 'weather_alerts',       label: 'Hali ya Hewa',        sub: 'Utabiri wa hali ya hewa',     route: '/forecast',        icon: null, color: '#f97316' },
 ];
 
 const ICONS: Record<Feature, React.ReactNode> = {

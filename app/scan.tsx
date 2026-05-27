@@ -633,7 +633,7 @@ export default function ScanScreen() {
                       activeOpacity={0.8}
                       onPress={() => {
                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                         router.push('/sankofa');
+                         router.push('/(tabs)/ai' as any);
                       }}
                       accessibilityRole="button"
                       accessibilityLabel="Speak with AI Agronomist"

@@ -400,7 +400,7 @@ const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
       }
     };
   } else if (nameLower.includes('rice') || nameLower.includes('mpunga')) {
-    image = require('../../assets/images/rice-field-bg.png');
+    image = require('../../assets/images/crop_rice.png');
     displayName = language === 'sw' ? 'Mpunga' : 'Rice';
     harvestDays = 130;
     currentDay = 105;
@@ -413,6 +413,91 @@ const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
       right: { 
         title: language === 'sw' ? 'Kukata Maji' : 'Drain Field', 
         sub: language === 'sw' ? 'Wiki 2 kabla ya kuvuna' : '2 weeks pre-harvest',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('onion') || nameLower.includes('vitunguu')) {
+    image = require('../../assets/images/crop_onion.png');
+    displayName = language === 'sw' ? 'Vitunguu' : 'Onions';
+    harvestDays = 120;
+    currentDay = 85;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kupandikiza' : 'Transplanting', 
+        sub: language === 'sw' ? 'Siku ya 1' : 'Day 1 field',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Palizi ya Kwanza' : 'First Weeding', 
+        sub: language === 'sw' ? 'Wiki ya 3' : 'Week 3',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('cabbage') || nameLower.includes('kabichi')) {
+    image = require('../../assets/images/crop_cabbage.png');
+    displayName = language === 'sw' ? 'Kabichi' : 'Cabbage';
+    harvestDays = 90;
+    currentDay = 60;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Mbolea ya Urea' : 'Urea Fertilizer', 
+        sub: language === 'sw' ? 'Wiki ya 4' : 'Week 4',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Viwavi' : 'Caterpillars', 
+        sub: language === 'sw' ? 'Siku ya 45' : 'Day 45 spray',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('sunflower') || nameLower.includes('alizeti')) {
+    image = require('../../assets/images/crop_sunflower.png');
+    displayName = language === 'sw' ? 'Alizeti' : 'Sunflower';
+    harvestDays = 95;
+    currentDay = 70;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Nafasi ya Kupanda' : 'Plant Spacing', 
+        sub: language === 'sw' ? '75cm × 30cm' : 'Spacing 75x30cm',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Kukomaa' : 'Maturity Check', 
+        sub: language === 'sw' ? 'Siku ya 85' : 'Day 85 check',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('chili') || nameLower.includes('pilipili')) {
+    image = require('../../assets/images/crop_chili.png');
+    displayName = language === 'sw' ? 'Pilipili Kali' : 'Chili Peppers';
+    harvestDays = 120;
+    currentDay = 90;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kitalu' : 'Nursery Bed', 
+        sub: language === 'sw' ? 'Wiki 4 mapema' : '4 weeks before',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Mavuno ya Kwanza' : 'First Harvest', 
+        sub: language === 'sw' ? 'Wiki ya 17' : 'Week 17 harvest',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('sorghum') || nameLower.includes('mtama')) {
+    image = require('../../assets/images/crop_sorghum.png');
+    displayName = language === 'sw' ? 'Mtama' : 'Sorghum';
+    harvestDays = 90;
+    currentDay = 65;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kupalilia' : 'Weeding', 
+        sub: language === 'sw' ? 'Wiki ya 3' : 'Week 3 weed',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Kuzuia Ndege' : 'Bird Scaring', 
+        sub: language === 'sw' ? 'Wiki ya 10' : 'Week 10 bird net',
         top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
       }
     };

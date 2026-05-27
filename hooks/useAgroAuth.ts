@@ -94,7 +94,17 @@ export function useAgroAuth() {
   const signInWithPhone = useCallback(async (phone: string) => {
     setLoading(true);
     try {
-      if (!supabase) throw new Error('Supabase not configured');
+      if (!supabase) {
+        console.log('[AgroAuth MOCK] Simulating phone OTP send for:', phone);
+        await new Promise((r) => setTimeout(r, 1000));
+        await SecureStore.setItemAsync('kilimo_phone', phone);
+        const { Alert } = require('react-native');
+        Alert.alert(
+          'Kilimo AI (Mock Auth)',
+          `[DEBUG MOCK] Nambari ya siri (OTP) ya majaribio ni: 123456\n\n[DEBUG MOCK] Your test OTP verification code is: 123456`
+        );
+        return;
+      }
       const { error } = await supabase.auth.signInWithOtp({
         phone,
         options: { channel: 'sms' },
@@ -114,8 +124,16 @@ export function useAgroAuth() {
     setLoading(true);
     try {
       if (!supabase) {
-        console.warn('[AgroAuth] Supabase client is not initialized!');
-        throw new Error('Supabase not configured');
+        console.log('[AgroAuth MOCK] Simulating email sign in for:', email);
+        await new Promise((r) => setTimeout(r, 1000));
+        await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');
+        const mockUserId = 'mock-user-' + email.replace(/[^a-zA-Z0-9]/g, '');
+        // Check if there is already an agroId set in the store
+        const currentAgroId = useKilimoStore.getState().agroId;
+        if (currentAgroId && currentAgroId.id === mockUserId) {
+          return { existingUser: true, user: { id: mockUserId, email } };
+        }
+        return { existingUser: false, user: { id: mockUserId, email } };
       }
       console.log('[AgroAuth] Calling Supabase signInWithPassword...');
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -161,7 +179,21 @@ export function useAgroAuth() {
   const verifyOtp = useCallback(async (phone: string, token: string) => {
     setLoading(true);
     try {
-      if (!supabase) throw new Error('Supabase not configured');
+      if (!supabase) {
+        console.log('[AgroAuth MOCK] Simulating OTP verification for:', phone, 'token:', token);
+        await new Promise((r) => setTimeout(r, 800));
+        if (token === '123456') {
+          await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');
+          const mockUserId = 'mock-user-' + phone.replace(/[^a-zA-Z0-9]/g, '');
+          const currentAgroId = useKilimoStore.getState().agroId;
+          if (currentAgroId && currentAgroId.id === mockUserId) {
+            return { existingUser: true, user: { id: mockUserId, email: phone + '@mock.com' } };
+          }
+          return { existingUser: false, user: { id: mockUserId, email: phone + '@mock.com' } };
+        } else {
+          throw new Error('Invalid verification code');
+        }
+      }
       const { data, error } = await supabase.auth.verifyOtp({
         phone,
         token,
