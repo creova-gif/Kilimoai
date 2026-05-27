@@ -541,10 +541,14 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
       </Text>
 
       {!isSupabaseConfigured && (
-        <View style={[s.warnBanner, { backgroundColor: '#451a14', borderColor: '#ef4444' }]}>
-          <Text style={s.warnTitle}>⚠️ Configuration Warning</Text>
-          <Text style={s.warnBody}>
-            Supabase environment variables are missing! Authentication will fail. Add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY to your env configuration.
+        <View style={[s.warnBanner, { backgroundColor: isDark ? 'rgba(34,209,90,0.08)' : 'rgba(34,209,90,0.06)', borderColor: 'rgba(34,209,90,0.25)' }]}>
+          <Text style={[s.warnTitle, { color: colors.primary }]}>
+            {lang === 'sw' ? '🔐 Hali ya Majaribio' : '🔐 Demo Mode Active'}
+          </Text>
+          <Text style={[s.warnBody, { color: colors.textMute }]}>
+            {lang === 'sw'
+              ? 'Tumia OTP ya majaribio: 123456. Akaunti itahifadhiwa kwenye kifaa hiki.'
+              : 'Use test OTP: 123456. Your account will be stored locally on this device.'}
           </Text>
         </View>
       )}

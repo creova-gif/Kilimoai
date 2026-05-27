@@ -11,21 +11,50 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { useKilimoStore, AgroID } from '../store/useKilimoStore';
 
 const SESSION_KEY = 'kilimo_session_token';
 
-// ─── Supabase client (lazy import to avoid issues in non-native envs) ───────
+// ─── Web-safe SecureStore wrapper (expo-secure-store not supported on web) ──
+const SecureStore = {
+  getItemAsync: async (key: string): Promise<string | null> => {
+    if (Platform.OS === 'web') {
+      try { return localStorage.getItem(key); } catch { return null; }
+    }
+    const ss = require('expo-secure-store');
+    return ss.getItemAsync(key);
+  },
+  setItemAsync: async (key: string, value: string): Promise<void> => {
+    if (Platform.OS === 'web') {
+      try { localStorage.setItem(key, value); } catch {}
+      return;
+    }
+    const ss = require('expo-secure-store');
+    return ss.setItemAsync(key, value);
+  },
+  deleteItemAsync: async (key: string): Promise<void> => {
+    if (Platform.OS === 'web') {
+      try { localStorage.removeItem(key); } catch {}
+      return;
+    }
+    const ss = require('expo-secure-store');
+    return ss.deleteItemAsync(key);
+  },
+};
+
+// ─── Supabase client (only when real credentials are present) ────────────────
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
 let supabase: any = null;
-try {
-  const { createClient } = require('@supabase/supabase-js');
-  supabase = createClient(
-    process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? ''
-  );
-} catch {
-  console.warn('[AgroID] Supabase not configured — using local session only');
+if (SUPABASE_URL && SUPABASE_KEY) {
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch {
+    // supabase stays null — mock mode
+  }
 }
 
 // ─── Auth Hook ───────────────────────────────────────────────────────────────
