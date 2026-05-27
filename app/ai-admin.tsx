@@ -29,7 +29,8 @@ import {
   Sparkles,
   ChevronRight,
   TrendingUp,
-  Award
+  Award,
+  MessageSquare
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -66,7 +67,7 @@ export default function AIAdminScreen() {
   const setAiAccuracy = useKilimoStore((s) => s.setAiAccuracy);
 
   // Local state
-  const [activeTab, setActiveTab] = useState<'overview' | 'prompt' | 'rag' | 'pipeline'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'prompt' | 'rag' | 'pipeline' | 'feedback'>('overview');
   const [promptText, setPromptText] = useState(customSystemPrompt || DEFAULT_SYSTEM_PROMPT);
   const [newDocName, setNewDocName] = useState('');
   
@@ -80,12 +81,55 @@ export default function AIAdminScreen() {
     'Base model accuracy verified: 95.8%',
   ]);
 
+  // Feedback local states
+  const [feedbacks, setFeedbacks] = useState([
+    {
+      id: 'f1',
+      farmer: 'Juma K.',
+      crop: 'Mahindi / Maize',
+      location: 'Mbeya',
+      type: 'positive',
+      commentSw: 'Ushauri wa kupanda mahindi mwezi wa tatu ulikuwa sahihi sana na nimepata mazao mengi.',
+      commentEn: 'The advice to plant maize in March was very accurate and I got a high yield.',
+      timestamp: 'Leo (Today)',
+      resolved: false
+    },
+    {
+      id: 'f2',
+      farmer: 'Mariam S.',
+      crop: 'Nyanya / Tomatoes',
+      location: 'Iringa',
+      type: 'negative',
+      commentSw: 'AI ilisema niweke dawa ya wadudu lakini haikutaja vipimo maalum, ilibidi nitafute Afisa Ugani.',
+      commentEn: 'AI told me to apply pesticide but did not specify dosage, I had to contact the Extension Officer.',
+      timestamp: 'Jana (Yesterday)',
+      resolved: false
+    },
+    {
+      id: 'f3',
+      farmer: 'Aloyce M.',
+      crop: 'Mpunga / Rice',
+      location: 'Shinyanga',
+      type: 'positive',
+      commentSw: 'Picha ya wadudu wa mpunga ilitambuliwa haraka sana kama Rice Blast. Nilifuata maelekezo ikasaidia.',
+      commentEn: 'Rice Blast photo identified very quickly. Followed the instructions and it helped.',
+      timestamp: 'Siku 2 zilizopita (2 days ago)',
+      resolved: false
+    }
+  ]);
+
+  const handleResolveFeedback = (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setFeedbacks(prev => prev.map(f => f.id === id ? { ...f, resolved: true } : f));
+  };
+
   // Tab configurations
   const tabs = [
     { id: 'overview', labelSw: 'Ufupisho', labelEn: 'Overview', icon: (color: string) => <Layers size={18} color={color} /> },
     { id: 'prompt', labelSw: 'Prompt ya Mfumo', labelEn: 'System Prompt', icon: (color: string) => <Sliders size={18} color={color} /> },
     { id: 'rag', labelSw: 'RAG / Nyaraka', labelEn: 'Knowledge Base', icon: (color: string) => <Database size={18} color={color} /> },
-    { id: 'pipeline', labelSw: 'Mifereji ya Mafunzo', labelEn: 'Retraining', icon: (color: string) => <Cpu size={18} color={color} /> }
+    { id: 'pipeline', labelSw: 'Mifereji ya Mafunzo', labelEn: 'Retraining', icon: (color: string) => <Cpu size={18} color={color} /> },
+    { id: 'feedback', labelSw: 'Maoni ya Wakulima', labelEn: 'Feedback Reviewer', icon: (color: string) => <MessageSquare size={18} color={color} /> }
   ] as const;
 
   // Handle system prompt save
@@ -575,6 +619,84 @@ export default function AIAdminScreen() {
             </Animated.View>
           )}
 
+          {activeTab === 'feedback' && (
+            /* 💬 FEEDBACK REVIEWER TAB */
+            <Animated.View entering={FadeIn}>
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.consoleCard, { borderColor: colors.border }]}>
+                <LinearGradient
+                  colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
+                  style={StyleSheet.absoluteFill}
+                />
+
+                <Text style={[styles.inputLabel, { color: colors.text }]}>
+                  {language === 'sw' ? 'Mkaguzi wa Maoni ya Wakulima' : 'Farmer Feedback Reviewer'}
+                </Text>
+                <Text style={[styles.inputHint, { color: colors.textMute }]}>
+                  {language === 'sw'
+                    ? 'Chambua maoni ya wakulima kuhusu majibu ya Sankofa AI ili kuboresha prompt au kuongeza nyaraka za RAG.'
+                    : 'Analyze farmer feedback on Sankofa AI replies to optimize system prompts or seed additional RAG documents.'}
+                </Text>
+
+                <View style={styles.feedbackList}>
+                  {feedbacks.map((f) => (
+                    <View
+                      key={f.id}
+                      style={[
+                        styles.feedbackCard,
+                        {
+                          borderColor: f.resolved ? 'rgba(16,185,129,0.2)' : colors.border,
+                          backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+                          opacity: f.resolved ? 0.6 : 1
+                        }
+                      ]}
+                    >
+                      <View style={styles.feedbackCardHeader}>
+                        <View style={styles.farmerMeta}>
+                          <Text style={[styles.feedbackFarmer, { color: colors.text }]}>{f.farmer}</Text>
+                          <Text style={[styles.feedbackSub, { color: colors.textMute }]}>
+                            {f.crop} • {f.location}
+                          </Text>
+                        </View>
+                        <View style={[styles.badge, { backgroundColor: f.type === 'positive' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)' }]}>
+                          <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: f.type === 'positive' ? '#10b981' : '#ef4444' }}>
+                            {f.type === 'positive' ? (language === 'sw' ? 'IMEPENDWA' : 'HELPFUL') : (language === 'sw' ? 'HAIJAPENDWA' : 'UNHELPFUL')}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <Text style={[styles.feedbackComment, { color: colors.text }]}>
+                        {language === 'sw' ? f.commentSw : f.commentEn}
+                      </Text>
+
+                      <View style={styles.feedbackCardFooter}>
+                        <Text style={[styles.feedbackTime, { color: colors.textMute }]}>{f.timestamp}</Text>
+                        {!f.resolved ? (
+                          <TouchableOpacity
+                            style={[styles.resolveBtn, { backgroundColor: colors.primary }]}
+                            onPress={() => handleResolveFeedback(f.id)}
+                            accessibilityRole="button"
+                            accessibilityLabel="Mark feedback as resolved"
+                          >
+                            <Text style={styles.resolveBtnText}>
+                              {language === 'sw' ? 'Maliza' : 'Resolve'}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <View style={styles.resolvedLabel}>
+                            <CheckCircle2 size={14} color="#10b981" />
+                            <Text style={styles.resolvedLabelText}>
+                              {language === 'sw' ? 'Imeisha' : 'Resolved'}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              </BlurView>
+            </Animated.View>
+          )}
+
           <View style={{ height: 60 }} />
         </ScrollView>
       </SafeAreaView>
@@ -919,5 +1041,78 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#34d399',
     lineHeight: 16,
-  }
+  },
+  /* Feedback review CSS */
+  feedbackList: {
+    gap: 12,
+    marginTop: 10,
+  },
+  feedbackCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 16,
+    gap: 12,
+  },
+  feedbackCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  farmerMeta: {
+    flex: 1,
+    gap: 2,
+  },
+  feedbackFarmer: {
+    fontSize: 14,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  feedbackSub: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  feedbackComment: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    lineHeight: 18,
+  },
+  feedbackCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.05)',
+  },
+  feedbackTime: {
+    fontSize: 10,
+    fontFamily: 'Inter_500Medium',
+  },
+  resolveBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+    minHeight: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  resolveBtnText: {
+    color: '#fff',
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  resolvedLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  resolvedLabelText: {
+    color: '#10b981',
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+  },
 });
