@@ -21,7 +21,9 @@ import {
   Database,
   Fingerprint,
   WifiOff,
-  Globe
+  Globe,
+  Bot,
+  Award
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -101,6 +103,7 @@ export default function ProfileScreen() {
   const resetOnboarding = useKilimoStore((s) => s.resetOnboarding);
   const language = useKilimoStore((s) => s.language);
   const setLanguage = useKilimoStore((s) => s.setLanguage);
+  const aiCertified = useKilimoStore((s) => s.aiCertified);
   
   const [biometric, setBiometric] = useState(true);
   
@@ -119,6 +122,13 @@ export default function ProfileScreen() {
       items: [
         { id: 'identity', title: language === 'sw' ? 'Uthibitisho wa Kibayometriki' : 'Biometric Identity', icon: <Fingerprint size={20} color="#3b82f6" />, hasSwitch: true, switchVal: biometric, onSwitch: (v: boolean) => { setBiometric(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }, value: '' },
         { id: 'security', title: language === 'sw' ? 'Usalama & Faragha' : 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
+      ]
+    },
+    {
+      title: language === 'sw' ? 'AI & MAFUNZO' : 'AI & TRAINING',
+      items: [
+        { id: 'ai-hub', title: language === 'sw' ? 'Mafunzo ya Sankofa AI' : 'Sankofa AI Training Hub', icon: <Award size={20} color="#eab308" />, hasSwitch: false, value: aiCertified ? (language === 'sw' ? 'Imethibitishwa' : 'Certified') : (language === 'sw' ? 'Anza' : 'Start'), onPress: () => router.push('/ai-training-hub' as any) },
+        { id: 'ai-admin', title: language === 'sw' ? 'Usimamizi wa Sankofa' : 'AI Admin Console', icon: <Bot size={20} color="#10b981" />, hasSwitch: false, value: '', onPress: () => router.push('/ai-admin' as any) },
       ]
     },
     {
@@ -195,9 +205,17 @@ export default function ProfileScreen() {
                   />
                   
                   <View style={styles.idHeader}>
-                    <View style={styles.idBadge}>
-                      <Fingerprint size={12} color={colors.primary} />
-                      <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <View style={styles.idBadge}>
+                        <Fingerprint size={12} color={colors.primary} />
+                        <Text style={[styles.idBadgeText, { color: colors.primary }]}>AGRO ID</Text>
+                      </View>
+                      {aiCertified && (
+                        <View style={[styles.idBadge, { backgroundColor: 'rgba(59, 130, 246, 0.15)' }]}>
+                          <Bot size={12} color="#3b82f6" />
+                          <Text style={[styles.idBadgeText, { color: '#3b82f6' }]}>SANKOFA CERTIFIED</Text>
+                        </View>
+                      )}
                     </View>
                     <Text style={[styles.idNumber, { color: colors.textMute }]}>{AGRO_ID_DATA.id}</Text>
                   </View>

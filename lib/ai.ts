@@ -5,6 +5,8 @@
  * Falls back to demo mode when the key is not set.
  */
 
+import { useKilimoStore } from '../store/useKilimoStore';
+
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY ?? '';
 const OPENAI_BASE = 'https://api.openai.com/v1';
 
@@ -53,9 +55,10 @@ async function openaiPost<T>(path: string, body: Record<string, unknown>): Promi
 
 /** T201 — Sankofa text chat (GPT-4o-mini for speed + cost). */
 export async function chat(messages: ChatMessage[]): Promise<string> {
+  const customPrompt = useKilimoStore.getState().customSystemPrompt;
   const systemMessage: ChatMessage = {
     role: 'system',
-    content: `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki.
+    content: customPrompt || `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki.
 
 KANUNI ZA LAZIMA (zifuatwe KILA wakati bila ubaguzi):
 

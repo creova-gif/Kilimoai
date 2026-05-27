@@ -32,6 +32,7 @@ export interface AgroID {
   nationalId?: string;
   tinNumber?: string;
   businessLicense?: string;
+  certifications?: string[];
 }
 
 export interface SyncQueueItem {
@@ -127,6 +128,13 @@ interface KilimoState {
   // Feed
   activities: ActivityItem[];
 
+  // AI Training & Settings
+  customSystemPrompt: string | null;
+  seededDocuments: string[];
+  completedModules: string[];
+  aiCertified: boolean;
+  aiAccuracy: number;
+
   // ─── Actions ───────────────────────────────────────────────────
 
   // Auth
@@ -165,6 +173,13 @@ interface KilimoState {
 
   // Feed
   setActivities: (activities: ActivityItem[]) => void;
+
+  // AI Settings Actions
+  setCustomSystemPrompt: (prompt: string | null) => void;
+  addSeededDocument: (doc: string) => void;
+  removeSeededDocument: (doc: string) => void;
+  completeModule: (modId: string) => void;
+  setAiAccuracy: (acc: number) => void;
 }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -238,6 +253,13 @@ export const useKilimoStore = create<KilimoState>()(
       ],
 
       activities: [],
+
+      // AI Training & Settings
+      customSystemPrompt: null,
+      seededDocuments: ['TARI Maize Guide v2.pdf', 'Soil pH Mapping Mbeya.txt'],
+      completedModules: [],
+      aiCertified: false,
+      aiAccuracy: 95.8,
 
       // ── Auth Actions ───────────────────────────────────────────
       setAgroId: (agroId) => set({ agroId, isAuthenticated: true, onboardingComplete: true }),
@@ -335,6 +357,31 @@ export const useKilimoStore = create<KilimoState>()(
 
       // ── Feed Actions ───────────────────────────────────────────
       setActivities: (activities) => set({ activities }),
+
+      // ── AI Settings Actions ────────────────────────────────────
+      setCustomSystemPrompt: (customSystemPrompt) => set({ customSystemPrompt }),
+      addSeededDocument: (doc) => set((s) => ({ seededDocuments: [...s.seededDocuments, doc] })),
+      removeSeededDocument: (doc) => set((s) => ({ seededDocuments: s.seededDocuments.filter((d) => d !== doc) })),
+      completeModule: (modId) => set((s) => {
+        const nextModules = s.completedModules.includes(modId)
+          ? s.completedModules
+          : [...s.completedModules, modId];
+
+        const isCertifiedNow = nextModules.length >= 5;
+        const updatedAgroId = s.agroId ? {
+          ...s.agroId,
+          certifications: s.agroId.certifications?.includes('Sankofa AI Certified')
+            ? s.agroId.certifications
+            : [...(s.agroId.certifications || []), 'Sankofa AI Certified']
+        } : null;
+
+        return {
+          completedModules: nextModules,
+          aiCertified: isCertifiedNow ? true : s.aiCertified,
+          agroId: isCertifiedNow ? updatedAgroId : s.agroId
+        };
+      }),
+      setAiAccuracy: (aiAccuracy) => set({ aiAccuracy }),
     }),
     {
       name: 'kilimo-ai-store',
@@ -366,6 +413,11 @@ export const useKilimoStore = create<KilimoState>()(
         notifications: state.notifications.slice(0, 50), // Cap at 50
         unreadCount: state.unreadCount,
         registeredIds: state.registeredIds,
+        customSystemPrompt: state.customSystemPrompt,
+        seededDocuments: state.seededDocuments,
+        completedModules: state.completedModules,
+        aiCertified: state.aiCertified,
+        aiAccuracy: state.aiAccuracy,
       }),
     }
   )
