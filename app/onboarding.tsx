@@ -256,17 +256,6 @@ export default function OnboardingWizard() {
   }
   const isWelcomeStep = step === 0;
 
-  if (isWelcomeStep) {
-    return (
-      <View style={[s.root, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="light-content" />
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <WelcomeStep lang={lang} setLang={setLang} onNext={next} />
-        </KeyboardAvoidingView>
-      </View>
-    );
-  }
-
   // Determine full-screen background image for current step
   const stepBgImage = useMemo(() => {
     switch (step) {
@@ -284,6 +273,17 @@ export default function OnboardingWizard() {
         return WELCOME_BG;
     }
   }, [step]);
+
+  if (isWelcomeStep) {
+    return (
+      <View style={[s.root, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="light-content" />
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+          <WelcomeStep lang={lang} setLang={setLang} onNext={next} />
+        </KeyboardAvoidingView>
+      </View>
+    );
+  }
 
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
