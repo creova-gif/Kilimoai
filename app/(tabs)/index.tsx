@@ -12,6 +12,8 @@ import {
   Image,
   Pressable,
   Platform,
+  TextInput,
+  ActivityIndicator
 } from 'react-native';
 import Animated, { 
   FadeInDown, 
@@ -43,33 +45,38 @@ import {
   Lightbulb,
   MapPin,
   ChevronDown,
-  MoreHorizontal
+  MoreHorizontal,
+  Search,
+  X,
+  Globe
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Card } from '../../components/ui/Card';
 import { useSyncEngine } from '../../hooks/useSyncEngine';
+import { chat, aiConfigured } from '../../lib/ai';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const QUICK_ACTIONS = [
-  { id: 'scan', label: 'Uchunguzi', icon: <Camera size={22} color="#fff" />, color: '#4CAF50', desc: 'AI Crop Scan' },
-  { id: 'tasks', label: 'Usimamizi', icon: <LayoutGrid size={22} color="#fff" />, color: '#3b82f6', desc: 'Farm Tasks' },
-  { id: 'market', label: 'Soko', icon: <TrendingUp size={22} color="#fff" />, color: '#f59e0b', desc: 'Market Prices' },
-  { id: 'crop-planning', label: 'Panga Mazao', icon: <Leaf size={22} color="#fff" />, color: '#22c55e', desc: 'AI Crop Planning' },
-  { id: 'contracts', label: 'Mikataba', icon: <BarChart3 size={22} color="#fff" />, color: '#8b5cf6', desc: 'Contract Farming' },
-];
-
-const TRACK_RECORDS = [
-  { date: 'Feb 10', title: 'Compost', subtitle: 'Fertilizer', completed: true },
-  { date: 'Feb 17', title: 'Superior', subtitle: 'Seeds', completed: true },
-  { date: 'Feb 24', title: 'KCl', subtitle: 'Fertilizer', completed: false },
-  { date: 'Mar 03', title: 'SP-36', subtitle: 'Fertilizer', completed: false },
-];
+const TRACK_RECORDS_DATA = {
+  sw: [
+    { date: 'Feb 10', title: 'Mbolea Vuli', subtitle: 'Samadi', completed: true },
+    { date: 'Feb 17', title: 'Kupanda Mbegu', subtitle: 'Mbegu Bora', completed: true },
+    { date: 'Feb 24', title: 'Mbolea ya KCl', subtitle: 'Kukua', completed: false },
+    { date: 'Mar 03', title: 'Dawa SP-36', subtitle: 'Kuzuia wadudu', completed: false },
+  ],
+  en: [
+    { date: 'Feb 10', title: 'Compost', subtitle: 'Fertilizer', completed: true },
+    { date: 'Feb 17', title: 'Superior', subtitle: 'Seeds', completed: true },
+    { date: 'Feb 24', title: 'KCl Fertilizer', subtitle: 'Fertilizer', completed: false },
+    { date: 'Mar 03', title: 'SP-36', subtitle: 'Fertilizer', completed: false },
+  ]
+};
 
 const GROWTH_DATA = [
   { label: 'Jul 24', value: 0.4 },
@@ -124,11 +131,14 @@ const PulsingDot = () => {
 };
 
 // Horizontal stepper timeline component
-const TrackRecords = ({ colors, isDark }: any) => {
+const TrackRecords = ({ colors, isDark, language }: any) => {
+  const records = language === 'sw' ? TRACK_RECORDS_DATA.sw : TRACK_RECORDS_DATA.en;
   return (
     <Card variant="solid" style={[styles.trackCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.trackHeader}>
-        <Text style={[styles.trackTitle, { color: colors.text }]}>Track Records</Text>
+        <Text style={[styles.trackTitle, { color: colors.text }]}>
+          {language === 'sw' ? 'Marekodi ya Ufuatiliaji' : 'Track Records'}
+        </Text>
         <View style={[styles.qrBadge, { backgroundColor: colors.primaryLight }]}>
           <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 10 }}>QR Codes</Text>
         </View>
@@ -138,7 +148,7 @@ const TrackRecords = ({ colors, isDark }: any) => {
         <View style={[styles.trackBgLine, { backgroundColor: isDark ? '#263322' : '#E2E8DF' }]} />
         
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
-          {TRACK_RECORDS.map((item, idx) => (
+          {records.map((item, idx) => (
             <View key={idx} style={styles.trackStep}>
               <View style={[
                 styles.stepDot, 
@@ -162,14 +172,16 @@ const TrackRecords = ({ colors, isDark }: any) => {
 };
 
 // Growth Rates vertical bar chart component
-const GrowthChart = ({ colors, isDark }: any) => {
+const GrowthChart = ({ colors, isDark, language }: any) => {
   const [selectedRange, setSelectedRange] = useState('M');
 
   return (
     <Card variant="solid" style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.chartHeader}>
         <View>
-          <Text style={[styles.chartSub, { color: colors.textMute }]}>Growth rate</Text>
+          <Text style={[styles.chartSub, { color: colors.textMute }]}>
+            {language === 'sw' ? 'Kiwango cha ukuaji' : 'Growth rate'}
+          </Text>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 2 }}>
             <Text style={[styles.chartValue, { color: colors.text }]}>0.75</Text>
             <Text style={[styles.chartUnit, { color: colors.textMute }]}> kg/ha</Text>
@@ -184,6 +196,8 @@ const GrowthChart = ({ colors, isDark }: any) => {
                 styles.rangeBtn,
                 selectedRange === range && { backgroundColor: colors.primary }
               ]}
+              accessibilityRole="button"
+              accessibilityLabel={`Range ${range}`}
             >
               <Text style={[
                 styles.rangeText,
@@ -218,11 +232,193 @@ const GrowthChart = ({ colors, isDark }: any) => {
   );
 };
 
+// ─── Inline Sparks / Charts for stats cards ───────────────────────────
+
+const SoilHealthChart = ({ color }: { color: string }) => (
+  <View style={styles.miniChartContainer}>
+    <Svg height="30" width="130">
+      <Defs>
+        <SvgLinearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor={color} stopOpacity="0.4" />
+          <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M0 25 C 20 22, 40 12, 60 18 C 80 24, 100 5, 130 8 L 130 30 L 0 30 Z"
+        fill="url(#soilGrad)"
+      />
+      <Path
+        d="M0 25 C 20 22, 40 12, 60 18 C 80 24, 100 5, 130 8"
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+      />
+    </Svg>
+  </View>
+);
+
+const MoistureChart = () => (
+  <View style={styles.miniChartContainer}>
+    <Svg height="30" width="130">
+      <Defs>
+        <SvgLinearGradient id="moistGrad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor="#2563EB" stopOpacity="0.4" />
+          <Stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M0 12 C 25 28, 50 2, 75 22 C 100 32, 115 12, 130 15 L 130 30 L 0 30 Z"
+        fill="url(#moistGrad)"
+      />
+      <Path
+        d="M0 12 C 25 28, 50 2, 75 22 C 100 32, 115 12, 130 15"
+        fill="none"
+        stroke="#2563EB"
+        strokeWidth="2"
+      />
+    </Svg>
+  </View>
+);
+
+const TemperatureChart = () => {
+  const heights = [10, 16, 14, 22, 26, 18, 20];
+  return (
+    <View style={styles.miniBarContainer}>
+      {heights.map((h, i) => (
+        <View 
+          key={i} 
+          style={{ 
+            width: 4, 
+            height: h, 
+            backgroundColor: i === heights.length - 1 ? '#F59E0B' : 'rgba(245, 158, 11, 0.35)', 
+            borderRadius: 2 
+          }} 
+        />
+      ))}
+    </View>
+  );
+};
+
+const YieldChart = () => (
+  <View style={styles.miniChartContainer}>
+    <Svg height="30" width="130">
+      <Defs>
+        <SvgLinearGradient id="yieldGrad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4" />
+          <Stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M0 28 Q 35 24, 65 15 T 130 3 L 130 30 L 0 30 Z"
+        fill="url(#yieldGrad)"
+      />
+      <Path
+        d="M0 28 Q 35 24, 65 15 T 130 3"
+        fill="none"
+        stroke="#8b5cf6"
+        strokeWidth="2"
+      />
+    </Svg>
+  </View>
+);
+
+// Get crop layout specifications and images based on their names
+const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
+  const nameLower = (cropName || '').toLowerCase();
+  let image = require('../../assets/images/rice-field-bg.png');
+  let displayName = cropName;
+  let harvestDays = 74;
+  let currentDay = 65;
+  let markers = {
+    left: { 
+      title: language === 'sw' ? 'Mbolea' : 'Manure', 
+      sub: language === 'sw' ? 'Kabla ya Kupanda' : 'Before Planting',
+      top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+    },
+    right: { 
+      title: language === 'sw' ? 'Mbolea ya KCl' : 'KCl Fertilizer', 
+      sub: language === 'sw' ? 'Wiki 2 - 3' : 'Age 2 - 3 Weeks',
+      top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+    }
+  };
+
+  if (nameLower.includes('maize') || nameLower.includes('mahindi')) {
+    image = require('../../assets/images/crop_maize.png');
+    displayName = language === 'sw' ? 'Mahindi' : 'Maize';
+    harvestDays = 120;
+    currentDay = 98;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Nafasi ya Mbegu' : 'Seed Spacing', 
+        sub: language === 'sw' ? 'Siku ya Kwanza' : 'Day 1 planting',
+        top: 110, left: '8%', lineW: '22%', lineH: 38, dotTop: 160
+      },
+      right: { 
+        title: language === 'sw' ? 'Mbolea ya Urea' : 'Urea Fertilizer', 
+        sub: language === 'sw' ? 'Wiki ya 4 - 6' : 'Week 4 - 6 dressing',
+        top: 85, right: '8%', lineW: '20%', lineH: 52, dotTop: 150
+      }
+    };
+  } else if (nameLower.includes('beans') || nameLower.includes('maharage')) {
+    image = require('../../assets/images/crop_beans.png');
+    displayName = language === 'sw' ? 'Maharage' : 'Beans';
+    harvestDays = 85;
+    currentDay = 60;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kuweka Maji' : 'Watering', 
+        sub: language === 'sw' ? 'Ua la kwanza' : 'First flowering',
+        top: 130, left: '5%', lineW: '24%', lineH: 40, dotTop: 180
+      },
+      right: { 
+        title: language === 'sw' ? 'Dawa ya Wadudu' : 'Pesticide', 
+        sub: language === 'sw' ? 'Wiki ya 3' : 'Week 3 spray',
+        top: 95, right: '5%', lineW: '18%', lineH: 45, dotTop: 152
+      }
+    };
+  } else if (nameLower.includes('tomato') || nameLower.includes('nyanya')) {
+    image = require('../../assets/images/crop_tomato.png');
+    displayName = language === 'sw' ? 'Nyanya' : 'Tomato';
+    harvestDays = 90;
+    currentDay = 72;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kupandikiza' : 'Transplanting', 
+        sub: language === 'sw' ? 'Siku ya 1' : 'Day 1 field',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Kukata Matawi' : 'Pruning', 
+        sub: language === 'sw' ? 'Kila Wiki' : 'Weekly trimming',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('rice') || nameLower.includes('mpunga')) {
+    image = require('../../assets/images/rice-field-bg.png');
+    displayName = language === 'sw' ? 'Mpunga' : 'Rice';
+    harvestDays = 130;
+    currentDay = 105;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kupandikiza' : 'Transplanting', 
+        sub: language === 'sw' ? 'Siku ya 1' : 'Day 1 flooded',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Kukata Maji' : 'Drain Field', 
+        sub: language === 'sw' ? 'Wiki 2 kabla ya kuvuna' : '2 weeks pre-harvest',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  }
+  
+  return { image, displayName, harvestDays, currentDay, markers };
+};
+
 export default function HomeScreen() {
   const { colors, isDark, radius, shadows } = useTheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  const [upgradeModalVisible, setUpgradeModalVisible] = useState(false);
 
   const agroId = useKilimoStore((s) => s.agroId);
   const isOffline = useKilimoStore((s) => s.isOffline);
@@ -232,20 +428,61 @@ export default function HomeScreen() {
   const unreadCount = useKilimoStore((s) => s.unreadCount);
   const farmProfile = useKilimoStore((s) => s.farmProfile);
   const language = useKilimoStore((s) => s.language);
-  const activities = useKilimoStore((s) => s.activities);
-  const setActivities = useKilimoStore((s) => s.setActivities);
+
+  // RAG Search State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [ragLoading, setRagLoading] = useState(false);
+  const [ragResult, setRagResult] = useState<{ summary: string; source: string } | null>(null);
+
+  // Ask Kilimo AI Chat Widget State
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatReply, setChatReply] = useState<string | null>(null);
+
+  // Weekly Insights State
+  const [weeklyInsight, setWeeklyInsight] = useState<{ title: string; body: string; source: string } | null>(null);
+  const [insightLoading, setInsightLoading] = useState(false);
+
+  // Crop Slideshow Selection
+  const primaryCrops = useMemo(() => {
+    const crops = farmProfile?.primaryCrops || [];
+    return crops.length > 0 ? crops : ['Mpunga (Rice)'];
+  }, [farmProfile]);
+
+  const [activeCropIndex, setActiveCropIndex] = useState(0);
+
+  // Slide carousel effect
+  useEffect(() => {
+    if (primaryCrops.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveCropIndex((prev) => (prev + 1) % primaryCrops.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [primaryCrops]);
+
+  const activeCrop = primaryCrops[activeCropIndex];
+  const cropMeta = useMemo(() => getCropMetadata(activeCrop, language), [activeCrop, language]);
+
+  // Translate Bento Stats
+  const FARM_STATS = [
+    { id: 'soil', label: language === 'sw' ? 'Afya ya Udongo' : 'Soil Health', value: `${farmVitals.soilHealth}%`, chart: <SoilHealthChart color={colors.primary} />, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary, trend: language === 'sw' ? 'Nzuri' : 'Optimal' },
+    { id: 'moisture', label: language === 'sw' ? 'Unyevu' : 'Moisture', value: `${farmVitals.moisture}%`, chart: <MoistureChart />, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
+    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${farmVitals.temperature}°C`, chart: <TemperatureChart />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: language === 'sw' ? 'Imara' : 'Optimal' },
+    { id: 'yield', label: language === 'sw' ? 'Kadirio Mavuno' : 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, chart: <YieldChart />, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
+  ];
+
+  const quickActions = useMemo(() => [
+    { id: 'scan', label: language === 'sw' ? 'Uchunguzi' : 'Scan', icon: <Camera size={22} color="#fff" />, color: '#4CAF50', desc: language === 'sw' ? 'Chunguza Ugonjwa' : 'AI Crop Scan' },
+    { id: 'tasks', label: language === 'sw' ? 'Ratiba' : 'Tasks', icon: <LayoutGrid size={22} color="#fff" />, color: '#3b82f6', desc: language === 'sw' ? 'Kazi za Shamba' : 'Farm Tasks' },
+    { id: 'market', label: language === 'sw' ? 'Soko' : 'Market', icon: <TrendingUp size={22} color="#fff" />, color: '#f59e0b', desc: language === 'sw' ? 'Bei za Mazao' : 'Market Prices' },
+    { id: 'crop-planning', label: language === 'sw' ? 'Upangaji' : 'Planning', icon: <Leaf size={22} color="#fff" />, color: '#22c55e', desc: language === 'sw' ? 'Upangaji wa Mazao' : 'AI Crop Planning' },
+    { id: 'contracts', label: language === 'sw' ? 'Mikataba' : 'Contracts', icon: <BarChart3 size={22} color="#fff" />, color: '#8b5cf6', desc: language === 'sw' ? 'Kilimo cha Mkataba' : 'Contract Farming' },
+  ], [language]);
 
   const recommendations = useMemo(
     () => generateRecommendations({ profile: farmProfile, vitals: farmVitals, language }),
     [farmProfile, farmVitals, language]
   );
-
-  const FARM_STATS = [
-    { id: 'soil', label: 'Soil Health', value: `${farmVitals.soilHealth}%`, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary },
-    { id: 'moisture', label: 'Moisture', value: `${farmVitals.moisture}%`, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB' },
-    { id: 'weather', label: 'Temperature', value: `${farmVitals.temperature}°C`, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B' },
-    { id: 'yield', label: 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6' },
-  ];
 
   const setLastSyncedAt = useKilimoStore((s) => s.setLastSyncedAt);
   const { forceSync } = useSyncEngine();
@@ -257,6 +494,177 @@ export default function HomeScreen() {
     setLastSyncedAt(new Date().toISOString());
     setRefreshing(false);
   }, [setLastSyncedAt, forceSync]);
+
+  // Execute RAG Search
+  const handleRagSearch = async () => {
+    const query = searchQuery.trim();
+    if (!query) return;
+    setRagLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    try {
+      if (aiConfigured()) {
+        const prompt = `Act as an agricultural search RAG system. Answer the following search query: "${query}" in ${language === 'sw' ? 'Kiswahili' : 'English'}.
+        Keep the answer very brief (max 3 sentences). 
+        You MUST output a clean JSON object ONLY, with no markdown styling:
+        {
+          "summary": "AI summary text here...",
+          "source": "realistic source citation, e.g. TARI (2024) or FAO guidelines"
+        }`;
+        const resText = await chat([{ role: 'user', content: prompt }]);
+        const parsed = JSON.parse(resText.replace(/```json\s*|\s*```/g, '').trim());
+        setRagResult(parsed);
+      } else {
+        await new Promise((r) => setTimeout(r, 1200));
+        const queryLower = query.toLowerCase();
+        if (queryLower.includes('mbeya') || queryLower.includes('maize') || queryLower.includes('mahindi')) {
+          if (language === 'sw') {
+            setRagResult({
+              summary: 'Uzalishaji wa mahindi mkoani Mbeya hufaidika na udongo wa kichanga wenye pH ya 6.2. Mavuno bora hutokea kati ya Juni na Agosti. Inashauriwa kuvuna wakati unyevu wa nafaka uko chini ya 15% ili kuzuia kuvu.',
+              source: 'Mwongozo wa Kilimo Tanzania (TARI Mbeya, 2024)'
+            });
+          } else {
+            setRagResult({
+              summary: 'Maize production in Mbeya benefit from fertile loam soil with pH 6.2. The optimal harvest window is between June and August. It is recommended to harvest when grain moisture is below 15% to prevent aflatoxin.',
+              source: 'Tanzania Agriculture Research Institute (TARI, 2024)'
+            });
+          }
+        } else if (queryLower.includes('nitrogen') || queryLower.includes('nitrojeni')) {
+          if (language === 'sw') {
+            setRagResult({
+              summary: 'Nitrojeni ya chini kwenye Zone 42 inasababishwa na kilimo cha mara kwa mara bila mzunguko wa mazao ya kunde. Inashauriwa kuongeza mbolea ya Urea (kilo 50/ekari) au kupanda maharage ili kurejesha rutuba ya nitrojeni.',
+              source: 'Ripoti ya Udongo ya Kilimo AI (Zone 42 Soil Report)'
+            });
+          } else {
+            setRagResult({
+              summary: 'Low nitrogen in Zone 42 is caused by continuous cropping without legume rotation. We recommend applying Urea (50kg/acre) or intercropping with beans to naturally restore nitrogen levels.',
+              source: 'Kilimo AI Sensor Analytics (Zone 42 Soil Report)'
+            });
+          }
+        } else {
+          if (language === 'sw') {
+            setRagResult({
+              summary: `Majibu ya utafutaji wa "${query}": Mazao ya shamba lako yanahitaji mbolea sahihi na umwagiliaji kwa wakati. Tafadhali wasiliana na afisa ugani kwa maelezo zaidi.`,
+              source: 'Kitabu cha Kilimo cha Taifa'
+            });
+          } else {
+            setRagResult({
+              summary: `Search results for "${query}": Your farm crops require proper fertilization and scheduled irrigation. Please consult your local extension officer for crop-specific actions.`,
+              source: 'National Agricultural Handbook'
+            });
+          }
+        }
+      }
+    } catch {
+      setRagResult({
+        summary: language === 'sw' ? 'Imeshindwa kupata majibu kwa sasa.' : 'Unable to retrieve search context right now.',
+        source: 'System Error'
+      });
+    } finally {
+      setRagLoading(false);
+    }
+  };
+
+  // Submit chat widget query
+  const handleChatWidgetSubmit = async (queryText?: string) => {
+    const query = (queryText || chatInput).trim();
+    if (!query) return;
+    setChatLoading(true);
+    setChatInput('');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      if (aiConfigured()) {
+        const promptText = `Wewe ni msaidizi wa Kilimo AI. Jibu kwa kifupi swali hili kwa ${language === 'sw' ? 'Kiswahili' : 'English'}: "${query}"`;
+        const reply = await chat([{ role: 'user', content: promptText }]);
+        setChatReply(reply);
+      } else {
+        await new Promise((r) => setTimeout(r, 1000));
+        const queryLower = query.toLowerCase();
+        if (queryLower.includes('nitrogen') || queryLower.includes('nitrojeni')) {
+          setChatReply(language === 'sw' 
+            ? 'Nitrojeni iko chini kwa sababu ya kilimo cha mfululizo. Kupanda maharage au kuweka mbolea ya Urea kutarudisha rutuba.' 
+            : 'Low nitrogen is usually caused by repeated mono-cropping. Intercropping with beans or applying Urea fertilizer will restore soil nutrients.');
+        } else if (queryLower.includes('bei') || queryLower.includes('market') || queryLower.includes('price')) {
+          setChatReply(language === 'sw' 
+            ? 'Bei ya Mahindi soko la Tandale imepanda hadi TZS 85,000 kwa gunia la kilo 100 leo. Hii ni ongezeko la 2.4%.' 
+            : 'Maize prices at Tandale market increased to TZS 85,000 per 100kg bag today. That is a 2.4% increase.');
+        } else {
+          setChatReply(language === 'sw'
+            ? 'Sankofa AI imepokea swali lako. Mwagilia mmea asubuhi kabla ya jua kali na uhakikishe mifereji iko wazi shambani.'
+            : 'Sankofa AI has received your query. Please irrigate your crops early in the morning and verify field drainage is optimal.');
+        }
+      }
+    } catch {
+      setChatReply(language === 'sw' ? 'Kuna hitilafu ya mtandao, jaribu tena.' : 'Network error. Please try again.');
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // Fetch LLM weekly insight
+  useEffect(() => {
+    let active = true;
+    const fetchWeeklyInsight = async () => {
+      setInsightLoading(true);
+      try {
+        const cropsList = primaryCrops.join(', ');
+        const prompt = `Generate a human-like, actionable weekly farming recommendation for a farmer in ${farmProfile?.region || 'Mbeya'}, Tanzania growing ${cropsList}. 
+        Write the response in ${language === 'sw' ? 'Kiswahili' : 'English'}.
+        Respond with a clean JSON format ONLY, with no markdown code blocks:
+        {
+          "title": "short catchy title",
+          "body": "actionable 2-sentence recommendation detail",
+          "source": "realistic source citation, e.g. TARI (2024)"
+        }`;
+        
+        let insightText = '';
+        if (aiConfigured()) {
+          insightText = await chat([{ role: 'user', content: prompt }]);
+        } else {
+          await new Promise((r) => setTimeout(r, 1200));
+          if (language === 'sw') {
+            insightText = JSON.stringify({
+              title: "Muda wa Kupalilia na Kuweka Urea",
+              body: `Kwa kuwa mahindi yako yana wiki 4 sasa mkoani ${farmProfile?.region || 'Mbeya'}, weka mbolea ya Urea (kilo 50 kwa ekari) baada ya kupalilia. Hii itaongeza ukuaji wa majani kwa haraka.`,
+              source: "Afisa Ugani (TARI, 2024)"
+            });
+          } else {
+            insightText = JSON.stringify({
+              title: "Weeding and Urea Application",
+              body: `Since your maize is at week 4 in ${farmProfile?.region || 'Mbeya'}, apply Urea fertilizer (50kg/acre) immediately after weeding. This boosts leafy vegetative growth.`,
+              source: "Extension Officer (TARI, 2024)"
+            });
+          }
+        }
+        
+        if (!active) return;
+        try {
+          const parsed = JSON.parse(insightText.replace(/```json\s*|\s*```/g, '').trim());
+          setWeeklyInsight(parsed);
+        } catch {
+          setWeeklyInsight({
+            title: language === 'sw' ? 'Ushauri wa Mbolea' : 'Fertilization Advice',
+            body: insightText.slice(0, 150),
+            source: 'Kilimo AI'
+          });
+        }
+      } catch (err) {
+        if (active) {
+          setWeeklyInsight({
+            title: language === 'sw' ? 'Dhibiti Unyevu wa Udongo' : 'Manage Soil Moisture',
+            body: language === 'sw' ? 'Mwagilia asubuhi na jioni ili kulinda mimea dhidi ya ukame unaotarajiwa.' : 'Water your crops in the morning and evening to protect against the expected dry spell.',
+            source: 'Kilimo AI'
+          });
+        }
+      } finally {
+        if (active) setInsightLoading(false);
+      }
+    };
+    
+    fetchWeeklyInsight();
+    return () => { active = false; };
+  }, [farmProfile, language, primaryCrops]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -270,7 +678,7 @@ export default function HomeScreen() {
         {/* Immersive Hero Header */}
         <View style={styles.heroWrapper}>
           <Image 
-            source={require('../../assets/images/rice-field-bg.png')} 
+            source={cropMeta.image} 
             style={styles.heroImage} 
           />
           <LinearGradient
@@ -280,29 +688,29 @@ export default function HomeScreen() {
           
           {/* Crop Overlay Visual Telemetry Markers */}
           <View style={StyleSheet.absoluteFill}>
-            {/* Left Marker: Manure */}
-            <View style={[styles.markerLabelContainer, { left: '8%', top: 120 }]}>
-              <Text style={styles.markerLabelTitle}>Manure</Text>
-              <Text style={styles.markerLabelSub}>Before Planting</Text>
+            {/* Left Marker */}
+            <View style={[styles.markerLabelContainer, { left: cropMeta.markers.left.left as any, top: cropMeta.markers.left.top } as any]}>
+              <Text style={styles.markerLabelTitle}>{cropMeta.markers.left.title}</Text>
+              <Text style={styles.markerLabelSub}>{cropMeta.markers.left.sub}</Text>
             </View>
-            <View style={[styles.markerLineH, { left: '26%', top: 132, width: '20%' }]} />
-            <View style={[styles.markerLineV, { left: '46%', top: 132, height: 42 }]} />
-            <View style={[styles.markerDot, { left: '45%', top: 174, borderColor: colors.primary }]} />
+            <View style={[styles.markerLineH, { left: '26%', top: cropMeta.markers.left.top + 12, width: cropMeta.markers.left.lineW as any } as any]} />
+            <View style={[styles.markerLineV, { left: '46%', top: cropMeta.markers.left.top + 12, height: cropMeta.markers.left.lineH } as any]} />
+            <View style={[styles.markerDot, { left: '45%', top: cropMeta.markers.left.dotTop, borderColor: colors.primary } as any]} />
 
-            {/* Right Marker: KCl Fertilizer */}
-            <View style={[styles.markerLabelContainer, { right: '6%', top: 88, alignItems: 'flex-end' }]}>
-              <Text style={styles.markerLabelTitle}>KCl Fertilizer</Text>
-              <Text style={styles.markerLabelSub}>Age 2 - 3 Weeks</Text>
+            {/* Right Marker */}
+            <View style={[styles.markerLabelContainer, { right: cropMeta.markers.right.right as any, top: cropMeta.markers.right.top, alignItems: 'flex-end' } as any]}>
+              <Text style={styles.markerLabelTitle}>{cropMeta.markers.right.title}</Text>
+              <Text style={styles.markerLabelSub}>{cropMeta.markers.right.sub}</Text>
             </View>
-            <View style={[styles.markerLineH, { right: '28%', top: 100, width: '18%' }]} />
-            <View style={[styles.markerLineV, { right: '46%', top: 100, height: 48 }]} />
-            <View style={[styles.markerDot, { right: '45.1%', top: 148, borderColor: colors.primary }]} />
+            <View style={[styles.markerLineH, { right: '28%', top: cropMeta.markers.right.top + 12, width: cropMeta.markers.right.lineW as any } as any]} />
+            <View style={[styles.markerLineV, { right: '46%', top: cropMeta.markers.right.top + 12, height: cropMeta.markers.right.lineH } as any]} />
+            <View style={[styles.markerDot, { right: '45.1%', top: cropMeta.markers.right.dotTop, borderColor: colors.primary } as any]} />
           </View>
           
           <SafeAreaView style={styles.heroHeader}>
             <View style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}>
               <MapPin size={14} color={colors.primary} />
-              <Text style={[styles.locationText, { color: colors.text }]}>{farmProfile?.region || agroId?.location || 'Bali, Indonesia'}</Text>
+              <Text style={[styles.locationText, { color: colors.text }]}>{farmProfile?.region || agroId?.location || 'Mbeya, Tanzania'}</Text>
             </View>
             
             <View style={styles.headerActions}>
@@ -342,25 +750,37 @@ export default function HomeScreen() {
           {/* Crop Telemetry Info Overlay */}
           <View style={styles.heroCropPanel}>
             <View style={styles.cropTitleRow}>
-              <Text style={styles.cropLabel}>YOUR AGRICULTURAL CROPS</Text>
+              <Text style={styles.cropLabel}>
+                {language === 'sw' ? 'MAZAO YAKO YA KILIMO' : 'YOUR AGRICULTURAL CROPS'}
+              </Text>
               <View style={[styles.liveBadge, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}>
                 <PulsingDot />
                 <Text style={styles.liveText}>LIVE</Text>
               </View>
             </View>
             <View style={styles.cropSelectorRow}>
-              <Text style={styles.cropName}>{farmProfile?.primaryCrops?.[0] || 'Rice Plants'}</Text>
-              <ChevronDown size={18} color="#FFFFFF" />
+              <Text style={styles.cropName}>{cropMeta.displayName}</Text>
+              {primaryCrops.length > 1 && (
+                <View style={styles.slideshowIndicator}>
+                  <Text style={styles.slideshowIndicatorText}>
+                    {activeCropIndex + 1}/{primaryCrops.length}
+                  </Text>
+                </View>
+              )}
             </View>
             
             {/* Cycle Progress bar */}
             <View style={styles.harvestTimeline}>
               <View style={styles.timelineTexts}>
-                <Text style={styles.timelineLeft}>{language === 'sw' ? 'Muda wa Kuvuna' : 'Time to harvest'}</Text>
-                <Text style={styles.timelineRight}>10 days (65/74)</Text>
+                <Text style={styles.timelineLeft}>
+                  {language === 'sw' ? 'Muda wa Kuvuna' : 'Time to harvest'}
+                </Text>
+                <Text style={styles.timelineRight}>
+                  {`${cropMeta.harvestDays - cropMeta.currentDay} ${language === 'sw' ? 'siku' : 'days'} (${cropMeta.currentDay}/${cropMeta.harvestDays})`}
+                </Text>
               </View>
               <View style={styles.timelineProgressBg}>
-                <View style={[styles.timelineProgressFill, { backgroundColor: colors.primary }]} />
+                <View style={[styles.timelineProgressFill, { backgroundColor: colors.primary, width: `${(cropMeta.currentDay / cropMeta.harvestDays) * 100}%` }]} />
               </View>
             </View>
           </View>
@@ -368,13 +788,69 @@ export default function HomeScreen() {
 
         {/* Content body below the Hero */}
         <View style={styles.mainContent}>
+
+          {/* RAG SEARCH BAR */}
+          <Animated.View entering={FadeInDown.delay(100).springify()} style={[styles.searchBarContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.searchBarInner}>
+              <Search size={20} color={colors.textMute} />
+              <TextInput
+                style={[styles.searchBarInput, { color: colors.text }]}
+                placeholder={language === 'sw' ? 'Tafuta miongozo ya mazao, udongo au masoko...' : 'Search crop guides, soil, or markets...'}
+                placeholderTextColor={colors.textMute}
+                value={searchQuery}
+                onChangeText={(text) => {
+                  setSearchQuery(text);
+                  if (!text.trim()) setRagResult(null);
+                }}
+                onSubmitEditing={handleRagSearch}
+                accessibilityLabel="RAG Search"
+                accessibilityHint="Query agricultural guides and get cited source cards"
+              />
+              {searchQuery ? (
+                <TouchableOpacity onPress={() => { setSearchQuery(''); setRagResult(null); }} accessibilityRole="button" accessibilityLabel="Clear Search">
+                  <X size={18} color={colors.textMute} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+
+            {ragLoading && (
+              <View style={styles.searchLoading}>
+                <ActivityIndicator size="small" color={colors.primary} />
+                <Text style={[styles.searchLoadingText, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Inatafuta nyaraka...' : 'Retrieving context...'}
+                </Text>
+              </View>
+            )}
+
+            {ragResult && (
+              <Animated.View entering={FadeInDown} style={[styles.searchResultCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)', borderColor: colors.border }]}>
+                <View style={styles.searchResultHeader}>
+                  <Sparkles size={14} color={colors.primary} />
+                  <Text style={[styles.searchResultTitle, { color: colors.primary }]}>
+                    {language === 'sw' ? 'Jibu la AI (RAG)' : 'AI Synthesis (RAG)'}
+                  </Text>
+                </View>
+                <Text style={[styles.searchResultBody, { color: colors.text }]}>{ragResult.summary}</Text>
+                
+                {/* Cited Source Card */}
+                <View style={[styles.citedCard, { backgroundColor: isDark ? '#171D15' : '#EAF0E8', borderColor: colors.primary + '30' }]}>
+                  <Globe size={12} color={colors.primary} />
+                  <Text style={[styles.citedText, { color: colors.primary }]}>
+                    {language === 'sw' ? `Kumbukumbu: ${ragResult.source}` : `Cited Source: ${ragResult.source}`}
+                  </Text>
+                </View>
+              </Animated.View>
+            )}
+          </Animated.View>
           
           {/* Horizontal Track Records timeline stepper */}
-          <TrackRecords colors={colors} isDark={isDark} />
+          <TrackRecords colors={colors} isDark={isDark} language={language} />
 
           {/* Quick Actions Scroll */}
           <View style={{ marginVertical: 12 }}>
-            <Text style={[styles.bentoSectionTitle, { color: colors.textMute, marginLeft: 4 }]}>QUICK ACTIONS</Text>
+            <Text style={[styles.bentoSectionTitle, { color: colors.textMute, marginLeft: 4 }]}>
+              {language === 'sw' ? 'NJIA ZA HARAKA' : 'QUICK ACTIONS'}
+            </Text>
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false} 
@@ -382,14 +858,14 @@ export default function HomeScreen() {
               snapToInterval={SCREEN_WIDTH * 0.65 + 16} 
               decelerationRate="fast"
             >
-              {QUICK_ACTIONS.map((action) => (
+              {quickActions.map((action) => (
                 <TouchableOpacity 
                   key={action.id} 
                   activeOpacity={0.88} 
                   onPress={() => { 
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
                     if (action.id === 'contracts' && agroId?.tier === 'Free') {
-                      setUpgradeModalVisible(true);
+                      router.push('/upgrade' as any);
                     } else {
                       router.push(`/${action.id}` as any); 
                     }
@@ -419,7 +895,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Growth Rate Chart */}
-          <GrowthChart colors={colors} isDark={isDark} />
+          <GrowthChart colors={colors} isDark={isDark} language={language} />
 
           {/* Wallet Card - Replaced with Olive Premium card */}
           <Animated.View entering={FadeInDown.delay(200).springify()}>
@@ -434,7 +910,9 @@ export default function HomeScreen() {
                 </View>
               </View>
 
-              <Text style={[styles.balanceLabel, { color: 'rgba(252, 251, 247, 0.6)' }]}>Akiba Yako (TZS)</Text>
+              <Text style={[styles.balanceLabel, { color: 'rgba(252, 251, 247, 0.6)' }]}>
+                {language === 'sw' ? 'Akiba Yako (TZS)' : 'Your Savings (TZS)'}
+              </Text>
               <View style={styles.balanceRow}>
                 <Text style={[styles.balanceAmount, { color: '#FCFBF7' }]}>{wallet.balanceTZS.toLocaleString()}</Text>
                 <Text style={[styles.balanceDecimals, { color: 'rgba(252, 251, 247, 0.6)' }]}>.00</Text>
@@ -448,7 +926,9 @@ export default function HomeScreen() {
                   accessibilityLabel="Deposit funds"
                 >
                   <ArrowDownLeft size={16} color="#080A08" />
-                  <Text style={[styles.walletBtnText, { color: '#080A08' }]}>Deposit</Text>
+                  <Text style={[styles.walletBtnText, { color: '#080A08' }]}>
+                    {language === 'sw' ? 'Weka Pesa' : 'Deposit'}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.walletBtn, { backgroundColor: 'rgba(255, 255, 255, 0.1)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.15)' }]}
@@ -457,7 +937,9 @@ export default function HomeScreen() {
                   accessibilityLabel="Pay cooperative dues"
                 >
                   <ArrowUpRight size={16} color="#FCFBF7" />
-                  <Text style={[styles.walletBtnText, { color: '#FCFBF7' }]}>Pay Co-op</Text>
+                  <Text style={[styles.walletBtnText, { color: '#FCFBF7' }]}>
+                    {language === 'sw' ? 'Lipa Co-op' : 'Pay Co-op'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </Card>
@@ -466,17 +948,21 @@ export default function HomeScreen() {
           {/* Bento Vitals Grid */}
           <View style={styles.bentoSection}>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Afya ya Shamba</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Afya ya Shamba' : 'Farm Vitals'}
+              </Text>
               <TouchableOpacity
                 onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}
                 accessibilityRole="button"
                 accessibilityLabel="View farm sensors"
               >
-                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 12 }}>SENSORS →</Text>
+                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 12 }}>
+                  {language === 'sw' ? 'DENSORI →' : 'SENSORS →'}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.statsGrid}>
-              {FARM_STATS.map((stat, idx) => (
+              {FARM_STATS.map((stat) => (
                 <View key={stat.id} style={styles.statCardContainer}>
                   <Card variant="solid" style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border, borderRadius: radius.lg, ...shadows.sm }]}>
                     <View style={styles.statHeaderRow}>
@@ -487,11 +973,17 @@ export default function HomeScreen() {
                         <MoreHorizontal size={16} color={colors.textMute} />
                       </TouchableOpacity>
                     </View>
-                    <Text style={[styles.statValueText, { color: colors.text }]}>{stat.value}</Text>
-                    <Text style={[styles.statLabelText, { color: colors.textMute }]}>{stat.label}</Text>
+                    <View style={styles.statMainBody}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.statValueText, { color: colors.text }]}>{stat.value}</Text>
+                        <Text style={[styles.statLabelText, { color: colors.textMute }]}>{stat.label}</Text>
+                      </View>
+                      {/* Embed Sparklines / mini graphs here */}
+                      {stat.chart}
+                    </View>
                     <View style={styles.statTrendRow}>
                       <ArrowUpRight size={12} color={colors.primary} />
-                      <Text style={[styles.statTrendLabel, { color: colors.primary }]}>Optimal</Text>
+                      <Text style={[styles.statTrendLabel, { color: colors.primary }]}>{stat.trend}</Text>
                     </View>
                   </Card>
                 </View>
@@ -499,17 +991,136 @@ export default function HomeScreen() {
             </View>
           </View>
 
+          {/* ASK KILIMO AI LLM WIDGET */}
+          <Animated.View entering={FadeInDown.delay(150).springify()} style={[styles.chatWidgetCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.chatWidgetHeader}>
+              <BrainCircuit size={20} color={colors.primary} />
+              <Text style={[styles.chatWidgetTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Uliza Kilimo AI' : 'Ask Kilimo AI'}
+              </Text>
+              <Sparkles size={16} color={colors.primary} style={styles.chatWidgetSparkle} />
+            </View>
+            
+            <Text style={[styles.chatWidgetDesc, { color: colors.textMute }]}>
+              {language === 'sw' ? 'Uliza lolote kuhusu nitrojeni, wadudu au masoko ya karibu.' : 'Ask about Nitrogen levels, disease control, or localized markets.'}
+            </Text>
+
+            <View style={styles.suggestionsWrapper}>
+              {[
+                language === 'sw' ? 'Mbona nitrogen iko chini Zone 42?' : 'Why is Nitrogen low in Zone 42?',
+                language === 'sw' ? 'Bei ya mahindi Mbeya?' : 'Maize market price in Mbeya?'
+              ].map((query, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setChatInput(query);
+                    handleChatWidgetSubmit(query);
+                  }}
+                  style={[styles.suggestionPill, { backgroundColor: isDark ? '#1C221A' : '#EDF1EC' }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Ask suggestion: ${query}`}
+                >
+                  <Text style={[styles.suggestionTextText, { color: colors.text }]}>{query}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <View style={[styles.chatWidgetInputContainer, { borderColor: colors.border, backgroundColor: colors.background }]}>
+              <TextInput
+                style={[styles.chatWidgetInput, { color: colors.text }]}
+                placeholder={language === 'sw' ? 'Uliza Kilimo AI...' : 'Ask Kilimo AI...'}
+                placeholderTextColor={colors.textMute}
+                value={chatInput}
+                onChangeText={setChatInput}
+                onSubmitEditing={() => handleChatWidgetSubmit()}
+                accessibilityLabel="Ask Kilimo AI Input"
+              />
+              <TouchableOpacity
+                onPress={() => handleChatWidgetSubmit()}
+                disabled={chatLoading || !chatInput.trim()}
+                style={[styles.chatWidgetSendBtn, { backgroundColor: chatInput.trim() ? colors.primary : 'transparent' }]}
+                accessibilityRole="button"
+                accessibilityLabel="Send message"
+              >
+                {chatLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <ArrowRight size={18} color={chatInput.trim() ? '#fff' : colors.textMute} />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {chatReply && (
+              <Animated.View entering={FadeInDown} style={[styles.chatWidgetReply, { backgroundColor: isDark ? '#121711' : '#F6F9F5', borderColor: colors.primary + '20' }]}>
+                <Text style={[styles.chatWidgetReplyHeader, { color: colors.primary }]}>Kilimo AI:</Text>
+                <Text style={[styles.chatWidgetReplyText, { color: colors.text }]}>{chatReply}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    router.push('/(tabs)/ai' as any);
+                  }}
+                  style={styles.chatWidgetReplyAction}
+                  accessibilityRole="button"
+                  accessibilityLabel="Open in full screen chat"
+                >
+                  <Text style={[styles.chatWidgetReplyActionText, { color: colors.primary }]}>
+                    {language === 'sw' ? 'Fungua Mazungumzo Kamili →' : 'Open Full Chat →'}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            )}
+          </Animated.View>
+
           {/* AI Recommendations */}
           <View style={styles.recSection}>
             <View style={styles.sectionHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Lightbulb size={18} color={colors.primary} />
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Sankofa AI</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                  {language === 'sw' ? 'Mapendekezo ya AI' : 'Sankofa AI'}
+                </Text>
               </View>
-              <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 11 }}>{recommendations.length} NEW</Text>
+              <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 11 }}>
+                {recommendations.length + (weeklyInsight ? 1 : 0)} NEW
+              </Text>
             </View>
+            
             <View style={{ gap: 10 }}>
-              {recommendations.map((rec, idx) => {
+              {/* Dynamic Weekly Insights Powered by LLM */}
+              {insightLoading && (
+                <Card variant="solid" style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border, alignItems: 'center', padding: 20 }]}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                  <Text style={{ color: colors.textMute, marginTop: 8, fontSize: 12 }}>
+                    {language === 'sw' ? 'Inapakia Ushauri wa AI...' : 'Generating Weekly Insights...'}
+                  </Text>
+                </Card>
+              )}
+
+              {weeklyInsight && !insightLoading && (
+                <Pressable
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/crop-planning' as any); }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Weekly Insight: ${weeklyInsight.title}`}
+                  accessibilityHint={weeklyInsight.body}
+                >
+                  <Card variant="solid" style={[styles.recCard, { borderLeftColor: colors.primary, borderLeftWidth: 4, backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <View style={styles.weeklyInsightBadgeRow}>
+                      <Text style={[styles.recCat, { color: colors.primary }]}>
+                        {language === 'sw' ? 'UFAHAMU WA WIKI (AI)' : 'WEEKLY INSIGHT (AI)'}
+                      </Text>
+                      <Sparkles size={12} color={colors.primary} />
+                    </View>
+                    <Text style={[styles.recTitle, { color: colors.text }]}>{weeklyInsight.title}</Text>
+                    <Text style={[styles.recBody, { color: colors.textMute }]}>{weeklyInsight.body}</Text>
+                    <Text style={styles.weeklyInsightSource}>
+                      {language === 'sw' ? `Chanzo: ${weeklyInsight.source}` : `Source: ${weeklyInsight.source}`}
+                    </Text>
+                  </Card>
+                </Pressable>
+              )}
+
+              {/* Regular Static/Rule-based recommendations */}
+              {recommendations.map((rec) => {
                 const col = severityColor(rec.severity);
                 return (
                   <Pressable
@@ -730,6 +1341,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: -0.5,
   },
+  slideshowIndicator: {
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    marginLeft: 4,
+  },
+  slideshowIndicatorText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontFamily: 'Inter_800ExtraBold',
+  },
   harvestTimeline: {
     marginTop: 2,
   },
@@ -757,7 +1380,6 @@ const styles = StyleSheet.create({
   },
   timelineProgressFill: {
     height: '100%',
-    width: '87%',
     borderRadius: 3,
   },
 
@@ -766,6 +1388,76 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     gap: 16,
+  },
+
+  // RAG Search Bar Styles
+  searchBarContainer: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 12,
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  searchBarInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  searchBarInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+    paddingVertical: 4,
+  },
+  searchLoading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingTop: 6,
+  },
+  searchLoadingText: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+  },
+  searchResultCard: {
+    borderTopWidth: 1,
+    paddingTop: 12,
+    marginTop: 4,
+    gap: 8,
+  },
+  searchResultHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  searchResultTitle: {
+    fontSize: 12,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
+  },
+  searchResultBody: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  citedCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginTop: 4,
+  },
+  citedText: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
   },
   
   // Track Records Stepper Styles
@@ -1049,6 +1741,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  statMainBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   statValueText: {
     fontSize: 20,
     fontFamily: 'Inter_900Black',
@@ -1069,6 +1766,116 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Inter_700Bold',
   },
+  miniChartContainer: {
+    width: 60,
+    height: 30,
+    overflow: 'hidden',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
+  miniBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    width: 50,
+    height: 30,
+    paddingHorizontal: 2,
+    marginLeft: 6,
+  },
+
+  // Ask Kilimo AI Widget Styles
+  chatWidgetCard: {
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 18,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  chatWidgetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  chatWidgetTitle: {
+    fontSize: 15,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: -0.2,
+  },
+  chatWidgetSparkle: {
+    marginLeft: 'auto',
+  },
+  chatWidgetDesc: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 16,
+  },
+  suggestionsWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 2,
+  },
+  suggestionPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  suggestionTextText: {
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  chatWidgetInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingLeft: 12,
+    paddingRight: 6,
+    height: 48,
+    marginTop: 4,
+  },
+  chatWidgetInput: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  chatWidgetSendBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chatWidgetReply: {
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 12,
+    marginTop: 6,
+    gap: 6,
+  },
+  chatWidgetReplyHeader: {
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 0.5,
+  },
+  chatWidgetReplyText: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  chatWidgetReplyAction: {
+    alignSelf: 'flex-end',
+    marginTop: 4,
+  },
+  chatWidgetReplyActionText: {
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+  },
 
   // AI Recs Styles
   recSection: {
@@ -1079,6 +1886,18 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     borderWidth: 1,
     borderRadius: 16,
+  },
+  weeklyInsightBadgeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  weeklyInsightSource: {
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+    color: '#8b5cf6',
+    marginTop: 8,
   },
   recCat: {
     fontSize: 9,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Database,
   Fingerprint,
-  WifiOff
+  WifiOff,
+  Globe
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -98,28 +99,45 @@ export default function ProfileScreen() {
   const isOffline = useKilimoStore((s) => s.isOffline);
   const setOffline = useKilimoStore((s) => s.setOffline);
   const resetOnboarding = useKilimoStore((s) => s.resetOnboarding);
+  const language = useKilimoStore((s) => s.language);
+  const setLanguage = useKilimoStore((s) => s.setLanguage);
+  
   const [biometric, setBiometric] = useState(true);
-  const AGRO_ID_DATA = storedAgroId ?? AGRO_ID_FALLBACK;
+  
+  const AGRO_ID_DATA = useMemo(() => {
+    if (storedAgroId) return storedAgroId;
+    return {
+      ...AGRO_ID_FALLBACK,
+      role: language === 'sw' ? 'Mkulima Mkuu' : 'Master Farmer',
+      tier: language === 'sw' ? 'Mwanachama wa Ushirika wa Premium' : 'Premium Co-op Member'
+    };
+  }, [storedAgroId, language]);
 
   const PROFILE_SECTIONS = [
     {
-      title: 'AGRO ID & USALAMA',
+      title: language === 'sw' ? 'AGRO ID & USALAMA' : 'AGRO ID & SECURITY',
       items: [
-        { id: 'identity', title: 'Biometric Identity', icon: <Fingerprint size={20} color="#3b82f6" />, hasSwitch: true, switchVal: biometric, onSwitch: (v: boolean) => { setBiometric(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }, value: '' },
-        { id: 'security', title: 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
+        { id: 'identity', title: language === 'sw' ? 'Uthibitisho wa Kibayometriki' : 'Biometric Identity', icon: <Fingerprint size={20} color="#3b82f6" />, hasSwitch: true, switchVal: biometric, onSwitch: (v: boolean) => { setBiometric(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }, value: '' },
+        { id: 'security', title: language === 'sw' ? 'Usalama & Faragha' : 'Security & Privacy', icon: <ShieldCheck size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/privacy' as any) },
       ]
     },
     {
-      title: 'MIFUMO & MTANDAO',
+      title: language === 'sw' ? 'MIFUMO & MTANDAO' : 'SYSTEM & NETWORK',
       items: [
-        { id: 'offline', title: 'Offline-First Mode', icon: <WifiOff size={20} color="#ef4444" />, hasSwitch: true, switchVal: isOffline, onSwitch: (v: boolean) => { setOffline(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }, value: '' },
-        { id: 'sync', title: 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: 'Last sync: 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert('Sync', 'Data yako imesawazishwa kikamilifu.'); } },
+        { id: 'language', title: language === 'sw' ? 'Lugha ya Programu' : 'App Language', icon: <Globe size={20} color={colors.primary} />, hasSwitch: false, value: language === 'sw' ? 'Kiswahili' : 'English', onPress: () => {
+            const nextLang = language === 'sw' ? 'en' : 'sw';
+            setLanguage(nextLang);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            Alert.alert(nextLang === 'sw' ? 'Lugha Imesasishwa' : 'Language Updated', nextLang === 'sw' ? 'Lugha ya programu sasa ni Kiswahili.' : 'App language is now English.');
+        } },
+        { id: 'offline', title: language === 'sw' ? 'Njia ya Nje ya Mtandao' : 'Offline-First Mode', icon: <WifiOff size={20} color="#ef4444" />, hasSwitch: true, switchVal: isOffline, onSwitch: (v: boolean) => { setOffline(v); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }, value: '' },
+        { id: 'sync', title: language === 'sw' ? 'Kusawazisha Data' : 'Local Cache Sync', icon: <Database size={20} color="#8b5cf6" />, hasSwitch: false, value: language === 'sw' ? 'Mwisho: saa 2 zilizopita' : 'Last sync: 2h ago', onPress: () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert(language === 'sw' ? 'Kusawazisha' : 'Sync', language === 'sw' ? 'Data yako imesawazishwa kikamilifu.' : 'Your data has been fully synchronized.'); } },
       ]
     },
     {
-      title: 'MSAADA & VIGEZO',
+      title: language === 'sw' ? 'MSAADA & VIGEZO' : 'HELP & SUPPORT',
       items: [
-        { id: 'help', title: 'Help & Support', icon: <HelpCircle size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/terms' as any) },
+        { id: 'help', title: language === 'sw' ? 'Msaada & Huduma' : 'Help & Support', icon: <HelpCircle size={20} color="#64748b" />, hasSwitch: false, value: '', onPress: () => router.push('/terms' as any) },
       ]
     }
   ];
@@ -130,9 +148,6 @@ export default function ProfileScreen() {
       
       {/* Cinematic Background */}
       <View style={StyleSheet.absoluteFill}>
-        
-        
-        
         <LinearGradient
           colors={[
             isDark ? colors.slate[950] : '#f8fafc',
@@ -151,12 +166,14 @@ export default function ProfileScreen() {
           <View>
             {/* Header */}
             <Animated.View style={styles.header}>
-              <Text style={[styles.headerTitle, { color: colors.text }]}>Identity</Text>
+              <Text style={[styles.headerTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Kitambulisho' : 'Identity'}
+              </Text>
               <TouchableOpacity
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }}
-              accessibilityRole="button"
-              accessibilityLabel="Edit profile settings"
-            >
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }}
+                accessibilityRole="button"
+                accessibilityLabel="Edit profile settings"
+              >
                 <Settings size={24} color={colors.text} />
               </TouchableOpacity>
             </Animated.View>
@@ -200,7 +217,9 @@ export default function ProfileScreen() {
 
                   <View style={styles.tierContainer}>
                     <Text style={[styles.tierText, { color: colors.text }]}>{AGRO_ID_DATA.tier}</Text>
-                    <Text style={[styles.joinText, { color: colors.textMute }]}>Member since {AGRO_ID_DATA.joinDate}</Text>
+                    <Text style={[styles.joinText, { color: colors.textMute }]}>
+                      {language === 'sw' ? `Mwanachama tangu ${AGRO_ID_DATA.joinDate}` : `Member since ${AGRO_ID_DATA.joinDate}`}
+                    </Text>
                   </View>
                 </BlurView>
               </TouchableOpacity>
@@ -208,34 +227,39 @@ export default function ProfileScreen() {
 
             {/* Quick Access — all PRD feature routes */}
             <View style={styles.quickContainer}>
-              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>UFIKIAJI WA HARAKA</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
+                {language === 'sw' ? 'UFIKIAJI WA HARAKA' : 'QUICK ACCESS'}
+              </Text>
               <View style={styles.quickGrid}>
-                {QUICK_ROUTES.map((q) => (
-                  <TouchableOpacity
-                    key={q.key}
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(q.route as any); }}
-                    activeOpacity={0.85}
-                    style={styles.quickItem}
-                    accessibilityRole="button"
-                    accessibilityLabel={q.label}
-                    accessibilityHint={`Open ${q.sub}`}
-                  >
-                    <BlurView
-                      intensity={isDark ? 25 : 65}
-                      tint={isDark ? 'dark' : 'light'}
-                      style={[styles.quickCard, { borderColor: colors.border }]}
+                {QUICK_ROUTES.map((q) => {
+                  const label = language === 'sw' ? q.label : q.sub;
+                  return (
+                    <TouchableOpacity
+                      key={q.key}
+                      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push(q.route as any); }}
+                      activeOpacity={0.85}
+                      style={styles.quickItem}
+                      accessibilityRole="button"
+                      accessibilityLabel={label}
+                      accessibilityHint={`Open ${q.sub}`}
                     >
-                      <View style={[styles.quickDot, { backgroundColor: q.color + '25' }]}>
-                        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: q.color }} />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Text style={[styles.quickLabel, { color: colors.text }]}>{q.label}</Text>
-                        <Text style={[styles.quickSub, { color: colors.textMute }]}>{q.sub}</Text>
-                      </View>
-                      <ArrowUpRight size={14} color={colors.textMute} />
-                    </BlurView>
-                  </TouchableOpacity>
-                ))}
+                      <BlurView
+                        intensity={isDark ? 25 : 65}
+                        tint={isDark ? 'dark' : 'light'}
+                        style={[styles.quickCard, { borderColor: colors.border }]}
+                      >
+                        <View style={[styles.quickDot, { backgroundColor: q.color + '25' }]}>
+                          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: q.color }} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={[styles.quickLabel, { color: colors.text }]}>{label}</Text>
+                          <Text style={[styles.quickSub, { color: colors.textMute }]}>{q.sub}</Text>
+                        </View>
+                        <ArrowUpRight size={14} color={colors.textMute} />
+                      </BlurView>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
 

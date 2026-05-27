@@ -201,12 +201,12 @@ export default function EditProfileScreen() {
           </View>
           <TouchableOpacity
             onPress={save}
-            style={[s.iconBtn, canSave && isDirty && { backgroundColor: 'rgba(62,207,142,0.18)' }]}
+            style={[s.iconBtn, canSave && isDirty && { backgroundColor: colors.primaryLight }]}
             accessibilityRole="button"
             accessibilityLabel="Save profile"
             accessibilityState={{ disabled: !(canSave && isDirty) }}
           >
-            <Save size={20} color={canSave && isDirty ? '#3ecf8e' : 'rgba(255,255,255,0.3)'} />
+            <Save size={20} color={canSave && isDirty ? colors.primary : 'rgba(255,255,255,0.3)'} />
           </TouchableOpacity>
         </View>
 
@@ -215,7 +215,7 @@ export default function EditProfileScreen() {
             <Text style={s.sub}>{t.sub}</Text>
 
             {/* Name */}
-            <Section icon={<User size={16} color="#3ecf8e" />} label={t.name} />
+            <Section icon={<User size={16} color={colors.primary} />} label={t.name} />
             <BlurView intensity={20} tint="dark" style={[s.inputWrap, !nameValid && name.length > 0 && s.inputErr]}>
               <TextInput
                 value={name}
@@ -241,13 +241,13 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRole(r); }}
-                  style={[s.rolePill, role === r && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.12)' }]}
+                  style={[s.rolePill, role === r && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={roleLabel(r)}
                   accessibilityState={{ checked: role === r }}
                 >
-                  <Text style={[s.rolePillText, role === r && { color: '#3ecf8e' }]}>{roleLabel(r)}</Text>
-                  {role === r && <Check size={16} color="#3ecf8e" />}
+                  <Text style={[s.rolePillText, role === r && { color: colors.primary }]}>{roleLabel(r)}</Text>
+                  {role === r && <Check size={16} color={colors.primary} />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -259,12 +259,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={r}
                   onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
-                  style={[s.pill, region === r && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  style={[s.pill, region === r && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={r}
                   accessibilityState={{ checked: region === r }}
                 >
-                  <Text style={[s.pillText, region === r && { color: '#3ecf8e' }]}>{r}</Text>
+                  <Text style={[s.pillText, region === r && { color: colors.primary }]}>{r}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -281,14 +281,14 @@ export default function EditProfileScreen() {
                     onPress={() => toggleCrop(c)}
                     style={[
                       s.cropPill,
-                      on && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' },
+                      on && { borderColor: colors.primary, backgroundColor: colors.primaryLight },
                       disabled && { opacity: 0.35 },
                     ]}
                     accessibilityRole="checkbox"
                     accessibilityLabel={c}
                     accessibilityState={{ checked: on, disabled }}
                   >
-                    <Text style={[s.pillText, on && { color: '#3ecf8e' }]}>{c}</Text>
+                    <Text style={[s.pillText, on && { color: colors.primary }]}>{c}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -301,8 +301,8 @@ export default function EditProfileScreen() {
             )}
             {crops.length === MAX_CROPS && (
               <View style={[s.errRow, { marginTop: 6 }]}>
-                <Check size={12} color="#3ecf8e" />
-                <Text style={[s.errText, { color: '#3ecf8e' }]}>
+                <Check size={12} color={colors.primary} />
+                <Text style={[s.errText, { color: colors.primary }]}>
                   {lang === 'sw' ? `Mazao ${MAX_CROPS} yamechaguliwa` : `${MAX_CROPS} crops selected — max reached`}
                 </Text>
               </View>
@@ -329,12 +329,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={a}
                   onPress={() => { Haptics.selectionAsync(); setActivity(a); }}
-                  style={[s.actBtn, activity === a && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  style={[s.actBtn, activity === a && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={(t as any)[a]}
                   accessibilityState={{ checked: activity === a }}
                 >
-                  <Text style={[s.pillText, activity === a && { color: '#3ecf8e' }]}>{(t as any)[a]}</Text>
+                  <Text style={[s.pillText, activity === a && { color: colors.primary }]}>{(t as any)[a]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -345,7 +345,7 @@ export default function EditProfileScreen() {
             <Switch
               value={hasLivestock}
               onValueChange={(v) => { Haptics.selectionAsync(); setHasLivestock(v); }}
-              trackColor={{ false: '#333', true: '#3ecf8e' }}
+              trackColor={{ false: '#333', true: colors.primary }}
               accessibilityLabel={t.livestock}
               accessibilityRole="switch"
             />
@@ -355,7 +355,7 @@ export default function EditProfileScreen() {
             <Switch
               value={hasIrrigation}
               onValueChange={(v) => { Haptics.selectionAsync(); setHasIrrigation(v); }}
-              trackColor={{ false: '#333', true: '#3ecf8e' }}
+              trackColor={{ false: '#333', true: colors.primary }}
               accessibilityLabel={t.irrigation}
               accessibilityRole="switch"
             />
@@ -368,12 +368,12 @@ export default function EditProfileScreen() {
                 <TouchableOpacity
                   key={L}
                   onPress={() => { Haptics.selectionAsync(); setLang(L); }}
-                  style={[s.actBtn, lang === L && { borderColor: '#3ecf8e', backgroundColor: 'rgba(62,207,142,0.18)' }]}
+                  style={[s.actBtn, lang === L && { borderColor: colors.primary, backgroundColor: colors.primaryLight }]}
                   accessibilityRole="radio"
                   accessibilityLabel={L === 'sw' ? 'Kiswahili' : 'English'}
                   accessibilityState={{ checked: lang === L }}
                 >
-                  <Text style={[s.pillText, lang === L && { color: '#3ecf8e' }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
+                  <Text style={[s.pillText, lang === L && { color: colors.primary }]}>{L === 'sw' ? 'Kiswahili' : 'English'}</Text>
                 </TouchableOpacity>
               ))}
             </View>
