@@ -1265,6 +1265,7 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
 
 function VerificationStep({ lang, idType, setIdType, nida, setNida, license, setLicense, tin, setTin }: any) {
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
 
   return (
     <BlurView
