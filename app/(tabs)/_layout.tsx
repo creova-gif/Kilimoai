@@ -1,59 +1,71 @@
 import React, { useEffect } from 'react';
 import { Tabs, router } from 'expo-router';
-import { Platform, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, View, TouchableOpacity } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { Home, Tv, GraduationCap, User, Settings, Bot, Tractor, Store, LayoutGrid, Plus } from 'lucide-react-native';
-import { BlurView } from 'expo-blur';
+import { Home, User, Bot, Tractor, Plus } from 'lucide-react-native';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
-function TabIcon({ focused, children, backgroundColor }: { focused: boolean; children: React.ReactNode; backgroundColor?: string }) {
-  const scale = useSharedValue(focused ? 1.15 : 1.0);
-  const opacity = useSharedValue(focused ? 1.0 : 0.7);
+const TAB_BAR_BG = 'rgba(14, 22, 13, 0.97)';
+const ICON_ACTIVE = '#22d15a';
+const ICON_INACTIVE = 'rgba(255,255,255,0.38)';
+
+function TabIcon({
+  focused,
+  children,
+}: {
+  focused: boolean;
+  children: React.ReactNode;
+}) {
+  const scale = useSharedValue(1.0);
 
   useEffect(() => {
-    if (focused) {
-      scale.value = withSpring(1.15, { damping: 10, stiffness: 100 });
-      opacity.value = withTiming(1.0, { duration: 200 });
-    } else {
-      scale.value = withTiming(1.0, { duration: 150 });
-      opacity.value = withTiming(0.7, { duration: 150 });
-    }
+    scale.value = focused
+      ? withSpring(1.15, { damping: 10, stiffness: 120 })
+      : withTiming(1.0, { duration: 150 });
   }, [focused]);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-      opacity: opacity.value,
-    };
-  });
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
-    <Animated.View style={[{ alignItems: 'center', justifyContent: 'center', minWidth: 48, minHeight: 48 }, animatedStyle]}>
-      <View style={{
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: focused && backgroundColor ? backgroundColor : 'transparent',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        {children}
-      </View>
+    <Animated.View
+      style={[
+        {
+          width: 48,
+          height: 48,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        animStyle,
+      ]}
+    >
+      {focused && (
+        <View
+          style={{
+            position: 'absolute',
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: 'rgba(34, 209, 90, 0.15)',
+          }}
+        />
+      )}
+      {children}
     </Animated.View>
   );
 }
 
 export default function TabLayout() {
-  const { colors, isDark } = useTheme();
-  const language = useKilimoStore((s) => s.language);
-  
+  const { colors } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#FFFFFF',
-        tabBarInactiveTintColor: isDark ? '#707D6D' : '#8C9A89',
+        tabBarActiveTintColor: ICON_ACTIVE,
+        tabBarInactiveTintColor: ICON_INACTIVE,
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -63,31 +75,23 @@ export default function TabLayout() {
           right: 16,
           height: 68,
           borderRadius: 34,
-          elevation: 6,
-          shadowColor: '#1A3B14',
-          shadowOpacity: 0.08,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 6 },
-          backgroundColor: isDark ? 'rgba(23, 29, 21, 0.94)' : 'rgba(255, 255, 255, 0.94)',
           borderTopWidth: 0,
+          overflow: 'visible',
+          backgroundColor: TAB_BAR_BG,
+          elevation: 12,
+          shadowColor: '#000',
+          shadowOpacity: 0.35,
+          shadowRadius: 20,
+          shadowOffset: { width: 0, height: 8 },
         },
-        tabBarBackground: () => (
-          <View style={{ ...StyleSheet.absoluteFillObject, borderRadius: 34, overflow: 'hidden' }}>
-            <BlurView 
-              intensity={isDark ? 30 : 80} 
-              tint={isDark ? 'dark' : 'light'} 
-              style={StyleSheet.absoluteFill} 
-            />
-          </View>
-        ),
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused} backgroundColor={colors.primary}>
-              <Home color={focused ? "#FFFFFF" : color} size={focused ? 24 : 22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused}>
+              <Home color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
@@ -96,8 +100,8 @@ export default function TabLayout() {
         name="fields"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused} backgroundColor={colors.primary}>
-              <Tractor color={focused ? "#FFFFFF" : color} size={focused ? 24 : 22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused}>
+              <Tractor color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
@@ -107,32 +111,32 @@ export default function TabLayout() {
         options={{
           tabBarLabel: () => null,
           tabBarIcon: () => null,
-          tabBarButton: ({ ref, onPress: defaultOnPress, ...props }: any) => (
-            <TouchableOpacity 
-              {...props} 
-              activeOpacity={0.8}
-              onPress={(e) => {
+          tabBarButton: ({ ...props }: any) => (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 router.push('/features');
               }}
               style={{
+                position: 'relative',
                 top: -20,
-                justifyContent: 'center',
-                alignItems: 'center',
                 width: 64,
                 height: 64,
                 borderRadius: 32,
-                backgroundColor: colors.primary,
-                shadowColor: colors.primary,
-                shadowOpacity: 0.3,
-                shadowRadius: 10,
+                backgroundColor: '#22d15a',
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: '#22d15a',
+                shadowOpacity: 0.55,
+                shadowRadius: 14,
                 shadowOffset: { width: 0, height: 6 },
-                elevation: 5,
-                borderWidth: 4,
-                borderColor: colors.background,
+                elevation: 10,
+                borderWidth: 3,
+                borderColor: 'rgba(14, 22, 13, 0.97)',
               }}
             >
-              <Plus color="#FFFFFF" size={32} strokeWidth={3} />
+              <Plus color="#fff" size={30} strokeWidth={2.5} />
             </TouchableOpacity>
           ),
         }}
@@ -141,8 +145,8 @@ export default function TabLayout() {
         name="ai"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused} backgroundColor={colors.primary}>
-              <Bot color={focused ? "#FFFFFF" : color} size={focused ? 24 : 22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused}>
+              <Bot color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
@@ -151,42 +155,17 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused} backgroundColor={colors.primary}>
-              <User color={focused ? "#FFFFFF" : color} size={focused ? 24 : 22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused}>
+              <User color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
       />
-      <Tabs.Screen
-        name="market"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="video-hub"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="ai-training-hub"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="edit-profile"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="features"
-        options={{
-          href: null,
-        }}
-      />
+      <Tabs.Screen name="market" options={{ href: null }} />
+      <Tabs.Screen name="video-hub" options={{ href: null }} />
+      <Tabs.Screen name="ai-training-hub" options={{ href: null }} />
+      <Tabs.Screen name="edit-profile" options={{ href: null }} />
+      <Tabs.Screen name="features" options={{ href: null }} />
     </Tabs>
   );
 }
