@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Image, Modal, ActivityIndicator, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
-import { ChevronLeft, Leaf, Droplets, Sun, AlertTriangle } from 'lucide-react-native';
+import { ChevronLeft, Leaf, Droplets, Sun, Sprout, TrendingUp, Clock, AlertTriangle, PlayCircle } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../constants/Theme';
 import { chat } from '../lib/ai';
@@ -10,12 +10,102 @@ import { chat } from '../lib/ai';
 const { width: SW } = Dimensions.get('window');
 
 const CROPS = [
-  { id: 'maize', name: 'Maize / Mahindi', img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=400' },
-  { id: 'beans', name: 'Beans / Maharage', img: 'https://images.unsplash.com/photo-1551608674-d4b3ff2efbb7?auto=format&fit=crop&q=80&w=400' },
-  { id: 'tomato', name: 'Tomatoes / Nyanya', img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400' },
-  { id: 'rice', name: 'Rice / Mpunga', img: 'https://images.unsplash.com/photo-1530335032608-f40445a6c1e9?auto=format&fit=crop&q=80&w=400' },
-  { id: 'onion', name: 'Onions / Vitunguu', img: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&q=80&w=400' },
-  { id: 'sunflower', name: 'Sunflower / Alizeti', img: 'https://images.unsplash.com/photo-1558500259-22a868427ce2?auto=format&fit=crop&q=80&w=400' },
+  { 
+    id: 'maize', nameEn: 'Maize', nameSw: 'Mahindi', 
+    img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 3-4', difficulty: 'Kati', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Zao kuu la chakula Tanzania. Hustawi maeneo mengi yenye mvua za kutosha.'
+  },
+  { 
+    id: 'beans', nameEn: 'Beans', nameSw: 'Maharage', 
+    img: 'https://images.unsplash.com/photo-1551608674-d4b3ff2efbb7?auto=format&fit=crop&q=80&w=400',
+    duration: 'Siku 60-90', difficulty: 'Rahisi', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Hulimwa sana nyanda za juu. Husaidia kurudisha nitrojeni kwenye udongo.'
+  },
+  { 
+    id: 'tomato', nameEn: 'Tomatoes', nameSw: 'Nyanya', 
+    img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 2-3', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi', sun: 'Jua Kamili',
+    desc: 'Zao la biashara la haraka. Linahitaji matunzo na dawa za kuzuia magonjwa ya kuvu.'
+  },
+  { 
+    id: 'rice', nameEn: 'Rice', nameSw: 'Mpunga', 
+    img: 'https://images.unsplash.com/photo-1530335032608-f40445a6c1e9?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 4-5', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi Sana', sun: 'Jua Kamili',
+    desc: 'Hulimwa sana mabondeni Mbeya, Morogoro, na Shinyanga. Hulipa sana kibiashara.'
+  },
+  { 
+    id: 'onion', nameEn: 'Onions', nameSw: 'Vitunguu', 
+    img: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 3-4', difficulty: 'Kati', profit: 'Juu Sana', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Vitunguu vya Singida na Mang\'ola vina soko kubwa Afrika Mashariki.'
+  },
+  { 
+    id: 'sunflower', nameEn: 'Sunflower', nameSw: 'Alizeti', 
+    img: 'https://images.unsplash.com/photo-1558500259-22a868427ce2?auto=format&fit=crop&q=80&w=400',
+    duration: 'Siku 90-120', difficulty: 'Rahisi', profit: 'Kati', water: 'Kidogo', sun: 'Jua Kamili',
+    desc: 'Hustahimili ukame. Hustawi sana Dodoma na Singida kwa uzalishaji wa mafuta ya kula.'
+  },
+  { 
+    id: 'cassava', nameEn: 'Cassava', nameSw: 'Muhogo', 
+    img: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 9-12', difficulty: 'Rahisi', profit: 'Kati', water: 'Kidogo', sun: 'Jua Kamili',
+    desc: 'Zao linalostahimili ukame mkali. Hulimwa sana kanda ya ziwa, Pwani na kusini.'
+  },
+  { 
+    id: 'coffee', nameEn: 'Coffee', nameSw: 'Kahawa', 
+    img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3-5 (Mavuno)', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi', sun: 'Kivuli Kiasi',
+    desc: 'Zao kuu la biashara (Arabica kaskazini/kusini, Robusta Kagera). Linaleta fedha za kigeni.'
+  },
+  { 
+    id: 'cashew', nameEn: 'Cashew Nuts', nameSw: 'Korosho', 
+    img: 'https://images.unsplash.com/photo-1533742468351-4d40abcb6478?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3+ (Mavuno)', difficulty: 'Kati', profit: 'Juu Sana', water: 'Kidogo', sun: 'Jua Kamili',
+    desc: 'Zao la utajiri Kusini mwa Tanzania (Mtwara, Lindi). Huhitaji dawa za ukungu mara kwa mara.'
+  },
+  { 
+    id: 'banana', nameEn: 'Banana', nameSw: 'Ndizi', 
+    img: 'https://images.unsplash.com/photo-1601002888204-5838cc518e38?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 9-12', difficulty: 'Kati', profit: 'Juu', water: 'Mingi', sun: 'Kiasi',
+    desc: 'Chakula kikuu Kilimanjaro na Kagera. Inahitaji unyevu na mboji nyingi.'
+  },
+  { 
+    id: 'sweetpotato', nameEn: 'Sweet Potato', nameSw: 'Viazi Vitamu', 
+    img: 'https://images.unsplash.com/photo-1596525164996-857e53f19e7a?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 3-5', difficulty: 'Rahisi', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Hukua haraka na kufunika ardhi. Hutoa chakula wakati wa njaa na hujazana mizizi kwa urahisi.'
+  },
+  { 
+    id: 'cotton', nameEn: 'Cotton', nameSw: 'Pamba', 
+    img: 'https://images.unsplash.com/photo-1502472458406-8d62dcce474f?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 5-6', difficulty: 'Nguvu', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
+    desc: '"Dhahabu Nyeupe" inayolimwa sana Kanda ya Ziwa. Huhitaji udhibiti mkali wa wadudu.'
+  },
+  { 
+    id: 'cloves', nameEn: 'Cloves', nameSw: 'Karafuu', 
+    img: 'https://images.unsplash.com/photo-1606822263435-0ce1b88e0018?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 5+ (Mavuno)', difficulty: 'Kati', profit: 'Juu Sana', water: 'Mingi', sun: 'Jua Kamili',
+    desc: 'Zao maarufu la Visiwa vya Zanzibar na Pemba. Hutumika kama kiungo duniani kote.'
+  },
+  { 
+    id: 'avocado', nameEn: 'Avocado', nameSw: 'Parachichi', 
+    img: 'https://images.unsplash.com/photo-1517666005606-1eb8a614d95b?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3+', difficulty: 'Kati', profit: 'Juu Sana', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Dhahabu ya kijani Njombe na Mbeya. Soko lake linakua kwa kasi kubwa kimataifa (Hass).'
+  },
+  { 
+    id: 'sorghum', nameEn: 'Sorghum', nameSw: 'Mtama', 
+    img: 'https://images.unsplash.com/photo-1597816001099-0158bc56184a?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 3-4', difficulty: 'Rahisi', profit: 'Chini', water: 'Kidogo Sana', sun: 'Jua Kali',
+    desc: 'Hustahimili ukame wa hali ya juu. Zao zuri kwa kanda kame kama Dodoma.'
+  },
+  {
+    id: 'tea', nameEn: 'Tea', nameSw: 'Chai',
+    img: 'https://images.unsplash.com/photo-1596637373007-9304a3f3a8b4?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3+', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi Sana', sun: 'Jua Kiasi',
+    desc: 'Hulimwa nyanda za juu zenye baridi na mvua nyingi kama Mufindi na Lushoto.'
+  }
 ];
 
 export default function CropLibraryScreen() {
@@ -32,11 +122,11 @@ export default function CropLibraryScreen() {
     setLoading(true);
     try {
       const response = await chat([
-        { role: 'user', content: `Nipe mwongozo kamili wa kilimo cha ${crop.name}. Jumuisha: 1. Maandalizi ya shamba, 2. Umbali wa kupanda, 3. Magonjwa makuu, 4. Uvunaji. Fupisha kwa nukta (bullet points) ili iwe rahisi kusoma.` }
+        { role: 'user', content: `Nipe mwongozo kamili na wa ubunifu wa kilimo cha ${crop.nameSw}. Jumuisha: 1. Maandalizi ya shamba, 2. Umbali wa kupanda, 3. Magonjwa makuu, 4. Uvunaji. Fupisha kwa nukta (bullet points) vizuri.` }
       ]);
       setDetails(response);
     } catch (e) {
-      setDetails("Kuna changamoto ya mtandao. Tafadhali jaribu tena baadaye.");
+      setDetails("Kuna changamoto ya mtandao kufikia AI. Tafadhali jaribu tena baadaye.");
     } finally {
       setLoading(false);
     }
@@ -48,7 +138,7 @@ export default function CropLibraryScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <ChevronLeft color={colors.text} size={28} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text }]}>Maktaba ya Mazao</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Maktaba ya Mazao (Tanzania)</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -62,41 +152,83 @@ export default function CropLibraryScreen() {
           >
             <Image source={{ uri: crop.img }} style={styles.cardImg} />
             <View style={styles.cardBody}>
-              <Text style={[styles.cardTitle, { color: colors.text }]}>{crop.name}</Text>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>{crop.nameSw}</Text>
+              <Text style={[styles.cardSub, { color: colors.textMute }]}>{crop.nameEn}</Text>
+              
+              <View style={styles.badgeRow}>
+                <View style={[styles.microBadge, { backgroundColor: crop.profit === 'Juu Sana' ? '#22d15a20' : colors.border }]}>
+                  <TrendingUp size={10} color={crop.profit === 'Juu Sana' ? '#22d15a' : colors.textMute} />
+                  <Text style={[styles.microBadgeText, { color: crop.profit === 'Juu Sana' ? '#22d15a' : colors.textMute }]}>Faida {crop.profit}</Text>
+                </View>
+                <View style={[styles.microBadge, { backgroundColor: colors.border }]}>
+                  <Clock size={10} color={colors.textMute} />
+                  <Text style={[styles.microBadgeText, { color: colors.textMute }]}>{crop.duration}</Text>
+                </View>
+              </View>
             </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      {/* Crop Details Modal */}
+      {/* Enhanced Crop Details Modal */}
       <Modal visible={!!selectedCrop} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)' }]} />
           <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>{selectedCrop?.name}</Text>
+              <View>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>{selectedCrop?.nameSw}</Text>
+                <Text style={[styles.modalSub, { color: colors.textMute }]}>{selectedCrop?.nameEn}</Text>
+              </View>
               <TouchableOpacity onPress={() => setSelectedCrop(null)} style={[styles.closeBtn, { backgroundColor: colors.background }]}>
-                <Text style={{ color: colors.text, fontWeight: 'bold' }}>X</Text>
+                <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>X</Text>
               </TouchableOpacity>
             </View>
+
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
               <Image source={{ uri: selectedCrop?.img }} style={styles.modalImg} />
               
-              <View style={[styles.infoBar, { backgroundColor: colors.background }]}>
-                <View style={styles.infoIcon}><Droplets size={18} color="#3b82f6" /><Text style={[styles.infoText, { color: colors.textMute }]}>Maji</Text></View>
-                <View style={styles.infoIcon}><Sun size={18} color="#f59e0b" /><Text style={[styles.infoText, { color: colors.textMute }]}>Jua</Text></View>
-                <View style={styles.infoIcon}><Leaf size={18} color={colors.primary} /><Text style={[styles.infoText, { color: colors.textMute }]}>Mbolea</Text></View>
+              <Text style={[styles.cropDescription, { color: colors.text }]}>{selectedCrop?.desc}</Text>
+
+              {/* Creative Stats Grid */}
+              <View style={styles.statsGrid}>
+                <View style={[styles.statBox, { backgroundColor: colors.background }]}>
+                  <Clock size={20} color={colors.primary} />
+                  <Text style={[styles.statValue, { color: colors.text }]}>{selectedCrop?.duration}</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>Muda wa Kukua</Text>
+                </View>
+                <View style={[styles.statBox, { backgroundColor: colors.background }]}>
+                  <TrendingUp size={20} color="#f59e0b" />
+                  <Text style={[styles.statValue, { color: colors.text }]}>{selectedCrop?.profit}</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>Faida / Soko</Text>
+                </View>
+                <View style={[styles.statBox, { backgroundColor: colors.background }]}>
+                  <Sprout size={20} color="#3b82f6" />
+                  <Text style={[styles.statValue, { color: colors.text }]}>{selectedCrop?.difficulty}</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>Ugumu</Text>
+                </View>
+                <View style={[styles.statBox, { backgroundColor: colors.background }]}>
+                  <Droplets size={20} color="#0ea5e9" />
+                  <Text style={[styles.statValue, { color: colors.text }]}>{selectedCrop?.water}</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>Mahitaji ya Maji</Text>
+                </View>
               </View>
 
               <View style={{ marginTop: 24 }}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Mwongozo wa Kilimo (AI)</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                  <PlayCircle size={24} color={colors.primary} />
+                  <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 0 }]}>Mwongozo wa AI</Text>
+                </View>
+
                 {loading ? (
-                  <View style={{ padding: 40, alignItems: 'center' }}>
+                  <View style={{ padding: 40, alignItems: 'center', backgroundColor: colors.background, borderRadius: 16 }}>
                     <ActivityIndicator size="large" color={colors.primary} />
-                    <Text style={{ color: colors.textMute, marginTop: 12 }}>Inachambua taarifa...</Text>
+                    <Text style={{ color: colors.textMute, marginTop: 12, fontFamily: 'Inter_500Medium' }}>Sankofa AI inachambua mwongozo wako...</Text>
                   </View>
                 ) : (
-                  <Text style={[styles.detailsText, { color: colors.text }]}>{details}</Text>
+                  <View style={{ backgroundColor: colors.background, padding: 20, borderRadius: 16 }}>
+                    <Text style={[styles.detailsText, { color: colors.text }]}>{details}</Text>
+                  </View>
                 )}
               </View>
             </ScrollView>
@@ -112,37 +244,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingBottom: 16, borderBottomWidth: 1,
   },
-  backBtn: { width: 40, height: 40, justifyContent: 'center' },
-  title: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
+  backBtn: { width: 44, height: 44, justifyContent: 'center' },
+  title: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular' },
   grid: {
-    flexDirection: 'row', flexWrap: 'wrap', padding: 16, justifyContent: 'space-between'
+    flexDirection: 'row', flexWrap: 'wrap', padding: 16, justifyContent: 'space-between', gap: 12
   },
   card: {
-    width: (SW - 48) / 2,
+    width: (SW - 44) / 2,
     borderRadius: 16,
-    marginBottom: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    shadowColor: '#0a3d18', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2
   },
-  cardImg: { width: '100%', height: 120 },
+  cardImg: { width: '100%', height: 110 },
   cardBody: { padding: 12 },
-  cardTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 14 },
+  cardTitle: { fontFamily: 'Inter_700Bold', fontSize: 15 },
+  cardSub: { fontFamily: 'Inter_500Medium', fontSize: 12, marginBottom: 8 },
+  badgeRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  microBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 4, borderRadius: 6, gap: 4 },
+  microBadgeText: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
   
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   modalContent: {
-    height: '85%',
-    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    height: '90%',
+    borderTopLeftRadius: 28, borderTopRightRadius: 28,
     padding: 24,
-    shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 20
+    shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 16, elevation: 20
   },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  modalImg: { width: '100%', height: 180, borderRadius: 16, marginBottom: 16 },
-  infoBar: { flexDirection: 'row', justifyContent: 'space-around', padding: 16, borderRadius: 12 },
-  infoIcon: { alignItems: 'center', gap: 4 },
-  infoText: { fontSize: 12, fontFamily: 'Inter_500Medium' },
-  sectionTitle: { fontSize: 18, fontFamily: 'Inter_600SemiBold', marginBottom: 12 },
-  detailsText: { fontSize: 15, fontFamily: 'Inter_400Regular', lineHeight: 24 },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
+  modalTitle: { fontSize: 28, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  modalSub: { fontSize: 14, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
+  closeBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  modalImg: { width: '100%', height: 200, borderRadius: 16, marginBottom: 16 },
+  cropDescription: { fontSize: 15, fontFamily: 'Inter_500Medium', lineHeight: 22, marginBottom: 20 },
+  
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  statBox: { width: '48%', padding: 16, borderRadius: 16, alignItems: 'flex-start', gap: 8 },
+  statValue: { fontSize: 16, fontFamily: 'Inter_700Bold', marginTop: 4 },
+  statLabel: { fontSize: 12, fontFamily: 'Inter_500Medium' },
+  
+  sectionTitle: { fontSize: 18, fontFamily: 'Inter_700Bold', marginBottom: 12 },
+  detailsText: { fontSize: 15, fontFamily: 'Inter_500Medium', lineHeight: 24 },
 });
