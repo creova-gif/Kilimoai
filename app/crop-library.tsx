@@ -1,110 +1,115 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Image, Modal, ActivityIndicator, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
-import { ChevronLeft, Leaf, Droplets, Sun, Sprout, TrendingUp, Clock, AlertTriangle, PlayCircle } from 'lucide-react-native';
+import { ChevronLeft, Leaf, Droplets, Sun, Sprout, TrendingUp, Clock, PlayCircle } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../constants/Theme';
 import { chat } from '../lib/ai';
 
 const { width: SW } = Dimensions.get('window');
 
+const CATEGORIES = [
+  { id: 'staple', title: 'Nafaka & Chakula Kikuu', subtitle: 'Msingi wa usalama wa chakula wa kila siku' },
+  { id: 'cash', title: 'Mazao ya Biashara', subtitle: 'Kwa ajili ya masoko makubwa ya ndani na nje' },
+  { id: 'horticulture', title: 'Matunda, Mboga & Viungo', subtitle: 'Mzunguko wa haraka, faida ya haraka' },
+];
+
 const CROPS = [
   { 
-    id: 'maize', nameEn: 'Maize', nameSw: 'Mahindi', 
+    id: 'maize', nameEn: 'Maize', nameSw: 'Mahindi', category: 'staple',
     img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=400',
     duration: 'Miezi 3-4', difficulty: 'Kati', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
     desc: 'Zao kuu la chakula Tanzania. Hustawi maeneo mengi yenye mvua za kutosha.'
   },
   { 
-    id: 'beans', nameEn: 'Beans', nameSw: 'Maharage', 
-    img: 'https://images.unsplash.com/photo-1551608674-d4b3ff2efbb7?auto=format&fit=crop&q=80&w=400',
-    duration: 'Siku 60-90', difficulty: 'Rahisi', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
-    desc: 'Hulimwa sana nyanda za juu. Husaidia kurudisha nitrojeni kwenye udongo.'
-  },
-  { 
-    id: 'tomato', nameEn: 'Tomatoes', nameSw: 'Nyanya', 
-    img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miezi 2-3', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi', sun: 'Jua Kamili',
-    desc: 'Zao la biashara la haraka. Linahitaji matunzo na dawa za kuzuia magonjwa ya kuvu.'
-  },
-  { 
-    id: 'rice', nameEn: 'Rice', nameSw: 'Mpunga', 
+    id: 'rice', nameEn: 'Rice', nameSw: 'Mpunga', category: 'staple',
     img: 'https://images.unsplash.com/photo-1530335032608-f40445a6c1e9?auto=format&fit=crop&q=80&w=400',
     duration: 'Miezi 4-5', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi Sana', sun: 'Jua Kamili',
     desc: 'Hulimwa sana mabondeni Mbeya, Morogoro, na Shinyanga. Hulipa sana kibiashara.'
   },
   { 
-    id: 'onion', nameEn: 'Onions', nameSw: 'Vitunguu', 
-    img: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miezi 3-4', difficulty: 'Kati', profit: 'Juu Sana', water: 'Wastani', sun: 'Jua Kamili',
-    desc: 'Vitunguu vya Singida na Mang\'ola vina soko kubwa Afrika Mashariki.'
+    id: 'beans', nameEn: 'Beans', nameSw: 'Maharage', category: 'staple',
+    img: 'https://images.unsplash.com/photo-1551608674-d4b3ff2efbb7?auto=format&fit=crop&q=80&w=400',
+    duration: 'Siku 60-90', difficulty: 'Rahisi', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Hulimwa sana nyanda za juu. Husaidia kurudisha nitrojeni kwenye udongo.'
   },
   { 
-    id: 'sunflower', nameEn: 'Sunflower', nameSw: 'Alizeti', 
-    img: 'https://images.unsplash.com/photo-1558500259-22a868427ce2?auto=format&fit=crop&q=80&w=400',
-    duration: 'Siku 90-120', difficulty: 'Rahisi', profit: 'Kati', water: 'Kidogo', sun: 'Jua Kamili',
-    desc: 'Hustahimili ukame. Hustawi sana Dodoma na Singida kwa uzalishaji wa mafuta ya kula.'
-  },
-  { 
-    id: 'cassava', nameEn: 'Cassava', nameSw: 'Muhogo', 
+    id: 'cassava', nameEn: 'Cassava', nameSw: 'Muhogo', category: 'staple',
     img: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=400',
     duration: 'Miezi 9-12', difficulty: 'Rahisi', profit: 'Kati', water: 'Kidogo', sun: 'Jua Kamili',
     desc: 'Zao linalostahimili ukame mkali. Hulimwa sana kanda ya ziwa, Pwani na kusini.'
   },
   { 
-    id: 'coffee', nameEn: 'Coffee', nameSw: 'Kahawa', 
-    img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miaka 3-5 (Mavuno)', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi', sun: 'Kivuli Kiasi',
-    desc: 'Zao kuu la biashara (Arabica kaskazini/kusini, Robusta Kagera). Linaleta fedha za kigeni.'
-  },
-  { 
-    id: 'cashew', nameEn: 'Cashew Nuts', nameSw: 'Korosho', 
-    img: 'https://images.unsplash.com/photo-1533742468351-4d40abcb6478?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miaka 3+ (Mavuno)', difficulty: 'Kati', profit: 'Juu Sana', water: 'Kidogo', sun: 'Jua Kamili',
-    desc: 'Zao la utajiri Kusini mwa Tanzania (Mtwara, Lindi). Huhitaji dawa za ukungu mara kwa mara.'
-  },
-  { 
-    id: 'banana', nameEn: 'Banana', nameSw: 'Ndizi', 
-    img: 'https://images.unsplash.com/photo-1601002888204-5838cc518e38?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miezi 9-12', difficulty: 'Kati', profit: 'Juu', water: 'Mingi', sun: 'Kiasi',
-    desc: 'Chakula kikuu Kilimanjaro na Kagera. Inahitaji unyevu na mboji nyingi.'
-  },
-  { 
-    id: 'sweetpotato', nameEn: 'Sweet Potato', nameSw: 'Viazi Vitamu', 
+    id: 'sweetpotato', nameEn: 'Sweet Potato', nameSw: 'Viazi Vitamu', category: 'staple',
     img: 'https://images.unsplash.com/photo-1596525164996-857e53f19e7a?auto=format&fit=crop&q=80&w=400',
     duration: 'Miezi 3-5', difficulty: 'Rahisi', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
     desc: 'Hukua haraka na kufunika ardhi. Hutoa chakula wakati wa njaa na hujazana mizizi kwa urahisi.'
   },
   { 
-    id: 'cotton', nameEn: 'Cotton', nameSw: 'Pamba', 
+    id: 'sorghum', nameEn: 'Sorghum', nameSw: 'Mtama', category: 'staple',
+    img: 'https://images.unsplash.com/photo-1597816001099-0158bc56184a?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 3-4', difficulty: 'Rahisi', profit: 'Chini', water: 'Kidogo Sana', sun: 'Jua Kali',
+    desc: 'Hustahimili ukame wa hali ya juu. Zao zuri kwa kanda kame kama Dodoma.'
+  },
+  { 
+    id: 'cashew', nameEn: 'Cashew Nuts', nameSw: 'Korosho', category: 'cash',
+    img: 'https://images.unsplash.com/photo-1533742468351-4d40abcb6478?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3+ (Mavuno)', difficulty: 'Kati', profit: 'Juu Sana', water: 'Kidogo', sun: 'Jua Kamili',
+    desc: 'Zao la utajiri Kusini mwa Tanzania (Mtwara, Lindi). Huhitaji dawa za ukungu mara kwa mara.'
+  },
+  { 
+    id: 'coffee', nameEn: 'Coffee', nameSw: 'Kahawa', category: 'cash',
+    img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3-5 (Mavuno)', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi', sun: 'Kivuli Kiasi',
+    desc: 'Zao kuu la biashara (Arabica kaskazini/kusini, Robusta Kagera). Linaleta fedha za kigeni.'
+  },
+  { 
+    id: 'cotton', nameEn: 'Cotton', nameSw: 'Pamba', category: 'cash',
     img: 'https://images.unsplash.com/photo-1502472458406-8d62dcce474f?auto=format&fit=crop&q=80&w=400',
     duration: 'Miezi 5-6', difficulty: 'Nguvu', profit: 'Kati', water: 'Wastani', sun: 'Jua Kamili',
     desc: '"Dhahabu Nyeupe" inayolimwa sana Kanda ya Ziwa. Huhitaji udhibiti mkali wa wadudu.'
   },
   { 
-    id: 'cloves', nameEn: 'Cloves', nameSw: 'Karafuu', 
-    img: 'https://images.unsplash.com/photo-1606822263435-0ce1b88e0018?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miaka 5+ (Mavuno)', difficulty: 'Kati', profit: 'Juu Sana', water: 'Mingi', sun: 'Jua Kamili',
-    desc: 'Zao maarufu la Visiwa vya Zanzibar na Pemba. Hutumika kama kiungo duniani kote.'
+    id: 'sunflower', nameEn: 'Sunflower', nameSw: 'Alizeti', category: 'cash',
+    img: 'https://images.unsplash.com/photo-1558500259-22a868427ce2?auto=format&fit=crop&q=80&w=400',
+    duration: 'Siku 90-120', difficulty: 'Rahisi', profit: 'Kati', water: 'Kidogo', sun: 'Jua Kamili',
+    desc: 'Hustahimili ukame. Hustawi sana Dodoma na Singida kwa uzalishaji wa mafuta ya kula.'
+  },
+  {
+    id: 'tea', nameEn: 'Tea', nameSw: 'Chai', category: 'cash',
+    img: 'https://images.unsplash.com/photo-1596637373007-9304a3f3a8b4?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 3+', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi Sana', sun: 'Jua Kiasi',
+    desc: 'Hulimwa nyanda za juu zenye baridi na mvua nyingi kama Mufindi na Lushoto.'
   },
   { 
-    id: 'avocado', nameEn: 'Avocado', nameSw: 'Parachichi', 
+    id: 'tomato', nameEn: 'Tomatoes', nameSw: 'Nyanya', category: 'horticulture',
+    img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 2-3', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi', sun: 'Jua Kamili',
+    desc: 'Zao la biashara la haraka. Linahitaji matunzo na dawa za kuzuia magonjwa ya kuvu.'
+  },
+  { 
+    id: 'onion', nameEn: 'Onions', nameSw: 'Vitunguu', category: 'horticulture',
+    img: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 3-4', difficulty: 'Kati', profit: 'Juu Sana', water: 'Wastani', sun: 'Jua Kamili',
+    desc: 'Vitunguu vya Singida na Mang\'ola vina soko kubwa Afrika Mashariki.'
+  },
+  { 
+    id: 'avocado', nameEn: 'Avocado', nameSw: 'Parachichi', category: 'horticulture',
     img: 'https://images.unsplash.com/photo-1517666005606-1eb8a614d95b?auto=format&fit=crop&q=80&w=400',
     duration: 'Miaka 3+', difficulty: 'Kati', profit: 'Juu Sana', water: 'Wastani', sun: 'Jua Kamili',
     desc: 'Dhahabu ya kijani Njombe na Mbeya. Soko lake linakua kwa kasi kubwa kimataifa (Hass).'
   },
   { 
-    id: 'sorghum', nameEn: 'Sorghum', nameSw: 'Mtama', 
-    img: 'https://images.unsplash.com/photo-1597816001099-0158bc56184a?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miezi 3-4', difficulty: 'Rahisi', profit: 'Chini', water: 'Kidogo Sana', sun: 'Jua Kali',
-    desc: 'Hustahimili ukame wa hali ya juu. Zao zuri kwa kanda kame kama Dodoma.'
+    id: 'banana', nameEn: 'Banana', nameSw: 'Ndizi', category: 'horticulture',
+    img: 'https://images.unsplash.com/photo-1601002888204-5838cc518e38?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miezi 9-12', difficulty: 'Kati', profit: 'Juu', water: 'Mingi', sun: 'Kiasi',
+    desc: 'Chakula kikuu Kilimanjaro na Kagera. Inahitaji unyevu na mboji nyingi.'
   },
-  {
-    id: 'tea', nameEn: 'Tea', nameSw: 'Chai',
-    img: 'https://images.unsplash.com/photo-1596637373007-9304a3f3a8b4?auto=format&fit=crop&q=80&w=400',
-    duration: 'Miaka 3+', difficulty: 'Nguvu', profit: 'Juu', water: 'Mingi Sana', sun: 'Jua Kiasi',
-    desc: 'Hulimwa nyanda za juu zenye baridi na mvua nyingi kama Mufindi na Lushoto.'
+  { 
+    id: 'cloves', nameEn: 'Cloves', nameSw: 'Karafuu', category: 'horticulture',
+    img: 'https://images.unsplash.com/photo-1606822263435-0ce1b88e0018?auto=format&fit=crop&q=80&w=400',
+    duration: 'Miaka 5+ (Mavuno)', difficulty: 'Kati', profit: 'Juu Sana', water: 'Mingi', sun: 'Jua Kamili',
+    desc: 'Zao maarufu la Visiwa vya Zanzibar na Pemba. Hutumika kama kiungo duniani kote.'
   }
 ];
 
@@ -138,42 +143,71 @@ export default function CropLibraryScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <ChevronLeft color={colors.text} size={28} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text }]}>Maktaba ya Mazao (Tanzania)</Text>
-        <View style={{ width: 40 }} />
+        <Text style={[styles.title, { color: colors.text }]}>Maktaba ya Mazao</Text>
+        <View style={{ width: 44 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.grid}>
-        {CROPS.map((crop) => (
-          <TouchableOpacity 
-            key={crop.id} 
-            style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
-            onPress={() => fetchCropDetails(crop)}
-            activeOpacity={0.8}
-          >
-            <Image source={{ uri: crop.img }} style={styles.cardImg} />
-            <View style={styles.cardBody}>
-              <Text style={[styles.cardTitle, { color: colors.text }]}>{crop.nameSw}</Text>
-              <Text style={[styles.cardSub, { color: colors.textMute }]}>{crop.nameEn}</Text>
-              
-              <View style={styles.badgeRow}>
-                <View style={[styles.microBadge, { backgroundColor: crop.profit === 'Juu Sana' ? '#22d15a20' : colors.border }]}>
-                  <TrendingUp size={10} color={crop.profit === 'Juu Sana' ? '#22d15a' : colors.textMute} />
-                  <Text style={[styles.microBadgeText, { color: crop.profit === 'Juu Sana' ? '#22d15a' : colors.textMute }]}>Faida {crop.profit}</Text>
-                </View>
-                <View style={[styles.microBadge, { backgroundColor: colors.border }]}>
-                  <Clock size={10} color={colors.textMute} />
-                  <Text style={[styles.microBadgeText, { color: colors.textMute }]}>{crop.duration}</Text>
-                </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingTop: 16 }}>
+        {CATEGORIES.map(cat => {
+          const catCrops = CROPS.filter(c => c.category === cat.id);
+          return (
+            <View key={cat.id} style={styles.sectionContainer}>
+              <View style={styles.sectionHeader}>
+                <Text style={[styles.sectionTitleText, { color: colors.text }]}>{cat.title}</Text>
+                <Text style={[styles.sectionSubtitleText, { color: colors.textMute }]}>{cat.subtitle}</Text>
               </View>
+
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                contentContainerStyle={styles.horizontalScroll}
+                snapToInterval={SW * 0.45 + 16}
+                decelerationRate="fast"
+              >
+                {catCrops.map((crop, index) => {
+                  const isFeatured = index === 0;
+                  return (
+                    <TouchableOpacity 
+                      key={crop.id} 
+                      style={[
+                        styles.card, 
+                        { backgroundColor: colors.card, borderColor: colors.border },
+                        isFeatured ? styles.cardFeatured : styles.cardNormal
+                      ]}
+                      onPress={() => fetchCropDetails(crop)}
+                      activeOpacity={0.8}
+                    >
+                      <Image source={{ uri: crop.img }} style={[styles.cardImg, isFeatured && styles.cardImgFeatured]} />
+                      <View style={styles.cardBody}>
+                        <Text style={[styles.cardTitle, isFeatured && styles.cardTitleFeatured, { color: colors.text }]} numberOfLines={1}>
+                          {crop.nameSw}
+                        </Text>
+                        <Text style={[styles.cardSub, { color: colors.textMute }]} numberOfLines={1}>{crop.nameEn}</Text>
+                        
+                        <View style={styles.badgeRow}>
+                          <View style={[styles.microBadge, { backgroundColor: crop.profit === 'Juu Sana' ? '#22d15a20' : colors.border }]}>
+                            <TrendingUp size={10} color={crop.profit === 'Juu Sana' ? '#22d15a' : colors.textMute} />
+                            <Text style={[styles.microBadgeText, { color: crop.profit === 'Juu Sana' ? '#22d15a' : colors.textMute }]}>{crop.profit}</Text>
+                          </View>
+                          <View style={[styles.microBadge, { backgroundColor: colors.border }]}>
+                            <Clock size={10} color={colors.textMute} />
+                            <Text style={[styles.microBadgeText, { color: colors.textMute }]}>{crop.duration}</Text>
+                          </View>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
             </View>
-          </TouchableOpacity>
-        ))}
+          );
+        })}
       </ScrollView>
 
       {/* Enhanced Crop Details Modal */}
       <Modal visible={!!selectedCrop} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)' }]} />
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)' }]} />
           <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <View style={styles.modalHeader}>
               <View>
@@ -246,20 +280,31 @@ const styles = StyleSheet.create({
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
   title: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular' },
-  grid: {
-    flexDirection: 'row', flexWrap: 'wrap', padding: 16, justifyContent: 'space-between', gap: 12
-  },
+  
+  sectionContainer: { marginBottom: 32 },
+  sectionHeader: { paddingHorizontal: 16, marginBottom: 16 },
+  sectionTitleText: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  sectionSubtitleText: { fontSize: 13, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  
+  horizontalScroll: { paddingHorizontal: 16, gap: 16 },
+  
   card: {
-    width: (SW - 44) / 2,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2
   },
-  cardImg: { width: '100%', height: 110 },
+  cardNormal: { width: SW * 0.45 },
+  cardFeatured: { width: SW * 0.70 },
+  
+  cardImg: { width: '100%', height: 120 },
+  cardImgFeatured: { height: 160 },
+  
   cardBody: { padding: 12 },
   cardTitle: { fontFamily: 'Inter_700Bold', fontSize: 15 },
+  cardTitleFeatured: { fontSize: 18 },
   cardSub: { fontFamily: 'Inter_500Medium', fontSize: 12, marginBottom: 8 },
+  
   badgeRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
   microBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 4, borderRadius: 6, gap: 4 },
   microBadgeText: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
