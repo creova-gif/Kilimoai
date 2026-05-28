@@ -11,7 +11,8 @@ import {
 } from '@expo-google-fonts/instrument-sans';
 import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { AppState, AppStateStatus, useColorScheme, View } from 'react-native';
+import { AppState, AppStateStatus, Platform, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { WifiOff, X } from 'lucide-react-native';
 import { pingActivity } from '../hooks/useIdleTimeout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useKilimoStore } from '../store/useKilimoStore';
@@ -36,6 +37,110 @@ const queryClient = new QueryClient({
 });
 
 /**
+ * useResumeRefresh — Task #14.
+ * When the app returns to the foreground, invalidate staleable React Query
+ * caches so weather, farm vitals, and market data re-fetch automatically.
+ */
+function useResumeRefresh() {
+  const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
+      const prev = appStateRef.current;
+      appStateRef.current = next;
+      if ((prev === 'background' || prev === 'inactive') && next === 'active') {
+        queryClient.invalidateQueries({ queryKey: ['weather'] });
+        queryClient.invalidateQueries({ queryKey: ['farmVitals'] });
+        queryClient.invalidateQueries({ queryKey: ['market'] });
+      }
+    });
+    return () => sub.remove();
+  }, []);
+}
+
+/**
+ * useAuthOverlay — Task #15.
+ * Returns true for 700 ms whenever isAuthenticated flips from true → false
+ * while the app is live. This window covers the OnboardingGate redirect so
+ * the old authenticated screen is never visible during the transition.
+ */
+function useAuthOverlay(): boolean {
+  const isAuthenticated = useKilimoStore((s) => s.isAuthenticated);
+  const prevAuth = useRef(isAuthenticated);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (prevAuth.current === true && !isAuthenticated) {
+      setShow(true);
+      const t = setTimeout(() => setShow(false), 700);
+      prevAuth.current = isAuthenticated;
+      return () => clearTimeout(t);
+    }
+    prevAuth.current = isAuthenticated;
+  }, [isAuthenticated]);
+
+  return show;
+}
+
+/**
+ * OfflineBanner — Task #14.
+ * A slim, dismissible bar shown at the top of the screen when the device
+ * has no internet connection. Auto-clears the dismissed flag when the
+ * connection is restored so it can appear again on the next outage.
+ */
+function OfflineBanner() {
+  const isOffline = useKilimoStore((s) => s.isOffline);
+  const language = useKilimoStore((s) => s.language);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!isOffline) setDismissed(false);
+  }, [isOffline]);
+
+  if (!isOffline || dismissed) return null;
+
+  const msg =
+    language === 'sw'
+      ? 'Hakuna mtandao — data inaweza kuwa ya zamani'
+      : 'No connection — data may be stale';
+
+  return (
+    <View style={styles.offlineBanner} pointerEvents="box-none">
+      <WifiOff size={13} color="#fff" style={{ marginRight: 6 }} />
+      <Text style={styles.offlineText} numberOfLines={1}>{msg}</Text>
+      <TouchableOpacity onPress={() => setDismissed(true)} hitSlop={8} style={{ marginLeft: 8 }}>
+        <X size={13} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  offlineBanner: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 9999,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    backgroundColor: '#b91c1c',
+  },
+  offlineText: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+  },
+  authOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 9998,
+    backgroundColor: '#000',
+  },
+});
+
+/**
  * AppServices — bootstraps all background hooks inside the providers.
  * Keeps RootLayout clean; all side effects live here.
  */
@@ -44,6 +149,7 @@ function AppServices() {
   useNotifications();    // 🔔 Push notification registration
   useFarmVitals();       // 🌱 Sensor telemetry polling
   useIdleTimeout();      // 🔒 AUTH-06 session inactivity gate
+  useResumeRefresh();    // 🔁 Invalidate stale queries on foreground resume (#14)
   return null;
 }
 
@@ -121,6 +227,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const themePreference = useKilimoStore((s) => s.themePreference);
   const hydrated = usePersistHydrated();
+  const showAuthOverlay = useAuthOverlay();
 
   let isDark: boolean;
   if (themePreference === 'dark') {
@@ -157,11 +264,12 @@ export default function RootLayout() {
     return () => clearTimeout(t);
   }, [loaded, hydrated]);
 
-  // Keep the native splash screen visible (via preventAutoHideAsync) until
-  // both fonts are ready AND the persisted store has rehydrated from
-  // AsyncStorage. Returning null here while the native splash is up ensures
-  // the Stack never mounts with default/empty state, preventing a blank frame.
-  if (!loaded || !hydrated) {
+  // On native: block until both fonts AND hydration are ready — the splash
+  // screen covers the wait, preventing any blank or wrong-state frame.
+  // On web: expo-splash-screen has no real overlay, so only block on fonts;
+  // the hydration event is unreliable on web and would cause a permanent
+  // blank page if we gated here.
+  if (!loaded || (Platform.OS !== 'web' && !hydrated)) {
     return null;
   }
 
@@ -199,6 +307,10 @@ export default function RootLayout() {
               <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
             </Stack>
           </View>
+          {/* Task #15 — opaque overlay during auth-expire → onboarding redirect */}
+          {showAuthOverlay && <View style={styles.authOverlay} pointerEvents="none" />}
+          {/* Task #14 — offline banner sits above everything */}
+          <OfflineBanner />
           <StatusBar style={themePreference === 'system' ? 'auto' : isDark ? 'light' : 'dark'} />
         </ThemeProvider>
       </QueryClientProvider>
