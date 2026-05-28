@@ -118,10 +118,10 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && hydrated) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, hydrated]);
 
   if (!loaded) {
     return null;
