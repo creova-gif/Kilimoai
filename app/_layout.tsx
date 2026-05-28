@@ -305,6 +305,19 @@ export default function RootLayout() {
               <Stack.Screen name="otp-auth" options={{ headerShown: false, presentation: 'modal' }} />
               <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
               <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
+              <Stack.Screen name="ai-voice" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="ai-admin" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="finance" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="mobile-money" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="offline-queue" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="soil-analysis" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="iot-systems" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="vra-setup" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="field/[id]" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="verification/intro" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="verification/personal" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="verification/business" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="verification/pending" options={{ headerShown: false, presentation: 'card' }} />
             </Stack>
           </View>
           {/* Task #15 — opaque overlay during auth-expire → onboarding redirect */}

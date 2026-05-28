@@ -56,7 +56,9 @@ import {
   Globe,
   ShieldAlert,
   Check,
-  Target
+  Target,
+  Cloud,
+  CloudRain,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -70,6 +72,7 @@ import { generateRecommendations, severityColor } from '../../lib/recommendation
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useSyncEngine } from '../../hooks/useSyncEngine';
+import { useWeather } from '../../hooks/useWeather';
 import { chat, aiConfigured } from '../../lib/ai';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -689,6 +692,7 @@ export default function HomeScreen() {
   const isOffline = useKilimoStore((s) => s.isOffline);
   const syncQueue = useKilimoStore((s) => s.syncQueue);
   const farmVitals = useKilimoStore((s) => s.farmVitals);
+  const weather = useWeather();
   const wallet = useKilimoStore((s) => s.wallet);
   const unreadCount = useKilimoStore((s) => s.unreadCount);
   const farmProfile = useKilimoStore((s) => s.farmProfile);
@@ -792,7 +796,7 @@ export default function HomeScreen() {
   const FARM_STATS = [
     { id: 'soil', label: language === 'sw' ? 'Afya ya Udongo' : 'Soil Health', value: `${farmVitals.soilHealth}%`, chart: <SoilHealthChart color={colors.primary} />, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary, trend: language === 'sw' ? 'Nzuri' : 'Optimal' },
     { id: 'moisture', label: language === 'sw' ? 'Unyevu' : 'Moisture', value: `${farmVitals.moisture}%`, chart: <MoistureChart />, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
-    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${farmVitals.temperature}°C`, chart: <TemperatureChart />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: language === 'sw' ? 'Imara' : 'Optimal' },
+    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${Math.round(weather.current?.temp ?? farmVitals.temperature)}°C`, chart: <TemperatureChart />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: weather.current?.conditionLabel ?? (language === 'sw' ? 'Imara' : 'Optimal') },
     { id: 'yield', label: language === 'sw' ? 'Kadirio Mavuno' : 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, chart: <YieldChart />, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
   ];
 
@@ -1049,8 +1053,14 @@ export default function HomeScreen() {
                 }}
                 style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}
               >
-                <Sun size={14} color="#F59E0B" />
-                <Text style={[styles.locationText, { color: colors.text }]}>{farmVitals.temperature}°C</Text>
+                {weather.current?.condition === 'cloud'
+                  ? <Cloud size={14} color="#94a3b8" />
+                  : weather.current?.condition === 'rain' || weather.current?.condition === 'storm'
+                  ? <CloudRain size={14} color="#60a5fa" />
+                  : <Sun size={14} color="#F59E0B" />}
+                <Text style={[styles.locationText, { color: colors.text }]}>
+                  {Math.round(weather.current?.temp ?? farmVitals.temperature)}°C
+                </Text>
               </TouchableOpacity>
             </View>
             
