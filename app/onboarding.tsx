@@ -396,15 +396,15 @@ export default function OnboardingWizard() {
             accessibilityState={{ disabled: !canContinue || loading }}
           >
             <LinearGradient
-              colors={[colors.primary, '#0a3d18']}
+              colors={['#0a3d18', '#163f20']}
               style={s.ctaGrad}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             >
-              <Text style={[s.ctaText, { color: isDark ? '#000' : '#fff' }]}>
+              <Text style={s.ctaText}>
                 {loading ? 'Subiri...' : (step === 6 ? t.done.cta : t.next)}
               </Text>
               <View style={s.ctaArrow}>
-                <ChevronRight size={18} color={isDark ? '#000' : '#fff'} strokeWidth={3} />
+                <ChevronRight size={18} color="#0a3d18" strokeWidth={2.5} />
               </View>
             </LinearGradient>
           </TouchableOpacity>
@@ -481,20 +481,19 @@ function WelcomeStep({ lang, setLang, onNext }: any) {
         {/* Description */}
         <Text style={s.welcomeHeroSubtitle}>{subtitle}</Text>
 
-        {/* Get Started Button matching screenshot */}
+        {/* Get Started Button — editorial dark-green capsule */}
         <TouchableOpacity
           onPress={onNext}
-          activeOpacity={0.88}
-          style={[s.welcomeCtaBtn, { backgroundColor: '#22d15a' }]}
+          activeOpacity={0.86}
+          style={s.welcomeCtaBtn}
           accessibilityRole="button"
           accessibilityLabel={btnText}
         >
           <View style={s.welcomeCtaInner}>
-            <View style={s.welcomeArrowCircle}>
-              <ChevronRight size={18} color="#22d15a" strokeWidth={3.5} />
-            </View>
             <Text style={s.welcomeCtaText}>{btnText}</Text>
-            <Text style={s.welcomeCarats}>&gt;&gt;&gt;</Text>
+            <View style={s.welcomeCtaChip}>
+              <ChevronRight size={20} color="#0a3d18" strokeWidth={2.5} />
+            </View>
           </View>
         </TouchableOpacity>
       </View>
@@ -968,10 +967,10 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
 
     // Footer CTA
     footer: { paddingHorizontal: 22, paddingBottom: Platform.OS === 'ios' ? 32 : 22, paddingTop: 12 },
-    ctaWrap: { borderRadius: 16, overflow: 'hidden' },
-    ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 0, paddingVertical: 17 },
-    ctaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
-    ctaArrow: { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.15)', justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
+    ctaWrap: { borderRadius: 100, overflow: 'hidden' },
+    ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, paddingLeft: 28, paddingRight: 10 },
+    ctaText: { color: '#FCFBF7', fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3, flex: 1 },
+    ctaArrow: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
 
     // ── Lang step ─────────────────────────────────────────────
     langRoot: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 24, paddingBottom: 24 },
@@ -1099,25 +1098,36 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
     },
     welcomeCtaBtn: {
       marginTop: 20,
-      borderRadius: 35,
-      overflow: 'hidden',
-      height: 64,
+      borderRadius: 100,
+      height: 72,
       justifyContent: 'center',
       width: '100%',
+      backgroundColor: 'rgba(10, 61, 24, 0.62)',
+      borderWidth: 1.5,
+      borderColor: 'rgba(34, 209, 90, 0.32)',
     },
     welcomeCtaInner: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 8,
+      paddingLeft: 28,
+      paddingRight: 10,
     },
     welcomeCtaText: {
       color: '#FCFBF7',
-      fontSize: 18,
+      fontSize: 22,
       fontFamily: 'InstrumentSerif_400Regular',
-      letterSpacing: 0.5,
+      letterSpacing: 0.4,
       flex: 1,
-      textAlign: 'center',
+    },
+    welcomeCtaChip: {
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      backgroundColor: '#22d15a',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexShrink: 0,
     },
     welcomeArrowCircle: {
       width: 48,
