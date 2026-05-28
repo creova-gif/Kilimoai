@@ -698,8 +698,13 @@ export default function MarketScreen() {
         >
           {/* Search */}
           <Animated.View style={[styles.searchContainer, searchFocused && styles.searchContainerFocused]}>
-            <BlurView intensity={isDark ? 25 : 75} tint={isDark ? 'dark' : 'light'} style={[styles.searchBar, { borderColor: searchFocused ? colors.primary : colors.border }]}>
-              <Search size={20} color={searchFocused ? colors.primary : colors.textMute} />
+            <View style={[styles.searchBar, {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : colors.card,
+              borderColor: searchFocused ? colors.primary : colors.border,
+            }]}>
+              <View style={[styles.searchIconWrap, { backgroundColor: (searchFocused ? colors.primary : colors.textMute) + '18' }]}>
+                <Search size={17} color={searchFocused ? colors.primary : colors.textMute} />
+              </View>
               <TextInput
                 placeholder={language === 'sw' ? 'Tafuta bidhaa, masoko, mikoa...' : 'Search crops, markets, regions...'}
                 placeholderTextColor={colors.textMute}
@@ -717,7 +722,9 @@ export default function MarketScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Clear"
                   >
-                    <Text style={{ color: colors.textMute, fontWeight: '800', fontSize: 13 }}>✕</Text>
+                    <View style={[styles.searchClearBtn, { backgroundColor: colors.textMute + '20' }]}>
+                      <X size={13} color={colors.textMute} />
+                    </View>
                   </TouchableOpacity>
                 ) : searchFocused ? (
                   <TouchableOpacity
@@ -725,7 +732,7 @@ export default function MarketScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Done"
                   >
-                    <Text style={{ color: colors.primary, fontWeight: '800', fontSize: 13 }}>DONE</Text>
+                    <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 12, letterSpacing: 0.5 }}>DONE</Text>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
@@ -734,11 +741,13 @@ export default function MarketScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Filter menu"
                   >
-                    <Filter size={18} color={colors.primary} />
+                    <View style={[styles.searchFilterBtn, { backgroundColor: colors.primary + '18', borderColor: colors.primary + '30' }]}>
+                      <Filter size={14} color={colors.primary} />
+                    </View>
                   </TouchableOpacity>
                 )}
               </View>
-            </BlurView>
+            </View>
           </Animated.View>
 
           {/* Categories (sticky) */}
@@ -959,10 +968,13 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 24, paddingTop: 16 },
   searchContainer: { marginBottom: 24 },
   searchContainerFocused: { zIndex: 50 },
-  searchBar: { flexDirection: 'row', alignItems: 'center', height: 64, borderRadius: 24, paddingHorizontal: 20, borderWidth: 1, overflow: 'hidden' },
-  searchInput: { flex: 1, marginLeft: 12, fontSize: 16, fontFamily: 'Inter_600SemiBold' },
-  searchActions: { flexDirection: 'row', alignItems: 'center' },
-  searchActionBtn: { padding: 8 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', height: 56, borderRadius: 28, paddingHorizontal: 14, borderWidth: 1.5, gap: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.07, shadowRadius: 10, elevation: 3 },
+  searchIconWrap: { width: 34, height: 34, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  searchInput: { flex: 1, fontSize: 14, fontFamily: 'Inter_500Medium' },
+  searchActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  searchActionBtn: { padding: 0 },
+  searchClearBtn: { width: 26, height: 26, borderRadius: 13, alignItems: 'center' as const, justifyContent: 'center' as const },
+  searchFilterBtn: { width: 34, height: 34, borderRadius: 11, borderWidth: 1, alignItems: 'center' as const, justifyContent: 'center' as const },
   stickyCategory: { marginBottom: 32, marginHorizontal: -24, zIndex: 10 },
   categoryContent: { paddingHorizontal: 24, gap: 12 },
   categoryPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 20, gap: 8 },

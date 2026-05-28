@@ -63,6 +63,7 @@ export default function FarmHub() {
   const [activeFilter, setActiveFilter] = useState<MapFilter>('productivity');
   const [zoomLevel, setZoomLevel] = useState<number>(1.0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [fieldSearchFocused, setFieldSearchFocused] = useState(false);
 
   // Pulsing Warnings Shared Values
   const pulseVal = useSharedValue(0.9);
@@ -198,17 +199,31 @@ export default function FarmHub() {
 
         <View style={styles.mainContent}>
           {/* ── Search Input overlay ────────────────────────────── */}
-          <BlurView intensity={isDark ? 16 : 40} tint={isDark ? 'dark' : 'light'} style={[styles.searchBar, { borderColor: colors.border }]}>
-            <Search size={18} color={colors.textMute} style={styles.searchIcon} />
+          <View style={[styles.searchBar, {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card,
+            borderColor: fieldSearchFocused ? colors.primary : colors.border,
+          }]}>
+            <View style={[styles.searchIconWrap, { backgroundColor: (fieldSearchFocused ? colors.primary : colors.textMute) + '18' }]}>
+              <Search size={16} color={fieldSearchFocused ? colors.primary : colors.textMute} />
+            </View>
             <TextInput
               style={[styles.searchInput, { color: colors.text }]}
               placeholder={language === 'sw' ? 'Tafuta maeneo, ukanda au sensa..' : 'Search fields, zone or sensor..'}
               placeholderTextColor={colors.textMute}
               value={searchQuery}
               onChangeText={setSearchQuery}
+              onFocus={() => setFieldSearchFocused(true)}
+              onBlur={() => setFieldSearchFocused(false)}
               accessibilityLabel="Search Fields"
             />
-          </BlurView>
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear">
+                <View style={[styles.searchClearBtn, { backgroundColor: colors.textMute + '20' }]}>
+                  <X size={12} color={colors.textMute} />
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
 
           
 
@@ -578,12 +593,26 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: 28,
+    borderWidth: 1.5,
     paddingHorizontal: 12,
-    height: 48,
+    height: 54,
     marginTop: 8,
-    overflow: 'hidden',
+    gap: 10,
+  },
+  searchIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchClearBtn: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   searchIcon: {
     marginRight: 8,

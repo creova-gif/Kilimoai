@@ -960,6 +960,7 @@ export default function HomeScreen() {
 
   // RAG Search State
   const [searchQuery, setSearchQuery] = useState('');
+  const [ragFocused, setRagFocused] = useState(false);
   const [ragLoading, setRagLoading] = useState(false);
   const [ragResult, setRagResult] = useState<{ summary: string; source: string } | null>(null);
 
@@ -1416,9 +1417,19 @@ export default function HomeScreen() {
         <View style={styles.mainContent}>
 
           {/* RAG SEARCH BAR */}
-          <Animated.View entering={FadeInDown.delay(100).springify()} style={[styles.searchBarContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.searchBarInner}>
-              <Search size={20} color={colors.textMute} />
+          <Animated.View entering={FadeInDown.delay(100).springify()} style={{ gap: 10 }}>
+            <View style={[styles.searchBarContainer, {
+              backgroundColor: isDark ? 'rgba(255,255,255,0.035)' : colors.card,
+              borderColor: ragFocused ? colors.primary : colors.border,
+            }]}>
+              <View style={styles.searchBarLeft}>
+                <View style={[styles.searchAiBadge, { backgroundColor: colors.primary + '1A' }]}>
+                  <Sparkles size={10} color={colors.primary} />
+                  <Text style={[styles.searchAiBadgeText, { color: colors.primary }]}>AI</Text>
+                </View>
+                <View style={[styles.searchDivider, { backgroundColor: colors.border }]} />
+                <Search size={16} color={ragFocused ? colors.primary : colors.textMute} />
+              </View>
               <TextInput
                 style={[styles.searchBarInput, { color: colors.text }]}
                 placeholder={language === 'sw' ? 'Tafuta miongozo ya mazao, udongo au masoko...' : 'Search crop guides, soil, or markets...'}
@@ -1429,14 +1440,22 @@ export default function HomeScreen() {
                   if (!text.trim()) setRagResult(null);
                 }}
                 onSubmitEditing={handleRagSearch}
+                onFocus={() => setRagFocused(true)}
+                onBlur={() => setRagFocused(false)}
                 accessibilityLabel="RAG Search"
                 accessibilityHint="Query agricultural guides and get cited source cards"
               />
               {searchQuery ? (
                 <TouchableOpacity onPress={() => { setSearchQuery(''); setRagResult(null); }} accessibilityRole="button" accessibilityLabel="Clear Search">
-                  <X size={18} color={colors.textMute} />
+                  <View style={[styles.searchClearBtn, { backgroundColor: colors.textMute + '22' }]}>
+                    <X size={12} color={colors.textMute} />
+                  </View>
                 </TouchableOpacity>
-              ) : null}
+              ) : (
+                <View style={[styles.searchReturnHint, { borderColor: colors.border }]}>
+                  <Text style={[styles.searchReturnHintText, { color: colors.textMute }]}>↵</Text>
+                </View>
+              )}
             </View>
 
             {ragLoading && (
@@ -2470,15 +2489,41 @@ const styles = StyleSheet.create({
 
   // RAG Search Bar Styles
   searchBarContainer: {
-    borderRadius: 20,
-    borderWidth: 1,
-    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 28,
+    borderWidth: 1.5,
+    height: 56,
+    paddingHorizontal: 14,
     gap: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  searchBarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  searchAiBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  searchAiBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.6,
+  },
+  searchDivider: {
+    width: 1,
+    height: 16,
+    opacity: 0.5,
   },
   searchBarInner: {
     flexDirection: 'row',
@@ -2488,8 +2533,26 @@ const styles = StyleSheet.create({
   searchBarInput: {
     flex: 1,
     fontSize: 14,
-    fontFamily: 'Inter_600SemiBold',
-    paddingVertical: 4,
+    fontFamily: 'Inter_500Medium',
+  },
+  searchClearBtn: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchReturnHint: {
+    width: 26,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchReturnHintText: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
   },
   searchLoading: {
     flexDirection: 'row',
