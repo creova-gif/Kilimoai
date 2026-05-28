@@ -53,21 +53,21 @@ const SEASONS: { key: Season; label: string; sublabel: string; months: string; i
 const CROP_DATA: Record<Season, CropRec[]> = {
   masika: [
     { id: 'm1', name: 'Maize', nameSw: 'Mahindi', emoji: '🌽', daysToHarvest: 120, yieldPerAcre: '2.5 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Tumia mbegu ya DK8031 au H614D', 'Weka CAN wiki 4 baada ya kupanda', 'Dhibiti wadudu wa buni mapema'] },
-    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#1A3B14', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
+    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
     { id: 'm3', name: 'Paddy Rice', nameSw: 'Mpunga', emoji: '🌾', daysToHarvest: 150, yieldPerAcre: '3.0 tani', price: 'TZS 120,000/mfuko', water: 'Juu', risk: 'Wastani', color: '#3b82f6', plantWeeks: 3, growWeeks: 16, harvestWeeks: 2, tips: ['Hitaji mfumo mzuri wa umwagiliaji', 'Tumia mbegu SARO 5 au TXD 306', 'Kagua mara kwa mara kwa magonjwa ya majani'] },
     { id: 'm4', name: 'Tomatoes', nameSw: 'Nyanya', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '5.0 tani', price: 'TZS 38,000/crate', water: 'Wastani', risk: 'Juu', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu kwanza wiki 3', 'Weka steki na uunganishe sawa', 'Dhibiti kuoza kwa mwisho (Blossom End Rot)'] },
   ],
   vuli: [
     { id: 'v1', name: 'Short Maize', nameSw: 'Mahindi (Mfupi)', emoji: '🌽', daysToHarvest: 90, yieldPerAcre: '2.0 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 1, tips: ['Chagua aina ya siku 90 (SEEDCO SC403)', 'Panda siku 1-3 za mvua za kwanza', 'Funika udongo (mulching) kudumisha unyevu'] },
     { id: 'v2', name: 'Onions', nameSw: 'Vitunguu', emoji: '🧅', daysToHarvest: 120, yieldPerAcre: '4.0 tani', price: 'TZS 45,000/net 20kg', water: 'Wastani', risk: 'Wastani', color: '#a855f7', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Anzisha katika kitalu wiki 4-6 mapema', 'Hitaji udongo wenye rutuba na mifereji mizuri', 'Kausha vizuri kabla ya kuhifadhi'] },
-    { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 tani', price: 'TZS 15,000/kichwa', water: 'Wastani', risk: 'Chini', color: '#1A3B14', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 3 mapema', 'Weka mbolea ya CAN mara kwa mara', 'Dhibiti viwavi (caterpillars) mapema'] },
-    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#1A3B14', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
+    { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 tani', price: 'TZS 15,000/kichwa', water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 3 mapema', 'Weka mbolea ya CAN mara kwa mara', 'Dhibiti viwavi (caterpillars) mapema'] },
+    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
   ],
   kiangazi: [
     { id: 'k1', name: 'Sunflower', nameSw: 'Alizeti', emoji: '🌻', daysToHarvest: 95, yieldPerAcre: '0.5 tani mbegu', price: 'TZS 95,000/mfuko', water: 'Chini', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 2, tips: ['Faa kwa maeneo kame na hata ya kiangazi', 'Umbali wa kupanda: 75cm × 30cm', 'Fua mbegu vizuri kabla ya kuuza'] },
     { id: 'k2', name: 'Irrigated Tomatoes', nameSw: 'Nyanya (Umwagiliaji)', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '7.0 tani', price: 'TZS 38,000/crate', water: 'Juu', risk: 'Wastani', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Hitaji umwagiliaji wa drip au flood', 'Bei nzuri wakati wa kiangazi (uhaba)', 'Dhibiti ugonjwa wa Late Blight'] },
     { id: 'k3', name: 'Chili Peppers', nameSw: 'Pilipili Kali', emoji: '🌶️', daysToHarvest: 120, yieldPerAcre: '1.2 tani', price: 'TZS 800/kg fresh', water: 'Wastani', risk: 'Chini', color: '#f97316', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 4 mapema', 'Inaweza kukaa hadi miaka 2-3 ikitunzwa', 'Soko la nje ya nchi (export) linalipa vizuri'] },
-    { id: 'k4', name: 'Sorghum', nameSw: 'Mtama', emoji: '🌿', daysToHarvest: 90, yieldPerAcre: '1.5 tani', price: 'TZS 55,000/mfuko', water: 'Chini', risk: 'Chini', color: '#1A3B14', plantWeeks: 1, growWeeks: 10, harvestWeeks: 2, tips: ['Ustahimili ukame zaidi ya mahindi', 'Inafaa kwa maeneo ya Dodoma/Singida', 'Tumia kwa chakula na lishe ya wanyama'] },
+    { id: 'k4', name: 'Sorghum', nameSw: 'Mtama', emoji: '🌿', daysToHarvest: 90, yieldPerAcre: '1.5 tani', price: 'TZS 55,000/mfuko', water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 10, harvestWeeks: 2, tips: ['Ustahimili ukame zaidi ya mahindi', 'Inafaa kwa maeneo ya Dodoma/Singida', 'Tumia kwa chakula na lishe ya wanyama'] },
   ],
 };
 
@@ -93,7 +93,7 @@ function PlantingTimeline({ crop, language }: { crop: CropRec; language: 'en' | 
         <Text style={tl.label}>
           {language === 'sw' ? `KALENDA YA KILIMO (${crop.daysToHarvest} siku)` : `AGRICULTURAL CALENDAR (${crop.daysToHarvest} days)`}
         </Text>
-        <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#1A3B14' }}>
+        <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>
           {language === 'sw' ? 'Gusa hatua kuona maelezo' : 'Tap phase for instructions'}
         </Text>
       </View>
@@ -145,7 +145,7 @@ function PlantingTimeline({ crop, language }: { crop: CropRec; language: 'en' | 
             accessibilityRole="button"
           >
             <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: phase.color }} />
-            <Text style={[tl.phaseLbl, activePhase === phase.key && { fontWeight: '800', color: '#1A3B14' }]}>
+            <Text style={[tl.phaseLbl, activePhase === phase.key && { fontWeight: '800', color: '#22d15a' }]}>
               {phase.label} ({phase.weeks}w)
             </Text>
           </TouchableOpacity>
@@ -205,9 +205,9 @@ const tl = StyleSheet.create({
   infoBox: {
     padding: 12,
     borderRadius: 12,
-    backgroundColor: 'rgba(26,59,20,0.06)',
+    backgroundColor: 'rgba(34,209,90,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(26,59,20,0.12)',
+    borderColor: 'rgba(34,209,90,0.12)',
     marginTop: 2,
     marginBottom: 8,
   },

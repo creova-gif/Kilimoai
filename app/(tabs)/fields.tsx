@@ -140,7 +140,7 @@ export default function FarmHub() {
   // Function to determine polygon color depending on active filter and zone values
   const getZoneColor = (zone: ZoneData) => {
     if (activeFilter === 'productivity') {
-      if (zone.productivity === 'High') return '#1A3B14';
+      if (zone.productivity === 'High') return '#22d15a';
       if (zone.productivity === 'Average') return '#3D7A29';
       return '#F59E0B'; // Low
     }
@@ -152,7 +152,7 @@ export default function FarmHub() {
     }
     // Soil pH
     if (zone.ph < 6.0) return '#EA580C'; // Acidic (Orange)
-    if (zone.ph <= 7.0) return '#1A3B14'; // Optimal (Green)
+    if (zone.ph <= 7.0) return '#22d15a'; // Optimal (Green)
     return '#0891B2'; // Alkaline (Teal)
   };
 
@@ -274,10 +274,10 @@ export default function FarmHub() {
                     style={[
                       styles.filterPill,
                       { borderColor: colors.border, backgroundColor: 'rgba(255,255,255,0.9)' },
-                      active && { backgroundColor: '#1A3B14', borderColor: '#1A3B14' },
+                      active && { backgroundColor: '#22d15a', borderColor: '#22d15a' },
                     ]}
                   >
-                    <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : '#1A3B14' }]}>
+                    <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : '#22d15a' }]}>
                       {label}
                     </Text>
                   </TouchableOpacity>
@@ -296,7 +296,7 @@ export default function FarmHub() {
               }}
             >
               <LinearGradient
-                colors={isDark ? ['rgba(26, 59, 20, 0.95)', 'rgba(10, 15, 10, 0.99)'] : ['#FAF7F0', '#FFFFFF']}
+                colors={isDark ? ['rgba(34, 209, 90, 0.95)', 'rgba(10, 15, 10, 0.99)'] : ['#F0FAF2', '#FFFFFF']}
                 style={[styles.bottomSheet, { borderColor: colors.border }]}
               >
                 <View style={styles.sheetTopRow}>
@@ -317,13 +317,13 @@ export default function FarmHub() {
                   accessibilityRole="button"
                   accessibilityLabel="Recenter map"
                 >
-                  <Target size={16} color="#1A3B14" />
+                  <Target size={16} color="#22d15a" />
                 </TouchableOpacity>
               </View>
 
               {/* Status Message */}
               <View style={styles.statusRow}>
-                <View style={[styles.statusDot, { backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : '#1A3B14' }]} />
+                <View style={[styles.statusDot, { backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : '#22d15a' }]} />
                 <Text style={[styles.statusText, { color: colors.text }]}>
                   {language === 'sw' ? activeZone.messageSw : activeZone.messageEn}
                 </Text>
@@ -356,7 +356,7 @@ export default function FarmHub() {
               {/* Advanced Nutrients Bar */}
               <View style={[styles.nutrientsBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={styles.nutrientsHeader}>
-                  <Sparkles size={14} color="#1A3B14" />
+                  <Sparkles size={14} color="#22d15a" />
                   <Text style={[styles.nutrientsTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'Uchambuzi wa Virutubisho' : 'Soil Nutrient Analysis'}
                   </Text>
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   activeSelectionLabel: {
     fontSize: 9,
     fontFamily: 'InstrumentSerif_400Regular',
-    color: '#1A3B14',
+    color: '#22d15a',
     letterSpacing: 1.2,
   },
   activeZoneTitle: {
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -10,
     alignSelf: 'center',
-    backgroundColor: '#1A3B14',
+    backgroundColor: '#22d15a',
     width: 50,
     height: 50,
     borderRadius: 25,

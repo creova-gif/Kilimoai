@@ -289,8 +289,8 @@ export default function AgroIdScreen() {
                   setQrModalVisible(true);
                 }}
               >
-                <QrCode size={18} color={isDark ? '#FFFFFF' : '#1A3B14'} />
-                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : '#1A3B14' }]}>Download QR</Text>
+                <QrCode size={18} color={isDark ? '#FFFFFF' : '#22d15a'} />
+                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : '#22d15a' }]}>Download QR</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(26, 59, 20, 0.08)',
+    backgroundColor: 'rgba(34, 209, 90, 0.08)',
   },
   rowDivider: {
     height: 1,

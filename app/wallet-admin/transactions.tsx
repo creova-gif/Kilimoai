@@ -113,5 +113,5 @@ const s = StyleSheet.create({
   name:      { fontFamily: 'Inter_700Bold', fontSize: 13 },
   sub:       { fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 2 },
   meta:      { fontFamily: 'Inter_500Medium', fontSize: 10, marginTop: 2 },
-  amount:    { fontFamily: 'Inter_800ExtraBold', fontSize: 14 },
+  amount:    { fontFamily: 'InstrumentSerif_400Regular', fontSize: 18, letterSpacing: -0.3 },
 });

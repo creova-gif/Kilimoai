@@ -10,13 +10,13 @@
  * every time the user navigates to this screen.
  */
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import {
   TrendingUp, TrendingDown, Minus, Bug,
   ArrowRight, ShieldCheck,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Line, Circle } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Line, Circle, Text as SvgText, Rect } from 'react-native-svg';
 import PageScaffold, { GlassCard, SectionHeader } from '../../components/PageScaffold';
 import { useTheme } from '../../constants/Theme';
 import { Gate } from '../../lib/access';
@@ -26,60 +26,145 @@ import { runAnalytics, PriceTrend } from '../../lib/analytics/predictions';
 const fmtTZS = (n: number) =>
   `TSh ${new Intl.NumberFormat('en-US').format(Math.round(n))}`;
 
-// Projection chart: shows current → forecast as a smooth SVG line
+const SCREEN_W = Dimensions.get('window').width;
+
+// Full-width projection chart with axes, gridlines, labels and legend
 function YieldProjectionChart({ current, forecast, trend, color }: {
   current: number; forecast: number; trend: 'up' | 'down' | 'flat'; color: string;
 }) {
-  const W = 280; const H = 56; const PAD = 8;
-  // Build a 9-point series: 6 historical points leading to current, then 3 projected
-  const hi = current;
-  const lo = Math.min(current, forecast) * 0.8;
-  const range = Math.max(0.01, Math.max(hi, forecast) * 1.15 - lo);
-  const toY = (v: number) => H - PAD - ((v - lo) / range) * (H - PAD * 2);
+  const W = SCREEN_W - 64;   // card has 16px margin + 16px padding each side
+  const H = 110;
+  const PAD_LEFT = 34; const PAD_BOT = 22; const PAD_TOP = 10; const PAD_RIGHT = 8;
+  const chartW = W - PAD_LEFT - PAD_RIGHT;
+  const chartH = H - PAD_BOT - PAD_TOP;
 
+  const lo = Math.min(current, forecast) * 0.82;
+  const hi = Math.max(current, forecast) * 1.12;
+  const range = Math.max(0.01, hi - lo);
+  const toY = (v: number) => PAD_TOP + chartH - ((v - lo) / range) * chartH;
+
+  // 6 historical + 4 forecast = 9 points total
   const histPts = [0, 1, 2, 3, 4, 5].map(i => {
     const t = i / 5;
-    const noise = Math.sin(i * 2.1 + current) * 0.04 * current;
-    return { x: (i / 8) * (W - PAD * 2) + PAD, y: toY(current * (0.7 + t * 0.3) + noise) };
+    const noise = Math.sin(i * 2.1 + current * 3.7) * 0.035 * current;
+    return {
+      x: PAD_LEFT + (i / 8) * chartW,
+      y: toY(current * (0.72 + t * 0.28) + noise),
+    };
   });
   const forecastPts = [5, 6, 7, 8].map(i => {
     const t = (i - 5) / 3;
-    const v = current + (forecast - current) * t;
-    return { x: (i / 8) * (W - PAD * 2) + PAD, y: toY(v) };
+    return {
+      x: PAD_LEFT + (i / 8) * chartW,
+      y: toY(current + (forecast - current) * t),
+    };
   });
-  const allPts = [...histPts, ...forecastPts.slice(1)];
 
-  let histLine = `M${histPts[0].x.toFixed(1)} ${histPts[0].y.toFixed(1)}`;
-  for (let i = 1; i < histPts.length; i++) {
-    const cpx = (histPts[i-1].x + histPts[i].x) / 2;
-    histLine += ` C${cpx.toFixed(1)} ${histPts[i-1].y.toFixed(1)},${cpx.toFixed(1)} ${histPts[i].y.toFixed(1)},${histPts[i].x.toFixed(1)} ${histPts[i].y.toFixed(1)}`;
-  }
+  const buildCurve = (pts: { x: number; y: number }[]) => {
+    let d = `M${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) {
+      const cpx = (pts[i - 1].x + pts[i].x) / 2;
+      d += ` C${cpx.toFixed(1)} ${pts[i-1].y.toFixed(1)},${cpx.toFixed(1)} ${pts[i].y.toFixed(1)},${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`;
+    }
+    return d;
+  };
 
-  let projLine = `M${forecastPts[0].x.toFixed(1)} ${forecastPts[0].y.toFixed(1)}`;
-  for (let i = 1; i < forecastPts.length; i++) {
-    const cpx = (forecastPts[i-1].x + forecastPts[i].x) / 2;
-    projLine += ` C${cpx.toFixed(1)} ${forecastPts[i-1].y.toFixed(1)},${cpx.toFixed(1)} ${forecastPts[i].y.toFixed(1)},${forecastPts[i].x.toFixed(1)} ${forecastPts[i].y.toFixed(1)}`;
-  }
+  const histLine  = buildCurve(histPts);
+  const projLine  = buildCurve(forecastPts);
+  const allPts    = [...histPts, ...forecastPts.slice(1)];
+  const areaPath  = `${histLine} ${projLine.replace('M', 'L')} L${allPts[allPts.length-1].x.toFixed(1)} ${PAD_TOP + chartH} L${PAD_LEFT} ${PAD_TOP + chartH} Z`;
+  const divideX   = forecastPts[0].x.toFixed(1);
+  const lastPt    = forecastPts[forecastPts.length - 1];
 
-  const areaPath = `${histLine} ${projLine.replace('M', 'L')} L${allPts[allPts.length-1].x.toFixed(1)} ${H} L${PAD} ${H} Z`;
-  const divideX = forecastPts[0].x.toFixed(1);
-  const lastPt = forecastPts[forecastPts.length - 1];
+  // Y-axis gridlines at 3 levels
+  const gridPcts = [0.25, 0.55, 0.85];
+  const axisBaseY = PAD_TOP + chartH;
+
+  // Month labels under chart — 6 history months + "Sasa" divider + horizon
+  const MONTHS = ['M-5', 'M-4', 'M-3', 'M-2', 'M-1', 'Sasa'];
+  const xLabels = [
+    ...histPts.map((p, i) => ({ x: p.x, label: MONTHS[i] })),
+    { x: lastPt.x, label: 'Utabiri' },
+  ];
 
   return (
-    <View style={{ marginTop: 12, borderRadius: 12, overflow: 'hidden' }}>
+    <View style={{ marginTop: 8 }}>
+      {/* Legend */}
+      <View style={{ flexDirection: 'row', gap: 16, marginBottom: 6, paddingHorizontal: PAD_LEFT }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <View style={{ width: 20, height: 2, backgroundColor: color, opacity: 0.5, borderRadius: 1 }} />
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 9, color: '#6B7280' }}>Historia</Text>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <View style={{ width: 20, height: 2, borderStyle: 'dashed', borderTopWidth: 2, borderColor: color, borderRadius: 1 }} />
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 9, color: '#6B7280' }}>Utabiri</Text>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 11, color: color }}>{forecast.toFixed(1)} t/ha</Text>
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 9, color: '#6B7280' }}>lengo</Text>
+        </View>
+      </View>
+
       <Svg width={W} height={H}>
         <Defs>
-          <SvgLinearGradient id="ypa" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor={color} stopOpacity="0.2" />
-            <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+          <SvgLinearGradient id="ypa2" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor={color} stopOpacity="0.25" />
+            <Stop offset="100%" stopColor={color} stopOpacity="0.02" />
           </SvgLinearGradient>
         </Defs>
-        <Path d={areaPath} fill="url(#ypa)" />
-        <Path d={histLine} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
-        <Path d={projLine} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="5,3" />
-        <Line x1={divideX} y1={PAD.toString()} x2={divideX} y2={(H - PAD).toString()} stroke={color} strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
-        <Circle cx={forecastPts[0].x.toFixed(1)} cy={forecastPts[0].y.toFixed(1)} r="3.5" fill={color} opacity="0.9" />
-        <Circle cx={lastPt.x.toFixed(1)} cy={lastPt.y.toFixed(1)} r="4" fill={color} />
+
+        {/* Horizontal gridlines */}
+        {gridPcts.map(pct => {
+          const gy = toY(lo + (hi - lo) * pct);
+          return (
+            <React.Fragment key={pct}>
+              <Line x1={PAD_LEFT.toString()} y1={gy.toFixed(1)} x2={(W - PAD_RIGHT).toString()} y2={gy.toFixed(1)}
+                stroke="#94a3b8" strokeWidth="0.6" strokeDasharray="3,3" opacity="0.4" />
+              <SvgText x={(PAD_LEFT - 4).toString()} y={(gy + 3.5).toFixed(1)}
+                fontSize="7" fontFamily="Inter_600SemiBold" fill="#9CA3AF" textAnchor="end">
+                {(lo + (hi - lo) * pct).toFixed(1)}
+              </SvgText>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Y-axis line */}
+        <Line x1={PAD_LEFT.toString()} y1={PAD_TOP.toString()} x2={PAD_LEFT.toString()} y2={axisBaseY.toString()}
+          stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
+
+        {/* Area fill */}
+        <Path d={areaPath} fill="url(#ypa2)" />
+
+        {/* History line (solid, slightly muted) */}
+        <Path d={histLine} fill="none" stroke={color} strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+
+        {/* Forecast line (dashed, full opacity) */}
+        <Path d={projLine} fill="none" stroke={color} strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round" strokeDasharray="5,4" />
+
+        {/* "Now" divider */}
+        <Line x1={divideX} y1={PAD_TOP.toString()} x2={divideX} y2={axisBaseY.toString()}
+          stroke={color} strokeWidth="1" strokeDasharray="3,3" opacity="0.5" />
+
+        {/* Endpoint dots */}
+        <Circle cx={forecastPts[0].x.toFixed(1)} cy={forecastPts[0].y.toFixed(1)}
+          r="4" fill={color} opacity="0.85" />
+        <Circle cx={lastPt.x.toFixed(1)} cy={lastPt.y.toFixed(1)} r="5" fill={color} />
+        <Circle cx={lastPt.x.toFixed(1)} cy={lastPt.y.toFixed(1)} r="9" fill={color} opacity="0.15" />
+
+        {/* X-axis base line */}
+        <Line x1={PAD_LEFT.toString()} y1={axisBaseY.toString()} x2={(W - PAD_RIGHT).toString()} y2={axisBaseY.toString()}
+          stroke="#94a3b8" strokeWidth="0.8" opacity="0.5" />
+
+        {/* X-axis labels — show only first, "Sasa", last */}
+        {[xLabels[0], xLabels[5], xLabels[xLabels.length - 1]].filter(Boolean).map((lbl, i) => (
+          <SvgText key={i} x={lbl.x.toFixed(1)} y={(axisBaseY + 13).toFixed(1)}
+            fontSize="8" fontFamily="Inter_700Bold"
+            fill={lbl.label === 'Sasa' ? color : '#9CA3AF'} textAnchor="middle">
+            {lbl.label}
+          </SvgText>
+        ))}
       </Svg>
     </View>
   );

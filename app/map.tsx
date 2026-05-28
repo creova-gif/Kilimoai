@@ -104,7 +104,7 @@ export default function MapScreen() {
             </TouchableOpacity>
             
             <View style={styles.headerCenter}>
-              <View style={[styles.spatialBadge, { backgroundColor: 'rgba(26, 59, 20, 0.25)' }]}>
+              <View style={[styles.spatialBadge, { backgroundColor: 'rgba(34, 209, 90, 0.25)' }]}>
                 <Globe size={10} color={colors.primary} />
                 <Text style={[styles.spatialText, { color: colors.primary }]}>SPATIAL INTELLIGENCE v4.1</Text>
               </View>

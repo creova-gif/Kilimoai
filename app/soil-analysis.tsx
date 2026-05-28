@@ -54,7 +54,7 @@ export default function SoilAnalysis() {
                 <View style={styles.statusRow}>
                   <Text style={[styles.statusMain, { color: colors.text }]}>Optimal</Text>
                   <View style={styles.statusBadge}>
-                    <ArrowUpRight size={12} color="#1A3B14" />
+                    <ArrowUpRight size={12} color="#22d15a" />
                     <Text style={styles.statusBadgeText}>+15%</Text>
                   </View>
                 </View>
@@ -66,7 +66,7 @@ export default function SoilAnalysis() {
 
             {/* Bars */}
             <View style={styles.barsContainer}>
-              <NutrientBar label="Nitrogen (N)" value={85} color="#1A3B14" />
+              <NutrientBar label="Nitrogen (N)" value={85} color="#22d15a" />
               <NutrientBar label="Phosphorus (P)" value={70} color="#F59E0B" />
               <NutrientBar label="Potassium (K)" value={60} color="#3b82f6" />
             </View>
@@ -120,7 +120,7 @@ function RecommendationItem({ title, desc, imageUri, onPress }: { title: string;
         <Text style={[styles.recDesc, { color: colors.textMute }]}>{desc}</Text>
         <TouchableOpacity style={styles.recAction} onPress={onPress}>
           <Text style={styles.recActionText}>View details</Text>
-          <ChevronLeft color="#1A3B14" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
+          <ChevronLeft color="#22d15a" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -202,13 +202,13 @@ const styles = StyleSheet.create({
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(26, 59, 20, 0.1)',
+    backgroundColor: 'rgba(34, 209, 90, 0.1)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
   },
   statusBadgeText: {
-    color: '#1A3B14',
+    color: '#22d15a',
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },
@@ -284,14 +284,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(26, 59, 20, 0.08)',
+    backgroundColor: 'rgba(34, 209, 90, 0.08)',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
     gap: 4,
   },
   recActionText: {
-    color: '#1A3B14',
+    color: '#22d15a',
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },

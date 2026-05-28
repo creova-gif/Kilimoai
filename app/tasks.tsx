@@ -212,7 +212,7 @@ export default function TasksScreen() {
             <Animated.View style={styles.dashboard}>
               <BlurView intensity={isDark ? 20 : 90} tint={isDark ? "dark" : "light"} style={[styles.dashboardCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={isDark ? ['rgba(26, 59, 20, 0.15)', 'transparent'] : ['rgba(26, 59, 20, 0.08)', 'transparent']}
+                  colors={isDark ? ['rgba(34, 209, 90, 0.15)', 'transparent'] : ['rgba(34, 209, 90, 0.08)', 'transparent']}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.dashboardHeader}>

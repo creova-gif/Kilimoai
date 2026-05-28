@@ -219,7 +219,7 @@ export default function EditProfileScreen() {
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
-      <LinearGradient colors={isDark ? ['#080A08', '#122617', '#080A08'] : ['#FAF7F0', '#F2ECE0', '#FAF7F0']} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={isDark ? ['#080A08', '#122617', '#080A08'] : ['#F0FAF2', '#E6F5EB', '#F0FAF2']} style={StyleSheet.absoluteFill} />
 
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}

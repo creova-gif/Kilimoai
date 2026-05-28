@@ -19,6 +19,7 @@ import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
+import Svg, { Line as SvgLine, Text as SvgText, Rect as SvgRect, Defs as SvgDefs, LinearGradient as SvgGrad, Stop as SvgStop } from 'react-native-svg';
 
 const { width: SW } = Dimensions.get('window');
 
@@ -61,26 +62,97 @@ function fmtDate(ts: number) {
   return new Date(ts).toLocaleDateString('sw-TZ', { month: 'short', day: 'numeric' });
 }
 
-// Mini SVG bar chart for monthly data
 function MonthlyChart({ months, colors }: { months: { label: string; income: number; expense: number }[]; colors: any }) {
+  const CW = Dimensions.get('window').width - 64;
+  const H = 110; const PAD_LEFT = 42; const PAD_BOT = 24; const PAD_TOP = 8;
+  const chartW = CW - PAD_LEFT - 8;
+  const chartH = H - PAD_BOT - PAD_TOP;
   const maxVal = Math.max(...months.flatMap(m => [m.income, m.expense]), 1);
-  const H = 60;
+  const toY = (v: number) => PAD_TOP + chartH - (v / maxVal) * chartH;
+  const barW = Math.max(6, (chartW / months.length - 6) / 2);
+  const colW = chartW / months.length;
+  const gridVals = [0.25, 0.5, 0.75, 1.0];
+
+  const fmtK = (v: number) => v >= 1000 ? `${Math.round(v / 1000)}k` : `${Math.round(v)}`;
+
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 4, height: H + 20 }}>
-      {months.map((m, i) => {
-        const incH = (m.income / maxVal) * H;
-        const expH = (m.expense / maxVal) * H;
-        const isLast = i === months.length - 1;
-        return (
-          <View key={m.label} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: H, gap: 2 }}>
-              <View style={{ width: 8, height: Math.max(2, incH), borderRadius: 4, backgroundColor: isLast ? '#22d15a' : '#22d15a55' }} />
-              <View style={{ width: 8, height: Math.max(2, expH), borderRadius: 4, backgroundColor: isLast ? '#ef444499' : '#ef444430' }} />
-            </View>
-            <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 8, color: isLast ? colors.text : colors.textMute }}>{m.label}</Text>
-          </View>
-        );
-      })}
+    <View>
+      {/* Legend */}
+      <View style={{ flexDirection: 'row', gap: 16, marginBottom: 8, paddingHorizontal: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: '#22d15a' }} />
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: colors.textMute }}>Mapato</Text>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: '#ef4444' }} />
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: colors.textMute }}>Matumizi</Text>
+        </View>
+      </View>
+      <Svg width={CW} height={H}>
+        <SvgDefs>
+          <SvgGrad id="incGrad" x1="0" y1="0" x2="0" y2="1">
+            <SvgStop offset="0%" stopColor="#22d15a" stopOpacity="1" />
+            <SvgStop offset="100%" stopColor="#16a34a" stopOpacity="0.9" />
+          </SvgGrad>
+          <SvgGrad id="expGrad" x1="0" y1="0" x2="0" y2="1">
+            <SvgStop offset="0%" stopColor="#ef4444" stopOpacity="0.85" />
+            <SvgStop offset="100%" stopColor="#dc2626" stopOpacity="0.7" />
+          </SvgGrad>
+        </SvgDefs>
+
+        {/* Gridlines + y-axis labels */}
+        {gridVals.map(pct => {
+          const gy = toY(maxVal * pct);
+          return (
+            <SvgLine key={pct} x1={PAD_LEFT} y1={gy} x2={CW - 8} y2={gy}
+              stroke={colors.border} strokeWidth="0.8" strokeDasharray="3,3" />
+          );
+        })}
+        {gridVals.map(pct => (
+          <SvgText key={pct} x={PAD_LEFT - 4} y={toY(maxVal * pct) + 3.5}
+            fontSize="8" fontFamily="Inter_600SemiBold" fill={colors.textMute} textAnchor="end">
+            {fmtK(maxVal * pct)}
+          </SvgText>
+        ))}
+
+        {/* Y-axis line */}
+        <SvgLine x1={PAD_LEFT} y1={PAD_TOP} x2={PAD_LEFT} y2={PAD_TOP + chartH}
+          stroke={colors.border} strokeWidth="1" />
+
+        {/* Bars */}
+        {months.map((m, i) => {
+          const cx = PAD_LEFT + i * colW + colW / 2;
+          const incH = Math.max(2, (m.income / maxVal) * chartH);
+          const expH = Math.max(2, (m.expense / maxVal) * chartH);
+          const isLast = i === months.length - 1;
+          return (
+            <React.Fragment key={m.label}>
+              <SvgRect
+                x={cx - barW - 1} y={toY(m.income)} width={barW} height={incH}
+                rx="3" fill={isLast ? 'url(#incGrad)' : '#22d15a'} opacity={isLast ? 1 : 0.45} />
+              <SvgRect
+                x={cx + 1} y={toY(m.expense)} width={barW} height={expH}
+                rx="3" fill={isLast ? 'url(#expGrad)' : '#ef4444'} opacity={isLast ? 0.85 : 0.3} />
+              {/* X-axis month label */}
+              <SvgText x={cx} y={H - 4} fontSize="8" fontFamily="Inter_600SemiBold"
+                fill={isLast ? colors.text : colors.textMute} textAnchor="middle">
+                {m.label}
+              </SvgText>
+              {/* Value on top of last bar */}
+              {isLast && (
+                <SvgText x={cx - barW / 2 - 1} y={toY(m.income) - 3} fontSize="7"
+                  fontFamily="Inter_700Bold" fill="#22d15a" textAnchor="middle">
+                  {fmtK(m.income)}
+                </SvgText>
+              )}
+            </React.Fragment>
+          );
+        })}
+
+        {/* X-axis base line */}
+        <SvgLine x1={PAD_LEFT} y1={PAD_TOP + chartH} x2={CW - 8} y2={PAD_TOP + chartH}
+          stroke={colors.border} strokeWidth="1" />
+      </Svg>
     </View>
   );
 }
@@ -341,7 +413,7 @@ const s = StyleSheet.create({
   root:           { flex: 1 },
   header:         { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 10 },
   backBtn:        { width: 38, height: 38, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  title:          { fontFamily: 'Inter_700Bold', fontSize: 18 },
+  title:          { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, letterSpacing: -0.3 },
   sub:            { fontFamily: 'Inter_500Medium', fontSize: 12 },
   exportBtn:      { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 999, borderWidth: 1 },
   exportTxt:      { fontFamily: 'Inter_800ExtraBold', fontSize: 10 },
@@ -382,7 +454,7 @@ const s = StyleSheet.create({
   entryIcon:      { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   entryLabel:     { fontFamily: 'Inter_600SemiBold', fontSize: 13 },
   entryDate:      { fontFamily: 'Inter_500Medium', fontSize: 10 },
-  entryAmt:       { fontFamily: 'Inter_700Bold', fontSize: 13 },
+  entryAmt:       { fontFamily: 'InstrumentSerif_400Regular', fontSize: 16, letterSpacing: -0.2 },
   catBadge:       { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
   catBadgeTxt:    { fontFamily: 'Inter_700Bold', fontSize: 9 },
   exportLink:     { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 16, borderWidth: 1 },

@@ -215,7 +215,7 @@ export default function FeaturesScreen() {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Ambient glow */}
-      <View style={[s.orb1, { backgroundColor: isDark ? 'rgba(26,59,20,0.1)' : 'rgba(26,59,20,0.05)' }]} />
+      <View style={[s.orb1, { backgroundColor: isDark ? 'rgba(34,209,90,0.1)' : 'rgba(34,209,90,0.05)' }]} />
       <View style={[s.orb2, { backgroundColor: isDark ? 'rgba(46,90,39,0.08)' : 'rgba(46,90,39,0.04)' }]} />
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -227,10 +227,10 @@ export default function FeaturesScreen() {
           >
             <LinearGradient
               colors={isDark ? ['#0c250c', '#0a0a0f'] : ['#f0fdf4', '#f8fafc']}
-              style={[s.hero, { borderColor: isDark ? 'rgba(26,59,20,0.25)' : 'rgba(26,59,20,0.15)' }]}
+              style={[s.hero, { borderColor: isDark ? 'rgba(34,209,90,0.25)' : 'rgba(34,209,90,0.15)' }]}
             >
               <View style={s.heroLeft}>
-                <View style={[s.heroBadge, { backgroundColor: isDark ? 'rgba(26,59,20,0.3)' : 'rgba(26,59,20,0.1)' }]}>
+                <View style={[s.heroBadge, { backgroundColor: isDark ? 'rgba(34,209,90,0.3)' : 'rgba(34,209,90,0.1)' }]}>
                   <Sparkles size={12} color={isDark ? '#6B9E5F' : colors.primary} />
                   <Text style={[s.heroBadgeText, { color: isDark ? '#6B9E5F' : colors.primary }]}>FEATURES HUB</Text>
                 </View>

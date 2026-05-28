@@ -107,7 +107,7 @@ export default function FieldDetailScreen() {
           <Text style={[styles.mainTitle, { color: colors.text }]}>
             {language === 'sw' ? zone.cropSw : zone.cropEn} Overview
           </Text>
-          <View style={[styles.statusBadge, { backgroundColor: zone.alertType === 'warning' ? '#F59E0B20' : '#1A3B1420' }]}>
+          <View style={[styles.statusBadge, { backgroundColor: zone.alertType === 'warning' ? '#F59E0B20' : '#22d15a20' }]}>
             <Text style={[styles.statusText, { color: zone.alertType === 'warning' ? '#F59E0B' : colors.primary }]}>
               {language === 'sw' ? zone.messageSw : zone.messageEn}
             </Text>
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 30,
     gap: 12,
-    shadowColor: '#1A3B14',
+    shadowColor: '#22d15a',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,

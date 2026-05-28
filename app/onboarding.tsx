@@ -58,8 +58,8 @@ const CROPS = [
 ];
 
 const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }> = {
-  smallholder:       { icon: <Leaf size={22} color="#1A3B14" />,    color: '#1A3B14' },
-  farmer:            { icon: <Sprout size={22} color="#1A3B14" />,   color: '#1A3B14' },
+  smallholder:       { icon: <Leaf size={22} color="#22d15a" />,    color: '#22d15a' },
+  farmer:            { icon: <Sprout size={22} color="#22d15a" />,   color: '#22d15a' },
   commercial_farmer: { icon: <Tractor size={22} color="#3b82f6" />,  color: '#3b82f6' },
   farm_manager:      { icon: <UserCog size={22} color="#8b5cf6" />,  color: '#8b5cf6' },
   commercial_admin:  { icon: <Building2 size={22} color="#f59e0b" />,color: '#f59e0b' },
@@ -69,8 +69,8 @@ const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }>
 };
 
 const FEATURES = [
-  { icon: <Sparkles size={20} color="#1A3B14" />, bg: 'rgba(26, 59, 20, 0.12)', label: 'Sankofa AI', sub: 'Ushauri wa AI' },
-  { icon: <Leaf size={20} color="#1A3B14" />,     bg: 'rgba(26, 59, 20, 0.12)', label: 'Crop Scan',  sub: 'Tambua magonjwa' },
+  { icon: <Sparkles size={20} color="#22d15a" />, bg: 'rgba(34, 209, 90, 0.12)', label: 'Sankofa AI', sub: 'Ushauri wa AI' },
+  { icon: <Leaf size={20} color="#22d15a" />,     bg: 'rgba(34, 209, 90, 0.12)', label: 'Crop Scan',  sub: 'Tambua magonjwa' },
   { icon: <TrendingUp size={20} color="#3b82f6" />,bg:'rgba(59,130,246,0.12)', label: 'Soko',       sub: 'Bei za sasa' },
   { icon: <ShieldCheck size={20} color="#f59e0b" />,bg:'rgba(245,158,11,0.12)',label: 'Bima',       sub: 'Ulinzi wa mazao' },
 ];
@@ -495,13 +495,13 @@ function WelcomeStep({ lang, setLang, onNext }: any) {
         <TouchableOpacity
           onPress={onNext}
           activeOpacity={0.88}
-          style={[s.welcomeCtaBtn, { backgroundColor: '#5DA035' }]}
+          style={[s.welcomeCtaBtn, { backgroundColor: '#22d15a' }]}
           accessibilityRole="button"
           accessibilityLabel={btnText}
         >
           <View style={s.welcomeCtaInner}>
             <View style={s.welcomeArrowCircle}>
-              <ChevronRight size={18} color="#1A3B14" strokeWidth={3.5} />
+              <ChevronRight size={18} color="#22d15a" strokeWidth={3.5} />
             </View>
             <Text style={s.welcomeCtaText}>{btnText}</Text>
             <Text style={s.welcomeCarats}>&gt;&gt;&gt;</Text>
@@ -893,7 +893,7 @@ function DoneStep({ t, name, role, lang }: any) {
 
       {/* ID card preview */}
       <LinearGradient
-        colors={isDark ? ['rgba(58, 141, 82, 0.15)', 'rgba(58, 141, 82, 0.04)'] : ['#FAF7F0', '#FFFFFF']}
+        colors={isDark ? ['rgba(34, 209, 90, 0.12)', 'rgba(34, 209, 90, 0.03)'] : ['#F0FAF2', '#FFFFFF']}
         style={[s.idCard, { borderColor: colors.border }]}
       >
         <View style={s.idRow}>
@@ -939,8 +939,8 @@ const s = StyleSheet.create({
   backText: { color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
   progressPills: { flexDirection: 'row', gap: 5 },
   progressPill: { width: 20, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.15)' },
-  progressActive: { backgroundColor: '#1A3B14', width: 32 },
-  progressDone: { backgroundColor: 'rgba(26, 59, 20, 0.5)' },
+  progressActive: { backgroundColor: '#22d15a', width: 32 },
+  progressDone: { backgroundColor: 'rgba(34, 209, 90, 0.5)' },
   stepNum: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontFamily: 'Inter_700Bold', minWidth: 28, textAlign: 'right' },
 
   // Scroll containers
@@ -961,9 +961,9 @@ const s = StyleSheet.create({
 
   // Pills
   pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
-  pillActive: { borderColor: '#1A3B14', backgroundColor: 'rgba(26, 59, 20, 0.15)' },
+  pillActive: { borderColor: '#22d15a', backgroundColor: 'rgba(34, 209, 90, 0.15)' },
   pillText: { color: 'rgba(255,255,255,0.7)', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  pillTextActive: { color: '#1A3B14' },
+  pillTextActive: { color: '#22d15a' },
   cropGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   cropPill: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
   actBtn: { flex: 1, paddingVertical: 13, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)', alignItems: 'center' },
@@ -983,19 +983,19 @@ const s = StyleSheet.create({
   langRoot: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 24, paddingBottom: 24 },
   logoWrap: { width: 96, height: 96, justifyContent: 'center', alignItems: 'center', marginBottom: 24, position: 'relative' },
   logoGrad: { width: 88, height: 88, borderRadius: 26, justifyContent: 'center', alignItems: 'center' },
-  logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(26, 59, 20, 0.3)', top: 0, left: 0 },
+  logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(34, 209, 90, 0.3)', top: 0, left: 0 },
   logoImg: { width: 80, height: 80 },
   langHeadline: { color: '#fff', fontSize: 34, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1.2, textAlign: 'center' },
   taglineRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
-  taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#1A3B14' },
+  taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#22d15a' },
   langTagline: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 },
-  langDivider: { width: 40, height: 1.5, backgroundColor: 'rgba(26, 59, 20, 0.3)', marginVertical: 28 },
+  langDivider: { width: 40, height: 1.5, backgroundColor: 'rgba(34, 209, 90, 0.3)', marginVertical: 28 },
   langPick: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: 16, alignSelf: 'flex-start' },
   langCards: { flexDirection: 'row', gap: 12, alignSelf: 'stretch' },
   langCard: { borderRadius: 18, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.1)', paddingVertical: 20, paddingHorizontal: 16, alignItems: 'center', gap: 10, overflow: 'hidden' },
   langFlag: { fontSize: 32 },
   langLabel: { color: '#fff', fontSize: 15, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
-  langCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#1A3B14', justifyContent: 'center', alignItems: 'center' },
+  langCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
   langCheckEmpty: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)' },
   langCtaWrap: { alignSelf: 'stretch', borderRadius: 16, overflow: 'hidden', marginTop: 28 },
   langCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 17 },
@@ -1003,7 +1003,7 @@ const s = StyleSheet.create({
   langFootnote: { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontFamily: 'Inter_400Regular', marginTop: 16, textAlign: 'center' },
 
   // ── Welcome step ──────────────────────────────────────────
-  welcomeLogoWrap: { width: 80, height: 80, borderRadius: 20, overflow: 'hidden', marginBottom: 22, borderWidth: 1, borderColor: 'rgba(26, 59, 20, 0.25)' },
+  welcomeLogoWrap: { width: 80, height: 80, borderRadius: 20, overflow: 'hidden', marginBottom: 22, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.25)' },
   welcomeLogoBg: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   welcomeLogoImg: { width: 60, height: 60 },
   featureGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 24 },
@@ -1020,15 +1020,15 @@ const s = StyleSheet.create({
   roleRadio: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
 
   // ── Done step ─────────────────────────────────────────────
-  doneRingOuter: { width: 100, height: 100, borderRadius: 50, padding: 3, backgroundColor: 'rgba(26, 59, 20, 0.15)' },
+  doneRingOuter: { width: 100, height: 100, borderRadius: 50, padding: 3, backgroundColor: 'rgba(34, 209, 90, 0.15)' },
   doneRingInner: { flex: 1, borderRadius: 47, justifyContent: 'center', alignItems: 'center' },
-  idCard: { alignSelf: 'stretch', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(26, 59, 20, 0.2)', padding: 18, marginTop: 28 },
+  idCard: { alignSelf: 'stretch', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.2)', padding: 18, marginTop: 28 },
   idRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   idIconWrap: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   idName: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
   idRole: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
-  idBadge: { backgroundColor: 'rgba(26, 59, 20, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(26, 59, 20, 0.3)' },
-  idBadgeText: { color: '#1A3B14', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+  idBadge: { backgroundColor: 'rgba(34, 209, 90, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.3)' },
+  idBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
   idDivider: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 14 },
   idFooter: { color: 'rgba(255,255,255,0.5)', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
   methodToggle: {
@@ -1161,7 +1161,7 @@ const s = StyleSheet.create({
     borderRadius: 17,
   },
   welcomeLangTabActive: {
-    backgroundColor: '#1A3B14',
+    backgroundColor: '#22d15a',
   },
   welcomeLangTabText: {
     color: 'rgba(252, 251, 247, 0.6)',

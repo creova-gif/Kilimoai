@@ -1,0 +1,3 @@
+- [Brand color system](brand-colors.md) — single primary `#22d15a`, shadow `#0a3d18`; never use old tokens
+- [Typography pairing](typography.md) — InstrumentSerif for titles/stats, Inter for labels/buttons
+- [SVG chart imports](svg-chart-imports.md) — inline imports mid-file break bundler; always place at top of file

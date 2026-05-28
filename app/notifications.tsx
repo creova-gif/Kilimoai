@@ -38,7 +38,7 @@ const TYPE_CONFIG = {
   alert:   { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
   warning: { icon: Zap,           color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
   info:    { icon: Info,          color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
-  success: { icon: CheckCircle2,  color: '#1A3B14', bg: 'rgba(26, 59, 20, 0.12)' },
+  success: { icon: CheckCircle2,  color: '#22d15a', bg: 'rgba(34, 209, 90, 0.12)' },
 };
 
 function timeAgo(iso: string): string {
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   actionBtn: {
     width: 44, height: 44, borderRadius: 22,
     justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(26, 59, 20, 0.1)',
+    backgroundColor: 'rgba(34, 209, 90, 0.1)',
   },
   scrollContent: {
     padding: 20, paddingBottom: 60, gap: 12,

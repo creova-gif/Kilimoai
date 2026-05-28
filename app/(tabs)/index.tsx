@@ -1100,7 +1100,7 @@ export default function HomeScreen() {
                   styles.noCropCard,
                   {
                     borderColor: colors.primary + '30',
-                    backgroundColor: isDark ? 'rgba(26, 59, 20, 0.25)' : 'rgba(26, 59, 20, 0.05)',
+                    backgroundColor: isDark ? 'rgba(34, 209, 90, 0.25)' : 'rgba(34, 209, 90, 0.05)',
                   }
                 ]}
               >
@@ -2967,7 +2967,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1.5,
     gap: 10,
-    shadowColor: '#1A3B14',
+    shadowColor: '#22d15a',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.1,
     shadowRadius: 16,

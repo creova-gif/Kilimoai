@@ -97,7 +97,7 @@ const IntelligenceBento = ({ isDark, colors, router, language }: any) => (
   <View style={styles.bentoContainer}>
     <Animated.View entering={FadeInDown} style={[styles.bentoMain, { borderColor: colors.border }]}>
       <BlurView intensity={isDark ? 25 : 85} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-      <LinearGradient colors={isDark ? ['rgba(26, 59, 20, 0.15)', 'rgba(15, 23, 42, 0.9)'] : ['rgba(26, 59, 20, 0.1)', 'rgba(255, 255, 255, 0.9)']} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={isDark ? ['rgba(34, 209, 90, 0.15)', 'rgba(15, 23, 42, 0.9)'] : ['rgba(34, 209, 90, 0.1)', 'rgba(255, 255, 255, 0.9)']} style={StyleSheet.absoluteFill} />
       <View style={styles.bentoHeader}>
         <View style={styles.intelBadge}><Cpu size={14} color={colors.primary} /><Text style={[styles.intelBadgeText, { color: colors.primary }]}>AI ENGINE V4.5</Text></View>
         <Animated.View><Sparkles size={20} color={colors.primary} opacity={0.6} /></Animated.View>
@@ -970,7 +970,7 @@ const styles = StyleSheet.create({
   bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 230 },
   bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
   bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34, 209, 90, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   intelBadgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   bentoTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', marginTop: 12, marginBottom: 4 },
   bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
@@ -1007,7 +1007,7 @@ const styles = StyleSheet.create({
   analysisRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   analysisItem: { flex: 1 },
   analysisLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
-  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(26, 59, 20, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
+  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(34, 209, 90, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
   outlookText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
   actionGrid: { flexDirection: 'row', gap: 12 },
