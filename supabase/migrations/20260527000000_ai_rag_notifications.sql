@@ -45,6 +45,7 @@ $$;
 -- 2. Notification Preferences
 create table if not exists public.user_notification_preferences (
     user_id uuid primary key references auth.users(id) on delete cascade,
+    push_token text, -- Expo Push Token
     allow_push boolean default true,
     allow_sms boolean default false,
     quiet_hours_start time default '22:00',

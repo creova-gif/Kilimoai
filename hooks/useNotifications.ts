@@ -61,7 +61,20 @@ export function useNotifications() {
     try {
       const token = (await Notifications.getExpoPushTokenAsync()).data;
       console.log('[Notifications] Push token:', token);
-      // TODO: Save token to Supabase: supabase.from('push_tokens').upsert({ token, user_id })
+      
+      // [NOTIFICATION ARCHITECTURE]
+      // Push token should be saved to the newly created 'user_notification_preferences' table
+      /*
+      const { data: session } = await supabase.auth.getSession();
+      if (session?.session?.user) {
+        await supabase
+          .from('user_notification_preferences')
+          .upsert({ 
+            user_id: session.session.user.id, 
+            push_token: token 
+          }, { onConflict: 'user_id' });
+      }
+      */
       return token;
     } catch (err) {
       console.warn('[Notifications] Failed to get push token:', err);
