@@ -140,7 +140,7 @@ export default function CropLibraryScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
           <ChevronLeft color={colors.text} size={28} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>Maktaba ya Mazao</Text>
