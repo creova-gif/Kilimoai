@@ -1000,12 +1000,12 @@ export default function HomeScreen() {
   ];
 
   const quickActions = useMemo(() => [
-    { id: 'scan', label: language === 'sw' ? 'Uchunguzi' : 'Scan', icon: <Camera size={22} color="#fff" />, color: '#4CAF50', desc: language === 'sw' ? 'Chunguza Ugonjwa' : 'AI Crop Scan' },
-    { id: 'tasks', label: language === 'sw' ? 'Ratiba' : 'Tasks', icon: <LayoutGrid size={22} color="#fff" />, color: '#3b82f6', desc: language === 'sw' ? 'Kazi za Shamba' : 'Farm Tasks' },
-    { id: 'market', label: language === 'sw' ? 'Soko' : 'Market', icon: <TrendingUp size={22} color="#fff" />, color: '#f59e0b', desc: language === 'sw' ? 'Bei za Mazao' : 'Market Prices' },
-    { id: 'iot-systems', label: language === 'sw' ? 'Mifumo & IoT' : 'IoT & Drones', icon: <Target size={22} color="#fff" />, color: '#0ea5e9', desc: language === 'sw' ? 'Udhibiti wa Shamba' : 'Smart Farm Control' },
-    { id: 'crop-planning', label: language === 'sw' ? 'Upangaji' : 'Planning', icon: <Leaf size={22} color="#fff" />, color: '#22c55e', desc: language === 'sw' ? 'Upangaji wa Mazao' : 'AI Crop Planning' },
-    { id: 'contracts', label: language === 'sw' ? 'Mikataba' : 'Contracts', icon: <BarChart3 size={22} color="#fff" />, color: '#8b5cf6', desc: language === 'sw' ? 'Kilimo cha Mkataba' : 'Contract Farming' },
+    { id: 'scan',         label: language === 'sw' ? 'Uchunguzi' : 'Scan',         icon: <Camera    size={22} color="#fff" />, color: '#22d15a', desc: language === 'sw' ? 'Chunguza Ugonjwa'    : 'AI Crop Scan'       },
+    { id: 'tasks',        label: language === 'sw' ? 'Ratiba' : 'Tasks',            icon: <LayoutGrid size={22} color="#fff" />, color: '#1cc154', desc: language === 'sw' ? 'Kazi za Shamba'     : 'Farm Tasks'         },
+    { id: 'market',       label: language === 'sw' ? 'Soko' : 'Market',             icon: <TrendingUp size={22} color="#fff" />, color: '#16b14e', desc: language === 'sw' ? 'Bei za Mazao'       : 'Market Prices'      },
+    { id: 'iot-systems',  label: language === 'sw' ? 'Mifumo & IoT' : 'IoT & Drones', icon: <Target  size={22} color="#fff" />, color: '#10a048', desc: language === 'sw' ? 'Udhibiti wa Shamba' : 'Smart Farm Control' },
+    { id: 'crop-planning',label: language === 'sw' ? 'Upangaji' : 'Planning',       icon: <Leaf      size={22} color="#fff" />, color: '#0a8f42', desc: language === 'sw' ? 'Upangaji wa Mazao'  : 'AI Crop Planning'   },
+    { id: 'contracts',    label: language === 'sw' ? 'Mikataba' : 'Contracts',      icon: <BarChart3 size={22} color="#fff" />, color: '#048038', desc: language === 'sw' ? 'Kilimo cha Mkataba'  : 'Contract Farming'   },
   ], [language]);
 
   const recommendations = useMemo(
