@@ -161,7 +161,7 @@ export default function RootLayout() {
               <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
             </Stack>
           </View>
-          <StatusBar style="auto" />
+          <StatusBar style={themePreference === 'system' ? 'auto' : isDark ? 'light' : 'dark'} />
         </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
