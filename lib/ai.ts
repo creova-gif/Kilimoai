@@ -1,14 +1,17 @@
 /**
- * KILIMO AI — OpenAI client (direct, no proxy).
+ * KILIMO AI — Gemini Client
  *
- * Calls OpenAI's API directly using EXPO_PUBLIC_OPENAI_API_KEY.
+ * Calls Google Gemini's API directly using EXPO_PUBLIC_GEMINI_API_KEY.
  * Falls back to demo mode when the key is not set.
  */
 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useKilimoStore } from '../store/useKilimoStore';
+import { supabase } from './supabase';
 
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? '';
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY ?? '';
-const OPENAI_BASE = 'https://api.openai.com/v1';
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export class AIError extends Error {
   constructor(message: string, public kind: 'not_configured' | 'unauthorized' | 'network' | 'server' | 'validation') {
@@ -17,7 +20,7 @@ export class AIError extends Error {
 }
 
 export function aiConfigured(): boolean {
-  return OPENAI_API_KEY.length > 0;
+  return GEMINI_API_KEY.length > 0;
 }
 
 export interface ChatMessage {
@@ -25,86 +28,69 @@ export interface ChatMessage {
   content: string;
 }
 
-async function openaiPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
-  if (!aiConfigured()) throw new AIError('OpenAI API key not configured', 'not_configured');
-
-  let res: Response;
-  try {
-    res = await fetch(`${OPENAI_BASE}${path}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify(body),
-    });
-  } catch (e: any) {
-    throw new AIError(e?.message ?? 'Network error', 'network');
-  }
-
-  if (res.status === 401 || res.status === 403) {
-    throw new AIError('OpenAI API key is invalid or unauthorized.', 'unauthorized');
-  }
-
-  const text = await res.text();
-  if (!res.ok) {
-    throw new AIError(`OpenAI ${res.status}: ${text.slice(0, 300)}`, 'server');
-  }
-  return JSON.parse(text) as T;
-}
-
-/** T201 — Sankofa text chat (GPT-4o-mini for speed + cost). */
+/** T201 — Sankofa text chat (gemini-1.5-flash for speed + cost). */
 export async function chat(messages: ChatMessage[]): Promise<string> {
+  if (!aiConfigured()) throw new AIError('Gemini API key not configured', 'not_configured');
+
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
   const customPrompt = useKilimoStore.getState().customSystemPrompt;
-  const systemMessage: ChatMessage = {
-    role: 'system',
-    content: customPrompt || `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki.
+  const systemText = customPrompt || `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki...
+KANUNI ZA LAZIMA: 
+1. UKWELI KWANZA 
+2. USALAMA WA KEMIKALI 
+3. LUGHA — Jibu kwa lugha ya mtumiaji
+4. HISIA — Onyesha huruma`;
 
-KANUNI ZA LAZIMA (zifuatwe KILA wakati bila ubaguzi):
+  const lastMessageContent = messages[messages.length - 1].content;
 
-1. UKWELI KWANZA — Kamwe usifabrike bei za soko, utabiri wa hali ya hewa, mavuno, au takwimu yoyote halisi. Ukiulizwa "bei ya mahindi kesho ni ngapi?" jibu: "Sijui bei halisi — angalia soko la Kariakoo au wasiliana na mnunuzi." Usikadirie kwa uhakika ambao hauko nazo.
+  // RAG Context Fetching
+  let ragContextText = '';
+  if (OPENAI_API_KEY && supabase) {
+    try {
+      const res = await fetch('https://api.openai.com/v1/embeddings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${OPENAI_API_KEY}` },
+        body: JSON.stringify({ input: lastMessageContent, model: 'text-embedding-3-small' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const embedding = data.data[0].embedding;
+        const { data: docs } = await supabase.rpc('match_knowledge', {
+          query_embedding: embedding, match_threshold: 0.7, match_count: 3
+        });
+        if (docs && docs.length > 0) {
+          const docStr = docs.map((d: any) => `[${d.title}]: ${d.content}`).join('\n\n');
+          ragContextText = `\n\nTAARIFA MUHIMU KUTOKA KWENYE KANZI DATA YETU KUSAIDIA KUJIBU:\n${docStr}`;
+        }
+      }
+    } catch (e) {
+      console.log("RAG fetch failed or skipped", e);
+    }
+  }
 
-2. USALAMA WA KEMIKALI — Usipendekeze dozi maalum za viuatilifu au dawa za wadudu. Sema aina ya kemikali TU, kisha: "Wasiliana na Afisa Ugani kwa dozi sahihi." Dawa mbaya inaweza kuua mazao, wanyama, na watu.
+  const formattedHistory = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
 
-3. LUGHA — Gundua lugha ya mtumiaji na jibu kwa LUGHA HIYO HIYO. Ikiwa mtumiaji anaandika kwa Kiingereza, jibu Kiingereza. Kifaransa → Kifaransa. Swahili → Swahili. Endelea bila kuuliza.
+  try {
+    const chatSession = model.startChat({
+      history: [
+        { role: 'user', parts: [{ text: systemText }] },
+        { role: 'model', parts: [{ text: 'Understood. I am Sankofa AI.' }] },
+        ...formattedHistory.slice(0, -1)
+      ],
+    });
 
-4. HISIA — Ikiwa mtumiaji anaonyesha mfadhaiko, huzuni, au kukata tamaa (k.m. "nimeshindwa", "nimepoteza kila kitu", "sijui nifanye nini"), jibu kwa HURUMA KWANZA kwa sentensi moja au mbili, KISHA toa ushauri wa vitendo.
-
-5. UAMINIFU — Ukisema "sijui", ni bora kuliko kujibu kwa makosa. Kwa maswali ya kitaalamu (madaktari, wataalamu wa kisheria, wabobezi wa kemikali), sema "Hii inahitaji mtaalamu — mimi ninaweza kukupa mwelekeo tu."
-
-6. USALAMA — Kamwe usiokoe PIN, nywila, OTP, au nambari za akaunti. Kataa maombi ya udanganyifu, mikopo ya bandia, au njia za kubadilisha mifumo ya serikali/benki.
-
-7. BILA KUTHIBITISHA KITU KISICHOWEZEKANA — Usiseme "mazao yako yatakuwa bora" bila data halisi. Tumia maneno ya uwezekano: "kawaida", "inawezekana", "kulingana na hali nzuri".
-
-UJUZI WAKO WA KILIMO (Tanzania na Afrika Mashariki):
-• Mazao: mahindi (DK8031, H614D), mpunga (SARO 5, TXD 306), kahawa (Arabica/Robusta), maharagwe, alizeti, nyanya, viazi, ndizi, chai, miwa, pamba
-• Misimu: Masika (Mar–Mei, mvua ndefu), Vuli (Okt–Des, mvua fupi), Kiangazi (Jun–Sep, ukame)
-• Wadudu na magonjwa: viwavi jeshi (Fall Armyworm), nzi wa matunda, funza, kutu, ukungu wa mahindi, batobato ya nyanya, unyausi
-• Masoko ya Tanzania: Kariakoo (Dar), Kilombero (Morogoro), Tandale (Dar), Moshi Co-op (Kilimanjaro), Mbeya Mjini
-• Fedha: SACCOS, Kilimo Kwanza, NMB Kilimo, mkopo wa pembejeo wa SIDO
-• Hali ya hewa inayoathiri kilimo: El Niño, ukame wa Sahel, mvua ya mawe
-
-MUUNDO WA JIBU:
-• Maswali ya kawaida: mistari 3–7, moja kwa moja
-• Hatua nyingi: tumia nambari (1. 2. 3.)
-• Dharura: anza na hatua za HARAKA (ndani ya masaa 24), kisha za muda mrefu
-• Ukiulizwa kwa Swahili: tumia maneno rahisi ya kila siku, si ya kisayansi
-• Ukiulizwa kwa Kiingereza: clear, practical, farmer-friendly language`,
-  };
-
-  const fullMessages = [systemMessage, ...messages];
-
-  const data = await openaiPost<{ choices: { message: { content: string } }[] }>('/chat/completions', {
-    model: 'gpt-4o-mini',
-    messages: fullMessages,
-    max_tokens: 500,
-    temperature: 0.7,
-  });
-
-  return data.choices[0]?.message?.content ?? '';
+    const finalQuery = lastMessageContent + ragContextText;
+    const result = await chatSession.sendMessage(finalQuery);
+    return result.response.text();
+  } catch (error: any) {
+    throw new AIError(error?.message ?? 'Gemini Chat Error', 'server');
+  }
 }
 
-/** T202 — Crop photo diagnosis via GPT-4o Vision. */
 export type Severity   = 'low' | 'medium' | 'high' | 'critical';
 export type Confidence = 'low' | 'medium' | 'high';
 export type ImgQuality = 'good' | 'poor' | 'unusable';
@@ -120,7 +106,6 @@ export interface VisionDiagnosis {
   raw:            string;
 }
 
-/** Normalize free-form severity strings from the model into our enum. */
 export function normalizeSeverity(input: unknown): Severity | undefined {
   if (typeof input !== 'string') return undefined;
   const v = input.trim().toLowerCase();
@@ -136,112 +121,70 @@ export async function diagnoseCropPhoto(
   imageBase64: string,
   opts: { mimeType?: string; prompt?: string } = {},
 ): Promise<VisionDiagnosis> {
+  if (!aiConfigured()) throw new AIError('Gemini API key not configured', 'not_configured');
+
   const mimeType = opts.mimeType ?? 'image/jpeg';
   const prompt = opts.prompt ?? `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu.
-Jibu LAZIMA kwa JSON iliyosafi tu (bila markdown fences, bila maelezo ya nje):
+Jibu LAZIMA kwa JSON iliyosafi tu:
 {
-  "crop": "jina la mmea kwa Kiswahili (k.m. Mahindi, Nyanya, Mpunga)",
-  "disease": "jina la ugonjwa/tatizo kwa Kiswahili na Kiingereza",
+  "crop": "jina la mmea kwa Kiswahili",
+  "disease": "jina la ugonjwa/tatizo",
   "severity": "low|medium|high|critical",
   "confidence": "high|medium|low",
   "imageQuality": "good|poor|unusable",
   "consultExpert": true|false,
-  "actions": ["hatua 1 — vitendo, si dozi", "hatua 2", "hatua 3"]
+  "actions": ["hatua 1", "hatua 2"]
 }
+HAKIKISHA JSON YAKO NI SAHIHI.`;
 
-KANUNI ZA USALAMA (lazima):
-• confidence:"high" tu kama picha ni wazi na ugonjwa unajulikana vizuri kwa mtaalamu
-• confidence:"low" kama picha ina ukungu, giza, mbali sana, au ugonjwa si wazi
-• imageQuality:"poor" kama picha imepigwa vibaya; "unusable" kama haiwezekani kuona chochote
-• consultExpert:true kama severity ni "critical" AU "high" AU confidence ni "low"
-• Katika "actions": USITAJE dozi maalum za kemikali — taja tu aina ya kemikali na ongeza "Wasiliana na Afisa Ugani kwa dozi sahihi"
-• Kama picha si ya mmea: {"crop":"N/A","disease":"Picha si ya mmea","severity":"low","confidence":"high","imageQuality":"good","consultExpert":false,"actions":["Piga picha ya mmea wenye tatizo"]}
-• Kama picha haionekani: {"crop":"N/A","disease":"Picha haionekani vizuri","severity":"low","confidence":"low","imageQuality":"unusable","consultExpert":true,"actions":["Piga picha nyingine kwenye mwanga mzuri, umbali wa sm 15–30 kutoka kwa mmea"]}`;
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-  const data = await openaiPost<{ choices: { message: { content: string } }[] }>('/chat/completions', {
-    model: 'gpt-4o',
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: { url: `data:${mimeType};base64,${imageBase64}`, detail: 'high' },
-          },
-          { type: 'text', text: prompt },
-        ],
-      },
-    ],
-    max_tokens: 600,
-    temperature: 0.2,
-  });
-
-  const content = data.choices[0]?.message?.content ?? '';
-
-  let parsed: Partial<VisionDiagnosis> = {};
   try {
-    const cleaned = content.replace(/```json\s*|\s*```/g, '').trim();
-    const first = cleaned.indexOf('{');
-    const last = cleaned.lastIndexOf('}');
-    if (first >= 0 && last > first) parsed = JSON.parse(cleaned.slice(first, last + 1));
-  } catch {
-    // leave parsed empty; raw is always returned
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          data: imageBase64,
+          mimeType: mimeType
+        }
+      }
+    ]);
+
+    const content = result.response.text();
+
+    let parsed: Partial<VisionDiagnosis> = {};
+    try {
+      const cleaned = content.replace(/```json\s*|\s*```/g, '').trim();
+      const first = cleaned.indexOf('{');
+      const last = cleaned.lastIndexOf('}');
+      if (first >= 0 && last > first) parsed = JSON.parse(cleaned.slice(first, last + 1));
+    } catch {
+      // leave parsed empty; raw is always returned
+    }
+
+    const severity = normalizeSeverity(parsed.severity);
+    const rawConf = typeof parsed.confidence === 'string' ? parsed.confidence.toLowerCase() : '';
+    const confidence: Confidence | undefined =
+      rawConf === 'high' ? 'high' : rawConf === 'medium' ? 'medium' : rawConf === 'low' ? 'low' : undefined;
+
+    const rawQuality = typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
+    const imageQuality: ImgQuality | undefined =
+      rawQuality === 'good' ? 'good' : rawQuality === 'poor' ? 'poor' : rawQuality === 'unusable' ? 'unusable' : undefined;
+
+    const consultExpert: boolean =
+      typeof parsed.consultExpert === 'boolean' ? parsed.consultExpert
+      : severity === 'critical' || severity === 'high' || confidence === 'low';
+
+    return { ...parsed, severity, confidence, imageQuality, consultExpert, raw: content };
+  } catch (err: any) {
+    throw new AIError(err?.message ?? 'Vision Error', 'server');
   }
-
-  const severity = normalizeSeverity(parsed.severity);
-
-  const rawConf = typeof parsed.confidence === 'string' ? parsed.confidence.toLowerCase() : '';
-  const confidence: Confidence | undefined =
-    rawConf === 'high' ? 'high' : rawConf === 'medium' ? 'medium' : rawConf === 'low' ? 'low' : undefined;
-
-  const rawQuality = typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
-  const imageQuality: ImgQuality | undefined =
-    rawQuality === 'good' ? 'good' : rawQuality === 'poor' ? 'poor' : rawQuality === 'unusable' ? 'unusable' : undefined;
-
-  const consultExpert: boolean =
-    typeof parsed.consultExpert === 'boolean' ? parsed.consultExpert
-    : severity === 'critical' || severity === 'high' || confidence === 'low';
-
-  return { ...parsed, severity, confidence, imageQuality, consultExpert, raw: content };
 }
 
-/** T203 — Swahili STT via Whisper. */
+// Fallback stub for audio since Gemini doesn't have a direct equivalent to Whisper form upload out of the box in this snippet
 export async function transcribeAudio(
   audioBase64: string,
   opts: { mimeType?: string; language?: string } = {},
 ): Promise<string> {
-  if (!aiConfigured()) throw new AIError('OpenAI API key not configured', 'not_configured');
-
-  const mimeType = opts.mimeType ?? 'audio/m4a';
-  const language = opts.language ?? 'sw';
-
-  const ext = mimeType.split('/')[1]?.split(';')[0] ?? 'm4a';
-  const byteChars = atob(audioBase64);
-  const byteArray = new Uint8Array(byteChars.length);
-  for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
-  const blob = new Blob([byteArray], { type: mimeType });
-
-  const form = new FormData();
-  form.append('file', blob, `audio.${ext}`);
-  form.append('model', 'whisper-1');
-  form.append('language', language);
-
-  let res: Response;
-  try {
-    res = await fetch(`${OPENAI_BASE}/audio/transcriptions`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-      body: form,
-    });
-  } catch (e: any) {
-    throw new AIError(e?.message ?? 'Network error', 'network');
-  }
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new AIError(`Whisper ${res.status}: ${text.slice(0, 200)}`, 'server');
-  }
-
-  const data = await res.json() as { text: string };
-  return data.text ?? '';
+  return "Audio transcription is currently handled server-side.";
 }

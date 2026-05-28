@@ -111,6 +111,8 @@ interface KilimoState {
   
   // Network / Offline
   isOffline: boolean;
+  // Offline Sync
+  isOnline: boolean;
   syncQueue: SyncQueueItem[];
   lastSyncedAt: string | null;
 
@@ -158,8 +160,12 @@ interface KilimoState {
   setOffline: (offline: boolean) => void;
   addToSyncQueue: (item: Omit<SyncQueueItem, 'id' | 'createdAt' | 'retries'>) => void;
   removeFromSyncQueue: (id: string) => void;
-  clearSyncQueue: () => void;
+  // Offline Sync
+  setOnlineStatus: (status: boolean) => void;
   setLastSyncedAt: (timestamp: string) => void;
+  enqueueAction: (action: Omit<SyncQueueItem, 'id' | 'createdAt' | 'retries'>) => void;
+  dequeueAction: (id: string) => void;
+  clearQueue: () => void;
 
   // Farm Vitals
   updateFarmVitals: (vitals: Partial<FarmVitals>) => void;
@@ -211,6 +217,7 @@ export const useKilimoStore = create<KilimoState>()(
       registeredIds: ['12345678901234567890', '123456789'],
 
       isOffline: false,
+      isOnline: true,
       syncQueue: [],
       lastSyncedAt: null,
 
@@ -310,9 +317,27 @@ export const useKilimoStore = create<KilimoState>()(
         set((state) => ({
           syncQueue: state.syncQueue.filter((item) => item.id !== id),
         })),
-
-      clearSyncQueue: () => set({ syncQueue: [] }),
+      
+      // ── Offline Actions ────────────────────────────────────────
+      setOnlineStatus: (status) => set({ isOnline: status }),
       setLastSyncedAt: (timestamp) => set({ lastSyncedAt: timestamp }),
+      enqueueAction: (action) =>
+        set((state) => ({
+          syncQueue: [
+            ...state.syncQueue,
+            {
+              ...action,
+              id: `sync_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              createdAt: new Date().toISOString(),
+              retries: 0,
+            },
+          ],
+        })),
+      dequeueAction: (id) =>
+        set((state) => ({
+          syncQueue: state.syncQueue.filter((q) => q.id !== id),
+        })),
+      clearQueue: () => set({ syncQueue: [] }),
 
       // ── Farm Vitals Actions ────────────────────────────────────
       updateFarmVitals: (vitals) =>

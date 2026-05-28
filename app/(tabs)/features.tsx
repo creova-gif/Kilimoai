@@ -44,6 +44,7 @@ const ALL_FEATURES: FeatureEntry[] = [
   { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI',   sub: 'Utabiri na takwimu',          route: '/analytics',       icon: null, color: '#F59E0B' },
   { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',       sub: 'Mfano wa kidijiti',           route: '/farm-twin',       icon: null, color: '#8b5cf6' },
   { feature: 'crop_planning',        label: 'Upangaji Mazao',      sub: 'Panga mzunguko wa mazao',     route: '/crop-planning',   icon: null, color: '#22d15a' },
+  { feature: 'crop_library',         label: 'Maktaba ya Mazao',    sub: 'Miongozo ya kilimo & magonjwa', route: '/crop-library',  icon: null, color: '#22d15a', pinned: true },
   // Market
   { feature: 'market_prices',        label: 'Bei za Soko',         sub: 'Bei za mazao ya sasa hivi',   route: '/market',          icon: null, color: '#22d15a',  pinned: true },
   { feature: 'contract_farming',     label: 'Mikataba',            sub: 'Mkataba wa ukulima',          route: '/contracts',       icon: null, color: '#8b5cf6' },
@@ -75,6 +76,7 @@ const ICONS: Record<Feature, React.ReactNode> = {
   analytics_predictive: <BarChart3 size={20} color="#F59E0B" />,
   digital_farm_twin:    <Cpu size={20} color="#8b5cf6" />,
   crop_planning:        <Sprout size={20} color="#22d15a" />,
+  crop_library:         <Leaf size={20} color="#22d15a" />,
   market_prices:        <TrendingUp size={20} color="#22d15a" />,
   contract_farming:     <FileText size={20} color="#8b5cf6" />,
   input_supply:         <Truck size={20} color="#3b82f6" />,
@@ -103,7 +105,7 @@ const CATEGORIES = [
     title: 'Akili Bandia',
     titleEn: 'AI & Intelligence',
     color: '#22d15a',
-    features: ['ai_chat', 'voice_assistant', 'photo_diagnosis', 'analytics_predictive', 'digital_farm_twin', 'crop_planning'] as Feature[],
+    features: ['ai_chat', 'voice_assistant', 'photo_diagnosis', 'analytics_predictive', 'digital_farm_twin', 'crop_planning', 'crop_library'] as Feature[],
   },
   {
     key: 'market',

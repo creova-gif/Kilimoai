@@ -14,6 +14,7 @@ import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useKilimoStore } from '../store/useKilimoStore';
+import { supabase } from '../lib/supabase';
 
 // Display notifications in foreground
 Notifications.setNotificationHandler({
@@ -112,6 +113,57 @@ export function useNotifications() {
     return () => {
       notificationListener.current?.remove();
       responseListener.current?.remove();
+    };
+  }, []);
+
+  // Supabase Realtime Sync
+  useEffect(() => {
+    if (!supabase) return;
+
+    // Fetch initial notifications
+    const fetchHistory = async () => {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.user) return;
+      
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', session.session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (data) {
+        // Clear and reload (simplified logic)
+        useKilimoStore.getState().clearNotifications();
+        data.reverse().forEach(n => {
+          addNotification({
+            title: n.title,
+            body: n.content,
+            type: n.type || 'info',
+          });
+        });
+      }
+    };
+    fetchHistory();
+
+    const channel = supabase
+      .channel('public:notifications')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications' },
+        (payload) => {
+          const newNotif = payload.new;
+          addNotification({
+            title: newNotif.title,
+            body: newNotif.content,
+            type: newNotif.type || 'info',
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
   }, []);
 

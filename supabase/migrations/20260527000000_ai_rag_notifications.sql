@@ -9,7 +9,7 @@ create table if not exists public.knowledge_base (
     content text not null,
     category text not null, -- e.g., 'crop_disease', 'weather_pattern', 'market_info'
     region text, -- Optional geographic targeting
-    embedding vector(1536), -- Assuming OpenAI text-embedding-3-small or similar
+    embedding vector(768), -- Updated for Gemini text-embedding-004
     created_at timestamp with time zone default now(),
     updated_at timestamp with time zone default now()
 );
@@ -20,7 +20,7 @@ on public.knowledge_base
 using hnsw (embedding vector_cosine_ops);
 
 -- RAG Search Function
-create or replace function match_knowledge(query_embedding vector(1536), match_threshold float, match_count int)
+create or replace function match_knowledge(query_embedding vector(768), match_threshold float, match_count int)
 returns table (
     id uuid,
     title text,

@@ -1,4 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { BarChart } from 'react-native-chart-kit';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { 
   StyleSheet, 
   View, 
@@ -62,6 +65,7 @@ import {
   ChevronRight,
   Thermometer,
   Wind,
+  ChevronLeft,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -191,6 +195,32 @@ const TrackRecords = ({ colors, isDark, language }: any) => {
 // Growth Rates vertical bar chart component
 const GrowthChart = ({ colors, isDark, language }: any) => {
   const [selectedRange, setSelectedRange] = useState('M');
+  const screenWidth = Dimensions.get('window').width;
+
+  const exportReport = async () => {
+    try {
+      const html = `
+        <html>
+          <body style="font-family: sans-serif; padding: 40px; color: #1a1a1a;">
+            <h1 style="color: ${colors.primary};">Kilimo AI - Growth Report</h1>
+            <h2>Growth Rate: 0.75 kg/ha</h2>
+            <p>Exported on ${new Date().toLocaleDateString()}</p>
+            <hr />
+            <p>Analytics indicate a steady growth trajectory matching the projected curve. Market conditions and localized weather data align with optimal harvest timing.</p>
+          </body>
+        </html>
+      `;
+      const { uri } = await Print.printToFileAsync({ html });
+      await Sharing.shareAsync(uri);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to export report');
+    }
+  };
+
+  const data = {
+    labels: GROWTH_DATA.map(d => d.label),
+    datasets: [{ data: GROWTH_DATA.map(d => d.value * 100) }]
+  };
 
   return (
     <Card variant="solid" style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -204,46 +234,49 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
             <Text style={[styles.chartUnit, { color: colors.textMute }]}> kg/ha</Text>
           </View>
         </View>
-        <View style={[styles.rangeSelector, { backgroundColor: isDark ? '#121711' : '#EDF1EC' }]}>
-          {['W', 'M', 'Y'].map((range) => (
-            <TouchableOpacity
-              key={range}
-              onPress={() => setSelectedRange(range)}
-              style={[
-                styles.rangeBtn,
-                selectedRange === range && { backgroundColor: colors.primary }
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={`Range ${range}`}
-            >
-              <Text style={[
-                styles.rangeText,
-                { color: selectedRange === range ? '#FFFFFF' : colors.textMute }
-              ]}>
-                {range}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <TouchableOpacity onPress={exportReport} style={[styles.rangeBtn, { backgroundColor: colors.primaryLight }]}>
+            <Text style={{ color: colors.primary, fontSize: 12, fontWeight: 'bold' }}>Export</Text>
+          </TouchableOpacity>
+          <View style={[styles.rangeSelector, { backgroundColor: isDark ? '#121711' : '#EDF1EC' }]}>
+            {['W', 'M', 'Y'].map((range) => (
+              <TouchableOpacity
+                key={range}
+                onPress={() => setSelectedRange(range)}
+                style={[styles.rangeBtn, selectedRange === range && { backgroundColor: colors.primary }]}
+              >
+                <Text style={[styles.rangeText, { color: selectedRange === range ? '#FFFFFF' : colors.textMute }]}>{range}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 
-      <View style={styles.chartContainer}>
-        {GROWTH_DATA.map((item, idx) => (
-          <View key={idx} style={styles.chartBarWrapper}>
-            <View style={[styles.chartBarBackground, { backgroundColor: isDark ? '#1C221A' : '#EDF1EC' }]}>
-              <View 
-                style={[
-                  styles.chartBarFill, 
-                  { 
-                    height: `${item.value * 100}%`, 
-                    backgroundColor: idx === 9 ? colors.primary : isDark ? '#2D4428' : '#B2C4AC' 
-                  }
-                ]} 
-              />
-            </View>
-            <Text style={[styles.chartLabel, { color: colors.textMute }]} numberOfLines={1}>{item.label}</Text>
-          </View>
-        ))}
+      <View style={{ marginTop: 16, marginHorizontal: -16 }}>
+        <BarChart
+          data={data}
+          width={screenWidth - 48}
+          height={220}
+          yAxisLabel=""
+          yAxisSuffix="%"
+          chartConfig={{
+            backgroundColor: colors.card,
+            backgroundGradientFrom: colors.card,
+            backgroundGradientTo: colors.card,
+            decimalPlaces: 0,
+            color: (opacity = 1) => colors.primary,
+            labelColor: (opacity = 1) => colors.textMute,
+            barPercentage: 0.5,
+            propsForBackgroundLines: {
+              strokeWidth: 1,
+              stroke: isDark ? '#1C221A' : '#EDF1EC',
+            }
+          }}
+          style={{ borderRadius: 16 }}
+          showValuesOnTopOfBars={true}
+          withHorizontalLabels={false}
+          fromZero
+        />
       </View>
     </Card>
   );
@@ -575,6 +608,23 @@ const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
       right: { 
         title: language === 'sw' ? 'Kukata Matawi' : 'Pruning', 
         sub: language === 'sw' ? 'Kila Wiki' : 'Weekly trimming',
+        top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
+      }
+    };
+  } else if (nameLower.includes('banana') || nameLower.includes('ndizi')) {
+    image = require('../../assets/images/crop_banana.png');
+    displayName = language === 'sw' ? 'Ndizi' : 'Bananas';
+    harvestDays = 270;
+    currentDay = 150;
+    markers = {
+      left: { 
+        title: language === 'sw' ? 'Kukata Majani' : 'Deleafing', 
+        sub: language === 'sw' ? 'Kila Mwezi' : 'Monthly pruning',
+        top: 120, left: '8%', lineW: '20%', lineH: 42, dotTop: 174
+      },
+      right: { 
+        title: language === 'sw' ? 'Kuwekea Mbolea' : 'Fertilization', 
+        sub: language === 'sw' ? 'Mbolea ya NPK' : 'NPK Application',
         top: 88, right: '6%', lineW: '18%', lineH: 48, dotTop: 148
       }
     };
@@ -1268,10 +1318,22 @@ export default function HomeScreen() {
                 <View style={styles.cropSelectorRow}>
                   <Text style={styles.cropName}>{cropMeta.displayName}</Text>
                   {primaryCrops.length > 1 && (
-                    <View style={styles.slideshowIndicator}>
+                    <View style={[styles.slideshowIndicator, { flexDirection: 'row', alignItems: 'center', gap: 6 }]}>
+                      <TouchableOpacity 
+                        onPress={() => setActiveCropIndex((prev) => (prev - 1 + primaryCrops.length) % primaryCrops.length)}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <ChevronLeft size={16} color="#fff" />
+                      </TouchableOpacity>
                       <Text style={styles.slideshowIndicatorText}>
                         {activeCropIndex + 1}/{primaryCrops.length}
                       </Text>
+                      <TouchableOpacity 
+                        onPress={() => setActiveCropIndex((prev) => (prev + 1) % primaryCrops.length)}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <ChevronRight size={16} color="#fff" />
+                      </TouchableOpacity>
                     </View>
                   )}
                 </View>

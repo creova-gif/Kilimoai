@@ -23,6 +23,7 @@ import { useSyncEngine } from '../hooks/useSyncEngine';
 import { useNotifications } from '../hooks/useNotifications';
 import { useFarmVitals } from '../hooks/useFarmVitals';
 import { useIdleTimeout } from '../hooks/useIdleTimeout';
+import { initializeOfflineManager } from '../lib/offline';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -247,6 +248,12 @@ export default function RootLayout() {
     'Inter_900Black': InstrumentSans_700Bold,
     'InstrumentSerif_400Regular': InstrumentSerif_400Regular,
   });
+
+  useEffect(() => {
+    // Start offline manager when layout mounts
+    const unsubscribe = initializeOfflineManager();
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (error) throw error;

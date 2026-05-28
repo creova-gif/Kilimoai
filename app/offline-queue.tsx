@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import {
   ChevronLeft, Wifi, WifiOff, RefreshCw, Camera, MessageSquare,
   ShoppingCart, ClipboardList, CheckCircle2, Clock, Trash2,
-  CloudOff, Cloud, Zap, HardDrive, AlertTriangle,
+  CloudOff, Cloud, Zap, HardDrive, AlertTriangle, Info
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown, FadeInUp, useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSequence } from 'react-native-reanimated';
@@ -29,20 +29,14 @@ type QueueItem = {
   retries: number;
 };
 
-const INITIAL_QUEUE: QueueItem[] = [
-  { id: 'q1', type: 'scan',        label: 'Skani ya Mazao',      sub: 'Picha 3 zinasubiri uchanganuzi',    sizeKB: 847, ts: Date.now() - 3600000, retries: 1 },
-  { id: 'q2', type: 'message',     label: 'Ujumbe wa Sankofa',   sub: 'Maswali 2 hayakupelekwa',           sizeKB: 4,   ts: Date.now() - 1800000, retries: 0 },
-  { id: 'q3', type: 'price_check', label: 'Bei za Soko',         sub: 'Ombi la bei — Kariakoo, Mbeya',     sizeKB: 2,   ts: Date.now() - 900000,  retries: 0 },
-  { id: 'q4', type: 'task',        label: 'Kazi Mpya',           sub: '"Mwagilia Kanda B" — haijaokolewa', sizeKB: 1,   ts: Date.now() - 600000,  retries: 0 },
-  { id: 'q5', type: 'order',       label: 'Agizo la Pembejeo',   sub: 'Mbolea 50kg — halijathibitishwa',   sizeKB: 3,   ts: Date.now() - 120000,  retries: 2 },
-];
+// Removed INITIAL_QUEUE mock
 
-const TYPE_META: Record<QueueItem['type'], { icon: (c: string) => React.ReactNode; color: string; label: string }> = {
-  scan:        { icon: (c) => <Camera size={16} color={c} />,       color: '#8b5cf6', label: 'SKANI' },
-  message:     { icon: (c) => <MessageSquare size={16} color={c} />, color: '#3b82f6', label: 'UJUMBE' },
-  order:       { icon: (c) => <ShoppingCart size={16} color={c} />, color: '#f59e0b', label: 'AGIZO' },
-  task:        { icon: (c) => <ClipboardList size={16} color={c} />, color: '#22d15a', label: 'KAZI' },
-  price_check: { icon: (c) => <Zap size={16} color={c} />,          color: '#06b6d4', label: 'BEI' },
+const TYPE_META: Record<string, { icon: (c: string) => React.ReactNode; color: string; label: string }> = {
+  scan_result:        { icon: (c) => <Camera size={16} color={c} />,       color: '#8b5cf6', label: 'SKANI' },
+  voice_note:         { icon: (c) => <MessageSquare size={16} color={c} />, color: '#3b82f6', label: 'SAUTI' },
+  market_order:       { icon: (c) => <ShoppingCart size={16} color={c} />, color: '#f59e0b', label: 'AGIZO' },
+  task_complete:      { icon: (c) => <ClipboardList size={16} color={c} />, color: '#22d15a', label: 'KAZI' },
+  irrigation_log:     { icon: (c) => <Zap size={16} color={c} />,          color: '#06b6d4', label: 'MAJI' },
 };
 
 function fmtAge(ts: number): string {
@@ -69,12 +63,14 @@ export default function OfflineQueueScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
   const language = useKilimoStore((s) => s.language);
-  const [online, setOnline] = useState(false);
+  const online = useKilimoStore((s) => s.isOnline);
+  const queue = useKilimoStore((s) => s.syncQueue);
+  const dequeueAction = useKilimoStore((s) => s.dequeueAction);
   const [syncing, setSyncing] = useState(false);
-  const [queue, setQueue] = useState<QueueItem[]>(INITIAL_QUEUE);
   const [synced, setSynced] = useState<string[]>([]);
 
-  const totalKB = queue.reduce((a, b) => a + b.sizeKB, 0);
+  // Estimate 1KB per payload
+  const totalKB = queue.length * 1.5;
 
   const handleSync = () => {
     if (!online) {
@@ -98,12 +94,12 @@ export default function OfflineQueueScreen() {
 
   const handleDelete = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setQueue(prev => prev.filter(q => q.id !== id));
+    dequeueAction(id);
   };
 
   const toggleOnline = () => {
     Haptics.selectionAsync();
-    setOnline(v => !v);
+    useKilimoStore.getState().setOnlineStatus(!online);
     if (synced.length > 0) setSynced([]);
   };
 
@@ -171,7 +167,7 @@ export default function OfflineQueueScreen() {
             </Animated.View>
           )}
           {queue.map((item, i) => {
-            const meta = TYPE_META[item.type];
+            const meta = TYPE_META[item.type] || { icon: (c: string) => <Info size={16} color={c} />, color: '#64748b', label: 'TUKIO' };
             const done = synced.includes(item.id);
             return (
               <Animated.View key={item.id} entering={FadeInDown.delay(i * 60).springify()}>
@@ -181,18 +177,18 @@ export default function OfflineQueueScreen() {
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                      <Text style={[s.qLabel, { color: colors.text }]} numberOfLines={1}>{item.label}</Text>
+                      <Text style={[s.qLabel, { color: colors.text }]} numberOfLines={1}>{(item.payload as any)?.label || item.type}</Text>
                       <View style={[s.typeBadge, { backgroundColor: meta.color + '18' }]}>
                         <Text style={[s.typeBadgeText, { color: meta.color }]}>{meta.label}</Text>
                       </View>
                     </View>
-                    <Text style={[s.qSub, { color: colors.textMute }]} numberOfLines={1}>{item.sub}</Text>
+                    <Text style={[s.qSub, { color: colors.textMute }]} numberOfLines={1}>{(item.payload as any)?.sub || 'Tukio la nje ya mtandao'}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                       <Clock size={10} color={colors.textMute} />
-                      <Text style={[s.qMeta, { color: colors.textMute }]}>{fmtAge(item.ts)}</Text>
+                      <Text style={[s.qMeta, { color: colors.textMute }]}>{fmtAge(new Date(item.createdAt).getTime())}</Text>
                       <Text style={[s.qMeta, { color: colors.textMute }]}>·</Text>
                       <HardDrive size={10} color={colors.textMute} />
-                      <Text style={[s.qMeta, { color: colors.textMute }]}>{item.sizeKB > 500 ? `${(item.sizeKB / 1024).toFixed(1)} MB` : `${item.sizeKB} KB`}</Text>
+                      <Text style={[s.qMeta, { color: colors.textMute }]}>1.5 KB</Text>
                       {item.retries > 0 && <>
                         <Text style={[s.qMeta, { color: colors.textMute }]}>·</Text>
                         <AlertTriangle size={10} color="#f59e0b" />

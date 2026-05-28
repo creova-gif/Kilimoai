@@ -8,10 +8,10 @@ export const COLORS = {
   brandShadow:     '#0a3d18',   // deep shadow behind primary elements
 
   // Luxury Neutrals
-  bgLight:      '#F2F7F2',   // clean pale-green-white
-  bgDark:       '#0B0F0B',   // deep charcoal-green
+  bgLight:      '#F8FAF8',   // Cleaner white-green
+  bgDark:       '#080A08',   // Pure luxury dark
   cardLight:    '#FFFFFF',
-  cardDark:     '#141A14',
+  cardDark:     '#121812',   // Brighter dark card instead of dim gray
 
   // Ivory / Charcoal
   ivory:        '#FCFCFA',

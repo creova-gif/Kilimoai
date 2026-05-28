@@ -51,12 +51,13 @@ export type Feature =
   | 'peer_groups'
   | 'wallet_admin'
   | 'iot_systems'
-  | 'soil_analysis';
+  | 'soil_analysis'
+  | 'crop_library';
 
 // Matrix mirrors PRD Section 2.1
 const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
   smallholder: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'basic', farm_mapping: 'basic', task_management: 'basic',
     livestock: 'none', inventory: 'none',
     market_prices: 'full', marketplace: 'full', contract_farming: 'none', input_supply: 'none',
@@ -66,7 +67,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'none', iot_systems: 'none', soil_analysis: 'basic',
   },
   farmer: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'full', farm_mapping: 'full', task_management: 'full',
     livestock: 'full', inventory: 'full',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
@@ -76,7 +77,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'none', iot_systems: 'basic', soil_analysis: 'full',
   },
   farm_manager: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'full', farm_mapping: 'full', task_management: 'full',
     livestock: 'full', inventory: 'full',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
@@ -86,7 +87,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'basic', iot_systems: 'full', soil_analysis: 'full',
   },
   agribusiness: {
-    ai_chat: 'none', photo_diagnosis: 'none', voice_assistant: 'none',
+    ai_chat: 'none', photo_diagnosis: 'none', voice_assistant: 'none', crop_library: 'full',
     crop_planning: 'none', farm_mapping: 'none', task_management: 'none',
     livestock: 'none', inventory: 'none',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
@@ -96,7 +97,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'basic', iot_systems: 'none', soil_analysis: 'none',
   },
   coop_leader: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'full', farm_mapping: 'full', task_management: 'none',
     livestock: 'none', inventory: 'none',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'none',
@@ -106,7 +107,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'full', iot_systems: 'none', soil_analysis: 'basic',
   },
   commercial_farmer: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'full', farm_mapping: 'full', task_management: 'full',
     livestock: 'full', inventory: 'full',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
@@ -116,7 +117,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'basic', iot_systems: 'full', soil_analysis: 'full',
   },
   commercial_admin: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'full', farm_mapping: 'full', task_management: 'full',
     livestock: 'full', inventory: 'full',
     market_prices: 'full', marketplace: 'full', contract_farming: 'full', input_supply: 'full',
@@ -126,7 +127,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     wallet_admin: 'full', iot_systems: 'full', soil_analysis: 'full',
   },
   extension_officer: {
-    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
+    ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full', crop_library: 'full',
     crop_planning: 'basic', farm_mapping: 'basic', task_management: 'full',
     livestock: 'basic', inventory: 'none',
     market_prices: 'full', marketplace: 'none', contract_farming: 'none', input_supply: 'basic',
@@ -140,6 +141,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
 const FEATURE_LABELS: Record<Feature, string> = {
   ai_chat: 'AI Chat',
   photo_diagnosis: 'Photo Crop Diagnosis',
+  crop_library: 'Crop Library',
   voice_assistant: 'Voice Assistant',
   crop_planning: 'Crop Planning',
   farm_mapping: 'Farm Mapping',
