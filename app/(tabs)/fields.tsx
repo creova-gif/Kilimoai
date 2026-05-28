@@ -288,107 +288,242 @@ export default function FarmHub() {
 
           {/* ── Active Selection Bottom Details Card ────────────── */}
           <View style={styles.bottomSheetContainer}>
-            <TouchableOpacity 
-              activeOpacity={0.9} 
+            <TouchableOpacity
+              activeOpacity={0.92}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push(`/field/${activeZone.id}`);
               }}
             >
-              <LinearGradient
-                colors={isDark ? ['rgba(34, 209, 90, 0.95)', 'rgba(10, 15, 10, 0.99)'] : ['#F0FAF2', '#FFFFFF']}
-                style={[styles.bottomSheet, { borderColor: colors.border }]}
-              >
-                <View style={styles.sheetTopRow}>
-                <View>
-                  <Text style={styles.activeSelectionLabel}>
-                    {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
-                  </Text>
-                  <Text style={[styles.activeZoneTitle, { color: colors.text }]}>
-                    {language === 'sw' ? activeZone.nameSw : activeZone.nameEn}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                    setZoomLevel(1.5);
-                  }}
-                  style={[styles.recenterBtn, { backgroundColor: colors.primaryLight }]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Recenter map"
-                >
-                  <Target size={16} color="#22d15a" />
-                </TouchableOpacity>
-              </View>
+              {/* Card shell */}
+              <View style={[styles.bottomSheet, {
+                backgroundColor: isDark ? '#0b150d' : '#ffffff',
+                borderColor: activeZone.alertType === 'warning'
+                  ? 'rgba(245,158,11,0.35)'
+                  : isDark ? 'rgba(34,209,90,0.2)' : 'rgba(34,209,90,0.25)',
+                padding: 0,
+                flexDirection: 'row',
+                overflow: 'hidden',
+              }]}>
 
-              {/* Status Message */}
-              <View style={styles.statusRow}>
-                <View style={[styles.statusDot, { backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : '#22d15a' }]} />
-                <Text style={[styles.statusText, { color: colors.text }]}>
-                  {language === 'sw' ? activeZone.messageSw : activeZone.messageEn}
-                </Text>
-              </View>
+                {/* ── Left accent strip ── */}
+                <LinearGradient
+                  colors={activeZone.alertType === 'warning'
+                    ? ['#F59E0B', '#D97706']
+                    : ['#22d15a', '#048038']}
+                  style={{ width: 4, alignSelf: 'stretch' }}
+                />
 
-              {/* Grid Readings */}
-              <View style={styles.metricsGrid}>
-                {/* Metric 1 */}
-                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={[styles.metricName, { color: colors.textMute }]}>{language === 'sw' ? 'Ukubwa' : 'Size'}</Text>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.area}</Text>
-                </View>
-                {/* Metric 2 */}
-                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={[styles.metricName, { color: colors.textMute }]}>NDVI</Text>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.ndvi}</Text>
-                </View>
-                {/* Metric 3 */}
-                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={[styles.metricName, { color: colors.textMute }]}>pH ya Udongo</Text>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.ph}</Text>
-                </View>
-                {/* Metric 4 */}
-                <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={[styles.metricName, { color: colors.textMute }]}>{language === 'sw' ? 'Unyevu' : 'Moisture'}</Text>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.moisture}</Text>
-                </View>
-              </View>
+                {/* ── Main content ── */}
+                <View style={{ flex: 1, padding: 15 }}>
 
-              {/* Advanced Nutrients Bar */}
-              <View style={[styles.nutrientsBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <View style={styles.nutrientsHeader}>
-                  <Sparkles size={14} color="#22d15a" />
-                  <Text style={[styles.nutrientsTitle, { color: colors.text }]}>
-                    {language === 'sw' ? 'Uchambuzi wa Virutubisho' : 'Soil Nutrient Analysis'}
-                  </Text>
-                </View>
-                <View style={styles.nutrientsRow}>
-                  {/* Nitrogen */}
-                  <View style={styles.nutrientElem}>
-                    <Text style={[styles.nutrientLabel, { color: colors.textMute }]}>N</Text>
-                    <Text style={[styles.nutrientVal, { color: activeZone.nitrogen.color }]}>
-                      {language === 'sw' ? activeZone.nitrogen.statusSw : activeZone.nitrogen.statusEn}
+                  {/* Header row */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <View style={{ flex: 1, paddingRight: 8 }}>
+                      {/* Micro label + live dot */}
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 3 }}>
+                        <View style={{
+                          width: 5, height: 5, borderRadius: 3,
+                          backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : '#22d15a',
+                        }} />
+                        <Text style={{
+                          fontSize: 8.5, fontFamily: 'Inter_700Bold',
+                          color: activeZone.alertType === 'warning' ? '#F59E0B' : '#22d15a',
+                          letterSpacing: 1.6, textTransform: 'uppercase',
+                        }}>
+                          {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
+                        </Text>
+                      </View>
+                      {/* Zone title — editorial serif */}
+                      <Text style={{
+                        fontFamily: 'InstrumentSerif_400Regular',
+                        fontSize: 20, lineHeight: 23,
+                        color: colors.text,
+                      }}>
+                        {language === 'sw' ? activeZone.nameSw : activeZone.nameEn}
+                      </Text>
+                      {/* Status message */}
+                      <Text style={{
+                        fontFamily: 'Inter_500Medium', fontSize: 11,
+                        color: colors.textMute, marginTop: 3,
+                      }}>
+                        {language === 'sw' ? activeZone.messageSw : activeZone.messageEn}
+                      </Text>
+                    </View>
+
+                    {/* Recenter pill button */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                        setZoomLevel(1.5);
+                      }}
+                      style={[styles.recenterBtn, { backgroundColor: colors.primaryLight }]}
+                      accessibilityRole="button"
+                      accessibilityLabel="Recenter map"
+                    >
+                      <Target size={15} color="#22d15a" />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Thin rule */}
+                  <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 12 }} />
+
+                  {/* ── Metrics grid ── */}
+                  <View style={{ flexDirection: 'row', gap: 7 }}>
+                    {([
+                      {
+                        key: 'size',
+                        label: language === 'sw' ? 'UKUBWA' : 'SIZE',
+                        value: activeZone.area,
+                        pct: 0.45,
+                        barColor: '#22d15a',
+                      },
+                      {
+                        key: 'ndvi',
+                        label: 'NDVI',
+                        value: String(activeZone.ndvi),
+                        pct: activeZone.ndvi,
+                        barColor: '#22d15a',
+                      },
+                      {
+                        key: 'ph',
+                        label: 'PH',
+                        value: String(activeZone.ph),
+                        pct: activeZone.ph / 14,
+                        barColor: activeZone.ph < 6.0 ? '#EA580C' : activeZone.ph <= 7.0 ? '#22d15a' : '#0891B2',
+                      },
+                      {
+                        key: 'moisture',
+                        label: language === 'sw' ? 'UNYEVU' : 'MOIST.',
+                        value: activeZone.moisture,
+                        pct: parseInt(activeZone.moisture) / 100,
+                        barColor: '#3B82F6',
+                      },
+                    ] as { key: string; label: string; value: string; pct: number; barColor: string }[]).map((m) => (
+                      <View key={m.key} style={{
+                        flex: 1,
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.025)',
+                        borderRadius: 11, padding: 9,
+                        borderWidth: 1, borderColor: colors.border,
+                        overflow: 'hidden',
+                      }}>
+                        <Text style={{
+                          fontSize: 7, fontFamily: 'Inter_700Bold',
+                          color: colors.textMute, letterSpacing: 0.8,
+                          marginBottom: 5,
+                        }}>
+                          {m.label}
+                        </Text>
+                        <Text style={{
+                          fontFamily: 'InstrumentSerif_400Regular',
+                          fontSize: 15, color: colors.text,
+                        }}>
+                          {m.value}
+                        </Text>
+                        {/* Percentage fill bar */}
+                        <View style={{
+                          height: 2, backgroundColor: colors.border,
+                          borderRadius: 1, marginTop: 8,
+                        }}>
+                          <View style={{
+                            height: 2, borderRadius: 1,
+                            backgroundColor: m.barColor,
+                            width: `${Math.min(Math.round(m.pct * 100), 100)}%`,
+                          }} />
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+
+                  {/* ── Nutrient section ── */}
+                  <View style={{
+                    marginTop: 10,
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                    borderRadius: 13, padding: 11,
+                    borderWidth: 1, borderColor: colors.border,
+                  }}>
+                    {/* Section header */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 10 }}>
+                      <Sparkles size={11} color="#22d15a" />
+                      <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: colors.text, letterSpacing: 0.3 }}>
+                        {language === 'sw' ? 'Uchambuzi wa Virutubisho' : 'Soil Nutrient Analysis'}
+                      </Text>
+                    </View>
+
+                    {/* N / P / K rows */}
+                    {([
+                      {
+                        key: 'n', symbol: 'N',
+                        name: language === 'sw' ? 'Nitrojeni' : 'Nitrogen',
+                        data: activeZone.nitrogen,
+                      },
+                      {
+                        key: 'p', symbol: 'P',
+                        name: language === 'sw' ? 'Fosforasi' : 'Phosphorus',
+                        data: activeZone.phosphorus,
+                      },
+                      {
+                        key: 'k', symbol: 'K',
+                        name: language === 'sw' ? 'Potasiamu' : 'Potassium',
+                        data: activeZone.potassium,
+                      },
+                    ] as { key: string; symbol: string; name: string; data: { statusEn: string; statusSw: string; value: string; color: string } }[]).map((n, i) => (
+                      <View key={n.key} style={{ marginBottom: i < 2 ? 8 : 0 }}>
+                        {/* Label row */}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            {/* Symbol badge */}
+                            <View style={{
+                              width: 18, height: 18, borderRadius: 5,
+                              backgroundColor: n.data.color + '22',
+                              justifyContent: 'center', alignItems: 'center',
+                            }}>
+                              <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 8.5, color: n.data.color }}>
+                                {n.symbol}
+                              </Text>
+                            </View>
+                            <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: colors.textMute }}>
+                              {n.name}
+                            </Text>
+                          </View>
+                          {/* Status pill */}
+                          <View style={{
+                            backgroundColor: n.data.color + '18',
+                            paddingHorizontal: 7, paddingVertical: 2,
+                            borderRadius: 20,
+                          }}>
+                            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 9, color: n.data.color }}>
+                              {language === 'sw' ? n.data.statusSw : n.data.statusEn}
+                            </Text>
+                          </View>
+                        </View>
+                        {/* Progress bar */}
+                        <View style={{ height: 3, backgroundColor: colors.border, borderRadius: 1.5 }}>
+                          <LinearGradient
+                            colors={
+                              n.data.color === '#22d15a' ? ['#22d15a', '#048038']
+                              : n.data.color === '#D97706' ? ['#FBBF24', '#D97706']
+                              : ['#F87171', '#DC2626']
+                            }
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={{ height: 3, borderRadius: 1.5, width: n.data.value }}
+                          />
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+
+                  {/* Tap hint */}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 9, gap: 3, opacity: 0.38 }}>
+                    <ChevronRight size={9} color={colors.textMute} />
+                    <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 9, color: colors.textMute }}>
+                      {language === 'sw' ? 'Gusa kwa maelezo zaidi' : 'Tap for full details'}
                     </Text>
                   </View>
-                  <View style={[styles.elemDivider, { backgroundColor: colors.border }]} />
-                  {/* Phosphorus */}
-                  <View style={styles.nutrientElem}>
-                    <Text style={[styles.nutrientLabel, { color: colors.textMute }]}>P</Text>
-                    <Text style={[styles.nutrientVal, { color: activeZone.phosphorus.color }]}>
-                      {language === 'sw' ? activeZone.phosphorus.statusSw : activeZone.phosphorus.statusEn}
-                    </Text>
-                  </View>
-                  <View style={[styles.elemDivider, { backgroundColor: colors.border }]} />
-                  {/* Potassium */}
-                  <View style={styles.nutrientElem}>
-                    <Text style={[styles.nutrientLabel, { color: colors.textMute }]}>K</Text>
-                    <Text style={[styles.nutrientVal, { color: activeZone.potassium.color }]}>
-                      {language === 'sw' ? activeZone.potassium.statusSw : activeZone.potassium.statusEn}
-                    </Text>
-                  </View>
+
                 </View>
               </View>
-
-            </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
