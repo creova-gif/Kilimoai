@@ -64,7 +64,7 @@ export const useTheme = () => {
       cardSolid:   isDark ? COLORS.cardDark  : COLORS.cardLight,
 
       text:     isDark ? COLORS.ivory    : '#0F1F0F',
-      textMute: isDark ? '#7A9480'       : '#4A6B4A',
+      textMute: isDark ? '#9CA3AF'       : '#4B5563', // Slate 400 and Slate 600 for AA contrast
 
       border:      isDark ? 'rgba(34, 209, 90, 0.14)' : '#D8EDD8',
       borderSolid: isDark ? '#1E2E1E'                 : '#D8EDD8',
@@ -91,28 +91,28 @@ export const useTheme = () => {
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: isDark ? 0.35 : 0.08,
         shadowRadius: 4,
-        elevation: 2,
+        elevation: 0, // Removed to prevent harsh muddy shadows on Android
       },
       md: {
         shadowColor: COLORS.brandShadow,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: isDark ? 0.45 : 0.12,
         shadowRadius: 8,
-        elevation: 4,
+        elevation: 1, // Softened for Android
       },
       lg: {
         shadowColor: COLORS.brandShadow,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: isDark ? 0.55 : 0.16,
         shadowRadius: 16,
-        elevation: 8,
+        elevation: 2, // Softened for Android
       },
       premium: {
         shadowColor: COLORS.brandShadow,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: isDark ? 0.65 : 0.20,
         shadowRadius: 24,
-        elevation: 12,
+        elevation: 4, // Softened for Android
       },
     },
   };

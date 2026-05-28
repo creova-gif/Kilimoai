@@ -292,8 +292,8 @@ function Detail({ label, value }: { label: string; value: string }) {
   const { colors } = useTheme();
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 }}>
-      <Text style={{ color: colors.textMute, fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>{label}</Text>
-      <Text style={{ color: colors.text, fontSize: 11, fontFamily: 'Inter_700Bold' }}>{value}</Text>
+      <Text style={{ color: colors.textMute, fontSize: 13, fontFamily: 'Inter_500Medium' }}>{label}</Text>
+      <Text style={{ color: colors.text, fontSize: 13, fontFamily: 'Inter_600SemiBold' }}>{value}</Text>
     </View>
   );
 }
@@ -394,54 +394,54 @@ function AccessDenied() {
 }
 
 const s = StyleSheet.create({
-  addBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
+  addBtn: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center' },
   summaryCard: { flexDirection: 'row', alignItems: 'center', padding: 18 },
-  summaryValue: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  summaryValueSm: { fontSize: 13, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
-  summaryLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginTop: 3, textAlign: 'center' },
+  summaryValue: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  summaryValueSm: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
+  summaryLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5, marginTop: 3, textAlign: 'center' },
   divider: { width: 1, height: 36, marginHorizontal: 4 },
   alertCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderWidth: 1 },
-  alertTitle: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  alertBody: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  alertTitle: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  alertBody: { fontSize: 13, fontFamily: 'Inter_500Medium', marginTop: 2 },
 });
 
 const ic = StyleSheet.create({
   leftBar: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, borderTopLeftRadius: 16, borderBottomLeftRadius: 16 },
   catBg: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
-  itemName: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
+  itemName: { fontSize: 15, fontFamily: 'Inter_700Bold' },
   catBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  catBadgeText: { fontSize: 8, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.8 },
-  supplier: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
-  qtyControl: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  qtyBtn: { width: 28, height: 28, borderRadius: 8, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-  qtyText: { fontSize: 13, fontFamily: 'InstrumentSerif_400Regular', minWidth: 52, textAlign: 'center' },
+  catBadgeText: { fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.8 },
+  supplier: { fontSize: 12, fontFamily: 'Inter_500Medium' },
+  qtyControl: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  qtyBtn: { width: 32, height: 32, borderRadius: 8, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
+  qtyText: { fontSize: 15, fontFamily: 'Inter_600SemiBold', minWidth: 52, textAlign: 'center' },
   progressTrack: { height: 4, borderRadius: 2, marginTop: 12, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 2 },
   lowBar: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8, padding: 8, borderRadius: 10, borderWidth: 1 },
-  lowText: { color: '#ef4444', fontSize: 10, fontFamily: 'Inter_700Bold', flex: 1 },
-  expandRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTopWidth: 1 },
-  expandLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', flex: 1 },
+  lowText: { color: '#ef4444', fontSize: 12, fontFamily: 'Inter_600SemiBold', flex: 1 },
+  expandRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTopWidth: 1, minHeight: 44 },
+  expandLabel: { fontSize: 13, fontFamily: 'Inter_600SemiBold', flex: 1 },
   expandBox: { marginTop: 10, padding: 12, borderRadius: 12, borderTopWidth: 1 },
-  deleteBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ef444440', alignSelf: 'flex-start' },
-  deleteText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#ef4444' },
+  deleteBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ef444440', alignSelf: 'flex-start', minHeight: 44 },
+  deleteText: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: '#ef4444' },
 });
 
 const m = StyleSheet.create({
   sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 32, maxHeight: '92%' },
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 4 },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 },
-  sheetTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
+  sheetTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
   catPreview: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  label: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 16, marginBottom: 8 },
+  closeBtn: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
+  label: { fontSize: 12, fontFamily: 'Inter_600SemiBold', letterSpacing: 1.2, marginTop: 16, marginBottom: 8 },
   catGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  catPill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 12, borderWidth: 1.5 },
-  catText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
-  inputWrap: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 4 },
-  input: { fontSize: 15, fontFamily: 'Inter_600SemiBold', paddingVertical: 10 },
+  catPill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 12, borderWidth: 1.5, minHeight: 44 },
+  catText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  inputWrap: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 4, minHeight: 48, justifyContent: 'center' },
+  input: { fontSize: 15, fontFamily: 'Inter_500Medium', paddingVertical: 10 },
   unitRow: { flexDirection: 'row', gap: 8 },
-  unitPill: { flex: 1, paddingVertical: 11, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
-  unitText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
-  saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24, paddingVertical: 16, borderRadius: 16 },
-  saveBtnText: { color: '#fff', fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
+  unitPill: { flex: 1, paddingVertical: 11, borderRadius: 12, borderWidth: 1.5, alignItems: 'center', minHeight: 44 },
+  unitText: { fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+  saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24, paddingVertical: 16, borderRadius: 16, minHeight: 48 },
+  saveBtnText: { color: '#fff', fontSize: 16, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.3 },
 });

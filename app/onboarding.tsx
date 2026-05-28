@@ -958,7 +958,7 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
     pillText: { color: colors.textMute, fontSize: 13, fontFamily: 'Inter_600SemiBold' },
     pillTextActive: { color: '#22d15a' },
     cropGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    cropPill: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: colors.border },
+    cropPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: colors.border, minHeight: 44, justifyContent: 'center' },
     actBtn: { flex: 1, paddingVertical: 13, borderRadius: 12, borderWidth: 1, borderColor: colors.border, alignItems: 'center' },
 
     // Toggles

@@ -1814,7 +1814,7 @@ export default function HomeScreen() {
         onRequestClose={() => setActiveGuideModal(false)}
       >
         <View style={styles.guideModalContainer}>
-          <BlurView intensity={35} tint="dark" style={StyleSheet.absoluteFill} />
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.6)' }]} />
           <View style={[styles.guideModalContent, { backgroundColor: isDark ? '#0c0f0a' : '#FCFBF7', borderColor: colors.border }]}>
             {/* Header */}
             <View style={styles.guideModalHeader}>
@@ -2027,10 +2027,8 @@ export default function HomeScreen() {
 
       {/* Verification Gate Overlay */}
       {agroId?.verificationStatus !== 'verified' && (
-        <BlurView 
-          intensity={85} 
-          tint={isDark ? "dark" : "light"} 
-          style={[StyleSheet.absoluteFill, { justifyContent: 'center', alignItems: 'center', padding: 24, zIndex: 1000 }]}
+        <View 
+          style={[StyleSheet.absoluteFill, { justifyContent: 'center', alignItems: 'center', padding: 24, zIndex: 1000, backgroundColor: isDark ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)' }]}
         >
           {/* Card containing the scanner and details */}
           <Card 
