@@ -634,7 +634,7 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
     const isActive = activeExcelData && activeExcelData.fileName === item.excelData.fileName;
     if (!isActive) {
       return (
-        <Animated.View entering={FadeInDown} style={styles.detachedCard}>
+        <Animated.View entering={FadeInDown} style={[styles.detachedCard, { borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border }]}>
           <FileSpreadsheet size={14} color={isDark ? "rgba(255,255,255,0.3)" : colors.textMute} />
           <Text style={[styles.detachedText, { color: colors.text }]}>
             {language === 'sw' ? `Lahajedwali imetenganishwa: ${item.excelData.fileName}` : `Detached: ${item.excelData.fileName}`}
@@ -671,7 +671,7 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
 
       {!isAi && (
         <View style={[styles.userAvatar, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}>
-          <User size={14} color="rgba(255,255,255,0.6)" />
+          <User size={14} color={isDark ? "rgba(255,255,255,0.6)" : colors.textMute} />
         </View>
       )}
     </Animated.View>
@@ -711,6 +711,7 @@ function TypingIndicator() {
 
 function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
   const [expanded, setExpanded] = useState(false);
+  const { colors, isDark } = useTheme();
 
   return (
     <Animated.View entering={FadeInDown} style={styles.excelCard}>
@@ -719,8 +720,8 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           <FileSpreadsheet size={20} color="#22d15a" />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
-          <Text style={styles.excelFileName} numberOfLines={1}>{data.fileName}</Text>
-          <Text style={styles.excelMeta}>{data.rowCount} rows · {data.columnCount} cols</Text>
+          <Text style={[styles.excelFileName, { color: colors.text }]} numberOfLines={1}>{data.fileName}</Text>
+          <Text style={[styles.excelMeta, { color: colors.textMute }]}>{data.rowCount} rows · {data.columnCount} cols</Text>
         </View>
         <TouchableOpacity onPress={onClear} style={styles.excelTrash}>
           <Trash2 size={16} color="#ef4444" />
@@ -729,8 +730,8 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
         {data.headers.map((h: string, i: number) => (
-          <View key={i} style={styles.headerChip}>
-            <Text style={styles.headerChipText}>{h}</Text>
+          <View key={i} style={[styles.headerChip, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.primaryLight }]}>
+            <Text style={[styles.headerChipText, { color: isDark ? 'rgba(255,255,255,0.7)' : colors.text }]}>{h}</Text>
           </View>
         ))}
       </ScrollView>
@@ -743,19 +744,19 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
 
       {expanded && (
         <ScrollView horizontal showsHorizontalScrollIndicator style={{ marginTop: 8 }}>
-          <View style={styles.table}>
+          <View style={[styles.table, { borderColor: colors.border }]}>
             <View style={styles.tableHeaderRow}>
               {data.headers.map((h: string, i: number) => (
-                <View key={i} style={[styles.tableCell, styles.tableHeaderCell]}>
-                  <Text style={styles.tableHeaderText} numberOfLines={1}>{h}</Text>
+                <View key={i} style={[styles.tableCell, styles.tableHeaderCell, { borderBottomColor: colors.border }]}>
+                  <Text style={[styles.tableHeaderText, { color: isDark ? 'rgba(255,255,255,0.7)' : colors.textMute }]} numberOfLines={1}>{h}</Text>
                 </View>
               ))}
             </View>
             {data.previewRows.map((row: any, rIdx: number) => (
               <View key={rIdx} style={styles.tableRow}>
                 {data.headers.map((h: string, cIdx: number) => (
-                  <View key={cIdx} style={styles.tableCell}>
-                    <Text style={styles.tableCellText} numberOfLines={1}>{String(row[h] ?? '')}</Text>
+                  <View key={cIdx} style={[styles.tableCell, { borderBottomColor: colors.border }]}>
+                    <Text style={[styles.tableCellText, { color: isDark ? 'rgba(255,255,255,0.6)' : colors.text }]} numberOfLines={1}>{String(row[h] ?? '')}</Text>
                   </View>
                 ))}
               </View>
