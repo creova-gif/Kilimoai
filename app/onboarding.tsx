@@ -107,6 +107,8 @@ export default function OnboardingWizard() {
   const { signInWithPhone, signInWithEmail, verifyOtp, loading } = useAgroAuth();
   const { colors, isDark } = useTheme();
 
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
+
   const [step,         setStep]         = useState<Step>(0);
   const [lang,         setLang]         = useState<AppLanguage>('sw');
   const [authMethod,   setAuthMethod]   = useState<'phone' | 'email'>('phone');
@@ -432,6 +434,7 @@ export default function OnboardingWizard() {
 // ─────────────────────────────────────────────────────────────
 function WelcomeStep({ lang, setLang, onNext }: any) {
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
 
   // Localized strings
   const titleLine1 = lang === 'sw' ? 'KILIMO CHAKO,' : 'YOUR FARM,';
@@ -517,6 +520,7 @@ function WelcomeStep({ lang, setLang, onNext }: any) {
 // ─────────────────────────────────────────────────────────────
 function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail, lang, setUserId, setStep, setName }: any) {
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
 
   const isSupabaseConfigured = Boolean(
     process.env.EXPO_PUBLIC_SUPABASE_URL && process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
@@ -605,6 +609,7 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
 // ─────────────────────────────────────────────────────────────
 function OtpStep({ otp, setOtp, lang, contact, onResend }: any) {
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
   const [timer, setTimer] = useState(60);
 
   useEffect(() => {
@@ -684,6 +689,7 @@ function OtpStep({ otp, setOtp, lang, contact, onResend }: any) {
 // ─────────────────────────────────────────────────────────────
 function RoleStep({ t, role, setRole }: any) {
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
   return (
     <BlurView
       intensity={Platform.OS === 'ios' ? 25 : 80}
@@ -730,6 +736,7 @@ function RoleStep({ t, role, setRole }: any) {
 // ─────────────────────────────────────────────────────────────
 function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, acres, setAcres, activity, setActivity, hasLivestock, setHasLivestock, hasIrrigation, setHasIrrigation }: any) {
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
 
   return (
     <BlurView
@@ -881,6 +888,7 @@ function ProfileStep({ t, name, setName, region, setRegion, crops, toggleCrop, a
 function DoneStep({ t, name, role, lang }: any) {
   const meta = ROLE_META[role as CanonicalRole];
   const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
 
   return (
     <BlurView
@@ -918,341 +926,342 @@ function DoneStep({ t, name, role, lang }: any) {
 }
 
 function FieldLabel({ label }: { label: string }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const s = useMemo(() => createStyles(colors, isDark), [colors, isDark]);
   return <Text style={[s.fieldLabel, { color: colors.textMute }]}>{label}</Text>;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Styles
-// ─────────────────────────────────────────────────────────────
-const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#060d1f' },
+function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boolean) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: colors.background },
 
-  // Background decoration
-  orb: { position: 'absolute', borderRadius: 999 },
-  gridLine1: { position: 'absolute', top: '30%', left: 0, right: 0, height: 1, backgroundColor: 'rgba(255,255,255,0.025)' },
-  gridLine2: { position: 'absolute', top: '60%', left: 0, right: 0, height: 1, backgroundColor: 'rgba(255,255,255,0.02)' },
+    // Background decoration
+    orb: { position: 'absolute', borderRadius: 999 },
+    gridLine1: { position: 'absolute', top: '30%', left: 0, right: 0, height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.04)' },
+    gridLine2: { position: 'absolute', top: '60%', left: 0, right: 0, height: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.04)' },
 
-  // Top nav
-  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
-  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 6, paddingRight: 8 },
-  backText: { color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
-  progressPills: { flexDirection: 'row', gap: 5 },
-  progressPill: { width: 20, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.15)' },
-  progressActive: { backgroundColor: '#22d15a', width: 32 },
-  progressDone: { backgroundColor: 'rgba(34, 209, 90, 0.5)' },
-  stepNum: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontFamily: 'Inter_700Bold', minWidth: 28, textAlign: 'right' },
+    // Top nav
+    topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14 },
+    backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 6, paddingRight: 8 },
+    backText: { color: colors.textMute, fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+    progressPills: { flexDirection: 'row', gap: 5 },
+    progressPill: { width: 20, height: 4, borderRadius: 2, backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' },
+    progressActive: { backgroundColor: '#22d15a', width: 32 },
+    progressDone: { backgroundColor: 'rgba(34, 209, 90, 0.5)' },
+    stepNum: { color: colors.textMute, fontSize: 12, fontFamily: 'Inter_700Bold', minWidth: 28, textAlign: 'right' },
 
-  // Scroll containers
-  scroll: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 20 },
-  scrollLang: { flexGrow: 1 },
+    // Scroll containers
+    scroll: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 20 },
+    scrollLang: { flexGrow: 1 },
 
-  // Generic step root
-  stepRoot: { paddingTop: 8, paddingBottom: 12 },
+    // Generic step root
+    stepRoot: { paddingTop: 8, paddingBottom: 12 },
 
-  // Typography
-  h1: { color: '#fff', fontSize: 30, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8, lineHeight: 36, marginBottom: 8 },
-  sub: { color: 'rgba(255,255,255,0.6)', fontSize: 15, fontFamily: 'Inter_400Regular', lineHeight: 22 },
-  fieldLabel: { color: 'rgba(255,255,255,0.45)', fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1.8, textTransform: 'uppercase', marginTop: 20, marginBottom: 8 },
+    // Typography
+    h1: { color: colors.text, fontSize: 30, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8, lineHeight: 36, marginBottom: 8 },
+    sub: { color: colors.textMute, fontSize: 15, fontFamily: 'Inter_400Regular', lineHeight: 22 },
+    fieldLabel: { color: colors.textMute, fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1.8, textTransform: 'uppercase', marginTop: 20, marginBottom: 8 },
 
-  // Input
-  inputWrap: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  input: { color: '#fff', fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
+    // Input
+    inputWrap: { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: colors.border },
+    input: { color: colors.text, backgroundColor: colors.card, fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
 
-  // Pills
-  pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
-  pillActive: { borderColor: '#22d15a', backgroundColor: 'rgba(34, 209, 90, 0.15)' },
-  pillText: { color: 'rgba(255,255,255,0.7)', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  pillTextActive: { color: '#22d15a' },
-  cropGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cropPill: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
-  actBtn: { flex: 1, paddingVertical: 13, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)', alignItems: 'center' },
+    // Pills
+    pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: colors.border },
+    pillActive: { borderColor: '#22d15a', backgroundColor: 'rgba(34, 209, 90, 0.15)' },
+    pillText: { color: colors.textMute, fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+    pillTextActive: { color: '#22d15a' },
+    cropGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    cropPill: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: colors.border },
+    actBtn: { flex: 1, paddingVertical: 13, borderRadius: 12, borderWidth: 1, borderColor: colors.border, alignItems: 'center' },
 
-  // Toggles
-  toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.08)' },
-  toggleLabel: { color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+    // Toggles
+    toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+    toggleLabel: { color: colors.text, fontSize: 14, fontFamily: 'Inter_600SemiBold' },
 
-  // Footer CTA
-  footer: { paddingHorizontal: 22, paddingBottom: Platform.OS === 'ios' ? 32 : 22, paddingTop: 12 },
-  ctaWrap: { borderRadius: 16, overflow: 'hidden' },
-  ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 0, paddingVertical: 17 },
-  ctaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
-  ctaArrow: { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.15)', justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
+    // Footer CTA
+    footer: { paddingHorizontal: 22, paddingBottom: Platform.OS === 'ios' ? 32 : 22, paddingTop: 12 },
+    ctaWrap: { borderRadius: 16, overflow: 'hidden' },
+    ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 0, paddingVertical: 17 },
+    ctaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
+    ctaArrow: { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.15)', justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
 
-  // ── Lang step ─────────────────────────────────────────────
-  langRoot: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 24, paddingBottom: 24 },
-  logoWrap: { width: 96, height: 96, justifyContent: 'center', alignItems: 'center', marginBottom: 24, position: 'relative' },
-  logoGrad: { width: 88, height: 88, borderRadius: 26, justifyContent: 'center', alignItems: 'center' },
-  logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(34, 209, 90, 0.3)', top: 0, left: 0 },
-  logoImg: { width: 80, height: 80 },
-  langHeadline: { color: '#fff', fontSize: 34, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1.2, textAlign: 'center' },
-  taglineRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
-  taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#22d15a' },
-  langTagline: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 },
-  langDivider: { width: 40, height: 1.5, backgroundColor: 'rgba(34, 209, 90, 0.3)', marginVertical: 28 },
-  langPick: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: 16, alignSelf: 'flex-start' },
-  langCards: { flexDirection: 'row', gap: 12, alignSelf: 'stretch' },
-  langCard: { borderRadius: 18, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.1)', paddingVertical: 20, paddingHorizontal: 16, alignItems: 'center', gap: 10, overflow: 'hidden' },
-  langFlag: { fontSize: 32 },
-  langLabel: { color: '#fff', fontSize: 15, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
-  langCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
-  langCheckEmpty: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)' },
-  langCtaWrap: { alignSelf: 'stretch', borderRadius: 16, overflow: 'hidden', marginTop: 28 },
-  langCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 17 },
-  langCtaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
-  langFootnote: { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontFamily: 'Inter_400Regular', marginTop: 16, textAlign: 'center' },
+    // ── Lang step ─────────────────────────────────────────────
+    langRoot: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 24, paddingBottom: 24 },
+    logoWrap: { width: 96, height: 96, justifyContent: 'center', alignItems: 'center', marginBottom: 24, position: 'relative' },
+    logoGrad: { width: 88, height: 88, borderRadius: 26, justifyContent: 'center', alignItems: 'center' },
+    logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(34, 209, 90, 0.3)', top: 0, left: 0 },
+    logoImg: { width: 80, height: 80 },
+    langHeadline: { color: colors.text, fontSize: 34, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1.2, textAlign: 'center' },
+    taglineRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
+    taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#22d15a' },
+    langTagline: { color: colors.textMute, fontSize: 13, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 },
+    langDivider: { width: 40, height: 1.5, backgroundColor: 'rgba(34, 209, 90, 0.3)', marginVertical: 28 },
+    langPick: { color: colors.textMute, fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: 16, alignSelf: 'flex-start' },
+    langCards: { flexDirection: 'row', gap: 12, alignSelf: 'stretch' },
+    langCard: { borderRadius: 18, borderWidth: 1.5, borderColor: colors.border, paddingVertical: 20, paddingHorizontal: 16, alignItems: 'center', gap: 10, overflow: 'hidden' },
+    langFlag: { fontSize: 32 },
+    langLabel: { color: colors.text, fontSize: 15, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
+    langCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
+    langCheckEmpty: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: colors.border },
+    langCtaWrap: { alignSelf: 'stretch', borderRadius: 16, overflow: 'hidden', marginTop: 28 },
+    langCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 17 },
+    langCtaText: { color: '#022c22', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.2 },
+    langFootnote: { color: colors.textMute, fontSize: 11, fontFamily: 'Inter_400Regular', marginTop: 16, textAlign: 'center' },
 
-  // ── Welcome step ──────────────────────────────────────────
-  welcomeLogoWrap: { width: 80, height: 80, borderRadius: 20, overflow: 'hidden', marginBottom: 22, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.25)' },
-  welcomeLogoBg: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  welcomeLogoImg: { width: 60, height: 60 },
-  featureGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 24 },
-  featureCard: { width: (SW - 44 - 10) / 2, borderRadius: 16, padding: 16, gap: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  featureIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.06)', justifyContent: 'center', alignItems: 'center' },
-  featureLabel: { color: '#fff', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  featureSub: { color: 'rgba(255,255,255,0.5)', fontSize: 11, fontFamily: 'Inter_400Regular' },
+    // ── Welcome step ──────────────────────────────────────────
+    welcomeLogoWrap: { width: 80, height: 80, borderRadius: 20, overflow: 'hidden', marginBottom: 22, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.25)' },
+    welcomeLogoBg: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    welcomeLogoImg: { width: 60, height: 60 },
+    featureGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 24 },
+    featureCard: { width: (SW - 44 - 10) / 2, borderRadius: 16, padding: 16, gap: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+    featureIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.06)', justifyContent: 'center', alignItems: 'center' },
+    featureLabel: { color: '#fff', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
+    featureSub: { color: 'rgba(255,255,255,0.5)', fontSize: 11, fontFamily: 'Inter_400Regular' },
 
-  // ── Role step ─────────────────────────────────────────────
-  roleCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.03)' },
-  roleIconWrap: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
-  roleName: { color: '#fff', fontSize: 13, fontFamily: 'Inter_800ExtraBold', marginBottom: 2 },
-  roleDesc: { color: 'rgba(255,255,255,0.45)', fontSize: 11, fontFamily: 'Inter_400Regular' },
-  roleRadio: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+    // ── Role step ─────────────────────────────────────────────
+    roleCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.03)' },
+    roleIconWrap: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+    roleName: { color: '#fff', fontSize: 13, fontFamily: 'Inter_800ExtraBold', marginBottom: 2 },
+    roleDesc: { color: 'rgba(255,255,255,0.45)', fontSize: 11, fontFamily: 'Inter_400Regular' },
+    roleRadio: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
 
-  // ── Done step ─────────────────────────────────────────────
-  doneRingOuter: { width: 100, height: 100, borderRadius: 50, padding: 3, backgroundColor: 'rgba(34, 209, 90, 0.15)' },
-  doneRingInner: { flex: 1, borderRadius: 47, justifyContent: 'center', alignItems: 'center' },
-  idCard: { alignSelf: 'stretch', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.2)', padding: 18, marginTop: 28 },
-  idRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  idIconWrap: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
-  idName: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
-  idRole: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
-  idBadge: { backgroundColor: 'rgba(34, 209, 90, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.3)' },
-  idBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
-  idDivider: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 14 },
-  idFooter: { color: 'rgba(255,255,255,0.5)', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
-  methodToggle: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    marginTop: 24,
-  },
-  methodToggleText: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-  },
-  warnBanner: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginTop: 16,
-    gap: 6,
-  },
-  warnTitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  warnBody: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 18,
-  },
-  demoBypassBtn: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    marginTop: 12,
-  },
-  demoBypassText: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-  },
-  // Welcome Splash Styles
-  welcomeHeroRoot: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'flex-end',
-  },
-  welcomeHeroContent: {
-    paddingHorizontal: 28,
-    paddingBottom: Platform.OS === 'ios' ? 70 : 50,
-    gap: 20,
-  },
-  welcomeHeroTitle: {
-    color: '#FCFBF7',
-    fontSize: 42,
-    fontFamily: 'InstrumentSerif_400Regular',
-    lineHeight: 48,
-    letterSpacing: -1,
-  },
-  welcomeHeroSubtitle: {
-    color: 'rgba(252, 251, 247, 0.75)',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 24,
-  },
-  welcomeCtaBtn: {
-    marginTop: 20,
-    borderRadius: 35,
-    overflow: 'hidden',
-    height: 64,
-    justifyContent: 'center',
-    width: '100%',
-  },
-  welcomeCtaInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-  },
-  welcomeCtaText: {
-    color: '#FCFBF7',
-    fontSize: 18,
-    fontFamily: 'InstrumentSerif_400Regular',
-    letterSpacing: 0.5,
-    flex: 1,
-    textAlign: 'center',
-  },
-  welcomeArrowCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FCFBF7',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 4,
-  },
-  welcomeCarats: {
-    color: 'rgba(252, 251, 247, 0.4)',
-    fontSize: 16,
-    fontFamily: 'Inter_800ExtraBold',
-    marginRight: 20,
-  },
-  welcomeLangSafeArea: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 20,
-    right: 20,
-    zIndex: 100,
-  },
-  welcomeLangBlur: {
-    flexDirection: 'row',
-    borderRadius: 20,
-    overflow: 'hidden',
-    padding: 3,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
-  },
-  welcomeLangTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 17,
-  },
-  welcomeLangTabActive: {
-    backgroundColor: '#22d15a',
-  },
-  welcomeLangTabText: {
-    color: 'rgba(252, 251, 247, 0.6)',
-    fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  welcomeLangTabTextActive: {
-    color: '#FCFBF7',
-  },
-  welcomeScroll: {
-    paddingTop: 100,
-    paddingBottom: 40,
-    alignItems: 'center',
-    width: '100%',
-  },
-  illustrationContainer: {
-    width: 220,
-    height: 220,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
-    position: 'relative',
-  },
-  pulseRing: {
-    position: 'absolute',
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2.5,
-  },
-  iconCircle: {
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    borderWidth: 2.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  cropInterestContainer: {
-    width: '100%',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  cropInterestTitle: {
-    fontSize: 14,
-    fontFamily: 'Inter_800ExtraBold',
-    marginBottom: 12,
-  },
-  cropInterestGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  cropChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 14,
-    borderWidth: 1,
-    minHeight: 40,
-    justifyContent: 'center',
-  },
-  cropChipText: {
-    fontSize: 12,
-    fontFamily: 'Inter_700Bold',
-  },
-  stepIllustration: {
-    width: '100%',
-    height: 220,
-    borderRadius: 20,
-    marginBottom: 20,
-  },
-  doneIllustration: {
-    width: 160,
-    height: 160,
-    borderRadius: 24,
-    marginBottom: 16,
-  },
-  glassCard: {
-    borderRadius: 24,
-    borderWidth: 1,
-    padding: 20,
-    marginTop: 8,
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-});
+    // ── Done step ─────────────────────────────────────────────
+    doneRingOuter: { width: 100, height: 100, borderRadius: 50, padding: 3, backgroundColor: 'rgba(34, 209, 90, 0.15)' },
+    doneRingInner: { flex: 1, borderRadius: 47, justifyContent: 'center', alignItems: 'center' },
+    idCard: { alignSelf: 'stretch', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.2)', padding: 18, marginTop: 28 },
+    idRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+    idIconWrap: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
+    idName: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
+    idRole: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
+    idBadge: { backgroundColor: 'rgba(34, 209, 90, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.3)' },
+    idBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+    idDivider: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 14 },
+    idFooter: { color: 'rgba(255,255,255,0.5)', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+    methodToggle: {
+      alignSelf: 'stretch',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 14,
+      borderRadius: 14,
+      borderWidth: 1,
+      marginTop: 24,
+    },
+    methodToggleText: {
+      fontSize: 14,
+      fontFamily: 'Inter_700Bold',
+    },
+    warnBanner: {
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 1,
+      marginTop: 16,
+      gap: 6,
+    },
+    warnTitle: {
+      color: '#fff',
+      fontSize: 14,
+      fontFamily: 'Inter_800ExtraBold',
+    },
+    warnBody: {
+      color: 'rgba(255, 255, 255, 0.8)',
+      fontSize: 12,
+      fontFamily: 'Inter_500Medium',
+      lineHeight: 18,
+    },
+    demoBypassBtn: {
+      alignSelf: 'stretch',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 14,
+      borderRadius: 14,
+      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.15)',
+      marginTop: 12,
+    },
+    demoBypassText: {
+      color: '#fff',
+      fontSize: 14,
+      fontFamily: 'Inter_700Bold',
+    },
+    // Welcome Splash Styles
+    welcomeHeroRoot: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      justifyContent: 'flex-end',
+    },
+    welcomeHeroContent: {
+      paddingHorizontal: 28,
+      paddingBottom: Platform.OS === 'ios' ? 70 : 50,
+      gap: 20,
+    },
+    welcomeHeroTitle: {
+      color: '#FCFBF7',
+      fontSize: 42,
+      fontFamily: 'InstrumentSerif_400Regular',
+      lineHeight: 48,
+      letterSpacing: -1,
+    },
+    welcomeHeroSubtitle: {
+      color: 'rgba(252, 251, 247, 0.75)',
+      fontSize: 16,
+      fontFamily: 'Inter_500Medium',
+      lineHeight: 24,
+    },
+    welcomeCtaBtn: {
+      marginTop: 20,
+      borderRadius: 35,
+      overflow: 'hidden',
+      height: 64,
+      justifyContent: 'center',
+      width: '100%',
+    },
+    welcomeCtaInner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 8,
+    },
+    welcomeCtaText: {
+      color: '#FCFBF7',
+      fontSize: 18,
+      fontFamily: 'InstrumentSerif_400Regular',
+      letterSpacing: 0.5,
+      flex: 1,
+      textAlign: 'center',
+    },
+    welcomeArrowCircle: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: '#FCFBF7',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 4,
+    },
+    welcomeCarats: {
+      color: 'rgba(252, 251, 247, 0.4)',
+      fontSize: 16,
+      fontFamily: 'Inter_800ExtraBold',
+      marginRight: 20,
+    },
+    welcomeLangSafeArea: {
+      position: 'absolute',
+      top: Platform.OS === 'ios' ? 50 : 20,
+      right: 20,
+      zIndex: 100,
+    },
+    welcomeLangBlur: {
+      flexDirection: 'row',
+      borderRadius: 20,
+      overflow: 'hidden',
+      padding: 3,
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.12)',
+    },
+    welcomeLangTab: {
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+      borderRadius: 17,
+    },
+    welcomeLangTabActive: {
+      backgroundColor: '#22d15a',
+    },
+    welcomeLangTabText: {
+      color: 'rgba(252, 251, 247, 0.6)',
+      fontSize: 13,
+      fontFamily: 'Inter_600SemiBold',
+    },
+    welcomeLangTabTextActive: {
+      color: '#FCFBF7',
+    },
+    welcomeScroll: {
+      paddingTop: 100,
+      paddingBottom: 40,
+      alignItems: 'center',
+      width: '100%',
+    },
+    illustrationContainer: {
+      width: 220,
+      height: 220,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginVertical: 20,
+      position: 'relative',
+    },
+    pulseRing: {
+      position: 'absolute',
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      borderWidth: 2.5,
+    },
+    iconCircle: {
+      width: 110,
+      height: 110,
+      borderRadius: 55,
+      borderWidth: 2.5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.12,
+      shadowRadius: 12,
+      elevation: 4,
+    },
+    cropInterestContainer: {
+      width: '100%',
+      marginTop: 10,
+      marginBottom: 20,
+    },
+    cropInterestTitle: {
+      fontSize: 14,
+      fontFamily: 'Inter_800ExtraBold',
+      marginBottom: 12,
+    },
+    cropInterestGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    cropChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 14,
+      borderWidth: 1,
+      minHeight: 40,
+      justifyContent: 'center',
+    },
+    cropChipText: {
+      fontSize: 12,
+      fontFamily: 'Inter_700Bold',
+    },
+    stepIllustration: {
+      width: '100%',
+      height: 220,
+      borderRadius: 20,
+      marginBottom: 20,
+    },
+    doneIllustration: {
+      width: 160,
+      height: 160,
+      borderRadius: 24,
+      marginBottom: 16,
+    },
+    glassCard: {
+      borderRadius: 24,
+      borderWidth: 1,
+      padding: 20,
+      marginTop: 8,
+      marginBottom: 16,
+      overflow: 'hidden',
+    },
+  });
+}
+
 
 function VerificationStep({ lang, idType, setIdType, nida, setNida, license, setLicense, tin, setTin }: any) {
   const { colors, isDark } = useTheme();

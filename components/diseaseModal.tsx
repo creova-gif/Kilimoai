@@ -265,7 +265,7 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
           style={[styles.sheet, { backgroundColor: colors.card, borderColor: colors.border }]}
         >
           {/* Header */}
-          <View style={styles.header}>
+          <View style={[styles.header, { borderBottomColor: colors.border }]}>
             <View>
               <Text style={[styles.title, { color: colors.text }]}>
                 {language === 'sw' ? 'Tathmini ya Afya' : 'Crop Health Check'}
@@ -449,7 +449,7 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                   {CROPS_LIST.map(c => (
                     <TouchableOpacity 
                       key={c.key} 
-                      style={styles.dropdownOption}
+                      style={[styles.dropdownOption, { borderBottomColor: colors.border }]}
                       onPress={() => { setSelectedCrop(c.key); setShowCropSelect(false); }}
                     >
                       <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>
@@ -478,7 +478,7 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                   {REGIONS_LIST.map(r => (
                     <TouchableOpacity 
                       key={r.label} 
-                      style={styles.dropdownOption}
+                      style={[styles.dropdownOption, { borderBottomColor: colors.border }]}
                       onPress={() => { setSelectedRegion(r.label); setShowRegionSelect(false); }}
                     >
                       <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>

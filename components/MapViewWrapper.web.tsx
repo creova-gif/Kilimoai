@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Appearance } from 'react-native';
 
 export const PROVIDER_GOOGLE = 'google' as const;
 export type Region = {
@@ -10,9 +10,10 @@ export type Region = {
 };
 
 export function MapView({ style, children }: { style?: any; children?: React.ReactNode }) {
+  const isDark = Appearance.getColorScheme() === 'dark';
   return (
-    <View style={[styles.stub, style]}>
-      <Text style={styles.label}>🗺 Map (mobile only)</Text>
+    <View style={[styles.stub, { backgroundColor: isDark ? '#0d1f0d' : '#c8d6c8' }, style]}>
+      <Text style={[styles.label, { color: isDark ? 'rgba(34,209,90,0.5)' : 'rgba(34,209,90,0.7)' }]}>🗺 Map (mobile only)</Text>
       {children}
     </View>
   );
@@ -27,12 +28,10 @@ export default MapView;
 
 const styles = StyleSheet.create({
   stub: {
-    backgroundColor: '#0d1f0d',
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
-    color: 'rgba(34,209,90,0.5)',
     fontSize: 13,
     fontFamily: 'Inter_500Medium',
   },

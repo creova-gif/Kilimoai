@@ -7,9 +7,7 @@ import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
-const TAB_BAR_BG = 'rgba(14, 22, 13, 0.97)';
 const ICON_ACTIVE = '#22d15a';
-const ICON_INACTIVE = 'rgba(255,255,255,0.38)';
 
 function TabIcon({
   focused,
@@ -59,13 +57,16 @@ function TabIcon({
 }
 
 export default function TabLayout() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+
+  const tabBarBg = colors.tabBar;
+  const iconInactive = isDark ? 'rgba(255,255,255,0.38)' : 'rgba(0,0,0,0.35)';
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: ICON_ACTIVE,
-        tabBarInactiveTintColor: ICON_INACTIVE,
+        tabBarInactiveTintColor: iconInactive,
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -77,10 +78,10 @@ export default function TabLayout() {
           borderRadius: 34,
           borderTopWidth: 0,
           overflow: 'visible',
-          backgroundColor: TAB_BAR_BG,
+          backgroundColor: tabBarBg,
           elevation: 12,
           shadowColor: '#000',
-          shadowOpacity: 0.35,
+          shadowOpacity: isDark ? 0.35 : 0.12,
           shadowRadius: 20,
           shadowOffset: { width: 0, height: 8 },
         },
@@ -133,7 +134,7 @@ export default function TabLayout() {
                 shadowOffset: { width: 0, height: 6 },
                 elevation: 10,
                 borderWidth: 3,
-                borderColor: 'rgba(14, 22, 13, 0.97)',
+                borderColor: tabBarBg,
               }}
             >
               <Plus color="#fff" size={30} strokeWidth={2.5} />

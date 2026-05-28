@@ -393,8 +393,8 @@ export default function SankofaScreen() {
 
   return (
     <RequireVerification>
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
         {/* Ambient background glows */}
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -404,9 +404,9 @@ export default function SankofaScreen() {
 
         <SafeAreaView style={styles.safeArea}>
           {/* ── Header ── */}
-          <Animated.View entering={FadeInDown} style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
-              <ChevronLeft size={22} color="#fff" />
+          <Animated.View entering={FadeInDown} style={[styles.header, { backgroundColor: isDark ? 'rgba(10,18,10,0.8)' : colors.card }]}>
+            <TouchableOpacity onPress={() => router.back()} style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]}>
+              <ChevronLeft size={22} color={colors.text} />
             </TouchableOpacity>
 
             <View style={styles.headerCenter}>
@@ -417,10 +417,10 @@ export default function SankofaScreen() {
                 <BrainCircuit size={16} color="#22d15a" />
               </LinearGradient>
               <View>
-                <Text style={styles.headerTitle}>Sankofa AI</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>Sankofa AI</Text>
                 <View style={styles.statusRow}>
                   <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#22d15a' }]} />
-                  <Text style={styles.statusLabel}>
+                  <Text style={[styles.statusLabel, { color: colors.textMute }]}>
                     {isOffline ? 'SMS Fallback' : 'Neural Link Active'}
                   </Text>
                 </View>
@@ -429,11 +429,11 @@ export default function SankofaScreen() {
 
             <TouchableOpacity
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setOffline(!isOffline); }}
-              style={styles.iconBtn}
+              style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]}
             >
               {isOffline
                 ? <CloudOff size={20} color="#ef4444" />
-                : <MoreVertical size={20} color="rgba(255,255,255,0.6)" />
+                : <MoreVertical size={20} color={isDark ? "rgba(255,255,255,0.6)" : colors.textMute} />
               }
             </TouchableOpacity>
           </Animated.View>
@@ -468,14 +468,14 @@ export default function SankofaScreen() {
           ) : (
             <Animated.View key="voice" entering={FadeInDown} exiting={FadeOut} style={styles.voiceModeContainer}>
               <View style={styles.voiceHeader}>
-                <Text style={styles.voicePhaseText}>
+                <Text style={[styles.voicePhaseText, { color: colors.text }]}>
                   {voiceState === 'IDLE' && "Gusa kuongea na Sankofa"}
                   {voiceState === 'LISTENING' && "Sankofa anakusikiliza…"}
                   {voiceState === 'PROCESSING' && "Inachanganua sauti…"}
                   {voiceState === 'SPEAKING' && "Sankofa anajibu"}
                 </Text>
                 {voiceState === 'SPEAKING' && !!voiceReply && (
-                  <Animated.Text entering={FadeInDown} style={styles.voiceTranscript}>
+                  <Animated.Text entering={FadeInDown} style={[styles.voiceTranscript, { color: colors.textMute }]}>
                     {voiceReply}
                   </Animated.Text>
                 )}
@@ -512,9 +512,9 @@ export default function SankofaScreen() {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity style={styles.exitVoiceBtn} onPress={toggleVoiceMode}>
-                <MessageSquare size={16} color="rgba(255,255,255,0.5)" />
-                <Text style={styles.exitVoiceText}>Rudi maandishi</Text>
+              <TouchableOpacity style={[styles.exitVoiceBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card, borderColor: colors.border }]} onPress={toggleVoiceMode}>
+                <MessageSquare size={16} color={isDark ? "rgba(255,255,255,0.5)" : colors.textMute} />
+                <Text style={[styles.exitVoiceText, { color: colors.textMute }]}>Rudi maandishi</Text>
               </TouchableOpacity>
             </Animated.View>
           )}
@@ -528,31 +528,31 @@ export default function SankofaScreen() {
                     {SUGGESTED_PROMPTS.map((prompt, i) => (
                       <TouchableOpacity
                         key={i}
-                        style={styles.suggestionBtn}
+                        style={[styles.suggestionBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card }]}
                         onPress={() => { setInputText(prompt); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
                       >
                         <Sparkles size={11} color="#22d15a" style={{ marginRight: 5 }} />
-                        <Text style={styles.suggestionText}>{prompt}</Text>
+                        <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
                       </TouchableOpacity>
                     ))}
                   </ScrollView>
                 </Animated.View>
               )}
 
-              <View style={styles.inputArea}>
+              <View style={[styles.inputArea, { backgroundColor: isDark ? 'rgba(10,18,10,0.97)' : colors.card }]}>
                 <View style={styles.inputRow}>
                   <TouchableOpacity
-                    style={styles.plusBtn}
+                    style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setAttachmentMenuVisible(true); }}
                   >
-                    <Plus size={20} color="rgba(255,255,255,0.5)" />
+                    <Plus size={20} color={isDark ? "rgba(255,255,255,0.5)" : colors.textMute} />
                   </TouchableOpacity>
 
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card }]}>
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: colors.text }]}
                       placeholder={isOffline ? "Tuma SMS..." : "Uliza Sankofa..."}
-                      placeholderTextColor="rgba(255,255,255,0.3)"
+                      placeholderTextColor={isDark ? "rgba(255,255,255,0.3)" : colors.textMute}
                       value={inputText}
                       onChangeText={setInputText}
                       multiline
@@ -560,14 +560,14 @@ export default function SankofaScreen() {
                     />
                     <View style={styles.inputActions}>
                       <TouchableOpacity style={styles.actionBtn} onPress={toggleVoiceMode}>
-                        <Mic size={19} color="rgba(255,255,255,0.4)" />
+                        <Mic size={19} color={isDark ? "rgba(255,255,255,0.4)" : colors.textMute} />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#22d15a' : 'rgba(255,255,255,0.1)' }]}
+                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
                         onPress={handleSend}
                         disabled={!inputText.trim() || isTyping}
                       >
-                        <Send size={15} color={inputText.trim() ? '#fff' : 'rgba(255,255,255,0.3)'} />
+                        <Send size={15} color={inputText.trim() ? '#fff' : (isDark ? 'rgba(255,255,255,0.3)' : colors.textMute)} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -580,27 +580,27 @@ export default function SankofaScreen() {
         {/* ── Attachment Modal ── */}
         <Modal visible={attachmentMenuVisible} transparent animationType="slide" onRequestClose={() => setAttachmentMenuVisible(false)}>
           <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setAttachmentMenuVisible(false)}>
-            <View style={styles.attachmentSheet}>
-              <View style={styles.sheetHandle} />
-              <Text style={styles.sheetTitle}>{language === 'sw' ? 'Zana za Sankofa' : 'Sankofa Tools'}</Text>
+            <View style={[styles.attachmentSheet, { backgroundColor: isDark ? '#111a10' : colors.card }]}>
+              <View style={[styles.sheetHandle, { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : colors.border }]} />
+              <Text style={[styles.sheetTitle, { color: colors.text }]}>{language === 'sw' ? 'Zana za Sankofa' : 'Sankofa Tools'}</Text>
 
               {[
                 { icon: <FileSpreadsheet size={22} color="#22d15a" />, title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet', sub: 'Excel / CSV → Q&A', onPress: handleExcelPick },
                 { icon: <Leaf size={22} color="#22d15a" />, title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment', sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist', onPress: () => { setAttachmentMenuVisible(false); setDiseaseModalVisible(true); } },
                 { icon: <Camera size={22} color="#22d15a" />, title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner', sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves', onPress: () => { setAttachmentMenuVisible(false); router.push('/scan' as any); } },
               ].map((item, i) => (
-                <TouchableOpacity key={i} style={[styles.sheetOption, i < 2 && styles.sheetOptionBorder]} onPress={item.onPress}>
+                <TouchableOpacity key={i} style={[styles.sheetOption, i < 2 && { borderBottomColor: colors.border }]} onPress={item.onPress}>
                   <View style={styles.sheetIconWrap}>{item.icon}</View>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.sheetOptionTitle}>{item.title}</Text>
-                    <Text style={styles.sheetOptionSub}>{item.sub}</Text>
+                    <Text style={[styles.sheetOptionTitle, { color: colors.text }]}>{item.title}</Text>
+                    <Text style={[styles.sheetOptionSub, { color: colors.textMute }]}>{item.sub}</Text>
                   </View>
-                  <ArrowRight size={16} color="rgba(255,255,255,0.2)" />
+                  <ArrowRight size={16} color={isDark ? "rgba(255,255,255,0.2)" : colors.textMute} />
                 </TouchableOpacity>
               ))}
 
-              <TouchableOpacity style={styles.sheetCancel} onPress={() => setAttachmentMenuVisible(false)}>
-                <Text style={styles.sheetCancelText}>{language === 'sw' ? 'Ghairi' : 'Cancel'}</Text>
+              <TouchableOpacity style={[styles.sheetCancel, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]} onPress={() => setAttachmentMenuVisible(false)}>
+                <Text style={[styles.sheetCancelText, { color: colors.textMute }]}>{language === 'sw' ? 'Ghairi' : 'Cancel'}</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -610,9 +610,9 @@ export default function SankofaScreen() {
 
         {isParsingExcel && (
           <View style={styles.loaderOverlay}>
-            <View style={styles.loaderCard}>
+            <View style={[styles.loaderCard, { backgroundColor: isDark ? '#111a10' : colors.card }]}>
               <ActivityIndicator size="large" color="#22d15a" />
-              <Text style={styles.loaderText}>{language === 'sw' ? 'Inasoma lahajedwali…' : 'Parsing spreadsheet…'}</Text>
+              <Text style={[styles.loaderText, { color: colors.text }]}>{language === 'sw' ? 'Inasoma lahajedwali…' : 'Parsing spreadsheet…'}</Text>
             </View>
           </View>
         )}
@@ -626,6 +626,7 @@ export default function SankofaScreen() {
 // ─────────────────────────────────────────
 
 function ChatMessage({ item, index, language, activeExcelData, setActiveExcelData, onShortcut }: any) {
+  const { colors, isDark } = useTheme();
   const isAi = item.sender === 'ai';
   const isExcel = item.sender === 'excel_preview';
 
@@ -634,8 +635,8 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
     if (!isActive) {
       return (
         <Animated.View entering={FadeInDown} style={styles.detachedCard}>
-          <FileSpreadsheet size={14} color="rgba(255,255,255,0.3)" />
-          <Text style={styles.detachedText}>
+          <FileSpreadsheet size={14} color={isDark ? "rgba(255,255,255,0.3)" : colors.textMute} />
+          <Text style={[styles.detachedText, { color: colors.text }]}>
             {language === 'sw' ? `Lahajedwali imetenganishwa: ${item.excelData.fileName}` : `Detached: ${item.excelData.fileName}`}
           </Text>
         </Animated.View>
@@ -659,17 +660,17 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
         </LinearGradient>
       )}
 
-      <View style={[styles.bubble, isAi ? styles.aiBubble : styles.userBubble]}>
-        <Text style={[styles.msgText, isAi ? styles.aiText : styles.userText]}>
+      <View style={[styles.bubble, isAi ? [styles.aiBubble, { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card }] : styles.userBubble]}>
+        <Text style={[styles.msgText, isAi ? [styles.aiText, { color: colors.text }] : styles.userText]}>
           {item.text}
         </Text>
-        <Text style={[styles.msgTime, isAi ? styles.aiTime : styles.userTime]}>
+        <Text style={[styles.msgTime, isAi ? [styles.aiTime, { color: colors.textMute }] : styles.userTime]}>
           {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </View>
 
       {!isAi && (
-        <View style={styles.userAvatar}>
+        <View style={[styles.userAvatar, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}>
           <User size={14} color="rgba(255,255,255,0.6)" />
         </View>
       )}

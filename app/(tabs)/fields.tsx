@@ -213,7 +213,7 @@ export default function FarmHub() {
           
 
           {/* ── SVG Map Visualizer ───────────────────────────────── */}
-          <View style={[styles.mapContainer, { borderRadius: 0, marginHorizontal: -16, marginTop: -8 }]}>
+          <View style={[styles.mapContainer, { borderRadius: 0, marginHorizontal: -16, marginTop: -8, backgroundColor: colors.background }]}>
             <MapView
               style={StyleSheet.absoluteFillObject}
               mapType="satellite"
@@ -333,22 +333,22 @@ export default function FarmHub() {
               <View style={styles.metricsGrid}>
                 {/* Metric 1 */}
                 <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={styles.metricName}>{language === 'sw' ? 'Ukubwa' : 'Size'}</Text>
+                  <Text style={[styles.metricName, { color: colors.textMute }]}>{language === 'sw' ? 'Ukubwa' : 'Size'}</Text>
                   <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.area}</Text>
                 </View>
                 {/* Metric 2 */}
                 <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={styles.metricName}>NDVI</Text>
+                  <Text style={[styles.metricName, { color: colors.textMute }]}>NDVI</Text>
                   <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.ndvi}</Text>
                 </View>
                 {/* Metric 3 */}
                 <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={styles.metricName}>pH ya Udongo</Text>
+                  <Text style={[styles.metricName, { color: colors.textMute }]}>pH ya Udongo</Text>
                   <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.ph}</Text>
                 </View>
                 {/* Metric 4 */}
                 <View style={[styles.metricBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <Text style={styles.metricName}>{language === 'sw' ? 'Unyevu' : 'Moisture'}</Text>
+                  <Text style={[styles.metricName, { color: colors.textMute }]}>{language === 'sw' ? 'Unyevu' : 'Moisture'}</Text>
                   <Text style={[styles.metricValue, { color: colors.text }]}>{activeZone.moisture}</Text>
                 </View>
               </View>
@@ -364,23 +364,23 @@ export default function FarmHub() {
                 <View style={styles.nutrientsRow}>
                   {/* Nitrogen */}
                   <View style={styles.nutrientElem}>
-                    <Text style={styles.nutrientLabel}>N</Text>
+                    <Text style={[styles.nutrientLabel, { color: colors.textMute }]}>N</Text>
                     <Text style={[styles.nutrientVal, { color: activeZone.nitrogen.color }]}>
                       {language === 'sw' ? activeZone.nitrogen.statusSw : activeZone.nitrogen.statusEn}
                     </Text>
                   </View>
-                  <View style={styles.elemDivider} />
+                  <View style={[styles.elemDivider, { backgroundColor: colors.border }]} />
                   {/* Phosphorus */}
                   <View style={styles.nutrientElem}>
-                    <Text style={styles.nutrientLabel}>P</Text>
+                    <Text style={[styles.nutrientLabel, { color: colors.textMute }]}>P</Text>
                     <Text style={[styles.nutrientVal, { color: activeZone.phosphorus.color }]}>
                       {language === 'sw' ? activeZone.phosphorus.statusSw : activeZone.phosphorus.statusEn}
                     </Text>
                   </View>
-                  <View style={styles.elemDivider} />
+                  <View style={[styles.elemDivider, { backgroundColor: colors.border }]} />
                   {/* Potassium */}
                   <View style={styles.nutrientElem}>
-                    <Text style={styles.nutrientLabel}>K</Text>
+                    <Text style={[styles.nutrientLabel, { color: colors.textMute }]}>K</Text>
                     <Text style={[styles.nutrientVal, { color: activeZone.potassium.color }]}>
                       {language === 'sw' ? activeZone.potassium.statusSw : activeZone.potassium.statusEn}
                     </Text>
@@ -484,7 +484,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginTop: 6,
     marginBottom: 20,
-    backgroundColor: '#0c0f0a',
     position: 'relative',
   },
   zoomControls: {
@@ -621,7 +620,6 @@ const styles = StyleSheet.create({
   metricName: {
     fontSize: 8,
     fontFamily: 'Inter_700Bold',
-    color: 'rgba(255,255,255,0.4)',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -659,7 +657,6 @@ const styles = StyleSheet.create({
   nutrientLabel: {
     fontSize: 11,
     fontFamily: 'InstrumentSerif_400Regular',
-    color: 'rgba(255,255,255,0.4)',
   },
   nutrientVal: {
     fontSize: 11,
@@ -667,7 +664,6 @@ const styles = StyleSheet.create({
   },
   elemDivider: {
     width: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
     marginVertical: 2,
   },
   floatingAddBtn: {
