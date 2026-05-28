@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,7 +11,7 @@ import {
 } from '@expo-google-fonts/instrument-sans';
 import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { useColorScheme, View } from 'react-native';
+import { AppState, AppStateStatus, useColorScheme, View } from 'react-native';
 import { pingActivity } from '../hooks/useIdleTimeout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useKilimoStore } from '../store/useKilimoStore';
@@ -54,15 +54,43 @@ function AppServices() {
  * hydration and then replace the route imperatively. This also handles users
  * who reset their onboarding state mid-session.
  */
-/** Subscribe to Zustand-persist hydration completion. Returns true once safe. */
+/**
+ * Subscribe to Zustand-persist hydration completion. Returns true once safe.
+ *
+ * Also listens to AppState so that if the OS kills and relaunches the process
+ * when the user returns from background (common on low-end Android), hydration
+ * is re-validated before the Stack renders — preventing a blank-screen flicker.
+ */
 function usePersistHydrated(): boolean {
   const [hydrated, setHydrated] = useState(() => useKilimoStore.persist.hasHydrated());
+  const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+
   useEffect(() => {
     if (hydrated) return;
     const unsub = useKilimoStore.persist.onFinishHydration(() => setHydrated(true));
     if (useKilimoStore.persist.hasHydrated()) setHydrated(true);
     return unsub;
   }, [hydrated]);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      const prev = appStateRef.current;
+      appStateRef.current = nextState;
+      // When the app returns to the foreground from background/inactive, confirm
+      // the store is still hydrated. On a process-kill + resume this will be
+      // false, triggering the hydration wait again and suppressing render until
+      // AsyncStorage has finished re-reading.
+      if (
+        (prev === 'background' || prev === 'inactive') &&
+        nextState === 'active' &&
+        !useKilimoStore.persist.hasHydrated()
+      ) {
+        setHydrated(false);
+      }
+    });
+    return () => sub.remove();
+  }, []);
+
   return hydrated;
 }
 
@@ -129,7 +157,11 @@ export default function RootLayout() {
     return () => clearTimeout(t);
   }, [loaded, hydrated]);
 
-  if (!loaded) {
+  // Keep the native splash screen visible (via preventAutoHideAsync) until
+  // both fonts are ready AND the persisted store has rehydrated from
+  // AsyncStorage. Returning null here while the native splash is up ensures
+  // the Stack never mounts with default/empty state, preventing a blank frame.
+  if (!loaded || !hydrated) {
     return null;
   }
 
