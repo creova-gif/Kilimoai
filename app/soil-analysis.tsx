@@ -79,14 +79,14 @@ export default function SoilAnalysis() {
             title="Low Nitrogen detected"
             desc="Apply Urea immediately."
             imageUri="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=300&auto=format&fit=crop"
-            onPress={() => {}}
+            onPress={() => router.push('/tasks' as any)}
           />
           
           <RecommendationItem 
             title="Potassium deficiency"
             desc="Boost suggested in Zone 5."
             imageUri="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?q=80&w=300&auto=format&fit=crop"
-            onPress={() => {}}
+            onPress={() => router.push('/consultations' as any)}
           />
 
         </View>

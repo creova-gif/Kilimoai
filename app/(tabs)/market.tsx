@@ -23,6 +23,7 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { RequireVerification } from '../../components/RequireVerification';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -49,15 +50,44 @@ const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
 
 type PriceAlert = { id: string; crop: string; direction: 'above' | 'below'; threshold: number; active: boolean };
 
-// ─── Sparkline ────────────────────────────────────────────────────────────────
-const NeuralSparkline = ({ data, positive }: any) => {
+// ─── Sparkline ─────────────────────────────────────────────────────────────────
+// SVG-based sparkline that renders actual data values as a smooth area chart
+
+function sparkPath(data: number[], w: number, h: number): { line: string; area: string } {
+  if (!data || data.length < 2) return { line: '', area: '' };
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const step = w / (data.length - 1);
+  const toY = (v: number) => h * 0.9 - ((v - min) / range) * h * 0.78;
+  let d = `M0 ${toY(data[0]).toFixed(1)}`;
+  for (let i = 1; i < data.length; i++) {
+    const prevX = (i - 1) * step;
+    const currX = i * step;
+    const cpx = (prevX + currX) / 2;
+    d += ` C${cpx.toFixed(1)} ${toY(data[i - 1]).toFixed(1)},${cpx.toFixed(1)} ${toY(data[i]).toFixed(1)},${currX.toFixed(1)} ${toY(data[i]).toFixed(1)}`;
+  }
+  return { line: d, area: `${d} L${((data.length - 1) * step).toFixed(1)} ${h} L0 ${h} Z` };
+}
+
+const NeuralSparkline = ({ data, positive }: { data: number[]; positive: boolean }) => {
   const { colors } = useTheme();
+  const color = positive ? colors.primary : '#ef4444';
+  const W = 80; const H = 28;
+  const { line, area } = sparkPath(data, W, H);
+  if (!line) return null;
   return (
     <View style={styles.sparklineOuter}>
-      {data.map((val: number, i: number) => (
-        <Animated.View key={i} entering={FadeInDown}
-          style={[styles.sparkBar, { backgroundColor: positive ? colors.primary : '#ef4444', opacity: 0.3 + (i / data.length) * 0.7 }]} />
-      ))}
+      <Svg width={W} height={H}>
+        <Defs>
+          <SvgLinearGradient id={`sg${positive ? 'p' : 'n'}`} x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor={color} stopOpacity="0.45" />
+            <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d={area} fill={`url(#sg${positive ? 'p' : 'n'})`} />
+        <Path d={line} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
     </View>
   );
 };

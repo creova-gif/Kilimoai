@@ -250,93 +250,113 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
 
 // ─── Inline Sparks / Charts for stats cards ───────────────────────────
 
-const SoilHealthChart = ({ color }: { color: string }) => (
-  <View style={styles.miniChartContainer}>
-    <Svg height="30" width="130">
-      <Defs>
-        <SvgLinearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0%" stopColor={color} stopOpacity="0.4" />
-          <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
-        </SvgLinearGradient>
-      </Defs>
-      <Path
-        d="M0 25 C 20 22, 40 12, 60 18 C 80 24, 100 5, 130 8 L 130 30 L 0 30 Z"
-        fill="url(#soilGrad)"
-      />
-      <Path
-        d="M0 25 C 20 22, 40 12, 60 18 C 80 24, 100 5, 130 8"
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-      />
-    </Svg>
-  </View>
-);
+// Deterministic micro time-series: generates 7 points that ease toward `norm` (0–1)
+function genMicroSeries(norm: number, count = 7): number[] {
+  const pts: number[] = [];
+  for (let i = 0; i < count; i++) {
+    const t = i / (count - 1);
+    const trend = 0.5 + (norm - 0.5) * (t * t);
+    const wobble = Math.sin(i * 2.3 + norm * 3) * 0.06 + Math.sin(i * 5.1) * 0.03;
+    pts.push(Math.max(0.05, Math.min(0.95, trend + wobble)));
+  }
+  pts[count - 1] = Math.max(0.05, Math.min(0.95, norm));
+  return pts;
+}
 
-const MoistureChart = () => (
-  <View style={styles.miniChartContainer}>
-    <Svg height="30" width="130">
-      <Defs>
-        <SvgLinearGradient id="moistGrad" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0%" stopColor="#2563EB" stopOpacity="0.4" />
-          <Stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
-        </SvgLinearGradient>
-      </Defs>
-      <Path
-        d="M0 12 C 25 28, 50 2, 75 22 C 100 32, 115 12, 130 15 L 130 30 L 0 30 Z"
-        fill="url(#moistGrad)"
-      />
-      <Path
-        d="M0 12 C 25 28, 50 2, 75 22 C 100 32, 115 12, 130 15"
-        fill="none"
-        stroke="#2563EB"
-        strokeWidth="2"
-      />
-    </Svg>
-  </View>
-);
+function seriesToSvgPath(pts: number[], w = 130, h = 30): { line: string; area: string } {
+  const step = w / (pts.length - 1);
+  const toY = (p: number) => (h * 0.9 - p * h * 0.78);
+  let d = `M0 ${toY(pts[0]).toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) {
+    const prevX = (i - 1) * step;
+    const currX = i * step;
+    const cpx = (prevX + currX) / 2;
+    d += ` C${cpx.toFixed(1)} ${toY(pts[i - 1]).toFixed(1)},${cpx.toFixed(1)} ${toY(pts[i]).toFixed(1)},${currX.toFixed(1)} ${toY(pts[i]).toFixed(1)}`;
+  }
+  const lastX = ((pts.length - 1) * step).toFixed(1);
+  return { line: d, area: `${d} L${lastX} ${h} L0 ${h} Z` };
+}
 
-const TemperatureChart = () => {
-  const heights = [10, 16, 14, 22, 26, 18, 20];
+const SoilHealthChart = ({ color, value }: { color: string; value: number }) => {
+  const { line, area } = seriesToSvgPath(genMicroSeries(value));
+  return (
+    <View style={styles.miniChartContainer}>
+      <Svg height="30" width="130">
+        <Defs>
+          <SvgLinearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor={color} stopOpacity="0.45" />
+            <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d={area} fill="url(#soilGrad)" />
+        <Path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    </View>
+  );
+};
+
+const MoistureChart = ({ value }: { value: number }) => {
+  // Moisture shows a sinusoidal wave pattern scaled by the moisture level
+  const pts = genMicroSeries(value).map((p, i) => {
+    const wave = Math.sin(i * 1.8) * 0.12 * value;
+    return Math.max(0.05, Math.min(0.95, p + wave));
+  });
+  const { line, area } = seriesToSvgPath(pts);
+  return (
+    <View style={styles.miniChartContainer}>
+      <Svg height="30" width="130">
+        <Defs>
+          <SvgLinearGradient id="moistGrad" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor="#2563EB" stopOpacity="0.45" />
+            <Stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d={area} fill="url(#moistGrad)" />
+        <Path d={line} fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    </View>
+  );
+};
+
+const TemperatureChart = ({ value }: { value: number }) => {
+  // Bar chart: heights derived from temperature (value = 0–1 mapped from 10–45°C)
+  const pts = genMicroSeries(value);
+  const maxH = 26;
+  const heights = pts.map(p => Math.max(3, Math.round(p * maxH)));
   return (
     <View style={styles.miniBarContainer}>
       {heights.map((h, i) => (
-        <View 
-          key={i} 
-          style={{ 
-            width: 4, 
-            height: h, 
-            backgroundColor: i === heights.length - 1 ? '#F59E0B' : 'rgba(245, 158, 11, 0.35)', 
-            borderRadius: 2 
-          }} 
+        <View
+          key={i}
+          style={{
+            width: 4,
+            height: h,
+            backgroundColor: i === heights.length - 1 ? '#F59E0B' : 'rgba(245, 158, 11, 0.35)',
+            borderRadius: 2,
+          }}
         />
       ))}
     </View>
   );
 };
 
-const YieldChart = () => (
-  <View style={styles.miniChartContainer}>
-    <Svg height="30" width="130">
-      <Defs>
-        <SvgLinearGradient id="yieldGrad" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4" />
-          <Stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
-        </SvgLinearGradient>
-      </Defs>
-      <Path
-        d="M0 28 Q 35 24, 65 15 T 130 3 L 130 30 L 0 30 Z"
-        fill="url(#yieldGrad)"
-      />
-      <Path
-        d="M0 28 Q 35 24, 65 15 T 130 3"
-        fill="none"
-        stroke="#8b5cf6"
-        strokeWidth="2"
-      />
-    </Svg>
-  </View>
-);
+const YieldChart = ({ value }: { value: number }) => {
+  const { line, area } = seriesToSvgPath(genMicroSeries(value));
+  return (
+    <View style={styles.miniChartContainer}>
+      <Svg height="30" width="130">
+        <Defs>
+          <SvgLinearGradient id="yieldGrad" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.45" />
+            <Stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d={area} fill="url(#yieldGrad)" />
+        <Path d={line} fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    </View>
+  );
+};
 // ─── Step 1 Animation: Soil prep scan ring ───────────────────────────────────
 function Step1SoilPrepAnimation() {
   const { colors } = useTheme();
@@ -921,10 +941,10 @@ export default function HomeScreen() {
 
   // Translate Bento Stats
   const FARM_STATS = [
-    { id: 'soil', label: language === 'sw' ? 'Afya ya Udongo' : 'Soil Health', value: `${farmVitals.soilHealth}%`, chart: <SoilHealthChart color={colors.primary} />, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary, trend: language === 'sw' ? 'Nzuri' : 'Optimal' },
-    { id: 'moisture', label: language === 'sw' ? 'Unyevu' : 'Moisture', value: `${farmVitals.moisture}%`, chart: <MoistureChart />, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
-    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${farmVitals.temperature}°C`, chart: <TemperatureChart />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: language === 'sw' ? 'Imara' : 'Optimal' },
-    { id: 'yield', label: language === 'sw' ? 'Kadirio Mavuno' : 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, chart: <YieldChart />, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
+    { id: 'soil', label: language === 'sw' ? 'Afya ya Udongo' : 'Soil Health', value: `${farmVitals.soilHealth}%`, chart: <SoilHealthChart color={colors.primary} value={farmVitals.soilHealth / 100} />, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary, trend: farmVitals.soilHealth >= 70 ? (language === 'sw' ? 'Nzuri' : 'Optimal') : farmVitals.soilHealth >= 40 ? (language === 'sw' ? 'Ya kati' : 'Fair') : (language === 'sw' ? 'Mbaya' : 'Poor') },
+    { id: 'moisture', label: language === 'sw' ? 'Unyevu' : 'Moisture', value: `${farmVitals.moisture}%`, chart: <MoistureChart value={farmVitals.moisture / 100} />, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB', trend: farmVitals.moisture >= 30 && farmVitals.moisture <= 70 ? (language === 'sw' ? 'Kawaida' : 'Optimal') : (language === 'sw' ? 'Angalia' : 'Check') },
+    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${farmVitals.temperature}°C`, chart: <TemperatureChart value={Math.min(1, Math.max(0, (farmVitals.temperature - 10) / 30))} />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: farmVitals.temperature >= 20 && farmVitals.temperature <= 32 ? (language === 'sw' ? 'Imara' : 'Optimal') : (language === 'sw' ? 'Angalia' : 'Check') },
+    { id: 'yield', label: language === 'sw' ? 'Kadirio Mavuno' : 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, chart: <YieldChart value={Math.min(1, farmVitals.yieldEstimate / 5)} />, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6', trend: farmVitals.yieldEstimate >= 2 ? (language === 'sw' ? 'Juu' : 'High') : farmVitals.yieldEstimate >= 1 ? (language === 'sw' ? 'Kawaida' : 'Normal') : (language === 'sw' ? 'Chini' : 'Low') },
   ];
 
   const quickActions = useMemo(() => [
@@ -1514,7 +1534,7 @@ export default function HomeScreen() {
                       <View style={[styles.statIconBg, { backgroundColor: stat.color + '12' }]}>
                         {stat.icon}
                       </View>
-                      <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                      <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}>
                         <MoreHorizontal size={16} color={colors.textMute} />
                       </TouchableOpacity>
                     </View>
