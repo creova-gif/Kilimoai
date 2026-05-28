@@ -404,23 +404,28 @@ export default function SankofaScreen() {
 
         <SafeAreaView style={styles.safeArea}>
           {/* ── Header ── */}
-          <Animated.View entering={FadeInDown} style={[styles.header, { backgroundColor: isDark ? 'rgba(10,18,10,0.8)' : colors.card }]}>
-            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]}>
-              <ChevronLeft size={22} color={colors.text} />
+          <Animated.View entering={FadeInDown} style={styles.header}>
+            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.iconBtn}>
+              <ChevronLeft size={22} color="rgba(255,255,255,0.8)" />
             </TouchableOpacity>
 
             <View style={styles.headerCenter}>
-              <LinearGradient
-                colors={['rgba(34,209,90,0.25)', 'rgba(34,209,90,0.08)']}
-                style={styles.aiAvatar}
-              >
-                <BrainCircuit size={16} color="#22d15a" />
-              </LinearGradient>
-              <View>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>Sankofa AI</Text>
+              <View style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center' }}>
+                <LinearGradient colors={['#112519', '#060e08']} style={styles.aiAvatar}>
+                  <BrainCircuit size={19} color="#22d15a" />
+                </LinearGradient>
+                <View style={[styles.avatarRing, { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : 'rgba(34,209,90,0.5)' }]} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                  <Text style={styles.headerTitle}>Sankofa AI</Text>
+                  <View style={styles.engineBadge}>
+                    <Text style={styles.engineBadgeText}>v2.1</Text>
+                  </View>
+                </View>
                 <View style={styles.statusRow}>
                   <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#22d15a' }]} />
-                  <Text style={[styles.statusLabel, { color: colors.textMute }]}>
+                  <Text style={styles.statusLabel}>
                     {isOffline ? 'SMS Fallback' : 'Neural Link Active'}
                   </Text>
                 </View>
@@ -429,11 +434,11 @@ export default function SankofaScreen() {
 
             <TouchableOpacity
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setOffline(!isOffline); }}
-              style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]}
+              style={styles.iconBtn}
             >
               {isOffline
                 ? <CloudOff size={20} color="#ef4444" />
-                : <MoreVertical size={20} color={isDark ? "rgba(255,255,255,0.6)" : colors.textMute} />
+                : <MoreVertical size={20} color="rgba(255,255,255,0.4)" />
               }
             </TouchableOpacity>
           </Animated.View>
@@ -655,23 +660,43 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
   return (
     <Animated.View entering={FadeInDown} style={[styles.msgRow, isAi ? styles.msgRowAi : styles.msgRowUser]}>
       {isAi && (
-        <LinearGradient colors={['rgba(34,209,90,0.2)', 'rgba(34,209,90,0.06)']} style={styles.avatar}>
+        <LinearGradient colors={['#112519', '#060e08']} style={styles.avatar}>
           <BrainCircuit size={14} color="#22d15a" />
         </LinearGradient>
       )}
 
-      <View style={[styles.bubble, isAi ? [styles.aiBubble, { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card }] : styles.userBubble]}>
-        <Text style={[styles.msgText, isAi ? [styles.aiText, { color: colors.text }] : styles.userText]}>
-          {item.text}
-        </Text>
-        <Text style={[styles.msgTime, isAi ? [styles.aiTime, { color: colors.textMute }] : styles.userTime]}>
-          {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </Text>
-      </View>
+      {isAi ? (
+        <View style={styles.aiBubble}>
+          <LinearGradient
+            colors={['rgba(34,209,90,0.13)', 'transparent']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+            style={styles.aiBubbleShimmer}
+          />
+          <View style={styles.aiBubbleSourceRow}>
+            <BrainCircuit size={9} color="#22d15a" />
+            <Text style={styles.aiBubbleSourceText}>SANKOFA</Text>
+          </View>
+          <Text style={[styles.msgText, styles.aiText]}>{item.text}</Text>
+          <Text style={[styles.msgTime, styles.aiTime]}>
+            {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </Text>
+        </View>
+      ) : (
+        <LinearGradient
+          colors={['#2be066', '#14a345']}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          style={[styles.bubble, styles.userBubble]}
+        >
+          <Text style={[styles.msgText, styles.userText]}>{item.text}</Text>
+          <Text style={[styles.msgTime, styles.userTime]}>
+            {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </Text>
+        </LinearGradient>
+      )}
 
       {!isAi && (
-        <View style={[styles.userAvatar, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}>
-          <User size={14} color={isDark ? "rgba(255,255,255,0.6)" : colors.textMute} />
+        <View style={styles.userAvatar}>
+          <User size={14} color="rgba(255,255,255,0.75)" />
         </View>
       )}
     </Animated.View>
@@ -697,13 +722,19 @@ function TypingDot({ delay }: { delay: number }) {
 function TypingIndicator() {
   return (
     <View style={styles.typingRow}>
-      <LinearGradient colors={['rgba(34,209,90,0.2)', 'rgba(34,209,90,0.06)']} style={styles.avatar}>
+      <LinearGradient colors={['#112519', '#060e08']} style={styles.avatar}>
         <BrainCircuit size={14} color="#22d15a" />
       </LinearGradient>
-      <View style={styles.typingBubble}>
-        <TypingDot delay={0} />
-        <TypingDot delay={150} />
-        <TypingDot delay={300} />
+      <View>
+        <View style={styles.aiBubbleSourceRow}>
+          <BrainCircuit size={8} color="#22d15a" />
+          <Text style={styles.aiBubbleSourceText}>SANKOFA</Text>
+        </View>
+        <View style={styles.typingBubble}>
+          <TypingDot delay={0} />
+          <TypingDot delay={150} />
+          <TypingDot delay={300} />
+        </View>
       </View>
     </View>
   );
@@ -793,23 +824,23 @@ const styles = StyleSheet.create({
   // Background glows
   glowTR: {
     position: 'absolute',
-    top: -60,
+    top: -80,
     right: -80,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: 'rgba(34,209,90,0.07)',
-    ...(Platform.OS === 'web' ? { filter: 'blur(60px)' } as any : {}),
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: 'rgba(34,209,90,0.1)',
+    ...(Platform.OS === 'web' ? { filter: 'blur(90px)' } as any : {}),
   },
   glowBL: {
     position: 'absolute',
-    bottom: 120,
-    left: -60,
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(34,209,90,0.04)',
-    ...(Platform.OS === 'web' ? { filter: 'blur(50px)' } as any : {}),
+    bottom: 100,
+    left: -80,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: 'rgba(34,209,90,0.06)',
+    ...(Platform.OS === 'web' ? { filter: 'blur(70px)' } as any : {}),
   },
 
   safeArea: { flex: 1 },
@@ -819,10 +850,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(34,209,90,0.08)',
-    backgroundColor: 'rgba(10,18,10,0.8)',
+    borderBottomColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(6,12,7,0.97)',
   },
   iconBtn: {
     width: 40,
@@ -836,17 +867,39 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 12,
+    marginLeft: 10,
     gap: 10,
   },
   aiAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.3)',
+    borderColor: 'rgba(34,209,90,0.35)',
+  },
+  avatarRing: {
+    position: 'absolute',
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+  },
+  engineBadge: {
+    backgroundColor: 'rgba(34,209,90,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(34,209,90,0.28)',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  engineBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    color: '#22d15a',
+    letterSpacing: 0.5,
   },
   headerTitle: {
     fontSize: 17,
@@ -890,25 +943,25 @@ const styles = StyleSheet.create({
   msgRowUser: { alignSelf: 'flex-end', flexDirection: 'row-reverse' },
 
   avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 11,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.25)',
+    borderColor: 'rgba(34,209,90,0.3)',
   },
   userAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(255,255,255,0.12)',
   },
 
   bubble: {
@@ -918,15 +971,39 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   aiBubble: {
-    backgroundColor: 'rgba(34,209,90,0.07)',
+    backgroundColor: 'rgba(9,20,11,0.97)',
+    borderRadius: 18,
     borderTopLeftRadius: 4,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.15)',
-    borderLeftWidth: 2,
-    borderLeftColor: 'rgba(34,209,90,0.5)',
+    borderColor: 'rgba(34,209,90,0.2)',
+    borderLeftWidth: 3,
+    borderLeftColor: '#22d15a',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    maxWidth: '100%',
+    overflow: 'hidden',
+  },
+  aiBubbleShimmer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 36,
+  },
+  aiBubbleSourceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 6,
+  },
+  aiBubbleSourceText: {
+    fontSize: 8,
+    fontFamily: 'Inter_800ExtraBold',
+    color: '#22d15a',
+    letterSpacing: 1,
   },
   userBubble: {
-    backgroundColor: '#22d15a',
+    borderRadius: 18,
     borderTopRightRadius: 4,
   },
   msgText: {
@@ -946,8 +1023,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontFamily: 'Inter_500Medium',
   },
-  aiTime: { color: 'rgba(255,255,255,0.3)' },
-  userTime: { color: 'rgba(255,255,255,0.6)' },
+  aiTime: { color: 'rgba(255,255,255,0.28)' },
+  userTime: { color: 'rgba(255,255,255,0.65)' },
 
   // Typing indicator
   typingRow: {
@@ -960,14 +1037,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    backgroundColor: 'rgba(34,209,90,0.07)',
-    borderRadius: 20,
+    paddingVertical: 13,
+    backgroundColor: 'rgba(9,20,11,0.97)',
+    borderRadius: 18,
     borderTopLeftRadius: 4,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.15)',
-    borderLeftWidth: 2,
-    borderLeftColor: 'rgba(34,209,90,0.5)',
+    borderColor: 'rgba(34,209,90,0.2)',
+    borderLeftWidth: 3,
+    borderLeftColor: '#22d15a',
     gap: 5,
   },
   typingDot: {
@@ -989,27 +1066,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 9,
     borderRadius: 20,
-    backgroundColor: 'rgba(34,209,90,0.07)',
+    backgroundColor: 'rgba(34,209,90,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(34,209,90,0.22)',
     marginRight: 8,
   },
   suggestionText: {
     fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
-    color: 'rgba(255,255,255,0.8)',
+    fontFamily: 'Inter_500Medium',
+    color: 'rgba(255,255,255,0.75)',
   },
 
   // Input
   inputArea: {
     paddingHorizontal: 12,
-    paddingVertical: 12,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 16,
+    paddingVertical: 13,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 18,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(34,209,90,0.08)',
-    backgroundColor: 'rgba(10,18,10,0.97)',
+    borderTopColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(5,10,6,0.99)',
   },
   inputRow: {
     flexDirection: 'row',
@@ -1030,12 +1107,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 24,
+    borderRadius: 26,
     paddingHorizontal: 16,
     paddingVertical: 4,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(34,209,90,0.28)',
   },
   input: {
     flex: 1,
