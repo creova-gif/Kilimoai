@@ -1,66 +1,70 @@
 import React, { useEffect } from 'react';
 import { Tabs, router } from 'expo-router';
-import { Platform, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Home, User, Bot, Tractor, Plus } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, interpolateColor } from 'react-native-reanimated';
 
-const ICON_ACTIVE = '#22d15a';
+const ICON_ACTIVE = '#10b981';
 
 function TabIcon({
   focused,
+  label,
   children,
 }: {
   focused: boolean;
+  label: string;
   children: React.ReactNode;
 }) {
-  const scale = useSharedValue(1.0);
+  const { colors, isDark } = useTheme();
+  const scale = useSharedValue(focused ? 1 : 0);
+  const iconScale = useSharedValue(focused ? 1.1 : 1);
 
   useEffect(() => {
-    scale.value = focused
-      ? withSpring(1.15, { damping: 10, stiffness: 120 })
-      : withTiming(1.0, { duration: 150 });
+    scale.value = withSpring(focused ? 1 : 0, { damping: 15, stiffness: 150 });
+    iconScale.value = withSpring(focused ? 1.15 : 1, { damping: 12, stiffness: 200 });
   }, [focused]);
 
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+  const pillStyle = useAnimatedStyle(() => ({
+    transform: [{ scaleX: scale.value }],
+    opacity: scale.value,
+  }));
+
+  const iconAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }, { translateY: focused ? -4 : 0 }],
   }));
 
   return (
-    <Animated.View
-      style={[
-        {
-          width: 48,
-          height: 48,
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-        animStyle,
-      ]}
-    >
-      {focused && (
-        <View
-          style={{
+    <View style={{ alignItems: 'center', justifyContent: 'center', width: 60 }}>
+      <Animated.View style={iconAnimStyle}>
+        {children}
+      </Animated.View>
+      <Animated.View
+        style={[
+          {
             position: 'absolute',
-            width: 36,
-            height: 36,
-            borderRadius: 18,
-            backgroundColor: 'rgba(34, 209, 90, 0.15)',
-          }}
-        />
-      )}
-      {children}
-    </Animated.View>
+            bottom: -14,
+            width: 4,
+            height: 4,
+            borderRadius: 2,
+            backgroundColor: ICON_ACTIVE,
+          },
+          pillStyle,
+        ]}
+      />
+    </View>
   );
 }
 
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
 
-  const tabBarBg = colors.tabBar;
-  const iconInactive = isDark ? 'rgba(255,255,255,0.38)' : 'rgba(0,0,0,0.35)';
+  const tabBarBg = isDark ? '#111827' : '#ffffff';
+  const iconInactive = isDark ? '#6B7280' : '#9CA3AF';
+  const borderColor = isDark ? '#1F2937' : '#F3F4F6';
 
   return (
     <Tabs
@@ -71,18 +75,18 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: Platform.OS === 'ios' ? 28 : 16,
-          left: 16,
-          right: 16,
-          height: 68,
-          borderRadius: 34,
-          borderTopWidth: 0,
-          overflow: 'visible',
+          bottom: Platform.OS === 'ios' ? 24 : 16,
+          left: 20,
+          right: 20,
+          height: 64,
+          borderRadius: 20,
+          borderTopWidth: 1,
+          borderColor: borderColor,
           backgroundColor: tabBarBg,
-          elevation: 12,
+          elevation: 10,
           shadowColor: '#000',
-          shadowOpacity: isDark ? 0.35 : 0.12,
-          shadowRadius: 20,
+          shadowOpacity: isDark ? 0.4 : 0.08,
+          shadowRadius: 16,
           shadowOffset: { width: 0, height: 8 },
         },
       }}
@@ -91,8 +95,8 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              <Home color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused} label="Mwanzo">
+              <Home color={color} size={24} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
@@ -101,8 +105,8 @@ export default function TabLayout() {
         name="fields"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              <Tractor color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused} label="Mashamba">
+              <Tractor color={color} size={24} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
@@ -114,30 +118,41 @@ export default function TabLayout() {
           tabBarIcon: () => null,
           tabBarButton: ({ ...props }: any) => (
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={0.9}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 router.push('/features');
               }}
               style={{
                 position: 'relative',
-                top: -20,
-                width: 64,
-                height: 64,
-                borderRadius: 32,
-                backgroundColor: '#22d15a',
-                alignItems: 'center',
+                top: -24,
+                width: 60,
+                height: 60,
                 justifyContent: 'center',
-                shadowColor: '#22d15a',
-                shadowOpacity: 0.55,
-                shadowRadius: 14,
-                shadowOffset: { width: 0, height: 6 },
-                elevation: 10,
-                borderWidth: 3,
-                borderColor: tabBarBg,
+                alignItems: 'center',
               }}
             >
-              <Plus color="#fff" size={30} strokeWidth={2.5} />
+              <LinearGradient
+                colors={['#34d399', '#059669']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  shadowColor: '#10b981',
+                  shadowOpacity: 0.4,
+                  shadowRadius: 12,
+                  shadowOffset: { width: 0, height: 6 },
+                  elevation: 8,
+                  borderWidth: 4,
+                  borderColor: tabBarBg,
+                }}
+              >
+                <Plus color="#ffffff" size={28} strokeWidth={3} />
+              </LinearGradient>
             </TouchableOpacity>
           ),
         }}
@@ -146,8 +161,8 @@ export default function TabLayout() {
         name="ai"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              <Bot color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused} label="Sankofa AI">
+              <Bot color={color} size={24} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}
@@ -156,8 +171,8 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
-              <User color={color} size={22} strokeWidth={focused ? 2.5 : 2} />
+            <TabIcon focused={focused} label="Profaili">
+              <User color={color} size={24} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
         }}

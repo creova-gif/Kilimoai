@@ -1237,64 +1237,89 @@ export default function HomeScreen() {
             </View>
           )}
           
-          <SafeAreaView style={styles.heroHeader}>
-            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-              <View style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}>
-                <MapPin size={14} color={colors.primary} />
-                <Text style={[styles.locationText, { color: colors.text }]}>{farmProfile?.region || agroId?.location || 'Mbeya, Tanzania'}</Text>
-              </View>
+          <SafeAreaView style={[styles.heroHeader, { paddingHorizontal: 20, paddingTop: Platform.OS === 'android' ? 40 : 0 }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
               
-              <TouchableOpacity 
-                activeOpacity={0.85}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  router.push('/forecast' as any);
-                }}
-                style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}
-              >
-                {weather.current?.condition === 'cloud'
-                  ? <Cloud size={14} color="#94a3b8" />
-                  : weather.current?.condition === 'rain' || weather.current?.condition === 'storm'
-                  ? <CloudRain size={14} color="#60a5fa" />
-                  : <Sun size={14} color="#F59E0B" />}
-                <Text style={[styles.locationText, { color: colors.text }]}>
-                  {Math.round(weather.current?.temp ?? farmVitals.temperature)}°C
-                </Text>
-              </TouchableOpacity>
+              {/* Left Profile Section */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
+                  <View style={[styles.heroAvatarBorder, { borderColor: colors.primary, borderWidth: 2, padding: 2, borderRadius: 24 }]}>
+                    {agroId?.avatarUrl ? (
+                      <Image source={{ uri: agroId.avatarUrl }} style={[styles.heroAvatar, { width: 44, height: 44, borderRadius: 22 }]} />
+                    ) : (
+                      <View style={[styles.heroAvatar, { backgroundColor: colors.primary, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }]}>
+                        <Text style={[styles.heroAvatarText, { fontSize: 18, color: '#fff', fontWeight: 'bold' }]}>
+                          {agroId?.name?.[0]?.toUpperCase() || 'K'}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </TouchableOpacity>
+                <View>
+                  <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter_500Medium' }}>
+                    {language === 'sw' ? 'Habari,' : 'Hello,'}
+                  </Text>
+                  <Text style={{ fontSize: 18, color: '#fff', fontFamily: 'Inter_700Bold', letterSpacing: 0.2 }}>
+                    {agroId?.name ? agroId.name.split(' ')[0] : (language === 'sw' ? 'Mkulima' : 'Farmer')}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Right Action Section */}
+              <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                <TouchableOpacity 
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    router.push('/forecast' as any);
+                  }}
+                  style={[styles.locationPill, { 
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+                    borderColor: 'rgba(255,255,255,0.15)',
+                    borderWidth: 1,
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 20
+                  }]}
+                >
+                  {weather.current?.condition === 'cloud'
+                    ? <Cloud size={16} color="#94a3b8" />
+                    : weather.current?.condition === 'rain' || weather.current?.condition === 'storm'
+                    ? <CloudRain size={16} color="#60a5fa" />
+                    : <Sun size={16} color="#F59E0B" />}
+                  <Text style={[styles.locationText, { color: '#fff', fontSize: 14, fontWeight: '600', marginLeft: 6 }]}>
+                    {Math.round(weather.current?.temp ?? farmVitals.temperature)}°
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }}
+                  style={[styles.heroActionCircle, { 
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                    borderColor: 'rgba(255,255,255,0.15)',
+                    borderWidth: 1,
+                    width: 42,
+                    height: 42,
+                    borderRadius: 21,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }]}
+                  accessibilityLabel="Notifications"
+                  accessibilityRole="button"
+                >
+                  <Bell size={18} color="#fff" />
+                  {unreadCount > 0 && !isOffline && <View style={[styles.heroNotificationDot, { top: 10, right: 12 }]} />}
+                </TouchableOpacity>
+              </View>
             </View>
             
-            <View style={styles.headerActions}>
-              {isOffline && (
-                <View style={styles.offlineIndicator}>
-                  <WifiOff size={16} color="#ef4444" />
-                  <Text style={styles.offlineText}>{syncQueue.length} Q</Text>
-                </View>
-              )}
-              
-              <TouchableOpacity 
-                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }}
-                style={[styles.heroActionCircle, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}
-                accessibilityLabel="Notifications"
-                accessibilityRole="button"
-              >
-                <Bell size={20} color={colors.text} />
-                {unreadCount > 0 && !isOffline && <View style={styles.heroNotificationDot} />}
-              </TouchableOpacity>
-              
-              <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
-                <View style={[styles.heroAvatarBorder, { borderColor: colors.primary }]}>
-                  {agroId?.avatarUrl ? (
-                    <Image source={{ uri: agroId.avatarUrl }} style={styles.heroAvatar} />
-                  ) : (
-                    <View style={[styles.heroAvatar, { backgroundColor: colors.primary }]}>
-                      <Text style={styles.heroAvatarText}>
-                        {agroId?.name?.[0]?.toUpperCase() || '?'}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-            </View>
+            {/* Contextual Sub-header / Status */}
+            {isOffline && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(239, 68, 68, 0.8)', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, alignSelf: 'flex-start', marginTop: 12 }}>
+                <WifiOff size={12} color="#fff" />
+                <Text style={{ color: '#fff', fontSize: 11, fontWeight: 'bold', marginLeft: 4 }}>OFFLINE ({syncQueue.length} Q)</Text>
+              </View>
+            )}
           </SafeAreaView>
 
           {/* Crop Telemetry Info Overlay */}
