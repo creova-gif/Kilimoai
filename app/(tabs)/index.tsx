@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { BarChart } from 'react-native-chart-kit';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { 
@@ -71,7 +70,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Rect, Text as SvgText } from 'react-native-svg';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { useTasks } from '../../hooks/useTasks';
@@ -217,10 +216,17 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
     }
   };
 
-  const data = {
-    labels: GROWTH_DATA.map(d => d.label),
-    datasets: [{ data: GROWTH_DATA.map(d => d.value * 100) }]
-  };
+  const chartW = screenWidth - 80;
+  const chartH = 160;
+  const padL = 8;
+  const padR = 8;
+  const padTop = 20;
+  const padBot = 28;
+  const barAreaW = chartW - padL - padR;
+  const n = GROWTH_DATA.length;
+  const barW = Math.floor(barAreaW / n * 0.55);
+  const gap = Math.floor(barAreaW / n);
+  const maxVal = Math.max(...GROWTH_DATA.map(d => d.value));
 
   return (
     <Card variant="solid" style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -252,31 +258,55 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
         </View>
       </View>
 
-      <View style={{ marginTop: 16, marginHorizontal: -16 }}>
-        <BarChart
-          data={data}
-          width={screenWidth - 48}
-          height={220}
-          yAxisLabel=""
-          yAxisSuffix="%"
-          chartConfig={{
-            backgroundColor: colors.card,
-            backgroundGradientFrom: colors.card,
-            backgroundGradientTo: colors.card,
-            decimalPlaces: 0,
-            color: (opacity = 1) => colors.primary,
-            labelColor: (opacity = 1) => colors.textMute,
-            barPercentage: 0.5,
-            propsForBackgroundLines: {
-              strokeWidth: 1,
-              stroke: isDark ? '#1C221A' : '#EDF1EC',
-            }
-          }}
-          style={{ borderRadius: 16 }}
-          showValuesOnTopOfBars={true}
-          withHorizontalLabels={false}
-          fromZero
-        />
+      <View style={{ marginTop: 16 }}>
+        <Svg width={chartW} height={chartH}>
+          <Defs>
+            <SvgLinearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0%" stopColor="#22d15a" stopOpacity="1" />
+              <Stop offset="100%" stopColor="#0a3d18" stopOpacity="0.7" />
+            </SvgLinearGradient>
+          </Defs>
+          {GROWTH_DATA.map((d, i) => {
+            const barH = ((d.value / maxVal) * (chartH - padTop - padBot));
+            const x = padL + i * gap + (gap - barW) / 2;
+            const y = chartH - padBot - barH;
+            const isHighlighted = d.value === 0.75;
+            return (
+              <React.Fragment key={i}>
+                <Rect
+                  x={x}
+                  y={y}
+                  width={barW}
+                  height={barH}
+                  rx={4}
+                  fill={isHighlighted ? '#22d15a' : 'url(#barGrad)'}
+                  opacity={isHighlighted ? 1 : 0.6}
+                />
+                {isHighlighted && (
+                  <SvgText
+                    x={x + barW / 2}
+                    y={y - 5}
+                    fontSize={9}
+                    fill="#22d15a"
+                    textAnchor="middle"
+                    fontWeight="bold"
+                  >
+                    {Math.round(d.value * 100)}%
+                  </SvgText>
+                )}
+                <SvgText
+                  x={x + barW / 2}
+                  y={chartH - 6}
+                  fontSize={7}
+                  fill={isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'}
+                  textAnchor="middle"
+                >
+                  {d.label.slice(-2)}
+                </SvgText>
+              </React.Fragment>
+            );
+          })}
+        </Svg>
       </View>
     </Card>
   );
