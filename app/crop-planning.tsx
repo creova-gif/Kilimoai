@@ -1,241 +1,196 @@
 /**
  * Crop Planning — AI-assisted seasonal crop calendar
- * Audit B1 (P1): season picker, crop recommendations, visual planting timeline, auto-tasks
+ * Redesigned: visual season cards, profit/yield graphs, timeline, plan workflow
  */
 import React, { useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, TouchableOpacity, SafeAreaView,
-  Dimensions, StatusBar, Platform, Alert,
+  StyleSheet, View, Text, ScrollView, TouchableOpacity,
+  SafeAreaView, Dimensions, StatusBar, Platform, Alert,
 } from 'react-native';
-import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut, FadeInRight } from 'react-native-reanimated';
 import {
-  ChevronLeft, Sparkles, Leaf, Droplets, AlertCircle, CheckCircle2,
-  Plus, TrendingUp, Sun, Cloud, CloudRain, Calendar, Target, ArrowRight,
+  ChevronLeft, Sparkles, Leaf, Droplets, CheckCircle2, Plus,
+  TrendingUp, Sun, Cloud, CloudRain, Calendar, Target, ArrowRight,
+  Zap, BarChart3, Clock, MapPin, Wheat,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import { useTasks, TaskCategory } from '../hooks/useTasks';
+import { useTasks } from '../hooks/useTasks';
 import { useKilimoStore } from '../store/useKilimoStore';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: W } = Dimensions.get('window');
 
-// ─── Data models ──────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 type Season = 'masika' | 'vuli' | 'kiangazi';
 type WaterNeed = 'Chini' | 'Wastani' | 'Juu';
 type Risk = 'Chini' | 'Wastani' | 'Juu';
 
 interface CropRec {
-  id: string;
-  name: string;
-  nameSw: string;
-  emoji: string;
-  daysToHarvest: number;
-  yieldPerAcre: string;   // e.g. "2.5 tani"
-  price: string;          // market reference
-  water: WaterNeed;
-  risk: Risk;
-  color: string;
-  plantWeeks: number;     // weeks of planting phase
-  growWeeks: number;      // weeks of growth phase
-  harvestWeeks: number;   // weeks of harvest phase
+  id: string; name: string; nameSw: string; emoji: string;
+  daysToHarvest: number; yieldPerAcre: string; yieldNum: number;
+  price: string; priceNum: number;
+  water: WaterNeed; risk: Risk; color: string;
+  plantWeeks: number; growWeeks: number; harvestWeeks: number;
   tips: string[];
 }
 
-const SEASONS: { key: Season; label: string; sublabel: string; months: string; icon: React.ReactNode; color: string }[] = [
-  { key: 'masika', label: 'Masika', sublabel: 'Mvua Ndefu', months: 'Mar – Mei', icon: <CloudRain size={16} color="#3b82f6" />, color: '#3b82f6' },
-  { key: 'vuli', label: 'Vuli', sublabel: 'Mvua Fupi', months: 'Okt – Des', icon: <Cloud size={16} color="#8b5cf6" />, color: '#8b5cf6' },
-  { key: 'kiangazi', label: 'Kiangazi', sublabel: 'Kiangazi', months: 'Jun – Sep', icon: <Sun size={16} color="#f59e0b" />, color: '#f59e0b' },
+const SEASONS = [
+  { key: 'masika' as Season, label: 'Masika', sublabel: 'Mvua Ndefu', months: 'Mar–Mei', icon: <CloudRain size={18} color="#3b82f6" />, color: '#3b82f6' },
+  { key: 'vuli' as Season,   label: 'Vuli',   sublabel: 'Mvua Fupi',  months: 'Okt–Des', icon: <Cloud size={18} color="#8b5cf6" />,   color: '#8b5cf6' },
+  { key: 'kiangazi' as Season, label: 'Kiangazi', sublabel: 'Kiangazi', months: 'Jun–Sep', icon: <Sun size={18} color="#f59e0b" />,    color: '#f59e0b' },
 ];
 
 const CROP_DATA: Record<Season, CropRec[]> = {
   masika: [
-    { id: 'm1', name: 'Maize', nameSw: 'Mahindi', emoji: '🌽', daysToHarvest: 120, yieldPerAcre: '2.5 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Tumia mbegu ya DK8031 au H614D', 'Weka CAN wiki 4 baada ya kupanda', 'Dhibiti wadudu wa buni mapema'] },
-    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 tani', price: 'TZS 210,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
-    { id: 'm3', name: 'Paddy Rice', nameSw: 'Mpunga', emoji: '🌾', daysToHarvest: 150, yieldPerAcre: '3.0 tani', price: 'TZS 120,000/mfuko', water: 'Juu', risk: 'Wastani', color: '#3b82f6', plantWeeks: 3, growWeeks: 16, harvestWeeks: 2, tips: ['Hitaji mfumo mzuri wa umwagiliaji', 'Tumia mbegu SARO 5 au TXD 306', 'Kagua mara kwa mara kwa magonjwa ya majani'] },
-    { id: 'm4', name: 'Tomatoes', nameSw: 'Nyanya', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '5.0 tani', price: 'TZS 38,000/crate', water: 'Wastani', risk: 'Juu', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu kwanza wiki 3', 'Weka steki na uunganishe sawa', 'Dhibiti kuoza kwa mwisho (Blossom End Rot)'] },
+    { id: 'm1', name: 'Maize', nameSw: 'Mahindi', emoji: '🌽', daysToHarvest: 120, yieldPerAcre: '2.5 t', yieldNum: 2.5, price: 'TSh 85,000/mfuko', priceNum: 85, water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Tumia mbegu DK8031 au H614D', 'Weka CAN wiki 4 baada ya kupanda', 'Dhibiti wadudu wa buni mapema'] },
+    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 t', yieldNum: 0.8, price: 'TSh 210,000/mfuko', priceNum: 210, water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
+    { id: 'm3', name: 'Paddy Rice', nameSw: 'Mpunga', emoji: '🌾', daysToHarvest: 150, yieldPerAcre: '3.0 t', yieldNum: 3.0, price: 'TSh 120,000/mfuko', priceNum: 120, water: 'Juu', risk: 'Wastani', color: '#3b82f6', plantWeeks: 3, growWeeks: 16, harvestWeeks: 2, tips: ['Hitaji mfumo mzuri wa umwagiliaji', 'Tumia mbegu SARO 5 au TXD 306', 'Kagua mara kwa mara kwa magonjwa'] },
+    { id: 'm4', name: 'Tomatoes', nameSw: 'Nyanya', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '5.0 t', yieldNum: 5.0, price: 'TSh 38,000/crate', priceNum: 38, water: 'Wastani', risk: 'Juu', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu kwanza wiki 3', 'Weka steki na uunganishe sawa', 'Dhibiti Blossom End Rot'] },
   ],
   vuli: [
-    { id: 'v1', name: 'Short Maize', nameSw: 'Mahindi (Mfupi)', emoji: '🌽', daysToHarvest: 90, yieldPerAcre: '2.0 tani', price: 'TZS 85,000/mfuko', water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 1, tips: ['Chagua aina ya siku 90 (SEEDCO SC403)', 'Panda siku 1-3 za mvua za kwanza', 'Funika udongo (mulching) kudumisha unyevu'] },
-    { id: 'v2', name: 'Onions', nameSw: 'Vitunguu', emoji: '🧅', daysToHarvest: 120, yieldPerAcre: '4.0 tani', price: 'TZS 45,000/net 20kg', water: 'Wastani', risk: 'Wastani', color: '#a855f7', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Anzisha katika kitalu wiki 4-6 mapema', 'Hitaji udongo wenye rutuba na mifereji mizuri', 'Kausha vizuri kabla ya kuhifadhi'] },
-    { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 tani', price: 'TZS 15,000/kichwa', water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 3 mapema', 'Weka mbolea ya CAN mara kwa mara', 'Dhibiti viwavi (caterpillars) mapema'] },
-    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 tani', price: 'TZS 210,000/mfuko', water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia mbegu ya Jesca au Lyamungu 85', 'Inafaa kwa maeneo ya mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
+    { id: 'v1', name: 'Short Maize', nameSw: 'Mahindi (Mfupi)', emoji: '🌽', daysToHarvest: 90, yieldPerAcre: '2.0 t', yieldNum: 2.0, price: 'TSh 85,000/mfuko', priceNum: 85, water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 1, tips: ['Chagua SEEDCO SC403 (siku 90)', 'Panda siku 1-3 za mvua za kwanza', 'Funika udongo (mulching)'] },
+    { id: 'v2', name: 'Onions', nameSw: 'Vitunguu', emoji: '🧅', daysToHarvest: 120, yieldPerAcre: '4.0 t', yieldNum: 4.0, price: 'TSh 45,000/net 20kg', priceNum: 45, water: 'Wastani', risk: 'Wastani', color: '#a855f7', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Anzisha kitalu wiki 4-6 mapema', 'Udongo wenye rutuba na mifereji', 'Kausha vizuri kabla ya kuhifadhi'] },
+    { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 t', yieldNum: 6.0, price: 'TSh 15,000/kichwa', priceNum: 15, water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda kitalu wiki 3 mapema', 'Weka mbolea CAN mara kwa mara', 'Dhibiti viwavi mapema'] },
+    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 t', yieldNum: 0.7, price: 'TSh 210,000/mfuko', priceNum: 210, water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia Jesca au Lyamungu 85', 'Inafaa mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
   ],
   kiangazi: [
-    { id: 'k1', name: 'Sunflower', nameSw: 'Alizeti', emoji: '🌻', daysToHarvest: 95, yieldPerAcre: '0.5 tani mbegu', price: 'TZS 95,000/mfuko', water: 'Chini', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 2, tips: ['Faa kwa maeneo kame na hata ya kiangazi', 'Umbali wa kupanda: 75cm × 30cm', 'Fua mbegu vizuri kabla ya kuuza'] },
-    { id: 'k2', name: 'Irrigated Tomatoes', nameSw: 'Nyanya (Umwagiliaji)', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '7.0 tani', price: 'TZS 38,000/crate', water: 'Juu', risk: 'Wastani', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Hitaji umwagiliaji wa drip au flood', 'Bei nzuri wakati wa kiangazi (uhaba)', 'Dhibiti ugonjwa wa Late Blight'] },
-    { id: 'k3', name: 'Chili Peppers', nameSw: 'Pilipili Kali', emoji: '🌶️', daysToHarvest: 120, yieldPerAcre: '1.2 tani', price: 'TZS 800/kg fresh', water: 'Wastani', risk: 'Chini', color: '#f97316', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Panda katika kitalu wiki 4 mapema', 'Inaweza kukaa hadi miaka 2-3 ikitunzwa', 'Soko la nje ya nchi (export) linalipa vizuri'] },
-    { id: 'k4', name: 'Sorghum', nameSw: 'Mtama', emoji: '🌿', daysToHarvest: 90, yieldPerAcre: '1.5 tani', price: 'TZS 55,000/mfuko', water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 10, harvestWeeks: 2, tips: ['Ustahimili ukame zaidi ya mahindi', 'Inafaa kwa maeneo ya Dodoma/Singida', 'Tumia kwa chakula na lishe ya wanyama'] },
+    { id: 'k1', name: 'Sunflower', nameSw: 'Alizeti', emoji: '🌻', daysToHarvest: 95, yieldPerAcre: '0.5 t', yieldNum: 0.5, price: 'TSh 95,000/mfuko', priceNum: 95, water: 'Chini', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 2, tips: ['Umbali 75cm × 30cm', 'Faa maeneo kame', 'Fua mbegu kabla ya kuuza'] },
+    { id: 'k2', name: 'Irrig. Tomatoes', nameSw: 'Nyanya (Umwagiliaji)', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '7.0 t', yieldNum: 7.0, price: 'TSh 38,000/crate', priceNum: 38, water: 'Juu', risk: 'Wastani', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Hitaji drip au flood irrigation', 'Bei nzuri wakati wa kiangazi', 'Dhibiti Late Blight'] },
+    { id: 'k3', name: 'Chili Peppers', nameSw: 'Pilipili Kali', emoji: '🌶️', daysToHarvest: 120, yieldPerAcre: '1.2 t', yieldNum: 1.2, price: 'TSh 800/kg fresh', priceNum: 80, water: 'Wastani', risk: 'Chini', color: '#f97316', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Panda kitalu wiki 4 mapema', 'Inaweza kukaa miaka 2-3', 'Soko la export linalipa vizuri'] },
+    { id: 'k4', name: 'Sorghum', nameSw: 'Mtama', emoji: '🌿', daysToHarvest: 90, yieldPerAcre: '1.5 t', yieldNum: 1.5, price: 'TSh 55,000/mfuko', priceNum: 55, water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 10, harvestWeeks: 2, tips: ['Ustahimili ukame zaidi ya mahindi', 'Inafaa Dodoma/Singida', 'Kwa chakula na lishe ya wanyama'] },
   ],
 };
 
-// ─── Background orb ───────────────────────────────────────────────────────────
-const NeuralOrb = ({ color, size, x, y, delay = 0 }: any) => (
-  <Animated.View
-    entering={FadeInDown}
-    style={[styles.orb, { width: size, height: size, borderRadius: size / 2, backgroundColor: color, filter: Platform.OS === 'web' ? 'blur(100px)' : undefined }]}
-  />
-);
+const WATER_COLOR: Record<WaterNeed, string> = { Chini: '#22c55e', Wastani: '#f59e0b', Juu: '#3b82f6' };
+const RISK_COLOR: Record<Risk, string> = { Chini: '#22c55e', Wastani: '#f59e0b', Juu: '#ef4444' };
 
-// ─── Planting timeline bar ─────────────────────────────────────────────────────
-function PlantingTimeline({ crop, language }: { crop: CropRec; language: 'en' | 'sw' }) {
+// ─── Yield bar chart (sparkbar) ────────────────────────────────────────────────
+function YieldChart({ crops }: { crops: CropRec[] }) {
+  const { isDark } = useTheme();
+  const max = Math.max(...crops.map((c) => c.yieldNum));
+  return (
+    <View style={yc.wrap}>
+      {crops.map((c) => (
+        <View key={c.id} style={yc.col}>
+          <Text style={yc.val}>{c.yieldNum}t</Text>
+          <View style={yc.trackWrap}>
+            <View style={[yc.track, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }]}>
+              <View style={[yc.fill, { height: `${(c.yieldNum / max) * 100}%` as any, backgroundColor: c.color }]} />
+            </View>
+          </View>
+          <Text style={yc.label} numberOfLines={1}>{c.emoji}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+const yc = StyleSheet.create({
+  wrap: {
+    flexDirection: 'row', gap: 6, height: 80,
+    alignItems: 'flex-end',
+  },
+  col: { flex: 1, alignItems: 'center', gap: 3 },
+  val: { fontSize: 8, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  trackWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
+  track: {
+    width: '100%', flex: 1, borderRadius: 4,
+    justifyContent: 'flex-end', overflow: 'hidden',
+  },
+  fill: { borderRadius: 4, minHeight: 4 },
+  label: { fontSize: 14 },
+});
+
+// ─── Planting timeline ────────────────────────────────────────────────────────
+function PlantingTimeline({ crop }: { crop: CropRec }) {
   const [activePhase, setActivePhase] = useState<'planting' | 'growing' | 'harvesting'>('planting');
   const total = crop.plantWeeks + crop.growWeeks + crop.harvestWeeks;
-  const plantPct = (crop.plantWeeks / total) * 100;
-  const growPct = (crop.growWeeks / total) * 100;
+  const plantPct  = (crop.plantWeeks  / total) * 100;
+  const growPct   = (crop.growWeeks   / total) * 100;
   const harvestPct = (crop.harvestWeeks / total) * 100;
 
+  const phases = [
+    { key: 'planting'   as const, label: 'Upanzi',   color: '#22c55e', pct: plantPct,   weeks: crop.plantWeeks },
+    { key: 'growing'    as const, label: 'Ukuaji',   color: '#f59e0b', pct: growPct,    weeks: crop.growWeeks },
+    { key: 'harvesting' as const, label: 'Mavuno',   color: '#f97316', pct: harvestPct, weeks: crop.harvestWeeks },
+  ];
+
+  const PHASE_BODY: Record<typeof activePhase, string> = {
+    planting:   `Inachukua wiki 1–${crop.plantWeeks}. Chimba mashimo, weka mbolea ya chini (DAP/NPK) na ufunike kwa udongo kidogo, kisha panda mbegu kwenye kina cha sm 2–5.`,
+    growing:    `Inachukua wiki ${crop.growWeeks}. Palilia shamba ndani ya wiki 2–3. Weka Urea/CAN wakati wa wiki 4–6 baada ya kuota wakati kuna unyevu.`,
+    harvesting: `Inachukua wiki ${crop.harvestWeeks}. Mavuno bora siku ${crop.daysToHarvest}. Kausha mazao chini ya 15% unyevu kuzuia aflatoxin.`,
+  };
+
   return (
-    <View style={{ marginTop: 12 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-        <Text style={tl.label}>
-          {language === 'sw' ? `KALENDA YA KILIMO (${crop.daysToHarvest} siku)` : `AGRICULTURAL CALENDAR (${crop.daysToHarvest} days)`}
-        </Text>
-        <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>
-          {language === 'sw' ? 'Gusa hatua kuona maelezo' : 'Tap phase for instructions'}
-        </Text>
-      </View>
+    <View style={{ gap: 10, marginTop: 8 }}>
+      <Text style={pt.label}>KALENDA ({crop.daysToHarvest} siku)</Text>
 
-      {/* Interactive Timeline Bar */}
-      <View style={{ flexDirection: 'row', height: 16, borderRadius: 8, overflow: 'hidden', gap: 3, backgroundColor: 'transparent' }}>
-        <TouchableOpacity 
-          activeOpacity={0.8}
-          onPress={() => { Haptics.selectionAsync(); setActivePhase('planting'); }}
-          style={{ width: `${plantPct}%`, height: '100%' }}
-          accessibilityRole="button"
-          accessibilityLabel="Planting Phase"
-        >
-          <View style={{ flex: 1, backgroundColor: '#22c55e', borderRadius: 4, opacity: activePhase === 'planting' ? 1.0 : 0.45 }} />
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          activeOpacity={0.8}
-          onPress={() => { Haptics.selectionAsync(); setActivePhase('growing'); }}
-          style={{ width: `${growPct}%`, height: '100%' }}
-          accessibilityRole="button"
-          accessibilityLabel="Growth Phase"
-        >
-          <View style={{ flex: 1, backgroundColor: '#f59e0b', borderRadius: 4, opacity: activePhase === 'growing' ? 1.0 : 0.45 }} />
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          activeOpacity={0.8}
-          onPress={() => { Haptics.selectionAsync(); setActivePhase('harvesting'); }}
-          style={{ width: `${harvestPct}%`, height: '100%' }}
-          accessibilityRole="button"
-          accessibilityLabel="Harvest Phase"
-        >
-          <View style={{ flex: 1, backgroundColor: '#f97316', borderRadius: 4, opacity: activePhase === 'harvesting' ? 1.0 : 0.45 }} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Legend Labels */}
-      <View style={{ flexDirection: 'row', gap: 16, marginTop: 10, marginBottom: 12 }}>
-        {[
-          { key: 'planting', label: language === 'sw' ? 'Upanzi' : 'Planting', color: '#22c55e', weeks: crop.plantWeeks },
-          { key: 'growing', label: language === 'sw' ? 'Ukuaji' : 'Growing', color: '#f59e0b', weeks: crop.growWeeks },
-          { key: 'harvesting', label: language === 'sw' ? 'Mavuno' : 'Harvest', color: '#f97316', weeks: crop.harvestWeeks }
-        ].map((phase) => (
-          <TouchableOpacity 
-            key={phase.key} 
-            onPress={() => { Haptics.selectionAsync(); setActivePhase(phase.key as any); }}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 4, opacity: activePhase === phase.key ? 1.0 : 0.5 }}
-            accessibilityRole="button"
+      {/* Bar */}
+      <View style={{ flexDirection: 'row', height: 14, borderRadius: 7, overflow: 'hidden', gap: 2 }}>
+        {phases.map((ph) => (
+          <TouchableOpacity
+            key={ph.key}
+            onPress={() => { Haptics.selectionAsync(); setActivePhase(ph.key); }}
+            style={{ width: `${ph.pct}%` as any, height: '100%' }}
+            activeOpacity={0.8}
           >
-            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: phase.color }} />
-            <Text style={[tl.phaseLbl, activePhase === phase.key && { fontWeight: '800', color: '#22d15a' }]}>
-              {phase.label} ({phase.weeks}w)
+            <View style={{ flex: 1, backgroundColor: ph.color, borderRadius: 4, opacity: activePhase === ph.key ? 1 : 0.4 }} />
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Legend */}
+      <View style={{ flexDirection: 'row', gap: 12, flexWrap: 'wrap' }}>
+        {phases.map((ph) => (
+          <TouchableOpacity
+            key={ph.key}
+            onPress={() => { Haptics.selectionAsync(); setActivePhase(ph.key); }}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 4, opacity: activePhase === ph.key ? 1 : 0.5 }}
+          >
+            <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: ph.color }} />
+            <Text style={[pt.phaseLbl, activePhase === ph.key && { color: '#22d15a' }]}>
+              {ph.label} ({ph.weeks}w)
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Interactive Phase Info Box */}
-      <Animated.View 
-        entering={FadeInDown.springify()} 
-        key={activePhase}
-        style={tl.infoBox}
-      >
-        {activePhase === 'planting' && (
-          <View style={{ gap: 4 }}>
-            <Text style={[tl.infoTitle, { color: '#22c55e' }]}>
-              {language === 'sw' ? '1. Hatua ya Upanzi' : '1. Planting Phase'}
-            </Text>
-            <Text style={tl.infoBody}>
-              {language === 'sw'
-                ? `Inachukua wiki 1 hadi ${crop.plantWeeks}. Chimba mashimo kwa usawa, weka mbolea ya chini (basal DAP/NPK) na ufunike kwa udongo kidogo, kisha panda mbegu kwenye kina cha sm 2-5.`
-                : `Spans week 1 to ${crop.plantWeeks}. Dig holes, place basal phosphorus fertilizer (DAP/NPK) and cover with soil, then plant seeds at a depth of 2-5 cm.`}
-            </Text>
-          </View>
-        )}
-        {activePhase === 'growing' && (
-          <View style={{ gap: 4 }}>
-            <Text style={[tl.infoTitle, { color: '#f59e0b' }]}>
-              {language === 'sw' ? '2. Hatua ya Ukuaji na Matunzo' : '2. Growth & Crop Care'}
-            </Text>
-            <Text style={tl.infoBody}>
-              {language === 'sw'
-                ? `Inachukua wiki ${crop.growWeeks}. Palilia shamba ndani ya wiki 2-3 kuzuia ushindani wa virutubisho, na weka mbolea ya Urea/CAN wakati wa wiki ya 4-6 baada ya kuota wakati kuna unyevu.`
-                : `Spans ${crop.growWeeks} weeks. Keep weed-free in first 2-3 weeks, and apply nitrogen top-dressing (Urea/CAN) at week 4-6 on moist soil after weeding.`}
-            </Text>
-          </View>
-        )}
-        {activePhase === 'harvesting' && (
-          <View style={{ gap: 4 }}>
-            <Text style={[tl.infoTitle, { color: '#f97316' }]}>
-              {language === 'sw' ? '3. Hatua ya Mavuno na Kuhifadhi' : '3. Harvesting & Storage'}
-            </Text>
-            <Text style={tl.infoBody}>
-              {language === 'sw'
-                ? `Inachukua wiki ${crop.harvestWeeks}. Mavuno bora hufanyika siku ya ${crop.daysToHarvest}. Kausha mazao yako vizuri kwenye unyevu wa chini ya 15% kuzuia sumu ya kuvu (aflatoxin).`
-                : `Spans ${crop.harvestWeeks} weeks. Dry grains properly below 15% moisture content to prevent mold or aflatoxin contamination.`}
-            </Text>
-          </View>
-        )}
+      {/* Info box */}
+      <Animated.View key={activePhase} entering={FadeInDown.springify()}>
+        <View style={pt.infoBox}>
+          <Text style={[pt.infoTitle, { color: phases.find((p) => p.key === activePhase)!.color }]}>
+            {phases.find((p) => p.key === activePhase)!.label.toUpperCase()}
+          </Text>
+          <Text style={pt.infoBody}>{PHASE_BODY[activePhase]}</Text>
+        </View>
       </Animated.View>
     </View>
   );
 }
 
-const tl = StyleSheet.create({
-  label: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1.5, color: '#6b7280' },
-  phaseLbl: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#6b7280' },
+const pt = StyleSheet.create({
+  label: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#64748b', letterSpacing: 1 },
+  phaseLbl: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#64748b' },
   infoBox: {
-    padding: 12,
-    borderRadius: 12,
+    padding: 12, borderRadius: 12,
     backgroundColor: 'rgba(34,209,90,0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.12)',
-    marginTop: 2,
-    marginBottom: 8,
+    borderWidth: 1, borderColor: 'rgba(34,209,90,0.12)',
+    gap: 4,
   },
-  infoTitle: {
-    fontSize: 11,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  infoBody: {
-    fontSize: 12,
-    fontFamily: 'Inter_500Medium',
-    lineHeight: 18,
-    color: '#4b5563',
-  }
+  infoTitle: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.6 },
+  infoBody: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 18, color: '#94a3b8' },
 });
 
-// ─── Water / risk badge ────────────────────────────────────────────────────────
-const WATER_COLOR: Record<WaterNeed, string> = { Chini: '#22c55e', Wastani: '#f59e0b', Juu: '#3b82f6' };
-const RISK_COLOR: Record<Risk, string> = { Chini: '#22c55e', Wastani: '#f59e0b', Juu: '#ef4444' };
-
-// ─── Main screen ──────────────────────────────────────────────────────────────
+// ─── Screen ───────────────────────────────────────────────────────────────────
 export default function CropPlanningScreen() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
   const { createTask } = useTasks();
   const addNotification = useKilimoStore((s) => s.addNotification);
   const language = useKilimoStore((s) => s.language);
+
   const [season, setSeason] = useState<Season>('masika');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [planning, setPlanning] = useState<Record<string, boolean>>({});
@@ -247,275 +202,410 @@ export default function CropPlanningScreen() {
     if (planning[crop.id]) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     const today = new Date();
-    createTask({ title: `Panda ${crop.nameSw}`, titleSw: `Panda ${crop.nameSw}`, category: 'planting', priority: 'high', status: 'pending', xpReward: 25, dueDate: new Date(today.getTime() + 1 * 24 * 3600_000).toISOString() });
-    createTask({ title: `Tunza ${crop.nameSw} — wiki 1-${crop.growWeeks}`, titleSw: `Tunza ${crop.nameSw}`, category: 'scouting', priority: 'medium', status: 'pending', xpReward: 15, dueDate: new Date(today.getTime() + 14 * 24 * 3600_000).toISOString() });
-    createTask({ title: `Vuna ${crop.nameSw}`, titleSw: `Vuna ${crop.nameSw}`, category: 'harvest', priority: 'critical', status: 'pending', xpReward: 40, dueDate: new Date(today.getTime() + crop.daysToHarvest * 24 * 3600_000).toISOString() });
-    addNotification({ title: `📅 Mpango wa ${crop.nameSw} Umewekwa`, body: `Kazi 3 zimeongezwa: Upanzi, Utunzaji, na Mavuno baada ya siku ${crop.daysToHarvest}.`, type: 'success' });
+    createTask({ title: `Panda ${crop.nameSw}`, titleSw: `Panda ${crop.nameSw}`, category: 'planting', priority: 'high', status: 'pending', xpReward: 25, dueDate: new Date(today.getTime() + 86400_000).toISOString() });
+    createTask({ title: `Tunza ${crop.nameSw}`, titleSw: `Tunza ${crop.nameSw}`, category: 'scouting', priority: 'medium', status: 'pending', xpReward: 15, dueDate: new Date(today.getTime() + 14 * 86400_000).toISOString() });
+    createTask({ title: `Vuna ${crop.nameSw}`, titleSw: `Vuna ${crop.nameSw}`, category: 'harvest', priority: 'critical', status: 'pending', xpReward: 40, dueDate: new Date(today.getTime() + crop.daysToHarvest * 86400_000).toISOString() });
+    addNotification({ title: `Mpango wa ${crop.nameSw} Umewekwa`, body: `Kazi 3 zimeongezwa kwa ratiba.`, type: 'success' });
     setPlanning((p) => ({ ...p, [crop.id]: true }));
   }
 
+  const plannedCount = Object.values(planning).filter(Boolean).length;
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[st.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
-      <View style={StyleSheet.absoluteFill}>
-        
-        
-        <LinearGradient colors={[isDark ? '#020617' : '#ffffff', isDark ? '#020617ee' : '#ffffffee', 'transparent']} style={{ position: 'absolute', top: 0, left: 0, right: 0, height: SCREEN_HEIGHT }} />
+      {/* Glows */}
+      <View style={StyleSheet.absoluteFill} pointerEvents="none">
+        <View style={[st.glowTR, Platform.OS === 'web' && ({ filter: 'blur(90px)' } as any)]} />
+        <View style={[st.glowBL, Platform.OS === 'web' && ({ filter: 'blur(70px)' } as any)]} />
       </View>
 
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
-        <Animated.View entering={FadeInDown} style={styles.header}>
+        <View style={st.header}>
           <TouchableOpacity
             onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel="Go back"
+            style={st.iconBtn}
           >
-            <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconBtn, { borderColor: colors.border }]}>
-              <ChevronLeft size={24} color={colors.text} />
-            </BlurView>
+            <ChevronLeft size={22} color={isDark ? 'rgba(255,255,255,0.8)' : colors.text} />
           </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
-            <View style={[styles.badge, { backgroundColor: colors.primary + '20' }]}>
-              <Sparkles size={11} color={colors.primary} /><Text style={[styles.badgeText, { color: colors.primary }]}>AI MSHAURI WA KILIMO</Text>
+            <View style={st.aiBadge}>
+              <Sparkles size={10} color="#22d15a" />
+              <Text style={st.aiBadgeText}>AI MSHAURI</Text>
             </View>
-            <Text style={[styles.title, { color: colors.text }]}>Upangaji Mazao</Text>
+            <Text style={[st.headerTitle, { color: colors.text }]}>Upangaji Mazao</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => router.push('/tasks')}
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel="View farm tasks calendar"
-          >
-            <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconBtn, { borderColor: colors.border }]}>
-              <Calendar size={20} color={colors.primary} />
-            </BlurView>
+          <TouchableOpacity onPress={() => router.push('/tasks')} style={st.iconBtn}>
+            <Calendar size={19} color="#22d15a" />
           </TouchableOpacity>
-        </Animated.View>
+        </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
 
-          {/* Season selector */}
-          <Animated.View entering={FadeInDown} style={styles.seasonRow}>
-            {SEASONS.map((s) => (
-              <TouchableOpacity
-              key={s.key}
-              onPress={() => { setSeason(s.key); setExpanded(null); Haptics.selectionAsync(); }}
-              style={{ flex: 1 }}
-              accessibilityRole="button"
-              accessibilityLabel={`${s.label} season, ${s.months}`}
-              accessibilityState={{ selected: season === s.key }}
-            >
-                <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'}
-                  style={[styles.seasonTab, { borderColor: season === s.key ? s.color : colors.border, borderWidth: season === s.key ? 2 : 1 }]}>
-                  <LinearGradient colors={season === s.key ? [s.color + '22', s.color + '08'] : ['transparent', 'transparent']} style={StyleSheet.absoluteFill} />
-                  {s.icon}
-                  <Text style={[styles.seasonLabel, { color: season === s.key ? s.color : colors.text }]}>{s.label}</Text>
-                  <Text style={[styles.seasonSub, { color: colors.textMute }]}>{s.months}</Text>
-                </BlurView>
-              </TouchableOpacity>
-            ))}
-          </Animated.View>
-
-          {/* Season info banner */}
-          <Animated.View key={season} entering={FadeInDown}
-            style={[styles.banner, { borderColor: activeSeason.color + '40', backgroundColor: activeSeason.color + '12' }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              {activeSeason.icon}
-              <View>
-                <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, color: activeSeason.color }}>{activeSeason.label} — {activeSeason.sublabel}</Text>
-                <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 12, color: colors.textMute }}>{activeSeason.months} · {crops.length} mazao yanayofaa</Text>
-              </View>
-            </View>
-            <View style={[styles.aiTag, { backgroundColor: colors.primary + '18' }]}>
-              <Sparkles size={12} color={colors.primary} />
-              <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 10, color: colors.primary }}>AI IMEPENDEKEZA</Text>
-            </View>
-          </Animated.View>
-
-          {/* Section heading */}
-          <View style={styles.sectionRow}>
-            <Leaf size={18} color={colors.primary} />
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Mazao Yanayopendekezwa</Text>
+          {/* ── Season selector ── */}
+          <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
+            {SEASONS.map((s) => {
+              const active = season === s.key;
+              return (
+                <TouchableOpacity
+                  key={s.key}
+                  onPress={() => { setSeason(s.key); setExpanded(null); Haptics.selectionAsync(); }}
+                  style={{ flex: 1 }}
+                >
+                  <View style={[st.seasonTab, {
+                    backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+                    borderColor: active ? s.color : (isDark ? 'rgba(255,255,255,0.06)' : colors.border),
+                    borderWidth: active ? 2 : 1,
+                  }]}>
+                    {active && (
+                      <LinearGradient
+                        colors={[`${s.color}22`, 'transparent']}
+                        style={StyleSheet.absoluteFill}
+                        pointerEvents="none"
+                      />
+                    )}
+                    {s.icon}
+                    <Text style={[st.seasonLabel, { color: active ? s.color : (isDark ? 'rgba(255,255,255,0.6)' : colors.text) }]}>
+                      {s.label}
+                    </Text>
+                    <Text style={[st.seasonMonths, { color: colors.textMute }]}>{s.months}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
-          {/* Crop cards */}
-          
+          {/* ── Season banner ── */}
+          <Animated.View key={season} entering={FadeInDown}>
+            <View style={[st.banner, {
+              backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+              borderColor: `${activeSeason.color}35`,
+            }]}>
+              <LinearGradient
+                colors={[`${activeSeason.color}18`, 'transparent']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                style={StyleSheet.absoluteFill}
+                pointerEvents="none"
+              />
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text style={[st.bannerTitle, { color: activeSeason.color }]}>
+                  {activeSeason.label} — {activeSeason.sublabel}
+                </Text>
+                <Text style={[st.bannerSub, { color: colors.textMute }]}>
+                  {activeSeason.months} · {crops.length} mazao yanayofaa
+                </Text>
+              </View>
+              {plannedCount > 0 && (
+                <View style={st.plannedBadge}>
+                  <Zap size={11} color="#f59e0b" />
+                  <Text style={st.plannedBadgeText}>{plannedCount} ZIMEPANGWA</Text>
+                </View>
+              )}
+            </View>
+          </Animated.View>
+
+          {/* ── Yield comparison chart ── */}
+          <Animated.View entering={FadeInDown.delay(80)} style={{ marginVertical: 16 }}>
+            <View style={[st.chartCard, {
+              backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+              borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
+            }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <BarChart3 size={16} color="#22d15a" />
+                <Text style={[st.chartTitle, { color: colors.text }]}>Ulinganisho wa Mavuno</Text>
+                <Text style={[st.chartSub, { color: colors.textMute }]}>tani/eka</Text>
+              </View>
+              <YieldChart crops={crops} />
+            </View>
+          </Animated.View>
+
+          {/* ── Crop cards ── */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Leaf size={17} color="#22d15a" />
+            <Text style={[st.sectionTitle, { color: colors.text }]}>Mazao Yanayopendekezwa</Text>
+          </View>
+
+          <View style={{ gap: 14 }}>
             {crops.map((crop, idx) => {
               const isOpen = expanded === crop.id;
               const isPlanned = !!planning[crop.id];
+
               return (
-                <Animated.View key={crop.id} entering={FadeInDown} exiting={FadeOut} style={{ marginBottom: 16 }}>
+                <Animated.View key={crop.id} entering={FadeInDown.delay(idx * 50).springify()}>
                   <TouchableOpacity
                     onPress={() => { setExpanded(isOpen ? null : crop.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-                    activeOpacity={0.88}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${crop.nameSw} — ${crop.daysToHarvest} days to harvest`}
-                    accessibilityHint={isOpen ? 'Collapse crop details' : 'Expand crop details'}
-                    accessibilityState={{ expanded: isOpen }}
+                    activeOpacity={0.9}
                   >
-                    <BlurView intensity={isDark ? 20 : 65} tint={isDark ? 'dark' : 'light'}
-                      style={[styles.card, { borderColor: isOpen ? crop.color + '50' : colors.border, borderWidth: isOpen ? 2 : 1 }]}>
+                    <View style={[st.cropCard, {
+                      backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+                      borderColor: isOpen ? `${crop.color}55` : (isDark ? 'rgba(255,255,255,0.06)' : colors.border),
+                      borderWidth: isOpen ? 2 : 1,
+                      borderLeftColor: crop.color,
+                    }]}>
+                      {/* Top shimmer */}
+                      <LinearGradient
+                        colors={[`${crop.color}12`, 'transparent']}
+                        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                        style={StyleSheet.absoluteFill}
+                        pointerEvents="none"
+                      />
 
-                      {/* Card header */}
-                      <View style={styles.cardHead}>
-                        <View style={[styles.emoji, { backgroundColor: crop.color + '18' }]}>
+                      {/* Card head */}
+                      <View style={st.cropHead}>
+                        <View style={[st.cropEmoji, { backgroundColor: `${crop.color}18` }]}>
                           <Text style={{ fontSize: 22 }}>{crop.emoji}</Text>
                         </View>
                         <View style={{ flex: 1 }}>
-                          <Text style={[styles.cropName, { color: colors.text }]}>{crop.nameSw}</Text>
-                          <Text style={[styles.cropSub, { color: colors.textMute }]}>{crop.name} · {crop.daysToHarvest} siku hadi mavuno</Text>
+                          <Text style={[st.cropName, { color: isDark ? '#fff' : colors.text }]}>
+                            {crop.nameSw}
+                          </Text>
+                          <Text style={[st.cropSub, { color: colors.textMute }]}>
+                            {crop.name} · {crop.daysToHarvest} siku
+                          </Text>
                         </View>
-                        {isPlanned && (
-                          <View style={[styles.plannedTag, { backgroundColor: '#22c55e18' }]}>
-                            <CheckCircle2 size={14} color="#22c55e" />
-                            <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 10, color: '#22c55e' }}>IMEPANGWA</Text>
-                          </View>
-                        )}
+                        {isPlanned
+                          ? <View style={st.plannedChip}>
+                              <CheckCircle2 size={12} color="#22c55e" />
+                              <Text style={st.plannedChipText}>IMEPANGWA</Text>
+                            </View>
+                          : <View style={[st.arrowChip, { backgroundColor: `${crop.color}15` }]}>
+                              <ArrowRight size={14} color={crop.color} style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }} />
+                            </View>
+                        }
                       </View>
 
                       {/* Stats row */}
-                      <View style={styles.statsRow}>
-                        <View style={styles.stat}>
-                          <Text style={[styles.statLabel, { color: colors.textMute }]}>Mavuno/Eka</Text>
-                          <Text style={[styles.statVal, { color: colors.text }]}>{crop.yieldPerAcre}</Text>
+                      <View style={st.statsRow}>
+                        <View style={st.stat}>
+                          <Text style={[st.statLbl, { color: colors.textMute }]}>Mavuno/Eka</Text>
+                          <Text style={[st.statVal, { color: isDark ? '#fff' : colors.text }]}>{crop.yieldPerAcre}</Text>
                         </View>
-                        <View style={[styles.statDiv, { backgroundColor: colors.border }]} />
-                        <View style={styles.stat}>
-                          <Text style={[styles.statLabel, { color: colors.textMute }]}>Bei ya Soko</Text>
-                          <Text style={[styles.statVal, { color: colors.text }]}>{crop.price}</Text>
+                        <View style={[st.statDiv, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]} />
+                        <View style={st.stat}>
+                          <Text style={[st.statLbl, { color: colors.textMute }]}>Bei ya Soko</Text>
+                          <Text style={[st.statVal, { color: '#22d15a' }]}>{crop.price}</Text>
                         </View>
-                        <View style={[styles.statDiv, { backgroundColor: colors.border }]} />
-                        <View style={styles.stat}>
-                          <Text style={[styles.statLabel, { color: colors.textMute }]}>Maji</Text>
-                          <Text style={[styles.statVal, { color: WATER_COLOR[crop.water] }]}>{crop.water}</Text>
+                        <View style={[st.statDiv, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]} />
+                        <View style={st.stat}>
+                          <Text style={[st.statLbl, { color: colors.textMute }]}>Maji</Text>
+                          <Text style={[st.statVal, { color: WATER_COLOR[crop.water] }]}>{crop.water}</Text>
                         </View>
-                        <View style={[styles.statDiv, { backgroundColor: colors.border }]} />
-                        <View style={styles.stat}>
-                          <Text style={[styles.statLabel, { color: colors.textMute }]}>Hatari</Text>
-                          <Text style={[styles.statVal, { color: RISK_COLOR[crop.risk] }]}>{crop.risk}</Text>
+                        <View style={[st.statDiv, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]} />
+                        <View style={st.stat}>
+                          <Text style={[st.statLbl, { color: colors.textMute }]}>Hatari</Text>
+                          <Text style={[st.statVal, { color: RISK_COLOR[crop.risk] }]}>{crop.risk}</Text>
                         </View>
                       </View>
 
-                      {/* Expanded section */}
-                      
-                        {isOpen && (
-                          <Animated.View entering={FadeInDown} exiting={FadeOut} style={{ overflow: 'hidden' }}>
-                            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                      {/* Expanded detail */}
+                      {isOpen && (
+                        <Animated.View entering={FadeInDown} exiting={FadeOut} style={{ gap: 14 }}>
+                          <View style={[st.divider, { backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : colors.border }]} />
 
-                            {/* Planting timeline */}
-                            <PlantingTimeline crop={crop} language={language} />
+                          {/* Timeline */}
+                          <PlantingTimeline crop={crop} />
 
-                            {/* Tips */}
-                            <Text style={[styles.tipsTitle, { color: colors.textMute }]}>VIDOKEZO VYA AI</Text>
+                          {/* Tips */}
+                          <Text style={[st.tipsTitle, { color: colors.textMute }]}>VIDOKEZO VYA AI</Text>
+                          <View style={{ gap: 6 }}>
                             {crop.tips.map((tip, ti) => (
-                              <View key={ti} style={styles.tipRow}>
-                                <View style={[styles.tipDot, { backgroundColor: crop.color }]} />
-                                <Text style={[styles.tipText, { color: colors.text }]}>{tip}</Text>
+                              <View key={ti} style={st.tipRow}>
+                                <View style={[st.tipDot, { backgroundColor: crop.color }]} />
+                                <Text style={[st.tipText, { color: isDark ? 'rgba(255,255,255,0.75)' : colors.text }]}>
+                                  {tip}
+                                </Text>
                               </View>
                             ))}
+                          </View>
 
-                            {/* Plan button */}
-                            <TouchableOpacity
-                              onPress={() => planCrop(crop)}
-                              disabled={isPlanned}
-                              style={[styles.planBtn, { backgroundColor: isPlanned ? '#22c55e30' : colors.primary, opacity: isPlanned ? 0.85 : 1 }]}
-                              accessibilityRole="button"
-                              accessibilityLabel={isPlanned ? `${crop.nameSw} tayari imepangwa` : `Panga kazi za ${crop.nameSw}`}
-                              accessibilityState={{ disabled: isPlanned }}
-                            >
-                              {isPlanned ? <CheckCircle2 size={18} color="#22c55e" /> : <Plus size={18} color={isDark ? '#000' : '#FCFBF7'} />}
-                              <Text style={[styles.planBtnText, { color: isPlanned ? '#22c55e' : (isDark ? '#000' : '#FCFBF7') }]}>
-                                {isPlanned ? 'Kazi Zimeongezwa kwenye Ratiba' : `Panga Kazi za ${crop.nameSw}`}
-                              </Text>
-                            </TouchableOpacity>
-                          </Animated.View>
-                        )}
-                      
-
-                      {/* Collapsed footer */}
-                      {!isOpen && (
-                        <View style={[styles.colFooter, { borderColor: colors.border }]}>
-                          <Text style={[{ fontFamily: 'Inter_500Medium', fontSize: 12, color: colors.textMute }]}>Bonyeza kuona maelezo kamili</Text>
-                          <ArrowRight size={14} color={colors.primary} />
-                        </View>
+                          {/* Plan CTA */}
+                          <TouchableOpacity
+                            onPress={() => planCrop(crop)}
+                            disabled={isPlanned}
+                            activeOpacity={0.85}
+                            style={{ borderRadius: 14, overflow: 'hidden', marginTop: 4 }}
+                          >
+                            {isPlanned
+                              ? <View style={[st.planDone]}>
+                                  <CheckCircle2 size={16} color="#22c55e" />
+                                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: '#22c55e' }}>
+                                    Kazi Zimeongezwa kwenye Ratiba
+                                  </Text>
+                                </View>
+                              : <LinearGradient
+                                  colors={['#22d15a', '#048038']}
+                                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                                  style={st.planBtn}
+                                >
+                                  <Plus size={16} color="#fff" />
+                                  <Text style={st.planBtnText}>Panga Kazi za {crop.nameSw}</Text>
+                                </LinearGradient>
+                            }
+                          </TouchableOpacity>
+                        </Animated.View>
                       )}
-                    </BlurView>
+                    </View>
                   </TouchableOpacity>
                 </Animated.View>
               );
             })}
-          
+          </View>
 
-          {/* Bottom tips card */}
-          <Animated.View entering={FadeInDown}>
-            <BlurView intensity={isDark ? 15 : 50} tint={isDark ? 'dark' : 'light'} style={[styles.tipCard, { borderColor: colors.border }]}>
-              <LinearGradient colors={[colors.primary + '14', colors.primary + '04']} style={StyleSheet.absoluteFill} />
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                <Target size={20} color={colors.primary} />
-                <Text style={{ fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, color: colors.text }}>Ushauri wa Msimu huu</Text>
+          {/* ── Bottom season tip ── */}
+          <Animated.View entering={FadeInDown.delay(200)} style={{ marginTop: 20 }}>
+            <View style={[st.tipCard, {
+              backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+              borderColor: 'rgba(34,209,90,0.18)',
+            }]}>
+              <LinearGradient
+                colors={['rgba(34,209,90,0.1)', 'transparent']}
+                style={StyleSheet.absoluteFill}
+                pointerEvents="none"
+              />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9, marginBottom: 10 }}>
+                <Target size={17} color="#22d15a" />
+                <Text style={[st.tipCardTitle, { color: colors.text }]}>Ushauri wa Msimu huu</Text>
               </View>
-              <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 13, color: colors.textMute, lineHeight: 20 }}>
-                Msimu wa <Text style={{ fontWeight: '700', color: colors.text }}>{activeSeason.label}</Text> ni wakati mzuri wa kupanda mazao yanayohitaji <Text style={{ fontWeight: '700', color: activeSeason.color }}>mvua {activeSeason.key === 'kiangazi' ? 'kidogo au umwagiliaji' : activeSeason.key === 'masika' ? 'nyingi na ya uhakika' : 'wastani'}</Text>. Tembelea soko lako la karibu au tumia <Text style={{ fontWeight: '700', color: colors.primary }}>Soko la KILIMO AI</Text> kupata bei za moja kwa moja.
+              <Text style={[st.tipCardBody, { color: colors.textMute }]}>
+                Msimu wa <Text style={{ color: activeSeason.color, fontFamily: 'Inter_700Bold' }}>{activeSeason.label}</Text> ni wakati mzuri wa mazao yanayohitaji mvua {activeSeason.key === 'kiangazi' ? 'kidogo au umwagiliaji' : activeSeason.key === 'masika' ? 'nyingi na ya uhakika' : 'wastani'}. Tembelea Soko la KILIMO AI kupata bei za sasa hivi.
               </Text>
               <TouchableOpacity
-                onPress={() => router.push('/market')}
-                style={[styles.mktBtn, { borderColor: colors.primary }]}
-                accessibilityRole="button"
-                accessibilityLabel="Check current market prices"
+                onPress={() => router.push('/tasks')}
+                style={st.tipCardBtn}
               >
-                <TrendingUp size={14} color={colors.primary} />
-                <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: colors.primary }}>Angalia Bei za Soko</Text>
+                <TrendingUp size={13} color="#22d15a" />
+                <Text style={st.tipCardBtnText}>Enda kwenye Ratiba</Text>
               </TouchableOpacity>
-            </BlurView>
+            </View>
           </Animated.View>
 
-          <View style={{ height: 80 }} />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+// ─── Styles ───────────────────────────────────────────────────────────────────
+const st = StyleSheet.create({
   container: { flex: 1 },
-  safe: { flex: 1 },
-  orb: { position: 'absolute' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 14 },
-  iconBtn: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
-  badge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 4 },
-  badgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
-  title: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
-  scroll: { paddingHorizontal: 20, paddingTop: 8 },
-  seasonRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
-  seasonTab: { borderRadius: 20, padding: 14, alignItems: 'center', gap: 4, overflow: 'hidden' },
-  seasonLabel: { fontFamily: 'Inter_800ExtraBold', fontSize: 13 },
-  seasonSub: { fontFamily: 'Inter_500Medium', fontSize: 10 },
-  banner: { borderRadius: 20, padding: 16, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-  aiTag: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 8 },
-  sectionRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  sectionTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  card: { borderRadius: 28, padding: 20, overflow: 'hidden' },
-  cardHead: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
-  emoji: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  cropName: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
-  cropSub: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
-  plannedTag: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 10 },
+  glowTR: {
+    position: 'absolute', top: -80, right: -60,
+    width: 300, height: 300, borderRadius: 150,
+    backgroundColor: 'rgba(34,209,90,0.07)',
+  },
+  glowBL: {
+    position: 'absolute', bottom: 100, left: -80,
+    width: 220, height: 220, borderRadius: 110,
+    backgroundColor: 'rgba(34,209,90,0.04)',
+  },
+  header: {
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 12,
+  },
+  iconBtn: {
+    width: 42, height: 42, borderRadius: 21,
+    justifyContent: 'center', alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+  },
+  aiBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 9, paddingVertical: 3,
+    borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.1)', marginBottom: 4,
+  },
+  aiBadgeText: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
+  headerTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.4 },
+
+  seasonTab: {
+    borderRadius: 18, padding: 13, alignItems: 'center',
+    gap: 4, overflow: 'hidden',
+  },
+  seasonLabel: { fontFamily: 'Inter_700Bold', fontSize: 12 },
+  seasonMonths: { fontFamily: 'Inter_500Medium', fontSize: 9 },
+
+  banner: {
+    borderRadius: 18, borderWidth: 1,
+    overflow: 'hidden', flexDirection: 'row',
+    alignItems: 'center', padding: 14, marginBottom: 0, gap: 10,
+  },
+  bannerTitle: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  bannerSub: { fontSize: 12, fontFamily: 'Inter_500Medium' },
+  plannedBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 8, paddingVertical: 4,
+    backgroundColor: 'rgba(245,158,11,0.12)',
+    borderRadius: 8,
+  },
+  plannedBadgeText: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#f59e0b' },
+
+  chartCard: {
+    borderRadius: 18, borderWidth: 1,
+    overflow: 'hidden', padding: 16,
+  },
+  chartTitle: { fontSize: 14, fontFamily: 'InstrumentSerif_400Regular' },
+  chartSub: { fontSize: 10, fontFamily: 'Inter_500Medium', flex: 1 },
+
+  sectionTitle: { fontSize: 19, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
+
+  cropCard: {
+    borderRadius: 20, borderLeftWidth: 3,
+    overflow: 'hidden', padding: 16, gap: 12,
+  },
+  cropHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  cropEmoji: {
+    width: 44, height: 44, borderRadius: 14,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  cropName: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: -0.2 },
+  cropSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  plannedChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 8, paddingVertical: 4,
+    backgroundColor: 'rgba(34,197,94,0.12)', borderRadius: 10,
+  },
+  plannedChipText: { fontSize: 8, fontFamily: 'Inter_700Bold', color: '#22c55e' },
+  arrowChip: {
+    width: 32, height: 32, borderRadius: 10,
+    justifyContent: 'center', alignItems: 'center',
+  },
+
   statsRow: { flexDirection: 'row', alignItems: 'center' },
-  stat: { flex: 1, alignItems: 'center' },
-  statLabel: { fontSize: 9, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5, marginBottom: 4 },
-  statVal: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
-  statDiv: { width: 1, height: 32 },
-  divider: { height: 1, marginVertical: 16 },
-  tipsTitle: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1.5, marginBottom: 10 },
-  tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 8 },
-  tipDot: { width: 6, height: 6, borderRadius: 3, marginTop: 5 },
-  tipText: { flex: 1, fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
-  planBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16, marginTop: 16 },
-  planBtnText: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 14 },
-  colFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, marginTop: 4, borderTopWidth: 1 },
-  tipCard: { borderRadius: 24, padding: 20, borderWidth: 1, overflow: 'hidden', marginBottom: 16 },
-  mktBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 14, paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10, borderWidth: 1.5, alignSelf: 'flex-start' },
+  stat: { flex: 1, alignItems: 'center', gap: 3 },
+  statLbl: { fontSize: 8, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.4 },
+  statVal: { fontSize: 11, fontFamily: 'Inter_700Bold' },
+  statDiv: { width: 1, height: 28 },
+
+  divider: { height: 1 },
+  tipsTitle: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
+  tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  tipDot: { width: 5, height: 5, borderRadius: 3, marginTop: 6 },
+  tipText: { flex: 1, fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 19 },
+
+  planBtn: {
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'center', gap: 8, paddingVertical: 14,
+  },
+  planBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold', color: '#fff' },
+  planDone: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, paddingVertical: 14,
+    backgroundColor: 'rgba(34,197,94,0.1)', borderRadius: 14,
+  },
+
+  tipCard: {
+    borderRadius: 20, borderWidth: 1,
+    overflow: 'hidden', padding: 18, gap: 0,
+  },
+  tipCardTitle: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular' },
+  tipCardBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20, marginBottom: 14 },
+  tipCardBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 8,
+    borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.3)',
+    backgroundColor: 'rgba(34,209,90,0.08)',
+  },
+  tipCardBtnText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a' },
 });
