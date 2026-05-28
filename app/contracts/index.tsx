@@ -1,144 +1,163 @@
 /**
- * Contract Farming — list + create modal
- * Lifecycle: Draft → Sent → Under Review → Signed → Active → Milestone Due → Completed
+ * Contract Farming — redesigned list + create modal
+ * Editorial hero · gradient cards · segmented milestone progress
  */
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Modal,
-  TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert,
+  TextInput, ScrollView, KeyboardAvoidingView, Platform,
+  Alert, Dimensions, SafeAreaView, StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Plus, Handshake, ChevronRight, X, FileText, User, MapPin, Wheat } from 'lucide-react-native';
+import {
+  Plus, Handshake, ChevronRight, X, FileText,
+  User, MapPin, Wheat, TrendingUp, CheckCircle2,
+  Circle, ArrowUpRight,
+} from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
-import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
-import PageScaffold, { GlassCard, SectionHeader, EmptyState } from '../../components/PageScaffold';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
 import { useTheme } from '../../constants/Theme';
 import {
   useContractsStore, STATUS_LABEL, STATUS_COLOR, Contract, ContractStatus,
 } from '../../store/useContractsStore';
 import { Gate } from '../../lib/access';
 import { RequireVerification } from '../../components/RequireVerification';
+import PageScaffold, { GlassCard, EmptyState } from '../../components/PageScaffold';
 
-const FILTERS: { label: string; status: 'all' | ContractStatus }[] = [
-  { label: 'Yote', status: 'all' },
-  { label: 'Rasimu', status: 'draft' },
-  { label: 'Inakaguliwa', status: 'under_review' },
-  { label: 'Inaendelea', status: 'active' },
-  { label: 'Imekamilika', status: 'completed' },
-];
-
-const CROPS = ['Mahindi', 'Mpunga', 'Maharage', 'Kahawa', 'Alizeti', 'Mihogo', 'Nyanya', 'Pamba', 'Ngano', 'Viazi'];
-const REGIONS = ['Arusha', 'Mbeya', 'Kilimanjaro', 'Morogoro', 'Iringa', 'Dodoma', 'Mwanza', 'Tanga', 'Pwani', 'Singida'];
-
+const { width: SW } = Dimensions.get('window');
 const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
 
-// ─── Create modal ─────────────────────────────────────────────────────────────
+const FILTERS: { label: string; labelEn: string; status: 'all' | ContractStatus }[] = [
+  { label: 'Yote',        labelEn: 'All',         status: 'all' },
+  { label: 'Rasimu',      labelEn: 'Draft',       status: 'draft' },
+  { label: 'Inakaguliwa', labelEn: 'In Review',   status: 'under_review' },
+  { label: 'Inaendelea',  labelEn: 'Active',      status: 'active' },
+  { label: 'Imekamilika', labelEn: 'Completed',   status: 'completed' },
+];
+
+const CROPS   = ['Mahindi','Mpunga','Maharage','Kahawa','Alizeti','Mihogo','Nyanya','Pamba','Ngano','Viazi'];
+const REGIONS = ['Arusha','Mbeya','Kilimanjaro','Morogoro','Iringa','Dodoma','Mwanza','Tanga','Pwani','Singida'];
+
+// ─── Status config ─────────────────────────────────────────────────────────────
+const STATUS_ICON: Record<ContractStatus, React.ReactNode> = {
+  draft:        <Circle       size={10} color="#94a3b8" fill="#94a3b8" />,
+  sent:         <Circle       size={10} color="#3b82f6" fill="#3b82f6" />,
+  under_review: <Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
+  signed:       <CheckCircle2 size={10} color="#22d15a" />,
+  active:       <CheckCircle2 size={10} color="#22d15a" />,
+  milestone_due:<Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
+  completed:    <CheckCircle2 size={10} color="#22d15a" />,
+  cancelled:    <Circle       size={10} color="#ef4444" fill="#ef4444" />,
+};
+
+// ─── Create Modal ──────────────────────────────────────────────────────────────
 function CreateContractModal({ visible, onClose, onCreate }: {
-  visible: boolean;
-  onClose: () => void;
-  onCreate: (id: string) => void;
+  visible: boolean; onClose: () => void; onCreate: (id: string) => void;
 }) {
   const { colors, isDark } = useTheme();
   const createContract = useContractsStore((s) => s.createContract);
-
-  const [title, setTitle] = useState('');
-  const [crop, setCrop] = useState('Mahindi');
-  const [buyer, setBuyer] = useState('');
-  const [qty, setQty] = useState('');
-  const [price, setPrice] = useState('');
+  const [title, setTitle]   = useState('');
+  const [crop, setCrop]     = useState('Mahindi');
+  const [buyer, setBuyer]   = useState('');
+  const [qty, setQty]       = useState('');
+  const [price, setPrice]   = useState('');
   const [region, setRegion] = useState('Arusha');
 
   function handleCreate() {
-    if (!title.trim()) { Alert.alert('Kichwa kinahitajika', 'Tafadhali weka jina la mkataba.'); return; }
-    if (!buyer.trim()) { Alert.alert('Mnunuzi anahitajika', 'Tafadhali weka jina la mnunuzi.'); return; }
-    const q = parseFloat(qty);
-    const p = parseFloat(price);
-    if (!q || q <= 0) { Alert.alert('Kiasi kinahitajika', 'Weka kiasi cha mazao kwa kg.'); return; }
-    if (!p || p <= 0) { Alert.alert('Bei inahitajika', 'Weka bei kwa kilo moja.'); return; }
-
+    if (!title.trim()) { Alert.alert('Kichwa kinahitajika','Tafadhali weka jina la mkataba.'); return; }
+    if (!buyer.trim()) { Alert.alert('Mnunuzi anahitajika','Tafadhali weka jina la mnunuzi.'); return; }
+    const q = parseFloat(qty), p = parseFloat(price);
+    if (!q || q <= 0) { Alert.alert('Kiasi kinahitajika','Weka kiasi cha mazao kwa kg.'); return; }
+    if (!p || p <= 0) { Alert.alert('Bei inahitajika','Weka bei kwa kilo moja.'); return; }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    const id = createContract({
-      title: title.trim(),
-      crop,
-      quantityKg: q,
-      pricePerKgTZS: p,
-      buyer: buyer.trim(),
-      region,
-      milestones: [],
-    });
+    const id = createContract({ title: title.trim(), crop, quantityKg: q, pricePerKgTZS: p, buyer: buyer.trim(), region, milestones: [] });
     setTitle(''); setBuyer(''); setQty(''); setPrice('');
-    onClose();
-    onCreate(id);
+    onClose(); onCreate(id);
   }
+
+  const contractValue = qty && price && parseFloat(qty) > 0 && parseFloat(price) > 0
+    ? parseFloat(qty) * parseFloat(price) : 0;
 
   return (
     <Modal visible={visible} animationType="slide" transparent presentationStyle="overFullScreen">
-      <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+      <BlurView intensity={isDark ? 50 : 70} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, justifyContent: 'flex-end' }}>
-        <View style={[cm.sheet, { backgroundColor: isDark ? '#1a1a2e' : '#fff' }]}>
+        <View style={[cm.sheet, { backgroundColor: isDark ? '#0d1a0f' : '#fff' }]}>
+          {/* Handle */}
           <View style={[cm.handle, { backgroundColor: colors.border }]} />
-          <View style={cm.sheetHeader}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <View style={[cm.iconBg, { backgroundColor: colors.primary + '20' }]}>
-                <Handshake size={18} color={colors.primary} />
+
+          {/* Header */}
+          <LinearGradient colors={['#22d15a18','#22d15a00']} style={cm.sheetHeaderGrad}>
+            <View style={cm.sheetHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <LinearGradient colors={['#22d15a','#0a3d18']} style={cm.iconCircle}>
+                  <Handshake size={18} color="#fff" />
+                </LinearGradient>
+                <View>
+                  <Text style={[cm.sheetTitle, { color: colors.text }]}>Mkataba Mpya</Text>
+                  <Text style={[cm.sheetSub, { color: colors.textMute }]}>New Contract</Text>
+                </View>
               </View>
-              <Text style={[cm.sheetTitle, { color: colors.text }]}>Mkataba Mpya</Text>
+              <TouchableOpacity onPress={onClose} style={[cm.closeBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <X size={15} color={colors.textMute} />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={onClose} style={[cm.closeBtn, { backgroundColor: colors.card }]}>
-              <X size={16} color={colors.textMute} />
-            </TouchableOpacity>
-          </View>
+          </LinearGradient>
 
-          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}>
 
-            {/* Title */}
-            <LabelRow icon={<FileText size={13} color={colors.primary} />} label="JINA LA MKATABA *" />
+            {/* Contract value preview bar */}
+            {contractValue > 0 && (
+              <Animated.View entering={FadeInDown} style={[cm.valueBar, { backgroundColor: '#22d15a15', borderColor: '#22d15a30' }]}>
+                <Text style={[cm.valueBarLabel, { color: colors.textMute }]}>Thamani ya mkataba</Text>
+                <Text style={[cm.valueBarAmount, { color: '#22d15a' }]}>TZS {fmt(contractValue)}</Text>
+              </Animated.View>
+            )}
+
+            <LabelRow icon={<FileText size={12} color={colors.primary} />} label="JINA LA MKATABA" required />
             <View style={[cm.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
               <TextInput value={title} onChangeText={setTitle} style={[cm.input, { color: colors.text }]}
                 placeholderTextColor={colors.textMute} placeholder="e.g. Mahindi Hifadhi ya 2026..." />
             </View>
 
-            {/* Crop */}
-            <LabelRow icon={<Wheat size={13} color="#22d15a" />} label="ZAO" />
-            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+            <LabelRow icon={<Wheat size={12} color="#22d15a" />} label="ZAO" />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {CROPS.map((c) => (
                 <TouchableOpacity key={c} onPress={() => { Haptics.selectionAsync(); setCrop(c); }}
-                  style={[cm.pill, { borderColor: crop === c ? colors.primary : colors.border, backgroundColor: crop === c ? colors.primary + '18' : 'transparent' }]}>
-                  <Text style={[cm.pillText, { color: crop === c ? colors.primary : colors.textMute }]}>{c}</Text>
+                  style={[cm.chip, { borderColor: crop === c ? '#22d15a' : colors.border, backgroundColor: crop === c ? '#22d15a20' : 'transparent' }]}>
+                  <Text style={[cm.chipText, { color: crop === c ? '#22d15a' : colors.textMute }]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
 
-            {/* Buyer */}
-            <LabelRow icon={<User size={13} color="#8b5cf6" />} label="MNUNUZI *" />
+            <LabelRow icon={<User size={12} color="#8b5cf6" />} label="MNUNUZI" required />
             <View style={[cm.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
               <TextInput value={buyer} onChangeText={setBuyer} style={[cm.input, { color: colors.text }]}
                 placeholderTextColor={colors.textMute} placeholder="e.g. NMB Foods Ltd..." />
             </View>
 
-            {/* Region */}
-            <LabelRow icon={<MapPin size={13} color="#3b82f6" />} label="MKOA" />
-            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+            <LabelRow icon={<MapPin size={12} color="#3b82f6" />} label="MKOA" />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {REGIONS.map((r) => (
                 <TouchableOpacity key={r} onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
-                  style={[cm.pill, { borderColor: region === r ? colors.primary : colors.border, backgroundColor: region === r ? colors.primary + '18' : 'transparent' }]}>
-                  <Text style={[cm.pillText, { color: region === r ? colors.primary : colors.textMute }]}>{r}</Text>
+                  style={[cm.chip, { borderColor: region === r ? '#22d15a' : colors.border, backgroundColor: region === r ? '#22d15a20' : 'transparent' }]}>
+                  <Text style={[cm.chipText, { color: region === r ? '#22d15a' : colors.textMute }]}>{r}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
 
-            {/* Qty + Price */}
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <View style={{ flex: 1 }}>
-                <LabelRow label="KIASI (kg) *" />
+                <LabelRow label="KIASI (kg)" required />
                 <View style={[cm.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
                   <TextInput value={qty} onChangeText={setQty} keyboardType="decimal-pad"
                     style={[cm.input, { color: colors.text }]} placeholderTextColor={colors.textMute} placeholder="1000" />
                 </View>
               </View>
               <View style={{ flex: 1 }}>
-                <LabelRow label="BEI/kg (TZS) *" />
+                <LabelRow label="BEI/kg (TZS)" required />
                 <View style={[cm.inputWrap, { borderColor: colors.border, backgroundColor: colors.card }]}>
                   <TextInput value={price} onChangeText={setPrice} keyboardType="decimal-pad"
                     style={[cm.input, { color: colors.text }]} placeholderTextColor={colors.textMute} placeholder="850" />
@@ -146,21 +165,14 @@ function CreateContractModal({ visible, onClose, onCreate }: {
               </View>
             </View>
 
-            {/* Value preview */}
-            {qty && price && parseFloat(qty) > 0 && parseFloat(price) > 0 && (
-              <View style={[cm.previewBox, { backgroundColor: colors.primary + '12', borderColor: colors.primary + '30' }]}>
-                <Text style={[cm.previewLabel, { color: colors.textMute }]}>Thamani ya mkataba</Text>
-                <Text style={[cm.previewValue, { color: colors.primary }]}>
-                  TZS {fmt(parseFloat(qty) * parseFloat(price))}
-                </Text>
-              </View>
-            )}
-
-            <TouchableOpacity onPress={handleCreate} style={[cm.createBtn, { backgroundColor: colors.primary }]}>
-              <Handshake size={18} color="#000" />
-              <Text style={cm.createBtnText}>Tengeneza Mkataba</Text>
+            {/* CTA */}
+            <TouchableOpacity onPress={handleCreate} activeOpacity={0.88} style={{ marginTop: 28 }}>
+              <LinearGradient colors={['#22d15a','#0a3d18']} style={cm.createBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <Handshake size={18} color="#fff" />
+                <Text style={cm.createBtnText}>Tengeneza Mkataba</Text>
+                <ArrowUpRight size={16} color="#fff" />
+              </LinearGradient>
             </TouchableOpacity>
-            <View style={{ height: 32 }} />
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -168,29 +180,30 @@ function CreateContractModal({ visible, onClose, onCreate }: {
   );
 }
 
-function LabelRow({ icon, label }: { icon?: React.ReactNode; label: string }) {
+function LabelRow({ icon, label, required }: { icon?: React.ReactNode; label: string; required?: boolean }) {
   const { colors } = useTheme();
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 16, marginBottom: 8 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 20, marginBottom: 8 }}>
       {icon}
       <Text style={[cm.fieldLabel, { color: colors.textMute }]}>{label}</Text>
+      {required && <Text style={{ color: '#22d15a', fontSize: 10 }}>*</Text>}
     </View>
   );
 }
 
-// ─── Main screen ──────────────────────────────────────────────────────────────
+// ─── Main screen ───────────────────────────────────────────────────────────────
 export default function ContractsScreen() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const contracts = useContractsStore((s) => s.contracts);
   const [filter, setFilter] = useState<'all' | ContractStatus>('all');
   const [showModal, setShowModal] = useState(false);
 
   const filtered = filter === 'all' ? contracts : contracts.filter((c) => c.status === filter);
-
-  const active = contracts.filter((c) => c.status === 'active').length;
-  const pending = contracts.filter((c) => c.status === 'under_review' || c.status === 'sent').length;
-  const totalValue = contracts.reduce((s, c) => s + c.quantityKg * c.pricePerKgTZS, 0);
+  const active    = contracts.filter((c) => c.status === 'active').length;
+  const pending   = contracts.filter((c) => c.status === 'under_review' || c.status === 'sent').length;
+  const draft     = contracts.filter((c) => c.status === 'draft').length;
+  const portfolio = contracts.reduce((s, c) => s + c.quantityKg * c.pricePerKgTZS, 0);
 
   return (
     <Gate
@@ -200,7 +213,7 @@ export default function ContractsScreen() {
           <View style={{ padding: 24 }}>
             <GlassCard style={{ padding: 24, alignItems: 'center' }}>
               <Handshake size={32} color={colors.textMute} />
-              <Text style={{ color: colors.text, fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 }}>Hairuhusiwi</Text>
+              <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 16, marginTop: 12 }}>Hairuhusiwi</Text>
               <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 6, textAlign: 'center' }}>
                 Mikataba inapatikana kwa wakulima walio na akaunti ya Premium au Ushirika.
               </Text>
@@ -210,193 +223,326 @@ export default function ContractsScreen() {
       }
     >
       <RequireVerification>
-      <CreateContractModal
-        visible={showModal}
-        onClose={() => setShowModal(false)}
-        onCreate={(id) => router.push(`/contracts/${id}` as any)}
-      />
+        <CreateContractModal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          onCreate={(id) => router.push(`/contracts/${id}` as any)}
+        />
 
-      <PageScaffold
-        title="Mikataba"
-        subtitle="Contract Farming"
-        badge="MARKETPLACE"
-        headerRight={
-          <TouchableOpacity
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}
-            style={[s.addBtn, { backgroundColor: colors.primary }]}
+        <View style={[s.root, { backgroundColor: colors.background }]}>
+          <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+          {/* ── Hero header ─────────────────────────────────────── */}
+          <LinearGradient
+            colors={isDark ? ['#0c1f0d','#070d08'] : ['#f0fdf4','#f8fafc']}
+            style={s.hero}
           >
-            <Plus size={20} color="#000" />
-          </TouchableOpacity>
-        }
-      >
-        {/* Summary */}
-        {contracts.length > 0 && (
-          <View style={{ paddingHorizontal: 24 }}>
-            <Animated.View entering={FadeInDown}>
-              <GlassCard style={s.summaryCard}>
-                <SummaryPill count={contracts.length} label="Mikataba Yote" color={colors.primary} />
-                <View style={[s.vr, { backgroundColor: colors.border }]} />
-                <SummaryPill count={active} label="Inaendelea" color="#22d15a" />
-                <View style={[s.vr, { backgroundColor: colors.border }]} />
-                <SummaryPill count={pending} label="Inakaguliwa" color="#f59e0b" />
-              </GlassCard>
-            </Animated.View>
-          </View>
-        )}
+            <SafeAreaView>
+              <View style={s.heroInner}>
+                {/* Back-row */}
+                <View style={s.heroTop}>
+                  <View>
+                    <View style={s.heroBadge}>
+                      <View style={s.heroBadgeDot} />
+                      <Text style={s.heroBadgeText}>CONTRACT FARMING</Text>
+                    </View>
+                    <Text style={[s.heroTitle, { color: colors.text }]}>Mikataba</Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}
+                    activeOpacity={0.88}
+                  >
+                    <LinearGradient colors={['#22d15a','#0a3d18']} style={s.addBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                      <Plus size={20} color="#fff" />
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
 
-        {/* Filter pills */}
-        <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingVertical: 12 }}>
-          {FILTERS.map((f) => {
-            const active = filter === f.status;
-            return (
-              <TouchableOpacity
-                key={f.status}
-                onPress={() => { Haptics.selectionAsync(); setFilter(f.status); }}
-                style={[
-                  s.filterPill,
-                  { borderColor: active ? colors.primary : colors.border, backgroundColor: active ? colors.primary + '20' : 'transparent' },
-                ]}
-              >
-                <Text style={[s.filterText, { color: active ? colors.primary : colors.textMute }]}>{f.label}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+                {/* Portfolio value */}
+                {contracts.length > 0 && (
+                  <Animated.View entering={FadeInDown.springify()} style={[s.portfolioCard, {
+                    backgroundColor: isDark ? 'rgba(34,209,90,0.08)' : 'rgba(34,209,90,0.06)',
+                    borderColor: isDark ? 'rgba(34,209,90,0.2)' : 'rgba(34,209,90,0.15)',
+                  }]}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[s.portfolioLabel, { color: colors.textMute }]}>Thamani ya Jumla</Text>
+                      <Text style={[s.portfolioValue, { color: colors.text }]}>
+                        TZS {fmt(portfolio)}
+                      </Text>
+                    </View>
+                    <TrendingUp size={22} color="#22d15a" />
+                  </Animated.View>
+                )}
 
-        <SectionHeader title={`${filtered.length} mikataba`} />
+                {/* Stat chips */}
+                {contracts.length > 0 && (
+                  <View style={s.statRow}>
+                    <StatChip count={contracts.length} label="Yote"        color={colors.text}  />
+                    <StatChip count={active}           label="Inaendelea"  color="#22d15a"       />
+                    <StatChip count={pending}          label="Inakaguliwa" color="#f59e0b"       />
+                    <StatChip count={draft}            label="Rasimu"      color={colors.textMute}/>
+                  </View>
+                )}
+              </View>
+            </SafeAreaView>
+          </LinearGradient>
 
-        {filtered.length === 0 ? (
-          <EmptyState
-            icon={<Handshake size={36} color={colors.primary} />}
-            title="Hakuna mikataba"
-            body="Tengeneza mkataba mpya wa kuuza mazao yako kwa mnunuzi aliyethibitishwa."
-            cta="Tengeneza Mkataba"
-            onCta={() => setShowModal(true)}
-          />
-        ) : (
-          <View style={{ paddingHorizontal: 24, gap: 10 }}>
-            {filtered.map((c, idx) => (
-              <Animated.View
-                key={c.id}
-                entering={FadeInDown}
-              >
-                <ContractRow c={c} onPress={() => router.push(`/contracts/${c.id}` as any)} />
-              </Animated.View>
-            ))}
-          </View>
-        )}
-      </PageScaffold>
+          {/* ── Filter tabs ─────────────────────────────────────── */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.filterRow}
+            style={{ flexGrow: 0 }}
+          >
+            {FILTERS.map((f) => {
+              const isActive = filter === f.status;
+              return (
+                <TouchableOpacity
+                  key={f.status}
+                  onPress={() => { Haptics.selectionAsync(); setFilter(f.status); }}
+                  activeOpacity={0.8}
+                  style={[
+                    s.filterPill,
+                    isActive
+                      ? { backgroundColor: '#22d15a', borderColor: '#22d15a' }
+                      : { backgroundColor: 'transparent', borderColor: colors.border },
+                  ]}
+                >
+                  <Text style={[s.filterText, { color: isActive ? '#fff' : colors.textMute }]}>
+                    {f.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          {/* ── List ────────────────────────────────────────────── */}
+          <ScrollView
+            contentContainerStyle={[s.listContent, { paddingBottom: 120 }]}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Section label */}
+            <View style={s.secRow}>
+              <View style={[s.secAccent, { backgroundColor: '#22d15a' }]} />
+              <Text style={[s.secLabel, { color: colors.textMute }]}>
+                {filtered.length} MIKATABA
+              </Text>
+            </View>
+
+            {filtered.length === 0 ? (
+              <EmptyState
+                icon={<Handshake size={36} color={colors.primary} />}
+                title="Hakuna mikataba"
+                body="Tengeneza mkataba mpya wa kuuza mazao yako kwa mnunuzi aliyethibitishwa."
+                cta="Tengeneza Mkataba"
+                onCta={() => setShowModal(true)}
+              />
+            ) : (
+              filtered.map((c, idx) => (
+                <Animated.View
+                  key={c.id}
+                  entering={FadeInDown.delay(idx * 55).springify()}
+                >
+                  <ContractCard c={c} onPress={() => router.push(`/contracts/${c.id}` as any)} />
+                </Animated.View>
+              ))
+            )}
+          </ScrollView>
+        </View>
       </RequireVerification>
     </Gate>
   );
 }
 
-function SummaryPill({ count, label, color }: { count: number; label: string; color: string }) {
+// ─── StatChip ──────────────────────────────────────────────────────────────────
+function StatChip({ count, label, color }: { count: number; label: string; color: string }) {
   const { colors } = useTheme();
   return (
-    <View style={{ flex: 1, alignItems: 'center' }}>
-      <Text style={[s.pillCount, { color }]}>{count}</Text>
-      <Text style={[s.pillLabel, { color: colors.textMute }]} numberOfLines={1}>{label}</Text>
+    <View style={[s.statChip, { borderColor: colors.border }]}>
+      <Text style={[s.statCount, { color }]}>{count}</Text>
+      <Text style={[s.statLabel, { color: colors.textMute }]}>{label}</Text>
     </View>
   );
 }
 
-function ContractRow({ c, onPress }: { c: Contract; onPress: () => void }) {
-  const { colors } = useTheme();
+// ─── ContractCard ──────────────────────────────────────────────────────────────
+function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
+  const { colors, isDark } = useTheme();
   const totalValue = c.quantityKg * c.pricePerKgTZS;
   const paidMilestones = c.milestones.filter((m) => m.paid).length;
+  const statusColor = STATUS_COLOR[c.status] as string;
+
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
-      <GlassCard style={{ padding: 0, overflow: 'hidden' }}>
-        <View style={[s.statusBar, { backgroundColor: STATUS_COLOR[c.status] }]} />
-        <View style={{ padding: 18 }}>
-          <View style={s.rowTop}>
-            <View style={{ flex: 1 }}>
-              <View style={[s.statusBadge, { backgroundColor: STATUS_COLOR[c.status] + '25' }]}>
-                <View style={[s.statusDot, { backgroundColor: STATUS_COLOR[c.status] }]} />
-                <Text style={[s.statusText, { color: STATUS_COLOR[c.status] }]}>{STATUS_LABEL[c.status]}</Text>
-              </View>
-              <Text style={[s.title, { color: colors.text }]} numberOfLines={1}>{c.title}</Text>
-              <Text style={[s.sub, { color: colors.textMute }]} numberOfLines={1}>
-                {c.buyer}{c.buyerOrg ? ` · ${c.buyerOrg}` : ''} · {c.region}
-              </Text>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={s.cardWrap}>
+      <View style={[s.card, {
+        backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff',
+        borderColor: colors.border,
+      }]}>
+        {/* Left accent gradient strip */}
+        <LinearGradient
+          colors={[statusColor, statusColor + '44']}
+          style={s.cardAccent}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+        />
+
+        <View style={s.cardBody}>
+          {/* Top row: status + arrow */}
+          <View style={s.cardTopRow}>
+            <View style={[s.statusBadge, { backgroundColor: statusColor + '18', borderColor: statusColor + '30' }]}>
+              {STATUS_ICON[c.status]}
+              <Text style={[s.statusText, { color: statusColor }]}>{STATUS_LABEL[c.status]}</Text>
             </View>
-            <ChevronRight size={20} color={colors.textMute} />
+            <View style={[s.arrowChip, { backgroundColor: statusColor + '15' }]}>
+              <ChevronRight size={14} color={statusColor} />
+            </View>
           </View>
-          <View style={[s.rowBottom, { borderTopColor: colors.border }]}>
-            <Metric label="Zao" value={c.crop} />
-            <Metric label="Kiasi" value={`${fmt(c.quantityKg)} kg`} />
-            <Metric label="Bei/kg" value={`TZS ${fmt(c.pricePerKgTZS)}`} />
-            <Metric label="Jumla" value={`TZS ${fmt(totalValue)}`} highlight />
+
+          {/* Title + buyer */}
+          <Text style={[s.cardTitle, { color: colors.text }]} numberOfLines={1}>{c.title}</Text>
+          <Text style={[s.cardBuyer, { color: colors.textMute }]} numberOfLines={1}>
+            {c.buyer}{c.buyerOrg ? ` · ${c.buyerOrg}` : ''} · {c.region}
+          </Text>
+
+          {/* Value + crop chip row */}
+          <View style={s.cardMidRow}>
+            <Text style={[s.cardValue, { color: '#22d15a' }]}>TZS {fmt(totalValue)}</Text>
+            <View style={[s.cropPill, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Text style={[s.cropText, { color: colors.textMute }]}>{c.crop}</Text>
+            </View>
           </View>
+
+          {/* Metrics strip */}
+          <View style={[s.metricsStrip, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc', borderColor: colors.border }]}>
+            <MetricTile label="Kiasi" value={`${fmt(c.quantityKg)} kg`} />
+            <View style={[s.metricDiv, { backgroundColor: colors.border }]} />
+            <MetricTile label="Bei/kg" value={`TZS ${fmt(c.pricePerKgTZS)}`} />
+            {c.milestones.length > 0 && (
+              <>
+                <View style={[s.metricDiv, { backgroundColor: colors.border }]} />
+                <MetricTile label="Hatua" value={`${paidMilestones}/${c.milestones.length}`} />
+              </>
+            )}
+          </View>
+
+          {/* Segmented milestone progress */}
           {c.milestones.length > 0 && (
-            <View style={[s.milestoneBar, { borderTopColor: colors.border }]}>
-              <Text style={[s.milestoneText, { color: colors.textMute }]}>
-                Hatua: {paidMilestones}/{c.milestones.length} imelipwa
-              </Text>
-              <View style={[s.mTrack, { backgroundColor: colors.border }]}>
-                <View style={[s.mFill, {
-                  backgroundColor: STATUS_COLOR[c.status],
-                  width: `${c.milestones.length > 0 ? (paidMilestones / c.milestones.length) * 100 : 0}%` as any,
-                }]} />
-              </View>
+            <View style={s.segRow}>
+              {c.milestones.map((m, i) => (
+                <View
+                  key={i}
+                  style={[
+                    s.segment,
+                    { flex: 1, backgroundColor: m.paid ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0') },
+                    i === 0 && { borderTopLeftRadius: 4, borderBottomLeftRadius: 4 },
+                    i === c.milestones.length - 1 && { borderTopRightRadius: 4, borderBottomRightRadius: 4 },
+                  ]}
+                />
+              ))}
             </View>
           )}
         </View>
-      </GlassCard>
+      </View>
     </TouchableOpacity>
   );
 }
 
-function Metric({ label, value, highlight }: any) {
+function MetricTile({ label, value }: { label: string; value: string }) {
   const { colors } = useTheme();
   return (
-    <View>
-      <Text style={[s.metricLabel, { color: colors.textMute }]}>{label}</Text>
-      <Text style={[s.metricValue, { color: highlight ? colors.primary : colors.text }]}>{value}</Text>
+    <View style={{ flex: 1, alignItems: 'center', paddingVertical: 8 }}>
+      <Text style={[s.mLabel, { color: colors.textMute }]}>{label}</Text>
+      <Text style={[s.mValue, { color: colors.text }]}>{value}</Text>
     </View>
   );
 }
 
+// ─── Styles ────────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
-  addBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
-  summaryCard: { flexDirection: 'row', alignItems: 'center', padding: 18 },
-  pillCount: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  pillLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginTop: 3, textAlign: 'center' },
-  vr: { width: 1, height: 36, marginHorizontal: 4 },
-  filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 16, borderWidth: 1 },
-  filterText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.3 },
-  statusBar: { height: 3 },
-  rowTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 8 },
-  statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.8 },
-  title: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
-  sub: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
-  rowBottom: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, marginTop: 14, paddingTop: 12 },
-  milestoneBar: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1 },
-  milestoneText: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
-  mTrack: { flex: 1, height: 4, borderRadius: 2, overflow: 'hidden' },
-  mFill: { height: '100%', borderRadius: 2 },
-  metricLabel: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.8 },
-  metricValue: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', marginTop: 2 },
+  root: { flex: 1 },
+
+  // Hero
+  hero: { paddingBottom: 0 },
+  heroInner: { paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 8 : 24, paddingBottom: 20 },
+  heroTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 },
+  heroBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
+  heroBadgeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' },
+  heroBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#22d15a', letterSpacing: 1.5 },
+  heroTitle: { fontSize: 32, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
+  addBtn: { width: 46, height: 46, borderRadius: 23, justifyContent: 'center', alignItems: 'center' },
+
+  // Portfolio
+  portfolioCard: {
+    flexDirection: 'row', alignItems: 'center', borderRadius: 16,
+    borderWidth: 1, padding: 16, marginBottom: 16,
+  },
+  portfolioLabel: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1, marginBottom: 4 },
+  portfolioValue: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+
+  // Stats
+  statRow: { flexDirection: 'row', gap: 8 },
+  statChip: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
+  statCount: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  statLabel: { fontSize: 8, fontFamily: 'Inter_700Bold', letterSpacing: 0.6, marginTop: 2, textTransform: 'uppercase' },
+
+  // Filter
+  filterRow: { paddingHorizontal: 20, paddingVertical: 14, gap: 8 },
+  filterPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 100, borderWidth: 1.5 },
+  filterText: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.2 },
+
+  // List
+  listContent: { paddingHorizontal: 16, paddingTop: 4 },
+  secRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14, paddingHorizontal: 4 },
+  secAccent: { width: 3, height: 14, borderRadius: 2 },
+  secLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
+
+  // Card
+  cardWrap: { marginBottom: 12 },
+  card: {
+    borderRadius: 20, borderWidth: 1, flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  cardAccent: { width: 4 },
+  cardBody: { flex: 1, padding: 16 },
+  cardTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
+  statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 100, borderWidth: 1 },
+  statusText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
+  arrowChip: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
+  cardTitle: { fontSize: 17, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
+  cardBuyer: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2, marginBottom: 10 },
+  cardMidRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  cardValue: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  cropPill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1 },
+  cropText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
+
+  // Metrics strip
+  metricsStrip: { flexDirection: 'row', borderRadius: 10, borderWidth: 1, overflow: 'hidden', marginBottom: 10 },
+  metricDiv: { width: 1 },
+  mLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.8, textTransform: 'uppercase' },
+  mValue: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', marginTop: 2 },
+
+  // Milestone segments
+  segRow: { flexDirection: 'row', gap: 3, height: 6 },
+  segment: { height: 6 },
 });
 
 const cm = StyleSheet.create({
-  sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 32, maxHeight: '92%' },
-  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 4 },
-  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 },
-  sheetTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
-  iconBg: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
+  sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 32, maxHeight: '94%' },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 14, marginBottom: 4 },
+  sheetHeaderGrad: { paddingHorizontal: 20, paddingBottom: 16 },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12 },
+  sheetTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
+  sheetSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 1 },
+  iconCircle: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  closeBtn: { width: 34, height: 34, borderRadius: 17, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
   fieldLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
-  inputWrap: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 4 },
-  input: { fontSize: 15, fontFamily: 'Inter_600SemiBold', paddingVertical: 10 },
-  pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1.5 },
-  pillText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
-  previewBox: { marginTop: 16, padding: 14, borderRadius: 14, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  previewLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
-  previewValue: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24, paddingVertical: 16, borderRadius: 16 },
-  createBtnText: { color: '#000', fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
+  inputWrap: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 14 },
+  input: { fontSize: 15, fontFamily: 'Inter_600SemiBold', paddingVertical: 12 },
+  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
+  chipText: { fontSize: 12, fontFamily: 'Inter_700Bold' },
+  valueBar: { borderRadius: 14, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, marginVertical: 4 },
+  valueBarLabel: { fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.8 },
+  valueBarAmount: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 17, borderRadius: 100 },
+  createBtnText: { color: '#fff', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', flex: 1, textAlign: 'center' },
 });
