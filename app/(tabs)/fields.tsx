@@ -26,7 +26,7 @@ import {
   ChevronRight,
   Sparkles,
 } from 'lucide-react-native';
-import MapView, { Polygon as MapPolygon, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Polygon as MapPolygon, Marker, PROVIDER_GOOGLE } from '../../components/MapViewWrapper';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';

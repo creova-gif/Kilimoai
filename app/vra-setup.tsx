@@ -5,7 +5,7 @@ import { ArrowLeft, Droplets, Target, Combine, Check, ShieldAlert } from 'lucide
 import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { ZONES } from '../constants/FarmData';
-import MapView, { Polygon, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Polygon, PROVIDER_GOOGLE } from '../components/MapViewWrapper';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInUp, FadeInDown, Layout } from 'react-native-reanimated';
 import Slider from '@react-native-community/slider';

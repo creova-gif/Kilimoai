@@ -5,7 +5,7 @@ import { ArrowLeft, Activity, Droplets, Target, Sprout, Combine } from 'lucide-r
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { ZONES } from '../../constants/FarmData';
-import MapView, { Polygon, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Polygon, PROVIDER_GOOGLE } from '../../components/MapViewWrapper';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
