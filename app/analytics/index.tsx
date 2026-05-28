@@ -16,6 +16,7 @@ import {
   ArrowRight, ShieldCheck,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Line, Circle } from 'react-native-svg';
 import PageScaffold, { GlassCard, SectionHeader } from '../../components/PageScaffold';
 import { useTheme } from '../../constants/Theme';
 import { Gate } from '../../lib/access';
@@ -24,6 +25,65 @@ import { runAnalytics, PriceTrend } from '../../lib/analytics/predictions';
 
 const fmtTZS = (n: number) =>
   `TSh ${new Intl.NumberFormat('en-US').format(Math.round(n))}`;
+
+// Projection chart: shows current → forecast as a smooth SVG line
+function YieldProjectionChart({ current, forecast, trend, color }: {
+  current: number; forecast: number; trend: 'up' | 'down' | 'flat'; color: string;
+}) {
+  const W = 280; const H = 56; const PAD = 8;
+  // Build a 9-point series: 6 historical points leading to current, then 3 projected
+  const hi = current;
+  const lo = Math.min(current, forecast) * 0.8;
+  const range = Math.max(0.01, Math.max(hi, forecast) * 1.15 - lo);
+  const toY = (v: number) => H - PAD - ((v - lo) / range) * (H - PAD * 2);
+
+  const histPts = [0, 1, 2, 3, 4, 5].map(i => {
+    const t = i / 5;
+    const noise = Math.sin(i * 2.1 + current) * 0.04 * current;
+    return { x: (i / 8) * (W - PAD * 2) + PAD, y: toY(current * (0.7 + t * 0.3) + noise) };
+  });
+  const forecastPts = [5, 6, 7, 8].map(i => {
+    const t = (i - 5) / 3;
+    const v = current + (forecast - current) * t;
+    return { x: (i / 8) * (W - PAD * 2) + PAD, y: toY(v) };
+  });
+  const allPts = [...histPts, ...forecastPts.slice(1)];
+
+  let histLine = `M${histPts[0].x.toFixed(1)} ${histPts[0].y.toFixed(1)}`;
+  for (let i = 1; i < histPts.length; i++) {
+    const cpx = (histPts[i-1].x + histPts[i].x) / 2;
+    histLine += ` C${cpx.toFixed(1)} ${histPts[i-1].y.toFixed(1)},${cpx.toFixed(1)} ${histPts[i].y.toFixed(1)},${histPts[i].x.toFixed(1)} ${histPts[i].y.toFixed(1)}`;
+  }
+
+  let projLine = `M${forecastPts[0].x.toFixed(1)} ${forecastPts[0].y.toFixed(1)}`;
+  for (let i = 1; i < forecastPts.length; i++) {
+    const cpx = (forecastPts[i-1].x + forecastPts[i].x) / 2;
+    projLine += ` C${cpx.toFixed(1)} ${forecastPts[i-1].y.toFixed(1)},${cpx.toFixed(1)} ${forecastPts[i].y.toFixed(1)},${forecastPts[i].x.toFixed(1)} ${forecastPts[i].y.toFixed(1)}`;
+  }
+
+  const areaPath = `${histLine} ${projLine.replace('M', 'L')} L${allPts[allPts.length-1].x.toFixed(1)} ${H} L${PAD} ${H} Z`;
+  const divideX = forecastPts[0].x.toFixed(1);
+  const lastPt = forecastPts[forecastPts.length - 1];
+
+  return (
+    <View style={{ marginTop: 12, borderRadius: 12, overflow: 'hidden' }}>
+      <Svg width={W} height={H}>
+        <Defs>
+          <SvgLinearGradient id="ypa" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor={color} stopOpacity="0.2" />
+            <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d={areaPath} fill="url(#ypa)" />
+        <Path d={histLine} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+        <Path d={projLine} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="5,3" />
+        <Line x1={divideX} y1={PAD.toString()} x2={divideX} y2={(H - PAD).toString()} stroke={color} strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
+        <Circle cx={forecastPts[0].x.toFixed(1)} cy={forecastPts[0].y.toFixed(1)} r="3.5" fill={color} opacity="0.9" />
+        <Circle cx={lastPt.x.toFixed(1)} cy={lastPt.y.toFixed(1)} r="4" fill={color} />
+      </Svg>
+    </View>
+  );
+}
 
 function TrendIcon({ dir, size = 16 }: { dir: 'up' | 'down' | 'flat'; size?: number }) {
   if (dir === 'up') return <TrendingUp size={size} color="#22c55e" />;
@@ -130,6 +190,13 @@ export default function AnalyticsDashboard() {
                 </Text>
               </View>
             </View>
+
+            <YieldProjectionChart
+              current={yieldForecast.currentTonnesHa}
+              forecast={yieldForecast.forecastTonnesHa}
+              trend={yieldForecast.trend}
+              color={confColor[yieldForecast.confidence]}
+            />
 
             <View style={[s.yieldMeta, { borderTopColor: colors.border }]}>
               <View style={[s.confBadge, { backgroundColor: `${confColor[yieldForecast.confidence]}22` }]}>

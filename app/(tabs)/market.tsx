@@ -998,7 +998,7 @@ const styles = StyleSheet.create({
   priceLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 4 },
   priceBig: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   trendArea: { alignItems: 'flex-end', gap: 8 },
-  sparklineOuter: { flexDirection: 'row', alignItems: 'flex-end', height: 40, gap: 3 },
+  sparklineOuter: { width: 80, height: 28, overflow: 'hidden' },
   sparkBar: { width: 4, borderRadius: 2 },
   trendPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, gap: 4 },
   trendPercent: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
