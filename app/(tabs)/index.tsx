@@ -70,7 +70,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Rect, Text as SvgText, Circle } from 'react-native-svg';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { useTasks } from '../../hooks/useTasks';
@@ -1211,9 +1211,15 @@ export default function HomeScreen() {
             style={styles.heroImage} 
           />
           <LinearGradient
-            colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.1)', colors.background]}
+            colors={['#040e07f2', '#0a2010c0', '#0d2b1540', colors.background]}
+            locations={[0, 0.28, 0.6, 1]}
             style={StyleSheet.absoluteFill}
           />
+          <Svg width={200} height={200} style={{ position: 'absolute', top: -20, right: -20, opacity: 0.09 }}>
+            <Circle cx={180} cy={20} r={60} stroke="#22d15a" strokeWidth={1} fill="none" />
+            <Circle cx={180} cy={20} r={92} stroke="#22d15a" strokeWidth={0.75} fill="none" />
+            <Circle cx={180} cy={20} r={124} stroke="#22d15a" strokeWidth={0.5} fill="none" />
+          </Svg>
           
           {/* Crop Overlay Visual Telemetry Markers */}
           {primaryCrops.length > 0 && (
@@ -1244,12 +1250,15 @@ export default function HomeScreen() {
               {/* Left Profile Section */}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
-                  <View style={[styles.heroAvatarBorder, { borderColor: colors.primary, borderWidth: 2, padding: 2, borderRadius: 24 }]}>
+                  <View style={{ width: 56, height: 56, alignItems: 'center', justifyContent: 'center' }}>
+                    <Svg width={56} height={56} style={{ position: 'absolute' }}>
+                      <Circle cx={28} cy={28} r={26} stroke="#22d15a" strokeWidth={1.5} fill="none" strokeDasharray="9 5" strokeLinecap="round" />
+                    </Svg>
                     {agroId?.avatarUrl ? (
-                      <Image source={{ uri: agroId.avatarUrl }} style={[styles.heroAvatar, { width: 44, height: 44, borderRadius: 22 }]} />
+                      <Image source={{ uri: agroId.avatarUrl }} style={{ width: 44, height: 44, borderRadius: 22 }} />
                     ) : (
-                      <View style={[styles.heroAvatar, { backgroundColor: colors.primary, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }]}>
-                        <Text style={[styles.heroAvatarText, { fontSize: 18, color: '#fff', fontWeight: 'bold' }]}>
+                      <View style={{ backgroundColor: colors.primary, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 18, color: '#fff', fontFamily: 'Inter_800ExtraBold' }}>
                           {agroId?.name?.[0]?.toUpperCase() || 'K'}
                         </Text>
                       </View>
@@ -1257,39 +1266,52 @@ export default function HomeScreen() {
                   </View>
                 </TouchableOpacity>
                 <View>
-                  <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter_500Medium' }}>
+                  <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontFamily: 'Inter_500Medium' }}>
                     {language === 'sw' ? 'Habari,' : 'Hello,'}
                   </Text>
-                  <Text style={{ fontSize: 18, color: '#fff', fontFamily: 'Inter_700Bold', letterSpacing: 0.2 }}>
+                  <Text style={{ fontSize: 21, color: '#fff', fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.1 }}>
                     {agroId?.name ? agroId.name.split(' ')[0] : (language === 'sw' ? 'Mkulima' : 'Farmer')}
                   </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 3 }}>
+                    <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#22d15a' }} />
+                    <Text style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter_700Bold', letterSpacing: 0.9 }}>
+                      {((agroId?.role as string) || 'MKULIMA').replace(/_/g, ' ').toUpperCase()}
+                    </Text>
+                  </View>
                 </View>
               </View>
 
               {/* Right Action Section */}
               <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   activeOpacity={0.85}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     router.push('/forecast' as any);
                   }}
-                  style={[styles.locationPill, { 
-                    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
-                    borderColor: 'rgba(255,255,255,0.15)',
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderColor: 'rgba(255,255,255,0.18)',
                     borderWidth: 1,
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 20
-                  }]}
+                    paddingHorizontal: 13,
+                    paddingVertical: 7,
+                    borderRadius: 14,
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
                 >
-                  {weather.current?.condition === 'cloud'
-                    ? <Cloud size={16} color="#94a3b8" />
-                    : weather.current?.condition === 'rain' || weather.current?.condition === 'storm'
-                    ? <CloudRain size={16} color="#60a5fa" />
-                    : <Sun size={16} color="#F59E0B" />}
-                  <Text style={[styles.locationText, { color: '#fff', fontSize: 14, fontWeight: '600', marginLeft: 6 }]}>
-                    {Math.round(weather.current?.temp ?? farmVitals.temperature)}°
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                    {weather.current?.condition === 'cloud'
+                      ? <Cloud size={13} color="#94a3b8" />
+                      : weather.current?.condition === 'rain' || weather.current?.condition === 'storm'
+                      ? <CloudRain size={13} color="#7dd3fc" />
+                      : <Sun size={13} color="#fcd34d" />}
+                    <Text style={{ color: '#fff', fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 24 }}>
+                      {Math.round(weather.current?.temp ?? farmVitals.temperature)}°
+                    </Text>
+                  </View>
+                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8, fontFamily: 'Inter_700Bold', letterSpacing: 0.7 }}>
+                    {language === 'sw' ? 'HALI YA HEWA' : 'FORECAST'}
                   </Text>
                 </TouchableOpacity>
 
@@ -1362,50 +1384,60 @@ export default function HomeScreen() {
               </TouchableOpacity>
             ) : (
               <>
-                <View style={styles.cropTitleRow}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                   <Text style={styles.cropLabel}>
                     {language === 'sw' ? 'MAZAO YAKO YA KILIMO' : 'YOUR AGRICULTURAL CROPS'}
                   </Text>
-                  <View style={[styles.liveBadge, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}>
+                  <View style={[styles.liveBadge, { backgroundColor: 'rgba(239,68,68,0.15)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)' }]}>
                     <PulsingDot />
                     <Text style={styles.liveText}>LIVE</Text>
                   </View>
                 </View>
-                <View style={styles.cropSelectorRow}>
-                  <Text style={styles.cropName}>{cropMeta.displayName}</Text>
-                  {primaryCrops.length > 1 && (
-                    <View style={[styles.slideshowIndicator, { flexDirection: 'row', alignItems: 'center', gap: 6 }]}>
-                      <TouchableOpacity 
-                        onPress={() => setActiveCropIndex((prev) => (prev - 1 + primaryCrops.length) % primaryCrops.length)}
-                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                      >
-                        <ChevronLeft size={16} color="#fff" />
-                      </TouchableOpacity>
-                      <Text style={styles.slideshowIndicatorText}>
-                        {activeCropIndex + 1}/{primaryCrops.length}
-                      </Text>
-                      <TouchableOpacity 
-                        onPress={() => setActiveCropIndex((prev) => (prev + 1) % primaryCrops.length)}
-                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                      >
-                        <ChevronRight size={16} color="#fff" />
-                      </TouchableOpacity>
+
+                <View style={{ backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.11)', borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                      <Text style={styles.cropName}>{cropMeta.displayName}</Text>
+                      {primaryCrops.length > 1 && (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <TouchableOpacity onPress={() => setActiveCropIndex((prev) => (prev - 1 + primaryCrops.length) % primaryCrops.length)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                            <ChevronLeft size={16} color="rgba(255,255,255,0.7)" />
+                          </TouchableOpacity>
+                          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 10, fontFamily: 'Inter_700Bold' }}>{activeCropIndex + 1}/{primaryCrops.length}</Text>
+                          <TouchableOpacity onPress={() => setActiveCropIndex((prev) => (prev + 1) % primaryCrops.length)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                            <ChevronRight size={16} color="rgba(255,255,255,0.7)" />
+                          </TouchableOpacity>
+                        </View>
+                      )}
                     </View>
-                  )}
-                </View>
-                
-                {/* Cycle Progress bar */}
-                <View style={styles.harvestTimeline}>
-                  <View style={styles.timelineTexts}>
-                    <Text style={styles.timelineLeft}>
-                      {language === 'sw' ? 'Muda wa Kuvuna' : 'Time to harvest'}
-                    </Text>
-                    <Text style={styles.timelineRight}>
-                      {`${cropMeta.harvestDays - cropMeta.currentDay} ${language === 'sw' ? 'siku' : 'days'} (${cropMeta.currentDay}/${cropMeta.harvestDays})`}
+                    <View style={{ flexDirection: 'row', gap: 3, marginBottom: 5 }}>
+                      {Array.from({ length: 12 }).map((_, i) => {
+                        const filled = i < Math.round((cropMeta.currentDay / cropMeta.harvestDays) * 12);
+                        return <View key={i} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: filled ? '#22d15a' : 'rgba(255,255,255,0.15)' }} />;
+                      })}
+                    </View>
+                    <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 9, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.3 }}>
+                      {language === 'sw' ? 'KUVUNA' : 'HARVEST'} · {cropMeta.harvestDays - cropMeta.currentDay} {language === 'sw' ? 'SIKU ZILIZO' : 'DAYS LEFT'}
                     </Text>
                   </View>
-                  <View style={styles.timelineProgressBg}>
-                    <View style={[styles.timelineProgressFill, { backgroundColor: colors.primary, width: `${(cropMeta.currentDay / cropMeta.harvestDays) * 100}%` }]} />
+
+                  <View style={{ gap: 6 }}>
+                    <View style={{ backgroundColor: 'rgba(34,209,90,0.18)', borderWidth: 1, borderColor: 'rgba(34,209,90,0.3)', borderRadius: 12, paddingHorizontal: 11, paddingVertical: 6, alignItems: 'center' }}>
+                      <Text style={{ color: '#22d15a', fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 21 }}>
+                        {Math.round((cropMeta.currentDay / cropMeta.harvestDays) * 100)}%
+                      </Text>
+                      <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 7, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
+                        {language === 'sw' ? 'UKUAJI' : 'GROWTH'}
+                      </Text>
+                    </View>
+                    <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)', borderRadius: 12, paddingHorizontal: 11, paddingVertical: 6, alignItems: 'center' }}>
+                      <Text style={{ color: '#fff', fontSize: 17, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 20 }}>
+                        {cropMeta.currentDay}
+                      </Text>
+                      <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 7, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
+                        {language === 'sw' ? 'SIKU' : 'DAY'}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               </>
@@ -2251,7 +2283,7 @@ const styles = StyleSheet.create({
   
   // Hero Styles
   heroWrapper: {
-    height: 330,
+    height: 390,
     width: '100%',
     position: 'relative',
     justifyContent: 'space-between',
@@ -2380,7 +2412,7 @@ const styles = StyleSheet.create({
   
   // Crop overlay panel
   heroCropPanel: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   cropTitleRow: {
     flexDirection: 'row',
