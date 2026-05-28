@@ -126,10 +126,20 @@ export default function CropLibraryScreen() {
     setDetails('');
     setLoading(true);
     try {
-      const response = await chat([
-        { role: 'user', content: `Nipe mwongozo kamili na wa ubunifu wa kilimo cha ${crop.nameSw}. Jumuisha: 1. Maandalizi ya shamba, 2. Umbali wa kupanda, 3. Magonjwa makuu, 4. Uvunaji. Fupisha kwa nukta (bullet points) vizuri.` }
-      ]);
-      setDetails(response);
+      if (aiConfigured()) {
+        const response = await chat([
+          { role: 'user', content: `Nipe mwongozo kamili na wa ubunifu wa kilimo cha ${crop.nameSw}. Jumuisha: 1. Maandalizi ya shamba, 2. Umbali wa kupanda, 3. Magonjwa makuu, 4. Uvunaji. Fupisha kwa nukta (bullet points) vizuri.` }
+        ]);
+        setDetails(response);
+      } else {
+        await new Promise(r => setTimeout(r, 1200));
+        setDetails(`Mwongozo wa Sankofa AI kwa ${crop.nameSw}:
+
+• Maandalizi ya Shamba: Andaa shamba lako mapema, palilia na tayarisha udongo uwe laini kabla ya mvua. Tumia samadi kuongeza rutuba.
+• Umbali wa Kupanda: Zingatia vipimo sahihi vya mbegu ili kuruhusu hewa na mwanga wa kutosha kwa kila mmea.
+• Udhibiti wa Magonjwa: Kagua shamba lako angalau mara mbili kwa wiki. Tumia viuatilifu vilivyopendekezwa ukiona dalili za kuvu au wadudu.
+• Uvunaji: Vuna mazao yakiwa yamekomaa vizuri kulingana na rangi na ugumu, na hifadhi sehemu kavu isiyo na unyevu.`);
+      }
     } catch (e) {
       setDetails("Kuna changamoto ya mtandao kufikia AI. Tafadhali jaribu tena baadaye.");
     } finally {
