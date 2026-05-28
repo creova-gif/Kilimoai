@@ -2136,7 +2136,7 @@ export default function HomeScreen() {
               </View>
             )}
           </Card>
-        </BlurView>
+        </View>
       )}
     </View>
   );
