@@ -2055,7 +2055,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   guideStepDot: {},
-  scrollContent: { paddingTop: 0 },
+  scrollContent: { paddingTop: 0, paddingBottom: 120 },
   
   // Hero Styles
   heroWrapper: {

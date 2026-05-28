@@ -49,7 +49,9 @@ export type Feature =
   | 'weather_alerts'
   | 'offline_mode'
   | 'peer_groups'
-  | 'wallet_admin';
+  | 'wallet_admin'
+  | 'iot_systems'
+  | 'soil_analysis';
 
 // Matrix mirrors PRD Section 2.1
 const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
@@ -61,7 +63,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'basic',
     analytics_predictive: 'none', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'none',
+    wallet_admin: 'none', iot_systems: 'none', soil_analysis: 'basic',
   },
   farmer: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -71,7 +73,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
     analytics_predictive: 'none', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'none',
+    wallet_admin: 'none', iot_systems: 'basic', soil_analysis: 'full',
   },
   farm_manager: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -81,7 +83,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'none',
     analytics_predictive: 'full', digital_farm_twin: 'full',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'basic',
+    wallet_admin: 'basic', iot_systems: 'full', soil_analysis: 'full',
   },
   agribusiness: {
     ai_chat: 'none', photo_diagnosis: 'none', voice_assistant: 'none',
@@ -91,7 +93,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'none', agro_id: 'full',
     analytics_predictive: 'full', digital_farm_twin: 'none',
     expert_consultations: 'none', weather_alerts: 'none', offline_mode: 'none', peer_groups: 'none',
-    wallet_admin: 'basic',
+    wallet_admin: 'basic', iot_systems: 'none', soil_analysis: 'none',
   },
   coop_leader: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -101,7 +103,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'none', agro_id: 'full',
     analytics_predictive: 'basic', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'full',
+    wallet_admin: 'full', iot_systems: 'none', soil_analysis: 'basic',
   },
   commercial_farmer: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -111,7 +113,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
     analytics_predictive: 'full', digital_farm_twin: 'basic',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'basic',
+    wallet_admin: 'basic', iot_systems: 'full', soil_analysis: 'full',
   },
   commercial_admin: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -121,7 +123,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'full', mobile_money: 'full', insurance: 'full', agro_id: 'full',
     analytics_predictive: 'full', digital_farm_twin: 'full',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'full',
+    wallet_admin: 'full', iot_systems: 'full', soil_analysis: 'full',
   },
   extension_officer: {
     ai_chat: 'full', photo_diagnosis: 'full', voice_assistant: 'full',
@@ -131,7 +133,7 @@ const MATRIX: Record<CanonicalRole, Record<Feature, AccessLevel>> = {
     finance_tracker: 'none', mobile_money: 'none', insurance: 'basic', agro_id: 'none',
     analytics_predictive: 'full', digital_farm_twin: 'none',
     expert_consultations: 'full', weather_alerts: 'full', offline_mode: 'full', peer_groups: 'full',
-    wallet_admin: 'none',
+    wallet_admin: 'none', iot_systems: 'none', soil_analysis: 'full',
   },
 };
 
@@ -159,6 +161,8 @@ const FEATURE_LABELS: Record<Feature, string> = {
   offline_mode: 'Offline Mode',
   peer_groups: 'Peer Groups',
   wallet_admin: 'Wallet Admin',
+  iot_systems: 'IoT & Drone Systems',
+  soil_analysis: 'Soil Analysis',
 };
 
 const ROLE_LABELS: Record<CanonicalRole, string> = {

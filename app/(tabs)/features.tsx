@@ -55,6 +55,8 @@ const ALL_FEATURES: FeatureEntry[] = [
   { feature: 'inventory',            label: 'Pembejeo',            sub: 'Ghala na vifaa',              route: '/inventory',       icon: null, color: '#8b5cf6' },
   { feature: 'task_management',      label: 'Kazi',                sub: 'Orodha ya kazi za shamba',    route: '/tasks',           icon: null, color: '#64748b' },
   { feature: 'offline_mode',         label: 'Nje ya Mtandao',      sub: 'Skani bila mtandao',          route: '/offline-queue',   icon: null, color: '#64748b' },
+  { feature: 'iot_systems',          label: 'IoT & Drones',        sub: 'Mifumo ya kisasa ya shamba',  route: '/iot-systems',     icon: null, color: '#0ea5e9' },
+  { feature: 'soil_analysis',        label: 'Udongo & pH',         sub: 'Uchambuzi wa afya ya udongo', route: '/soil-analysis',   icon: null, color: '#a3e635' },
   // Finance
   { feature: 'finance_tracker',      label: 'Daftari la Fedha',    sub: 'Matumizi na mapato',          route: '/finance',         icon: null, color: '#22d15a',  pinned: true },
   { feature: 'mobile_money',         label: 'M-Pesa / Airtel',     sub: 'Tuma na pokea pesa',          route: '/mobile-money',    icon: null, color: '#22d15a' },
@@ -87,11 +89,12 @@ const ICONS: Record<Feature, React.ReactNode> = {
   peer_groups:          <Users size={20} color="#8b5cf6" />,
   expert_consultations: <GraduationCap size={20} color="#22d15a" />,
   weather_alerts:       <Bell size={20} color="#F59E0B" />,
-  // extras not in features list but in Feature type
   voice_assistant:      <Zap size={20} color="#F59E0B" />,
   finance_tracker:      <BarChart3 size={20} color="#22d15a" />,
   mobile_money:         <Wallet size={20} color="#22d15a" />,
   offline_mode:         <Zap size={20} color="#64748b" />,
+  iot_systems:          <Cpu size={20} color="#0ea5e9" />,
+  soil_analysis:        <Leaf size={20} color="#a3e635" />,
 };
 
 const CATEGORIES = [
@@ -114,7 +117,7 @@ const CATEGORIES = [
     title: 'Shamba',
     titleEn: 'Farm Management',
     color: '#F59E0B',
-    features: ['farm_mapping', 'livestock', 'inventory', 'task_management', 'offline_mode'] as Feature[],
+    features: ['farm_mapping', 'livestock', 'inventory', 'task_management', 'offline_mode', 'iot_systems', 'soil_analysis'] as Feature[],
   },
   {
     key: 'finance',

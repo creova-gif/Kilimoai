@@ -94,6 +94,60 @@ export default function IOTSystems() {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} >
+
+          {/* Device Hub — Connection Status */}
+          <Animated.View entering={FadeInUp.delay(50).springify()}>
+            <View style={[styles.deviceHubBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={[styles.deviceHubHeader, { backgroundColor: 'rgba(245,158,11,0.08)' }]}>
+                <View style={styles.deviceHubTitleRow}>
+                  <Animated.View style={[styles.searchingDot, animatedPulse, { backgroundColor: '#f59e0b' }]} />
+                  <Text style={[styles.deviceHubTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'KITUO CHA VIFAA' : 'DEVICE HUB'}
+                  </Text>
+                </View>
+                <Text style={[styles.deviceHubSub, { color: '#f59e0b' }]}>
+                  {language === 'sw' ? 'Inatafuta vifaa...' : 'Scanning for devices...'}
+                </Text>
+              </View>
+
+              {([
+                { name: language === 'sw' ? 'Drone ya Shamba (DJI T40)' : 'Agricultural Drone (DJI T40)', type: language === 'sw' ? 'DRONE' : 'DRONE', icon: <Target size={16} color="#3b82f6" />, color: '#3b82f6' },
+                { name: language === 'sw' ? 'Sensori ya Udongo (SM-3)' : 'Soil Sensor Node (SM-3)', type: language === 'sw' ? 'SENSORI' : 'SENSOR', icon: <Zap size={16} color="#a3e635" />, color: '#a3e635' },
+                { name: language === 'sw' ? 'Kituo cha Hali ya Hewa' : 'Weather Station', type: language === 'sw' ? 'HEWA' : 'WEATHER', icon: <Wind size={16} color="#0ea5e9" />, color: '#0ea5e9' },
+                { name: language === 'sw' ? 'Mdhibiti wa Umwagiliaji' : 'Irrigation Controller', type: language === 'sw' ? 'MAJI' : 'IRRIGATION', icon: <Droplets size={16} color="#22c55e" />, color: '#22c55e' },
+              ] as const).map((device, i) => (
+                <Animated.View
+                  key={i}
+                  entering={FadeInDown.delay(80 + i * 55).springify()}
+                  style={[styles.deviceRow, { borderTopColor: colors.border }]}
+                >
+                  <View style={[styles.deviceIconBox, { backgroundColor: device.color + '18' }]}>
+                    {device.icon}
+                  </View>
+                  <View style={styles.deviceInfo}>
+                    <Text style={[styles.deviceName, { color: colors.text }]}>{device.name}</Text>
+                    <Text style={[styles.deviceType, { color: colors.textMute }]}>{device.type}</Text>
+                  </View>
+                  <View style={styles.deviceStatusRow}>
+                    <Animated.View style={[styles.statusPulseDot, animatedPulse, { backgroundColor: '#f59e0b' }]} />
+                    <Text style={[styles.deviceStatusText, { color: '#f59e0b' }]}>
+                      {language === 'sw' ? 'Inatafuta' : 'Searching'}
+                    </Text>
+                  </View>
+                </Animated.View>
+              ))}
+
+              <View style={[styles.deviceHubFooter, { borderTopColor: colors.border }]}>
+                <Wifi size={12} color={colors.textMute} />
+                <Text style={[styles.deviceHubFooterText, { color: colors.textMute }]}>
+                  {language === 'sw'
+                    ? 'Vifaa vitaunganishwa kiotomatiki vikiwa karibu · Bluetooth / Wi-Fi'
+                    : 'Devices auto-connect when in range · Bluetooth / Wi-Fi'}
+                </Text>
+              </View>
+            </View>
+          </Animated.View>
+
           {/* Drone Control Panel */}
           <Animated.View entering={FadeInDown.delay(100).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
@@ -402,6 +456,94 @@ const styles = StyleSheet.create({
   progressBarFill: {
     height: '100%',
     borderRadius: 4,
+  },
+  deviceHubBanner: {
+    borderRadius: 20,
+    borderWidth: 1,
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
+  deviceHubHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+  },
+  deviceHubTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  searchingDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+  },
+  deviceHubTitle: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.8,
+  },
+  deviceHubSub: {
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  deviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  deviceIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deviceInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  deviceName: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  deviceType: {
+    fontSize: 10,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 1,
+    letterSpacing: 0.6,
+  },
+  deviceStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  statusPulseDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+  },
+  deviceStatusText: {
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.5,
+  },
+  deviceHubFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  deviceHubFooterText: {
+    fontSize: 10,
+    fontFamily: 'Inter_500Medium',
+    flex: 1,
   },
   sensorsGrid: {
     flexDirection: 'row',

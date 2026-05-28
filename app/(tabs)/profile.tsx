@@ -113,6 +113,13 @@ export default function ProfileScreen() {
       ]
     },
     {
+      title: language === 'sw' ? 'KILIMO CHA KISASA' : 'SMART FARMING',
+      items: [
+        { id: 'iot', title: language === 'sw' ? 'Mifumo ya IoT & Drones' : 'IoT & Drone Systems', icon: <Settings size={20} color="#0ea5e9" />, hasSwitch: false, value: language === 'sw' ? 'Inatafuta...' : 'Searching...', onPress: () => router.push('/iot-systems' as any) },
+        { id: 'soil', title: language === 'sw' ? 'Uchambuzi wa Udongo' : 'Soil Analysis', icon: <Database size={20} color="#a3e635" />, hasSwitch: false, value: '', onPress: () => router.push('/soil-analysis' as any) },
+      ]
+    },
+    {
       title: language === 'sw' ? 'MIFUMO & MTANDAO' : 'SYSTEM & NETWORK',
       items: [
         { id: 'language', title: language === 'sw' ? 'Lugha ya Programu' : 'App Language', icon: <Globe size={20} color={colors.primary} />, hasSwitch: false, value: language === 'sw' ? 'Kiswahili' : 'English', onPress: () => {
@@ -327,6 +334,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 24,
     paddingTop: 12,
+    paddingBottom: 120,
   },
   header: {
     flexDirection: 'row',
