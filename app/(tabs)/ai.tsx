@@ -526,7 +526,10 @@ export default function SankofaScreen() {
 
           {/* ── Input Area ── */}
           {!isVoiceMode && (
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{ marginBottom: Platform.OS === 'ios' ? 96 : 82 }}
+            >
               {!isTyping && messages.length < 3 && (
                 <Animated.View entering={FadeInDown} exiting={FadeOut} style={styles.suggestionBox}>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionScroll}>
@@ -1143,7 +1146,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 60,
+    paddingTop: 60,
+    paddingBottom: Platform.OS === 'ios' ? 156 : 142,
   },
   voiceHeader: {
     alignItems: 'center',
