@@ -1,11 +1,4 @@
-/**
- * Kilimo AI — Notifications Center (Kituo cha Arifa)
- *
- * Displays all system, AI, and market notifications from the global store.
- * Supports swipe-to-dismiss, mark-all-read, and cinematic empty state.
- */
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -15,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ActivityIndicator
 } from 'react-native';
 import {
   ChevronLeft,
@@ -28,11 +22,11 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
-import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useTheme } from '../constants/Theme';
-import { useKilimoStore, Notification } from '../store/useKilimoStore';
+import { getSupabase } from '../lib/supabase';
+import { useKilimoStore } from '../store/useKilimoStore';
 
 const TYPE_CONFIG = {
   alert:   { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
@@ -56,24 +50,20 @@ function NotificationItem({
   onRead,
   onDelete,
   colors,
-  isDark,
-  index,
 }: {
-  item: Notification;
+  item: any;
   onRead: (id: string) => void;
   onDelete: (id: string) => void;
   colors: any;
-  isDark: boolean;
-  index: number;
 }) {
-  const cfg = TYPE_CONFIG[item.type];
+  const typeKey = (item.title.toLowerCase().includes('hatari') || item.title.toLowerCase().includes('alert')) ? 'alert' 
+                : item.title.toLowerCase().includes('okoa') ? 'success' : 'info';
+  const cfg = TYPE_CONFIG[typeKey];
   const Icon = cfg.icon;
+  const isRead = item.status === 'read';
 
   return (
-    <Animated.View
-      entering={FadeInDown} exiting={FadeOut}
-      style={styles.notifWrapper}
-    >
+    <Animated.View entering={FadeInDown} exiting={FadeOut} style={styles.notifWrapper}>
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={() => {
@@ -81,23 +71,17 @@ function NotificationItem({
           onRead(item.id);
         }}
         accessibilityRole="button"
-        accessibilityLabel={item.read ? item.title : `Unread: ${item.title}`}
-        accessibilityHint="Tap to mark as read"
+        accessibilityLabel={isRead ? item.title : `Unread: ${item.title}`}
       >
-        <BlurView
-          intensity={isDark ? 20 : 60}
-          tint={isDark ? 'dark' : 'light'}
-          style={[
-            styles.notifCard,
-            {
-              borderColor: item.read
-                ? colors.border
-                : cfg.color + '40',
-              borderWidth: item.read ? 1 : 1.5,
-            },
-          ]}
-        >
-          {!item.read && (
+        <View style={[
+          styles.notifCard,
+          {
+            backgroundColor: colors.card,
+            borderColor: isRead ? colors.border : cfg.color + '40',
+            borderWidth: isRead ? 1 : 1.5,
+          },
+        ]}>
+          {!isRead && (
             <LinearGradient
               colors={[cfg.bg, 'transparent']}
               style={StyleSheet.absoluteFill}
@@ -107,43 +91,35 @@ function NotificationItem({
           )}
 
           <View style={styles.notifRow}>
-            {/* Icon */}
             <View style={[styles.notifIconBg, { backgroundColor: cfg.bg }]}>
               <Icon size={20} color={cfg.color} />
             </View>
 
-            {/* Content */}
             <View style={styles.notifContent}>
-              <Text style={[styles.notifTitle, { color: colors.text, opacity: item.read ? 0.6 : 1 }]}>
+              <Text style={[styles.notifTitle, { color: colors.text, opacity: isRead ? 0.6 : 1 }]}>
                 {item.title}
               </Text>
               <Text style={[styles.notifBody, { color: colors.textMute }]}>
                 {item.body}
               </Text>
               <Text style={[styles.notifTime, { color: colors.textMute }]}>
-                {timeAgo(item.timestamp)}
+                {timeAgo(item.created_at)}
               </Text>
             </View>
 
-            {/* Unread indicator */}
-            {!item.read && (
-              <View style={[styles.unreadDot, { backgroundColor: cfg.color }]} />
-            )}
+            {!isRead && <View style={[styles.unreadDot, { backgroundColor: cfg.color }]} />}
 
-            {/* Delete */}
             <TouchableOpacity
               style={styles.deleteBtn}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 onDelete(item.id);
               }}
-              accessibilityRole="button"
-              accessibilityLabel={`Delete notification: ${item.title}`}
             >
-              <Trash2 size={14} color={colors.textMute} />
+              <Trash2 size={16} color={colors.textMute} />
             </TouchableOpacity>
           </View>
-        </BlurView>
+        </View>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -152,127 +128,110 @@ function NotificationItem({
 export default function NotificationsScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
-  const notifications = useKilimoStore((s) => s.notifications);
-  const markNotificationRead = useKilimoStore((s) => s.markNotificationRead);
-  const removeNotification = useKilimoStore((s) => s.removeNotification);
-  const markAllRead = useKilimoStore((s) => s.markAllRead);
-  const clearNotifications = useKilimoStore((s) => s.clearNotifications);
-  const unreadCount = useKilimoStore((s) => s.unreadCount);
+  
+  const [dbNotifications, setDbNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = (id: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    removeNotification(id);
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    const sb = getSupabase();
+    if (!sb) return setLoading(false);
+    
+    // Fallback to anonymous user for testing if no auth session
+    const { data: sessionData } = await sb.auth.getSession();
+    const userId = sessionData?.session?.user?.id || 'd3b07384-d9a2-4a0b-99f5-1b88e1a89c9c'; // Test user UUID
+    
+    const { data, error } = await sb
+      .from('user_notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(50);
+      
+    if (data) {
+      setDbNotifications(data);
+    }
+    setLoading(false);
   };
+
+  const markNotificationRead = async (id: string) => {
+    const sb = getSupabase();
+    setDbNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
+    if (sb) {
+      await sb.from('user_notifications').update({ status: 'read' }).eq('id', id);
+    }
+  };
+
+  const removeNotification = async (id: string) => {
+    const sb = getSupabase();
+    setDbNotifications(prev => prev.filter(n => n.id !== id));
+    if (sb) {
+      await sb.from('user_notifications').delete().eq('id', id);
+    }
+  };
+
+  const markAllRead = async () => {
+    const sb = getSupabase();
+    setDbNotifications(prev => prev.map(n => ({ ...n, status: 'read' })));
+    if (sb) {
+      const { data: sessionData } = await sb.auth.getSession();
+      const userId = sessionData?.session?.user?.id || 'd3b07384-d9a2-4a0b-99f5-1b88e1a89c9c';
+      await sb.from('user_notifications').update({ status: 'read' }).eq('user_id', userId);
+    }
+  };
+
+  const unreadCount = dbNotifications.filter(n => n.status !== 'read').length;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
-      {/* Background Orbs */}
-      <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        <Animated.View
-          /* Reanimated Todo */
-          style={[styles.bgOrb, { backgroundColor: colors.primary, top: -80, right: -100, width: 300, height: 300, borderRadius: 150 }]}
-        />
-        <Animated.View
-          /* Reanimated Todo */
-          style={[styles.bgOrb, { backgroundColor: '#3b82f6', bottom: 100, left: -80, width: 250, height: 250, borderRadius: 125 }]}
-        />
-      </View>
-
       <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
-        <Animated.View
-          entering={FadeInDown}
-        >
-          <BlurView
-            intensity={isDark ? 20 : 80}
-            tint={isDark ? 'dark' : 'light'}
-            style={[styles.header, { borderBottomColor: colors.border }]}
-          >
-            <TouchableOpacity
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.back(); }}
-              style={styles.backBtn}
-              accessibilityRole="button"
-              accessibilityLabel="Go back"
-            >
-              <ChevronLeft size={24} color={colors.text} />
-            </TouchableOpacity>
+        <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <ChevronLeft size={28} color={colors.text} />
+          </TouchableOpacity>
 
-            <View style={styles.headerCenter}>
-              <Text style={[styles.headerTitle, { color: colors.text }]}>Arifa</Text>
-              {unreadCount > 0 && (
-                <View style={styles.countBadge}>
-                  <Text style={styles.countText}>{unreadCount}</Text>
-                </View>
-              )}
-            </View>
-
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                markAllRead();
-              }}
-              style={styles.actionBtn}
-              accessibilityRole="button"
-              accessibilityLabel="Mark all notifications as read"
-            >
-              <CheckCheck size={20} color={colors.primary} />
-            </TouchableOpacity>
-          </BlurView>
-        </Animated.View>
-
-        {/* List */}
-        <ScrollView
-          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
-        >
-          
-            {notifications.length === 0 ? (
-              /* Empty State */
-              <Animated.View
-                entering={FadeInDown}
-                style={styles.emptyState}
-              >
-                <Animated.View
-                  /* Reanimated Todo */
-                  style={[styles.emptyIcon, { backgroundColor: colors.primary + '15' }]}
-                >
-                  <BellRing size={40} color={colors.primary} />
-                </Animated.View>
-                <Text style={[styles.emptyTitle, { color: colors.text }]}>Hakuna Arifa</Text>
-                <Text style={[styles.emptySubtitle, { color: colors.textMute }]}>
-                  Arifa zako zote zitaonekana hapa. Sankofa AI itakutumia ujumbe muhimu.
-                </Text>
-              </Animated.View>
-            ) : (
-              notifications.map((notif, i) => (
-                <NotificationItem
-                  key={notif.id}
-                  item={notif}
-                  index={i}
-                  onRead={markNotificationRead}
-                  onDelete={handleDelete}
-                  colors={colors}
-                  isDark={isDark}
-                />
-              ))
+          <View style={styles.headerCenter}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Arifa</Text>
+            {unreadCount > 0 && (
+              <View style={styles.countBadge}>
+                <Text style={styles.countText}>{unreadCount}</Text>
+              </View>
             )}
-          
+          </View>
 
-          {notifications.length > 0 && (
-            <TouchableOpacity
-              style={styles.clearAllBtn}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                clearNotifications();
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Clear all notifications"
-            >
-              <Text style={[styles.clearAllText, { color: colors.textMute }]}>
-                Futa Arifa Zote
+          <TouchableOpacity onPress={markAllRead} style={styles.actionBtn}>
+            <CheckCheck size={20} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+          ) : dbNotifications.length === 0 ? (
+            <Animated.View entering={FadeInDown} style={styles.emptyState}>
+              <View style={[styles.emptyIcon, { backgroundColor: colors.primary + '15' }]}>
+                <BellRing size={40} color={colors.primary} />
+              </View>
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>Hakuna Arifa</Text>
+              <Text style={[styles.emptySubtitle, { color: colors.textMute }]}>
+                Sankofa AI itakutumia taarifa na tahadhari zote muhimu hapa.
               </Text>
-            </TouchableOpacity>
+            </Animated.View>
+          ) : (
+            dbNotifications.map((notif) => (
+              <NotificationItem
+                key={notif.id}
+                item={notif}
+                onRead={markNotificationRead}
+                onDelete={removeNotification}
+                colors={colors}
+              />
+            ))
           )}
         </ScrollView>
       </SafeAreaView>
@@ -283,85 +242,28 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   safeArea: { flex: 1 },
-  bgOrb: { position: 'absolute', filter: Platform.OS === 'web' ? 'blur(80px)' : undefined },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
+    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1,
   },
-  backBtn: {
-    width: 44, height: 44, borderRadius: 22,
-    justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
-  },
-  headerCenter: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 16, gap: 10,
-  },
-  headerTitle: {
-    fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5,
-  },
-  countBadge: {
-    backgroundColor: '#ef4444', borderRadius: 10,
-    paddingHorizontal: 8, paddingVertical: 2,
-  },
-  countText: {
-    color: '#fff', fontSize: 11, fontFamily: 'InstrumentSerif_400Regular',
-  },
-  actionBtn: {
-    width: 44, height: 44, borderRadius: 22,
-    justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(34, 209, 90, 0.1)',
-  },
-  scrollContent: {
-    padding: 20, paddingBottom: 60, gap: 12,
-  },
+  backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
+  headerCenter: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  headerTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  countBadge: { backgroundColor: '#ef4444', borderRadius: 12, paddingHorizontal: 8, paddingVertical: 2 },
+  countText: { color: '#fff', fontSize: 12, fontFamily: 'Inter_700Bold' },
+  actionBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'flex-end' },
+  scrollContent: { padding: 16, gap: 12 },
   notifWrapper: { marginBottom: 0 },
-  notifCard: {
-    borderRadius: 24, overflow: 'hidden',
-  },
-  notifRow: {
-    flexDirection: 'row', alignItems: 'flex-start',
-    padding: 18, gap: 14,
-  },
-  notifIconBg: {
-    width: 44, height: 44, borderRadius: 16,
-    justifyContent: 'center', alignItems: 'center', flexShrink: 0,
-  },
+  notifCard: { borderRadius: 16, overflow: 'hidden' },
+  notifRow: { flexDirection: 'row', alignItems: 'flex-start', padding: 16, gap: 12 },
+  notifIconBg: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   notifContent: { flex: 1, gap: 4 },
-  notifTitle: {
-    fontSize: 15, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3,
-  },
-  notifBody: {
-    fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20,
-  },
-  notifTime: {
-    fontSize: 11, fontFamily: 'Inter_600SemiBold', opacity: 0.5, marginTop: 2,
-  },
-  unreadDot: {
-    width: 8, height: 8, borderRadius: 4, marginTop: 4, flexShrink: 0,
-  },
-  deleteBtn: {
-    padding: 4, opacity: 0.5,
-  },
-  emptyState: {
-    alignItems: 'center', paddingTop: 80, paddingHorizontal: 40,
-  },
-  emptyIcon: {
-    width: 100, height: 100, borderRadius: 50,
-    justifyContent: 'center', alignItems: 'center', marginBottom: 28,
-  },
-  emptyTitle: {
-    fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, marginBottom: 12,
-  },
-  emptySubtitle: {
-    fontSize: 16, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 24,
-  },
-  clearAllBtn: {
-    alignItems: 'center', paddingVertical: 20, marginTop: 8,
-  },
-  clearAllText: {
-    fontSize: 13, fontFamily: 'Inter_700Bold',
-  },
+  notifTitle: { fontSize: 15, fontFamily: 'Inter_700Bold' },
+  notifBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
+  notifTime: { fontSize: 11, fontFamily: 'Inter_600SemiBold', opacity: 0.6, marginTop: 4 },
+  unreadDot: { width: 8, height: 8, borderRadius: 4, marginTop: 6, flexShrink: 0 },
+  deleteBtn: { padding: 8 },
+  emptyState: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 40 },
+  emptyIcon: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
+  emptyTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, marginBottom: 8 },
+  emptySubtitle: { fontSize: 15, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 22 },
 });
