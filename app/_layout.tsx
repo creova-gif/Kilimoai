@@ -118,9 +118,15 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded && hydrated) {
+    if (!loaded) return;
+    if (hydrated) {
       SplashScreen.hideAsync();
+      return;
     }
+    // Fallback: if hydration hasn't signalled within 2 s (common on web),
+    // dismiss the splash anyway so the app isn't permanently blank.
+    const t = setTimeout(() => SplashScreen.hideAsync(), 2000);
+    return () => clearTimeout(t);
   }, [loaded, hydrated]);
 
   if (!loaded) {
