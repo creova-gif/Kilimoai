@@ -174,20 +174,26 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
   onUpdateHealth: (id: string, next: LivestockAnimal['healthStatus']) => void;
   onDelete: (id: string) => void;
 }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const [expanded, setExpanded] = useState(false);
   const sc = speciesColor(a.species);
   const healthMeta = HEALTH.find((h) => h.key === a.healthStatus)!;
   const HealthIcon = healthMeta.icon;
+  const speciesMeta = SPECIES.find((x) => x.key === a.species)!;
 
   const vacDays = a.nextVaccineDue ? daysUntil(a.nextVaccineDue) : null;
-  const vacColor = vacDays !== null ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#22d15a') : colors.textMute;
+  const vacColor = vacDays !== null
+    ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#22d15a')
+    : colors.textMute;
+  // Urgency fill: 0 = far away, 1 = overdue
+  const vacUrgency = vacDays !== null
+    ? Math.min(1, Math.max(0, vacDays < 0 ? 1 : (90 - vacDays) / 90))
+    : 0;
 
   function cycleHealth() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const idx = HEALTH.findIndex((h) => h.key === a.healthStatus);
-    const next = HEALTH[(idx + 1) % HEALTH.length].key;
-    onUpdateHealth(a.id, next);
+    const i = HEALTH.findIndex((h) => h.key === a.healthStatus);
+    onUpdateHealth(a.id, HEALTH[(i + 1) % HEALTH.length].key);
   }
 
   function confirmDelete() {
@@ -199,61 +205,118 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
   }
 
   return (
-    <Animated.View
-      entering={FadeInDown}
-    >
+    <Animated.View entering={FadeInDown.delay(idx * 40)}>
       <GlassCard style={{ padding: 0, overflow: 'hidden' }}>
-        {/* Color bar */}
-        <View style={[ac.colorBar, { backgroundColor: sc }]} />
-        <View style={{ padding: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={[ac.iconBg, { backgroundColor: sc + '18' }]}>
-              <SpeciesIcon species={a.species} size={22} color={sc} />
-            </View>
-            <View style={{ flex: 1, marginLeft: 14 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={[ac.tag, { color: colors.text }]}>{a.tag}</Text>
-                {a.name && <Text style={[ac.name, { color: sc }]}>· {a.name}</Text>}
+
+        {/* ── Card body: left accent strip + content ── */}
+        <View style={{ flexDirection: 'row' }}>
+
+          {/* Left accent strip */}
+          <View style={{ width: 4, backgroundColor: sc, borderTopLeftRadius: 16, borderBottomLeftRadius: expanded ? 0 : 16 }} />
+
+          {/* Content */}
+          <View style={{ flex: 1, padding: 14 }}>
+
+            {/* Header row */}
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+
+              {/* Species icon bubble */}
+              <View style={[ac.iconBg, { backgroundColor: sc + '18', borderColor: sc + '30', borderWidth: 1 }]}>
+                <SpeciesIcon species={a.species} size={20} color={sc} />
               </View>
-              <Text style={[ac.species, { color: colors.textMute }]}>
-                {SPECIES.find((x) => x.key === a.species)?.swahili.toUpperCase()} {a.weightKg ? `· ${a.weightKg} kg` : ''}
-              </Text>
+
+              {/* Tag + name + chips */}
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
+                  <Text style={[ac.tag, { color: colors.text }]}>{a.tag}</Text>
+                  {a.name && (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                      <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: sc }} />
+                      <Text style={[ac.name, { color: sc }]}>{a.name}</Text>
+                    </View>
+                  )}
+                </View>
+                {/* Species + weight chips */}
+                <View style={{ flexDirection: 'row', gap: 5, marginTop: 5, flexWrap: 'wrap' }}>
+                  <View style={[ac.chip, { backgroundColor: sc + '12', borderColor: sc + '30' }]}>
+                    <Text style={[ac.chipText, { color: sc }]}>
+                      {speciesMeta.swahili.toUpperCase()}
+                    </Text>
+                  </View>
+                  {a.weightKg && (
+                    <View style={[ac.chip, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', borderColor: colors.border }]}>
+                      <Text style={[ac.chipText, { color: colors.textMute }]}>{a.weightKg} kg</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+
+              {/* Health badge — tappable to cycle */}
+              <TouchableOpacity
+                onPress={cycleHealth}
+                style={[ac.healthBadge, {
+                  backgroundColor: healthMeta.color + '15',
+                  borderColor: healthMeta.color + '40',
+                }]}
+              >
+                <HealthIcon size={10} color={healthMeta.color} />
+                <Text style={[ac.healthText, { color: healthMeta.color }]}>{healthMeta.label}</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={cycleHealth} style={[ac.healthBadge, { backgroundColor: healthMeta.color + '20' }]}>
-              <HealthIcon size={11} color={healthMeta.color} />
-              <Text style={[ac.healthText, { color: healthMeta.color }]}>{healthMeta.label}</Text>
-            </TouchableOpacity>
+
+            {/* Vaccine section */}
+            {a.nextVaccineDue && (
+              <View style={{ marginTop: 12 }}>
+                {/* Label row */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Syringe size={11} color={vacColor} />
+                  <Text style={[ac.vacText, { color: vacColor, flex: 1 }]}>
+                    {vacDays! < 0
+                      ? `Chanjo imechelewa — siku ${Math.abs(vacDays!)} zilipita`
+                      : vacDays === 0
+                      ? 'Chanjo leo!'
+                      : `Chanjo katika siku ${vacDays}`}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => { setExpanded(!expanded); Haptics.selectionAsync(); }}
+                    style={[ac.expandBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)', borderColor: colors.border }]}
+                  >
+                    {expanded
+                      ? <ChevronUp size={12} color={colors.textMute} />
+                      : <ChevronDown size={12} color={colors.textMute} />}
+                  </TouchableOpacity>
+                </View>
+                {/* Urgency progress bar */}
+                <View style={{ height: 3, backgroundColor: colors.border, borderRadius: 2, marginTop: 6 }}>
+                  <View style={{
+                    height: 3, borderRadius: 2,
+                    backgroundColor: vacColor,
+                    width: `${Math.round(vacUrgency * 100)}%`,
+                    opacity: 0.85,
+                  }} />
+                </View>
+              </View>
+            )}
+
           </View>
-
-          {/* Vaccine row */}
-          {a.nextVaccineDue && (
-            <View style={[ac.vacRow, { borderTopColor: colors.border }]}>
-              <Syringe size={12} color={vacColor} />
-              <Text style={[ac.vacText, { color: vacColor }]}>
-                {vacDays! < 0
-                  ? `Chanjo imechelewa — siku ${Math.abs(vacDays!)} zilipita`
-                  : vacDays === 0 ? 'Chanjo leo!'
-                  : `Chanjo katika siku ${vacDays}`}
-              </Text>
-              <TouchableOpacity onPress={() => { setExpanded(!expanded); Haptics.selectionAsync(); }} style={ac.expandBtn}>
-                {expanded ? <ChevronUp size={14} color={colors.textMute} /> : <ChevronDown size={14} color={colors.textMute} />}
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* Expanded details */}
-          {expanded && (
-            <View style={[ac.expandedBox, { borderTopColor: colors.border, backgroundColor: colors.card }]}>
-              {a.birthDate && <Detail label="Tarehe ya kuzaliwa" value={new Date(a.birthDate).toLocaleDateString('en-GB')} />}
-              {a.lastVaccineDate && <Detail label="Chanjo ya mwisho" value={new Date(a.lastVaccineDate).toLocaleDateString('en-GB')} />}
-              {a.notes && <Detail label="Maelezo" value={a.notes} />}
-              <TouchableOpacity onPress={confirmDelete} style={[ac.deleteBtn, { borderColor: '#ef444440' }]}>
-                <Trash2 size={13} color="#ef4444" />
-                <Text style={ac.deleteText}>Futa mnyama huyu</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
+
+        {/* Expanded details */}
+        {expanded && (
+          <Animated.View
+            entering={FadeInDown}
+            style={[ac.expandedBox, { borderTopColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }]}
+          >
+            {a.birthDate && <Detail label="Tarehe ya kuzaliwa" value={new Date(a.birthDate).toLocaleDateString('en-GB')} />}
+            {a.lastVaccineDate && <Detail label="Chanjo ya mwisho" value={new Date(a.lastVaccineDate).toLocaleDateString('en-GB')} />}
+            {a.notes && <Detail label="Maelezo" value={a.notes} />}
+            <TouchableOpacity onPress={confirmDelete} style={[ac.deleteBtn, { borderColor: '#ef444435' }]}>
+              <Trash2 size={12} color="#ef4444" />
+              <Text style={ac.deleteText}>Futa mnyama huyu</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+
       </GlassCard>
     </Animated.View>
   );
@@ -389,17 +452,16 @@ const s = StyleSheet.create({
 });
 
 const ac = StyleSheet.create({
-  colorBar: { height: 3, width: '100%' },
-  iconBg: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
+  iconBg: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   tag: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3 },
   name: { fontSize: 13, fontFamily: 'Inter_700Bold' },
-  species: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1, marginTop: 2 },
-  healthBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 9, paddingVertical: 5, borderRadius: 10 },
-  healthText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
-  vacRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingTop: 10, borderTopWidth: 1 },
-  vacText: { fontSize: 11, fontFamily: 'Inter_700Bold', flex: 1 },
-  expandBtn: { padding: 2 },
-  expandedBox: { marginTop: 10, padding: 12, borderRadius: 12, borderTopWidth: 1 },
+  chip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 7, borderWidth: 1 },
+  chipText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.8 },
+  healthBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 10, borderWidth: 1 },
+  healthText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.3 },
+  vacText: { fontSize: 11, fontFamily: 'Inter_700Bold' },
+  expandBtn: { width: 26, height: 26, borderRadius: 8, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
+  expandedBox: { marginHorizontal: 4, marginBottom: 4, padding: 12, borderRadius: 12, borderTopWidth: 1 },
   deleteBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, alignSelf: 'flex-start' },
   deleteText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#ef4444' },
 });
