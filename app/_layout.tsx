@@ -91,7 +91,17 @@ function OnboardingGate({ hydrated }: { hydrated: boolean }) {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const themePreference = useKilimoStore((s) => s.themePreference);
   const hydrated = usePersistHydrated();
+
+  let isDark: boolean;
+  if (themePreference === 'dark') {
+    isDark = true;
+  } else if (themePreference === 'light') {
+    isDark = false;
+  } else {
+    isDark = colorScheme === 'dark';
+  }
 
   const [loaded, error] = useFonts({
     'Inter_400Regular': InstrumentSans_400Regular,
@@ -120,7 +130,7 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
           {hydrated && <AppServices />}
           <OnboardingGate hydrated={hydrated} />
           <View style={{ flex: 1 }} onTouchStart={pingActivity}>
