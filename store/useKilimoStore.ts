@@ -97,6 +97,7 @@ export interface FarmProfile {
 }
 
 export type AppLanguage = 'sw' | 'en';
+export type ThemePreference = 'system' | 'light' | 'dark';
 
 interface KilimoState {
   // Auth / Identity
@@ -104,6 +105,7 @@ interface KilimoState {
   isAuthenticated: boolean;
   onboardingComplete: boolean;
   language: AppLanguage;
+  themePreference: ThemePreference;
   farmProfile: FarmProfile | null;
   registeredIds: string[];
   
@@ -147,6 +149,7 @@ interface KilimoState {
   clearAgroId: () => void;
   setOnboardingComplete: (complete: boolean) => void;
   setLanguage: (lang: AppLanguage) => void;
+  setThemePreference: (pref: ThemePreference) => void;
   setFarmProfile: (profile: FarmProfile) => void;
   resetOnboarding: () => void;
   addRegisteredId: (id: string) => void;
@@ -203,6 +206,7 @@ export const useKilimoStore = create<KilimoState>()(
       isAuthenticated: false,
       onboardingComplete: false,
       language: 'sw',
+      themePreference: 'system' as ThemePreference,
       farmProfile: null,
       registeredIds: ['12345678901234567890', '123456789'],
 
@@ -280,6 +284,7 @@ export const useKilimoStore = create<KilimoState>()(
       clearAgroId: () => set({ agroId: null, isAuthenticated: false }),
       setOnboardingComplete: (complete) => set({ onboardingComplete: complete }),
       setLanguage: (language) => set({ language }),
+      setThemePreference: (themePreference) => set({ themePreference }),
       setFarmProfile: (farmProfile) => set({ farmProfile }),
       resetOnboarding: () =>
         set({ onboardingComplete: false, agroId: null, farmProfile: null, isAuthenticated: false }),
@@ -421,6 +426,7 @@ export const useKilimoStore = create<KilimoState>()(
         isAuthenticated: state.isAuthenticated,
         onboardingComplete: state.onboardingComplete,
         language: state.language,
+        themePreference: state.themePreference,
         farmProfile: state.farmProfile,
         syncQueue: state.syncQueue,
         lastSyncedAt: state.lastSyncedAt,

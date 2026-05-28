@@ -1,4 +1,5 @@
 import { useColorScheme } from 'react-native';
+import { useKilimoStore } from '../store/useKilimoStore';
 
 export const COLORS = {
   // Brand Primary — single bright green
@@ -39,8 +40,17 @@ export const COLORS = {
 };
 
 export const useTheme = () => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const systemScheme = useColorScheme();
+  const themePreference = useKilimoStore((s) => s.themePreference);
+
+  let isDark: boolean;
+  if (themePreference === 'dark') {
+    isDark = true;
+  } else if (themePreference === 'light') {
+    isDark = false;
+  } else {
+    isDark = systemScheme === 'dark';
+  }
 
   return {
     isDark,

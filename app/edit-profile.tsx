@@ -18,11 +18,11 @@ import {
   SafeAreaView, StatusBar, KeyboardAvoidingView, Platform, Alert, AlertButton,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, MapPin, Save, User, Sprout, Globe, Check, AlertCircle } from 'lucide-react-native';
+import { ChevronLeft, MapPin, Save, User, Sprout, Globe, Check, AlertCircle, Sun, Moon, Monitor } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
-import { useKilimoStore, FarmProfile, AppLanguage } from '../store/useKilimoStore';
+import { useKilimoStore, FarmProfile, AppLanguage, ThemePreference } from '../store/useKilimoStore';
 import { allRoles, roleLabel, CanonicalRole, normalizeRole } from '../lib/access';
 import { useTheme } from '../constants/Theme';
 
@@ -69,9 +69,11 @@ export default function EditProfileScreen() {
   const updateAgroId  = useKilimoStore((s) => s.updateAgroId);
   const farmProfile   = useKilimoStore((s) => s.farmProfile);
   const setFarmProfile = useKilimoStore((s) => s.setFarmProfile);
-  const language      = useKilimoStore((s) => s.language);
-  const setLanguage   = useKilimoStore((s) => s.setLanguage);
-  const addNotification = useKilimoStore((s) => s.addNotification);
+  const language           = useKilimoStore((s) => s.language);
+  const setLanguage        = useKilimoStore((s) => s.setLanguage);
+  const themePreference    = useKilimoStore((s) => s.themePreference);
+  const setThemePreference = useKilimoStore((s) => s.setThemePreference);
+  const addNotification    = useKilimoStore((s) => s.addNotification);
 
   // ── Local editable state ────────────────────────────────────────────────────
   const [name,         setName]         = useState(agroId?.name ?? '');
@@ -83,6 +85,7 @@ export default function EditProfileScreen() {
   const [hasLivestock, setHasLivestock] = useState(farmProfile?.hasLivestock ?? false);
   const [hasIrrigation,setHasIrrigation]= useState(farmProfile?.hasIrrigation ?? false);
   const [lang,         setLang]         = useState<AppLanguage>(language);
+  const [themePref,    setThemePref]    = useState<ThemePreference>(themePreference ?? 'system');
   const [saved,        setSaved]        = useState(false);
 
   // ── Dirty tracking ──────────────────────────────────────────────────────────
@@ -96,9 +99,10 @@ export default function EditProfileScreen() {
     if (hasLivestock !== (farmProfile?.hasLivestock ?? false)) return true;
     if (hasIrrigation !== (farmProfile?.hasIrrigation ?? false)) return true;
     if (lang !== language) return true;
+    if (themePref !== (themePreference ?? 'system')) return true;
     return false;
-  }, [name, role, region, crops, acres, activity, hasLivestock, hasIrrigation, lang,
-      agroId, farmProfile, language]);
+  }, [name, role, region, crops, acres, activity, hasLivestock, hasIrrigation, lang, themePref,
+      agroId, farmProfile, language, themePreference]);
 
   // ── Validation ──────────────────────────────────────────────────────────────
   const nameValid  = name.trim().length >= 2;
@@ -151,6 +155,7 @@ export default function EditProfileScreen() {
       hasIrrigation,
     });
     setLanguage(lang);
+    setThemePreference(themePref);
     addNotification({
       title: lang === 'sw' ? 'Wasifu Umehifadhiwa' : 'Profile Saved',
       body:  lang === 'sw' ? 'Mapendekezo ya AI yatabadilika papo hapo.' : 'AI recommendations will update immediately.',
@@ -192,6 +197,10 @@ export default function EditProfileScreen() {
     livestock:   'Una mifugo?',
     irrigation:  'Una umwagiliaji?',
     language:    'Lugha ya programu',
+    appearance:  'Mandhari',
+    themeSystem: 'Mfumo',
+    themeLight:  'Mwanga',
+    themeDark:   'Giza',
     save:        'Hifadhi Mabadiliko',
     unsaved:     'Mabadiliko bila kuhifadhi',
   } : {
@@ -212,6 +221,10 @@ export default function EditProfileScreen() {
     livestock:   'Raise livestock?',
     irrigation:  'Have irrigation?',
     language:    'App language',
+    appearance:  'Appearance',
+    themeSystem: 'System',
+    themeLight:  'Light',
+    themeDark:   'Dark',
     save:        'Save Changes',
     unsaved:     'Unsaved changes',
   };
@@ -423,6 +436,32 @@ export default function EditProfileScreen() {
               ))}
             </View>
 
+            {/* Appearance */}
+            <Section icon={<Sun size={16} color="#a78bfa" />} label={t.appearance} />
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {([
+                { value: 'system', label: t.themeSystem, icon: <Monitor size={15} color={themePref === 'system' ? colors.primary : colors.textMute} /> },
+                { value: 'light',  label: t.themeLight,  icon: <Sun     size={15} color={themePref === 'light'  ? colors.primary : colors.textMute} /> },
+                { value: 'dark',   label: t.themeDark,   icon: <Moon    size={15} color={themePref === 'dark'   ? colors.primary : colors.textMute} /> },
+              ] as const).map(({ value, label, icon }) => (
+                <TouchableOpacity
+                  key={value}
+                  onPress={() => { Haptics.selectionAsync(); setThemePref(value); }}
+                  style={[
+                    s.themeBtn,
+                    { borderColor: colors.border },
+                    themePref === value && { borderColor: colors.primary, backgroundColor: colors.primaryLight },
+                  ]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={label}
+                  accessibilityState={{ checked: themePref === value }}
+                >
+                  {icon}
+                  <Text style={[s.pillText, { color: colors.text }, themePref === value && { color: colors.primary }]}>{label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
             {/* Save CTA */}
             <TouchableOpacity
               onPress={save}
@@ -484,6 +523,7 @@ const s = StyleSheet.create({
   cropGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center' },
+  themeBtn:        { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   rolePill:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   rolePillText:    { color: 'rgba(255,255,255,0.8)', fontSize: 13, fontFamily: 'Inter_700Bold', flex: 1 },
   toggleRow:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', marginTop: 6 },
