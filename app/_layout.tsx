@@ -3,14 +3,12 @@ import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-rout
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import { 
-  DMSans_400Regular,
-  DMSans_500Medium,
-  DMSans_600SemiBold,
-  DMSans_700Bold,
-  DMSans_800ExtraBold,
-  DMSans_900Black,
-} from '@expo-google-fonts/dm-sans';
+import {
+  InstrumentSans_400Regular,
+  InstrumentSans_500Medium,
+  InstrumentSans_600SemiBold,
+  InstrumentSans_700Bold,
+} from '@expo-google-fonts/instrument-sans';
 import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useColorScheme, View } from 'react-native';
@@ -96,13 +94,13 @@ export default function RootLayout() {
   const hydrated = usePersistHydrated();
 
   const [loaded, error] = useFonts({
-    Inter_400Regular: DMSans_400Regular,
-    Inter_500Medium: DMSans_500Medium,
-    Inter_600SemiBold: DMSans_600SemiBold,
-    Inter_700Bold: DMSans_700Bold,
-    Inter_800ExtraBold: DMSans_800ExtraBold,
-    Inter_900Black: DMSans_900Black,
-    InstrumentSerif_400Regular,
+    'Inter_400Regular': InstrumentSans_400Regular,
+    'Inter_500Medium': InstrumentSans_500Medium,
+    'Inter_600SemiBold': InstrumentSans_600SemiBold,
+    'Inter_700Bold': InstrumentSans_700Bold,
+    'Inter_800ExtraBold': InstrumentSans_700Bold,
+    'Inter_900Black': InstrumentSans_700Bold,
+    'InstrumentSerif_400Regular': InstrumentSerif_400Regular,
   });
 
   useEffect(() => {
@@ -129,6 +127,7 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="forecast" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="scan" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
               <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />

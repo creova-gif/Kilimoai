@@ -539,7 +539,6 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
           : (lang === 'sw' ? 'Tutakutumia namba ya siri (OTP) kwenye barua pepe yako.' : 'We will send you a secret OTP code to your email.')}
       </Text>
 
-
       {authMethod === 'phone' ? (
         <View style={{ marginTop: 24 }}>
           <FieldLabel label={lang === 'sw' ? 'SIMU' : 'PHONE'} />
@@ -597,7 +596,6 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
             : (lang === 'sw' ? 'Tumia Namba ya Simu Badala yake' : 'Use Phone Number Instead')}
         </Text>
       </TouchableOpacity>
-
     </BlurView>
   );
 }
@@ -1063,6 +1061,22 @@ const s = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 18,
+  },
+  demoBypassBtn: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    marginTop: 12,
+  },
+  demoBypassText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
   },
   // Welcome Splash Styles
   welcomeHeroRoot: {

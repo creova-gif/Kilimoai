@@ -56,13 +56,8 @@ import {
   Globe,
   ShieldAlert,
   Check,
-  Target,
-  Wind,
-  CloudSun,
-  CloudRain,
-  Thermometer,
+  Target
 } from 'lucide-react-native';
-import { useWeather } from '../../hooks/useWeather';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
@@ -250,113 +245,93 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
 
 // ─── Inline Sparks / Charts for stats cards ───────────────────────────
 
-// Deterministic micro time-series: generates 7 points that ease toward `norm` (0–1)
-function genMicroSeries(norm: number, count = 7): number[] {
-  const pts: number[] = [];
-  for (let i = 0; i < count; i++) {
-    const t = i / (count - 1);
-    const trend = 0.5 + (norm - 0.5) * (t * t);
-    const wobble = Math.sin(i * 2.3 + norm * 3) * 0.06 + Math.sin(i * 5.1) * 0.03;
-    pts.push(Math.max(0.05, Math.min(0.95, trend + wobble)));
-  }
-  pts[count - 1] = Math.max(0.05, Math.min(0.95, norm));
-  return pts;
-}
+const SoilHealthChart = ({ color }: { color: string }) => (
+  <View style={styles.miniChartContainer}>
+    <Svg height="30" width="130">
+      <Defs>
+        <SvgLinearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor={color} stopOpacity="0.4" />
+          <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M0 25 C 20 22, 40 12, 60 18 C 80 24, 100 5, 130 8 L 130 30 L 0 30 Z"
+        fill="url(#soilGrad)"
+      />
+      <Path
+        d="M0 25 C 20 22, 40 12, 60 18 C 80 24, 100 5, 130 8"
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+      />
+    </Svg>
+  </View>
+);
 
-function seriesToSvgPath(pts: number[], w = 130, h = 30): { line: string; area: string } {
-  const step = w / (pts.length - 1);
-  const toY = (p: number) => (h * 0.9 - p * h * 0.78);
-  let d = `M0 ${toY(pts[0]).toFixed(1)}`;
-  for (let i = 1; i < pts.length; i++) {
-    const prevX = (i - 1) * step;
-    const currX = i * step;
-    const cpx = (prevX + currX) / 2;
-    d += ` C${cpx.toFixed(1)} ${toY(pts[i - 1]).toFixed(1)},${cpx.toFixed(1)} ${toY(pts[i]).toFixed(1)},${currX.toFixed(1)} ${toY(pts[i]).toFixed(1)}`;
-  }
-  const lastX = ((pts.length - 1) * step).toFixed(1);
-  return { line: d, area: `${d} L${lastX} ${h} L0 ${h} Z` };
-}
+const MoistureChart = () => (
+  <View style={styles.miniChartContainer}>
+    <Svg height="30" width="130">
+      <Defs>
+        <SvgLinearGradient id="moistGrad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor="#2563EB" stopOpacity="0.4" />
+          <Stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M0 12 C 25 28, 50 2, 75 22 C 100 32, 115 12, 130 15 L 130 30 L 0 30 Z"
+        fill="url(#moistGrad)"
+      />
+      <Path
+        d="M0 12 C 25 28, 50 2, 75 22 C 100 32, 115 12, 130 15"
+        fill="none"
+        stroke="#2563EB"
+        strokeWidth="2"
+      />
+    </Svg>
+  </View>
+);
 
-const SoilHealthChart = ({ color, value }: { color: string; value: number }) => {
-  const { line, area } = seriesToSvgPath(genMicroSeries(value));
-  return (
-    <View style={styles.miniChartContainer}>
-      <Svg height="30" width="130">
-        <Defs>
-          <SvgLinearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor={color} stopOpacity="0.45" />
-            <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
-          </SvgLinearGradient>
-        </Defs>
-        <Path d={area} fill="url(#soilGrad)" />
-        <Path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </Svg>
-    </View>
-  );
-};
-
-const MoistureChart = ({ value }: { value: number }) => {
-  // Moisture shows a sinusoidal wave pattern scaled by the moisture level
-  const pts = genMicroSeries(value).map((p, i) => {
-    const wave = Math.sin(i * 1.8) * 0.12 * value;
-    return Math.max(0.05, Math.min(0.95, p + wave));
-  });
-  const { line, area } = seriesToSvgPath(pts);
-  return (
-    <View style={styles.miniChartContainer}>
-      <Svg height="30" width="130">
-        <Defs>
-          <SvgLinearGradient id="moistGrad" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor="#2563EB" stopOpacity="0.45" />
-            <Stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
-          </SvgLinearGradient>
-        </Defs>
-        <Path d={area} fill="url(#moistGrad)" />
-        <Path d={line} fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </Svg>
-    </View>
-  );
-};
-
-const TemperatureChart = ({ value }: { value: number }) => {
-  // Bar chart: heights derived from temperature (value = 0–1 mapped from 10–45°C)
-  const pts = genMicroSeries(value);
-  const maxH = 26;
-  const heights = pts.map(p => Math.max(3, Math.round(p * maxH)));
+const TemperatureChart = () => {
+  const heights = [10, 16, 14, 22, 26, 18, 20];
   return (
     <View style={styles.miniBarContainer}>
       {heights.map((h, i) => (
-        <View
-          key={i}
-          style={{
-            width: 4,
-            height: h,
-            backgroundColor: i === heights.length - 1 ? '#F59E0B' : 'rgba(245, 158, 11, 0.35)',
-            borderRadius: 2,
-          }}
+        <View 
+          key={i} 
+          style={{ 
+            width: 4, 
+            height: h, 
+            backgroundColor: i === heights.length - 1 ? '#F59E0B' : 'rgba(245, 158, 11, 0.35)', 
+            borderRadius: 2 
+          }} 
         />
       ))}
     </View>
   );
 };
 
-const YieldChart = ({ value }: { value: number }) => {
-  const { line, area } = seriesToSvgPath(genMicroSeries(value));
-  return (
-    <View style={styles.miniChartContainer}>
-      <Svg height="30" width="130">
-        <Defs>
-          <SvgLinearGradient id="yieldGrad" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.45" />
-            <Stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
-          </SvgLinearGradient>
-        </Defs>
-        <Path d={area} fill="url(#yieldGrad)" />
-        <Path d={line} fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </Svg>
-    </View>
-  );
-};
+const YieldChart = () => (
+  <View style={styles.miniChartContainer}>
+    <Svg height="30" width="130">
+      <Defs>
+        <SvgLinearGradient id="yieldGrad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4" />
+          <Stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M0 28 Q 35 24, 65 15 T 130 3 L 130 30 L 0 30 Z"
+        fill="url(#yieldGrad)"
+      />
+      <Path
+        d="M0 28 Q 35 24, 65 15 T 130 3"
+        fill="none"
+        stroke="#8b5cf6"
+        strokeWidth="2"
+      />
+    </Svg>
+  </View>
+);
 // ─── Step 1 Animation: Soil prep scan ring ───────────────────────────────────
 function Step1SoilPrepAnimation() {
   const { colors } = useTheme();
@@ -704,132 +679,6 @@ const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
   return { image, displayName, harvestDays, currentDay, markers };
 };
 
-// ─── Weather Home Card ────────────────────────────────────────────────────────
-function WeatherHomeCard({ language, colors, isDark }: { language: string; colors: any; isDark: boolean }) {
-  const router = useRouter();
-  const farmVitals = useKilimoStore((s) => s.farmVitals);
-  const { current, loading, location } = useWeather();
-
-  const temp = current?.temp ?? farmVitals?.temperature ?? '--';
-  const condition = current?.conditionLabel ?? (language === 'sw' ? 'Hali ya Hewa' : 'Weather');
-  const humidity = current?.humidity;
-  const wind = current?.windKph;
-  const feelsLike = current?.feelsLike;
-  const displayLocation = current?.location ?? location;
-
-  const WeatherIcon = () => {
-    const c = current?.condition;
-    if (!c || c === 'sun') return <Sun size={52} color="#F59E0B" strokeWidth={1.5} />;
-    if (c === 'rain') return <CloudRain size={52} color="#60a5fa" strokeWidth={1.5} />;
-    return <CloudSun size={52} color="#F59E0B" strokeWidth={1.5} />;
-  };
-
-  return (
-    <Animated.View entering={FadeInDown.delay(80).springify()} style={{ marginVertical: 8 }}>
-      <TouchableOpacity
-        activeOpacity={0.92}
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          router.push('/forecast' as any);
-        }}
-        accessibilityRole="button"
-        accessibilityLabel={language === 'sw' ? 'Angalia hali ya hewa' : 'View weather forecast'}
-      >
-        <LinearGradient
-          colors={isDark ? ['#091a0a', '#0d2210'] : ['#f0fdf4', '#dcfce7']}
-          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-          style={[wStyles.card, { borderColor: colors.primary + '28' }]}
-        >
-          <View style={wStyles.headerRow}>
-            <View style={wStyles.locationRow}>
-              <MapPin size={11} color={colors.primary} />
-              <Text style={[wStyles.locationText, { color: colors.textMute }]} numberOfLines={1}>
-                {displayLocation}
-              </Text>
-            </View>
-            <View style={[wStyles.badge, { backgroundColor: colors.primary + '18' }]}>
-              <Text style={[wStyles.badgeText, { color: colors.primary }]}>
-                {language === 'sw' ? 'HALI YA HEWA →' : 'WEATHER →'}
-              </Text>
-            </View>
-          </View>
-
-          <View style={wStyles.mainRow}>
-            <View>
-              {loading && !current ? (
-                <ActivityIndicator color={colors.primary} />
-              ) : (
-                <>
-                  <View style={wStyles.tempRow}>
-                    <Text style={[wStyles.tempBig, { color: colors.text }]}>{temp}</Text>
-                    <Text style={[wStyles.tempDeg, { color: colors.primary }]}>°C</Text>
-                  </View>
-                  <Text style={[wStyles.condition, { color: colors.text }]} numberOfLines={1}>
-                    {condition.charAt(0).toUpperCase() + condition.slice(1)}
-                  </Text>
-                </>
-              )}
-            </View>
-            <WeatherIcon />
-          </View>
-
-          <View style={[wStyles.statsRow, { borderTopColor: colors.border + '50' }]}>
-            <View style={wStyles.statItem}>
-              <Droplets size={14} color="#60a5fa" />
-              <Text style={[wStyles.statVal, { color: colors.text }]}>
-                {humidity != null ? `${humidity}%` : '--'}
-              </Text>
-              <Text style={[wStyles.statLabel, { color: colors.textMute }]}>
-                {language === 'sw' ? 'Unyevu' : 'Humidity'}
-              </Text>
-            </View>
-            <View style={[wStyles.statDivider, { backgroundColor: colors.border + '50' }]} />
-            <View style={wStyles.statItem}>
-              <Wind size={14} color={colors.primary} />
-              <Text style={[wStyles.statVal, { color: colors.text }]}>
-                {wind != null ? `${wind}` : '--'}
-                {wind != null ? <Text style={{ fontSize: 9 }}> km/h</Text> : null}
-              </Text>
-              <Text style={[wStyles.statLabel, { color: colors.textMute }]}>
-                {language === 'sw' ? 'Upepo' : 'Wind'}
-              </Text>
-            </View>
-            <View style={[wStyles.statDivider, { backgroundColor: colors.border + '50' }]} />
-            <View style={wStyles.statItem}>
-              <Thermometer size={14} color="#f59e0b" />
-              <Text style={[wStyles.statVal, { color: colors.text }]}>
-                {feelsLike != null ? `${feelsLike}°` : '--'}
-              </Text>
-              <Text style={[wStyles.statLabel, { color: colors.textMute }]}>
-                {language === 'sw' ? 'Inahisi' : 'Feels like'}
-              </Text>
-            </View>
-          </View>
-        </LinearGradient>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-}
-
-const wStyles = StyleSheet.create({
-  card: { borderRadius: 28, borderWidth: 1, overflow: 'hidden', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 },
-  locationText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginLeft: 2 },
-  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  badgeText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
-  mainRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
-  tempRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  tempBig: { fontSize: 64, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 68, letterSpacing: -2 },
-  tempDeg: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', marginTop: 8 },
-  condition: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: -0.3, marginTop: 4 },
-  statsRow: { flexDirection: 'row', borderTopWidth: 1, paddingTop: 14 },
-  statItem: { flex: 1, alignItems: 'center', gap: 3 },
-  statDivider: { width: 1, marginHorizontal: 4 },
-  statVal: { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
-  statLabel: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
-});
-
 export default function HomeScreen() {
   const { colors, isDark, radius, shadows } = useTheme();
   const router = useRouter();
@@ -941,10 +790,10 @@ export default function HomeScreen() {
 
   // Translate Bento Stats
   const FARM_STATS = [
-    { id: 'soil', label: language === 'sw' ? 'Afya ya Udongo' : 'Soil Health', value: `${farmVitals.soilHealth}%`, chart: <SoilHealthChart color={colors.primary} value={farmVitals.soilHealth / 100} />, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary, trend: farmVitals.soilHealth >= 70 ? (language === 'sw' ? 'Nzuri' : 'Optimal') : farmVitals.soilHealth >= 40 ? (language === 'sw' ? 'Ya kati' : 'Fair') : (language === 'sw' ? 'Mbaya' : 'Poor') },
-    { id: 'moisture', label: language === 'sw' ? 'Unyevu' : 'Moisture', value: `${farmVitals.moisture}%`, chart: <MoistureChart value={farmVitals.moisture / 100} />, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB', trend: farmVitals.moisture >= 30 && farmVitals.moisture <= 70 ? (language === 'sw' ? 'Kawaida' : 'Optimal') : (language === 'sw' ? 'Angalia' : 'Check') },
-    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${farmVitals.temperature}°C`, chart: <TemperatureChart value={Math.min(1, Math.max(0, (farmVitals.temperature - 10) / 30))} />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: farmVitals.temperature >= 20 && farmVitals.temperature <= 32 ? (language === 'sw' ? 'Imara' : 'Optimal') : (language === 'sw' ? 'Angalia' : 'Check') },
-    { id: 'yield', label: language === 'sw' ? 'Kadirio Mavuno' : 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, chart: <YieldChart value={Math.min(1, farmVitals.yieldEstimate / 5)} />, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6', trend: farmVitals.yieldEstimate >= 2 ? (language === 'sw' ? 'Juu' : 'High') : farmVitals.yieldEstimate >= 1 ? (language === 'sw' ? 'Kawaida' : 'Normal') : (language === 'sw' ? 'Chini' : 'Low') },
+    { id: 'soil', label: language === 'sw' ? 'Afya ya Udongo' : 'Soil Health', value: `${farmVitals.soilHealth}%`, chart: <SoilHealthChart color={colors.primary} />, icon: <Leaf size={18} color={colors.primary} />, color: colors.primary, trend: language === 'sw' ? 'Nzuri' : 'Optimal' },
+    { id: 'moisture', label: language === 'sw' ? 'Unyevu' : 'Moisture', value: `${farmVitals.moisture}%`, chart: <MoistureChart />, icon: <Droplets size={18} color="#2563EB" />, color: '#2563EB', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
+    { id: 'weather', label: language === 'sw' ? 'Joto' : 'Temperature', value: `${farmVitals.temperature}°C`, chart: <TemperatureChart />, icon: <Sun size={18} color="#F59E0B" />, color: '#F59E0B', trend: language === 'sw' ? 'Imara' : 'Optimal' },
+    { id: 'yield', label: language === 'sw' ? 'Kadirio Mavuno' : 'Yield Est.', value: `${farmVitals.yieldEstimate}t`, chart: <YieldChart />, icon: <TrendingUp size={18} color="#8b5cf6" />, color: '#8b5cf6', trend: language === 'sw' ? 'Kawaida' : 'Optimal' },
   ];
 
   const quickActions = useMemo(() => [
@@ -1186,9 +1035,23 @@ export default function HomeScreen() {
           )}
           
           <SafeAreaView style={styles.heroHeader}>
-            <View style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}>
-              <MapPin size={14} color={colors.primary} />
-              <Text style={[styles.locationText, { color: colors.text }]}>{farmProfile?.region || agroId?.location || 'Mbeya, Tanzania'}</Text>
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+              <View style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}>
+                <MapPin size={14} color={colors.primary} />
+                <Text style={[styles.locationText, { color: colors.text }]}>{farmProfile?.region || agroId?.location || 'Mbeya, Tanzania'}</Text>
+              </View>
+              
+              <TouchableOpacity 
+                activeOpacity={0.85}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  router.push('/forecast' as any);
+                }}
+                style={[styles.locationPill, { backgroundColor: isDark ? 'rgba(23, 29, 21, 0.75)' : 'rgba(255, 255, 255, 0.85)' }]}
+              >
+                <Sun size={14} color="#F59E0B" />
+                <Text style={[styles.locationText, { color: colors.text }]}>{farmVitals.temperature}°C</Text>
+              </TouchableOpacity>
             </View>
             
             <View style={styles.headerActions}>
@@ -1360,9 +1223,6 @@ export default function HomeScreen() {
             )}
           </Animated.View>
           
-          {/* Live Weather Card — taps to full forecast */}
-          <WeatherHomeCard language={language} colors={colors} isDark={isDark} />
-
           {/* Horizontal Track Records timeline stepper */}
           <TrackRecords colors={colors} isDark={isDark} language={language} />
 
@@ -1529,28 +1389,40 @@ export default function HomeScreen() {
             <View style={styles.statsGrid}>
               {FARM_STATS.map((stat) => (
                 <View key={stat.id} style={styles.statCardContainer}>
-                  <Card variant="solid" style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border, borderRadius: radius.lg, ...shadows.sm }]}>
-                    <View style={styles.statHeaderRow}>
-                      <View style={[styles.statIconBg, { backgroundColor: stat.color + '12' }]}>
-                        {stat.icon}
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      if (stat.id === 'weather') {
+                        router.push('/forecast' as any);
+                      } else {
+                        router.push('/analytics' as any);
+                      }
+                    }}
+                  >
+                    <Card variant="solid" style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border, borderRadius: radius.lg, ...shadows.sm }]}>
+                      <View style={styles.statHeaderRow}>
+                        <View style={[styles.statIconBg, { backgroundColor: stat.color + '12' }]}>
+                          {stat.icon}
+                        </View>
+                        <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                          <MoreHorizontal size={16} color={colors.textMute} />
+                        </TouchableOpacity>
                       </View>
-                      <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/analytics' as any); }}>
-                        <MoreHorizontal size={16} color={colors.textMute} />
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.statMainBody}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={[styles.statValueText, { color: colors.text }]}>{stat.value}</Text>
-                        <Text style={[styles.statLabelText, { color: colors.textMute }]}>{stat.label}</Text>
+                      <View style={styles.statMainBody}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={[styles.statValueText, { color: colors.text }]}>{stat.value}</Text>
+                          <Text style={[styles.statLabelText, { color: colors.textMute }]}>{stat.label}</Text>
+                        </View>
+                        {/* Embed Sparklines / mini graphs here */}
+                        {stat.chart}
                       </View>
-                      {/* Embed Sparklines / mini graphs here */}
-                      {stat.chart}
-                    </View>
-                    <View style={styles.statTrendRow}>
-                      <ArrowUpRight size={12} color={colors.primary} />
-                      <Text style={[styles.statTrendLabel, { color: colors.primary }]}>{stat.trend}</Text>
-                    </View>
-                  </Card>
+                      <View style={styles.statTrendRow}>
+                        <ArrowUpRight size={12} color={colors.primary} />
+                        <Text style={[styles.statTrendLabel, { color: colors.primary }]}>{stat.trend}</Text>
+                      </View>
+                    </Card>
+                  </TouchableOpacity>
                 </View>
               ))}
             </View>

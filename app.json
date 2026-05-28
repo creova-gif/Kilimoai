@@ -66,11 +66,17 @@
             "node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
             "node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf",
             "node_modules/@expo-google-fonts/inter/800ExtraBold/Inter_800ExtraBold.ttf",
-            "node_modules/@expo-google-fonts/inter/900Black/Inter_900Black.ttf"
+            "node_modules/@expo-google-fonts/inter/900Black/Inter_900Black.ttf",
+            "node_modules/@expo-google-fonts/instrument-serif/400Regular/InstrumentSerif_400Regular.ttf",
+            "node_modules/@expo-google-fonts/instrument-sans/400Regular/InstrumentSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/instrument-sans/500Medium/InstrumentSans_500Medium.ttf",
+            "node_modules/@expo-google-fonts/instrument-sans/600SemiBold/InstrumentSans_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/instrument-sans/700Bold/InstrumentSans_700Bold.ttf"
           ]
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      "expo-asset"
     ],
     "scheme": "kilimoai",
     "extra": {
