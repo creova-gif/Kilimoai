@@ -151,7 +151,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon focused={focused}>
+            <TabIcon focused={focused} backgroundColor={colors.primary}>
               <User color={focused ? "#FFFFFF" : color} size={focused ? 24 : 22} strokeWidth={focused ? 2.5 : 2} />
             </TabIcon>
           ),
@@ -190,24 +190,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  activePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 6,
-    shadowColor: '#1A3B14',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-  },
-  activeLabel: {
-    color: '#FFFFFF',
-    fontFamily: 'Inter_800ExtraBold',
-    fontSize: 10,
-    letterSpacing: 0.5,
-  },
-});
