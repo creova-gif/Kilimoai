@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
 import { 
-  useFonts, 
-  Inter_400Regular, 
-  Inter_500Medium,
-  Inter_600SemiBold, 
-  Inter_700Bold,
-  Inter_800ExtraBold,
-  Inter_900Black 
-} from '@expo-google-fonts/inter';
+  DMSans_400Regular,
+  DMSans_500Medium,
+  DMSans_600SemiBold,
+  DMSans_700Bold,
+  DMSans_800ExtraBold,
+  DMSans_900Black,
+} from '@expo-google-fonts/dm-sans';
 import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useColorScheme, View } from 'react-native';
@@ -96,12 +96,12 @@ export default function RootLayout() {
   const hydrated = usePersistHydrated();
 
   const [loaded, error] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    Inter_800ExtraBold,
-    Inter_900Black,
+    Inter_400Regular: DMSans_400Regular,
+    Inter_500Medium: DMSans_500Medium,
+    Inter_600SemiBold: DMSans_600SemiBold,
+    Inter_700Bold: DMSans_700Bold,
+    Inter_800ExtraBold: DMSans_800ExtraBold,
+    Inter_900Black: DMSans_900Black,
     InstrumentSerif_400Regular,
   });
 

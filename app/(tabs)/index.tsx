@@ -56,8 +56,13 @@ import {
   Globe,
   ShieldAlert,
   Check,
-  Target
+  Target,
+  Wind,
+  CloudSun,
+  CloudRain,
+  Thermometer,
 } from 'lucide-react-native';
+import { useWeather } from '../../hooks/useWeather';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
@@ -679,6 +684,132 @@ const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
   return { image, displayName, harvestDays, currentDay, markers };
 };
 
+// ─── Weather Home Card ────────────────────────────────────────────────────────
+function WeatherHomeCard({ language, colors, isDark }: { language: string; colors: any; isDark: boolean }) {
+  const router = useRouter();
+  const farmVitals = useKilimoStore((s) => s.farmVitals);
+  const { current, loading, location } = useWeather();
+
+  const temp = current?.temp ?? farmVitals?.temperature ?? '--';
+  const condition = current?.conditionLabel ?? (language === 'sw' ? 'Hali ya Hewa' : 'Weather');
+  const humidity = current?.humidity;
+  const wind = current?.windKph;
+  const feelsLike = current?.feelsLike;
+  const displayLocation = current?.location ?? location;
+
+  const WeatherIcon = () => {
+    const c = current?.condition;
+    if (!c || c === 'sun') return <Sun size={52} color="#F59E0B" strokeWidth={1.5} />;
+    if (c === 'rain') return <CloudRain size={52} color="#60a5fa" strokeWidth={1.5} />;
+    return <CloudSun size={52} color="#F59E0B" strokeWidth={1.5} />;
+  };
+
+  return (
+    <Animated.View entering={FadeInDown.delay(80).springify()} style={{ marginVertical: 8 }}>
+      <TouchableOpacity
+        activeOpacity={0.92}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          router.push('/forecast' as any);
+        }}
+        accessibilityRole="button"
+        accessibilityLabel={language === 'sw' ? 'Angalia hali ya hewa' : 'View weather forecast'}
+      >
+        <LinearGradient
+          colors={isDark ? ['#091a0a', '#0d2210'] : ['#f0fdf4', '#dcfce7']}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          style={[wStyles.card, { borderColor: colors.primary + '28' }]}
+        >
+          <View style={wStyles.headerRow}>
+            <View style={wStyles.locationRow}>
+              <MapPin size={11} color={colors.primary} />
+              <Text style={[wStyles.locationText, { color: colors.textMute }]} numberOfLines={1}>
+                {displayLocation}
+              </Text>
+            </View>
+            <View style={[wStyles.badge, { backgroundColor: colors.primary + '18' }]}>
+              <Text style={[wStyles.badgeText, { color: colors.primary }]}>
+                {language === 'sw' ? 'HALI YA HEWA →' : 'WEATHER →'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={wStyles.mainRow}>
+            <View>
+              {loading && !current ? (
+                <ActivityIndicator color={colors.primary} />
+              ) : (
+                <>
+                  <View style={wStyles.tempRow}>
+                    <Text style={[wStyles.tempBig, { color: colors.text }]}>{temp}</Text>
+                    <Text style={[wStyles.tempDeg, { color: colors.primary }]}>°C</Text>
+                  </View>
+                  <Text style={[wStyles.condition, { color: colors.text }]} numberOfLines={1}>
+                    {condition.charAt(0).toUpperCase() + condition.slice(1)}
+                  </Text>
+                </>
+              )}
+            </View>
+            <WeatherIcon />
+          </View>
+
+          <View style={[wStyles.statsRow, { borderTopColor: colors.border + '50' }]}>
+            <View style={wStyles.statItem}>
+              <Droplets size={14} color="#60a5fa" />
+              <Text style={[wStyles.statVal, { color: colors.text }]}>
+                {humidity != null ? `${humidity}%` : '--'}
+              </Text>
+              <Text style={[wStyles.statLabel, { color: colors.textMute }]}>
+                {language === 'sw' ? 'Unyevu' : 'Humidity'}
+              </Text>
+            </View>
+            <View style={[wStyles.statDivider, { backgroundColor: colors.border + '50' }]} />
+            <View style={wStyles.statItem}>
+              <Wind size={14} color={colors.primary} />
+              <Text style={[wStyles.statVal, { color: colors.text }]}>
+                {wind != null ? `${wind}` : '--'}
+                {wind != null ? <Text style={{ fontSize: 9 }}> km/h</Text> : null}
+              </Text>
+              <Text style={[wStyles.statLabel, { color: colors.textMute }]}>
+                {language === 'sw' ? 'Upepo' : 'Wind'}
+              </Text>
+            </View>
+            <View style={[wStyles.statDivider, { backgroundColor: colors.border + '50' }]} />
+            <View style={wStyles.statItem}>
+              <Thermometer size={14} color="#f59e0b" />
+              <Text style={[wStyles.statVal, { color: colors.text }]}>
+                {feelsLike != null ? `${feelsLike}°` : '--'}
+              </Text>
+              <Text style={[wStyles.statLabel, { color: colors.textMute }]}>
+                {language === 'sw' ? 'Inahisi' : 'Feels like'}
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+const wStyles = StyleSheet.create({
+  card: { borderRadius: 28, borderWidth: 1, overflow: 'hidden', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 },
+  locationText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginLeft: 2 },
+  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  badgeText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
+  mainRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
+  tempRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  tempBig: { fontSize: 64, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 68, letterSpacing: -2 },
+  tempDeg: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', marginTop: 8 },
+  condition: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: -0.3, marginTop: 4 },
+  statsRow: { flexDirection: 'row', borderTopWidth: 1, paddingTop: 14 },
+  statItem: { flex: 1, alignItems: 'center', gap: 3 },
+  statDivider: { width: 1, marginHorizontal: 4 },
+  statVal: { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
+  statLabel: { fontSize: 10, fontFamily: 'Inter_600SemiBold' },
+});
+
 export default function HomeScreen() {
   const { colors, isDark, radius, shadows } = useTheme();
   const router = useRouter();
@@ -1209,6 +1340,9 @@ export default function HomeScreen() {
             )}
           </Animated.View>
           
+          {/* Live Weather Card — taps to full forecast */}
+          <WeatherHomeCard language={language} colors={colors} isDark={isDark} />
+
           {/* Horizontal Track Records timeline stepper */}
           <TrackRecords colors={colors} isDark={isDark} language={language} />
 

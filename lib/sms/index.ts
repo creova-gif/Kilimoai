@@ -1,15 +1,17 @@
 /**
- * Kilimo AI — SMS Adapter (Phase 1 stub)
+ * Kilimo AI — SMS Adapter (Africa's Talking)
  *
- * Sends SMS via a pluggable provider. In Phase 1 this is a no-op that logs to
- * console and pushes an in-app notification so the user can see what would have
- * been sent. Wire Africa's Talking or Selcom in Phase 2 by:
+ * Sends SMS via Africa's Talking REST API.
+ * Requires three EXPO_PUBLIC_* secrets:
+ *   EXPO_PUBLIC_AT_USERNAME   — AT username (use "sandbox" for testing)
+ *   EXPO_PUBLIC_AT_API_KEY    — AT API key
+ *   EXPO_PUBLIC_AT_SENDER_ID  — Registered shortcode / alphanumeric sender ID (optional)
  *
- *   1. Add AFRICAS_TALKING_API_KEY + AFRICAS_TALKING_USERNAME secrets
- *   2. Replace the body of `sendSms` with a fetch to the provider
+ * Falls back to in-app notification mirror when credentials are absent so the
+ * channel is always visible during development.
  *
- * The Notification Delivery Matrix (PRD 2.2) routes through here for all
- * SMS-backed events: critical diagnosis, price alerts, severe weather.
+ * Notification Delivery Matrix (PRD 2.2) routes through here for all
+ * SMS-backed events: critical diagnosis, price alerts, severe weather, payments.
  */
 
 import { useKilimoStore } from '../../store/useKilimoStore';
@@ -27,32 +29,79 @@ export interface SmsPayload {
   meta?: Record<string, unknown>;
 }
 
-const PROVIDER_CONFIGURED = false; // Flip true once Phase 2 secrets land
+const AT_USERNAME  = process.env.EXPO_PUBLIC_AT_USERNAME  ?? '';
+const AT_API_KEY   = process.env.EXPO_PUBLIC_AT_API_KEY   ?? '';
+const AT_SENDER_ID = process.env.EXPO_PUBLIC_AT_SENDER_ID ?? '';
+const AT_ENDPOINT  = 'https://api.africastalking.com/version1/messaging';
+
+function atConfigured(): boolean {
+  return AT_USERNAME.length > 0 && AT_API_KEY.length > 0;
+}
 
 export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reason?: string }> {
-  if (!PROVIDER_CONFIGURED) {
+  if (!atConfigured()) {
     console.log('[SMS:stub]', payload.event, '→', payload.to, '·', payload.body);
 
-    // Mirror to in-app notification so the user sees the channel firing
     useKilimoStore.getState().addNotification({
-      title: `[SMS Stub] ${labelForEvent(payload.event)}`,
-      body: `Would send to ${maskNumber(payload.to)}: ${payload.body}`,
+      title: labelForEvent(payload.event),
+      body: `${maskNumber(payload.to)}: ${payload.body}`,
       type: 'info',
     });
 
     return { ok: false, reason: 'sms_provider_not_configured' };
   }
 
-  // Phase 2: real provider call goes here.
-  return { ok: false, reason: 'not_implemented' };
+  try {
+    const formBody = new URLSearchParams({
+      username: AT_USERNAME,
+      to: payload.to,
+      message: payload.body,
+      ...(AT_SENDER_ID ? { from: AT_SENDER_ID } : {}),
+    });
+
+    const res = await fetch(AT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        apiKey: AT_API_KEY,
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formBody.toString(),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      console.error('[SMS:AT] HTTP error', res.status, text);
+      return { ok: false, reason: `at_http_${res.status}` };
+    }
+
+    const json = await res.json();
+    const recipient = json?.SMSMessageData?.Recipients?.[0];
+
+    if (recipient?.statusCode === 101) {
+      useKilimoStore.getState().addNotification({
+        title: labelForEvent(payload.event),
+        body: `SMS imetumwa kwa ${maskNumber(payload.to)}`,
+        type: 'success',
+      });
+      return { ok: true };
+    }
+
+    const errMsg = recipient?.status ?? 'unknown_at_status';
+    console.error('[SMS:AT] Delivery failure:', errMsg);
+    return { ok: false, reason: errMsg };
+  } catch (err: any) {
+    console.error('[SMS:AT] Network error:', err?.message);
+    return { ok: false, reason: 'network_error' };
+  }
 }
 
 function labelForEvent(e: SmsEvent): string {
   switch (e) {
-    case 'critical_diagnosis': return 'Critical Diagnosis';
-    case 'price_alert': return 'Price Alert';
-    case 'severe_weather': return 'Severe Weather';
-    case 'payment_received': return 'Payment Received';
+    case 'critical_diagnosis': return 'Utambuzi wa Haraka';
+    case 'price_alert':        return 'Tahadhari ya Bei';
+    case 'severe_weather':     return 'Tahadhari ya Hali ya Hewa';
+    case 'payment_received':   return 'Malipo Yamepokelewa';
   }
 }
 

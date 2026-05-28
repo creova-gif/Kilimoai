@@ -539,18 +539,6 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
           : (lang === 'sw' ? 'Tutakutumia namba ya siri (OTP) kwenye barua pepe yako.' : 'We will send you a secret OTP code to your email.')}
       </Text>
 
-      {!isSupabaseConfigured && (
-        <View style={[s.warnBanner, { backgroundColor: isDark ? 'rgba(34,209,90,0.08)' : 'rgba(34,209,90,0.06)', borderColor: 'rgba(34,209,90,0.25)' }]}>
-          <Text style={[s.warnTitle, { color: colors.primary }]}>
-            {lang === 'sw' ? '🔐 Hali ya Majaribio' : '🔐 Demo Mode Active'}
-          </Text>
-          <Text style={[s.warnBody, { color: colors.textMute }]}>
-            {lang === 'sw'
-              ? 'Tumia OTP ya majaribio: 123456. Akaunti itahifadhiwa kwenye kifaa hiki.'
-              : 'Use test OTP: 123456. Your account will be stored locally on this device.'}
-          </Text>
-        </View>
-      )}
 
       {authMethod === 'phone' ? (
         <View style={{ marginTop: 24 }}>
@@ -610,24 +598,6 @@ function AuthStep({ authMethod, setAuthMethod, phone, setPhone, email, setEmail,
         </Text>
       </TouchableOpacity>
 
-      {/* Bypass Action Button (always active for developer fallback or if config is missing) */}
-      <TouchableOpacity
-        onPress={() => {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          console.log('[OnboardingWizard] Bypassing authentication step (demo mode)');
-          setUserId('demo-user-id-' + Math.random().toString(36).substring(7));
-          setName('Justin Mafie (Demo)');
-          setStep(3); // proceed to Role Selection step
-        }}
-        style={s.demoBypassBtn}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel="Bypass authentication"
-      >
-        <Text style={s.demoBypassText}>
-          {lang === 'sw' ? 'Ruka Uthibitishaji (Njia ya Jaribio)' : 'Bypass Authentication (Demo Mode)'}
-        </Text>
-      </TouchableOpacity>
     </BlurView>
   );
 }
@@ -1093,22 +1063,6 @@ const s = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 18,
-  },
-  demoBypassBtn: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    marginTop: 12,
-  },
-  demoBypassText: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
   },
   // Welcome Splash Styles
   welcomeHeroRoot: {
