@@ -267,7 +267,7 @@ export default function OtpAuthScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         <View style={s.header}>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
             style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             accessibilityLabel={isSw ? 'Rudi' : 'Back'}
           >
@@ -276,8 +276,8 @@ export default function OtpAuthScreen() {
         </View>
         <View style={s.content}>
           <OtpAuthFlow
-            onSuccess={() => router.back()}
-            onSkip={() => router.back()}
+            onSuccess={() => router.canGoBack() ? router.back() : router.replace('/')}
+            onSkip={() => router.canGoBack() ? router.back() : router.replace('/')}
           />
         </View>
       </SafeAreaView>

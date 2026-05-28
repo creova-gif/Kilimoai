@@ -186,7 +186,7 @@ export default function ForecastScreen() {
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton} 
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.back(); }}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.canGoBack() ? router.back() : router.replace('/'); }}
           >
             <BlurView intensity={30} tint="dark" style={styles.backBlur}>
               <ArrowLeft size={20} color="#fff" />

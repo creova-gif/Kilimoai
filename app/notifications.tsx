@@ -191,7 +191,7 @@ export default function NotificationsScreen() {
 
       <SafeAreaView style={styles.safeArea}>
         <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
             <ChevronLeft size={28} color={colors.text} />
           </TouchableOpacity>
 

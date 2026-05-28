@@ -176,7 +176,7 @@ export default function TasksScreen() {
           
           <Animated.View style={styles.header}>
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
               activeOpacity={0.7}
               accessibilityRole="button"
               accessibilityLabel="Go back"

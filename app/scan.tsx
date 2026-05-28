@@ -395,7 +395,7 @@ export default function ScanScreen() {
           /* Reanimated Todo */
           style={styles.header}
         >
-          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} accessibilityLabel="Go back" accessibilityRole="button">
+          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} activeOpacity={0.7} accessibilityLabel="Go back" accessibilityRole="button">
             <BlurView intensity={40} tint="dark" style={styles.iconButton}>
               <X size={24} color="#ffffff" />
             </BlurView>

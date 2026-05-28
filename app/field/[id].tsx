@@ -35,7 +35,7 @@ export default function FieldDetailScreen() {
     return (
       <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}>Field Not Found</Text>
-        <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 20 }}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={{ marginTop: 20 }}>
           <Text style={{ color: colors.primary }}>Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -84,7 +84,7 @@ export default function FieldDetailScreen() {
         {/* Header Navigation overlay */}
         <BlurView intensity={60} tint="dark" style={styles.topNav}>
           <TouchableOpacity 
-            onPress={() => router.back()}
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
             style={styles.backBtn}
           >
             <ArrowLeft color="#fff" size={24} />

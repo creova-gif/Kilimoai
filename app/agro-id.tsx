@@ -123,7 +123,7 @@ export default function AgroIdScreen() {
             />
 
             <SafeAreaView style={styles.heroHeader}>
-              <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+              <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} activeOpacity={0.7}>
                 <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
                   <ChevronLeft size={22} color="#fff" />
                 </BlurView>

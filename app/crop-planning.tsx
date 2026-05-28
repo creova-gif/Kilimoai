@@ -268,7 +268,7 @@ export default function CropPlanningScreen() {
         {/* Header */}
         <Animated.View entering={FadeInDown} style={styles.header}>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
             activeOpacity={0.7}
             accessibilityRole="button"
             accessibilityLabel="Go back"

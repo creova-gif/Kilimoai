@@ -178,7 +178,7 @@ export default function AiVoiceScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
           <View style={s.headerCenter}>

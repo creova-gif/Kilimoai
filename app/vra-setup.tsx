@@ -34,7 +34,7 @@ export default function VRASetupScreen() {
     return (
       <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}>Zone Not Found</Text>
-        <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 20 }}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={{ marginTop: 20 }}>
           <Text style={{ color: colors.primary }}>Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -51,7 +51,7 @@ export default function VRASetupScreen() {
     setIsPushing(true);
     setTimeout(() => {
       setIsPushing(false);
-      router.back();
+      router.canGoBack() ? router.back() : router.replace('/');
     }, 2000);
   };
 
@@ -98,7 +98,7 @@ export default function VRASetupScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Custom Header */}
       <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text }]}>VRA Setup</Text>

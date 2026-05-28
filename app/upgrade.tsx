@@ -108,7 +108,7 @@ export default function UpgradeScreen() {
   const [selected, setSelected] = useState<'Free' | 'Premium' | 'Cooperative'>(currentTier);
 
   const handleUpgrade = () => {
-    if (selected === currentTier) { router.back(); return; }
+    if (selected === currentTier) { router.canGoBack() ? router.back() : router.replace('/'); return; }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     updateAgroId({ tier: selected });
     addNotification({
@@ -118,7 +118,7 @@ export default function UpgradeScreen() {
         : `Switched to ${selected}. New features are now unlocked.`,
       type: 'success',
     });
-    router.back();
+    router.canGoBack() ? router.back() : router.replace('/');
   };
 
   return (
@@ -135,7 +135,7 @@ export default function UpgradeScreen() {
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.back(); }}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.canGoBack() ? router.back() : router.replace('/'); }}
             style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             accessibilityLabel={isSw ? 'Rudi' : 'Go back'}
           >

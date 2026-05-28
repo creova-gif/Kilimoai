@@ -405,7 +405,7 @@ export default function SankofaScreen() {
         <SafeAreaView style={styles.safeArea}>
           {/* ── Header ── */}
           <Animated.View entering={FadeInDown} style={[styles.header, { backgroundColor: isDark ? 'rgba(10,18,10,0.8)' : colors.card }]}>
-            <TouchableOpacity onPress={() => router.back()} style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]}>
+            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[styles.iconBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]}>
               <ChevronLeft size={22} color={colors.text} />
             </TouchableOpacity>
 
