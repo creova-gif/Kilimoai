@@ -1789,25 +1789,61 @@ export default function HomeScreen() {
                   accessibilityLabel={`Weekly Insight: ${weeklyInsight.title}`}
                   accessibilityHint={weeklyInsight.body}
                 >
-                  <Card variant="solid" style={[styles.recCard, { borderLeftColor: colors.primary, borderLeftWidth: 4, backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <View style={styles.weeklyInsightBadgeRow}>
-                      <Text style={[styles.recCat, { color: colors.primary }]}>
-                        {language === 'sw' ? 'UFAHAMU WA WIKI (AI)' : 'WEEKLY INSIGHT (AI)'}
-                      </Text>
-                      <Sparkles size={12} color={colors.primary} />
+                  <View style={styles.weeklyHeroCard}>
+                    <LinearGradient
+                      colors={['#0a2e12', '#063d18', '#022b10']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={StyleSheet.absoluteFill}
+                    />
+                    <View style={styles.weeklyHeroBubble1} />
+                    <View style={styles.weeklyHeroBubble2} />
+                    <View style={styles.weeklyHeroBadgeRow}>
+                      <View style={styles.weeklyHeroAiBadge}>
+                        <Sparkles size={10} color="#22d15a" />
+                        <Text style={styles.weeklyHeroAiBadgeText}>AI ENGINE V4.5</Text>
+                      </View>
+                      <View style={styles.weeklyHeroLivePill}>
+                        <Text style={styles.weeklyHeroLiveText}>LIVE</Text>
+                      </View>
                     </View>
-                    <Text style={[styles.recTitle, { color: colors.text }]}>{weeklyInsight.title}</Text>
-                    <Text style={[styles.recBody, { color: colors.textMute }]}>{weeklyInsight.body}</Text>
-                    <Text style={styles.weeklyInsightSource}>
-                      {language === 'sw' ? `Chanzo: ${weeklyInsight.source}` : `Source: ${weeklyInsight.source}`}
-                    </Text>
-                  </Card>
+                    <Text style={styles.weeklyHeroTitle}>{weeklyInsight.title}</Text>
+                    <Text style={styles.weeklyHeroBody}>{weeklyInsight.body}</Text>
+                    <View style={styles.weeklyHeroFooter}>
+                      <Text style={styles.weeklyHeroSource} numberOfLines={1}>
+                        {language === 'sw' ? `Chanzo: ${weeklyInsight.source}` : `Source: ${weeklyInsight.source}`}
+                      </Text>
+                      <View style={styles.weeklyHeroCtaBtn}>
+                        <Text style={styles.weeklyHeroCtaText}>
+                          {language === 'sw' ? 'Angalia' : 'Explore'}
+                        </Text>
+                        <ArrowUpRight size={12} color="#22d15a" />
+                      </View>
+                    </View>
+                  </View>
                 </Pressable>
               )}
 
               {/* Regular Static/Rule-based recommendations */}
               {recommendations.map((rec) => {
                 const col = severityColor(rec.severity);
+                const CatIcon = (() => {
+                  switch (rec.category) {
+                    case 'irrigation': return Droplets;
+                    case 'market':     return TrendingUp;
+                    case 'pest':       return ShieldAlert;
+                    case 'soil':       return Leaf;
+                    case 'finance':    return BarChart3;
+                    case 'weather':    return Cloud;
+                    case 'planning':   return Target;
+                    default:           return Lightbulb;
+                  }
+                })();
+                const sevLabel = rec.severity === 'urgent'
+                  ? (language === 'sw' ? 'DHARURA' : 'URGENT')
+                  : rec.severity === 'opportunity'
+                    ? (language === 'sw' ? 'FURSA' : 'OPP')
+                    : (language === 'sw' ? 'HABARI' : 'INFO');
                 return (
                   <Pressable
                     key={rec.id}
@@ -1816,11 +1852,33 @@ export default function HomeScreen() {
                     accessibilityLabel={rec.title}
                     accessibilityHint={rec.cta.label}
                   >
-                    <Card variant="solid" style={[styles.recCard, { borderLeftColor: col, borderLeftWidth: 4, backgroundColor: colors.card, borderColor: colors.border }]}>
-                      <Text style={[styles.recCat, { color: col }]}>{rec.category.toUpperCase()}</Text>
-                      <Text style={[styles.recTitle, { color: colors.text }]}>{rec.title}</Text>
-                      <Text style={[styles.recBody, { color: colors.textMute }]}>{rec.body}</Text>
-                    </Card>
+                    <View style={[styles.recCardNew, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                      <LinearGradient
+                        colors={[col + '22', col + '08', 'transparent']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={[StyleSheet.absoluteFill, { borderRadius: 20 }]}
+                      />
+                      <View style={styles.recCardTopRow}>
+                        <View style={[styles.recIconSquare, { backgroundColor: col + '25' }]}>
+                          <CatIcon size={16} color={col} />
+                        </View>
+                        <Text style={[styles.recCatNew, { color: col }]}>{rec.category.toUpperCase()}</Text>
+                        <View style={{ flex: 1 }} />
+                        <View style={[styles.recSeverityPill, { backgroundColor: col + '18', borderColor: col + '35' }]}>
+                          <Text style={[styles.recSeverityText, { color: col }]}>{sevLabel}</Text>
+                        </View>
+                      </View>
+                      <Text style={[styles.recTitleNew, { color: colors.text }]}>{rec.title}</Text>
+                      <Text style={[styles.recBodyNew, { color: colors.textMute }]}>{rec.body}</Text>
+                      <View style={styles.recCtaRow}>
+                        <View style={{ flex: 1 }} />
+                        <View style={[styles.recCtaChip, { backgroundColor: col + '18', borderColor: col + '35' }]}>
+                          <Text style={[styles.recCtaLabel, { color: col }]}>{rec.cta.label}</Text>
+                          <ChevronRight size={11} color={col} />
+                        </View>
+                      </View>
+                    </View>
                   </Pressable>
                 );
               })}
@@ -2933,6 +2991,186 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 16,
+  },
+  // ── Weekly Insight Hero Card ──────────────────────────────
+  weeklyHeroCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    padding: 20,
+    paddingBottom: 16,
+    minHeight: 210,
+    position: 'relative',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  weeklyHeroBubble1: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(34,209,90,0.07)',
+    top: -70,
+    right: -50,
+  },
+  weeklyHeroBubble2: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(34,209,90,0.05)',
+    bottom: -40,
+    left: 10,
+  },
+  weeklyHeroBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  weeklyHeroAiBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(34,209,90,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(34,209,90,0.28)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  weeklyHeroAiBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    color: '#22d15a',
+    letterSpacing: 0.8,
+  },
+  weeklyHeroLivePill: {
+    backgroundColor: '#22d15a',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  weeklyHeroLiveText: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    color: '#fff',
+    letterSpacing: 1.2,
+  },
+  weeklyHeroTitle: {
+    fontSize: 22,
+    fontFamily: 'InstrumentSerif_400Regular',
+    color: '#fff',
+    marginBottom: 8,
+    lineHeight: 28,
+  },
+  weeklyHeroBody: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    color: 'rgba(255,255,255,0.72)',
+    lineHeight: 20,
+    marginBottom: 18,
+  },
+  weeklyHeroFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  weeklyHeroSource: {
+    fontSize: 10,
+    fontFamily: 'Inter_500Medium',
+    color: 'rgba(255,255,255,0.35)',
+    flex: 1,
+  },
+  weeklyHeroCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(34,209,90,0.18)',
+    borderWidth: 1,
+    borderColor: 'rgba(34,209,90,0.32)',
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  weeklyHeroCtaText: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    color: '#22d15a',
+    letterSpacing: 0.4,
+  },
+  // ── Regular Rec Card Redesign ─────────────────────────────
+  recCardNew: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  recCardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  recIconSquare: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recCatNew: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1.1,
+  },
+  recSeverityPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  recSeverityText: {
+    fontSize: 8,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.9,
+  },
+  recTitleNew: {
+    fontSize: 17,
+    fontFamily: 'InstrumentSerif_400Regular',
+    marginBottom: 6,
+    lineHeight: 22,
+  },
+  recBodyNew: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+    marginBottom: 14,
+  },
+  recCtaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  recCtaChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  recCtaLabel: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.4,
   },
 
   // Guide Card Styles
