@@ -27,9 +27,9 @@ export interface SmsPayload {
   meta?: Record<string, unknown>;
 }
 
-const AT_API_KEY = process.env.EXPO_PUBLIC_AFRICAS_TALKING_API_KEY || '';
-const AT_USERNAME = process.env.EXPO_PUBLIC_AFRICAS_TALKING_USERNAME || '';
-const AT_SENDER_ID = process.env.EXPO_PUBLIC_AFRICAS_TALKING_SENDER_ID || '';
+const AT_API_KEY = process.env.EXPO_PUBLIC_AT_API_KEY || process.env.EXPO_PUBLIC_AFRICAS_TALKING_API_KEY || '';
+const AT_USERNAME = process.env.EXPO_PUBLIC_AT_USERNAME || process.env.EXPO_PUBLIC_AFRICAS_TALKING_USERNAME || '';
+const AT_SENDER_ID = process.env.EXPO_PUBLIC_AT_SENDER_ID || process.env.EXPO_PUBLIC_AFRICAS_TALKING_SENDER_ID || '';
 
 const PROVIDER_CONFIGURED = AT_API_KEY.length > 0 && AT_USERNAME.length > 0;
 

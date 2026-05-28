@@ -231,7 +231,7 @@ export default function TasksScreen() {
                   <Animated.View 
                     style={{ height: '100%' }}
                   >
-                    <LinearGradient colors={[colors.primary, colors.primaryDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
+                    <LinearGradient colors={[colors.primary, '#0a3d18']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.progressFill} />
                   </Animated.View>
                 </View>
               </BlurView>

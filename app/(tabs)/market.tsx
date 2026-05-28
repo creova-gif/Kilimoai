@@ -929,7 +929,7 @@ export default function MarketScreen() {
             accessibilityRole="button"
             accessibilityLabel={language === 'sw' ? 'Uza mazao' : 'Sell crops'}
           >
-            <LinearGradient colors={[colors.success, colors.primaryDark]} style={styles.fabGrad}>
+            <LinearGradient colors={[colors.success, '#0a3d18']} style={styles.fabGrad}>
               <Package size={20} color="#fff" />
               <Text style={styles.fabText}>
                 {language === 'sw' ? 'UZA' : 'SELL'}

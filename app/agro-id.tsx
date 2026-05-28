@@ -294,7 +294,7 @@ export default function AgroIdScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity 
-                style={[styles.updateBtn, { backgroundColor: colors.primaryDark }]}
+                style={[styles.updateBtn, { backgroundColor: '#0a3d18' }]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   setUpdateModalVisible(true);

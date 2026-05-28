@@ -473,7 +473,7 @@ export default function EditProfileScreen() {
               accessibilityState={{ disabled: !canSave }}
             >
               <LinearGradient
-                colors={[colors.primary, colors.primaryDark]}
+                colors={[colors.primary, '#0a3d18']}
                 style={s.saveGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}

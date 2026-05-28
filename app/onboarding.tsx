@@ -135,16 +135,10 @@ export default function OnboardingWizard() {
   const t = COPY[lang];
 
   const canContinue = useMemo(() => {
-    if (step === 0) return true; // Welcome Step
-    if (step === 1) { // Auth Step
-      if (authMethod === 'email') {
-        const isOk = email.includes('@') && email.trim().length > 4;
-        console.log('[OnboardingWizard] canContinue Step 1 Email validation:', { email, isOk });
-        return isOk;
-      }
-      const isOk = phone.length >= 9;
-      console.log('[OnboardingWizard] canContinue Step 1 Phone validation:', { phone, isOk });
-      return isOk;
+    if (step === 0) return true;
+    if (step === 1) {
+      if (authMethod === 'email') return email.includes('@') && email.trim().length > 4;
+      return phone.length >= 9;
     }
     if (step === 2) return otp.length === 6; // OTP Step
     if (step === 3) return !!role; // Role Step
@@ -159,34 +153,27 @@ export default function OnboardingWizard() {
   }, [step, lang, phone, otp, role, name, crops, acres, authMethod, email, idType, nida, tin, license]);
 
   async function next() {
-    console.log('[OnboardingWizard] next() called for step:', step, 'authMethod:', authMethod);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (step === 0) {
       setLanguage(lang);
-      setStep(1); // Go to Auth step
+      setStep(1);
       return;
     }
     if (step === 1) {
       if (authMethod === 'email') {
-        console.log('[OnboardingWizard] Executing signInWithEmail with:', email);
         try {
           await signInWithEmail(email);
-          console.log('[OnboardingWizard] Email sign-in OTP sent. Proceeding to OTP validation (Step 2)');
-          setStep(2); // OTP step
+          setStep(2);
         } catch (err: any) {
-          console.error('[OnboardingWizard] signInWithEmail threw error:', err);
-          Alert.alert('Error', err.message || 'Failed to send OTP to email');
+          Alert.alert(lang === 'sw' ? 'Hitilafu' : 'Error', err.message || (lang === 'sw' ? 'Imeshindwa kutuma OTP kwa barua pepe' : 'Failed to send OTP to email'));
         }
         return;
       } else {
-        console.log('[OnboardingWizard] Executing signInWithPhone with:', phone);
         try {
           await signInWithPhone(phone);
-          console.log('[OnboardingWizard] Phone sign-in request sent. Proceeding to OTP validation (Step 2)');
-          setStep(2); // OTP step
+          setStep(2);
         } catch (err: any) {
-          console.error('[OnboardingWizard] signInWithPhone threw error:', err);
-          Alert.alert('Error', err.message || 'Failed to send OTP');
+          Alert.alert(lang === 'sw' ? 'Hitilafu' : 'Error', err.message || (lang === 'sw' ? 'Imeshindwa kutuma OTP' : 'Failed to send OTP'));
         }
         return;
       }
@@ -409,7 +396,7 @@ export default function OnboardingWizard() {
             accessibilityState={{ disabled: !canContinue || loading }}
           >
             <LinearGradient
-              colors={[colors.primary, colors.primaryDark]}
+              colors={[colors.primary, '#0a3d18']}
               style={s.ctaGrad}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             >

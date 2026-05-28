@@ -59,6 +59,9 @@ import {
   Target,
   Cloud,
   CloudRain,
+  ChevronRight,
+  Thermometer,
+  Wind,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -682,6 +685,122 @@ const getCropMetadata = (cropName: string, language: 'en' | 'sw') => {
   return { image, displayName, harvestDays, currentDay, markers };
 };
 
+// ─── Weather Widget Card ──────────────────────────────────────────────────────
+function WeatherWidget({ weather, language, colors, isDark, router }: any) {
+  const hourlyData = React.useMemo(() => {
+    const currentHour = new Date().getHours();
+    const baseTemp = weather.current?.temp ?? 24;
+    const offsets = [0, 1, 2, 1, -1];
+    return Array.from({ length: 5 }).map((_, i) => {
+      const hr = (currentHour + i) % 24;
+      const ampm = hr >= 12 ? 'PM' : 'AM';
+      const displayHr = hr % 12 === 0 ? 12 : hr % 12;
+      const cond = weather.current?.condition ?? 'sun';
+      return {
+        label: `${displayHr} ${ampm}`,
+        temp: Math.round(baseTemp + (offsets[i] ?? 0)),
+        isRain: (cond === 'rain' || cond === 'storm') && i > 2,
+        isCloud: i === 1 || i === 4,
+      };
+    });
+  }, [weather.current?.temp, weather.current?.condition]);
+
+  const displayTemp = Math.round(weather.current?.temp ?? 24);
+  const humidity = weather.current?.humidity ?? 78;
+  const feelsLike = Math.round((weather.current as any)?.feelsLike ?? displayTemp + 1);
+  const conditionLabel = weather.current?.conditionLabel ?? (language === 'sw' ? 'Mawingu kidogo' : 'Partly cloudy');
+  const condition = weather.current?.condition ?? 'cloud';
+  const thumbPct = Math.max(8, Math.min(88, ((displayTemp - 14) / 22) * 100));
+  const conditionColor = condition === 'rain' ? '#3b82f6' : condition === 'storm' ? '#6366f1' : condition === 'cloud' ? '#64748b' : '#F59E0B';
+
+  return (
+    <Animated.View entering={FadeInDown.delay(50).duration(500).springify()} style={{ marginVertical: 8 }}>
+      <Text style={[styles.bentoSectionTitle, { color: colors.textMute, marginLeft: 4, marginBottom: 8 }]}>
+        {language === 'sw' ? 'HALI YA HEWA' : 'WEATHER'}
+      </Text>
+      <TouchableOpacity
+        activeOpacity={0.93}
+        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/forecast' as any); }}
+        style={[styles.wxCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+        accessibilityRole="button"
+        accessibilityLabel={language === 'sw' ? 'Fungua hali kamili ya hewa' : 'Open full weather forecast'}
+      >
+        {/* Header */}
+        <View style={styles.wxHead}>
+          <View style={styles.wxLoc}>
+            <MapPin size={11} color={colors.primary} strokeWidth={2.5} />
+            <Text style={[styles.wxLocText, { color: colors.textMute }]}>
+              {(weather.location ?? 'Arusha').replace(',TZ', '').replace(',tz', '')}
+            </Text>
+          </View>
+          <View style={[styles.wxBadge, { backgroundColor: colors.primaryLight }]}>
+            <Text style={[styles.wxBadgeText, { color: colors.primary }]}>
+              {language === 'sw' ? 'Leo' : 'Today'}
+            </Text>
+            <ChevronRight size={11} color={colors.primary} strokeWidth={2.5} />
+          </View>
+        </View>
+
+        {/* Temperature + Icon */}
+        <View style={styles.wxTempRow}>
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+              <Text style={[styles.wxBigTemp, { color: colors.text }]}>{displayTemp}</Text>
+              <Text style={[styles.wxDeg, { color: colors.primary }]}>°C</Text>
+            </View>
+            <Text style={[styles.wxCond, { color: colors.textMute }]}>{conditionLabel}</Text>
+          </View>
+          <View style={[styles.wxIconRing, { backgroundColor: conditionColor + '14', borderColor: conditionColor + '28' }]}>
+            {condition === 'rain' || condition === 'storm'
+              ? <CloudRain size={44} color={conditionColor} strokeWidth={1.5} />
+              : condition === 'cloud'
+              ? <Cloud size={44} color={conditionColor} strokeWidth={1.5} />
+              : <Sun size={44} color={conditionColor} strokeWidth={1.5} />}
+          </View>
+        </View>
+
+        {/* Gradient Range Bar */}
+        <View style={styles.wxBarWrap}>
+          <LinearGradient colors={['#2e7d32', '#a3e635', '#f59e0b', '#ef4444']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.wxBar} />
+          <View style={[styles.wxBarThumb, { left: `${thumbPct}%` as any, borderColor: colors.primary }]} />
+        </View>
+
+        {/* Hourly Timeline */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 16 }} contentContainerStyle={{ gap: 4, paddingHorizontal: 2 }}>
+          {hourlyData.map((h, i) => (
+            <View key={i} style={[styles.wxHour, i === 0 && { backgroundColor: colors.primaryLight, borderRadius: 14 }]}>
+              <Text style={[styles.wxHourTime, { color: i === 0 ? colors.primary : colors.textMute }]}>{h.label}</Text>
+              {h.isRain ? <CloudRain size={15} color="#60a5fa" strokeWidth={1.8} />
+                : h.isCloud ? <Cloud size={15} color="#94a3b8" strokeWidth={1.8} />
+                : <Sun size={15} color="#F59E0B" strokeWidth={1.8} />}
+              <Text style={[styles.wxHourTemp, { color: colors.text }]}>{h.temp}°</Text>
+            </View>
+          ))}
+        </ScrollView>
+
+        {/* Stats Row */}
+        <View style={[styles.wxStats, { borderTopColor: colors.border }]}>
+          {[
+            { icon: <Droplets size={13} color="#3b82f6" />, val: `${humidity}%`, lbl: language === 'sw' ? 'Unyevu' : 'Humidity' },
+            { icon: <Sun size={13} color="#F59E0B" />,      val: '05',           lbl: 'UV Index' },
+            { icon: <Thermometer size={13} color={colors.primary} />, val: `${feelsLike}°`, lbl: language === 'sw' ? 'Hisi' : 'Feels like' },
+            { icon: <Wind size={13} color="#94a3b8" />,     val: '12 km/h',      lbl: language === 'sw' ? 'Upepo' : 'Wind' },
+          ].map((s, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <View style={[styles.wxStatDiv, { backgroundColor: colors.border }]} />}
+              <View style={styles.wxStat}>
+                {s.icon}
+                <Text style={[styles.wxStatVal, { color: colors.text }]}>{s.val}</Text>
+                <Text style={[styles.wxStatLbl, { color: colors.textMute }]}>{s.lbl}</Text>
+              </View>
+            </React.Fragment>
+          ))}
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
 export default function HomeScreen() {
   const { colors, isDark, radius, shadows } = useTheme();
   const router = useRouter();
@@ -1236,6 +1355,9 @@ export default function HomeScreen() {
           {/* Horizontal Track Records timeline stepper */}
           <TrackRecords colors={colors} isDark={isDark} language={language} />
 
+          {/* Weather Widget */}
+          <WeatherWidget weather={weather} language={language} colors={colors} isDark={isDark} router={router} />
+
           {/* Quick Actions Scroll */}
           <View style={{ marginVertical: 12 }}>
             <Text style={[styles.bentoSectionTitle, { color: colors.textMute, marginLeft: 4 }]}>
@@ -1334,7 +1456,7 @@ export default function HomeScreen() {
 
           {/* Wallet Card - Replaced with Olive Premium card */}
           <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <Card variant="solid" style={[styles.walletCard, { backgroundColor: colors.primaryDark, borderColor: colors.primaryDark, ...shadows.premium }]}>
+            <Card variant="solid" style={[styles.walletCard, { backgroundColor: '#0F4D2A', borderColor: '#0F4D2A', ...shadows.premium }]}>
               <View style={styles.walletHeader}>
                 <View style={[styles.agroIdBadge, { backgroundColor: 'rgba(255, 255, 255, 0.08)' }]}>
                   <Fingerprint size={12} color="#FCFBF7" />
@@ -3039,4 +3161,37 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: 'Inter_800ExtraBold',
   },
+
+  // ── Weather Widget ──
+  wxCard: {
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  wxHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  wxLoc: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  wxLocText: { fontSize: 12, fontFamily: 'Inter_500Medium' },
+  wxBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20, gap: 3 },
+  wxBadgeText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+  wxTempRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  wxBigTemp: { fontSize: 60, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -2, lineHeight: 64 },
+  wxDeg: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', marginTop: 8, marginLeft: 2 },
+  wxCond: { fontSize: 13, fontFamily: 'Inter_500Medium', marginTop: 4 },
+  wxIconRing: { width: 76, height: 76, borderRadius: 38, justifyContent: 'center', alignItems: 'center', borderWidth: 1 },
+  wxBarWrap: { height: 10, borderRadius: 5, overflow: 'visible', position: 'relative', marginBottom: 2 },
+  wxBar: { height: 10, borderRadius: 5 },
+  wxBarThumb: { position: 'absolute', top: -3, width: 16, height: 16, borderRadius: 8, backgroundColor: '#fff', borderWidth: 2.5, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.18, shadowRadius: 3, elevation: 2, marginLeft: -8 },
+  wxHour: { alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 8 },
+  wxHourTime: { fontSize: 10, fontFamily: 'Inter_500Medium' },
+  wxHourTemp: { fontSize: 13, fontFamily: 'Inter_700Bold' },
+  wxStats: { flexDirection: 'row', alignItems: 'center', marginTop: 14, paddingTop: 14, borderTopWidth: 1 },
+  wxStat: { flex: 1, alignItems: 'center', gap: 3 },
+  wxStatDiv: { width: 1, height: 32, marginHorizontal: 2 },
+  wxStatVal: { fontSize: 13, fontFamily: 'Inter_700Bold' },
+  wxStatLbl: { fontSize: 9, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 12 },
 });

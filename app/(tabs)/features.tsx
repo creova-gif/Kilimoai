@@ -242,7 +242,7 @@ export default function FeaturesScreen() {
                 </Text>
               </View>
               <View style={s.heroRight}>
-                <LinearGradient colors={[colors.primary, colors.primaryDark ?? '#0a1d08']} style={s.heroCircle}>
+                <LinearGradient colors={[colors.primary, '#0a1d08']} style={s.heroCircle}>
                   <LayoutGrid size={26} color="#FCFBF7" strokeWidth={2.5} />
                 </LinearGradient>
               </View>
