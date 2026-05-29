@@ -1,21 +1,22 @@
 /**
- * Sauti AI — Voice-first interface for hands-free farm queries
- * Uses OpenAI Whisper (speech-to-text) → GPT-4o → TTS playback flow
+ * Sauti AI — Voice assistant, creative redesign
+ * Immersive orb visualizer · Editorial typography · Theme-aware
  */
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  Platform, Dimensions,
+  Platform, Dimensions, StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
-  Mic, MicOff, Volume2, ChevronLeft, Sparkles, Zap,
-  MessageSquare, RotateCcw, HelpCircle, Headphones,
+  Mic, ChevronLeft, Sparkles, Zap, RotateCcw, Headphones,
+  Volume2, Wand2,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue, useAnimatedStyle, withRepeat, withSequence,
-  withTiming, Easing, FadeInDown, FadeInUp,
+  withTiming, Easing, FadeInDown, FadeInUp, interpolate,
+  withSpring,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,93 +24,198 @@ import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
 
 const { width: SW } = Dimensions.get('window');
+const PRIMARY = '#22d15a';
+const ORB_SIZE = 136;
+const ORB_CONTAINER = 220;
 
 const QUICK_PHRASES = [
-  { sw: 'Hali ya hewa leo?', en: "Today's weather?" },
-  { sw: 'Magonjwa ya mahindi?', en: 'Maize diseases?' },
-  { sw: 'Bei za soko sasa?', en: 'Current market prices?' },
-  { sw: 'Wakati wa kupanda?', en: 'Planting schedule?' },
-  { sw: 'Jinsi ya kumwagilia?', en: 'Irrigation advice?' },
-  { sw: 'Mbolea inayofaa?', en: 'Best fertilizer?' },
+  { sw: 'Hali ya hewa leo?', en: "Today's weather?", icon: '🌤' },
+  { sw: 'Magonjwa ya mahindi?', en: 'Maize diseases?', icon: '🌽' },
+  { sw: 'Bei za soko sasa?', en: 'Current market prices?', icon: '📈' },
+  { sw: 'Wakati wa kupanda?', en: 'Planting schedule?', icon: '🌱' },
+  { sw: 'Jinsi ya kumwagilia?', en: 'Irrigation advice?', icon: '💧' },
+  { sw: 'Mbolea inayofaa?', en: 'Best fertilizer?', icon: '🧪' },
 ];
 
 const SAMPLE_RESPONSES = [
-  { q: 'Hali ya hewa leo?', a: 'Leo Dodoma kuna joto la 26°C na anga angavu. Mvua inatarajiwa baadaye wiki hii — Alhamisi usiku — wastani wa 12mm. Fuatilia dalili za upepo mkali kabla ya dhoruba.' },
-  { q: "Today's weather?", a: 'Today in Dodoma: 26°C, clear skies. Rain expected Thursday evening — approx 12mm. Monitor for wind gusts ahead of the front.' },
+  { q: 'Hali ya hewa leo?', a: 'Leo Dodoma kuna joto la 26°C na anga angavu. Mvua inatarajiwa Alhamisi usiku — wastani wa 12mm. Fuatilia dalili za upepo mkali kabla ya dhoruba.' },
+  { q: "Today's weather?", a: 'Today in Dodoma: 26°C, clear skies. Rain expected Thursday evening — approx 12mm. Watch for wind gusts ahead of the front.' },
   { q: 'Bei za soko sasa?', a: 'Mahindi: TSh 420/kg (Kariakoo), TSh 390/kg (Mbeya). Maharage: TSh 1,800/kg. Alizeti: TSh 2,100/kg. Bei za mahindi zimepanda 8% wiki hii.' },
 ];
 
 type Message = { role: 'user' | 'ai'; text: string; ts: number };
 
-function PulseRing({ active, color }: { active: boolean; color: string }) {
-  const scale1 = useSharedValue(1);
-  const scale2 = useSharedValue(1);
-  const op1 = useSharedValue(0.6);
-  const op2 = useSharedValue(0.4);
-
+// ─── Single pulse ring (one per instance) ────────────────────────────────────
+function OrbRing({ active, color, ringIndex }: { active: boolean; color: string; ringIndex: number }) {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(0);
   useEffect(() => {
     if (active) {
-      scale1.value = withRepeat(withSequence(
-        withTiming(1.6, { duration: 900, easing: Easing.out(Easing.ease) }),
-        withTiming(1, { duration: 100 }),
-      ), -1, false);
-      scale2.value = withRepeat(withSequence(
-        withTiming(1, { duration: 300 }),
-        withTiming(1.9, { duration: 1100, easing: Easing.out(Easing.ease) }),
-        withTiming(1, { duration: 100 }),
-      ), -1, false);
-      op1.value = withRepeat(withSequence(
-        withTiming(0, { duration: 900 }),
-        withTiming(0.6, { duration: 100 }),
-      ), -1, false);
-      op2.value = withRepeat(withSequence(
-        withTiming(0.4, { duration: 300 }),
-        withTiming(0, { duration: 1100 }),
-        withTiming(0.4, { duration: 100 }),
-      ), -1, false);
+      const delay = ringIndex * 220;
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: delay }),
+          withTiming(1 + ringIndex * 0.28, { duration: 1000, easing: Easing.out(Easing.ease) }),
+          withTiming(1, { duration: 0 }),
+        ), -1, false);
+      opacity.value = withRepeat(
+        withSequence(
+          withTiming(0.5 - ringIndex * 0.12, { duration: delay }),
+          withTiming(0, { duration: 1000 }),
+          withTiming(0, { duration: 0 }),
+        ), -1, false);
     } else {
-      scale1.value = withTiming(1, { duration: 300 });
-      scale2.value = withTiming(1, { duration: 300 });
-      op1.value = withTiming(0, { duration: 300 });
-      op2.value = withTiming(0, { duration: 300 });
+      scale.value = withTiming(1, { duration: 400 });
+      opacity.value = withTiming(0, { duration: 400 });
     }
   }, [active]);
-
-  const s1 = useAnimatedStyle(() => ({
-    transform: [{ scale: scale1.value }],
-    opacity: op1.value,
+  const style = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
   }));
-  const s2 = useAnimatedStyle(() => ({
-    transform: [{ scale: scale2.value }],
-    opacity: op2.value,
-  }));
-
+  const size = ORB_SIZE + ringIndex * 28;
   return (
-    <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]}>
-      <Animated.View style={[s2, { width: 120, height: 120, borderRadius: 60, backgroundColor: color }]} />
-      <Animated.View style={[s1, { position: 'absolute', width: 90, height: 90, borderRadius: 45, backgroundColor: color }]} />
-    </View>
+    <Animated.View style={[style, {
+      position: 'absolute',
+      width: size, height: size,
+      borderRadius: size / 2,
+      borderWidth: 1.5,
+      borderColor: color,
+    }]} />
   );
 }
 
-function WaveBar({ index, active, color }: { index: number; active: boolean; color: string }) {
+// ─── Three concentric pulse rings around the orb ──────────────────────────────
+function OrbRings({ active, color }: { active: boolean; color: string }) {
+  return (
+    <>
+      <OrbRing active={active} color={color} ringIndex={1} />
+      <OrbRing active={active} color={color} ringIndex={2} />
+      <OrbRing active={active} color={color} ringIndex={3} />
+    </>
+  );
+}
+
+// ─── Wave bars inside the orb ──────────────────────────────────────────────────
+function WaveBar({ index, active }: { index: number; active: boolean }) {
   const h = useSharedValue(4);
   useEffect(() => {
     if (active) {
-      const delay = index * 80;
-      h.value = withRepeat(withSequence(
-        withTiming(4, { duration: delay }),
-        withTiming(8 + Math.sin(index * 1.5) * 8, { duration: 300, easing: Easing.ease }),
-        withTiming(4, { duration: 300, easing: Easing.ease }),
-      ), -1, true);
+      const delay = index * 70;
+      h.value = withRepeat(
+        withSequence(
+          withTiming(4, { duration: delay }),
+          withTiming(6 + Math.abs(Math.sin(index * 1.2)) * 26, { duration: 350, easing: Easing.ease }),
+          withTiming(4, { duration: 350, easing: Easing.ease }),
+        ), -1, true);
     } else {
-      h.value = withTiming(4, { duration: 200 });
+      h.value = withTiming(5, { duration: 250 });
     }
   }, [active]);
   const style = useAnimatedStyle(() => ({ height: h.value }));
-  return <Animated.View style={[style, { width: 3, borderRadius: 2, backgroundColor: color, marginHorizontal: 2 }]} />;
+  return <Animated.View style={[style, { width: 3.5, borderRadius: 2, backgroundColor: '#fff', marginHorizontal: 2.5 }]} />;
 }
 
+// ─── Idle orb inner shimmer ───────────────────────────────────────────────────
+function OrbShimmer({ colors, isDark }: { colors: any; isDark: boolean }) {
+  const rotate = useSharedValue(0);
+  useEffect(() => {
+    rotate.value = withRepeat(withTiming(1, { duration: 8000, easing: Easing.linear }), -1, false);
+  }, []);
+  const style = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotate.value * 360}deg` }],
+  }));
+  return (
+    <Animated.View style={[StyleSheet.absoluteFill, { borderRadius: ORB_SIZE / 2, overflow: 'hidden' }, style]}>
+      <LinearGradient
+        colors={[`${PRIMARY}00`, `${PRIMARY}20`, `${PRIMARY}00`, `${PRIMARY}10`]}
+        locations={[0, 0.35, 0.65, 1]}
+        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+    </Animated.View>
+  );
+}
+
+// ─── Message bubble ───────────────────────────────────────────────────────────
+function MessageBubble({ m, colors, isDark }: { m: Message; colors: any; isDark: boolean }) {
+  if (m.role === 'user') {
+    return (
+      <Animated.View entering={FadeInDown.springify().damping(18)} style={S.msgUserRow}>
+        <View style={[S.bubbleUser, { backgroundColor: PRIMARY }]}>
+          <Text style={S.bubbleUserText}>{m.text}</Text>
+        </View>
+        <View style={[S.userAvatar, { backgroundColor: `${PRIMARY}28` }]}>
+          <Mic size={12} color={PRIMARY} />
+        </View>
+      </Animated.View>
+    );
+  }
+  return (
+    <Animated.View entering={FadeInDown.springify().damping(18)} style={S.msgAiRow}>
+      <View style={[S.aiAvatar, { backgroundColor: `${PRIMARY}20` }]}>
+        <Sparkles size={12} color={PRIMARY} />
+      </View>
+      <View style={[S.bubbleAi, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[S.aiAccentBar, { backgroundColor: PRIMARY }]} />
+        <Text style={[S.bubbleAiText, { color: colors.text }]}>{m.text}</Text>
+        <View style={S.aiFooter}>
+          <Volume2 size={10} color={colors.textMute} />
+          <Text style={[S.aiFooterText, { color: colors.textMute }]}>Sauti AI</Text>
+        </View>
+      </View>
+    </Animated.View>
+  );
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+function EmptyState({ colors, isDark, language }: { colors: any; isDark: boolean; language: string }) {
+  const pulse = useSharedValue(1);
+  useEffect(() => {
+    pulse.value = withRepeat(withTiming(1.08, { duration: 2200, easing: Easing.inOut(Easing.ease) }), -1, true);
+  }, []);
+  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: pulse.value }] }));
+
+  return (
+    <Animated.View entering={FadeInUp.duration(500)} style={S.emptyWrap}>
+      {/* Concentric decorative rings */}
+      <View style={S.emptyRingsWrap}>
+        {[86, 110, 134].map((size, i) => (
+          <View key={i} style={[S.emptyRing, { width: size, height: size, borderRadius: size / 2, borderColor: `${PRIMARY}${['25', '18', '10'][i]}` }]} />
+        ))}
+        <Animated.View style={[S.emptyIconCircle, { backgroundColor: `${PRIMARY}15`, borderColor: `${PRIMARY}35` }, pulseStyle]}>
+          <Headphones size={28} color={PRIMARY} />
+        </Animated.View>
+      </View>
+
+      <Text style={[S.emptyTitle, { color: colors.text }]}>
+        {language === 'sw' ? 'Sema na AI Yako' : 'Talk to Your AI'}
+      </Text>
+      <Text style={[S.emptyBody, { color: colors.textMute }]}>
+        {language === 'sw'
+          ? 'Bonyeza kitufe cha maikrofoni hapa chini au chagua swali la haraka.'
+          : 'Tap the mic orb below, or pick a quick phrase to get started.'}
+      </Text>
+
+      {/* Feature chips */}
+      <View style={S.emptyChips}>
+        {[
+          { icon: '🌾', label: language === 'sw' ? 'Mazao' : 'Crops' },
+          { icon: '☁️', label: language === 'sw' ? 'Hewa' : 'Weather' },
+          { icon: '📊', label: language === 'sw' ? 'Bei' : 'Prices' },
+          { icon: '💡', label: language === 'sw' ? 'Ushauri' : 'Advice' },
+        ].map((chip, i) => (
+          <View key={i} style={[S.emptyChip, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', borderColor: colors.border }]}>
+            <Text style={{ fontSize: 13 }}>{chip.icon}</Text>
+            <Text style={[S.emptyChipText, { color: colors.textMute }]}>{chip.label}</Text>
+          </View>
+        ))}
+      </View>
+    </Animated.View>
+  );
+}
+
+// ─── Main screen ──────────────────────────────────────────────────────────────
 export default function AiVoiceScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
@@ -119,8 +225,11 @@ export default function AiVoiceScreen() {
   const [phraseIdx, setPhraseIdx] = useState<number | null>(null);
   const scrollRef = useRef<ScrollView>(null);
 
+  const orbScale = useSharedValue(1);
+
   const handleMicPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    orbScale.value = withSpring(0.93, { damping: 10 }, () => { orbScale.value = withSpring(1, { damping: 12 }); });
     if (recording) {
       setRecording(false);
       if (phraseIdx !== null) {
@@ -128,16 +237,12 @@ export default function AiVoiceScreen() {
         const q = language === 'sw' ? phrase.sw : phrase.en;
         const resp = SAMPLE_RESPONSES.find(r => r.q === q);
         const answer = resp?.a ?? (language === 'sw'
-          ? 'Naelewa swali lako. Tafadhali subiri — ninafanya utafiti wa hali ya shamba lako...'
-          : 'Understood. Please wait — analyzing your farm conditions...');
+          ? 'Naelewa swali lako. Ninafanya utafiti wa hali ya shamba lako...'
+          : 'Understood. Analyzing your farm conditions...');
         const now = Date.now();
-        setMessages(prev => [
-          ...prev,
-          { role: 'user', text: q, ts: now },
-          { role: 'ai', text: answer, ts: now + 1 },
-        ]);
+        setMessages(prev => [...prev, { role: 'user', text: q, ts: now }, { role: 'ai', text: answer, ts: now + 1 }]);
         setPhraseIdx(null);
-        setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
+        setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 120);
       }
     } else {
       setRecording(true);
@@ -153,140 +258,193 @@ export default function AiVoiceScreen() {
       const phrase = QUICK_PHRASES[idx];
       const q = language === 'sw' ? phrase.sw : phrase.en;
       const resp = SAMPLE_RESPONSES.find(r => r.q === q);
-      const answer = resp?.a ?? (language === 'sw'
-        ? 'Naelewa swali lako. Ninafanya utafiti...'
-        : 'Understood. Analyzing...');
+      const answer = resp?.a ?? (language === 'sw' ? 'Naelewa swali lako. Ninafanya utafiti...' : 'Understood. Analyzing...');
       const now = Date.now();
-      setMessages(prev => [
-        ...prev,
-        { role: 'user', text: q, ts: now },
-        { role: 'ai', text: answer, ts: now + 1 },
-      ]);
+      setMessages(prev => [...prev, { role: 'user', text: q, ts: now }, { role: 'ai', text: answer, ts: now + 1 }]);
       setPhraseIdx(null);
-      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 120);
     }, 1800);
   };
 
+  const orbAnimStyle = useAnimatedStyle(() => ({ transform: [{ scale: orbScale.value }] }));
+
   return (
-    <View style={[s.root, { backgroundColor: colors.background }]}>
+    <View style={[S.root, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+      {/* Background gradient */}
       <LinearGradient
-        colors={isDark ? ['#040d06', '#080f09', colors.background] : ['#f0fdf4', '#f8fafc', colors.background]}
+        colors={isDark
+          ? [`${PRIMARY}10`, colors.background, colors.background]
+          : [`${PRIMARY}0c`, colors.background, colors.background]}
+        locations={[0, 0.35, 1]}
         style={StyleSheet.absoluteFill}
-        locations={[0, 0.3, 1]}
       />
 
+      {/* Faint "SAUTI" watermark */}
+      <View style={S.watermarkWrap} pointerEvents="none">
+        <Text style={[S.watermark, { color: PRIMARY }]}>SAUTI</Text>
+      </View>
+
       <SafeAreaView style={{ flex: 1 }}>
-        {/* Header */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {/* ── Header ── */}
+        <Animated.View entering={FadeInDown.duration(300)} style={S.header}>
+          <TouchableOpacity
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+            activeOpacity={0.8}
+            style={[S.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+            accessibilityRole="button" accessibilityLabel="Go back"
+          >
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
-          <View style={s.headerCenter}>
-            <View style={[s.badge, { backgroundColor: colors.primary + '22' }]}>
-              <Zap size={11} color={colors.primary} />
-              <Text style={[s.badgeText, { color: colors.primary }]}>SAUTI AI</Text>
+
+          <View style={S.headerCenter}>
+            <View style={[S.badge, { backgroundColor: `${PRIMARY}18` }]}>
+              <Wand2 size={11} color={PRIMARY} />
+              <Text style={[S.badgeText, { color: PRIMARY }]}>SAUTI AI</Text>
             </View>
-            <Text style={[s.headerTitle, { color: colors.text }]}>
+            <Text style={[S.headerTitle, { color: colors.text }]}>
               {language === 'sw' ? 'Mshauri wa Sauti' : 'Voice Assistant'}
             </Text>
           </View>
-          <View style={[s.liveChip, { backgroundColor: recording ? colors.primary + '22' : colors.card, borderColor: recording ? colors.primary + '55' : colors.border }]}>
-            <View style={[s.liveDot, { backgroundColor: recording ? colors.primary : colors.textMute }]} />
-            <Text style={[s.liveText, { color: recording ? colors.primary : colors.textMute }]}>
-              {recording ? (language === 'sw' ? 'INASIKILIZA' : 'LISTENING') : (language === 'sw' ? 'TAYARI' : 'READY')}
+
+          <View style={[S.statusPill, {
+            backgroundColor: recording ? `${PRIMARY}18` : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)'),
+            borderColor: recording ? `${PRIMARY}50` : colors.border,
+          }]}>
+            <View style={[S.statusDot, { backgroundColor: recording ? PRIMARY : colors.textMute }]} />
+            <Text style={[S.statusText, { color: recording ? PRIMARY : colors.textMute }]}>
+              {recording
+                ? (language === 'sw' ? 'INASIKILIZA' : 'LISTENING')
+                : (language === 'sw' ? 'TAYARI' : 'READY')}
             </Text>
           </View>
-        </View>
+        </Animated.View>
 
-        {/* Transcript */}
+        {/* ── Transcript ── */}
         <ScrollView
           ref={scrollRef}
-          style={s.transcript}
-          contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 16 }}
+          style={S.transcript}
+          contentContainerStyle={S.transcriptContent}
           showsVerticalScrollIndicator={false}
         >
           {messages.length === 0 && (
-            <Animated.View entering={FadeInUp} style={[s.emptyState, { borderColor: colors.border }]}>
-              <Headphones size={28} color={colors.textMute} />
-              <Text style={[s.emptyTitle, { color: colors.text }]}>
-                {language === 'sw' ? 'Sema na AI Yako' : 'Talk to Your AI'}
-              </Text>
-              <Text style={[s.emptyBody, { color: colors.textMute }]}>
-                {language === 'sw'
-                  ? 'Bonyeza kitufe cha maikrofoni hapa chini au chagua swali la haraka hapo juu.'
-                  : 'Tap the mic button below or pick a quick phrase above.'}
-              </Text>
-            </Animated.View>
+            <EmptyState colors={colors} isDark={isDark} language={language} />
           )}
           {messages.map((m, i) => (
-            <Animated.View key={m.ts + i} entering={FadeInDown.springify()} style={m.role === 'user' ? s.msgUser : s.msgAiWrap}>
-              {m.role === 'ai' && (
-                <View style={[s.aiAvatar, { backgroundColor: colors.primary + '22' }]}>
-                  <Sparkles size={12} color={colors.primary} />
-                </View>
-              )}
-              <View style={[
-                s.bubble,
-                m.role === 'user'
-                  ? { backgroundColor: colors.primary, alignSelf: 'flex-end' }
-                  : { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, flex: 1 }
-              ]}>
-                <Text style={[s.bubbleText, { color: m.role === 'user' ? '#fff' : colors.text }]}>{m.text}</Text>
-              </View>
-            </Animated.View>
+            <MessageBubble key={m.ts + i} m={m} colors={colors} isDark={isDark} />
           ))}
         </ScrollView>
 
-        {/* Quick phrases */}
-        <View style={s.phrasesSection}>
-          <Text style={[s.phrasesLabel, { color: colors.textMute }]}>
-            {language === 'sw' ? 'MASWALI YA HARAKA' : 'QUICK QUERIES'}
-          </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
-            {QUICK_PHRASES.map((p, i) => (
-              <TouchableOpacity
-                key={i}
-                onPress={() => handlePhrase(i)}
-                style={[s.phraseChip, { backgroundColor: phraseIdx === i ? colors.primary : colors.card, borderColor: phraseIdx === i ? colors.primary : colors.border }]}
-              >
-                <Text style={[s.phraseText, { color: phraseIdx === i ? '#fff' : colors.text }]}>
-                  {language === 'sw' ? p.sw : p.en}
-                </Text>
-              </TouchableOpacity>
-            ))}
+        {/* ── Quick phrases ── */}
+        <View style={S.phrasesSection}>
+          <View style={S.phrasesHeader}>
+            <View style={[S.phrasesLine, { backgroundColor: colors.border }]} />
+            <Text style={[S.phrasesLabel, { color: colors.textMute }]}>
+              {language === 'sw' ? 'MASWALI YA HARAKA' : 'QUICK QUERIES'}
+            </Text>
+            <View style={[S.phrasesLine, { backgroundColor: colors.border }]} />
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={S.phrasesRow}
+          >
+            {QUICK_PHRASES.map((p, i) => {
+              const active = phraseIdx === i;
+              return (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => handlePhrase(i)}
+                  activeOpacity={0.8}
+                  style={[S.phraseChip, {
+                    backgroundColor: active ? PRIMARY : colors.card,
+                    borderColor: active ? PRIMARY : colors.border,
+                  }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={language === 'sw' ? p.sw : p.en}
+                >
+                  <Text style={{ fontSize: 13 }}>{p.icon}</Text>
+                  <Text style={[S.phraseText, { color: active ? '#fff' : colors.text }]}>
+                    {language === 'sw' ? p.sw : p.en}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
 
-        {/* Mic button */}
-        <View style={s.micSection}>
+        {/* ── Mic orb section ── */}
+        <View style={S.micSection}>
           {messages.length > 0 && (
-            <TouchableOpacity
-              onPress={() => { setMessages([]); setPhraseIdx(null); setRecording(false); Haptics.selectionAsync(); }}
-              style={[s.clearBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-            >
-              <RotateCcw size={16} color={colors.textMute} />
-              <Text style={[s.clearText, { color: colors.textMute }]}>{language === 'sw' ? 'Futa' : 'Clear'}</Text>
-            </TouchableOpacity>
+            <Animated.View entering={FadeInDown.duration(260)}>
+              <TouchableOpacity
+                onPress={() => { setMessages([]); setPhraseIdx(null); setRecording(false); Haptics.selectionAsync(); }}
+                style={[S.clearBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Futa mazungumzo' : 'Clear conversation'}
+              >
+                <RotateCcw size={14} color={colors.textMute} />
+                <Text style={[S.clearText, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Futa' : 'Clear'}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
           )}
 
-          <View style={s.micWrapper}>
-            <PulseRing active={recording} color={colors.primary + '30'} />
-            <TouchableOpacity
-              onPress={handleMicPress}
-              activeOpacity={0.85}
-              style={[s.micBtn, { backgroundColor: recording ? colors.primary : colors.card, borderColor: recording ? colors.primary : colors.border }]}
-            >
-              {recording
-                ? <View style={s.waveRow}>{[0,1,2,3,4,5,6].map(i => <WaveBar key={i} index={i} active={recording} color="#fff" />)}</View>
-                : <Mic size={32} color={colors.primary} />
-              }
-            </TouchableOpacity>
+          {/* Orb container */}
+          <View style={S.orbContainer}>
+            {/* Pulse rings */}
+            <OrbRings active={recording} color={`${PRIMARY}55`} />
+
+            {/* Idle ambient ring */}
+            {!recording && (
+              <View style={[S.idleRing, { borderColor: `${PRIMARY}22` }]} />
+            )}
+
+            {/* Main orb button */}
+            <Animated.View style={orbAnimStyle}>
+              <TouchableOpacity
+                onPress={handleMicPress}
+                activeOpacity={0.9}
+                accessibilityRole="button"
+                accessibilityLabel={recording ? (language === 'sw' ? 'Simama' : 'Stop recording') : (language === 'sw' ? 'Anza kuzungumza' : 'Start speaking')}
+                style={S.orbTouchable}
+              >
+                <LinearGradient
+                  colors={recording
+                    ? [PRIMARY, '#12903a', '#0a6b2a']
+                    : (isDark ? [`${PRIMARY}18`, `${PRIMARY}08`] : [`${PRIMARY}12`, `${PRIMARY}05`])}
+                  style={S.orb}
+                >
+                  {!recording && <OrbShimmer colors={colors} isDark={isDark} />}
+
+                  {recording ? (
+                    <View style={S.waveRow}>
+                      {[0,1,2,3,4,5,6,7,8].map(i => (
+                        <WaveBar key={i} index={i} active={recording} />
+                      ))}
+                    </View>
+                  ) : (
+                    <View style={S.orbIdleInner}>
+                      <Mic size={34} color={PRIMARY} />
+                    </View>
+                  )}
+                </LinearGradient>
+
+                {/* Orb border ring */}
+                <View style={[S.orbBorder, {
+                  borderColor: recording ? `${PRIMARY}80` : `${PRIMARY}35`,
+                }]} />
+              </TouchableOpacity>
+            </Animated.View>
           </View>
 
-          <Text style={[s.micHint, { color: colors.textMute }]}>
+          {/* Hint text */}
+          <Text style={[S.micHint, { color: colors.textMute }]}>
             {recording
-              ? (language === 'sw' ? 'Inasikiliza — bonyeza tena kusimama' : 'Listening — tap again to stop')
-              : (language === 'sw' ? 'Bonyeza kuanza kuzungumza' : 'Tap to start speaking')}
+              ? (language === 'sw' ? 'Inasikiliza — gusa kusimama' : 'Listening — tap to stop')
+              : (language === 'sw' ? 'Gusa kuanza kuzungumza' : 'Tap to start speaking')}
           </Text>
         </View>
       </SafeAreaView>
@@ -294,35 +452,71 @@ export default function AiVoiceScreen() {
   );
 }
 
-const s = StyleSheet.create({
-  root:          { flex: 1 },
-  header:        { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 10 },
-  backBtn:       { width: 38, height: 38, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  headerCenter:  { flex: 1, alignItems: 'center', gap: 4 },
-  headerTitle:   { fontFamily: 'Inter_700Bold', fontSize: 15 },
-  badge:         { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999 },
-  badgeText:     { fontFamily: 'Inter_800ExtraBold', fontSize: 9, letterSpacing: 0.8 },
-  liveChip:      { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
-  liveDot:       { width: 6, height: 6, borderRadius: 3 },
-  liveText:      { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 0.6 },
-  transcript:    { flex: 1 },
-  emptyState:    { alignItems: 'center', padding: 32, borderRadius: 16, borderWidth: 1, gap: 10, marginTop: 20 },
-  emptyTitle:    { fontFamily: 'Inter_700Bold', fontSize: 16 },
-  emptyBody:     { fontFamily: 'Inter_500Medium', fontSize: 13, textAlign: 'center', lineHeight: 20 },
-  msgUser:       { flexDirection: 'row', justifyContent: 'flex-end' },
-  msgAiWrap:     { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
-  aiAvatar:      { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 4 },
-  bubble:        { maxWidth: SW * 0.72, padding: 12, borderRadius: 14 },
-  bubbleText:    { fontFamily: 'Inter_500Medium', fontSize: 13, lineHeight: 20 },
-  phrasesSection:{ paddingBottom: 4 },
-  phrasesLabel:  { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 1, paddingHorizontal: 16, marginBottom: 8 },
-  phraseChip:    { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
-  phraseText:    { fontFamily: 'Inter_600SemiBold', fontSize: 12 },
-  micSection:    { alignItems: 'center', paddingBottom: Platform.OS === 'ios' ? 0 : 16, paddingTop: 12, gap: 10 },
-  clearBtn:      { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
-  clearText:     { fontFamily: 'Inter_600SemiBold', fontSize: 12 },
-  micWrapper:    { width: 120, height: 120, alignItems: 'center', justifyContent: 'center' },
-  micBtn:        { width: 80, height: 80, borderRadius: 40, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', zIndex: 2 },
-  waveRow:       { flexDirection: 'row', alignItems: 'center' },
-  micHint:       { fontFamily: 'Inter_500Medium', fontSize: 11, textAlign: 'center', paddingHorizontal: 32, paddingBottom: 4 },
+// ─── Styles ───────────────────────────────────────────────────────────────────
+const S = StyleSheet.create({
+  root: { flex: 1 },
+
+  watermarkWrap: { position: 'absolute', top: 60, left: -20, overflow: 'hidden' },
+  watermark: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 130, opacity: 0.035, letterSpacing: -4 },
+
+  // Header
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 4, paddingBottom: 10, gap: 10 },
+  backBtn: { width: 38, height: 38, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  headerCenter: { flex: 1, alignItems: 'center', gap: 3 },
+  badge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 9, paddingVertical: 3, borderRadius: 999 },
+  badgeText: { fontFamily: 'Inter_800ExtraBold', fontSize: 9, letterSpacing: 1 },
+  headerTitle: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 18, letterSpacing: 0.2 },
+  statusPill: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
+  statusDot: { width: 6, height: 6, borderRadius: 3 },
+  statusText: { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 0.6 },
+
+  // Transcript
+  transcript: { flex: 1 },
+  transcriptContent: { paddingHorizontal: 16, paddingVertical: 12, gap: 12, paddingBottom: 8 },
+
+  // Empty state
+  emptyWrap: { alignItems: 'center', paddingTop: 24, paddingBottom: 8, gap: 14 },
+  emptyRingsWrap: { width: 134, height: 134, alignItems: 'center', justifyContent: 'center' },
+  emptyRing: { position: 'absolute', borderWidth: 1 },
+  emptyIconCircle: { width: 62, height: 62, borderRadius: 31, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  emptyTitle: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 24, letterSpacing: 0.2 },
+  emptyBody: { fontFamily: 'Inter_400Regular', fontSize: 13, textAlign: 'center', lineHeight: 20, paddingHorizontal: 32 },
+  emptyChips: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 },
+  emptyChip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1 },
+  emptyChipText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
+
+  // Messages
+  msgUserRow: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 8 },
+  msgAiRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  userAvatar: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  aiAvatar: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 4, flexShrink: 0 },
+  bubbleUser: { maxWidth: SW * 0.68, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 18, borderBottomRightRadius: 4 },
+  bubbleUserText: { fontFamily: 'Inter_500Medium', fontSize: 13, lineHeight: 20, color: '#fff' },
+  bubbleAi: { flex: 1, maxWidth: SW * 0.72, borderRadius: 16, borderBottomLeftRadius: 4, borderWidth: 1, overflow: 'hidden' },
+  aiAccentBar: { height: 3, width: '100%' },
+  bubbleAiText: { fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 21, padding: 12, paddingTop: 10 },
+  aiFooter: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingBottom: 8 },
+  aiFooterText: { fontFamily: 'Inter_600SemiBold', fontSize: 10, letterSpacing: 0.4 },
+
+  // Phrases
+  phrasesSection: { paddingBottom: 6 },
+  phrasesHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, marginBottom: 10 },
+  phrasesLine: { flex: 1, height: 1 },
+  phrasesLabel: { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 1.2 },
+  phrasesRow: { paddingHorizontal: 16, gap: 8 },
+  phraseChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 13, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
+  phraseText: { fontFamily: 'Inter_600SemiBold', fontSize: 12 },
+
+  // Mic orb
+  micSection: { alignItems: 'center', paddingBottom: Platform.OS === 'ios' ? 0 : 16, paddingTop: 8, gap: 8 },
+  clearBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 999, borderWidth: 1 },
+  clearText: { fontFamily: 'Inter_600SemiBold', fontSize: 12 },
+  orbContainer: { width: ORB_CONTAINER, height: ORB_CONTAINER, alignItems: 'center', justifyContent: 'center' },
+  idleRing: { position: 'absolute', width: ORB_SIZE + 22, height: ORB_SIZE + 22, borderRadius: (ORB_SIZE + 22) / 2, borderWidth: 1 },
+  orbTouchable: { width: ORB_SIZE, height: ORB_SIZE, borderRadius: ORB_SIZE / 2 },
+  orb: { width: ORB_SIZE, height: ORB_SIZE, borderRadius: ORB_SIZE / 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  orbBorder: { position: 'absolute', width: ORB_SIZE, height: ORB_SIZE, borderRadius: ORB_SIZE / 2, borderWidth: 1.5 },
+  orbIdleInner: { alignItems: 'center', justifyContent: 'center' },
+  waveRow: { flexDirection: 'row', alignItems: 'center' },
+  micHint: { fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center', paddingHorizontal: 40, paddingBottom: 4 },
 });
