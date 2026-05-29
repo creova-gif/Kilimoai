@@ -28,11 +28,11 @@ export interface ChatMessage {
   content: string;
 }
 
-/** T201 — Sankofa text chat (gemini-2.5-flash for speed + cost). */
+/** T201 — Sankofa text chat (gemini-1.5-flash for speed + cost). */
 export async function chat(messages: ChatMessage[]): Promise<string> {
   if (!aiConfigured()) throw new AIError('Gemini API key not configured', 'not_configured');
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const customPrompt = useKilimoStore.getState().customSystemPrompt;
   const systemText = customPrompt || `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki...
@@ -137,7 +137,7 @@ Jibu LAZIMA kwa JSON iliyosafi tu:
 }
 HAKIKISHA JSON YAKO NI SAHIHI.`;
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   try {
     const result = await model.generateContent([

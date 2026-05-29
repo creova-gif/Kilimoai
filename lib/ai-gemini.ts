@@ -12,7 +12,7 @@ export function aiConfigured(): boolean {
 export async function chat(messages: ChatMessage[]): Promise<string> {
   if (!aiConfigured()) throw new AIError('Gemini API key not configured', 'not_configured');
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   // Gemini expects history in { role: "user" | "model", parts: [{ text: "..." }] } format
   const customPrompt = useKilimoStore.getState().customSystemPrompt;
@@ -49,7 +49,7 @@ export async function diagnoseCropPhoto(
   const mimeType = opts.mimeType ?? 'image/jpeg';
   const prompt = opts.prompt ?? `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu... (Ensure JSON output only)`;
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   try {
     const result = await model.generateContent([
