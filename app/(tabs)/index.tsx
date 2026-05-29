@@ -150,44 +150,160 @@ const PulsingDot = () => {
   );
 };
 
-// Horizontal stepper timeline component
-const TrackRecords = ({ colors, isDark, language }: any) => {
+// Horizontal stepper timeline component — redesigned
+const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
   const records = language === 'sw' ? TRACK_RECORDS_DATA.sw : TRACK_RECORDS_DATA.en;
+  const [activeStep, setActiveStep] = useState<number | null>(null);
+  const routerInner = useRouter();
+
+  const completedCount = records.filter((r: any) => r.completed).length;
+  const progressPct = (completedCount / records.length) * 100;
+  const nextIdx = records.findIndex((r: any) => !r.completed);
+
   return (
-    <Card variant="solid" style={[styles.trackCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+    <View style={[styles.trackCard, {
+      backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+      borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
+    }]}>
+      {/* Shimmer strip */}
+      <LinearGradient
+        colors={['rgba(34,209,90,0.08)', 'transparent']}
+        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+
+      {/* Header */}
       <View style={styles.trackHeader}>
-        <Text style={[styles.trackTitle, { color: colors.text }]}>
-          {language === 'sw' ? 'Marekodi ya Ufuatiliaji' : 'Track Records'}
-        </Text>
-        <View style={[styles.qrBadge, { backgroundColor: colors.primaryLight }]}>
-          <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 10 }}>QR Codes</Text>
+        <View style={{ gap: 2 }}>
+          <Text style={[styles.trackTitle, { color: isDark ? '#fff' : colors.text }]}>
+            {language === 'sw' ? 'Marekodi ya Ufuatiliaji' : 'Track Records'}
+          </Text>
+          <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+            {completedCount}/{records.length} {language === 'sw' ? 'zimekamilika' : 'completed'}
+          </Text>
         </View>
+        <TouchableOpacity
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); routerInner.push('/scan' as any); }}
+          activeOpacity={0.8}
+          style={styles.qrBadge}
+        >
+          <Microscope size={10} color="#22d15a" />
+          <Text style={{ color: '#22d15a', fontFamily: 'Inter_700Bold', fontSize: 10 }}>
+            {language === 'sw' ? 'Changanua' : 'QR Scan'}
+          </Text>
+        </TouchableOpacity>
       </View>
-      <View style={{ position: 'relative', marginTop: 16 }}>
-        {/* Connection Line */}
-        <View style={[styles.trackBgLine, { backgroundColor: isDark ? '#263322' : '#E2E8DF' }]} />
-        
-        <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
-          {records.map((item, idx) => (
-            <View key={idx} style={styles.trackStep}>
-              <View style={[
-                styles.stepDot, 
-                { 
-                  backgroundColor: item.completed ? colors.primary : isDark ? '#171D15' : '#FFFFFF',
-                  borderColor: item.completed ? colors.primary : isDark ? '#2A3326' : '#C4D0C0',
-                  borderWidth: 2,
+
+      {/* Progress bar */}
+      <View style={styles.trackProgressTrack}>
+        <View style={[styles.trackProgressFill, { width: `${progressPct}%` as any }]} />
+      </View>
+
+      {/* Steps scroll */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.trackScroll}
+        style={{ marginTop: 14 }}
+      >
+        {records.map((item: any, idx: number) => {
+          const isCompleted = item.completed;
+          const isNext = idx === nextIdx;
+          const isActive = activeStep === idx;
+          const dotColor = isCompleted ? '#22d15a' : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.12)' : '#e2e8df');
+          const lineColor = isCompleted ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.06)' : '#e2e8df');
+
+          return (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => { Haptics.selectionAsync(); setActiveStep(isActive ? null : idx); }}
+              activeOpacity={0.8}
+              style={styles.trackStep}
+            >
+              {/* Connector line */}
+              {idx < records.length - 1 && (
+                <View style={[styles.trackConnector, { backgroundColor: lineColor }]} />
+              )}
+
+              {/* Dot */}
+              <View style={[styles.stepDot, {
+                backgroundColor: isCompleted ? '#22d15a' : isNext ? 'rgba(245,158,11,0.15)' : (isDark ? 'rgba(255,255,255,0.05)' : '#fff'),
+                borderColor: dotColor,
+                borderWidth: isNext ? 2 : 1.5,
+              }]}>
+                {isCompleted
+                  ? <Check size={7} color="#000" strokeWidth={3} />
+                  : isNext
+                  ? <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#f59e0b' }} />
+                  : null
                 }
-              ]}>
-                {item.completed && <View style={styles.activeDotInner} />}
               </View>
-              <Text style={[styles.stepDate, { color: colors.textMute }]}>{item.date}</Text>
-              <Text style={[styles.stepMainTitle, { color: colors.text }]}>{item.title}</Text>
-              <Text style={[styles.stepSubtitle, { color: colors.textMute }]}>{item.subtitle}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    </Card>
+
+              {/* Date chip */}
+              <View style={[styles.stepDateChip, {
+                backgroundColor: isCompleted ? 'rgba(34,209,90,0.1)' : isNext ? 'rgba(245,158,11,0.1)' : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
+                borderColor: isCompleted ? 'rgba(34,209,90,0.2)' : isNext ? 'rgba(245,158,11,0.25)' : 'transparent',
+              }]}>
+                <Text style={[styles.stepDate, {
+                  color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute
+                }]}>
+                  {item.date}
+                </Text>
+              </View>
+
+              <Text style={[styles.stepMainTitle, { color: isDark ? '#fff' : colors.text }]} numberOfLines={1}>
+                {item.title}
+              </Text>
+              <Text style={[styles.stepSubtitle, { color: colors.textMute }]} numberOfLines={1}>
+                {item.subtitle}
+              </Text>
+
+              {/* Status chip */}
+              <View style={[styles.stepStatusChip, {
+                backgroundColor: isCompleted ? 'rgba(34,209,90,0.12)' : isNext ? 'rgba(245,158,11,0.1)' : 'transparent',
+              }]}>
+                <Text style={[styles.stepStatusText, {
+                  color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute,
+                }]}>
+                  {isCompleted
+                    ? (language === 'sw' ? '✓ IMEKAMILIKA' : '✓ DONE')
+                    : isNext
+                    ? (language === 'sw' ? '▶ INAYOFUATA' : '▶ NEXT')
+                    : (language === 'sw' ? 'INANGOJA' : 'PENDING')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Expanded step detail */}
+      {activeStep !== null && (
+        <Animated.View entering={FadeInDown.springify()} style={[styles.trackExpanded, {
+          backgroundColor: isDark ? 'rgba(34,209,90,0.05)' : 'rgba(34,209,90,0.04)',
+          borderColor: 'rgba(34,209,90,0.15)',
+        }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Leaf size={13} color="#22d15a" />
+            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: '#22d15a' }}>
+              {records[activeStep].title}
+            </Text>
+          </View>
+          <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 12, color: colors.textMute, marginTop: 4, lineHeight: 18 }}>
+            {records[activeStep].subtitle} · {records[activeStep].date}
+          </Text>
+          <TouchableOpacity
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/tasks' as any); }}
+            style={styles.trackExpandedBtn}
+          >
+            <Text style={styles.trackExpandedBtnText}>
+              {language === 'sw' ? 'Angalia Ratiba →' : 'View Schedule →'}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+    </View>
   );
 };
 
@@ -2633,48 +2749,70 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
   },
   
-  // Track Records Stepper Styles
+  // Track Records Stepper Styles — redesigned
   trackCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
     padding: 16,
+    marginBottom: 0,
   },
   trackHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   trackTitle: {
-    fontSize: 16,
-    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 15,
+    fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: -0.2,
   },
   qrBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  trackBgLine: {
-    position: 'absolute',
-    top: 14,
-    left: 20,
-    right: 20,
-    height: 1,
-    borderStyle: 'dashed',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    backgroundColor: 'rgba(34,209,90,0.1)',
     borderWidth: 1,
-    borderRadius: 1,
-    borderColor: '#C4D0C0',
+    borderColor: 'rgba(34,209,90,0.25)',
+  },
+  trackProgressTrack: {
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    marginTop: 12,
+    overflow: 'hidden',
+  },
+  trackProgressFill: {
+    height: '100%',
+    borderRadius: 2,
+    backgroundColor: '#22d15a',
   },
   trackScroll: {
-    paddingRight: 20,
+    paddingRight: 16,
+    paddingBottom: 4,
   },
   trackStep: {
-    width: 96,
+    width: 100,
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 8,
+    paddingTop: 4,
+    position: 'relative',
+  },
+  trackConnector: {
+    position: 'absolute',
+    top: 14,
+    left: '55%',
+    right: -8,
+    height: 1.5,
+    zIndex: 0,
   },
   stepDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
@@ -2686,18 +2824,55 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#FFFFFF',
   },
+  stepDateChip: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    marginBottom: 5,
+  },
   stepDate: {
-    fontSize: 10,
-    fontFamily: 'Inter_600SemiBold',
-    marginBottom: 2,
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.3,
   },
   stepMainTitle: {
-    fontSize: 12,
-    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    textAlign: 'center',
+    marginBottom: 2,
   },
   stepSubtitle: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: 'Inter_500Medium',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  stepStatusChip: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 5,
+  },
+  stepStatusText: {
+    fontSize: 7,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.3,
+  },
+  trackExpanded: {
+    marginTop: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
+    gap: 2,
+  },
+  trackExpandedBtn: {
+    marginTop: 8,
+    alignSelf: 'flex-start',
+  },
+  trackExpandedBtnText: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    color: '#22d15a',
   },
 
   // Quick Action List Styles
