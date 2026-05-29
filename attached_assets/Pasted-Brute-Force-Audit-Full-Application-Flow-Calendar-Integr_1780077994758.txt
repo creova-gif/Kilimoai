@@ -1,0 +1,136 @@
+Brute Force Audit – Full Application Flow, Calendar Integration & AI Guidance
+Audit Mandate
+Perform a zero‑assumption, destructive‑yet‑constructive audit of the entire application.
+
+Test every user story from start to finish.
+
+Verify every workflow – if not 100% correct, document exactly why (missing edge case, logic flaw, broken integration).
+
+Evaluate UI/UX polish – we love the current design, but flag any “vibe‑coded” or rushed areas.
+
+Typography: Instrument Serif is primary; ensure creative, non‑clashing use of secondary fonts.
+
+Engagement & teaching animations: Identify where cartoon‑like structures or motion design can guide users (especially during learning flows).
+
+1. Calendar – Core Requirements (NEW & CRITICAL)
+The app includes an interactive calendar that must be tightly coupled with the entire application workflow. Audit it against these specifications:
+
+1.1 Interactivity & Workflow Integration
+The calendar must update dynamically when tasks, deadlines, or events are created/edited/deleted elsewhere in the app (e.g., from a project page, task list, or AI chat).
+
+Clicking any date should allow adding a deadline or task directly.
+
+Dragging tasks between dates must re‑schedule them and update all dependent workflows (reminders, notifications, AI suggestions).
+
+The calendar view should be filterable (e.g., show only deadlines, only personal tasks, only AI‑suggested items).
+
+1.2 Sankofa AI – Guided Calendar Assistance
+“Sankofa AI” must be accessible from within the calendar (e.g., a chat bubble or inline assistant).
+
+The AI can help users add tasks/deadlines via natural language:
+Example: “Add ‘review Q3 report’ on Friday” → AI parses and places it correctly.
+
+The AI can guide users on how to use calendar features (e.g., “Sankofa, how do I set a recurring deadline?” → AI provides an interactive walkthrough or highlights the UI element).
+
+The AI must suggest optimizations (e.g., “You have three tasks due on Monday – would you like to move one to Tuesday?”) and allow one‑click changes.
+
+Test that AI suggestions are context‑aware (based on user’s current calendar view, pending tasks, and app workflow state).
+
+1.3 Task & Deadline Management
+Users can add deadlines with titles, descriptions, priority levels, and optional subtasks.
+
+Tasks can be associated with specific calendar dates, and once marked complete, they should visually update (e.g., strike‑through, gray out) and possibly trigger workflow hooks (e.g., next task auto‑scheduled by AI).
+
+Creative task interaction – evaluate novel ways to manipulate tasks:
+
+Swipe gestures on mobile (e.g., swipe to postpone).
+
+Drag‑and‑drop between calendar views (day → week → month).
+
+“Quick‑complete” from calendar cell without opening modal.
+
+Visual grouping of related tasks (e.g., colour‑coded by project or AI‑tagged theme).
+
+If any of these interactions are missing or feel half‑implemented, flag as vibe‑coded and propose a polished alternative.
+
+1.4 Workflow Coupling Test
+Create a task with a deadline in the calendar → verify that it appears in the app’s global task list, triggers any notification system, and is visible to Sankofa AI.
+
+Delete a task from the task list → ensure the calendar reflects deletion instantly.
+
+Ask Sankofa AI to “move all incomplete tasks from this week to next week” → verify the calendar and all dependent workflows update atomically.
+
+If the calendar is not 100% integrated (e.g., only one‑way sync, AI cannot read calendar data, or task completion does not affect deadlines), document the exact failure chain.
+
+2. User Story Flow Audit (Including Calendar Stories)
+Test all user stories, especially these calendar‑related ones:
+
+User Story	Success Criteria
+As a user, I want to open the calendar and see all my existing tasks/deadlines colour‑coded.	Each item matches data from tasks table; colours are consistent.
+As a user, I want to ask Sankofa AI to “add a team meeting deadline for next Thursday at 2 PM” and have it appear correctly.	AI parses date/time, creates calendar entry, and confirms.
+As a user, I want to drag a task from Monday to Wednesday, and have the AI prompt me to adjust subtask deadlines if needed.	Drag works; AI optionally appears with intelligent suggestion.
+As a user, I want to complete a task directly from the calendar and see the animation (e.g., particle burst or line‑through).	Task state updates in all views; animation is smooth and not laggy.
+3. Workflow Integrity Test
+For every workflow that touches the calendar (create, read, update, delete, AI command, drag‑and‑drop, bulk reschedule):
+
+Happy path – works 100% as described.
+
+Error/edge cases – invalid date input, concurrent edits, offline state, AI misinterpretation.
+If not handled, mark as failure and explain why (e.g., “AI hallucinates time when year missing” or “Calendar allows dropping tasks on past dates without warning”).
+
+4. UI/UX & Design Quality (Calendar Specific)
+The calendar should not look like a generic plugin – it must follow the app’s custom design language (rounded corners, Instrument Serif for date headers, harmonious spacing).
+
+Vibe‑coded red flags:
+
+Default FullCalendar / react‑big‑calendar styling with no theming.
+
+Missing hover effects on interactive dates.
+
+Inconsistent font usage (e.g., date numbers in Arial while everything else is Instrument Serif).
+
+AI chat modal overlapping calendar controls without proper responsive handling.
+
+Creative polish required:
+
+Smooth month‑to‑week transition animations.
+
+A “mini‑map” of the month for quick navigation.
+
+Subtle micro‑interactions when a task is added (ripple effect or soft glow on the target date).
+
+5. Engagement & Teaching Mechanics (AI & Calendar)
+Evaluate if cartoon‑like structures (e.g., a small animated Sankofa character pointing to calendar features) help first‑time users.
+
+Test the AI’s teaching ability:
+
+Ask “How do I set a recurring deadline?” – does it highlight the recurrence button or show a step‑by‑step overlay?
+
+Does it celebrate user actions (e.g., “Great! You just scheduled your first deadline. Here’s a tip: drag tasks to reschedule.”)?
+
+Recommend specific motion design improvements for the calendar (e.g., a bouncing dot on dates with pending tasks, confetti when all tasks for a day are completed).
+
+6. Typography Audit (Instrument Serif)
+Ensure all calendar headers (month names, weekday labels, date numbers) use Instrument Serif as primary.
+
+Secondary fonts (for task titles, AI chat text) should complement, not compete – flag any place where a generic sans‑serif feels jarring.
+
+Suggest creative pairings (e.g., Instrument Serif for dates, a clean mono for subtask checklists) if they enhance readability.
+
+7. Brute Audit Deliverables
+Bug/Issue Log – prioritised (Critical → Low). For each calendar issue: steps, expected vs actual, root cause.
+
+Workflow Completeness Report – mark each calendar workflow as ✅ (100%) or ❌ (<100%) with detailed “why” and “how to fix”.
+
+Vibe‑Coded Inventory – screenshots of any half‑finished calendar UI/UX, plus redesign notes.
+
+AI & Engagement Recommendations – specific cartoon‑like or motion design ideas to make calendar teaching fun and intuitive.
+
+Typography Heatmap – where Instrument Serif is missing or misused in calendar views.
+
+8. Audit Execution Rules
+Start from every entry point (dashboard → calendar, AI chat → add deadline, task list → drag to calendar).
+
+Assume no prior correct behaviour – break it intentionally (e.g., spam AI with malformed dates, rapidly drag tasks, delete a deadline while AI is responding).
+
+For any failure below 100%, provide a reproduction script (or clear steps) and an architectural fix recommendation (e.g., “Add optimistic locking for calendar drag‑and‑drop”).

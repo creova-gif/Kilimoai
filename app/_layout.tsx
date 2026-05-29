@@ -293,6 +293,7 @@ export default function RootLayout() {
               <Stack.Screen name="forecast" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="scan" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
               <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="calendar" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="notifications" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="agro-id" options={{ headerShown: false, presentation: 'card' }} />
