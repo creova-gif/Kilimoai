@@ -7,17 +7,14 @@ import React, { useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, TouchableOpacity,
   Image, Modal, ActivityIndicator, Dimensions, SafeAreaView,
-  StatusBar, Platform,
+  StatusBar,
 } from 'react-native';
-import Animated, {
-  FadeInDown, FadeIn, useSharedValue, useAnimatedStyle,
-  withRepeat, withTiming, Easing,
-} from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import {
   ChevronLeft, Leaf, Droplets, Sun, TrendingUp, Clock,
-  Sparkles, X, BookOpen, Award, Zap, BarChart3,
-  Thermometer, MapPin, Users, AlertTriangle, Lightbulb,
-  ArrowRight, Check, Calendar, ChevronRight, Target,
+  Sparkles, BookOpen, Zap, BarChart3, MapPin, Users,
+  AlertTriangle, Lightbulb, ArrowRight, Check, Calendar,
+  ChevronRight, Target,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -26,9 +23,8 @@ import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { chat, aiConfigured } from '../lib/ai';
 import { useWeather } from '../hooks/useWeather';
-import Svg, { Path, Defs, LinearGradient as SvgGrad, Stop, Circle } from 'react-native-svg';
 
-const { width: SW, height: SH } = Dimensions.get('window');
+const { width: SW } = Dimensions.get('window');
 const PRIMARY = '#22d15a';
 const fmt = (n: number) =>
   n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M`
@@ -39,7 +35,8 @@ const fmt = (n: number) =>
 const CROPS = [
   {
     id: 'maize', nameEn: 'Maize', nameSw: 'Mahindi', category: 'staple',
-    img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=800',
+    // Golden corn ears / maize close-up — no people
+    img: 'https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&q=80&w=800',
     duration: 'Miezi 3–4', harvestDays: 105, difficulty: 'Kati', profit: 'Kati', profitScore: 2,
     water: 'Wastani', sun: 'Jua Kamili',
     desc: 'Zao kuu la chakula Tanzania. Hustawi maeneo mengi yenye mvua za kutosha.',
@@ -49,9 +46,9 @@ const CROPS = [
     regions: 'Dodoma · Mbeya · Morogoro · Arusha',
     workers: '3–5 / ekari', tempMin: 18, tempMax: 30,
     diseases: [
-      { name: 'Blight ya Majani', severity: 'high', nameSw: 'Blight ya Majani' },
-      { name: 'Funza wa Nguruwe', severity: 'medium', nameSw: 'Funza wa Nguruwe' },
-      { name: 'Uozo wa Shina', severity: 'low', nameSw: 'Uozo wa Shina' },
+      { name: 'Blight ya Majani', severity: 'high' },
+      { name: 'Funza wa Nguruwe (Fall Armyworm)', severity: 'medium' },
+      { name: 'Uozo wa Shina', severity: 'low' },
     ],
     tips: [
       'Panda mbegu zilizotibiwa (treated seeds) kupunguza magonjwa ya udongo.',
@@ -61,7 +58,8 @@ const CROPS = [
   },
   {
     id: 'rice', nameEn: 'Rice', nameSw: 'Mpunga', category: 'staple',
-    img: 'https://images.unsplash.com/photo-1530335032608-f40445a6c1e9?auto=format&fit=crop&q=80&w=800',
+    // Lush green rice paddy field — no people
+    img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=800',
     duration: 'Miezi 4–5', harvestDays: 140, difficulty: 'Nguvu', profit: 'Juu', profitScore: 3,
     water: 'Mingi Sana', sun: 'Jua Kamili',
     desc: 'Hulimwa sana mabondeni Mbeya, Morogoro, na Shinyanga. Hulipa sana kibiashara.',
@@ -83,7 +81,8 @@ const CROPS = [
   },
   {
     id: 'beans', nameEn: 'Beans', nameSw: 'Maharage', category: 'staple',
-    img: 'https://images.unsplash.com/photo-1551608674-d4b3ff2efbb7?auto=format&fit=crop&q=80&w=800',
+    // Green bean pods hanging on plant — no people
+    img: 'https://images.unsplash.com/photo-1559181567-c3190ca9d062?auto=format&fit=crop&q=80&w=800',
     duration: 'Siku 60–90', harvestDays: 75, difficulty: 'Rahisi', profit: 'Kati', profitScore: 2,
     water: 'Wastani', sun: 'Jua Kamili',
     desc: 'Hulimwa sana nyanda za juu. Husaidia kurudisha nitrojeni kwenye udongo.',
@@ -105,7 +104,8 @@ const CROPS = [
   },
   {
     id: 'cassava', nameEn: 'Cassava', nameSw: 'Muhogo', category: 'staple',
-    img: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=800',
+    // Cassava roots / tapioca plant — no people
+    img: 'https://images.unsplash.com/photo-1627494360338-67c40e45f9e2?auto=format&fit=crop&q=80&w=800',
     duration: 'Miezi 9–12', harvestDays: 300, difficulty: 'Rahisi', profit: 'Kati', profitScore: 2,
     water: 'Kidogo', sun: 'Jua Kamili',
     desc: 'Zao linalostahimili ukame. Hulimwa kanda ya ziwa, Pwani na Kusini.',
@@ -127,7 +127,8 @@ const CROPS = [
   },
   {
     id: 'cashew', nameEn: 'Cashew Nuts', nameSw: 'Korosho', category: 'cash',
-    img: 'https://images.unsplash.com/photo-1533742468351-4d40abcb6478?auto=format&fit=crop&q=80&w=800',
+    // Ripe cashew apple with nut on tree — no people
+    img: 'https://images.unsplash.com/photo-1574856344991-aaa31b6f4f85?auto=format&fit=crop&q=80&w=800',
     duration: 'Miaka 3+', harvestDays: 1095, difficulty: 'Kati', profit: 'Juu Sana', profitScore: 4,
     water: 'Kidogo', sun: 'Jua Kamili',
     desc: 'Zao la utajiri Kusini mwa Tanzania (Mtwara, Lindi). Soko kubwa nje ya nchi.',
@@ -149,7 +150,8 @@ const CROPS = [
   },
   {
     id: 'coffee', nameEn: 'Coffee', nameSw: 'Kahawa', category: 'cash',
-    img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=800',
+    // Red coffee cherries on branch — classic shot, no people
+    img: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&q=80&w=800',
     duration: 'Miaka 3–5', harvestDays: 1460, difficulty: 'Nguvu', profit: 'Juu', profitScore: 3,
     water: 'Mingi', sun: 'Kivuli',
     desc: 'Zao kuu la biashara (Arabica kaskazini/kusini, Robusta Kagera). Soko la dunia.',
@@ -171,7 +173,8 @@ const CROPS = [
   },
   {
     id: 'sunflower', nameEn: 'Sunflower', nameSw: 'Alizeti', category: 'cash',
-    img: 'https://images.unsplash.com/photo-1558500259-22a868427ce2?auto=format&fit=crop&q=80&w=800',
+    // Bright sunflower field in full bloom — no people
+    img: 'https://images.unsplash.com/photo-1490750967868-88df5691cc0e?auto=format&fit=crop&q=80&w=800',
     duration: 'Siku 90–120', harvestDays: 105, difficulty: 'Rahisi', profit: 'Kati', profitScore: 2,
     water: 'Kidogo', sun: 'Jua Kamili',
     desc: 'Hustahimili ukame. Hustawi Dodoma na Singida kwa uzalishaji wa mafuta.',
@@ -193,7 +196,8 @@ const CROPS = [
   },
   {
     id: 'tomato', nameEn: 'Tomatoes', nameSw: 'Nyanya', category: 'horticulture',
-    img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=800',
+    // Ripe red tomatoes on the vine — no people
+    img: 'https://images.unsplash.com/photo-1546470427-f5b4dd577b86?auto=format&fit=crop&q=80&w=800',
     duration: 'Miezi 2–3', harvestDays: 80, difficulty: 'Nguvu', profit: 'Juu', profitScore: 3,
     water: 'Mingi', sun: 'Jua Kamili',
     desc: 'Zao la biashara la haraka. Linahitaji matunzo na dawa za kuzuia magonjwa.',
@@ -216,7 +220,8 @@ const CROPS = [
   },
   {
     id: 'onion', nameEn: 'Onions', nameSw: 'Vitunguu', category: 'horticulture',
-    img: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&q=80&w=800',
+    // Raw white onions with roots, overhead view — no people
+    img: 'https://images.unsplash.com/photo-1518977876801-8c2b56d2b4d7?auto=format&fit=crop&q=80&w=800',
     duration: 'Miezi 3–4', harvestDays: 110, difficulty: 'Kati', profit: 'Juu Sana', profitScore: 4,
     water: 'Wastani', sun: 'Jua Kamili',
     desc: "Vitunguu vya Singida na Mang'ola vina soko kubwa Afrika Mashariki.",
@@ -238,7 +243,8 @@ const CROPS = [
   },
   {
     id: 'avocado', nameEn: 'Avocado', nameSw: 'Parachichi', category: 'horticulture',
-    img: 'https://images.unsplash.com/photo-1517666005606-1eb8a614d95b?auto=format&fit=crop&q=80&w=800',
+    // Avocados hanging on tree branch — no people
+    img: 'https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?auto=format&fit=crop&q=80&w=800',
     duration: 'Miaka 3+', harvestDays: 1095, difficulty: 'Kati', profit: 'Juu Sana', profitScore: 4,
     water: 'Wastani', sun: 'Jua Kamili',
     desc: 'Dhahabu ya kijani Njombe na Mbeya. Soko lake linakua kimataifa (Hass variety).',
@@ -260,7 +266,8 @@ const CROPS = [
   },
   {
     id: 'cloves', nameEn: 'Cloves', nameSw: 'Karafuu', category: 'horticulture',
-    img: 'https://images.unsplash.com/photo-1606822263435-0ce1b88e0018?auto=format&fit=crop&q=80&w=800',
+    // Dried cloves spice close-up — no people
+    img: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
     duration: 'Miaka 5+', harvestDays: 1825, difficulty: 'Kati', profit: 'Juu Sana', profitScore: 4,
     water: 'Mingi', sun: 'Jua Kamili',
     desc: 'Zao maarufu la Zanzibar na Pemba. Hutumika kama kiungo duniani kote.',
@@ -283,10 +290,10 @@ const CROPS = [
 ];
 
 const CATEGORIES = [
-  { id: 'all',          titleSw: 'Yote',             titleEn: 'All',          color: PRIMARY },
-  { id: 'staple',       titleSw: 'Nafaka',           titleEn: 'Staple',       color: '#f59e0b' },
-  { id: 'cash',         titleSw: 'Biashara',         titleEn: 'Cash',         color: '#3b82f6' },
-  { id: 'horticulture', titleSw: 'Bustani',          titleEn: 'Horticulture', color: '#a855f7' },
+  { id: 'all',          titleSw: 'Yote',      titleEn: 'All',          color: PRIMARY },
+  { id: 'staple',       titleSw: 'Nafaka',    titleEn: 'Staple',       color: '#f59e0b' },
+  { id: 'cash',         titleSw: 'Biashara',  titleEn: 'Cash',         color: '#3b82f6' },
+  { id: 'horticulture', titleSw: 'Bustani',   titleEn: 'Horticulture', color: '#a855f7' },
 ];
 
 const PROFIT_COLOR: Record<string, string> = {
@@ -301,7 +308,7 @@ const SEV_COLOR: Record<string, string> = {
 
 type Crop = typeof CROPS[0];
 
-// ─── Mini sparkline for profit dots ──────────────────────────────────────────
+// ─── Mini profit dots ─────────────────────────────────────────────────────────
 function ProfitDots({ score, isDark }: { score: number; isDark: boolean }) {
   return (
     <View style={{ flexDirection: 'row', gap: 3 }}>
@@ -315,77 +322,74 @@ function ProfitDots({ score, isDark }: { score: number; isDark: boolean }) {
   );
 }
 
-// ─── pH visualization bar ─────────────────────────────────────────────────────
+// ─── pH gradient bar ──────────────────────────────────────────────────────────
 function PHBar({ ph, phMid }: { ph: string; phMid: number }) {
-  const pct = ((phMid - 4) / 10) * 100; // map 4–14 to 0–100%
-  const safe = Math.max(2, Math.min(98, pct));
+  const pct = ((phMid - 4) / 10) * 100;
+  const safe = Math.max(2, Math.min(96, pct));
   const label = phMid < 6.5 ? 'Tindikali' : phMid > 7.5 ? 'Alkali' : 'Wastani';
   const labelColor = phMid < 6.5 ? '#f59e0b' : phMid > 7.5 ? '#3b82f6' : PRIMARY;
   return (
     <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
         <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 10, color: '#9CA3AF' }}>Tindikali (4)</Text>
-        <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: labelColor }}>{label} {phMid.toFixed(1)}</Text>
+        <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: labelColor }}>{label} · pH {phMid.toFixed(1)}</Text>
         <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 10, color: '#9CA3AF' }}>Alkali (9)</Text>
       </View>
-      <View style={{ height: 8, borderRadius: 4, overflow: 'hidden', position: 'relative' }}>
+      <View style={{ height: 8, borderRadius: 4, overflow: 'hidden' }}>
         <LinearGradient
           colors={['#ef4444', '#f59e0b', '#22d15a', '#3b82f6']}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
           style={{ flex: 1 }}
         />
+      </View>
+      {/* marker overlay — separate view so it doesn't clip */}
+      <View style={{ height: 12, marginTop: -10 }}>
         <View style={{
-          position: 'absolute', top: -2,
-          left: `${safe}%` as any,
+          position: 'absolute', left: `${safe}%` as any,
           width: 12, height: 12, borderRadius: 6,
           backgroundColor: '#fff', borderWidth: 2.5, borderColor: labelColor,
           marginLeft: -6,
         }} />
       </View>
-      <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>
-        pH {ph} · {ph}
+      <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
+        Range: pH {ph}
       </Text>
     </View>
   );
 }
 
 // ─── Weather suitability chip ─────────────────────────────────────────────────
-function WeatherChip({ crop, colors }: { crop: Crop; colors: any }) {
+function WeatherChip({ crop }: { crop: Crop }) {
   const { current } = useWeather();
   if (!current) return null;
   const temp = (current as any).main?.temp ?? (current as any).temp ?? 0;
   const suitable = temp >= crop.tempMin && temp <= crop.tempMax;
   return (
-    <View style={[D.weatherChip, { backgroundColor: suitable ? `${PRIMARY}15` : '#f59e0b15', borderColor: suitable ? `${PRIMARY}40` : '#f59e0b40' }]}>
-      {suitable ? <Check size={11} color={PRIMARY} /> : <AlertTriangle size={11} color="#f59e0b" />}
+    <View style={[D.weatherChip, {
+      backgroundColor: suitable ? `${PRIMARY}18` : '#f59e0b18',
+      borderColor: suitable ? `${PRIMARY}40` : '#f59e0b40',
+    }]}>
+      {suitable
+        ? <Check size={11} color={PRIMARY} />
+        : <AlertTriangle size={11} color="#f59e0b" />}
       <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: suitable ? PRIMARY : '#f59e0b' }}>
-        {suitable ? `${Math.round(temp)}°C · Inafaa kupanda` : `${Math.round(temp)}°C · Hali tofauti`}
+        {Math.round(temp)}°C · {suitable ? 'Inafaa kupanda' : 'Hali tofauti na kawaida'}
       </Text>
     </View>
   );
 }
 
-// ─── Stat bento card ──────────────────────────────────────────────────────────
-function StatCard({ label, value, sub, color, icon: Icon, isDark }: any) {
-  return (
-    <View style={[D.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}>
-      <Icon size={14} color={color} />
-      <Text style={[D.statVal, { color }]}>{value}</Text>
-      <Text style={D.statSub}>{sub}</Text>
-      <Text style={D.statLbl}>{label}</Text>
-    </View>
-  );
-}
-
 // ─── Disease row ──────────────────────────────────────────────────────────────
-function DiseaseRow({ d, language }: { d: any; language: string }) {
+function DiseaseRow({ d, language, textColor }: { d: any; language: string; textColor: string }) {
   const color = SEV_COLOR[d.severity] ?? '#9CA3AF';
-  const sevLabel = d.severity === 'high' ? (language === 'sw' ? 'Hatari' : 'High Risk')
-    : d.severity === 'medium' ? (language === 'sw' ? 'Wastani' : 'Medium') : (language === 'sw' ? 'Chini' : 'Low');
+  const sevLabel =
+    d.severity === 'high'   ? (language === 'sw' ? 'Hatari'  : 'High Risk') :
+    d.severity === 'medium' ? (language === 'sw' ? 'Wastani' : 'Medium')    :
+                              (language === 'sw' ? 'Chini'   : 'Low');
   return (
     <View style={D.diseaseRow}>
       <View style={[D.diseaseDot, { backgroundColor: color }]} />
-      <Text style={[D.diseaseName, { flex: 1 }]}>{d.name}</Text>
+      <Text style={[D.diseaseName, { flex: 1, color: textColor }]}>{d.name}</Text>
       <View style={[D.diseasePill, { backgroundColor: `${color}18` }]}>
         <Text style={[D.diseasePillText, { color }]}>{sevLabel}</Text>
       </View>
@@ -393,15 +397,15 @@ function DiseaseRow({ d, language }: { d: any; language: string }) {
   );
 }
 
-// ─── Crop Detail Full Screen ──────────────────────────────────────────────────
+// ─── Full-screen Crop Detail ───────────────────────────────────────────────────
 function CropDetail({
   crop, onClose, colors, isDark, language,
 }: {
   crop: Crop; onClose: () => void; colors: any; isDark: boolean; language: string;
 }) {
-  const [aiText, setAiText] = useState('');
+  const [aiText, setAiText]     = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiLoaded, setAiLoaded] = useState(false);
+  const [aiLoaded, setAiLoaded]  = useState(false);
   const router = useRouter();
   const marketValue = Math.round((crop.yieldKgAcre * crop.marketPricePerKg) / 1000) * 1000;
   const subtle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
@@ -411,15 +415,26 @@ function CropDetail({
     setAiLoading(true);
     try {
       if (aiConfigured()) {
-        const res = await chat([{ role: 'user', content: `Nipe mwongozo kamili wa kilimo cha ${crop.nameSw} Tanzania. Jumuisha: 1. Maandalizi ya shamba, 2. Umbali wa kupanda, 3. Magonjwa makuu na udhibiti, 4. Wakati wa kuvuna. Fupisha kwa bullet points 5–6 za kisanaa.` }]);
+        const res = await chat([{
+          role: 'user',
+          content: `Nipe mwongozo kamili wa kilimo cha ${crop.nameSw} Tanzania kwa bullet points 6 fupi.`,
+        }]);
         setAiText(res);
       } else {
-        await new Promise((r) => setTimeout(r, 900));
-        setAiText(`Mwongozo wa Sankofa AI kwa ${crop.nameSw}:\n\n• Maandalizi: Andaa shamba mapema, tumia samadi au mboji kuongeza rutuba ya udongo.\n• Kupanda: Zingatia umbali wa ${crop.spacing} kwa mwanga na hewa ya kutosha.\n• Mbolea: Tumia ${crop.fertilizer} kufuata maelekezo ya vituo vya kilimo.\n• Magonjwa: Kagua shamba angalau mara mbili kwa wiki. Tumia viuatilifu vilivyopendekezwa.\n• Maji: ${crop.water} — epuka maji yaliyosimama shambani.\n• Uvunaji: Vuna mazao yakiwa yamekomaa vizuri na hifadhi sehemu kavu.`);
+        await new Promise((r) => setTimeout(r, 800));
+        setAiText(
+          `Mwongozo wa Sankofa AI kwa ${crop.nameSw}:\n\n` +
+          `• Maandalizi ya shamba: Andaa shamba mapema, ongeza samadi au mboji.\n` +
+          `• Umbali wa kupanda: ${crop.spacing} kwa mwanga na hewa ya kutosha.\n` +
+          `• Mbolea: Tumia ${crop.fertilizer} kwa mwongozo wa kituo cha kilimo.\n` +
+          `• Udhibiti wa magonjwa: Kagua shamba mara 2/wiki, piga dawa mapema.\n` +
+          `• Maji: ${crop.water} — epuka maji yaliyosimama, yanaweza kusababisha kuoza.\n` +
+          `• Uvunaji: Vuna mazao yakiwa yamekomaa na hifadhi sehemu kavu na yenye hewa.`
+        );
       }
       setAiLoaded(true);
     } catch {
-      setAiText('Kuna changamoto ya mtandao. Tafadhali jaribu tena.');
+      setAiText('Kuna tatizo la mtandao. Tafadhali jaribu tena.');
     } finally {
       setAiLoading(false);
     }
@@ -433,28 +448,26 @@ function CropDetail({
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} bounces>
 
-        {/* ── Hero Image ── */}
+        {/* ── Hero ── */}
         <View style={D.heroWrap}>
           <Image source={{ uri: crop.img }} style={D.heroImg} resizeMode="cover" />
           <LinearGradient
-            colors={['rgba(0,0,0,0.25)', 'transparent', 'transparent', 'rgba(0,0,0,0.85)']}
-            locations={[0, 0.2, 0.45, 1]}
+            colors={['rgba(0,0,0,0.3)', 'transparent', 'transparent', 'rgba(0,0,0,0.88)']}
+            locations={[0, 0.22, 0.45, 1]}
             style={StyleSheet.absoluteFill}
           />
 
-          {/* Top bar */}
           <SafeAreaView style={D.heroTopBar}>
             <TouchableOpacity onPress={onClose} style={D.heroBackBtn} activeOpacity={0.8}>
-              <BlurView intensity={60} tint="dark" style={D.heroBackBlur}>
+              <BlurView intensity={55} tint="dark" style={D.heroBackBlur}>
                 <ChevronLeft size={20} color="#fff" />
               </BlurView>
             </TouchableOpacity>
-            <View style={[D.heroCatBadge, { backgroundColor: `${catInfo.color}cc` }]}>
+            <View style={[D.heroCatBadge, { backgroundColor: `${catInfo.color}d0` }]}>
               <Text style={D.heroCatText}>{language === 'sw' ? catInfo.titleSw : catInfo.titleEn}</Text>
             </View>
           </SafeAreaView>
 
-          {/* Hero copy */}
           <View style={D.heroBottom}>
             {crop.profitScore >= 3 && (
               <View style={D.hotBadge}>
@@ -464,7 +477,7 @@ function CropDetail({
             )}
             <Text style={D.heroName}>{cropName}</Text>
             <Text style={D.heroSub}>{language === 'sw' ? crop.nameEn : crop.nameSw}</Text>
-            <WeatherChip crop={crop} colors={colors} />
+            <WeatherChip crop={crop} />
           </View>
         </View>
 
@@ -474,39 +487,32 @@ function CropDetail({
           <Animated.View entering={FadeInDown.delay(60).duration(320)}>
             <View style={[D.bentoBg, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <LinearGradient
-                colors={[`${PRIMARY}0c`, colors.card]}
+                colors={[`${PRIMARY}10`, colors.card]}
                 locations={[0, 0.7]}
                 style={StyleSheet.absoluteFill}
               />
               <View style={D.bentoRow}>
-                {/* Yield */}
                 <View style={[D.bentoCell, { borderRightColor: colors.border, borderRightWidth: 1 }]}>
                   <Leaf size={13} color={PRIMARY} />
                   <Text style={[D.bentoBig, { color: colors.text }]}>{fmt(crop.yieldKgAcre)}</Text>
                   <Text style={D.bentoUnit}>kg / ekari</Text>
                   <Text style={D.bentoLabel}>{language === 'sw' ? 'Est. Mavuno' : 'Est. Yield'}</Text>
                 </View>
-                {/* Market value */}
                 <View style={[D.bentoCell, { borderRightColor: colors.border, borderRightWidth: 1 }]}>
                   <TrendingUp size={13} color="#f59e0b" />
                   <Text style={[D.bentoBig, { color: colors.text }]}>TSh {fmt(marketValue)}</Text>
                   <Text style={D.bentoUnit}>/ ekari</Text>
                   <Text style={D.bentoLabel}>{language === 'sw' ? 'Bei ya Soko' : 'Market Value'}</Text>
                 </View>
-                {/* Harvest days */}
                 <View style={D.bentoCell}>
                   <Clock size={13} color="#0284c7" />
                   <Text style={[D.bentoBig, { color: colors.text }]}>
-                    {crop.harvestDays > 365
-                      ? `${(crop.harvestDays / 365).toFixed(0)}y+`
-                      : `${crop.harvestDays}`}
+                    {crop.harvestDays > 365 ? `${(crop.harvestDays / 365).toFixed(0)}y+` : `${crop.harvestDays}`}
                   </Text>
                   <Text style={D.bentoUnit}>{crop.harvestDays > 365 ? 'miaka' : 'siku'}</Text>
                   <Text style={D.bentoLabel}>{language === 'sw' ? 'Hadi Mavuno' : 'To Harvest'}</Text>
                 </View>
               </View>
-
-              {/* Price per kg strip */}
               <View style={[D.priceStrip, { backgroundColor: subtle, borderTopColor: colors.border }]}>
                 <BarChart3 size={12} color={PRIMARY} />
                 <Text style={[D.priceStripText, { color: colors.textMute }]}>
@@ -515,9 +521,7 @@ function CropDetail({
                 <Text style={[D.priceStripVal, { color: PRIMARY }]}>
                   TSh {new Intl.NumberFormat('en-US').format(crop.marketPricePerKg)} / kg
                 </Text>
-                <View style={D.profitDots}>
-                  <ProfitDots score={crop.profitScore} isDark={isDark} />
-                </View>
+                <ProfitDots score={crop.profitScore} isDark={isDark} />
               </View>
             </View>
           </Animated.View>
@@ -531,7 +535,6 @@ function CropDetail({
               </Text>
             </View>
             <View style={{ gap: 10 }}>
-              {/* pH card */}
               <View style={[D.condCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={D.condCardHeader}>
                   <Text style={[D.condCardTitle, { color: colors.text }]}>
@@ -554,8 +557,6 @@ function CropDetail({
                   </View>
                 </View>
               </View>
-
-              {/* Water + Sun 2-col */}
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 <View style={[D.condHalf, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={[D.condHalfIcon, { backgroundColor: '#0284c715' }]}>
@@ -602,13 +603,13 @@ function CropDetail({
                 <Users size={13} color="#f59e0b" />
                 <Text style={[D.infoText, { color: colors.text }]}>{crop.workers}</Text>
                 <Text style={[D.infoSub, { color: colors.textMute }]}>
-                  {language === 'sw' ? 'wafanyakazi' : 'workers'}
+                  {' '}{language === 'sw' ? 'wafanyakazi' : 'workers'}
                 </Text>
               </View>
             </View>
           </Animated.View>
 
-          {/* ── Disease Risk ── */}
+          {/* ── Disease Risks ── */}
           <Animated.View entering={FadeInDown.delay(180).duration(320)} style={D.section}>
             <View style={D.sectionHeader}>
               <AlertTriangle size={15} color="#ef4444" />
@@ -622,8 +623,10 @@ function CropDetail({
             <View style={[D.diseaseCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               {crop.diseases.map((d, i) => (
                 <React.Fragment key={i}>
-                  <DiseaseRow d={d} language={language} />
-                  {i < crop.diseases.length - 1 && <View style={[D.infoDivider, { backgroundColor: colors.border }]} />}
+                  <DiseaseRow d={d} language={language} textColor={colors.text} />
+                  {i < crop.diseases.length - 1 && (
+                    <View style={[D.infoDivider, { backgroundColor: colors.border }]} />
+                  )}
                 </React.Fragment>
               ))}
             </View>
@@ -663,7 +666,7 @@ function CropDetail({
             <View style={[D.aiCard, { backgroundColor: colors.card, borderColor: `${PRIMARY}30` }]}>
               <View style={[D.aiCardAccent, { backgroundColor: PRIMARY }]} />
               {aiLoading ? (
-                <View style={{ padding: 24, alignItems: 'center', gap: 12 }}>
+                <View style={{ padding: 28, alignItems: 'center', gap: 12 }}>
                   <ActivityIndicator size="large" color={PRIMARY} />
                   <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium', fontSize: 13 }}>
                     {language === 'sw' ? 'Sankofa AI inachambua...' : 'Analyzing with Sankofa AI...'}
@@ -692,7 +695,11 @@ function CropDetail({
               style={D.ctaBtn}
               activeOpacity={0.88}
             >
-              <LinearGradient colors={[PRIMARY, '#12903a', '#0a6b2a']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={D.ctaGrad}>
+              <LinearGradient
+                colors={[PRIMARY, '#12903a', '#0a6b2a']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                style={D.ctaGrad}
+              >
                 <Leaf size={18} color="#fff" />
                 <Text style={D.ctaText}>
                   {language === 'sw' ? 'Ongeza kwenye Mpango wa Kulima' : 'Add to Crop Plan'}
@@ -707,20 +714,23 @@ function CropDetail({
   );
 }
 
-// ─── Crop card (grid) ─────────────────────────────────────────────────────────
+// ─── Grid card ────────────────────────────────────────────────────────────────
 function CropCard({ crop, index, onPress, colors, isDark, language }: {
-  crop: Crop; index: number; onPress: () => void; colors: any; isDark: boolean; language: string;
+  crop: Crop; index: number; onPress: () => void;
+  colors: any; isDark: boolean; language: string;
 }) {
   const isHot = crop.profitScore >= 3;
-  const name = language === 'sw' ? crop.nameSw : crop.nameEn;
+  const name  = language === 'sw' ? crop.nameSw : crop.nameEn;
   return (
     <Animated.View entering={FadeInDown.delay(index * 35).springify()} style={{ width: (SW - 44) / 2 }}>
       <TouchableOpacity onPress={onPress} activeOpacity={0.88}>
-        <View style={[gc.card, { backgroundColor: colors.card, borderColor: isHot ? `${PRIMARY}30` : colors.border }]}>
-          {/* Image */}
+        <View style={[gc.card, {
+          backgroundColor: colors.card,
+          borderColor: isHot ? `${PRIMARY}35` : colors.border,
+        }]}>
           <View style={gc.imgWrap}>
             <Image source={{ uri: crop.img }} style={gc.img} resizeMode="cover" />
-            <LinearGradient colors={['transparent', 'rgba(0,0,0,0.72)']} style={gc.imgGrad} />
+            <LinearGradient colors={['transparent', 'rgba(0,0,0,0.75)']} style={gc.imgGrad} />
             {isHot && (
               <View style={gc.hotChip}>
                 <Zap size={8} color="#000" />
@@ -731,8 +741,6 @@ function CropCard({ crop, index, onPress, colors, isDark, language }: {
               <Text style={gc.imgName} numberOfLines={1}>{name}</Text>
             </View>
           </View>
-
-          {/* Body */}
           <View style={gc.body}>
             <Text style={[gc.sub, { color: colors.textMute }]} numberOfLines={1}>
               {language === 'sw' ? crop.nameEn : crop.nameSw}
@@ -764,7 +772,7 @@ const gc = StyleSheet.create({
   card: { borderRadius: 18, borderWidth: 1, overflow: 'hidden' },
   imgWrap: { position: 'relative' },
   img: { width: '100%', height: 140 },
-  imgGrad: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 70 },
+  imgGrad: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 72 },
   hotChip: {
     position: 'absolute', top: 8, right: 8,
     flexDirection: 'row', alignItems: 'center', gap: 3,
@@ -773,7 +781,7 @@ const gc = StyleSheet.create({
   },
   hotText: { fontSize: 7, fontFamily: 'Inter_700Bold', color: '#000' },
   imgOverlay: { position: 'absolute', bottom: 8, left: 10, right: 10 },
-  imgName: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 15, color: '#fff', letterSpacing: 0.2 },
+  imgName: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 15, color: '#fff' },
   body: { padding: 10 },
   sub: { fontSize: 10, fontFamily: 'Inter_500Medium' },
   pill: { flexDirection: 'row', alignItems: 'center', gap: 3, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 6 },
@@ -788,18 +796,21 @@ export default function CropLibraryScreen() {
   const { colors, isDark } = useTheme();
   const language = useKilimoStore((s) => s.language);
 
-  const [catFilter, setCatFilter] = useState('all');
+  const [catFilter, setCatFilter]       = useState('all');
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
 
   const displayed = catFilter === 'all' ? CROPS : CROPS.filter((c) => c.category === catFilter);
-  const subtle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
 
   return (
     <View style={[M.root, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
-      {/* Crop detail full-screen modal */}
-      <Modal visible={!!selectedCrop} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => setSelectedCrop(null)}>
+      <Modal
+        visible={!!selectedCrop}
+        animationType="slide"
+        presentationStyle="fullScreen"
+        onRequestClose={() => setSelectedCrop(null)}
+      >
         {selectedCrop && (
           <CropDetail
             crop={selectedCrop}
@@ -833,10 +844,18 @@ export default function CropLibraryScreen() {
           <View style={{ width: 38 }} />
         </View>
 
-        {/* Summary stats */}
+        {/* Summary stats bar */}
         <Animated.View entering={FadeInDown.duration(300)}>
-          <View style={[M.statsBar, { backgroundColor: colors.card, borderColor: colors.border, marginHorizontal: 16, marginBottom: 12 }]}>
-            <LinearGradient colors={[`${PRIMARY}0a`, 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
+          <View style={[M.statsBar, {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            marginHorizontal: 16, marginBottom: 12,
+          }]}>
+            <LinearGradient
+              colors={[`${PRIMARY}0a`, 'transparent']}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+              style={StyleSheet.absoluteFill}
+            />
             {[
               { num: String(CROPS.length), label: language === 'sw' ? 'Mazao Yote' : 'Total Crops', color: colors.text },
               { num: String(CROPS.filter((c) => c.profitScore >= 3).length), label: language === 'sw' ? 'Faida Juu' : 'High Profit', color: PRIMARY },
@@ -853,12 +872,15 @@ export default function CropLibraryScreen() {
           </View>
         </Animated.View>
 
-        {/* Category pills */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }}
-          contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingBottom: 12 }}>
+        {/* Category filter pills */}
+        <ScrollView
+          horizontal showsHorizontalScrollIndicator={false}
+          style={{ flexGrow: 0 }}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingBottom: 12 }}
+        >
           {CATEGORIES.map((cat) => {
             const active = catFilter === cat.id;
-            const label = language === 'sw' ? cat.titleSw : cat.titleEn;
+            const label  = language === 'sw' ? cat.titleSw : cat.titleEn;
             return (
               <TouchableOpacity key={cat.id} onPress={() => setCatFilter(cat.id)} activeOpacity={0.8}>
                 <View style={[M.catPill, {
@@ -872,7 +894,7 @@ export default function CropLibraryScreen() {
           })}
         </ScrollView>
 
-        {/* Grid */}
+        {/* Crop grid */}
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}>
           <View style={M.grid}>
             {displayed.map((crop, i) => (
@@ -895,104 +917,124 @@ export default function CropLibraryScreen() {
 
 // ─── Detail styles ─────────────────────────────────────────────────────────────
 const D = StyleSheet.create({
-  heroWrap: { position: 'relative', height: 300 },
-  heroImg: { width: '100%', height: 300 },
-  heroTopBar: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingTop: 4 },
-  heroBackBtn: { width: 40, height: 40, borderRadius: 20, overflow: 'hidden' },
+  heroWrap:    { position: 'relative', height: 310 },
+  heroImg:     { width: '100%', height: 310 },
+  heroTopBar:  {
+    position: 'absolute', top: 0, left: 0, right: 0,
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, paddingTop: 4,
+  },
+  heroBackBtn:  { width: 40, height: 40, borderRadius: 20, overflow: 'hidden' },
   heroBackBlur: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   heroCatBadge: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20 },
-  heroCatText: { fontFamily: 'Inter_700Bold', fontSize: 11, color: '#fff', letterSpacing: 0.5 },
-  heroBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, gap: 5 },
-  hotBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20, backgroundColor: PRIMARY, alignSelf: 'flex-start' },
-  hotText: { fontFamily: 'Inter_700Bold', fontSize: 9, color: '#000', letterSpacing: 1 },
-  heroName: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 36, color: '#fff', lineHeight: 40, letterSpacing: -0.5 },
-  heroSub: { fontFamily: 'Inter_500Medium', fontSize: 14, color: 'rgba(255,255,255,0.7)' },
-  weatherChip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20, borderWidth: 1, alignSelf: 'flex-start', marginTop: 4 },
+  heroCatText:  { fontFamily: 'Inter_700Bold', fontSize: 11, color: '#fff', letterSpacing: 0.5 },
+  heroBottom: {
+    position: 'absolute', bottom: 0, left: 0, right: 0,
+    padding: 20, gap: 5,
+  },
+  hotBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20,
+    backgroundColor: PRIMARY, alignSelf: 'flex-start',
+  },
+  hotText:   { fontFamily: 'Inter_700Bold', fontSize: 9, color: '#000', letterSpacing: 1 },
+  heroName:  { fontFamily: 'InstrumentSerif_400Regular', fontSize: 38, color: '#fff', lineHeight: 42 },
+  heroSub:   { fontFamily: 'Inter_500Medium', fontSize: 14, color: 'rgba(255,255,255,0.72)' },
+  weatherChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 10, paddingVertical: 5,
+    borderRadius: 20, borderWidth: 1, alignSelf: 'flex-start', marginTop: 4,
+  },
 
-  body: { padding: 16, gap: 0 },
+  body: { padding: 16 },
 
-  // Stats bento
-  bentoBg: { borderRadius: 20, borderWidth: 1, overflow: 'hidden', marginBottom: 18 },
-  bentoRow: { flexDirection: 'row' },
-  bentoCell: { flex: 1, alignItems: 'center', paddingVertical: 18, gap: 3 },
-  bentoBig: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, lineHeight: 26 },
-  bentoUnit: { fontFamily: 'Inter_400Regular', fontSize: 9, color: '#9CA3AF' },
-  bentoLabel: { fontFamily: 'Inter_600SemiBold', fontSize: 9, color: '#9CA3AF', letterSpacing: 0.5, textAlign: 'center' },
-  priceStrip: { flexDirection: 'row', alignItems: 'center', gap: 6, padding: 12, borderTopWidth: 1 },
+  // Bento
+  bentoBg:      { borderRadius: 20, borderWidth: 1, overflow: 'hidden', marginBottom: 18 },
+  bentoRow:     { flexDirection: 'row' },
+  bentoCell:    { flex: 1, alignItems: 'center', paddingVertical: 18, gap: 3 },
+  bentoBig:     { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, lineHeight: 26 },
+  bentoUnit:    { fontFamily: 'Inter_400Regular', fontSize: 9, color: '#9CA3AF' },
+  bentoLabel:   { fontFamily: 'Inter_600SemiBold', fontSize: 9, color: '#9CA3AF', letterSpacing: 0.4, textAlign: 'center' },
+  priceStrip:   { flexDirection: 'row', alignItems: 'center', gap: 6, padding: 12, borderTopWidth: 1 },
   priceStripText: { fontFamily: 'Inter_500Medium', fontSize: 11, flex: 1 },
-  priceStripVal: { fontFamily: 'Inter_700Bold', fontSize: 13 },
-  profitDots: { marginLeft: 4 },
+  priceStripVal:  { fontFamily: 'Inter_700Bold', fontSize: 13 },
 
   // Section
-  section: { marginBottom: 18 },
+  section:       { marginBottom: 18 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 },
-  sectionTitle: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 18, flex: 1 },
-  riskBadge: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  riskBadgeText: { fontFamily: 'Inter_800ExtraBold', fontSize: 11 },
+  sectionTitle:  { fontFamily: 'InstrumentSerif_400Regular', fontSize: 18, flex: 1 },
+  riskBadge:     { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  riskBadgeText: { fontFamily: 'Inter_700Bold', fontSize: 11 },
 
   // Conditions
-  condCard: { borderRadius: 16, borderWidth: 1, padding: 14 },
+  condCard:       { borderRadius: 16, borderWidth: 1, padding: 14 },
   condCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  condCardTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 13 },
-  fertChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
-  fertChipText: { fontFamily: 'Inter_700Bold', fontSize: 10 },
-  condRow: { flexDirection: 'row', gap: 16 },
-  condItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  condItemText: { fontFamily: 'Inter_500Medium', fontSize: 12 },
-  condHalf: { flex: 1, borderRadius: 16, borderWidth: 1, padding: 14, alignItems: 'center', gap: 6 },
-  condHalfIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  condHalfLabel: { fontFamily: 'Inter_500Medium', fontSize: 10, letterSpacing: 0.5 },
-  condHalfVal: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, textAlign: 'center' },
+  condCardTitle:  { fontFamily: 'Inter_600SemiBold', fontSize: 13 },
+  fertChip:       { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
+  fertChipText:   { fontFamily: 'Inter_700Bold', fontSize: 10 },
+  condRow:        { flexDirection: 'row', gap: 16 },
+  condItem:       { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  condItemText:   { fontFamily: 'Inter_500Medium', fontSize: 12 },
+  condHalf:       { flex: 1, borderRadius: 16, borderWidth: 1, padding: 14, alignItems: 'center', gap: 6 },
+  condHalfIcon:   { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  condHalfLabel:  { fontFamily: 'Inter_500Medium', fontSize: 10, letterSpacing: 0.4 },
+  condHalfVal:    { fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, textAlign: 'center' },
 
   // Info card
-  infoCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
-  infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 13 },
-  infoText: { fontFamily: 'Inter_500Medium', fontSize: 13, flex: 1, lineHeight: 18 },
-  infoSub: { fontFamily: 'Inter_400Regular', fontSize: 11 },
+  infoCard:    { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
+  infoRow:     { flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 13 },
+  infoText:    { fontFamily: 'Inter_500Medium', fontSize: 13, flex: 1, lineHeight: 18 },
+  infoSub:     { fontFamily: 'Inter_400Regular', fontSize: 11 },
   infoDivider: { height: 1 },
 
-  // Diseases
-  diseaseCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
-  diseaseRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 13 },
-  diseaseDot: { width: 7, height: 7, borderRadius: 4 },
-  diseaseName: { fontFamily: 'Inter_500Medium', fontSize: 13, color: '#E5E7EB' },
-  diseasePill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  // Disease
+  diseaseCard:     { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
+  diseaseRow:      { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 13 },
+  diseaseDot:      { width: 7, height: 7, borderRadius: 4 },
+  diseaseName:     { fontFamily: 'Inter_500Medium', fontSize: 13 },
+  diseasePill:     { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   diseasePillText: { fontFamily: 'Inter_700Bold', fontSize: 10 },
 
   // Tips
-  tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 13, borderRadius: 14, borderWidth: 1 },
-  tipNum: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  tipNumText: { fontFamily: 'Inter_800ExtraBold', fontSize: 12 },
-  tipText: { fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 20, flex: 1 },
+  tipRow:     { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 13, borderRadius: 14, borderWidth: 1 },
+  tipNum:     { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  tipNumText: { fontFamily: 'Inter_700Bold', fontSize: 12 },
+  tipText:    { fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 20, flex: 1 },
 
   // AI
-  aiCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
+  aiCard:       { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
   aiCardAccent: { height: 3, width: '100%' },
-  aiText: { fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 22, padding: 14 },
-  aiPromptBtn: { margin: 14, borderRadius: 14, overflow: 'hidden' },
+  aiText:       { fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 22, padding: 14 },
+  aiPromptBtn:  { margin: 14, borderRadius: 14, overflow: 'hidden' },
   aiPromptGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 14 },
   aiPromptText: { fontFamily: 'Inter_700Bold', fontSize: 14, color: '#fff', flex: 1, textAlign: 'center' },
 
   // CTA
-  ctaBtn: { borderRadius: 20, overflow: 'hidden', marginTop: 8 },
+  ctaBtn:  { borderRadius: 20, overflow: 'hidden', marginTop: 8 },
   ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16 },
   ctaText: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 16, color: '#fff', flex: 1, textAlign: 'center' },
 });
 
 // ─── Main screen styles ────────────────────────────────────────────────────────
 const M = StyleSheet.create({
-  root: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 10 },
+  root:    { flex: 1 },
+  header:  {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 10,
+  },
   backBtn: { width: 38, height: 38, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  badge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 9, paddingVertical: 3, borderRadius: 20 },
-  badgeText: { fontFamily: 'Inter_800ExtraBold', fontSize: 9, letterSpacing: 1 },
-  title: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 20 },
-  statsBar: { flexDirection: 'row', borderRadius: 16, borderWidth: 1, overflow: 'hidden', padding: 14 },
+  badge:   { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 9, paddingVertical: 3, borderRadius: 20 },
+  badgeText: { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 1 },
+  title:   { fontFamily: 'InstrumentSerif_400Regular', fontSize: 20 },
+  statsBar: {
+    flexDirection: 'row', borderRadius: 16, borderWidth: 1,
+    overflow: 'hidden', padding: 14,
+  },
   statCol: { flex: 1, alignItems: 'center', gap: 2 },
   statNum: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 },
   statLbl: { fontFamily: 'Inter_600SemiBold', fontSize: 9 },
   statDiv: { width: 1, marginHorizontal: 8 },
   catPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
   catText: { fontFamily: 'Inter_700Bold', fontSize: 12 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 4 },
+  grid:    { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 4 },
 });
