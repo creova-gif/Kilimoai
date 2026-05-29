@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert, Platform, StatusBar, SafeAreaView, Modal, Dimensions
 } from 'react-native';
 import {
-  ChevronLeft, MapPin, Calendar, QrCode, ShieldCheck, Download, Plus, Info, Check, Trash2, ArrowUpRight, ChevronRight, Layers, AlertCircle
+  ChevronLeft, MapPin, Calendar, QrCode, ShieldCheck, Download, Plus, Info, Check, Trash2, ArrowUpRight, ArrowDownLeft, ChevronRight, Layers, AlertCircle, X
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
@@ -366,48 +366,110 @@ export default function AgroIdScreen() {
           animationType="slide"
           onRequestClose={() => setUpdateModalVisible(false)}
         >
-          <View style={styles.modalOverlay}>
-            <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
-            <View style={[styles.modalCard, { backgroundColor: colors.card, borderColor: colors.border, width: '90%' }]}>
-              <View style={styles.modalHeader}>
-                <Layers size={22} color={colors.primary} />
-                <Text style={[styles.modalTitle, { color: colors.text }]}>Ongeza Muamala (Add Entry)</Text>
-              </View>
-              <Text style={[styles.modalDesc, { color: colors.textMute }]}>
-                Select entry type to update your verified crop passport ledger.
-              </Text>
-              
-              <View style={styles.ledgerActionRow}>
+          <View style={styles.addSheetOverlay}>
+            <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFill} />
+            <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={() => setUpdateModalVisible(false)} />
+            <View style={[styles.addSheet, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              {/* Drag handle */}
+              <View style={[styles.addSheetHandle, { backgroundColor: colors.border }]} />
+
+              {/* Header */}
+              <View style={styles.addSheetHeader}>
+                <View style={[styles.addSheetIconWrap, { backgroundColor: colors.primary + '18' }]}>
+                  <Layers size={20} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.addSheetTitle, { color: colors.text }]}>
+                    {language === 'sw' ? 'Ongeza Muamala' : 'Add Entry'}
+                  </Text>
+                  <Text style={[styles.addSheetSub, { color: colors.textMute }]}>
+                    {language === 'sw' ? 'Ledger ya Agro ID yako' : 'Your verified Agro ID ledger'}
+                  </Text>
+                </View>
                 <TouchableOpacity
+                  onPress={() => setUpdateModalVisible(false)}
+                  style={[styles.addSheetClose, { backgroundColor: colors.background, borderColor: colors.border }]}
+                >
+                  <X size={16} color={colors.textMute} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Divider */}
+              <View style={[styles.addSheetDivider, { backgroundColor: colors.border }]} />
+
+              {/* Action cards */}
+              <View style={styles.addSheetCards}>
+                {/* Income card */}
+                <TouchableOpacity
+                  activeOpacity={0.85}
                   onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     addSampleEntry(true);
                     setUpdateModalVisible(false);
                     Alert.alert('Mauzo', 'Muamala wa mapato umeongezwa kikamilifu.');
                   }}
-                  style={[styles.quickBtn, { backgroundColor: colors.success + '15', borderColor: colors.success + '40', paddingVertical: 16 }]}
                 >
-                  <Plus size={16} color={colors.success} />
-                  <Text style={[styles.quickBtnText, { color: colors.success, fontSize: 13 }]}>Income (Mauzo)</Text>
+                  <LinearGradient
+                    colors={['#22d15a22', '#22d15a0a']}
+                    style={[styles.addSheetActionCard, { borderColor: '#22d15a40' }]}
+                  >
+                    <View style={[styles.addSheetActionIcon, { backgroundColor: '#22d15a20' }]}>
+                      <ArrowDownLeft size={22} color="#22d15a" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.addSheetActionLabel, { color: colors.text }]}>
+                        {language === 'sw' ? 'Mapato' : 'Income'}
+                      </Text>
+                      <Text style={[styles.addSheetActionSub, { color: colors.textMute }]}>
+                        {language === 'sw' ? 'Mauzo ya mazao, faida' : 'Crop sales, earnings'}
+                      </Text>
+                    </View>
+                    <View style={[styles.addSheetActionPill, { backgroundColor: '#22d15a' }]}>
+                      <Plus size={14} color="#000" />
+                    </View>
+                  </LinearGradient>
                 </TouchableOpacity>
-                
+
+                {/* Expense card */}
                 <TouchableOpacity
+                  activeOpacity={0.85}
                   onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     addSampleEntry(false);
                     setUpdateModalVisible(false);
                     Alert.alert('Gharama', 'Muamala wa gharama umeongezwa kikamilifu.');
                   }}
-                  style={[styles.quickBtn, { backgroundColor: colors.error + '15', borderColor: colors.error + '40', paddingVertical: 16 }]}
                 >
-                  <Plus size={16} color={colors.error} />
-                  <Text style={[styles.quickBtnText, { color: colors.error, fontSize: 13 }]}>Expense (Pembejeo)</Text>
+                  <LinearGradient
+                    colors={['#ef444422', '#ef44440a']}
+                    style={[styles.addSheetActionCard, { borderColor: '#ef444440' }]}
+                  >
+                    <View style={[styles.addSheetActionIcon, { backgroundColor: '#ef444420' }]}>
+                      <ArrowUpRight size={22} color="#ef4444" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.addSheetActionLabel, { color: colors.text }]}>
+                        {language === 'sw' ? 'Gharama' : 'Expense'}
+                      </Text>
+                      <Text style={[styles.addSheetActionSub, { color: colors.textMute }]}>
+                        {language === 'sw' ? 'Pembejeo, zana, usafirishaji' : 'Inputs, tools, transport'}
+                      </Text>
+                    </View>
+                    <View style={[styles.addSheetActionPill, { backgroundColor: '#ef4444' }]}>
+                      <Plus size={14} color="#fff" />
+                    </View>
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity 
-                style={[styles.modalCloseBtn, { marginTop: 16 }]}
+              {/* Cancel */}
+              <TouchableOpacity
+                style={[styles.addSheetCancel, { borderColor: colors.border }]}
                 onPress={() => setUpdateModalVisible(false)}
               >
-                <Text style={[styles.modalCloseText, { color: colors.textMute }]}>Ghairi (Cancel)</Text>
+                <Text style={[styles.addSheetCancelText, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Ghairi' : 'Cancel'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -659,6 +721,109 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontFamily: 'Inter_800ExtraBold',
+  },
+
+  // ── Add Entry Bottom Sheet ─────────────────────────────────────────
+  addSheetOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  addSheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+  },
+  addSheetHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  addSheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  addSheetIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addSheetTitle: {
+    fontFamily: 'InstrumentSerif_400Regular',
+    fontSize: 20,
+    letterSpacing: -0.3,
+  },
+  addSheetSub: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12,
+    marginTop: 1,
+  },
+  addSheetClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addSheetDivider: {
+    height: StyleSheet.hairlineWidth,
+    marginBottom: 16,
+  },
+  addSheetCards: {
+    gap: 10,
+    marginBottom: 16,
+  },
+  addSheetActionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 16,
+  },
+  addSheetActionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addSheetActionLabel: {
+    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 15,
+    marginBottom: 3,
+  },
+  addSheetActionSub: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  addSheetActionPill: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addSheetCancel: {
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingVertical: 13,
+    alignItems: 'center',
+  },
+  addSheetCancelText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 14,
   },
 
   // Modals Styles
