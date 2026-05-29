@@ -14,7 +14,7 @@ import {
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
-import Animated, { FadeInDown, FadeIn, useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import PageScaffold, { GlassCard, SectionHeader, EmptyState } from '../components/PageScaffold';
 import { useTheme } from '../constants/Theme';
 import { useFarmDataStore, InventoryItem, InventoryUnit } from '../store/useFarmDataStore';
@@ -42,14 +42,11 @@ const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
 const fmtShort = (n: number) => n >= 1_000_000 ? `${(n/1_000_000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(0)}K` : String(n);
 const catMeta = (c: InventoryItem['category']) => CATEGORIES.find((x) => x.key === c) ?? CATEGORIES[5];
 
-// ─── Animated fill bar ────────────────────────────────────────────────────────
+// ─── Fill bar ─────────────────────────────────────────────────────────────────
 function FillBar({ progress, color }: { progress: number; color: string }) {
-  const w = useSharedValue(0);
-  React.useEffect(() => { w.value = withTiming(progress, { duration: 800 }); }, [progress]);
-  const style = useAnimatedStyle(() => ({ width: w.value * 100 + '%' as any }));
   return (
     <View style={fb.track}>
-      <Animated.View style={[fb.fill, style, { backgroundColor: color }]} />
+      <View style={[fb.fill, { backgroundColor: color, width: `${Math.round(progress * 100)}%` as any }]} />
     </View>
   );
 }
