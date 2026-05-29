@@ -307,6 +307,345 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
   );
 };
 
+// ─── Market price + yield reference tables (Tanzania averages) ─────────────────
+const CROP_PRICE_TZS: Record<string, number> = {
+  maize: 850, beans: 1400, tomato: 1200, rice: 2000, cassava: 700,
+  sunflower: 1500, sorghum: 900, chili: 3500, coffee: 6000, banana: 600,
+  potato: 900, onion: 1100, cabbage: 800, watermelon: 700, groundnut: 2200,
+};
+const CROP_YIELD_T_HA: Record<string, number> = {
+  maize: 2.5, beans: 1.0, tomato: 18, rice: 3.5, cassava: 15,
+  sunflower: 1.3, sorghum: 1.8, chili: 6, coffee: 0.6, banana: 20,
+  potato: 14, onion: 12, cabbage: 20, watermelon: 25, groundnut: 1.5,
+};
+const CROP_PLANTS_HA: Record<string, number> = {
+  maize: 44000, beans: 150000, tomato: 15000, rice: 400000, cassava: 10000,
+  sunflower: 40000, sorghum: 200000, chili: 20000, coffee: 1500, banana: 2500,
+};
+
+// ─── Crop Value Card — inspired by Nogyo "Bell Pepper / Pumpkin Field" cards ──
+const CropValueCard = ({ colors, isDark, language }: any) => {
+  const routerInner = useRouter();
+  const farmProfile = useKilimoStore((s) => s.farmProfile);
+  const farmVitals  = useKilimoStore((s) => s.farmVitals);
+  const primaryCrops = farmProfile?.primaryCrops || [];
+  const [idx, setIdx] = useState(0);
+
+  const activeCrop = primaryCrops[idx] || '';
+  const cropMeta   = useMemo(() => getCropMetadata(activeCrop, language), [activeCrop, language]);
+
+  if (!activeCrop) return null;
+
+  const nameLower = activeCrop.toLowerCase();
+  const cropKey   = Object.keys(CROP_PRICE_TZS).find((k) => nameLower.includes(k)) ?? 'maize';
+  const pricePerKg  = CROP_PRICE_TZS[cropKey];
+  const yieldTHa    = CROP_YIELD_T_HA[cropKey] ?? 2.5;
+  const plantsHa    = CROP_PLANTS_HA[cropKey] ?? 44000;
+  const acreageHa   = (farmProfile?.farmSizeAcres ?? 2) * 0.405;
+  const estYieldKg  = Math.round(acreageHa * yieldTHa * 1000);
+  const estValueTZS = Math.round(estYieldKg * pricePerKg);
+  const daysLeft    = cropMeta.harvestDays - cropMeta.currentDay;
+  const laborDays   = Math.max(2, Math.ceil(estYieldKg / 300));
+  const pctDone     = Math.round((cropMeta.currentDay / cropMeta.harvestDays) * 100);
+  const estPlants   = Math.round(acreageHa * plantsHa);
+
+  // Stage-contextual daily tip
+  const stageTip = (() => {
+    if (pctDone < 30) return language === 'sw'
+      ? `Weka mbolea ya DAP mapema (kilo 50/hekta) kuimarisha mizizi ya ${cropMeta.displayName}.`
+      : `Apply DAP fertilizer early (50 kg/ha) to strengthen ${cropMeta.displayName} root systems.`;
+    if (pctDone < 70) return language === 'sw'
+      ? `Kagua wadudu kila siku 3 kwenye ${cropMeta.displayName} — hatua hii ni muhimu kwa mavuno bora.`
+      : `Scout ${cropMeta.displayName} for pests every 3 days — this stage is critical for yield quality.`;
+    return language === 'sw'
+      ? `Tayarisha ghala na magunia ya safi. Vuna ${cropMeta.displayName} mapema asubuhi kuepuka joto kali.`
+      : `Prepare clean storage bags. Harvest ${cropMeta.displayName} early morning to avoid heat stress.`;
+  })();
+
+  const healthColor  = farmVitals.soilPh >= 6 && farmVitals.soilPh <= 7.5 ? '#22d15a' : '#f59e0b';
+  const healthLabel  = farmVitals.soilPh >= 6 && farmVitals.soilPh <= 7.5
+    ? (language === 'sw' ? 'Nzuri' : 'Good')
+    : (language === 'sw' ? 'Wastani' : 'Fair');
+
+  return (
+    <Animated.View entering={FadeInDown.delay(60).springify()}>
+      <View style={[styles.cropValueCard, {
+        backgroundColor: isDark ? 'rgba(4,12,6,0.98)' : colors.card,
+        borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
+      }]}>
+        <LinearGradient
+          colors={['rgba(34,209,90,0.09)', 'rgba(34,209,90,0.03)', 'transparent']}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+
+        {/* Header row */}
+        <View style={styles.cropValueHeader}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.cropValueTitle, { color: isDark ? '#fff' : colors.text }]}>
+              {cropMeta.displayName}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
+              <View style={styles.cropValueFieldBadge}>
+                <Text style={styles.cropValueFieldText}>
+                  {acreageHa.toFixed(1)} Ha · {estPlants.toLocaleString()} {language === 'sw' ? 'miche' : 'plants'}
+                </Text>
+              </View>
+              {primaryCrops.length > 1 && (
+                <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
+                  <TouchableOpacity onPress={() => setIdx((p) => (p - 1 + primaryCrops.length) % primaryCrops.length)} hitSlop={{ top:8,bottom:8,left:8,right:8 }}>
+                    <ChevronLeft size={13} color={colors.textMute} />
+                  </TouchableOpacity>
+                  <Text style={{ fontSize: 9, fontFamily: 'Inter_600SemiBold', color: colors.textMute }}>{idx+1}/{primaryCrops.length}</Text>
+                  <TouchableOpacity onPress={() => setIdx((p) => (p + 1) % primaryCrops.length)} hitSlop={{ top:8,bottom:8,left:8,right:8 }}>
+                    <ChevronRight size={13} color={colors.textMute} />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </View>
+          <View style={[styles.cropHealthBadge, { backgroundColor: healthColor + '18', borderColor: healthColor + '35' }]}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: healthColor }} />
+            <Text style={[styles.cropHealthText, { color: healthColor }]}>
+              {language === 'sw' ? 'Afya: ' : 'Health: '}{healthLabel}
+            </Text>
+          </View>
+        </View>
+
+        {/* Big stats */}
+        <View style={styles.cropValueStats}>
+          <View style={styles.cropValueStatCol}>
+            <Text style={[styles.cropValueStatLabel, { color: colors.textMute }]}>
+              {language === 'sw' ? 'Est. Mavuno' : 'Est. Total'}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
+              <Text style={[styles.cropValueStatBig, { color: isDark ? '#fff' : colors.text }]}>
+                {(estYieldKg / 1000).toFixed(1)}
+              </Text>
+              <Text style={[styles.cropValueStatUnit, { color: colors.textMute }]}>T</Text>
+            </View>
+            <Text style={[styles.cropValueStatSub, { color: colors.textMute }]}>
+              ~{estYieldKg.toLocaleString()} kg
+            </Text>
+          </View>
+
+          <View style={[styles.cropValueDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border }]} />
+
+          <View style={styles.cropValueStatCol}>
+            <Text style={[styles.cropValueStatLabel, { color: colors.textMute }]}>
+              {language === 'sw' ? 'Est. Thamani' : 'Est. Market Value'}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
+              <Text style={[styles.cropValueStatBig, { color: '#22d15a' }]}>
+                {(estValueTZS / 1000000).toFixed(2)}M
+              </Text>
+            </View>
+            <Text style={[styles.cropValueStatSub, { color: colors.textMute }]}>
+              TZS @{pricePerKg.toLocaleString()}/kg
+            </Text>
+          </View>
+        </View>
+
+        {/* Harvest countdown + labor */}
+        <View style={styles.cropValueCountdown}>
+          <View style={styles.cropValueCountdownLeft}>
+            <Text style={[styles.cropValueCountdownNum, { color: isDark ? '#fff' : colors.text }]}>
+              {daysLeft}
+            </Text>
+            <View>
+              <Text style={[styles.cropValueCountdownLabel, { color: colors.textMute }]}>
+                {language === 'sw' ? 'siku · kasi ya kawaida' : 'days at regular rate'}
+              </Text>
+              <Text style={[styles.cropValueCountdownSub, { color: colors.textMute }]}>
+                {language === 'sw' ? 'Hadi Mavuno' : 'Est. Harvest due in'}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.cropValueLaborBadge, {
+            backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+            borderColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border,
+          }]}>
+            <Target size={11} color={colors.textMute} />
+            <Text style={[styles.cropValueLaborText, { color: colors.textMute }]}>
+              ~{laborDays} {language === 'sw' ? 'siku za kazi' : 'work days'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Daily tip strip */}
+        <View style={[styles.cropValueTipRow, {
+          backgroundColor: isDark ? 'rgba(34,209,90,0.05)' : 'rgba(34,209,90,0.04)',
+          borderColor: 'rgba(34,209,90,0.13)',
+        }]}>
+          <Lightbulb size={12} color="#22d15a" />
+          <Text style={[styles.cropValueTipText, { color: colors.textMute }]} numberOfLines={2}>
+            {stageTip}
+          </Text>
+        </View>
+
+        {/* CTA row */}
+        <View style={styles.cropValueFooter}>
+          <TouchableOpacity
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/crop-planning' as any); }}
+            style={[styles.cropValueCtaBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.12)' : colors.primaryLight, borderColor: 'rgba(34,209,90,0.25)' }]}
+          >
+            <Leaf size={12} color="#22d15a" />
+            <Text style={styles.cropValueCtaText}>
+              {language === 'sw' ? 'Mpango wa Mazao' : 'Crop Plan'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/market' as any); }}
+            style={[styles.cropValueCtaBtn, { backgroundColor: isDark ? 'rgba(245,158,11,0.1)' : 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.25)' }]}
+          >
+            <TrendingUp size={12} color="#f59e0b" />
+            <Text style={[styles.cropValueCtaText, { color: '#f59e0b' }]}>
+              {language === 'sw' ? 'Angalia Soko' : 'Market Prices'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Animated.View>
+  );
+};
+
+// ─── Daily Organizer Strip — inspired by Nogyo "Jeremy Zucker" daily task card ─
+const DailyOrganizerStrip = ({ colors, isDark, language }: any) => {
+  const routerInner = useRouter();
+  const { tasks } = useTasks();
+
+  const upcoming = useMemo(() => {
+    const now = Date.now();
+    const cutoff = now + 48 * 60 * 60 * 1000;
+    return tasks
+      .filter((t) => t.status !== 'done' && t.status !== 'cancelled')
+      .filter((t) => !t.dueDate || new Date(t.dueDate).getTime() <= cutoff)
+      .sort((a, b) => {
+        const ap = { critical: 0, high: 1, medium: 2, low: 3 }[a.priority] ?? 3;
+        const bp = { critical: 0, high: 1, medium: 2, low: 3 }[b.priority] ?? 3;
+        return ap - bp;
+      })
+      .slice(0, 3);
+  }, [tasks]);
+
+  const pendingTotal = tasks.filter((t) => t.status !== 'done' && t.status !== 'cancelled').length;
+
+  const catIcon = (cat: string) => {
+    switch (cat) {
+      case 'irrigation': return <Droplets size={13} color="#3b82f6" />;
+      case 'planting':   return <Leaf size={13} color="#22d15a" />;
+      case 'harvest':    return <Sparkles size={13} color="#f59e0b" />;
+      case 'scouting':   return <Microscope size={13} color="#a78bfa" />;
+      case 'finance':    return <BarChart3 size={13} color="#22d15a" />;
+      default:           return <Target size={13} color={colors.textMute} />;
+    }
+  };
+  const priorityColor = (p: string) => ({
+    critical: '#ef4444', high: '#f59e0b', medium: '#22d15a', low: colors.textMute
+  }[p] ?? colors.textMute);
+
+  const formatDue = (dueDate?: string) => {
+    if (!dueDate) return language === 'sw' ? 'Leo' : 'Today';
+    const ms = new Date(dueDate).getTime() - Date.now();
+    const hrs = Math.round(ms / (60 * 60 * 1000));
+    if (hrs <= 0) return language === 'sw' ? 'Sasa hivi' : 'Due now';
+    if (hrs < 24) return language === 'sw' ? `Saa ${hrs} zijazo` : `in ${hrs}h`;
+    return language === 'sw' ? 'Kesho' : 'Tomorrow';
+  };
+
+  return (
+    <Animated.View entering={FadeInDown.delay(80).springify()}>
+      <View style={[styles.organizerCard, {
+        backgroundColor: isDark ? 'rgba(6,14,8,0.98)' : colors.card,
+        borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
+      }]}>
+        <LinearGradient
+          colors={['rgba(34,209,90,0.06)', 'transparent']}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+
+        {/* Header */}
+        <View style={styles.organizerHeader}>
+          <View style={{ gap: 1 }}>
+            <Text style={[styles.organizerTitle, { color: isDark ? '#fff' : colors.text }]}>
+              {language === 'sw' ? 'Leo Shambani' : "Today's Schedule"}
+            </Text>
+            <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+              {new Date().toLocaleDateString(language === 'sw' ? 'sw-TZ' : 'en-TZ', { weekday: 'long', day: 'numeric', month: 'short' })}
+            </Text>
+          </View>
+          <View style={[styles.organizerBadge, { backgroundColor: pendingTotal > 0 ? 'rgba(239,68,68,0.12)' : 'rgba(34,209,90,0.1)', borderColor: pendingTotal > 0 ? 'rgba(239,68,68,0.25)' : 'rgba(34,209,90,0.2)' }]}>
+            <Text style={[styles.organizerBadgeText, { color: pendingTotal > 0 ? '#ef4444' : '#22d15a' }]}>
+              {pendingTotal} {language === 'sw' ? 'zingooja' : 'pending'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Task rows */}
+        {upcoming.length === 0 ? (
+          <View style={styles.organizerEmpty}>
+            <Check size={16} color="#22d15a" />
+            <Text style={[styles.organizerEmptyText, { color: colors.textMute }]}>
+              {language === 'sw' ? 'Hakuna kazi leo — imara sana!' : 'No tasks due — all clear!'}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.organizerList}>
+            {upcoming.map((task, i) => (
+              <TouchableOpacity
+                key={task.id}
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/tasks' as any); }}
+                activeOpacity={0.8}
+                style={[styles.organizerRow, {
+                  borderTopWidth: i > 0 ? 1 : 0,
+                  borderTopColor: isDark ? 'rgba(255,255,255,0.05)' : colors.border,
+                }]}
+              >
+                <View style={[styles.organizerIconWrap, {
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                }]}>
+                  {catIcon(task.category)}
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.organizerTaskTitle, { color: isDark ? '#fff' : colors.text }]} numberOfLines={1}>
+                    {language === 'sw' && task.titleSw ? task.titleSw : task.title}
+                  </Text>
+                  {task.farmBlock && (
+                    <Text style={[styles.organizerTaskSub, { color: colors.textMute }]}>
+                      {task.farmBlock}
+                    </Text>
+                  )}
+                </View>
+                <View style={{ alignItems: 'flex-end', gap: 3 }}>
+                  <View style={[styles.organizerPriorityDot, { backgroundColor: priorityColor(task.priority) }]} />
+                  <Text style={[styles.organizerDueText, { color: colors.textMute }]}>
+                    {formatDue(task.dueDate)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {/* Footer CTA */}
+        <TouchableOpacity
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); routerInner.push('/tasks' as any); }}
+          style={[styles.organizerFooterBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.1)' : colors.primaryLight }]}
+        >
+          <LayoutGrid size={12} color="#22d15a" />
+          <Text style={styles.organizerFooterText}>
+            {language === 'sw' ? 'Angalia Ratiba Yote' : 'View Full Schedule'}
+          </Text>
+          <ArrowRight size={12} color="#22d15a" />
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
+  );
+};
+
 // Growth Rates vertical bar chart component
 const GrowthChart = ({ colors, isDark, language }: any) => {
   const [selectedRange, setSelectedRange] = useState('M');
@@ -1639,6 +1978,9 @@ export default function HomeScreen() {
           {/* Horizontal Track Records timeline stepper */}
           <TrackRecords colors={colors} isDark={isDark} language={language} />
 
+          {/* Crop Value Dashboard — est. yield, market value, harvest countdown */}
+          <CropValueCard colors={colors} isDark={isDark} language={language} />
+
           {/* Weather Widget */}
           <WeatherWidget weather={weather} language={language} colors={colors} isDark={isDark} router={router} />
 
@@ -1923,6 +2265,9 @@ export default function HomeScreen() {
               </Animated.View>
             )}
           </Animated.View>
+
+          {/* Daily Organizer — today's tasks at a glance */}
+          <DailyOrganizerStrip colors={colors} isDark={isDark} language={language} />
 
           {/* AI Recommendations */}
           <View style={styles.recSection}>
@@ -2870,6 +3215,251 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   trackExpandedBtnText: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    color: '#22d15a',
+  },
+
+  // ── Crop Value Card Styles ─────────────────────────────────────────────────
+  cropValueCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
+    padding: 16,
+    marginTop: 10,
+  },
+  cropValueHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  cropValueTitle: {
+    fontSize: 20,
+    fontFamily: 'InstrumentSerif_400Regular',
+    letterSpacing: -0.3,
+  },
+  cropValueFieldBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignSelf: 'flex-start',
+  },
+  cropValueFieldText: {
+    fontSize: 9,
+    fontFamily: 'Inter_600SemiBold',
+    color: 'rgba(255,255,255,0.45)',
+    letterSpacing: 0.2,
+  },
+  cropHealthBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  cropHealthText: {
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+  },
+  cropValueStats: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginBottom: 14,
+    gap: 12,
+  },
+  cropValueStatCol: {
+    flex: 1,
+  },
+  cropValueDivider: {
+    width: 1,
+    borderRadius: 1,
+  },
+  cropValueStatLabel: {
+    fontSize: 9,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+  },
+  cropValueStatBig: {
+    fontSize: 28,
+    fontFamily: 'InstrumentSerif_400Regular',
+    lineHeight: 30,
+  },
+  cropValueStatUnit: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+    lineHeight: 32,
+  },
+  cropValueStatSub: {
+    fontSize: 9,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 1,
+  },
+  cropValueCountdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  cropValueCountdownLeft: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 8,
+  },
+  cropValueCountdownNum: {
+    fontSize: 34,
+    fontFamily: 'InstrumentSerif_400Regular',
+    lineHeight: 38,
+  },
+  cropValueCountdownLabel: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+  },
+  cropValueCountdownSub: {
+    fontSize: 9,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 1,
+  },
+  cropValueLaborBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  cropValueLaborText: {
+    fontSize: 10,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  cropValueTipRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 12,
+  },
+  cropValueTipText: {
+    flex: 1,
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 16,
+  },
+  cropValueFooter: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  cropValueCtaBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  cropValueCtaText: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    color: '#22d15a',
+  },
+
+  // ── Daily Organizer Strip Styles ───────────────────────────────────────────
+  organizerCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
+    marginTop: 10,
+  },
+  organizerHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    padding: 14,
+    paddingBottom: 10,
+  },
+  organizerTitle: {
+    fontSize: 15,
+    fontFamily: 'InstrumentSerif_400Regular',
+  },
+  organizerBadge: {
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  organizerBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+  },
+  organizerEmpty: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 14,
+    paddingTop: 6,
+  },
+  organizerEmptyText: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+  },
+  organizerList: {
+    paddingHorizontal: 14,
+    paddingBottom: 4,
+  },
+  organizerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+  },
+  organizerIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  organizerTaskTitle: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  organizerTaskSub: {
+    fontSize: 10,
+    fontFamily: 'Inter_500Medium',
+    marginTop: 1,
+  },
+  organizerPriorityDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    alignSelf: 'flex-end',
+  },
+  organizerDueText: {
+    fontSize: 9,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 0.2,
+  },
+  organizerFooterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7,
+    margin: 12,
+    marginTop: 6,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  organizerFooterText: {
     fontSize: 11,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
