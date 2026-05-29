@@ -321,6 +321,9 @@ export default function RootLayout() {
               <Stack.Screen name="soil-analysis" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="iot-systems" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="vra-setup" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="crop-library" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="ai-training-hub" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="video-hub" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="field/[id]" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="verification/intro" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="verification/personal" options={{ headerShown: false, presentation: 'card' }} />
