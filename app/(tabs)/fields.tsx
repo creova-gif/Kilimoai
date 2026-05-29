@@ -25,6 +25,7 @@ import {
   Check,
   ChevronRight,
   Sparkles,
+  X,
 } from 'lucide-react-native';
 import MapView, { Polygon as MapPolygon, Marker, PROVIDER_GOOGLE } from '../../components/MapViewWrapper';
 import { BlurView } from 'expo-blur';
@@ -522,7 +523,7 @@ export default function FarmHub() {
                             }
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
-                            style={{ height: 3, borderRadius: 1.5, width: n.data.value }}
+                            style={{ height: 3, borderRadius: 1.5, width: n.data.value as any }}
                           />
                         </View>
                       </View>

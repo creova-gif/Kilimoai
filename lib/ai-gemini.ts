@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useKilimoStore } from '../store/useKilimoStore';
-import { ChatMessage, VisionDiagnosis, Severity, Confidence, ImgQuality, normalizeSeverity, AIError } from './ai-types';
+import { ChatMessage, VisionDiagnosis, Severity, Confidence, ImgQuality, normalizeSeverity, AIError } from './ai';
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);

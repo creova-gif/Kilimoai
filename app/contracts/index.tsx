@@ -1,7 +1,6 @@
 /**
- * Contract Farming — list + create modal
+ * Contract Farming — redesigned list + create modal
  * Editorial hero · gradient cards · segmented milestone progress
- * Navigation fix: back button added to hero header
  */
 import React, { useState, useMemo } from 'react';
 import {
@@ -11,9 +10,9 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
-  Plus, Handshake, ChevronRight, X, FileText,
+  Plus, Handshake, ChevronRight, ChevronLeft, X, FileText,
   User, MapPin, Wheat, TrendingUp, CheckCircle2,
-  Circle, ArrowUpRight, ChevronLeft,
+  Circle, ArrowUpRight,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
@@ -41,16 +40,17 @@ const FILTERS: { label: string; labelEn: string; status: 'all' | ContractStatus 
 const CROPS   = ['Mahindi','Mpunga','Maharage','Kahawa','Alizeti','Mihogo','Nyanya','Pamba','Ngano','Viazi'];
 const REGIONS = ['Arusha','Mbeya','Kilimanjaro','Morogoro','Iringa','Dodoma','Mwanza','Tanga','Pwani','Singida'];
 
+// ─── Status config ─────────────────────────────────────────────────────────────
 const STATUS_ICON: Record<ContractStatus, React.ReactNode> = {
-  draft:         <Circle       size={10} color="#94a3b8" fill="#94a3b8" />,
-  sent:          <Circle       size={10} color="#3b82f6" fill="#3b82f6" />,
-  under_review:  <Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
-  signed:        <CheckCircle2 size={10} color="#22d15a" />,
-  active:        <CheckCircle2 size={10} color="#22d15a" />,
-  milestone_due: <Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
-  completed:     <CheckCircle2 size={10} color="#22d15a" />,
-  cancelled:     <Circle       size={10} color="#ef4444" fill="#ef4444" />,
-  disputed:      <Circle       size={10} color="#ef4444" fill="#ef4444" />,
+  draft:        <Circle       size={10} color="#94a3b8" fill="#94a3b8" />,
+  sent:         <Circle       size={10} color="#3b82f6" fill="#3b82f6" />,
+  under_review: <Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
+  signed:       <CheckCircle2 size={10} color="#22d15a" />,
+  active:       <CheckCircle2 size={10} color="#22d15a" />,
+  milestone_due:<Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
+  completed:    <CheckCircle2 size={10} color="#22d15a" />,
+  cancelled:    <Circle       size={10} color="#ef4444" fill="#ef4444" />,
+  disputed:     <Circle       size={10} color="#ef4444" fill="#ef4444" />,
 };
 
 // ─── Create Modal ──────────────────────────────────────────────────────────────
@@ -86,8 +86,10 @@ function CreateContractModal({ visible, onClose, onCreate }: {
       <BlurView intensity={isDark ? 50 : 70} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={[cm.sheet, { backgroundColor: isDark ? '#0d1a0f' : '#fff' }]}>
+          {/* Handle */}
           <View style={[cm.handle, { backgroundColor: colors.border }]} />
 
+          {/* Header */}
           <LinearGradient colors={['#22d15a18','#22d15a00']} style={cm.sheetHeaderGrad}>
             <View style={cm.sheetHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -107,6 +109,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
 
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}>
 
+            {/* Contract value preview bar */}
             {contractValue > 0 && (
               <Animated.View entering={FadeInDown} style={[cm.valueBar, { backgroundColor: '#22d15a15', borderColor: '#22d15a30' }]}>
                 <Text style={[cm.valueBarLabel, { color: colors.textMute }]}>Thamani ya mkataba</Text>
@@ -163,6 +166,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
               </View>
             </View>
 
+            {/* CTA */}
             <TouchableOpacity onPress={handleCreate} activeOpacity={0.88} style={{ marginTop: 28 }}>
               <LinearGradient colors={['#22d15a','#0a3d18']} style={cm.createBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                 <Handshake size={18} color="#fff" />
@@ -236,20 +240,23 @@ export default function ContractsScreen() {
           >
             <SafeAreaView>
               <View style={s.heroInner}>
-
-                {/* Nav row: back + add */}
-                <View style={s.heroNav}>
-                  <TouchableOpacity
-                    onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
-                    activeOpacity={0.8}
-                    style={[s.backBtn, {
-                      backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)',
-                      borderColor: colors.border,
-                    }]}
-                  >
-                    <ChevronLeft size={20} color={colors.text} />
-                  </TouchableOpacity>
-
+                {/* Back-row */}
+                <View style={s.heroTop}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <TouchableOpacity
+                      onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+                      style={{ padding: 6, borderRadius: 12, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card }}
+                    >
+                      <ChevronLeft size={20} color={colors.text} />
+                    </TouchableOpacity>
+                    <View>
+                      <View style={s.heroBadge}>
+                        <View style={s.heroBadgeDot} />
+                        <Text style={s.heroBadgeText}>CONTRACT FARMING</Text>
+                      </View>
+                      <Text style={[s.heroTitle, { color: colors.text }]}>Mikataba</Text>
+                    </View>
+                  </View>
                   <TouchableOpacity
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}
                     activeOpacity={0.88}
@@ -259,13 +266,6 @@ export default function ContractsScreen() {
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
-
-                {/* Title block */}
-                <View style={s.heroBadge}>
-                  <View style={s.heroBadgeDot} />
-                  <Text style={s.heroBadgeText}>CONTRACT FARMING</Text>
-                </View>
-                <Text style={[s.heroTitle, { color: colors.text }]}>Mikataba</Text>
 
                 {/* Portfolio value */}
                 {contracts.length > 0 && (
@@ -330,6 +330,7 @@ export default function ContractsScreen() {
             contentContainerStyle={[s.listContent, { paddingBottom: 120 }]}
             showsVerticalScrollIndicator={false}
           >
+            {/* Section label */}
             <View style={s.secRow}>
               <View style={[s.secAccent, { backgroundColor: '#22d15a' }]} />
               <Text style={[s.secLabel, { color: colors.textMute }]}>
@@ -386,6 +387,7 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
         backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff',
         borderColor: colors.border,
       }]}>
+        {/* Left accent gradient strip */}
         <LinearGradient
           colors={[statusColor, statusColor + '44']}
           style={s.cardAccent}
@@ -394,6 +396,7 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
         />
 
         <View style={s.cardBody}>
+          {/* Top row: status + arrow */}
           <View style={s.cardTopRow}>
             <View style={[s.statusBadge, { backgroundColor: statusColor + '18', borderColor: statusColor + '30' }]}>
               {STATUS_ICON[c.status]}
@@ -404,11 +407,13 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
             </View>
           </View>
 
+          {/* Title + buyer */}
           <Text style={[s.cardTitle, { color: colors.text }]} numberOfLines={1}>{c.title}</Text>
           <Text style={[s.cardBuyer, { color: colors.textMute }]} numberOfLines={1}>
             {c.buyer}{c.buyerOrg ? ` · ${c.buyerOrg}` : ''} · {c.region}
           </Text>
 
+          {/* Value + crop chip row */}
           <View style={s.cardMidRow}>
             <Text style={[s.cardValue, { color: '#22d15a' }]}>TZS {fmt(totalValue)}</Text>
             <View style={[s.cropPill, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -416,6 +421,7 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
             </View>
           </View>
 
+          {/* Metrics strip */}
           <View style={[s.metricsStrip, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc', borderColor: colors.border }]}>
             <MetricTile label="Kiasi" value={`${fmt(c.quantityKg)} kg`} />
             <View style={[s.metricDiv, { backgroundColor: colors.border }]} />
@@ -428,6 +434,7 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
             )}
           </View>
 
+          {/* Segmented milestone progress */}
           {c.milestones.length > 0 && (
             <View style={s.segRow}>
               {c.milestones.map((m, i) => (
@@ -463,18 +470,17 @@ function MetricTile({ label, value }: { label: string; value: string }) {
 const s = StyleSheet.create({
   root: { flex: 1 },
 
+  // Hero
   hero: { paddingBottom: 0 },
   heroInner: { paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 8 : 24, paddingBottom: 20 },
-
-  heroNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-
+  heroTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 },
   heroBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
   heroBadgeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' },
   heroBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#22d15a', letterSpacing: 1.5 },
-  heroTitle: { fontSize: 32, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1, marginBottom: 20 },
+  heroTitle: { fontSize: 32, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   addBtn: { width: 46, height: 46, borderRadius: 23, justifyContent: 'center', alignItems: 'center' },
 
+  // Portfolio
   portfolioCard: {
     flexDirection: 'row', alignItems: 'center', borderRadius: 16,
     borderWidth: 1, padding: 16, marginBottom: 16,
@@ -482,22 +488,29 @@ const s = StyleSheet.create({
   portfolioLabel: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 1, marginBottom: 4 },
   portfolioValue: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
 
+  // Stats
   statRow: { flexDirection: 'row', gap: 8 },
   statChip: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
   statCount: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   statLabel: { fontSize: 8, fontFamily: 'Inter_700Bold', letterSpacing: 0.6, marginTop: 2, textTransform: 'uppercase' },
 
+  // Filter
   filterRow: { paddingHorizontal: 20, paddingVertical: 14, gap: 8 },
   filterPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 100, borderWidth: 1.5 },
   filterText: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.2 },
 
+  // List
   listContent: { paddingHorizontal: 16, paddingTop: 4 },
   secRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14, paddingHorizontal: 4 },
   secAccent: { width: 3, height: 14, borderRadius: 2 },
   secLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
 
+  // Card
   cardWrap: { marginBottom: 12 },
-  card: { borderRadius: 20, borderWidth: 1, flexDirection: 'row', overflow: 'hidden' },
+  card: {
+    borderRadius: 20, borderWidth: 1, flexDirection: 'row',
+    overflow: 'hidden',
+  },
   cardAccent: { width: 4 },
   cardBody: { flex: 1, padding: 16 },
   cardTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
@@ -511,32 +524,34 @@ const s = StyleSheet.create({
   cropPill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1 },
   cropText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
 
+  // Metrics strip
   metricsStrip: { flexDirection: 'row', borderRadius: 10, borderWidth: 1, overflow: 'hidden', marginBottom: 10 },
   metricDiv: { width: 1 },
-  mLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 2 },
-  mValue: { fontSize: 12, fontFamily: 'InstrumentSerif_400Regular' },
+  mLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.8, textTransform: 'uppercase' },
+  mValue: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', marginTop: 2 },
 
+  // Milestone segments
   segRow: { flexDirection: 'row', gap: 3, height: 6 },
   segment: { height: 6 },
 });
 
 const cm = StyleSheet.create({
-  sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingTop: 12, maxHeight: '92%' },
-  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
-  sheetHeaderGrad: { borderRadius: 0 },
-  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 16 },
-  sheetTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.4 },
-  sheetSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 32, maxHeight: '94%' },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 14, marginBottom: 4 },
+  sheetHeaderGrad: { paddingHorizontal: 20, paddingBottom: 16 },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12 },
+  sheetTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
+  sheetSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 1 },
   iconCircle: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-  fieldLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.2 },
-  inputWrap: { borderWidth: 1.5, borderRadius: 14, paddingHorizontal: 14, height: 48, justifyContent: 'center' },
-  input: { fontSize: 15, fontFamily: 'Inter_500Medium' },
-  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 100, borderWidth: 1.5 },
+  closeBtn: { width: 34, height: 34, borderRadius: 17, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
+  fieldLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
+  inputWrap: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 14 },
+  input: { fontSize: 15, fontFamily: 'Inter_600SemiBold', paddingVertical: 12 },
+  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
   chipText: { fontSize: 12, fontFamily: 'Inter_700Bold' },
-  valueBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14, borderRadius: 14, borderWidth: 1, marginTop: 16 },
-  valueBarLabel: { fontSize: 11, fontFamily: 'Inter_700Bold' },
-  valueBarAmount: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
-  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 17, borderRadius: 18 },
-  createBtnText: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', color: '#fff', letterSpacing: 0.2 },
+  valueBar: { borderRadius: 14, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, marginVertical: 4 },
+  valueBarLabel: { fontSize: 10, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.8 },
+  valueBarAmount: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 17, borderRadius: 100 },
+  createBtnText: { color: '#fff', fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', flex: 1, textAlign: 'center' },
 });

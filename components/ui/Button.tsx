@@ -84,7 +84,7 @@ export function Button({
       {...rest}
     >
       {isPrimary ? (
-        <LinearGradient colors={[colors.primary, colors.primaryDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.gradient}>
+        <LinearGradient colors={[colors.primary, colors.primaryDim]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.gradient}>
           {btnContent}
         </LinearGradient>
       ) : isDestructive ? (

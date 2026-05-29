@@ -49,6 +49,7 @@ export interface FarmVitals {
   temperature: number;      // °C
   yieldEstimate: number;    // tonnes
   lastUpdated: string;
+  soilPh: number;           // 0-14
 }
 
 export interface Notification {
@@ -226,6 +227,7 @@ export const useKilimoStore = create<KilimoState>()(
         moisture: 42,
         temperature: 24,
         yieldEstimate: 1.2,
+        soilPh: 6.8,
         lastUpdated: new Date().toISOString(),
       },
 

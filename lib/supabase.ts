@@ -25,6 +25,8 @@ export function getSupabase() {
   }
 }
 
+export const supabase = getSupabase();
+
 /**
  * Resolve the current user's access token. Tries the live Supabase session
  * first, falls back to the SecureStore-cached token from useAgroAuth.

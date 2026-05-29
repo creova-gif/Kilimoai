@@ -501,7 +501,7 @@ export default function InventoryScreen() {
           <View style={{ paddingHorizontal: 24 }}>
             <GlassCard style={{ padding: 24, alignItems: 'center' }}>
               <Text style={{ fontSize: 14, fontFamily: 'Inter_600SemiBold', color: colors.textMute }}>
-                Hakuna bidhaa za {catMeta(activeFilter).swahili} bado.
+                Hakuna bidhaa za {catMeta(activeFilter as InventoryItem['category']).swahili} bado.
               </Text>
             </GlassCard>
           </View>

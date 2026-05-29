@@ -1,325 +1,213 @@
-/**
- * Soil Analysis — Enhanced v2
- * Hero · NPK status · 7-day trend · farm zones · IoT sensors · anomaly alerts
- */
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  ImageBackground, Platform, Dimensions, Alert,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ImageBackground,
+  Platform,
+  Image,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import {
-  ChevronLeft, Sprout, ArrowUpRight, Wifi, WifiOff, Battery,
-  AlertTriangle, CheckCircle2, MapPin, Cpu, TrendingUp,
-  TrendingDown, Minus, Activity, RefreshCw, Zap, Info,
-} from 'lucide-react-native';
+import { ChevronLeft, Info, Sprout, ArrowUpRight, AlertTriangle, ShieldAlert, BookOpen } from 'lucide-react-native';
 import { useTheme } from '../constants/Theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { FadeInDown } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import Svg, { Polyline, Circle as SvgCircle, Rect, Line as SvgLine, Text as SvgText } from 'react-native-svg';
 import { useKilimoStore } from '../store/useKilimoStore';
 
 const { width: SW } = Dimensions.get('window');
-const fmt = (n: number) => n.toFixed(0);
 
-// ─── Mock historical data (7-day NPK trend) ──────────────────────────────────
-const TREND_DAYS = ['J', 'I', 'I', 'A', 'J', 'S', 'S'];
-const TREND_N = [72, 76, 79, 83, 81, 86, 85];
-const TREND_P = [62, 64, 68, 67, 70, 69, 70];
-const TREND_K = [50, 54, 57, 59, 57, 61, 60];
+// ─── Soil pH Trend SVG Chart ───────────────────────────────────────────────────
+function SoilPHTrendChart({ data, months, colors }: { data: number[]; months: string[]; colors: any }) {
+  const chartW = SW - 80;
+  const chartH = 80;
+  const max = 7.5;
+  const min = 4.5;
+  const points = data
+    .map((val, index) => {
+      const x = (index / (data.length - 1)) * (chartW - 20) + 10;
+      const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 20) - 15;
+      return `${x},${y}`;
+    })
+    .join(' ');
 
-// ─── Farm zones ──────────────────────────────────────────────────────────────
-const ZONES = [
-  { id: 'A', name: 'Kanda A', label: 'Kaskazini', N: 92, P: 78, K: 65, status: 'good'      },
-  { id: 'B', name: 'Kanda B', label: 'Mashariki', N: 71, P: 55, K: 43, status: 'attention' },
-  { id: 'C', name: 'Kanda C', label: 'Kusini',    N: 85, P: 68, K: 70, status: 'good'      },
-  { id: 'D', name: 'Kanda D', label: 'Magharibi', N: 44, P: 38, K: 31, status: 'critical'  },
-];
-
-// ─── IoT sensors ─────────────────────────────────────────────────────────────
-const SENSORS = [
-  { id: 's1', name: 'SM-3 · Kanda A',   type: 'Udongo NPK', zone: 'A', battery: 87, online: true,  sync: 'Dakika 2 zilizopita'  },
-  { id: 's2', name: 'SM-3 · Kanda B',   type: 'Udongo NPK', zone: 'B', battery: 45, online: true,  sync: 'Dakika 5 zilizopita'  },
-  { id: 's3', name: 'WS-01 · Central',  type: 'Hali ya Hewa', zone: '–', battery: 78, online: true, sync: 'Dakika 1 iliyopita'   },
-  { id: 's4', name: 'SM-3 · Kanda D',   type: 'Udongo NPK', zone: 'D', battery: 12, online: false, sync: 'Saa 3 zilizopita'     },
-];
-
-// ─── Anomalies ────────────────────────────────────────────────────────────────
-const ANOMALIES = [
-  { id: 'an1', zone: 'D', nutrient: 'N·P·K', level: 44, title: 'Upungufu mkubwa — Kanda D', desc: 'Viwango vyote vya virutubisho viko chini ya 50%. Inahitaji hatua ya haraka.', severity: 'critical' },
-  { id: 'an2', zone: 'B', nutrient: 'K',     level: 43, title: 'Potasiamu (K) chini — Kanda B', desc: 'Kiwango cha Potasiamu ni 43% — chini ya kiwango cha salama (55%). Ongeza Sulfate ya Potasiamu.', severity: 'warning' },
-];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const statusColor = (s: string) =>
-  s === 'critical' ? '#ef4444' : s === 'attention' ? '#f59e0b' : '#22d15a';
-const statusLabel = (s: string) =>
-  s === 'critical' ? 'Hatari' : s === 'attention' ? 'Tahadhari' : 'Nzuri';
-const nutrientColor = (label: string) =>
-  label === 'N' ? '#22d15a' : label === 'P' ? '#f59e0b' : '#3b82f6';
-
-// ─── Sparkline chart for one nutrient ────────────────────────────────────────
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  const max = Math.max(...data);
-  const barW = (SW - 80) / 8;
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 36, gap: 3 }}>
-      {data.map((v, i) => (
-        <View
-          key={i}
-          style={{
-            width: barW,
-            height: Math.max(4, (v / max) * 36),
-            borderRadius: 3,
-            backgroundColor: i === data.length - 1 ? color : color + '55',
-          }}
+    <View style={{ marginVertical: 12, height: chartH }}>
+      <Svg width={chartW} height={chartH}>
+        <Rect width={chartW} height={chartH} fill="rgba(0,0,0,0.02)" rx={8} />
+        
+        {/* pH Reference Lines */}
+        <SvgLine x1="10" y1={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} x2={chartW - 10} y2={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} stroke="#22d15a" strokeDasharray="3,3" strokeWidth="1" />
+        <SvgText x={chartW - 35} y={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 18} fontSize="7" fill="#22d15a" fontFamily="Inter_700Bold">Optimum (6.5)</SvgText>
+
+        <Polyline
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth="2.5"
+          points={points}
         />
-      ))}
+        {data.map((val, index) => {
+          const x = (index / (data.length - 1)) * (chartW - 20) + 10;
+          const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 20) - 15;
+          return (
+            <React.Fragment key={index}>
+              <SvgCircle
+                cx={x}
+                cy={y}
+                r="3.5"
+                fill={val < 5.5 ? '#ef4444' : '#22d15a'}
+                stroke="#FFF"
+                strokeWidth="1.5"
+              />
+              <SvgText
+                x={x}
+                y={y - 6}
+                fontSize="7.5"
+                fontFamily="Inter_700Bold"
+                fill={colors.text}
+                textAnchor="middle"
+              >
+                {val}
+              </SvgText>
+              <SvgText
+                x={x}
+                y={chartH - 2}
+                fontSize="7"
+                fontFamily="Inter_600SemiBold"
+                fill={colors.textMute}
+                textAnchor="middle"
+              >
+                {months[index]}
+              </SvgText>
+            </React.Fragment>
+          );
+        })}
+      </Svg>
     </View>
   );
 }
 
-// ─── Nutrient bar ─────────────────────────────────────────────────────────────
-function NutrientBar({ label, value, colors }: { label: string; value: number; colors: any }) {
-  const c = nutrientColor(label);
-  const trend = label === 'N' ? 'up' : label === 'P' ? 'flat' : 'up';
-  return (
-    <View style={S.barItem}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <View style={[S.barDot, { backgroundColor: c }]} />
-          <Text style={[S.barLabel, { color: colors.text }]}>{label === 'N' ? 'Nitrojeni (N)' : label === 'P' ? 'Fosforasi (P)' : 'Potasiamu (K)'}</Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          {trend === 'up' ? <TrendingUp size={12} color="#22d15a" /> : <Minus size={12} color="#f59e0b" />}
-          <Text style={[S.barValue, { color: value >= 70 ? '#22d15a' : value >= 50 ? '#f59e0b' : '#ef4444' }]}>{value}%</Text>
-        </View>
-      </View>
-      <View style={[S.barTrack, { backgroundColor: colors.border }]}>
-        <LinearGradient
-          colors={[c + 'aa', c]}
-          start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-          style={[S.barFill, { width: `${value}%` }]}
-        />
-      </View>
-    </View>
-  );
-}
-
-// ─── Zone card ────────────────────────────────────────────────────────────────
-function ZoneCard({ z, colors, isDark }: { z: typeof ZONES[0]; colors: any; isDark: boolean }) {
-  const sc = statusColor(z.status);
-  return (
-    <View style={[S.zoneCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff', borderColor: z.status === 'critical' ? '#ef444430' : z.status === 'attention' ? '#f59e0b30' : colors.border }]}>
-      <View style={S.zoneTop}>
-        <View style={[S.zoneBadge, { backgroundColor: sc + '18' }]}>
-          <Text style={[S.zoneBadgeText, { color: sc }]}>{z.name}</Text>
-        </View>
-        <View style={[S.zoneStatus, { backgroundColor: sc + '15', borderColor: sc + '30' }]}>
-          <View style={[S.zoneStatusDot, { backgroundColor: sc }]} />
-          <Text style={[S.zoneStatusText, { color: sc }]}>{statusLabel(z.status)}</Text>
-        </View>
-      </View>
-      <Text style={[S.zoneLabel, { color: colors.textMute }]}>{z.label}</Text>
-      <View style={S.zoneMetrics}>
-        {[['N', z.N], ['P', z.P], ['K', z.K]].map(([l, v]) => (
-          <View key={l as string} style={S.zoneMetric}>
-            <Text style={[S.zoneMetricLabel, { color: nutrientColor(l as string) }]}>{l}</Text>
-            <Text style={[S.zoneMetricValue, { color: (v as number) < 50 ? '#ef4444' : colors.text }]}>{v}%</Text>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
-}
-
-// ─── Main screen ──────────────────────────────────────────────────────────────
 export default function SoilAnalysis() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
   const language = useKilimoStore((s) => s.language);
-  const sw = language === 'sw';
-  const [refreshing, setRefreshing] = useState(false);
 
-  function handleRefresh() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1400);
-  }
-
-  const avgN = Math.round(ZONES.reduce((a, z) => a + z.N, 0) / ZONES.length);
-  const avgP = Math.round(ZONES.reduce((a, z) => a + z.P, 0) / ZONES.length);
-  const avgK = Math.round(ZONES.reduce((a, z) => a + z.K, 0) / ZONES.length);
-  const overallHealth = avgN >= 70 && avgP >= 60 ? 'Bora' : avgN >= 55 ? 'Wastani' : 'Dhaifu';
-  const healthColor = overallHealth === 'Bora' ? '#22d15a' : overallHealth === 'Wastani' ? '#f59e0b' : '#ef4444';
+  // Mock pH historical readings (showing a drop)
+  const phTrendData = [6.8, 6.5, 6.4, 5.9, 5.5, 5.2];
+  const phTrendMonths = ['Des', 'Jan', 'Feb', 'Mac', 'Apr', 'Mei'];
 
   return (
-    <View style={[S.root, { backgroundColor: colors.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
-
-        {/* ── Hero ────────────────────────────────────── */}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={styles.scrollContent}>
+        {/* Hero Background */}
         <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800' }}
-          style={S.hero}
+          source={{ uri: 'https://images.unsplash.com/photo-1592982537447-6f2334208f0a?q=80&w=600&auto=format&fit=crop' }}
+          style={styles.heroBackground}
         >
           <LinearGradient
-            colors={['rgba(0,0,0,0.55)', 'rgba(0,0,0,0.1)', 'transparent']}
+            colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.1)', colors.background]}
             style={StyleSheet.absoluteFill}
           />
-          <SafeAreaView edges={['top']} style={S.heroSafe}>
-            <View style={S.heroNav}>
-              <TouchableOpacity
-                onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
-                style={S.backBtn}
-              >
-                <ChevronLeft color="#fff" size={22} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleRefresh} style={S.refreshBtn}>
-                <RefreshCw size={16} color="#fff" />
-              </TouchableOpacity>
-            </View>
-            <View style={S.heroBottom}>
-              <View style={S.heroBadge}>
-                <Sprout size={12} color="#22d15a" />
-                <Text style={S.heroBadgeText}>UDONGO · SOIL ANALYSIS</Text>
-              </View>
-              <Text style={S.heroTitle}>{sw ? 'Hali ya Udongo' : 'Soil Analysis'}</Text>
-              <Text style={S.heroSub}>{sw ? 'Kanda 4 · Sensorer 4 zilizounganishwa' : '4 zones · 4 sensors connected'}</Text>
+          <SafeAreaView edges={['top']} style={styles.headerSafe}>
+            <TouchableOpacity 
+              onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
+              style={[styles.backBtn, { backgroundColor: 'rgba(255,255,255,0.2)' }]}
+            >
+              <ChevronLeft color="#FFF" size={24} />
+            </TouchableOpacity>
+            
+            <View style={styles.heroContent}>
+              <Text style={styles.heroTitle}>
+                {language === 'sw' ? 'Uchunguzi wa Udongo' : 'Soil Nutrient Analysis'}
+              </Text>
             </View>
           </SafeAreaView>
         </ImageBackground>
 
-        <View style={S.content}>
-
-          {/* ── Anomaly Alerts ──────────────────────── */}
-          {ANOMALIES.map((a, i) => (
-            <Animated.View key={a.id} entering={FadeInDown.delay(i * 50).springify()}>
-              <View style={[S.anomaly, { backgroundColor: (a.severity === 'critical' ? '#ef4444' : '#f59e0b') + '12', borderColor: (a.severity === 'critical' ? '#ef4444' : '#f59e0b') + '35' }]}>
-                <AlertTriangle size={16} color={a.severity === 'critical' ? '#ef4444' : '#f59e0b'} />
-                <View style={{ flex: 1 }}>
-                  <Text style={[S.anomalyTitle, { color: a.severity === 'critical' ? '#ef4444' : '#f59e0b' }]}>{a.title}</Text>
-                  <Text style={[S.anomalyDesc, { color: colors.textMute }]}>{a.desc}</Text>
+        {/* N-P-K Status Card */}
+        <View style={styles.contentPadding}>
+          <View style={[styles.statusCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.statusHeader}>
+              <View>
+                <Text style={[styles.statusLabel, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Afya ya Udongo' : 'Overall Soil Health'}
+                </Text>
+                <View style={styles.statusRow}>
+                  <Text style={[styles.statusMain, { color: '#ef4444' }]}>
+                    {language === 'sw' ? 'Tishio la Asidi' : 'Acidic Alert'}
+                  </Text>
                 </View>
               </View>
-            </Animated.View>
-          ))}
-
-          {/* ── Overall NPK Card ─────────────────────── */}
-          <Animated.View entering={FadeInDown.delay(80).springify()}>
-            <View style={[S.card, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff', borderColor: colors.border }]}>
-              <View style={S.cardHeader}>
-                <View>
-                  <Text style={[S.cardLabel, { color: colors.textMute }]}>{sw ? 'Afya ya Jumla' : 'Overall Health'}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                    <Text style={[S.overallLabel, { color: colors.text }]}>{overallHealth}</Text>
-                    <View style={[S.overallBadge, { backgroundColor: healthColor + '18' }]}>
-                      <TrendingUp size={11} color={healthColor} />
-                      <Text style={[S.overallBadgeText, { color: healthColor }]}>+12% {sw ? 'wiki hii' : 'this week'}</Text>
-                    </View>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  onPress={() => Alert.alert('NPK Info', 'N=Nitrojeni (ukuaji wa majani), P=Fosforasi (mizizi/maua), K=Potasiamu (nguvu ya mmea).')}
-                  style={[S.infoBtn, { backgroundColor: colors.card }]}
-                >
-                  <Info size={18} color={colors.textMute} />
-                </TouchableOpacity>
-              </View>
-              <View style={S.barsWrap}>
-                <NutrientBar label="N" value={avgN} colors={colors} />
-                <NutrientBar label="P" value={avgP} colors={colors} />
-                <NutrientBar label="K" value={avgK} colors={colors} />
+              <View style={[styles.infoIcon, { backgroundColor: colors.background }]}>
+                <Info size={20} color={colors.textMute} />
               </View>
             </View>
-          </Animated.View>
 
-          {/* ── 7-day Trend ─────────────────────────── */}
-          <Animated.View entering={FadeInDown.delay(110).springify()}>
-            <SectionTitle label={sw ? 'Mwenendo wa Siku 7' : '7-Day Trend'} colors={colors} />
-            <View style={[S.card, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff', borderColor: colors.border, gap: 16 }]}>
-              {[{ label: 'N', data: TREND_N, color: '#22d15a' }, { label: 'P', data: TREND_P, color: '#f59e0b' }, { label: 'K', data: TREND_K, color: '#3b82f6' }].map((t) => (
-                <View key={t.label}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <Text style={[S.trendLabel, { color: t.color }]}>
-                      {t.label === 'N' ? 'Nitrojeni' : t.label === 'P' ? 'Fosforasi' : 'Potasiamu'}
-                    </Text>
-                    <Text style={[S.trendValue, { color: colors.textMute }]}>
-                      {t.data[t.data.length - 1]}% · {t.data[t.data.length - 1] > t.data[0] ? '↑' : t.data[t.data.length - 1] < t.data[0] ? '↓' : '→'}{' '}
-                      {Math.abs(t.data[t.data.length - 1] - t.data[0])} pts
-                    </Text>
-                  </View>
-                  <Sparkline data={t.data} color={t.color} />
-                </View>
-              ))}
+            {/* Bars */}
+            <View style={styles.barsContainer}>
+              <NutrientBar label="Nitrogen (N)" value={85} color="#22d15a" />
+              <NutrientBar label="Phosphorus (P)" value={70} color="#F59E0B" />
+              <NutrientBar label="Potassium (K)" value={60} color="#3b82f6" />
             </View>
-          </Animated.View>
+          </View>
 
-          {/* ── Farm Zones ──────────────────────────── */}
-          <Animated.View entering={FadeInDown.delay(140).springify()}>
-            <SectionTitle label={sw ? 'Kanda za Shamba' : 'Farm Zones'} colors={colors} />
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-              {ZONES.map((z) => (
-                <ZoneCard key={z.id} z={z} colors={colors} isDark={isDark} />
-              ))}
+          {/* Soil pH Anomaly Alert Banner */}
+          <View style={[styles.anomalyAlert, { backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
+            <ShieldAlert size={20} color="#ef4444" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.anomalyTitle}>
+                {language === 'sw' ? 'TAHADHARI YA pH YA UDONGO' : 'CRITICAL pH ANOMALY DETECTED'}
+              </Text>
+              <Text style={styles.anomalyDesc}>
+                {language === 'sw'
+                  ? 'pH ya udongo imeshuka kwa kasi kutoka 6.8 (Desemba) hadi 5.2 (Mwezi huu) katika Block A. Udongo ni asidi sana!'
+                  : 'pH levels dropped sharply from 6.8 (Dec) to 5.2 (This Month) in Block A. High soil acidification!'}
+              </Text>
             </View>
-          </Animated.View>
+          </View>
 
-          {/* ── IoT Sensors ─────────────────────────── */}
-          <Animated.View entering={FadeInDown.delay(170).springify()}>
-            <SectionTitle label={sw ? 'Sensorer za IoT' : 'IoT Sensors'} colors={colors} />
-            <View style={{ gap: 8 }}>
-              {SENSORS.map((s) => (
-                <View key={s.id} style={[S.sensorRow, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff', borderColor: !s.online ? '#ef444430' : colors.border }]}>
-                  <View style={[S.sensorIcon, { backgroundColor: s.online ? '#22d15a15' : '#ef444415' }]}>
-                    {s.online ? <Wifi size={16} color="#22d15a" /> : <WifiOff size={16} color="#ef4444" />}
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={[S.sensorName, { color: colors.text }]}>{s.name}</Text>
-                    <Text style={[S.sensorType, { color: colors.textMute }]}>{s.type} · {s.sync}</Text>
-                  </View>
-                  <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                      <Battery size={12} color={s.battery > 20 ? '#22d15a' : '#ef4444'} />
-                      <Text style={[S.sensorBattery, { color: s.battery > 20 ? '#22d15a' : '#ef4444' }]}>{s.battery}%</Text>
-                    </View>
-                    <View style={[S.onlineDot, { backgroundColor: s.online ? '#22d15a' : '#ef4444' }]} />
-                  </View>
-                </View>
-              ))}
-            </View>
-          </Animated.View>
+          {/* Soil pH History Line Chart Section */}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {language === 'sw' ? 'Mwenendo wa pH (Mwisho Miezi 6)' : 'pH Level History (Past 6 Months)'}
+          </Text>
+          <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <SoilPHTrendChart data={phTrendData} months={phTrendMonths} colors={colors} />
+            <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
+              {language === 'sw' ? 'Kiwango cha pH kinapaswa kuwa kati ya 6.0 na 7.0 kwa mazao mengi' : 'pH levels should ideally range between 6.0 and 7.0 for most staple crops'}
+            </Text>
+          </View>
 
-          {/* ── Recommendations ─────────────────────── */}
-          <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <SectionTitle label={sw ? 'Mapendekezo ya Dharura' : 'Urgent Recommendations'} colors={colors} />
-            <View style={{ gap: 12 }}>
-              <RecCard
-                title={sw ? 'Ongeza Urea — Kanda D' : 'Apply Urea — Zone D'}
-                desc={sw ? 'Nitrojeni ni 44% tu. Weka Urea kg 25/ekari haraka iwezekanavyo.' : 'Nitrogen critically low at 44%. Apply 25kg/acre Urea immediately.'}
-                cost="TZS 47,500"
-                severity="critical"
-                onPress={() => router.push('/tasks' as any)}
-                colors={colors}
-              />
-              <RecCard
-                title={sw ? 'Sulfate ya Potasiamu — Kanda B' : 'Potassium Sulphate — Zone B'}
-                desc={sw ? 'K chini ya 45%. Weka MOP au SOP kg 20/ekari kabla ya wiki 2.' : 'K below 45%. Apply MOP or SOP 20kg/acre within 2 weeks.'}
-                cost="TZS 38,000"
-                severity="warning"
-                onPress={() => router.push('/consultations' as any)}
-                colors={colors}
-              />
-              <RecCard
-                title={sw ? 'Weka Mbolea ya Hiari — Kanda C' : 'Maintenance Fertilizer — Zone C'}
-                desc={sw ? 'Viwango viko vizuri. Weka CAN kg 15/ekari kwa kuzuia kushuka.' : 'Levels are good. Apply CAN 15kg/acre as maintenance dose.'}
-                cost="TZS 28,500"
-                severity="info"
-                onPress={() => router.push('/input-supply' as any)}
-                colors={colors}
-              />
-            </View>
-          </Animated.View>
+          {/* Urgent Recommendations */}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {language === 'sw' ? 'Mapendekezo ya Haraka' : 'Urgent Recommendations'}
+          </Text>
+          
+          <RecommendationItem 
+            title={language === 'sw' ? 'Weka Chokaa cha Kilimo (Agri-Lime)' : 'Apply Agriculture Agri-Lime'}
+            desc={language === 'sw' ? 'Weka tani 1.5 za Minjingu Agri-Lime kwa hekta ili kupunguza asidi na kupandisha pH.' : 'Apply 1.5 Tonnes of Minjingu Agri-Lime per hectare to raise pH back to optimum.'}
+            imageUri="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=300&auto=format&fit=crop"
+            onPress={() => router.push('/tasks' as any)}
+            btnText={language === 'sw' ? 'Tengeneza Kazi' : 'Create Task'}
+          />
+
+          <RecommendationItem 
+            title={language === 'sw' ? 'Badilisha Mazao yanayohimili Asidi' : 'Shift to Acid-Tolerant Crops'}
+            desc={language === 'sw' ? 'Hustawisha chai, muhogo, au viazi vitamu ambavyo vinaweza kuhimili pH ya chini hadi 5.0.' : 'Plant acid-tolerant crops like tea, cassava, or sweet potatoes if soil pH remains low.'}
+            imageUri="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?q=80&w=300&auto=format&fit=crop"
+            onPress={() => router.push('/crop-library' as any)}
+            btnText={language === 'sw' ? 'Maktaba ya Mazao' : 'Crop Library'}
+          />
+
+          <RecommendationItem 
+            title={language === 'sw' ? 'Epuka Mbolea zenye Ammonium' : 'Avoid Ammonium Fertilizers'}
+            desc={language === 'sw' ? 'Mbolea zenye ammonium (e.g. Ammonium Sulphate) huongeza zaidi asidi kwenye udongo.' : 'Avoid acidifying ammonium-based fertilizers. Prefer nitrate-based nitrogen sources.'}
+            imageUri="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=300&auto=format&fit=crop"
+            onPress={() => router.push('/consultations' as any)}
+            btnText={language === 'sw' ? 'Ongea na Mtaalamu' : 'Ask Agronomist'}
+          />
 
         </View>
       </ScrollView>
@@ -327,106 +215,219 @@ export default function SoilAnalysis() {
   );
 }
 
-// ─── Section title ────────────────────────────────────────────────────────────
-function SectionTitle({ label, colors }: { label: string; colors: any }) {
+function NutrientBar({ label, value, color }: { label: string; value: number; color: string }) {
+  const { colors } = useTheme();
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 24, marginBottom: 12 }}>
-      <View style={{ width: 3, height: 14, borderRadius: 2, backgroundColor: '#22d15a' }} />
-      <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, letterSpacing: 1.5 }}>{label.toUpperCase()}</Text>
+    <View style={styles.barItem}>
+      <View style={styles.barLabels}>
+        <Text style={[styles.barLabelText, { color: colors.text }]}>{label}</Text>
+        <Text style={[styles.barValueText, { color: colors.textMute }]}>{value}%</Text>
+      </View>
+      <View style={[styles.barTrack, { backgroundColor: colors.border }]}>
+        <View style={[styles.barFill, { width: `${value}%`, backgroundColor: color }]} />
+      </View>
     </View>
   );
 }
 
-// ─── Recommendation card ──────────────────────────────────────────────────────
-function RecCard({ title, desc, cost, severity, onPress, colors }: {
-  title: string; desc: string; cost: string; severity: string; onPress: () => void; colors: any;
-}) {
-  const c = severity === 'critical' ? '#ef4444' : severity === 'warning' ? '#f59e0b' : '#22d15a';
+function RecommendationItem({ title, desc, imageUri, onPress, btnText }: { title: string; desc: string; imageUri: string; onPress: () => void; btnText: string }) {
+  const { colors } = useTheme();
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.85}>
-      <View style={[S.recCard, { borderColor: c + '30', backgroundColor: c + '08' }]}>
-        <View style={[S.recLeft, { backgroundColor: c + '18' }]}>
-          {severity === 'critical' ? <AlertTriangle size={18} color={c} /> : severity === 'warning' ? <AlertTriangle size={18} color={c} /> : <CheckCircle2 size={18} color={c} />}
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={[S.recTitle, { color: c }]}>{title}</Text>
-          <Text style={[S.recDesc, { color: colors.textMute }]}>{desc}</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 }}>
-            <View style={[S.costBadge, { backgroundColor: c + '15' }]}>
-              <Text style={[S.costText, { color: c }]}>{cost}</Text>
-            </View>
-            <Text style={[S.viewMore, { color: c }]}>Angalia →</Text>
-          </View>
-        </View>
+    <View style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <Image source={{ uri: imageUri }} style={styles.recImage} />
+      <View style={styles.recContent}>
+        <Text style={[styles.recTitle, { color: colors.text }]} numberOfLines={1}>{title}</Text>
+        <Text style={[styles.recDesc, { color: colors.textMute }]} numberOfLines={3}>{desc}</Text>
+        <TouchableOpacity style={styles.recAction} onPress={onPress}>
+          <Text style={styles.recActionText}>{btnText}</Text>
+          <ChevronLeft color="#22d15a" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
+        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
-const S = StyleSheet.create({
-  root: { flex: 1 },
-  hero: { width: '100%', height: 240, justifyContent: 'flex-start' },
-  heroSafe: { flex: 1, justifyContent: 'space-between', paddingBottom: 24 },
-  heroNav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: Platform.OS === 'ios' ? 4 : 16 },
-  heroBottom: { paddingHorizontal: 20, gap: 4 },
-  heroBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  heroBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#22d15a', letterSpacing: 1.5 },
-  heroTitle: { fontSize: 28, fontFamily: 'InstrumentSerif_400Regular', color: '#fff', letterSpacing: -0.5 },
-  heroSub: { fontSize: 12, fontFamily: 'Inter_500Medium', color: 'rgba(255,255,255,0.7)' },
-  backBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(0,0,0,0.38)', justifyContent: 'center', alignItems: 'center' },
-  refreshBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(0,0,0,0.38)', justifyContent: 'center', alignItems: 'center' },
-
-  content: { paddingHorizontal: 20, paddingTop: 20 },
-
-  anomaly: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1, marginBottom: 10 },
-  anomalyTitle: { fontSize: 13, fontFamily: 'Inter_800ExtraBold', marginBottom: 2 },
-  anomalyDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 16 },
-
-  card: { borderRadius: 18, borderWidth: 1, padding: 18, marginBottom: 0 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
-  cardLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, marginBottom: 4 },
-  overallLabel: { fontSize: 26, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  overallBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 10 },
-  overallBadgeText: { fontSize: 11, fontFamily: 'Inter_700Bold' },
-  infoBtn: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  barsWrap: { gap: 16 },
-
-  barItem: {},
-  barDot: { width: 8, height: 8, borderRadius: 4 },
-  barLabel: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  barValue: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  barTrack: { height: 8, borderRadius: 4, overflow: 'hidden' },
-  barFill: { height: '100%', borderRadius: 4 },
-
-  trendLabel: { fontSize: 12, fontFamily: 'Inter_700Bold' },
-  trendValue: { fontSize: 11, fontFamily: 'Inter_500Medium' },
-
-  zoneCard: { width: (SW - 52) / 2, borderRadius: 16, borderWidth: 1, padding: 14 },
-  zoneTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  zoneBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  zoneBadgeText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
-  zoneStatus: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 8, borderWidth: 1 },
-  zoneStatusDot: { width: 5, height: 5, borderRadius: 3 },
-  zoneStatusText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold' },
-  zoneLabel: { fontSize: 11, fontFamily: 'Inter_500Medium', marginBottom: 10 },
-  zoneMetrics: { flexDirection: 'row', gap: 8 },
-  zoneMetric: { alignItems: 'center', gap: 2 },
-  zoneMetricLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
-  zoneMetricValue: { fontSize: 13, fontFamily: 'InstrumentSerif_400Regular' },
-
-  sensorRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1 },
-  sensorIcon: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
-  sensorName: { fontSize: 13, fontFamily: 'Inter_700Bold' },
-  sensorType: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
-  sensorBattery: { fontSize: 11, fontFamily: 'Inter_700Bold' },
-  onlineDot: { width: 7, height: 7, borderRadius: 4 },
-
-  recCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 0, borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
-  recLeft: { width: 52, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 16, alignSelf: 'stretch' },
-  recTitle: { fontSize: 13, fontFamily: 'Inter_800ExtraBold', marginBottom: 4, paddingTop: 14, paddingRight: 14 },
-  recDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 17, paddingRight: 14 },
-  costBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, marginBottom: 12 },
-  costText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
-  viewMore: { fontSize: 12, fontFamily: 'Inter_700Bold', marginBottom: 12 },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  heroBackground: {
+    width: '100%',
+    height: 240,
+    justifyContent: 'flex-start',
+  },
+  headerSafe: {
+    width: '100%',
+    flex: 1,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 16,
+    marginTop: Platform.OS === 'ios' ? 0 : 16,
+  },
+  heroContent: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+  },
+  heroTitle: {
+    fontSize: 28,
+    fontFamily: 'InstrumentSerif_400Regular',
+    color: '#FFF',
+    letterSpacing: -0.5,
+  },
+  contentPadding: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    gap: 12,
+  },
+  statusCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 20,
+    marginTop: -30,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  statusHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  statusLabel: {
+    fontSize: 12,
+    fontFamily: 'Inter_600SemiBold',
+    marginBottom: 4,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  statusMain: {
+    fontSize: 24,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  infoIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  barsContainer: {
+    gap: 16,
+  },
+  barItem: {
+    width: '100%',
+  },
+  barLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  barLabelText: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  barValueText: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+  },
+  barTrack: {
+    width: '100%',
+    height: 8,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  anomalyAlert: {
+    flexDirection: 'row',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 12,
+    marginTop: 8,
+  },
+  anomalyTitle: {
+    fontSize: 10.5,
+    fontFamily: 'Inter_800ExtraBold',
+    color: '#ef4444',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  anomalyDesc: {
+    fontSize: 11.5,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_800ExtraBold',
+    marginTop: 24,
+    marginBottom: 4,
+  },
+  chartCard: {
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  recCard: {
+    flexDirection: 'row',
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+    height: 124,
+  },
+  recImage: {
+    width: 100,
+    height: '100%',
+  },
+  recContent: {
+    flex: 1,
+    padding: 12,
+    justifyContent: 'center',
+    gap: 4,
+  },
+  recTitle: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+  },
+  recDesc: {
+    fontSize: 10.5,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 15,
+  },
+  recAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(34, 209, 90, 0.08)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    gap: 4,
+    marginTop: 2,
+  },
+  recActionText: {
+    color: '#22d15a',
+    fontSize: 10.5,
+    fontFamily: 'Inter_700Bold',
+  },
 });
