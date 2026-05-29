@@ -7,6 +7,7 @@ import {
   ScrollView,
   Platform,
   Dimensions,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Info, Sprout, ArrowUpRight, AlertTriangle, ShieldAlert, BookOpen } from 'lucide-react-native';
@@ -109,12 +110,13 @@ export default function SoilAnalysis() {
             <View style={styles.headerRow}>
               <TouchableOpacity 
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
-                style={styles.backBtn}
+                style={[styles.backBtn, { backgroundColor: 'rgba(255,255,255,0.2)' }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
               >
-                <ChevronLeft color="#FFF" size={22} />
+                <ChevronLeft color="#FFF" size={24} />
               </TouchableOpacity>
             </View>
-
             <View style={styles.heroContent}>
               <View style={styles.heroBadge}>
                 <Sprout size={11} color="#22d15a" />
@@ -180,7 +182,7 @@ export default function SoilAnalysis() {
           </Text>
           <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <SoilPHTrendChart data={phTrendData} months={phTrendMonths} colors={colors} />
-            <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
+            <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
               {language === 'sw' ? 'Kiwango cha pH kinapaswa kuwa kati ya 6.0 na 7.0 kwa mazao mengi' : 'pH levels should ideally range between 6.0 and 7.0 for most staple crops'}
             </Text>
           </View>
@@ -243,7 +245,12 @@ function RecommendationItem({ title, desc, imageUri, onPress, btnText }: { title
       <View style={styles.recContent}>
         <Text style={[styles.recTitle, { color: colors.text }]} numberOfLines={1}>{title}</Text>
         <Text style={[styles.recDesc, { color: colors.textMute }]} numberOfLines={3}>{desc}</Text>
-        <TouchableOpacity style={styles.recAction} onPress={onPress}>
+        <TouchableOpacity 
+          style={styles.recAction} 
+          onPress={onPress}
+          accessibilityRole="button"
+          accessibilityLabel={btnText}
+        >
           <Text style={styles.recActionText}>{btnText}</Text>
           <ChevronLeft color="#22d15a" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
@@ -276,9 +283,9 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 0 : 16,
   },
   backBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.15)',
@@ -401,14 +408,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   anomalyTitle: {
-    fontSize: 10.5,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     color: '#ef4444',
     letterSpacing: 0.5,
     marginBottom: 4,
   },
   anomalyDesc: {
-    fontSize: 11.5,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 18,
   },
@@ -446,7 +453,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
   },
   recDesc: {
-    fontSize: 10.5,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 15,
   },
@@ -463,7 +470,7 @@ const styles = StyleSheet.create({
   },
   recActionText: {
     color: '#22d15a',
-    fontSize: 10.5,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },
 });

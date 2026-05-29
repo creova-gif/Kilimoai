@@ -93,7 +93,7 @@ const yc = StyleSheet.create({
     alignItems: 'flex-end',
   },
   col: { flex: 1, alignItems: 'center', gap: 3 },
-  val: { fontSize: 8, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  val: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a' },
   trackWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
   track: {
     width: '100%', flex: 1, borderRadius: 4,
@@ -171,15 +171,15 @@ function PlantingTimeline({ crop }: { crop: CropRec }) {
 }
 
 const pt = StyleSheet.create({
-  label: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#64748b', letterSpacing: 1 },
-  phaseLbl: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#64748b' },
+  label: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#64748b', letterSpacing: 1 },
+  phaseLbl: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#64748b' },
   infoBox: {
     padding: 12, borderRadius: 12,
     backgroundColor: 'rgba(34,209,90,0.06)',
     borderWidth: 1, borderColor: 'rgba(34,209,90,0.12)',
     gap: 4,
   },
-  infoTitle: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.6 },
+  infoTitle: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.6 },
   infoBody: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 18, color: '#94a3b8' },
 });
 
@@ -516,7 +516,7 @@ const st = StyleSheet.create({
     paddingHorizontal: 9, paddingVertical: 3,
     borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.1)', marginBottom: 4,
   },
-  aiBadgeText: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
+  aiBadgeText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
   headerTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.4 },
 
   seasonTab: {
@@ -524,7 +524,7 @@ const st = StyleSheet.create({
     gap: 4, overflow: 'hidden',
   },
   seasonLabel: { fontFamily: 'Inter_700Bold', fontSize: 12 },
-  seasonMonths: { fontFamily: 'Inter_500Medium', fontSize: 9 },
+  seasonMonths: { fontFamily: 'Inter_500Medium', fontSize: 12 },
 
   banner: {
     borderRadius: 18, borderWidth: 1,
@@ -539,14 +539,14 @@ const st = StyleSheet.create({
     backgroundColor: 'rgba(245,158,11,0.12)',
     borderRadius: 8,
   },
-  plannedBadgeText: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#f59e0b' },
+  plannedBadgeText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#f59e0b' },
 
   chartCard: {
     borderRadius: 18, borderWidth: 1,
     overflow: 'hidden', padding: 16,
   },
   chartTitle: { fontSize: 14, fontFamily: 'InstrumentSerif_400Regular' },
-  chartSub: { fontSize: 10, fontFamily: 'Inter_500Medium', flex: 1 },
+  chartSub: { fontSize: 12, fontFamily: 'Inter_500Medium', flex: 1 },
 
   sectionTitle: { fontSize: 19, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3 },
 
@@ -560,13 +560,13 @@ const st = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
   cropName: { fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: -0.2 },
-  cropSub: { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  cropSub: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
   plannedChip: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     paddingHorizontal: 8, paddingVertical: 4,
     backgroundColor: 'rgba(34,197,94,0.12)', borderRadius: 10,
   },
-  plannedChipText: { fontSize: 8, fontFamily: 'Inter_700Bold', color: '#22c55e' },
+  plannedChipText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22c55e' },
   arrowChip: {
     width: 32, height: 32, borderRadius: 10,
     justifyContent: 'center', alignItems: 'center',
@@ -574,12 +574,12 @@ const st = StyleSheet.create({
 
   statsRow: { flexDirection: 'row', alignItems: 'center' },
   stat: { flex: 1, alignItems: 'center', gap: 3 },
-  statLbl: { fontSize: 8, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.4 },
-  statVal: { fontSize: 11, fontFamily: 'Inter_700Bold' },
+  statLbl: { fontSize: 12, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.4 },
+  statVal: { fontSize: 12, fontFamily: 'Inter_700Bold' },
   statDiv: { width: 1, height: 28 },
 
   divider: { height: 1 },
-  tipsTitle: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
+  tipsTitle: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   tipDot: { width: 5, height: 5, borderRadius: 3, marginTop: 6 },
   tipText: { flex: 1, fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 19 },

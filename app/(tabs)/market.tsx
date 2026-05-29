@@ -393,6 +393,8 @@ export default function MarketScreen() {
             <TouchableOpacity
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
             >
               <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconButton, { borderColor: colors.border }]}>
                 <ChevronLeft size={24} color={colors.text} />
@@ -415,6 +417,8 @@ export default function MarketScreen() {
                 Haptics.selectionAsync();
                 setShowAlerts(true);
               }}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Fungua arifa za bei' : 'Open price alerts'}
             >
               <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconButton, { borderColor: colors.border }]}>
                 <Bell size={20} color={colors.text} />
@@ -438,6 +442,9 @@ export default function MarketScreen() {
                     Haptics.selectionAsync();
                     setActiveTab(tab.id as any);
                   }}
+                  accessibilityRole="tab"
+                  accessibilityLabel={tab.label}
+                  accessibilityState={{ selected: active }}
                   style={[
                     styles.tabItem,
                     active && { borderBottomColor: colors.primary, borderBottomWidth: 2 },
@@ -512,6 +519,9 @@ export default function MarketScreen() {
                           Haptics.selectionAsync();
                           setActiveStoreCat(cat.id as any);
                         }}
+                        accessibilityRole="button"
+                        accessibilityLabel={cat.label}
+                        accessibilityState={{ selected: selected }}
                         style={[
                           styles.storeCatPill,
                           {
@@ -542,6 +552,9 @@ export default function MarketScreen() {
                               styles.compareIconBtn,
                               { backgroundColor: isCompared ? colors.primary : 'rgba(0,0,0,0.5)' },
                             ]}
+                            accessibilityRole="button"
+                            accessibilityLabel={language === 'sw' ? `Linganisha ${prod.nameSw}` : `Compare ${prod.name}`}
+                            accessibilityState={{ selected: isCompared }}
                           >
                             <Scale size={12} color={isCompared ? '#000' : '#fff'} />
                           </TouchableOpacity>
@@ -562,6 +575,8 @@ export default function MarketScreen() {
                               setReviewProduct(prod);
                             }}
                             style={styles.ratingRow}
+                            accessibilityRole="button"
+                            accessibilityLabel={language === 'sw' ? `Soma maoni ya ${prod.nameSw}` : `Read reviews for ${prod.name}`}
                           >
                             <Star size={10} color="#f59e0b" fill="#f59e0b" />
                             <Text style={styles.ratingText}>
@@ -571,7 +586,12 @@ export default function MarketScreen() {
 
                           <View style={styles.prodCardFooter}>
                             <Text style={[styles.prodPrice, { color: colors.text }]}>TSh {fmt(prod.price)}</Text>
-                            <TouchableOpacity onPress={() => addToCart(prod)} style={styles.addToCartBtn}>
+                            <TouchableOpacity
+                              onPress={() => addToCart(prod)}
+                              style={styles.addToCartBtn}
+                              accessibilityRole="button"
+                              accessibilityLabel={language === 'sw' ? `Ongeza ${prod.nameSw} kwenye kikapu` : `Add ${prod.name} to cart`}
+                            >
                               <ShoppingCart size={12} color="#000" />
                               <Text style={styles.addToCartText}>{language === 'sw' ? 'Ongeza' : 'Add'}</Text>
                             </TouchableOpacity>
@@ -606,6 +626,9 @@ export default function MarketScreen() {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       }}
                       activeOpacity={0.9}
+                      accessibilityRole="button"
+                      accessibilityLabel={language === 'sw' ? `${itemName}, bonyeza kupanua maelezo ya bei` : `${itemName}, press to expand price details`}
+                      accessibilityState={{ expanded: isExpanded }}
                     >
                       <BlurView
                         intensity={isDark ? 20 : 60}
@@ -701,6 +724,8 @@ export default function MarketScreen() {
                                   setExpandedId(null);
                                   setOfferItem(item);
                                 }}
+                                accessibilityRole="button"
+                                accessibilityLabel={language === 'sw' ? `Toa ofa kwa ajili ya ${itemName}` : `Make offer for ${itemName}`}
                               >
                                 <Wallet size={16} color="#000" />
                                 <Text style={[styles.contractBtnText, { color: '#000' }]}>
@@ -713,6 +738,8 @@ export default function MarketScreen() {
                                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                   router.push('/contracts');
                                 }}
+                                accessibilityRole="button"
+                                accessibilityLabel={language === 'sw' ? 'Fungua mkataba mwerevu' : 'Open smart contract'}
                               >
                                 <FileSignature size={16} color={colors.text} />
                                 <Text style={[styles.contractBtnText, { color: colors.text }]}>Smart Contract</Text>
@@ -737,12 +764,12 @@ export default function MarketScreen() {
                         Order: #{ord.id}
                       </Text>
                       <View style={{ backgroundColor: ord.status === 'Delivered' ? '#22d15a20' : '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
-                        <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? '#22d15a' : '#f59e0b' }}>
+                        <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? '#22d15a' : '#f59e0b' }}>
                           {ord.status}
                         </Text>
                       </View>
                     </View>
-                    <Text style={{ color: colors.textMute, fontSize: 11, fontFamily: 'Inter_600SemiBold', marginTop: 4 }}>
+                    <Text style={{ color: colors.textMute, fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 4 }}>
                       Date: {ord.date}
                     </Text>
                     <Text style={{ color: colors.text, fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 8 }} numberOfLines={1}>
@@ -768,6 +795,8 @@ export default function MarketScreen() {
                   setShowCartDrawer(true);
                 }}
                 style={styles.cartFabBtn}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Fungua kikapu cha ununuzi' : 'Open shopping cart'}
               >
                 <ShoppingCart size={18} color="#000" />
                 <View style={styles.cartCountBadge}>
@@ -781,15 +810,17 @@ export default function MarketScreen() {
           {comparedIds.length > 0 && (
             <Animated.View entering={FadeInUp} style={styles.compBar}>
               <View style={styles.compBarInner}>
-                <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_700Bold' }}>
+                <Text style={{ color: '#fff', fontSize: 12, fontFamily: 'Inter_700Bold' }}>
                   {comparedIds.length} {language === 'sw' ? 'kulinganisha' : 'to compare'}
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 8 }}>
                   <TouchableOpacity
                     onPress={() => setComparedIds([])}
-                    style={{ padding: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8 }}
+                    style={{ padding: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8, minHeight: 44, justifyContent: 'center' }}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Futa ulinganisho' : 'Clear comparison'}
                   >
-                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>Clear</Text>
+                    <Text style={{ color: '#fff', fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>Clear</Text>
                   </TouchableOpacity>
                   {comparedIds.length === 2 && (
                     <TouchableOpacity
@@ -797,9 +828,11 @@ export default function MarketScreen() {
                         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                         setShowCompModal(true);
                       }}
-                      style={{ padding: 8, backgroundColor: colors.primary, borderRadius: 8 }}
+                      style={{ padding: 8, backgroundColor: colors.primary, borderRadius: 8, minHeight: 44, justifyContent: 'center' }}
+                      accessibilityRole="button"
+                      accessibilityLabel={language === 'sw' ? 'Linganisha bidhaa' : 'Compare products'}
                     >
-                      <Text style={{ color: '#000', fontSize: 11, fontFamily: 'Inter_700Bold' }}>
+                      <Text style={{ color: '#000', fontSize: 12, fontFamily: 'Inter_700Bold' }}>
                         {language === 'sw' ? 'Linganisha' : 'Compare'}
                       </Text>
                     </TouchableOpacity>
@@ -818,6 +851,8 @@ export default function MarketScreen() {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 }}
                 activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Weka tangazo la kuza mazao' : 'Sell your crops'}
               >
                 <LinearGradient colors={[colors.success, '#0a3d18']} style={styles.fabGrad}>
                   <Package size={20} color="#fff" />
@@ -879,7 +914,12 @@ export default function MarketScreen() {
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
                   {language === 'sw' ? 'Ulinganisho wa Bidhaa' : 'Product Comparison'}
                 </Text>
-                <TouchableOpacity onPress={() => setShowCompModal(false)} style={styles.closeBtn}>
+                <TouchableOpacity
+                  onPress={() => setShowCompModal(false)}
+                  style={styles.closeBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel={language === 'sw' ? 'Funga ulinganisho' : 'Close comparison'}
+                >
                   <X size={20} color={colors.text} />
                 </TouchableOpacity>
               </View>
@@ -940,7 +980,12 @@ export default function MarketScreen() {
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
                   {language === 'sw' ? 'Maoni ya Wakulima' : 'Farmer Reviews'}
                 </Text>
-                <TouchableOpacity onPress={() => setReviewProduct(null)} style={styles.closeBtn}>
+                <TouchableOpacity
+                  onPress={() => setReviewProduct(null)}
+                  style={styles.closeBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel={language === 'sw' ? 'Funga maoni' : 'Close reviews'}
+                >
                   <X size={20} color={colors.text} />
                 </TouchableOpacity>
               </View>
@@ -953,7 +998,7 @@ export default function MarketScreen() {
                 {STORE_REVIEWS.map((rev) => (
                   <GlassCard key={rev.id} style={{ padding: 14 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <Text style={{ fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>
+                      <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>
                         {rev.author}
                       </Text>
                       <View style={{ flexDirection: 'row', gap: 2 }}>
@@ -981,7 +1026,12 @@ export default function MarketScreen() {
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
                   {language === 'sw' ? 'Kikapu Changu' : 'My Shopping Cart'}
                 </Text>
-                <TouchableOpacity onPress={() => setShowCartDrawer(false)} style={styles.closeBtn}>
+                <TouchableOpacity
+                  onPress={() => setShowCartDrawer(false)}
+                  style={styles.closeBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel={language === 'sw' ? 'Funga kikapu' : 'Close cart'}
+                >
                   <X size={20} color={colors.text} />
                 </TouchableOpacity>
               </View>
@@ -994,16 +1044,26 @@ export default function MarketScreen() {
                       <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }} numberOfLines={1}>
                         {language === 'sw' ? item.product.nameSw : item.product.name}
                       </Text>
-                      <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 11, color: colors.primary }}>
+                      <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: colors.primary }}>
                         TSh {fmt(item.product.price)}
                       </Text>
                     </View>
                     <View style={styles.qtyControlRow}>
-                      <TouchableOpacity onPress={() => updateCartQty(item.product.id, item.qty - 1)} style={styles.qtyBtn}>
+                      <TouchableOpacity
+                        onPress={() => updateCartQty(item.product.id, item.qty - 1)}
+                        style={styles.qtyBtn}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? 'Punguza idadi' : 'Decrease quantity'}
+                      >
                         <Text style={{ color: colors.text }}>-</Text>
                       </TouchableOpacity>
                       <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }}>{item.qty}</Text>
-                      <TouchableOpacity onPress={() => updateCartQty(item.product.id, item.qty + 1)} style={styles.qtyBtn}>
+                      <TouchableOpacity
+                        onPress={() => updateCartQty(item.product.id, item.qty + 1)}
+                        style={styles.qtyBtn}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? 'Ongeza idadi' : 'Increase quantity'}
+                      >
                         <Text style={{ color: colors.text }}>+</Text>
                       </TouchableOpacity>
                     </View>
@@ -1031,7 +1091,12 @@ export default function MarketScreen() {
                   </Text>
                 </View>
 
-                <TouchableOpacity onPress={handleCheckout} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
+                <TouchableOpacity
+                  onPress={handleCheckout}
+                  style={[styles.saveBtn, { backgroundColor: colors.primary }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={language === 'sw' ? 'Agiza sasa na ufanye malipo' : 'Place order checkout'}
+                >
                   <Text style={styles.saveBtnText}>
                     {language === 'sw' ? 'Agiza Sasa (Checkout)' : 'Place Order (Checkout)'}
                   </Text>
@@ -1437,7 +1502,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   locationContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
-  locationText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+  locationText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
   iconButton: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
   notifDot: { position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4 },
   scrollContent: { paddingHorizontal: 24, paddingTop: 16 },
@@ -1447,43 +1512,43 @@ const styles = StyleSheet.create({
   searchIconWrap: { width: 34, height: 34, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   searchInput: { flex: 1, fontSize: 14, fontFamily: 'Inter_500Medium' },
   tabBar: { flexDirection: 'row', paddingHorizontal: 24, marginBottom: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(0,0,0,0.08)' },
-  tabItem: { flex: 1, paddingVertical: 10, alignItems: 'center' },
+  tabItem: { flex: 1, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
   tabText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  storeCatPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
+  storeCatPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5, minHeight: 44, justifyContent: 'center' },
   storeCatTxt: { fontSize: 12, fontFamily: 'Inter_700Bold' },
   storeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingVertical: 10 },
   prodCard: { width: '48%', padding: 0, borderRadius: 20, overflow: 'hidden', borderWidth: 1 },
   prodImageContainer: { position: 'relative' },
   prodImage: { width: '100%', height: 110 },
-  compareIconBtn: { position: 'absolute', top: 8, right: 8, width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  compareIconBtn: { position: 'absolute', top: 4, right: 4, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   prodName: { fontSize: 12.5, fontFamily: 'Inter_700Bold', marginTop: 4 },
-  prodSeller: { fontSize: 10, fontFamily: 'Inter_500Medium', marginTop: 1 },
-  prodSpec: { fontSize: 9.5, fontFamily: 'Inter_500Medium' },
+  prodSeller: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 1 },
+  prodSpec: { fontSize: 12, fontFamily: 'Inter_500Medium' },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  ratingText: { fontSize: 9, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
+  ratingText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
   prodCardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(0,0,0,0.08)', paddingTop: 6 },
   prodPrice: { fontSize: 12.5, fontFamily: 'Inter_800ExtraBold' },
-  addToCartBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#22d15a', paddingHorizontal: 8, paddingVertical: 5, borderRadius: 8 },
-  addToCartText: { fontSize: 9.5, fontFamily: 'Inter_800ExtraBold', color: '#000' },
+  addToCartBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#22d15a', paddingHorizontal: 8, borderRadius: 8, minHeight: 44, justifyContent: 'center' },
+  addToCartText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#000' },
   cartFab: { position: 'absolute', bottom: 32, right: 24, zIndex: 100 },
   cartFabBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#22d15a', alignItems: 'center', justifyContent: 'center', position: 'relative', shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5 },
   cartCountBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: '#000', borderRadius: 8, width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
-  cartCountBadgeTxt: { color: '#fff', fontSize: 9, fontFamily: 'Inter_800ExtraBold' },
+  cartCountBadgeTxt: { color: '#fff', fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   compBar: { position: 'absolute', bottom: 32, left: 24, right: 24, zIndex: 90 },
   compBarInner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#000', borderRadius: 16, padding: 12 },
   compGrid: { flexDirection: 'row', paddingVertical: 14, gap: 10 },
   compCol: { flex: 1, gap: 6 },
   compHead: { fontSize: 12.5, fontFamily: 'Inter_700Bold' },
-  compLabel: { fontSize: 9, fontFamily: 'Inter_600SemiBold', marginTop: 8 },
-  compValue: { fontSize: 11.5, fontFamily: 'Inter_600SemiBold' },
+  compLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 8 },
+  compValue: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
   compDivider: { width: 1, backgroundColor: 'rgba(0,0,0,0.08)' },
   cartRowItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: StyleSheet.hairlineWidth },
   cartRowImg: { width: 44, height: 44, borderRadius: 8 },
   qtyControlRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  qtyBtn: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
+  qtyBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
   cartTotalSection: { borderTopWidth: 1, paddingTop: 16, marginTop: 10, gap: 10 },
   mobiMoneyNote: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  mobiMoneyText: { fontSize: 10.5, fontFamily: 'Inter_500Medium' },
+  mobiMoneyText: { fontSize: 12, fontFamily: 'Inter_500Medium' },
 
   // Original Feed Styling
   marketGrid: { gap: 16 },
@@ -1495,28 +1560,28 @@ const styles = StyleSheet.create({
   itemName: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
   itemMarket: { fontSize: 12, fontFamily: 'Inter_500Medium', opacity: 0.7 },
   volatilityBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  volatilityText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
+  volatilityText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   cardBody: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 },
   priceContainer: { flex: 1 },
-  priceLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 4 },
+  priceLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginBottom: 4 },
   priceBig: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   trendArea: { alignItems: 'flex-end', gap: 8 },
   sparklineOuter: { width: 80, height: 28, overflow: 'hidden' },
   trendPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, gap: 4 },
-  trendPercent: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
+  trendPercent: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   expandedContent: { overflow: 'hidden', marginTop: 8 },
   intelDivider: { height: 1, marginVertical: 16 },
   analysisRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   analysisItem: { flex: 1 },
-  analysisLabel: { fontSize: 11, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
+  analysisLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
   outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(34, 209, 90, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
-  outlookText: { fontSize: 10, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
+  outlookText: { fontSize: 12, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
   actionGrid: { flexDirection: 'row', gap: 12 },
-  contractBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 16, gap: 8 },
+  contractBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 16, gap: 8, minHeight: 44 },
   contractBtnText: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
   fab: { position: 'absolute', bottom: 32, right: 24 },
-  fabGrad: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingVertical: 16, borderRadius: 28 },
+  fabGrad: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingVertical: 16, borderRadius: 28, minHeight: 44 },
   fabText: { color: '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, letterSpacing: 0.5 },
 
   // Modals Overlay and Sheets
@@ -1524,8 +1589,8 @@ const styles = StyleSheet.create({
   modalSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: Platform.OS === 'ios' ? 44 : 24, gap: 16 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   modalTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
-  saveBtn: { paddingVertical: 14, borderRadius: 16, alignItems: 'center', flexDirection: 'row', gap: 8, justifyContent: 'center' },
+  closeBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
+  saveBtn: { paddingVertical: 14, borderRadius: 16, alignItems: 'center', flexDirection: 'row', gap: 8, justifyContent: 'center', minHeight: 44 },
   saveBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold', color: '#000' },
 });
 
@@ -1534,19 +1599,19 @@ const pm = StyleSheet.create({
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 4 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 },
   title: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
+  closeBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
   empty: { fontFamily: 'Inter_600SemiBold', fontSize: 13, marginTop: 12 },
   alertRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12, borderBottomWidth: 1 },
   alertDot: { width: 8, height: 8, borderRadius: 4 },
   alertText: { flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
-  label: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 14, marginBottom: 8 },
-  pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 16, borderWidth: 1.5, alignItems: 'center' },
+  label: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 14, marginBottom: 8 },
+  pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 16, borderWidth: 1.5, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
   pillText: { fontFamily: 'Inter_800ExtraBold', fontSize: 12 },
-  dirBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5 },
+  dirBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5, minHeight: 44 },
   inputWrap: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 4 },
   input: { fontSize: 15, fontFamily: 'Inter_600SemiBold', paddingVertical: 10 },
-  cancelBtn: { paddingHorizontal: 20, paddingVertical: 14, borderRadius: 12, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-  saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16 },
-  addBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, marginTop: 8 },
+  cancelBtn: { paddingHorizontal: 20, paddingVertical: 14, borderRadius: 12, borderWidth: 1, justifyContent: 'center', alignItems: 'center', minHeight: 44 },
+  saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16, minHeight: 44 },
+  addBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, marginTop: 8, minHeight: 44 },
   preview: { marginTop: 12, padding: 16, borderRadius: 14, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
 });

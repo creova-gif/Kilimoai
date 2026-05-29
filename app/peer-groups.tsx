@@ -467,28 +467,28 @@ const s = StyleSheet.create({
   avatar: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
   avatarText: { fontSize: 13, fontFamily: 'Inter_700Bold' },
   postAuthor: { fontSize: 13, fontFamily: 'Inter_700Bold' },
-  postTime: { fontSize: 11, fontFamily: 'Inter_500Medium' },
+  postTime: { fontSize: 12, fontFamily: 'Inter_500Medium' },
   postBody: { fontSize: 13.5, fontFamily: 'Inter_500Medium', lineHeight: 20 },
   
   // Custom redesign components
   linksRow: { flexDirection: 'row', gap: 10, marginTop: 10, flexWrap: 'wrap' },
   linkPill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
-  linkText: { fontSize: 11, fontFamily: 'Inter_700Bold' },
+  linkText: { fontSize: 12, fontFamily: 'Inter_700Bold' },
   
   tabsWrapper: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(0,0,0,0.1)', paddingHorizontal: 24, marginTop: 8 },
   tabsScroll: { gap: 16, paddingBottom: 0 },
   tabButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 4 },
-  tabButtonText: { fontSize: 12.5, fontFamily: 'Inter_700Bold' },
-  tabBadge: { width: 14, height: 14, borderRadius: 7, backgroundColor: '#ef4444', justifyContent: 'center', alignItems: 'center' },
-  tabBadgeText: { color: '#fff', fontSize: 8, fontFamily: 'Inter_800ExtraBold' },
+  tabButtonText: { fontSize: 13, fontFamily: 'Inter_700Bold' },
+  tabBadge: { width: 16, height: 16, borderRadius: 8, backgroundColor: '#ef4444', justifyContent: 'center', alignItems: 'center' },
+  tabBadgeText: { color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold' },
   
   tabInfoBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10, backgroundColor: 'rgba(0,0,0,0.02)', borderRadius: 10, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' },
-  tabInfoText: { fontSize: 10.5, color: '#4b5563', flex: 1, fontFamily: 'Inter_500Medium' },
+  tabInfoText: { fontSize: 12, color: '#4b5563', flex: 1, fontFamily: 'Inter_500Medium' },
   
   volunteerBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.04)' },
-  volunteerBtn: { marginTop: 12, height: 38, borderRadius: 10, borderWidth: 1.5, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  volunteerBtn: { marginTop: 12, height: 44, borderRadius: 10, borderWidth: 1.5, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   
   attendeePill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.1)' },
-  rsvpBtn: { marginTop: 12, height: 38, borderRadius: 10, borderWidth: 1.5, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  rsvpBtn: { marginTop: 12, height: 44, borderRadius: 10, borderWidth: 1.5, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
 });

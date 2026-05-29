@@ -73,8 +73,8 @@ const st = StyleSheet.create({
   tile:    { flex: 1, borderRadius: 20, borderWidth: 1, padding: 14, alignItems: 'center', gap: 4 },
   iconRing:{ width: 38, height: 38, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 4 },
   value:   { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  label:   { fontSize: 9,  fontFamily: 'Inter_700Bold', letterSpacing: 0.8, textAlign: 'center' },
-  sub:     { fontSize: 9,  fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
+  label:   { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.8, textAlign: 'center' },
+  sub:     { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
 });
 
 // ─── Add modal ────────────────────────────────────────────────────────────────
@@ -528,7 +528,7 @@ const s = StyleSheet.create({
   alertBanner:    { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 16, borderWidth: 1 },
   alertIconRing:  { width: 36, height: 36, borderRadius: 18, backgroundColor: '#ef444420', justifyContent: 'center', alignItems: 'center' },
   alertTitle:     { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  alertBody:      { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  alertBody:      { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 2 },
   alertCount:     { width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
   alertCountText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#fff' },
 
@@ -545,18 +545,18 @@ const ic = StyleSheet.create({
   iconCircle:{ width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   nameBlock: { flex: 1 },
   name:      { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.2 },
-  badge:     { paddingHorizontal: 7, paddingVertical: 3, borderRadius: 7 },
-  badgeText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.8 },
+  badge:     { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 7 },
+  badgeText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.8 },
 
   stepper: { flexDirection: 'row', alignItems: 'center', borderRadius: 22, borderWidth: 1, paddingHorizontal: 4, paddingVertical: 4, gap: 2 },
   stepBtn: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   stepVal: { fontSize: 14, fontFamily: 'InstrumentSerif_400Regular', minWidth: 42, textAlign: 'center' },
 
   lowBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, padding: 8, borderRadius: 10, borderWidth: 1 },
-  lowText:   { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#ef4444', flex: 1 },
+  lowText:   { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#ef4444', flex: 1 },
 
   footRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
-  priceTag:   { fontSize: 11, fontFamily: 'Inter_500Medium' },
+  priceTag:   { fontSize: 12, fontFamily: 'Inter_500Medium' },
   totalTag:   { fontSize: 13, fontFamily: 'InstrumentSerif_400Regular' },
   expandChip: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
 
@@ -572,7 +572,7 @@ const mo = StyleSheet.create({
   title:     { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
   sub:       { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 1 },
   closeBtn:  { width: 36, height: 36, borderRadius: 18, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-  label:     { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 18, marginBottom: 8 },
+  label:     { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, marginTop: 18, marginBottom: 8 },
   catGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   catChip:   { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5 },
   catText:   { fontSize: 13, fontFamily: 'Inter_700Bold' },

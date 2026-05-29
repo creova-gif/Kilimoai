@@ -229,10 +229,10 @@ export default function InsuranceScreen() {
             <GlassCard style={{ padding: 14, borderColor: '#f59e0b40', backgroundColor: '#f59e0b10', flexDirection: 'row', gap: 10, alignItems: 'center' }}>
               <AlertTriangle size={18} color="#f59e0b" />
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: '#f59e0b' }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: '#f59e0b' }}>
                   {language === 'sw' ? 'Agro ID haijathibitishwa' : 'Agro ID unverified'}
                 </Text>
-                <Text style={{ fontSize: 9.5, fontFamily: 'Inter_500Medium', color: colors.textMute, marginTop: 1 }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute, marginTop: 1 }}>
                   {language === 'sw' 
                     ? 'Thibitisha wasifu wako ili upate punguzo la ruzuku ya bima kupitia ushirika wako.' 
                     : 'Verify your profile to unlock cooperative insurance subsidies.'}
@@ -250,7 +250,7 @@ export default function InsuranceScreen() {
               <Text style={[s.empty, { color: colors.textMute }]}>
                 {language === 'sw' ? 'Hakuna sera bado · No active policies' : 'No active policies yet'}
               </Text>
-              <Text style={{ fontSize: 10.5, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
+              <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
                 {language === 'sw' 
                   ? 'Sajili mazao au mifugo yako ili ujilinde na majanga ya tabianchi.'
                   : 'Enroll in a coverage below to protect your farming investments.'}
@@ -293,6 +293,8 @@ export default function InsuranceScreen() {
                 onPress={() => openEnrollment(p)}
                 style={[s.enrollBtn, { backgroundColor: colors.primary }]}
                 activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? `Omba bima ya ${p.product} kutoka ${p.provider}` : `Apply for ${p.product} from ${p.provider}`}
               >
                 <Text style={s.enrollText}>
                   {language === 'sw' ? 'Omba Bima · Apply Now' : 'Apply Now'}
@@ -315,11 +317,16 @@ export default function InsuranceScreen() {
                 <Text style={[s.modalTitle, { color: colors.text }]}>
                   {language === 'sw' ? 'Ombi la Bima' : 'Insurance Application'}
                 </Text>
-                <Text style={{ fontSize: 11.5, fontFamily: 'Inter_600SemiBold', color: colors.primary }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.primary }}>
                   {selectedEnrollPolicy?.product}
                 </Text>
               </View>
-              <TouchableOpacity onPress={() => setEnrollModalVisible(false)} style={s.closeBtn}>
+              <TouchableOpacity
+                onPress={() => setEnrollModalVisible(false)}
+                style={s.closeBtn}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Funga dirisha la maombi' : 'Close application modal'}
+              >
                 <X size={20} color={colors.text} />
               </TouchableOpacity>
             </View>
@@ -332,7 +339,7 @@ export default function InsuranceScreen() {
                     backgroundColor: enrollStep >= step ? colors.primary : colors.border,
                     borderColor: enrollStep === step ? colors.primary : 'transparent',
                   }]}>
-                    <Text style={{ color: '#000', fontSize: 11, fontFamily: 'Inter_800ExtraBold' }}>{step}</Text>
+                    <Text style={{ color: '#000', fontSize: 12, fontFamily: 'Inter_800ExtraBold' }}>{step}</Text>
                   </View>
                   {step < 3 && <View style={[s.stepLine, { backgroundColor: enrollStep > step ? colors.primary : colors.border }]} />}
                 </View>
@@ -363,6 +370,8 @@ export default function InsuranceScreen() {
                         onChangeText={setFarmerName}
                         placeholder="Enter full name"
                         placeholderTextColor={colors.textMute}
+                        accessibilityLabel={language === 'sw' ? 'Jina la Mkulima' : 'Farmer Name'}
+                        accessibilityHint={language === 'sw' ? 'Weka jina lako kamili' : 'Enter your full name'}
                       />
                     </View>
                   </View>
@@ -378,6 +387,8 @@ export default function InsuranceScreen() {
                         keyboardType="phone-pad"
                         placeholder="e.g. +255 765 123 456"
                         placeholderTextColor={colors.textMute}
+                        accessibilityLabel={language === 'sw' ? 'Nambari ya Simu' : 'Phone Number'}
+                        accessibilityHint={language === 'sw' ? 'Weka nambari yako ya simu ya mkononi' : 'Enter your mobile phone number'}
                       />
                     </View>
                   </View>
@@ -392,6 +403,8 @@ export default function InsuranceScreen() {
                         onChangeText={setNationalId}
                         placeholder="NIDA Number (digits)"
                         placeholderTextColor={colors.textMute}
+                        accessibilityLabel={language === 'sw' ? 'Nambari ya NIDA' : 'National ID Number'}
+                        accessibilityHint={language === 'sw' ? 'Weka nambari yako ya NIDA ya Kitanzania' : 'Enter your Tanzanian NIDA number'}
                       />
                     </View>
                   </View>
@@ -406,6 +419,8 @@ export default function InsuranceScreen() {
                         onChangeText={setFarmerRegion}
                         placeholder="e.g. Mbeya, Rungwe"
                         placeholderTextColor={colors.textMute}
+                        accessibilityLabel={language === 'sw' ? 'Mkoa na Wilaya' : 'Region and District'}
+                        accessibilityHint={language === 'sw' ? 'Weka eneo lilipo shamba lako' : 'Enter where your farm is located'}
                       />
                     </View>
                   </View>
@@ -427,6 +442,8 @@ export default function InsuranceScreen() {
                       onChangeText={setCropCovered}
                       placeholder="e.g. Maize / Nyanya"
                       placeholderTextColor={colors.textMute}
+                      accessibilityLabel={language === 'sw' ? 'Zao Linalokatiwa Bima' : 'Crop to Cover'}
+                      accessibilityHint={language === 'sw' ? 'Weka jina la zao' : 'Enter the crop type'}
                     />
                   </View>
 
@@ -439,11 +456,13 @@ export default function InsuranceScreen() {
                       keyboardType="numeric"
                       placeholder="e.g. 5"
                       placeholderTextColor={colors.textMute}
+                      accessibilityLabel={language === 'sw' ? 'Ukubwa wa Shamba kwa Ekari' : 'Farm Size in Acres'}
+                      accessibilityHint={language === 'sw' ? 'Weka idadi ya ekari za shamba' : 'Enter the size of the farm in acres'}
                     />
                   </View>
 
                   <GlassCard style={{ padding: 14, marginTop: 10, borderColor: colors.primary + '20' }}>
-                    <Text style={{ fontSize: 10.5, fontFamily: 'Inter_700Bold', color: colors.textMute }}>
+                    <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.textMute }}>
                       COVERAGE LIMITS
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
@@ -452,7 +471,7 @@ export default function InsuranceScreen() {
                         TZS {fmt((selectedEnrollPolicy?.payoutMaxTZS ?? 0) * (parseFloat(farmAcres) || 1))}
                       </Text>
                     </View>
-                    <Text style={{ fontSize: 9.5, color: colors.textMute, marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 4 }}>
                       Payout is adjusted dynamically based on satellite NDVI vegetation stress index readings.
                     </Text>
                   </GlassCard>
@@ -493,32 +512,38 @@ export default function InsuranceScreen() {
                   <TouchableOpacity 
                     onPress={() => setPaymentMethod('mpesa')}
                     style={[s.payMethodCard, { borderColor: paymentMethod === 'mpesa' ? colors.primary : colors.border }]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Vodacom M-Pesa"
+                    accessibilityState={{ selected: paymentMethod === 'mpesa' }}
                   >
                     <View style={[s.radioCircle, { borderColor: paymentMethod === 'mpesa' ? colors.primary : colors.border }]}>
                       {paymentMethod === 'mpesa' && <View style={[s.radioInner, { backgroundColor: colors.primary }]} />}
                     </View>
-                    <View>
+                    <View style={{ gap: 2 }}>
                       <Text style={{ fontSize: 13, fontFamily: 'Inter_700Bold', color: colors.text }}>Vodacom M-Pesa</Text>
-                      <Text style={{ fontSize: 10, color: colors.textMute }}>Auto-deduct linked number: {farmerPhone || 'Not set'}</Text>
+                      <Text style={{ fontSize: 12, color: colors.textMute }}>Auto-deduct linked number: {farmerPhone || 'Not set'}</Text>
                     </View>
                   </TouchableOpacity>
 
                   <TouchableOpacity 
                     onPress={() => setPaymentMethod('tigo')}
                     style={[s.payMethodCard, { borderColor: paymentMethod === 'tigo' ? colors.primary : colors.border }]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Tigo Pesa"
+                    accessibilityState={{ selected: paymentMethod === 'tigo' }}
                   >
                     <View style={[s.radioCircle, { borderColor: paymentMethod === 'tigo' ? colors.primary : colors.border }]}>
                       {paymentMethod === 'tigo' && <View style={[s.radioInner, { backgroundColor: colors.primary }]} />}
                     </View>
-                    <View>
+                    <View style={{ gap: 2 }}>
                       <Text style={{ fontSize: 13, fontFamily: 'Inter_700Bold', color: colors.text }}>Tigo Pesa</Text>
-                      <Text style={{ fontSize: 10, color: colors.textMute }}>Manual push USSD prompt</Text>
+                      <Text style={{ fontSize: 12, color: colors.textMute }}>Manual push USSD prompt</Text>
                     </View>
                   </TouchableOpacity>
 
                   <View style={{ flexDirection: 'row', gap: 6, alignItems: 'flex-start', marginTop: 8 }}>
                     <CheckCircle2 size={14} color={colors.primary} style={{ marginTop: 2 }} />
-                    <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute, flex: 1 }}>
+                    <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute, flex: 1 }}>
                       {language === 'sw' 
                         ? 'Mkataba wako wa bima utaanza mara moja baada ya malipo kuthibitishwa.' 
                         : 'Your cover goes active immediately upon automated mobile money confirmation.'}
@@ -533,6 +558,8 @@ export default function InsuranceScreen() {
                   <TouchableOpacity 
                     onPress={() => setEnrollStep(enrollStep - 1)}
                     style={[s.modalSecBtn, { borderColor: colors.border }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
                   >
                     <Text style={[s.modalSecBtnText, { color: colors.text }]}>Back</Text>
                   </TouchableOpacity>
@@ -542,6 +569,8 @@ export default function InsuranceScreen() {
                   <TouchableOpacity 
                     onPress={() => setEnrollStep(enrollStep + 1)}
                     style={[s.modalPriBtn, { backgroundColor: colors.primary, flex: 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Endelea' : 'Continue'}
                   >
                     <Text style={s.modalPriBtnText}>Continue</Text>
                     <ChevronRight size={16} color="#000" />
@@ -551,6 +580,8 @@ export default function InsuranceScreen() {
                     onPress={handleEnrollSubmit}
                     disabled={loadingEnroll}
                     style={[s.modalPriBtn, { backgroundColor: colors.primary, flex: 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Thibitisha malipo na utume' : 'Confirm payment and submit'}
                   >
                     {loadingEnroll ? (
                       <ActivityIndicator size="small" color="#000" />
@@ -583,11 +614,16 @@ export default function InsuranceScreen() {
                 <Text style={[s.modalTitle, { color: colors.text }]}>
                   {language === 'sw' ? 'Wasilisha Dai la Fidia' : 'Submit Insurance Claim'}
                 </Text>
-                <Text style={{ fontSize: 11.5, fontFamily: 'Inter_600SemiBold', color: colors.primary }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.primary }}>
                   {selectedClaimPolicy?.product} · {selectedClaimPolicy?.provider}
                 </Text>
               </View>
-              <TouchableOpacity onPress={() => setClaimModalVisible(false)} style={s.closeBtn}>
+              <TouchableOpacity
+                onPress={() => setClaimModalVisible(false)}
+                style={s.closeBtn}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Funga dirisha la madai' : 'Close claims modal'}
+              >
                 <X size={20} color={colors.text} />
               </TouchableOpacity>
             </View>
@@ -600,7 +636,7 @@ export default function InsuranceScreen() {
                     backgroundColor: claimStep >= step ? colors.primary : colors.border,
                     borderColor: claimStep === step ? colors.primary : 'transparent',
                   }]}>
-                    <Text style={{ color: '#000', fontSize: 11, fontFamily: 'Inter_800ExtraBold' }}>{step}</Text>
+                    <Text style={{ color: '#000', fontSize: 12, fontFamily: 'Inter_800ExtraBold' }}>{step}</Text>
                   </View>
                   {step < 3 && <View style={[s.stepLine, { backgroundColor: claimStep > step ? colors.primary : colors.border }]} />}
                 </View>
@@ -626,6 +662,8 @@ export default function InsuranceScreen() {
                       onChangeText={setClaimReason}
                       placeholder={language === 'sw' ? 'Eleza kwa kifupi uharibifu uliotokea na tarehe yake...' : 'Describe what happened (e.g. drought impact, armyworms, flooding)...'}
                       placeholderTextColor={colors.textMute}
+                      accessibilityLabel={language === 'sw' ? 'Sababu ya Hasara' : 'Reason for Loss'}
+                      accessibilityHint={language === 'sw' ? 'Eleza kwa nini unadai fidia na nini kilitokea shambani' : 'Explain why you are filing a claim and what happened'}
                     />
                   </View>
 
@@ -643,6 +681,9 @@ export default function InsuranceScreen() {
                             backgroundColor: damageLevel === sev ? colors.primary + '10' : 'transparent',
                           }
                         ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? `Kiwango cha uharibifu: ${sev}` : `Damage level: ${sev}`}
+                        accessibilityState={{ selected: damageLevel === sev }}
                       >
                         <Text style={{ 
                           fontSize: 11.5, 
@@ -658,13 +699,13 @@ export default function InsuranceScreen() {
 
                   {selectedClaimPolicy && (
                     <GlassCard style={{ padding: 14, borderColor: '#ef444430', backgroundColor: '#ef444405' }}>
-                      <Text style={{ fontSize: 10.5, fontFamily: 'Inter_700Bold', color: colors.textMute }}>
+                      <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.textMute }}>
                         ESTIMATED PAYOUT
                       </Text>
                       <Text style={{ fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#ef4444', marginTop: 4 }}>
                         TZS {fmt(Math.round(selectedClaimPolicy.payoutMaxTZS * (damageLevel === 'low' ? 0.2 : damageLevel === 'medium' ? 0.5 : damageLevel === 'high' ? 0.8 : 1.0)))}
                       </Text>
-                      <Text style={{ fontSize: 9.5, color: colors.textMute, marginTop: 4 }}>
+                      <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 4 }}>
                         * Fidia halisi imedhamiriwa baada ya ukaguzi wa picha na uthibitisho wa satelaiti.
                       </Text>
                     </GlassCard>
@@ -700,6 +741,8 @@ export default function InsuranceScreen() {
                           <TouchableOpacity 
                             onPress={simulateCameraCapture}
                             style={[s.cameraBtn, { backgroundColor: colors.primary }]}
+                            accessibilityRole="button"
+                            accessibilityLabel={language === 'sw' ? 'Piga picha ya ushahidi wa hasara' : 'Capture photo evidence of damage'}
                           >
                             <Camera size={16} color="#000" />
                             <Text style={s.cameraBtnText}>
@@ -722,6 +765,8 @@ export default function InsuranceScreen() {
                         <TouchableOpacity 
                           onPress={() => setClaimPhoto(null)}
                           style={[s.modalSecBtn, { borderColor: colors.border, flex: 1 }]}
+                          accessibilityRole="button"
+                          accessibilityLabel={language === 'sw' ? 'Piga picha tena' : 'Retake photo'}
                         >
                           <Text style={[s.modalSecBtnText, { color: colors.text }]}>
                             {language === 'sw' ? 'Piga Tena' : 'Retake'}
@@ -729,7 +774,7 @@ export default function InsuranceScreen() {
                         </TouchableOpacity>
                         <View style={[s.evidenceBadge, { flex: 1.5, backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
                           <Sparkles size={12} color={colors.primary} />
-                          <Text style={{ fontSize: 10.5, fontFamily: 'Inter_700Bold', color: colors.primary }}>
+                          <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.primary }}>
                             Geo-Tagged & Secured
                           </Text>
                         </View>
@@ -779,17 +824,17 @@ export default function InsuranceScreen() {
                       <Image source={{ uri: claimPhoto }} style={s.thumbnail} />
                     )}
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: colors.text }}>
+                      <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.text }}>
                         {language === 'sw' ? 'Ushahidi wa picha umepakiwa' : 'Photo evidence attached'}
                       </Text>
-                      <Text style={{ fontSize: 9.5, color: colors.textMute, marginTop: 1 }} numberOfLines={2}>
+                      <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 1 }} numberOfLines={2}>
                         {claimReason || 'No text description entered.'}
                       </Text>
                     </View>
                   </View>
 
                   <View style={s.agreeBox}>
-                    <Text style={{ fontSize: 10, color: colors.textMute, lineHeight: 15 }}>
+                    <Text style={{ fontSize: 12, color: colors.textMute, lineHeight: 15 }}>
                       Nathibitisha kuwa taarifa zote zilizotolewa hapa ni za kweli na zinaonyesha uhalisia wa hasara iliyotokea shambani kwangu.
                     </Text>
                   </View>
@@ -802,6 +847,8 @@ export default function InsuranceScreen() {
                   <TouchableOpacity 
                     onPress={() => setClaimStep(claimStep - 1)}
                     style={[s.modalSecBtn, { borderColor: colors.border }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
                   >
                     <Text style={[s.modalSecBtnText, { color: colors.text }]}>Back</Text>
                   </TouchableOpacity>
@@ -820,6 +867,8 @@ export default function InsuranceScreen() {
                       setClaimStep(claimStep + 1);
                     }}
                     style={[s.modalPriBtn, { backgroundColor: colors.primary, flex: 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Endelea' : 'Continue'}
                   >
                     <Text style={s.modalPriBtnText}>Continue</Text>
                     <ChevronRight size={16} color="#000" />
@@ -829,6 +878,8 @@ export default function InsuranceScreen() {
                     onPress={handleClaimSubmit}
                     disabled={loadingClaim}
                     style={[s.modalPriBtn, { backgroundColor: colors.primary, flex: 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Tuma dai la fidia' : 'Submit crop claim'}
                   >
                     {loadingClaim ? (
                       <ActivityIndicator size="small" color="#000" />
@@ -913,37 +964,37 @@ const s = StyleSheet.create({
   empty: { fontSize: 13, fontFamily: 'Inter_700Bold', marginTop: 8 },
   iconBg: { width: 44, height: 44, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   product: { fontSize: 16, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3, fontWeight: '600' },
-  provider: { fontSize: 9.5, fontFamily: 'Inter_700Bold', letterSpacing: 0.8, marginTop: 2 },
+  provider: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.8, marginTop: 2 },
   specs: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 14, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, gap: 10 },
-  specLabel: { fontSize: 7.5, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
-  specValue: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', marginTop: 2 },
-  enrollBtn: { marginTop: 14, paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
+  specLabel: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
+  specValue: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', marginTop: 2 },
+  enrollBtn: { marginTop: 14, borderRadius: 12, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
   enrollText: { color: '#000', fontSize: 13, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
   policyRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontSize: 9, fontFamily: 'Inter_700Bold', letterSpacing: 0.8 },
-  expires: { fontSize: 10, fontFamily: 'Inter_600SemiBold', flexDirection: 'row', alignItems: 'center', gap: 4 },
+  statusText: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.8 },
+  expires: { fontSize: 12, fontFamily: 'Inter_600SemiBold', flexDirection: 'row', alignItems: 'center', gap: 4 },
   claimBox: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 10, borderWidth: 1, marginTop: 12 },
-  claimText: { fontSize: 11, fontFamily: 'Inter_700Bold', flex: 1 },
-  claimBtn: { marginTop: 12, paddingVertical: 10, borderRadius: 10, alignItems: 'center', borderWidth: 1 },
+  claimText: { fontSize: 12, fontFamily: 'Inter_700Bold', flex: 1 },
+  claimBtn: { marginTop: 12, borderRadius: 10, alignItems: 'center', borderWidth: 1, minHeight: 44, justifyContent: 'center' },
   claimBtnText: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.3 },
   
   // Modals
   modalContainer: { flex: 1 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 24, borderBottomWidth: StyleSheet.hairlineWidth },
   modalTitle: { fontSize: 22, fontFamily: 'InstrumentSerif_400Regular', fontWeight: 'bold' },
-  closeBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(0,0,0,0.05)', justifyContent: 'center', alignItems: 'center' },
+  closeBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.05)', justifyContent: 'center', alignItems: 'center' },
   
   stepperRow: { flexDirection: 'row', paddingHorizontal: 24, paddingTop: 16, gap: 4 },
   stepNumCircle: { width: 22, height: 22, borderRadius: 11, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5 },
   stepLine: { height: 2, flex: 1, marginHorizontal: 6 },
   
   prefillBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10, backgroundColor: 'rgba(34,209,90,0.06)', borderRadius: 10, borderWidth: 0.5, borderColor: 'rgba(34,209,90,0.2)', marginBottom: 8 },
-  prefillBannerText: { fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#146e2e', flex: 1 },
+  prefillBannerText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#146e2e', flex: 1 },
   
   inputGroup: { gap: 6 },
-  inputLabel: { fontSize: 10.5, fontFamily: 'Inter_700Bold' },
+  inputLabel: { fontSize: 12, fontFamily: 'Inter_700Bold' },
   inputWrap: { flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderRadius: 12, paddingHorizontal: 12, height: 48 },
   textInput: { flex: 1, fontSize: 13, fontFamily: 'Inter_500Medium', padding: 0 },
   singleTextInput: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, height: 48, fontSize: 13, fontFamily: 'Inter_500Medium' },
@@ -952,7 +1003,7 @@ const s = StyleSheet.create({
   pnlBox: { borderWidth: 1, borderRadius: 14, padding: 14, gap: 8, backgroundColor: 'rgba(0,0,0,0.01)' },
   pnlRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   
-  payMethodCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderRadius: 14, padding: 14 },
+  payMethodCard: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderRadius: 14, padding: 14, minHeight: 44, justifyContent: 'center' },
   radioCircle: { width: 16, height: 16, borderRadius: 8, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
   radioInner: { width: 8, height: 8, borderRadius: 4 },
   
@@ -965,8 +1016,8 @@ const s = StyleSheet.create({
   sevCard: { flex: 1, height: 44, borderRadius: 10, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
   
   viewfinder: { height: 200, borderRadius: 16, borderWidth: 1.5, borderStyle: 'dashed', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
-  cameraBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10 },
-  cameraBtnText: { color: '#000', fontSize: 11, fontFamily: 'Inter_700Bold' },
+  cameraBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, borderRadius: 10, minHeight: 44, justifyContent: 'center' },
+  cameraBtnText: { color: '#000', fontSize: 12, fontFamily: 'Inter_700Bold' },
   
   photoPreviewContainer: { height: 220, borderRadius: 16, borderWidth: 1, overflow: 'hidden', position: 'relative' },
   photoPreview: { width: '100%', height: '100%' },

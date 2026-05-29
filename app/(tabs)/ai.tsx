@@ -487,7 +487,19 @@ export default function SankofaScreen() {
               </View>
 
               <View style={styles.voiceOrbWrapper}>
-                <TouchableOpacity onPress={handleVoiceInteraction} activeOpacity={0.85} style={styles.voiceOrbButton}>
+                <TouchableOpacity
+                  onPress={handleVoiceInteraction}
+                  activeOpacity={0.85}
+                  style={styles.voiceOrbButton}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    voiceState === 'LISTENING'
+                      ? (language === 'sw' ? 'Acha kurekodi sauti' : 'Stop voice recording')
+                      : voiceState === 'PROCESSING'
+                      ? (language === 'sw' ? 'Inatafakari sauti' : 'Processing voice')
+                      : (language === 'sw' ? 'Anza kurekodi sauti' : 'Start voice recording')
+                  }
+                >
                   {[140, 170, 200].map((sz, i) => (
                     <View key={i} style={[styles.voiceRipple, {
                       width: sz, height: sz, borderRadius: sz / 2,
@@ -517,7 +529,12 @@ export default function SankofaScreen() {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity style={[styles.exitVoiceBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card, borderColor: colors.border }]} onPress={toggleVoiceMode}>
+              <TouchableOpacity
+                style={[styles.exitVoiceBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card, borderColor: colors.border }]}
+                onPress={toggleVoiceMode}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Rudi kwenye maandishi' : 'Switch to Text'}
+              >
                 <MessageSquare size={16} color={isDark ? "rgba(255,255,255,0.5)" : colors.textMute} />
                 <Text style={[styles.exitVoiceText, { color: colors.textMute }]}>Rudi maandishi</Text>
               </TouchableOpacity>
@@ -538,6 +555,8 @@ export default function SankofaScreen() {
                         key={i}
                         style={[styles.suggestionBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card }]}
                         onPress={() => { setInputText(prompt); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? `Uliza pendekezo: ${prompt}` : `Ask suggestion: ${prompt}`}
                       >
                         <Sparkles size={11} color="#22d15a" style={{ marginRight: 5 }} />
                         <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
@@ -552,6 +571,8 @@ export default function SankofaScreen() {
                   <TouchableOpacity
                     style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setAttachmentMenuVisible(true); }}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Fungua zana za ziada' : 'Open additional tools'}
                   >
                     <Plus size={20} color={isDark ? "rgba(255,255,255,0.5)" : colors.textMute} />
                   </TouchableOpacity>
@@ -565,15 +586,24 @@ export default function SankofaScreen() {
                       onChangeText={setInputText}
                       multiline
                       onFocus={() => Haptics.selectionAsync()}
+                      accessibilityLabel={language === 'sw' ? 'Uwanja wa swali' : 'Question input field'}
+                      accessibilityHint={language === 'sw' ? 'Weka ujumbe wako hapa' : 'Type your message here'}
                     />
                     <View style={styles.inputActions}>
-                      <TouchableOpacity style={styles.actionBtn} onPress={toggleVoiceMode}>
+                      <TouchableOpacity
+                        style={styles.actionBtn}
+                        onPress={toggleVoiceMode}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? 'Washa kurekodi sauti' : 'Enable voice recording'}
+                      >
                         <Mic size={19} color={isDark ? "rgba(255,255,255,0.4)" : colors.textMute} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
                         onPress={handleSend}
                         disabled={!inputText.trim() || isTyping}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? 'Tuma ujumbe sasa' : 'Send message now'}
                       >
                         <Send size={15} color={inputText.trim() ? '#fff' : (isDark ? 'rgba(255,255,255,0.3)' : colors.textMute)} />
                       </TouchableOpacity>
@@ -899,7 +929,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   engineBadgeText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
     letterSpacing: 0.5,
@@ -922,7 +952,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   statusLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     color: 'rgba(255,255,255,0.4)',
   },
@@ -1000,7 +1030,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   aiBubbleSourceText: {
-    fontSize: 8,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     color: '#22d15a',
     letterSpacing: 1,
@@ -1022,7 +1052,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   msgTime: {
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 6,
     fontFamily: 'Inter_500Medium',
   },
@@ -1351,7 +1381,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   headerChipText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     color: 'rgba(255,255,255,0.7)',
   },
@@ -1389,12 +1419,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(34,209,90,0.08)',
   },
   tableHeaderText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: 'rgba(255,255,255,0.7)',
   },
   tableCellText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     color: 'rgba(255,255,255,0.6)',
   },
@@ -1415,7 +1445,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(34,209,90,0.2)',
   },
   shortcutText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
   },

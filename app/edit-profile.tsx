@@ -281,7 +281,7 @@ export default function EditProfileScreen() {
                 placeholderTextColor={isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"}
                 style={[s.input, { color: colors.text }]}
                 accessibilityLabel={t.name}
-                accessibilityHint={!nameValid && name.length > 0 ? t.nameErr : undefined}
+                accessibilityHint={lang === 'sw' ? 'Weka jina lako kamili la herufi mbili au zaidi' : 'Enter your full name of two or more characters'}
               />
             </BlurView>
             {!nameValid && name.length > 0 && (
@@ -377,6 +377,7 @@ export default function EditProfileScreen() {
                 placeholderTextColor={isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"}
                 style={[s.input, { color: colors.text }]}
                 accessibilityLabel={t.size}
+                accessibilityHint={lang === 'sw' ? 'Weka ukubwa wa shamba lako kwa ekari' : 'Enter the size of your farm in acres'}
               />
             </BlurView>
 
@@ -504,26 +505,26 @@ function Section({ icon, label }: { icon?: React.ReactNode; label: string }) {
 const s = StyleSheet.create({
   container:       { flex: 1 },
   header:          { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
-  iconBtn:         { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.06)', justifyContent: 'center', alignItems: 'center' },
+  iconBtn:         { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.06)', justifyContent: 'center', alignItems: 'center' },
   headerTitle:     { color: '#fff', fontSize: 17, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.3 },
   dirtyBadge:      { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
   dirtyDot:        { width: 6, height: 6, borderRadius: 3, backgroundColor: '#f59e0b' },
-  dirtyText:       { color: '#f59e0b', fontSize: 10, fontFamily: 'Inter_600SemiBold' },
+  dirtyText:       { color: '#f59e0b', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
   scroll:          { paddingHorizontal: 20, paddingBottom: 40 },
   sub:             { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 8, lineHeight: 18 },
   sectionLabel:    { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 24, marginBottom: 10 },
-  sectionLabelText:{ color: 'rgba(255,255,255,0.55)', fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, textTransform: 'uppercase' },
+  sectionLabelText:{ color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5, textTransform: 'uppercase' },
   inputWrap:       { borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   inputErr:        { borderColor: '#ef4444' },
   input:           { color: '#fff', fontSize: 16, fontFamily: 'Inter_600SemiBold', paddingHorizontal: 16, paddingVertical: 14 },
   errRow:          { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
-  errText:         { color: '#ef4444', fontSize: 11, fontFamily: 'Inter_500Medium' },
-  pill:            { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  errText:         { color: '#ef4444', fontSize: 12, fontFamily: 'Inter_500Medium' },
+  pill:            { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', minHeight: 44, justifyContent: 'center' },
   pillText:        { color: 'rgba(255,255,255,0.75)', fontSize: 13, fontFamily: 'Inter_700Bold' },
   cropGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center' },
-  themeBtn:        { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  cropPill:        { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', minHeight: 44, justifyContent: 'center' },
+  actBtn:          { flex: 1, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center', minHeight: 44, justifyContent: 'center' },
+  themeBtn:        { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', minHeight: 44 },
   rolePill:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   rolePillText:    { color: 'rgba(255,255,255,0.8)', fontSize: 13, fontFamily: 'Inter_700Bold', flex: 1 },
   toggleRow:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', marginTop: 6 },

@@ -180,7 +180,7 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
           <Text style={[styles.trackTitle, { color: isDark ? '#fff' : colors.text }]}>
             {language === 'sw' ? 'Marekodi ya Ufuatiliaji' : 'Track Records'}
           </Text>
-          <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+          <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
             {completedCount}/{records.length} {language === 'sw' ? 'zimekamilika' : 'completed'}
           </Text>
         </View>
@@ -188,9 +188,11 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
           onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); routerInner.push('/scan' as any); }}
           activeOpacity={0.8}
           style={styles.qrBadge}
+          accessibilityRole="button"
+          accessibilityLabel={language === 'sw' ? 'Changanua ufuatiliaji' : 'Scan tracker'}
         >
-          <Microscope size={10} color="#22d15a" />
-          <Text style={{ color: '#22d15a', fontFamily: 'Inter_700Bold', fontSize: 10 }}>
+          <Microscope size={12} color="#22d15a" />
+          <Text style={{ color: '#22d15a', fontFamily: 'Inter_700Bold', fontSize: 12 }}>
             {language === 'sw' ? 'Changanua' : 'QR Scan'}
           </Text>
         </TouchableOpacity>
@@ -221,6 +223,9 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
               onPress={() => { Haptics.selectionAsync(); setActiveStep(isActive ? null : idx); }}
               activeOpacity={0.8}
               style={styles.trackStep}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
+              accessibilityLabel={language === 'sw' ? `${item.title}, ${item.subtitle}, ${isCompleted ? 'Imekamilika' : isNext ? 'Inayofuata' : 'Inasubiri'}` : `${item.title}, ${item.subtitle}, ${isCompleted ? 'Completed' : isNext ? 'Next' : 'Pending'}`}
             >
               {/* Connector line */}
               {idx < records.length - 1 && (
@@ -297,6 +302,8 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
           <TouchableOpacity
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/tasks' as any); }}
             style={styles.trackExpandedBtn}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Angalia Ratiba' : 'View Schedule'}
           >
             <Text style={styles.trackExpandedBtnText}>
               {language === 'sw' ? 'Angalia Ratiba →' : 'View Schedule →'}
@@ -395,12 +402,22 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
               </View>
               {primaryCrops.length > 1 && (
                 <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-                  <TouchableOpacity onPress={() => setIdx((p) => (p - 1 + primaryCrops.length) % primaryCrops.length)} hitSlop={{ top:8,bottom:8,left:8,right:8 }}>
-                    <ChevronLeft size={13} color={colors.textMute} />
+                  <TouchableOpacity
+                    onPress={() => setIdx((p) => (p - 1 + primaryCrops.length) % primaryCrops.length)}
+                    hitSlop={{ top:10,bottom:10,left:10,right:10 }}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Mmea uliotangulia' : 'Previous crop'}
+                  >
+                    <ChevronLeft size={16} color={colors.textMute} />
                   </TouchableOpacity>
-                  <Text style={{ fontSize: 9, fontFamily: 'Inter_600SemiBold', color: colors.textMute }}>{idx+1}/{primaryCrops.length}</Text>
-                  <TouchableOpacity onPress={() => setIdx((p) => (p + 1) % primaryCrops.length)} hitSlop={{ top:8,bottom:8,left:8,right:8 }}>
-                    <ChevronRight size={13} color={colors.textMute} />
+                  <Text style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.textMute }}>{idx+1}/{primaryCrops.length}</Text>
+                  <TouchableOpacity
+                    onPress={() => setIdx((p) => (p + 1) % primaryCrops.length)}
+                    hitSlop={{ top:10,bottom:10,left:10,right:10 }}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Mmea unaofuata' : 'Next crop'}
+                  >
+                    <ChevronRight size={16} color={colors.textMute} />
                   </TouchableOpacity>
                 </View>
               )}
@@ -490,6 +507,8 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
           <TouchableOpacity
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/crop-planning' as any); }}
             style={[styles.cropValueCtaBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.12)' : colors.primaryLight, borderColor: 'rgba(34,209,90,0.25)' }]}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Fungua Mpango wa Mazao' : 'Open Crop Plan'}
           >
             <Leaf size={12} color="#22d15a" />
             <Text style={styles.cropValueCtaText}>
@@ -499,6 +518,8 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
           <TouchableOpacity
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/market' as any); }}
             style={[styles.cropValueCtaBtn, { backgroundColor: isDark ? 'rgba(245,158,11,0.1)' : 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.25)' }]}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Fungua Bei za Masoko' : 'Open Market Prices'}
           >
             <TrendingUp size={12} color="#f59e0b" />
             <Text style={[styles.cropValueCtaText, { color: '#f59e0b' }]}>
@@ -742,7 +763,7 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
                   <SvgText
                     x={x + barW / 2}
                     y={y - 5}
-                    fontSize={9}
+                    fontSize={12}
                     fill="#22d15a"
                     textAnchor="middle"
                     fontWeight="bold"
@@ -753,7 +774,7 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
                 <SvgText
                   x={x + barW / 2}
                   y={chartH - 6}
-                  fontSize={7}
+                  fontSize={12}
                   fill={isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'}
                   textAnchor="middle"
                 >
@@ -2757,7 +2778,7 @@ const styles = StyleSheet.create({
   },
   markerLabelTitle: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 1 },
@@ -2765,7 +2786,7 @@ const styles = StyleSheet.create({
   },
   markerLabelSub: {
     color: 'rgba(255,255,255,0.75)',
-    fontSize: 8,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     marginTop: 1,
     textShadowColor: 'rgba(0,0,0,0.5)',
@@ -2868,7 +2889,7 @@ const styles = StyleSheet.create({
   },
   offlineText: {
     color: '#ef4444',
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
   
@@ -2883,7 +2904,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   cropLabel: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     color: 'rgba(255,255,255,0.7)',
     letterSpacing: 1,
@@ -2917,7 +2938,7 @@ const styles = StyleSheet.create({
   },
   liveText: {
     color: '#ef4444',
-    fontSize: 8,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
   },
   cropSelectorRow: {
@@ -2941,7 +2962,7 @@ const styles = StyleSheet.create({
   },
   slideshowIndicatorText: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
   harvestTimeline: {
@@ -2954,12 +2975,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   timelineLeft: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     color: 'rgba(255,255,255,0.7)',
   },
   timelineRight: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     color: '#FFFFFF',
   },
@@ -3010,7 +3031,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   searchAiBadgeText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.6,
   },
@@ -3045,7 +3066,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchReturnHintText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
   },
   searchLoading: {
@@ -3091,7 +3112,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   citedText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },
   
@@ -3178,18 +3199,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   stepDate: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.3,
   },
   stepMainTitle: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     textAlign: 'center',
     marginBottom: 2,
   },
   stepSubtitle: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     textAlign: 'center',
     marginBottom: 5,
@@ -3200,7 +3221,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   stepStatusText: {
-    fontSize: 7,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.3,
   },
@@ -3216,7 +3237,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   trackExpandedBtnText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
   },
@@ -3248,7 +3269,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   cropValueFieldText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     color: 'rgba(255,255,255,0.45)',
     letterSpacing: 0.2,
@@ -3263,7 +3284,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   cropHealthText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },
   cropValueStats: {
@@ -3280,7 +3301,7 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
   cropValueStatLabel: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     letterSpacing: 0.5,
     marginBottom: 4,
@@ -3297,7 +3318,7 @@ const styles = StyleSheet.create({
     lineHeight: 32,
   },
   cropValueStatSub: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     marginTop: 1,
   },
@@ -3322,7 +3343,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
   },
   cropValueCountdownSub: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     marginTop: 1,
   },
@@ -3336,7 +3357,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   cropValueLaborText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
   },
   cropValueTipRow: {
@@ -3350,7 +3371,7 @@ const styles = StyleSheet.create({
   },
   cropValueTipText: {
     flex: 1,
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     lineHeight: 16,
   },
@@ -3369,7 +3390,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   cropValueCtaText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
   },
@@ -3399,7 +3420,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   organizerBadgeText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },
   organizerEmpty: {
@@ -3435,7 +3456,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
   },
   organizerTaskSub: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     marginTop: 1,
   },
@@ -3446,7 +3467,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   organizerDueText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     letterSpacing: 0.2,
   },
@@ -3461,14 +3482,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   organizerFooterText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
   },
 
   // Quick Action List Styles
   bentoSectionTitle: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1.5,
     marginBottom: 10,
@@ -3501,7 +3522,7 @@ const styles = StyleSheet.create({
   },
   actionDesc: {
     color: 'rgba(255,255,255,0.85)',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
   },
 
@@ -3525,7 +3546,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   chartUnit: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
   },
   rangeSelector: {
@@ -3539,7 +3560,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   rangeText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
   chartContainer: {
@@ -3565,7 +3586,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   chartLabel: {
-    fontSize: 8,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
     marginTop: 6,
   },
@@ -3590,7 +3611,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   agroIdText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: 0.5,
   },
@@ -3601,7 +3622,7 @@ const styles = StyleSheet.create({
   },
   mobileMoneyText: {
     color: '#fff',
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
   balanceLabel: {
@@ -3702,7 +3723,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   statTrendLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },
   miniChartContainer: {
@@ -3765,7 +3786,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   suggestionTextText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
   },
   chatWidgetInputContainer: {
@@ -3798,7 +3819,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   chatWidgetReplyHeader: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: 0.5,
   },
@@ -3812,7 +3833,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   chatWidgetReplyActionText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
 
@@ -3833,13 +3854,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   weeklyInsightSource: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#8b5cf6',
     marginTop: 8,
   },
   recCat: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     marginBottom: 2,
   },
@@ -3903,7 +3924,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   weeklyHeroAiBadgeText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
     letterSpacing: 0.8,
@@ -3915,7 +3936,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   weeklyHeroLiveText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#fff',
     letterSpacing: 1.2,
@@ -3940,7 +3961,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   weeklyHeroSource: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
     color: 'rgba(255,255,255,0.35)',
     flex: 1,
@@ -3957,7 +3978,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   weeklyHeroCtaText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     color: '#22d15a',
     letterSpacing: 0.4,
@@ -3988,7 +4009,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   recCatNew: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 1.1,
   },
@@ -3999,7 +4020,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   recSeverityText: {
-    fontSize: 8,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.9,
   },
@@ -4029,7 +4050,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   recCtaLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.4,
   },
@@ -4068,7 +4089,7 @@ const styles = StyleSheet.create({
   },
   guideBadgeText: {
     color: '#FCFBF7',
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: 0.5,
   },
@@ -4178,7 +4199,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 26,
     color: '#3b82f6',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
   animatedSeed: {
@@ -4221,7 +4242,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     color: '#ef4444',
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
   growingMaizeContainer: {
@@ -4255,7 +4276,7 @@ const styles = StyleSheet.create({
     right: 18,
   },
   guideStepNumText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
@@ -4331,7 +4352,7 @@ const styles = StyleSheet.create({
   },
   noCropWarningBadgeText: {
     color: '#000',
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 0.5,
   },
@@ -4372,7 +4393,7 @@ const styles = StyleSheet.create({
   },
   showStepsBtnText: {
     color: '#000',
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
   },
 
@@ -4401,11 +4422,11 @@ const styles = StyleSheet.create({
   wxBar: { height: 10, borderRadius: 5 },
   wxBarThumb: { position: 'absolute', top: -3, width: 16, height: 16, borderRadius: 8, backgroundColor: '#fff', borderWidth: 2.5, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.18, shadowRadius: 3, elevation: 2, marginLeft: -8 },
   wxHour: { alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 8 },
-  wxHourTime: { fontSize: 10, fontFamily: 'Inter_500Medium' },
+  wxHourTime: { fontSize: 12, fontFamily: 'Inter_500Medium' },
   wxHourTemp: { fontSize: 13, fontFamily: 'Inter_700Bold' },
   wxStats: { flexDirection: 'row', alignItems: 'center', marginTop: 14, paddingTop: 14, borderTopWidth: 1 },
   wxStat: { flex: 1, alignItems: 'center', gap: 3 },
   wxStatDiv: { width: 1, height: 32, marginHorizontal: 2 },
   wxStatVal: { fontSize: 13, fontFamily: 'Inter_700Bold' },
-  wxStatLbl: { fontSize: 9, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 12 },
+  wxStatLbl: { fontSize: 12, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 12 },
 });

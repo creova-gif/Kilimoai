@@ -117,11 +117,11 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
       <View style={{ flexDirection: 'row', gap: 16, marginBottom: 8, paddingHorizontal: 4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
           <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: '#22d15a' }} />
-          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: colors.textMute }}>Mapato</Text>
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, color: colors.textMute }}>Mapato</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
           <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: '#ef4444' }} />
-          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: colors.textMute }}>Matumizi</Text>
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, color: colors.textMute }}>Matumizi</Text>
         </View>
       </View>
       <Svg width={CW} height={H}>
@@ -143,7 +143,7 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
           );
         })}
         {gridVals.map((pct) => (
-          <SvgText key={pct} x={PAD_LEFT - 4} y={toY(maxVal * pct) + 3.5} fontSize="8" fontFamily="Inter_600SemiBold" fill={colors.textMute} textAnchor="end">
+          <SvgText key={pct} x={PAD_LEFT - 4} y={toY(maxVal * pct) + 3.5} fontSize="12" fontFamily="Inter_600SemiBold" fill={colors.textMute} textAnchor="end">
             {fmtK(maxVal * pct)}
           </SvgText>
         ))}
@@ -175,11 +175,11 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
                 fill={isLast ? 'url(#expGrad)' : '#ef4444'}
                 opacity={isLast ? 0.85 : 0.3}
               />
-              <SvgText x={cx} y={H - 4} fontSize="8" fontFamily="Inter_600SemiBold" fill={isLast ? colors.text : colors.textMute} textAnchor="middle">
+              <SvgText x={cx} y={H - 4} fontSize="12" fontFamily="Inter_600SemiBold" fill={isLast ? colors.text : colors.textMute} textAnchor="middle">
                 {m.label}
               </SvgText>
               {isLast && (
-                <SvgText x={cx - barW / 2 - 1} y={toY(m.income) - 3} fontSize="7" fontFamily="Inter_700Bold" fill="#22d15a" textAnchor="middle">
+                <SvgText x={cx - barW / 2 - 1} y={toY(m.income) - 3} fontSize="12" fontFamily="Inter_700Bold" fill="#22d15a" textAnchor="middle">
                   {fmtK(m.income)}
                 </SvgText>
               )}
@@ -283,6 +283,8 @@ export default function FinanceScreen() {
           <TouchableOpacity
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
             style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
           >
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
@@ -295,6 +297,8 @@ export default function FinanceScreen() {
           <TouchableOpacity
             onPress={() => router.push('/agro-id' as any)}
             style={[s.exportBtn, { backgroundColor: colors.primary + '18', borderColor: colors.primary + '44' }]}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Pakua ripoti ya PDF' : 'Download PDF report'}
           >
             <FileText size={14} color={colors.primary} />
             <Text style={[s.exportTxt, { color: colors.primary }]}>PDF</Text>
@@ -352,7 +356,7 @@ export default function FinanceScreen() {
                 <Text style={[s.chartTitle, { color: colors.text }]}>
                   {language === 'sw' ? 'Kikomo cha Bajeti ya Matumizi' : 'Monthly Operations Budget'}
                 </Text>
-                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 11, color: colors.primary }}>
+                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.primary }}>
                   {fmtTZS(currentMonthExpense)} / {fmtTZS(budgetLimit)}
                 </Text>
               </View>
@@ -367,7 +371,7 @@ export default function FinanceScreen() {
                   ]}
                 />
               </View>
-              <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+              <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
                 {language === 'sw'
                   ? `Umetumia ${Math.round(budgetProgressPct * 100)}% ya bajeti ya matumizi ya mwezi huu.`
                   : `You have consumed ${Math.round(budgetProgressPct * 100)}% of your monthly operational budget.`}
@@ -403,7 +407,7 @@ export default function FinanceScreen() {
                 <Smartphone size={16} color="#22d15a" />
                 <View style={{ flex: 1 }}>
                   <Text style={[s.syncTitle, { color: colors.text }]}>Vodacom M-Pesa</Text>
-                  <Text style={{ fontSize: 9.5, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+                  <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
                     Last sync: 2 hours ago
                   </Text>
                 </View>
@@ -416,7 +420,7 @@ export default function FinanceScreen() {
                 <Smartphone size={16} color="#f59e0b" />
                 <View style={{ flex: 1 }}>
                   <Text style={[s.syncTitle, { color: colors.text }]}>Tigo Pesa</Text>
-                  <Text style={{ fontSize: 9.5, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+                  <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
                     Last sync: Just now
                   </Text>
                 </View>
@@ -477,6 +481,21 @@ export default function FinanceScreen() {
                     borderColor: filter === f ? 'transparent' : colors.border,
                   },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  f === 'all'
+                    ? language === 'sw'
+                      ? 'Onyesha rekodi zote za fedha'
+                      : 'Show all financial records'
+                    : f === 'income'
+                    ? language === 'sw'
+                      ? 'Onyesha mapato pekee'
+                      : 'Show income only'
+                    : language === 'sw'
+                    ? 'Onyesha matumizi pekee'
+                    : 'Show expenses only'
+                }
+                accessibilityState={{ selected: filter === f }}
               >
                 <Text style={[s.filterTxt, { color: filter === f ? '#fff' : colors.textMute }]}>
                   {f === 'all'
@@ -499,6 +518,8 @@ export default function FinanceScreen() {
                 setShowInvoiceModal(true);
               }}
               style={[s.invoiceBtn, { borderColor: colors.primary }]}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Tengeneza ankara ya mkataba' : 'Generate contract invoice'}
             >
               <FileText size={16} color={colors.primary} />
             </TouchableOpacity>
@@ -508,6 +529,8 @@ export default function FinanceScreen() {
                 setShowAdd((v) => !v);
               }}
               style={[s.addBtn, { backgroundColor: colors.primary }]}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Fungua fomu ya kuongeza rekodi mpya' : 'Open form to add a new record'}
             >
               <Plus size={16} color="#fff" />
             </TouchableOpacity>
@@ -530,6 +553,17 @@ export default function FinanceScreen() {
                           borderColor: colors.border,
                         },
                       ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        t === 'income'
+                          ? language === 'sw'
+                            ? 'Chagua kama Mapato'
+                            : 'Select as Income'
+                          : language === 'sw'
+                          ? 'Chagua kama Matumizi'
+                          : 'Select as Expense'
+                      }
+                      accessibilityState={{ selected: newType === t }}
                     >
                       {t === 'income' ? (
                         <ArrowDownLeft size={14} color={newType === t ? '#fff' : colors.textMute} />
@@ -548,6 +582,8 @@ export default function FinanceScreen() {
                   placeholderTextColor={colors.textMute}
                   value={newLabel}
                   onChangeText={setNewLabel}
+                  accessibilityLabel={language === 'sw' ? 'Maelezo ya rekodi' : 'Record description'}
+                  accessibilityHint={language === 'sw' ? 'Weka jina au maelezo ya muamala' : 'Enter transaction name or description'}
                 />
                 <TextInput
                   style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
@@ -556,6 +592,8 @@ export default function FinanceScreen() {
                   keyboardType="numeric"
                   value={newAmount}
                   onChangeText={setNewAmount}
+                  accessibilityLabel={language === 'sw' ? 'Kiasi cha fedha' : 'Transaction amount'}
+                  accessibilityHint={language === 'sw' ? 'Weka kiasi cha fedha kwa Shilingi za Kitanzania' : 'Enter amount in Tanzanian shillings'}
                 />
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }}>
                   {(Object.keys(CAT_META) as Category[]).map((c) => {
@@ -571,6 +609,9 @@ export default function FinanceScreen() {
                             borderColor: newCat === c ? meta.color : colors.border,
                           },
                         ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={language === 'sw' ? `Chagua kikundi cha ${meta.label}` : `Select category ${meta.labelEn}`}
+                        accessibilityState={{ selected: newCat === c }}
                       >
                         {meta.icon(newCat === c ? '#fff' : meta.color)}
                         <Text style={[s.catChipTxt, { color: newCat === c ? '#fff' : colors.textMute }]}>
@@ -580,7 +621,12 @@ export default function FinanceScreen() {
                     );
                   })}
                 </ScrollView>
-                <TouchableOpacity onPress={handleAdd} style={[s.saveBtn, { backgroundColor: colors.primary }]}>
+                <TouchableOpacity
+                  onPress={handleAdd}
+                  style={[s.saveBtn, { backgroundColor: colors.primary }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={language === 'sw' ? 'Hifadhi rekodi hii' : 'Save this record'}
+                >
                   <Text style={s.saveTxt}>{language === 'sw' ? 'Hifadhi' : 'Save'}</Text>
                 </TouchableOpacity>
               </View>
@@ -621,6 +667,8 @@ export default function FinanceScreen() {
             <TouchableOpacity
               onPress={() => router.push('/agro-id' as any)}
               style={[s.exportLink, { backgroundColor: colors.card, borderColor: colors.border }]}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Toa Ripoti ya P&L, fungua Agro ID' : 'Export P&L Report, open Agro ID'}
             >
               <FileText size={18} color={colors.primary} />
               <View style={{ flex: 1 }}>
@@ -646,12 +694,17 @@ export default function FinanceScreen() {
               <Text style={[s.modalTitle, { color: colors.text }]}>
                 {language === 'sw' ? 'Tengeneza Ankara ya Mkataba' : 'Generate Contract Invoice'}
               </Text>
-              <TouchableOpacity onPress={() => setShowInvoiceModal(false)} style={s.closeBtn}>
+              <TouchableOpacity
+                onPress={() => setShowInvoiceModal(false)}
+                style={s.closeBtn}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Funga dirisha hili' : 'Close this modal'}
+              >
                 <X size={20} color={colors.text} />
               </TouchableOpacity>
             </View>
 
-            <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, letterSpacing: 0.5 }}>
+            <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, letterSpacing: 0.5 }}>
               CHAGUA MKATABA ULIOKUBALIWA
             </Text>
 
@@ -669,12 +722,15 @@ export default function FinanceScreen() {
                         backgroundColor: selected ? colors.primary + '10' : 'transparent',
                       },
                     ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? `Chagua ${con.title}, mnunuzi ${con.buyer}` : `Select ${con.title}, buyer ${con.buyer}`}
+                    accessibilityState={{ selected }}
                   >
                     <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }}>{con.title}</Text>
-                    <Text style={{ fontSize: 10.5, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+                    <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
                       Buyer: {con.buyer} · Value: {fmtTZS(con.value)}
                     </Text>
-                    <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: colors.primary, marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.primary, marginTop: 4 }}>
                       Milestone: {con.milestone} (TSh {fmt(con.value / 3)})
                     </Text>
                   </TouchableOpacity>
@@ -682,7 +738,12 @@ export default function FinanceScreen() {
               })}
             </View>
 
-            <TouchableOpacity onPress={handleGenerateInvoice} style={[s.saveBtn, { backgroundColor: colors.primary, marginTop: 12 }]}>
+            <TouchableOpacity
+              onPress={handleGenerateInvoice}
+              style={[s.saveBtn, { backgroundColor: colors.primary, marginTop: 12 }]}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Tengeneza ankara ya mkataba na uhifadhi' : 'Generate contract invoice and save'}
+            >
               <Text style={{ color: '#000', fontSize: 14, fontFamily: 'Inter_700Bold' }}>
                 {language === 'sw' ? 'Tengeneza Ankara' : 'Generate & Save'}
               </Text>
@@ -697,15 +758,15 @@ export default function FinanceScreen() {
 const s = StyleSheet.create({
   root: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 10 },
-  backBtn: { width: 38, height: 38, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 44, height: 44, borderRadius: 14, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   title: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, letterSpacing: -0.3 },
   sub: { fontFamily: 'Inter_500Medium', fontSize: 12 },
-  exportBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 999, borderWidth: 1 },
-  exportTxt: { fontFamily: 'Inter_800ExtraBold', fontSize: 10 },
+  exportBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, borderRadius: 999, borderWidth: 1, minHeight: 44, justifyContent: 'center' },
+  exportTxt: { fontFamily: 'Inter_800ExtraBold', fontSize: 12 },
   plCard: { borderRadius: 20, padding: 16, borderWidth: 1 },
   plRow: { flexDirection: 'row', alignItems: 'center' },
   plItem: { flex: 1, alignItems: 'center', gap: 4 },
-  plLabel: { fontFamily: 'Inter_800ExtraBold', fontSize: 9, letterSpacing: 0.6 },
+  plLabel: { fontFamily: 'Inter_800ExtraBold', fontSize: 12, letterSpacing: 0.6 },
   plValue: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 18 },
   plDivider: { width: 1, height: 40, marginHorizontal: 4 },
   chartCard: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 4 },
@@ -713,7 +774,7 @@ const s = StyleSheet.create({
   chartTitle: { fontFamily: 'Inter_700Bold', fontSize: 13 },
   legendRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendTxt: { fontFamily: 'Inter_500Medium', fontSize: 10 },
+  legendTxt: { fontFamily: 'Inter_500Medium', fontSize: 12 },
   catCard: { padding: 16, borderRadius: 16, borderWidth: 1 },
   catRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   catIcon: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
@@ -722,30 +783,30 @@ const s = StyleSheet.create({
   catTrack: { height: 5, borderRadius: 3, overflow: 'hidden' },
   catFill: { height: 5, borderRadius: 3 },
   filterRow: { flexDirection: 'row', paddingHorizontal: 16, marginVertical: 12, gap: 8, alignItems: 'center' },
-  filterTab: { flex: 1, paddingVertical: 8, borderRadius: 10, borderWidth: 1, alignItems: 'center' },
+  filterTab: { flex: 1, borderRadius: 10, borderWidth: 1, alignItems: 'center', minHeight: 44, justifyContent: 'center' },
   filterTxt: { fontFamily: 'Inter_700Bold', fontSize: 12 },
-  addBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  invoiceBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  addBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  invoiceBtn: { width: 44, height: 44, borderRadius: 22, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   addForm: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 12 },
   formTitle: { fontFamily: 'Inter_700Bold', fontSize: 15 },
   typeRow: { flexDirection: 'row', gap: 8 },
-  typeBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 40, borderRadius: 10, borderWidth: 1 },
+  typeBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 44, borderRadius: 10, borderWidth: 1 },
   typeTxt: { fontFamily: 'Inter_700Bold', fontSize: 12 },
   input: { height: 44, borderRadius: 10, borderWidth: 1, paddingHorizontal: 12, fontFamily: 'Inter_500Medium', fontSize: 13 },
-  catChip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
-  catChipTxt: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
+  catChip: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, borderRadius: 999, borderWidth: 1, minHeight: 44, justifyContent: 'center' },
+  catChipTxt: { fontFamily: 'Inter_600SemiBold', fontSize: 12 },
   saveBtn: { height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   saveTxt: { fontFamily: 'Inter_700Bold', fontSize: 14, color: '#fff' },
   entryRow: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 14, borderWidth: 1, gap: 12 },
   entryIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   entryLabel: { fontFamily: 'Inter_600SemiBold', fontSize: 13 },
-  entryDate: { fontFamily: 'Inter_500Medium', fontSize: 10 },
+  entryDate: { fontFamily: 'Inter_500Medium', fontSize: 12 },
   entryAmt: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 16, letterSpacing: -0.2 },
   catBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
-  catBadgeTxt: { fontFamily: 'Inter_700Bold', fontSize: 9 },
+  catBadgeTxt: { fontFamily: 'Inter_700Bold', fontSize: 12 },
   exportLink: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 16, borderWidth: 1 },
   exportLinkTitle: { fontFamily: 'Inter_700Bold', fontSize: 14 },
-  exportLinkSub: { fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 2 },
+  exportLinkSub: { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 2 },
 
   // Budget module
   budgetCard: { padding: 16, gap: 6 },
@@ -754,20 +815,20 @@ const s = StyleSheet.create({
 
   // Cash flow alert
   cashFlowWarning: { flexDirection: 'row', gap: 10, padding: 12, backgroundColor: 'rgba(239, 68, 68, 0.08)', borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.2)', marginHorizontal: 16, borderRadius: 16, marginTop: 8 },
-  warningTitle: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#ef4444', letterSpacing: 0.5, marginBottom: 2 },
-  warningDesc: { fontSize: 11, fontFamily: 'Inter_500Medium', lineHeight: 16 },
+  warningTitle: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#ef4444', letterSpacing: 0.5, marginBottom: 2 },
+  warningDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', lineHeight: 16 },
 
   // Sync rows
   syncRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 },
   syncTitle: { fontSize: 12, fontFamily: 'Inter_700Bold' },
   syncStatusBadge: { backgroundColor: 'rgba(34,209,90,0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
-  syncStatusText: { fontSize: 8.5, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  syncStatusText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
 
   // Modals
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' },
   modalSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   modalTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
-  closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
-  contractOption: { padding: 12, borderWidth: 1.5, borderRadius: 12, gap: 2 },
+  closeBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
+  contractOption: { padding: 12, borderWidth: 1.5, borderRadius: 12, gap: 2, minHeight: 44, justifyContent: 'center' },
 });

@@ -262,13 +262,15 @@ export default function TasksScreen() {
           <TouchableOpacity
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
             style={st.iconBtn}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Rudi Nyuma' : 'Go Back'}
           >
             <ChevronLeft size={22} color={isDark ? 'rgba(255,255,255,0.8)' : colors.text} />
           </TouchableOpacity>
 
           <View style={{ alignItems: 'center' }}>
             <View style={st.commandBadge}>
-              <Target size={11} color="#22d15a" />
+              <Target size={12} color="#22d15a" />
               <Text style={st.commandText}>OPERESHENI</Text>
             </View>
             <Text style={[st.headerTitle, { color: colors.text }]}>Kazi za Shamba</Text>
@@ -281,6 +283,8 @@ export default function TasksScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             }}
             style={[st.iconBtn, isOffline && { borderColor: '#ef444450' }]}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Ongeza kazi mpya' : 'Add new task'}
           >
             {isOffline ? <WifiOff size={18} color="#ef4444" /> : <Plus size={22} color="#22d15a" />}
           </TouchableOpacity>
@@ -347,8 +351,10 @@ export default function TasksScreen() {
                   });
                 }}
                 style={[st.iotTriggerBtn, { borderColor: '#ef4444' }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? "Simulate Homa ya Ng'ombe" : 'Simulate Cow Fever Alert'}
               >
-                <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: '#ef4444' }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: '#ef4444' }}>
                   {language === 'sw' ? "Homa Ng'ombe" : 'Cow Fever'}
                 </Text>
               </TouchableOpacity>
@@ -369,8 +375,10 @@ export default function TasksScreen() {
                   });
                 }}
                 style={[st.iotTriggerBtn, { borderColor: '#f59e0b' }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Simulate Itilafu ya Bomba' : 'Simulate Pump Failure Alert'}
               >
-                <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: '#f59e0b' }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: '#f59e0b' }}>
                   {language === 'sw' ? 'Itilafu ya Bomba' : 'Pump Failure'}
                 </Text>
               </TouchableOpacity>
@@ -391,8 +399,10 @@ export default function TasksScreen() {
                   });
                 }}
                 style={[st.iotTriggerBtn, { borderColor: '#3b82f6' }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Simulate pH imeshuka' : 'Simulate pH Drop Alert'}
               >
-                <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: '#3b82f6' }}>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: '#3b82f6' }}>
                   {language === 'sw' ? 'pH imeshuka' : 'pH Drop'}
                 </Text>
               </TouchableOpacity>
@@ -427,30 +437,44 @@ export default function TasksScreen() {
                     borderColor: viewMode === 'calendar' ? '#22d15a' : colors.border,
                   },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Badilisha mtazamo wa kalenda na orodha' : 'Toggle calendar and list view'}
+                accessibilityState={{ checked: viewMode === 'calendar' }}
               >
                 {viewMode === 'calendar' ? <LayoutGrid size={17} color="#22d15a" /> : <CalendarIcon size={17} color={colors.textMute} />}
               </TouchableOpacity>
-              {(['all', 'pending', 'done'] as const).map((f) => (
-                <TouchableOpacity
-                  key={f}
-                  onPress={() => {
-                    setFilter(f);
-                    Haptics.selectionAsync();
-                  }}
-                  style={[
-                    st.filterBtn,
-                    {
-                      backgroundColor: filter === f ? '#22d15a' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                      borderColor: filter === f ? '#22d15a' : colors.border,
-                      paddingHorizontal: 10,
-                    },
-                  ]}
-                >
-                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 9, color: filter === f ? '#000' : colors.textMute }}>
-                    {f === 'all' ? 'ZOTE' : f === 'pending' ? 'ZINAZO' : 'ZIMEKAM'}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {(['all', 'pending', 'done'] as const).map((f) => {
+                const isSelected = filter === f;
+                const label = f === 'all'
+                  ? (language === 'sw' ? 'Kazi zote' : 'All tasks')
+                  : f === 'pending'
+                  ? (language === 'sw' ? 'Kazi zinazoendelea' : 'Pending tasks')
+                  : (language === 'sw' ? 'Kazi zilizokamilika' : 'Completed tasks');
+                return (
+                  <TouchableOpacity
+                    key={f}
+                    onPress={() => {
+                      setFilter(f);
+                      Haptics.selectionAsync();
+                    }}
+                    style={[
+                      st.filterBtn,
+                      {
+                        backgroundColor: filter === f ? '#22d15a' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                        borderColor: filter === f ? '#22d15a' : colors.border,
+                        paddingHorizontal: 10,
+                      },
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={label}
+                    accessibilityState={{ selected: isSelected }}
+                  >
+                    <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: filter === f ? '#000' : colors.textMute }}>
+                      {f === 'all' ? 'ZOTE' : f === 'pending' ? 'ZINAZO' : 'ZIMEKAM'}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
 
@@ -477,6 +501,9 @@ export default function TasksScreen() {
                       backgroundColor: selected ? colors.primary + '15' : 'transparent',
                     },
                   ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={role.label}
+                  accessibilityState={{ selected }}
                 >
                   <Text style={[st.roleFilterText, { color: selected ? colors.primary : colors.textMute }]}>
                     {role.label}
@@ -499,13 +526,23 @@ export default function TasksScreen() {
                 />
 
                 <View style={st.calNav}>
-                  <TouchableOpacity onPress={prevMonth} style={st.calNavBtn}>
+                  <TouchableOpacity
+                    onPress={prevMonth}
+                    style={st.calNavBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Mwezi uliopita' : 'Previous month'}
+                  >
                     <ChevronLeft size={18} color={isDark ? 'rgba(255,255,255,0.6)' : colors.text} />
                   </TouchableOpacity>
                   <Text style={[st.calMonthLabel, { color: colors.text }]}>
                     {MONTH_NAMES[calMonth]} {calYear}
                   </Text>
-                  <TouchableOpacity onPress={nextMonth} style={st.calNavBtn}>
+                  <TouchableOpacity
+                    onPress={nextMonth}
+                    style={st.calNavBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={language === 'sw' ? 'Mwezi ujao' : 'Next month'}
+                  >
                     <ChevronRight size={18} color={isDark ? 'rgba(255,255,255,0.6)' : colors.text} />
                   </TouchableOpacity>
                 </View>
@@ -530,6 +567,9 @@ export default function TasksScreen() {
                           Haptics.selectionAsync();
                         }}
                         style={st.calCell}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${day} ${MONTH_NAMES[calMonth]} ${calYear}`}
+                        accessibilityState={{ selected: isSel }}
                       >
                         <View style={[st.calDayNum, isToday && { backgroundColor: 'rgba(34,209,90,0.2)' }, isSel && { backgroundColor: '#22d15a' }]}>
                           <Text
@@ -567,11 +607,20 @@ export default function TasksScreen() {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                       }}
                       style={st.calAddBtn}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={language === 'sw' ? 'Ongeza kazi kwa siku hii' : 'Add task for this day'}
                     >
                       <Plus size={11} color="#22d15a" />
                       <Text style={st.calAddText}>Ongeza</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setSelectedDay(null)} style={{ marginLeft: 8 }}>
+                    <TouchableOpacity
+                      onPress={() => setSelectedDay(null)}
+                      style={{ marginLeft: 8 }}
+                      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={language === 'sw' ? 'Funga mabango ya kuchagua' : 'Close selected day banner'}
+                    >
                       <X size={14} color="#22d15a" />
                     </TouchableOpacity>
                   </View>
@@ -658,6 +707,10 @@ export default function TasksScreen() {
                             borderColor: isDone ? '#22d15a' : isDark ? 'rgba(255,255,255,0.18)' : colors.border,
                           },
                         ]}
+                        hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                        accessibilityRole="checkbox"
+                        accessibilityLabel={language === 'sw' ? `Kamilisha kazi: ${task.titleSw ?? task.title}` : `Complete task: ${task.title}`}
+                        accessibilityState={{ checked: isDone }}
                       >
                         {isDone && <Check size={12} color="#000" strokeWidth={3} />}
                       </TouchableOpacity>
@@ -715,7 +768,13 @@ export default function TasksScreen() {
 
             <View style={st.modalHeader}>
               <Text style={[st.modalTitle, { color: colors.text }]}>Kazi Mpya</Text>
-              <TouchableOpacity onPress={() => setShowCreate(false)} style={st.modalClose}>
+              <TouchableOpacity
+                onPress={() => setShowCreate(false)}
+                style={st.modalClose}
+                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Funga dirisha la kuongeza kazi' : 'Close create task modal'}
+              >
                 <X size={20} color={colors.textMute} />
               </TouchableOpacity>
             </View>
@@ -726,6 +785,8 @@ export default function TasksScreen() {
               placeholder="Jina la kazi (English)"
               placeholderTextColor={colors.textMute}
               style={[st.modalInput, { color: colors.text, borderColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }]}
+              accessibilityLabel={language === 'sw' ? 'Jina la kazi kwa Kiingereza' : 'Task title in English'}
+              accessibilityHint={language === 'sw' ? 'Weka jina la kazi kwa Kiingereza' : 'Enter the task title in English'}
             />
             <TextInput
               value={newTitleSw}
@@ -733,6 +794,8 @@ export default function TasksScreen() {
               placeholder="Jina kwa Kiswahili (hiari)"
               placeholderTextColor={colors.textMute}
               style={[st.modalInput, { color: colors.text, borderColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }]}
+              accessibilityLabel={language === 'sw' ? 'Jina la kazi kwa Kiswahili' : 'Task title in Swahili'}
+              accessibilityHint={language === 'sw' ? 'Weka jina la kazi kwa Kiswahili, hii ni hiari' : 'Enter the task title in Swahili, optional'}
             />
             <TextInput
               value={newBlock}
@@ -740,6 +803,8 @@ export default function TasksScreen() {
               placeholder="Eneo la shamba (mfano: Block A)"
               placeholderTextColor={colors.textMute}
               style={[st.modalInput, { color: colors.text, borderColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }]}
+              accessibilityLabel={language === 'sw' ? 'Eneo la shamba' : 'Farm block location'}
+              accessibilityHint={language === 'sw' ? 'Weka jina la eneo la shamba kama Block A' : 'Enter the farm block location, e.g. Block A'}
             />
 
             {/* Stepper */}
@@ -748,16 +813,22 @@ export default function TasksScreen() {
               <TouchableOpacity
                 onPress={() => setNewDueDays((d) => Math.max(1, d - 1))}
                 style={[st.stepBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Punguza siku' : 'Decrease days'}
+                accessibilityHint={language === 'sw' ? 'Inapunguza muda wa kukamilisha kwa siku moja' : 'Decreases due date by one day'}
               >
                 <Text style={{ fontSize: 18, color: colors.text }}>−</Text>
               </TouchableOpacity>
               <View style={[st.stepVal, { backgroundColor: 'rgba(34,209,90,0.1)', borderColor: 'rgba(34,209,90,0.25)' }]}>
                 <Text style={{ fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', color: '#22d15a' }}>{newDueDays}</Text>
-                <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: '#22d15a' }}>siku</Text>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: '#22d15a' }}>siku</Text>
               </View>
               <TouchableOpacity
                 onPress={() => setNewDueDays((d) => Math.min(90, d + 1))}
                 style={[st.stepBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}
+                accessibilityRole="button"
+                accessibilityLabel={language === 'sw' ? 'Ongeza siku' : 'Increase days'}
+                accessibilityHint={language === 'sw' ? 'Inaongeza muda wa kukamilisha kwa siku moja' : 'Increases due date by one day'}
               >
                 <Text style={{ fontSize: 18, color: colors.text }}>+</Text>
               </TouchableOpacity>
@@ -780,14 +851,18 @@ export default function TasksScreen() {
                       flex: 1,
                       backgroundColor: newRole === role.id ? 'rgba(34,209,90,0.12)' : 'transparent',
                       borderColor: newRole === role.id ? '#22d15a' : colors.border,
-                      paddingVertical: 12,
+                      height: 44,
+                      justifyContent: 'center',
                       borderRadius: 12,
                       borderWidth: 1.5,
                       alignItems: 'center',
                     },
                   ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={role.label}
+                  accessibilityState={{ selected: newRole === role.id }}
                 >
-                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 11, color: newRole === role.id ? '#22d15a' : colors.textMute }}>
+                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: newRole === role.id ? '#22d15a' : colors.textMute }}>
                     {role.label}
                   </Text>
                 </TouchableOpacity>
@@ -809,6 +884,9 @@ export default function TasksScreen() {
                         borderColor: newCat === c ? CAT_COLOR[c] : colors.border,
                       },
                     ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={CAT_LABEL[c]}
+                    accessibilityState={{ selected: newCat === c }}
                   >
                     {CAT_ICON[c]}
                     <Text style={[st.catPillText, { color: newCat === c ? CAT_COLOR[c] : colors.textMute }]}>{CAT_LABEL[c]}</Text>
@@ -832,6 +910,9 @@ export default function TasksScreen() {
                       borderColor: newPri === p ? PRI_COLOR[p] : colors.border,
                     },
                   ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={p.toUpperCase()}
+                  accessibilityState={{ selected: newPri === p }}
                 >
                   <View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: PRI_COLOR[p], marginBottom: 4 }]} />
                   <Text style={[st.priBtn2Text, { color: newPri === p ? PRI_COLOR[p] : colors.textMute }]}>{p.toUpperCase()}</Text>
@@ -839,7 +920,12 @@ export default function TasksScreen() {
               ))}
             </View>
 
-            <TouchableOpacity onPress={handleCreate} style={st.createBtn}>
+            <TouchableOpacity
+              onPress={handleCreate}
+              style={st.createBtn}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Ongeza Kazi mpya' : 'Add Task'}
+            >
               <LinearGradient colors={['#22d15a', '#048038']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={st.createBtnGrad}>
                 <Plus size={18} color="#fff" />
                 <Text style={st.createBtnText}>Ongeza Kazi</Text>
@@ -858,74 +944,74 @@ const st = StyleSheet.create({
   glowTR: { position: 'absolute', top: -80, right: -60, width: 320, height: 320, borderRadius: 160, backgroundColor: 'rgba(34,209,90,0.08)' },
   glowBL: { position: 'absolute', bottom: 80, left: -80, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(34,209,90,0.05)' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
-  iconBtn: { width: 42, height: 42, borderRadius: 21, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  iconBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   commandBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(34,209,90,0.1)', marginBottom: 4 },
-  commandText: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
+  commandText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
   headerTitle: { fontSize: 21, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   scrollContent: { padding: 16, gap: 14 },
   dashCard: { borderRadius: 22, borderWidth: 1, overflow: 'hidden', padding: 20 },
   dashRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
-  dashLabel: { fontSize: 9, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1, marginBottom: 6 },
+  dashLabel: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1, marginBottom: 6 },
   dashTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3, marginBottom: 3 },
   dashSub: { fontSize: 12, fontFamily: 'Inter_500Medium' },
   dashCircle: { width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: 'rgba(34,209,90,0.3)', justifyContent: 'center', alignItems: 'center' },
   dashPct: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', color: '#22d15a' },
   xpRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 12 },
-  xpText: { fontSize: 11, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
+  xpText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
   barTrack: { height: 8, borderRadius: 4, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 4 },
   offlineCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 16, backgroundColor: 'rgba(239,68,68,0.1)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)' },
   offlineTitle: { fontSize: 13, fontFamily: 'Inter_700Bold', color: '#ef4444', marginBottom: 2 },
-  offlineDesc: { fontSize: 11, fontFamily: 'Inter_500Medium', color: '#fca5a5' },
+  offlineDesc: { fontSize: 12, fontFamily: 'Inter_500Medium', color: '#fca5a5' },
   sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
-  filterBtn: { width: 34, height: 34, borderRadius: 10, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
+  filterBtn: { minWidth: 44, height: 44, borderRadius: 10, borderWidth: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 },
   calCard: { borderRadius: 22, borderWidth: 1, overflow: 'hidden', padding: 16 },
   calNav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  calNavBtn: { padding: 8 },
+  calNavBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   calMonthLabel: { fontSize: 14, fontFamily: 'Inter_700Bold' },
   calDayHdrRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  calDayHdr: { width: '13.5%', textAlign: 'center', fontSize: 11, fontFamily: 'Inter_700Bold' },
+  calDayHdr: { width: '13.5%', textAlign: 'center', fontSize: 12, fontFamily: 'Inter_700Bold' },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 8 },
-  calCell: { width: '14.28%', height: 42, alignItems: 'center', justifyContent: 'center' },
+  calCell: { width: '14.28%', height: 44, alignItems: 'center', justifyContent: 'center' },
   calDayNum: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   calDots: { flexDirection: 'row', gap: 2, marginTop: 2 },
   calDot: { width: 4, height: 4, borderRadius: 2 },
   calSelBanner: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12, borderWidth: 1, marginTop: 14 },
-  calSelText: { fontSize: 11.5, fontFamily: 'Inter_700Bold', marginLeft: 6 },
+  calSelText: { fontSize: 12, fontFamily: 'Inter_700Bold', marginLeft: 6 },
   calAddBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: 'rgba(34,209,90,0.1)' },
-  calAddText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  calAddText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
   emptyCard: { padding: 32, borderRadius: 18, borderWidth: 1, alignItems: 'center', gap: 8 },
   emptyText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
   taskCard: { borderRadius: 18, borderWidth: 1, borderLeftWidth: 4, padding: 14, position: 'relative', overflow: 'hidden' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 },
   catIconBox: { width: 24, height: 24, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
-  catLabel: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
+  catLabel: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 },
   coopBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: 'rgba(59,130,246,0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  coopText: { fontSize: 8.5, fontFamily: 'Inter_800ExtraBold', color: '#3b82f6' },
+  coopText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#3b82f6' },
   priPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, borderWidth: 1 },
   priDot: { width: 5, height: 5, borderRadius: 2.5 },
-  priText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold' },
+  priText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   cardBody: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   checkBtn: { width: 18, height: 18, borderRadius: 5, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   taskTitle: { fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 },
   cardFooter: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   chip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(0,0,0,0.03)', borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 6 },
-  chipText: { fontSize: 9, fontFamily: 'Inter_800ExtraBold' },
+  chipText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   progressBar: { height: 3, borderRadius: 1.5, overflow: 'hidden', marginTop: 10 },
 
   // Role Badges
   roleBadge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, marginLeft: 4 },
-  roleText: { fontSize: 8.5, fontFamily: 'Inter_800ExtraBold' },
+  roleText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
 
   // Role Filter row
   roleFilterRow: { flexDirection: 'row', gap: 8, marginVertical: 4, flexWrap: 'wrap' },
-  roleFilterPill: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 14, borderWidth: 1 },
-  roleFilterText: { fontSize: 10.5, fontFamily: 'Inter_700Bold' },
+  roleFilterPill: { paddingHorizontal: 12, minHeight: 44, justifyContent: 'center', borderRadius: 22, borderWidth: 1 },
+  roleFilterText: { fontSize: 12, fontFamily: 'Inter_700Bold' },
 
   // IoT alerts trigger style
   iotAlertsCard: { padding: 14, gap: 4 },
-  iotTriggerBtn: { borderWidth: 1, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
+  iotTriggerBtn: { borderWidth: 1, paddingHorizontal: 10, minHeight: 44, justifyContent: 'center', borderRadius: 10 },
 
   // Modal
   modalSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 20, paddingBottom: Platform.OS === 'ios' ? 44 : 24, gap: 12 },
@@ -934,14 +1020,14 @@ const st = StyleSheet.create({
   modalTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular' },
   modalClose: { padding: 4 },
   modalInput: { height: 44, borderRadius: 10, borderWidth: 1, paddingHorizontal: 12, fontFamily: 'Inter_500Medium', fontSize: 13 },
-  modalSection: { fontSize: 9.5, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1, marginTop: 10 },
+  modalSection: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1, marginTop: 10 },
   dueStepper: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  stepBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  stepBtn: { width: 44, height: 44, borderRadius: 22, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   stepVal: { flex: 1, height: 44, borderRadius: 12, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 },
-  catPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1.5 },
-  catPillText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
-  priBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderRadius: 10, paddingVertical: 8 },
-  priBtn2Text: { fontSize: 10.5, fontFamily: 'Inter_800ExtraBold' },
+  catPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, minHeight: 44, justifyContent: 'center', borderRadius: 10, borderWidth: 1.5 },
+  catPillText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
+  priBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderRadius: 10, minHeight: 44 },
+  priBtn2Text: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   createBtn: { marginTop: 16, borderRadius: 12, overflow: 'hidden' },
   createBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48 },
   createBtnText: { color: '#fff', fontSize: 14, fontFamily: 'Inter_800ExtraBold' },

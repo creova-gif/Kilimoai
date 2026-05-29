@@ -56,6 +56,7 @@ function NotificationItem({
   onDelete: (id: string) => void;
   colors: any;
 }) {
+  const language = useKilimoStore((s) => s.language);
   const typeKey = (item.title.toLowerCase().includes('hatari') || item.title.toLowerCase().includes('alert')) ? 'alert' 
                 : item.title.toLowerCase().includes('okoa') ? 'success' : 'info';
   const cfg = TYPE_CONFIG[typeKey];
@@ -71,7 +72,7 @@ function NotificationItem({
           onRead(item.id);
         }}
         accessibilityRole="button"
-        accessibilityLabel={isRead ? item.title : `Unread: ${item.title}`}
+        accessibilityLabel={isRead ? item.title : (language === 'sw' ? `Soma bado haijasomwa: ${item.title}` : `Unread: ${item.title}`)}
       >
         <View style={[
           styles.notifCard,
@@ -115,6 +116,8 @@ function NotificationItem({
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 onDelete(item.id);
               }}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'sw' ? 'Futa arifa' : 'Delete notification'}
             >
               <Trash2 size={16} color={colors.textMute} />
             </TouchableOpacity>
@@ -128,6 +131,7 @@ function NotificationItem({
 export default function NotificationsScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
+  const language = useKilimoStore((s) => s.language);
   
   const [dbNotifications, setDbNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -191,12 +195,17 @@ export default function NotificationsScreen() {
 
       <SafeAreaView style={styles.safeArea}>
         <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
-          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
+          <TouchableOpacity
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+            style={styles.backBtn}
+            accessibilityRole="button"
+            accessibilityLabel={unreadCount > 0 ? (language === 'sw' ? 'Rudi nyuma, arifa' : 'Go back, notifications') : (language === 'sw' ? 'Rudi nyuma' : 'Go back')}
+          >
             <ChevronLeft size={28} color={colors.text} />
           </TouchableOpacity>
 
           <View style={styles.headerCenter}>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>Arifa</Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>{language === 'sw' ? 'Arifa' : 'Notifications'}</Text>
             {unreadCount > 0 && (
               <View style={styles.countBadge}>
                 <Text style={styles.countText}>{unreadCount}</Text>
@@ -204,7 +213,12 @@ export default function NotificationsScreen() {
             )}
           </View>
 
-          <TouchableOpacity onPress={markAllRead} style={styles.actionBtn}>
+          <TouchableOpacity
+            onPress={markAllRead}
+            style={styles.actionBtn}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'sw' ? 'Soma zote' : 'Mark all as read'}
+          >
             <CheckCheck size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
@@ -259,9 +273,9 @@ const styles = StyleSheet.create({
   notifContent: { flex: 1, gap: 4 },
   notifTitle: { fontSize: 15, fontFamily: 'Inter_700Bold' },
   notifBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
-  notifTime: { fontSize: 11, fontFamily: 'Inter_600SemiBold', opacity: 0.6, marginTop: 4 },
+  notifTime: { fontSize: 12, fontFamily: 'Inter_600SemiBold', opacity: 0.6, marginTop: 4 },
   unreadDot: { width: 8, height: 8, borderRadius: 4, marginTop: 6, flexShrink: 0 },
-  deleteBtn: { padding: 8 },
+  deleteBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   emptyState: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 40 },
   emptyIcon: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
   emptyTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, marginBottom: 8 },

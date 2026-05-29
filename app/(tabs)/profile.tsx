@@ -166,6 +166,7 @@ export default function ProfileScreen() {
                 onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }}
                 accessibilityRole="button"
                 accessibilityLabel="Edit profile settings"
+                style={{ minHeight: 44, minWidth: 44, justifyContent: 'center', alignItems: 'center' }}
               >
                 <Settings size={24} color={colors.text} />
               </TouchableOpacity>
@@ -377,7 +378,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   idBadgeText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
@@ -430,14 +431,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
   },
   joinText: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
   },
   sectionContainer: {
     marginBottom: 28,
   },
   sectionTitle: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1.5,
     marginBottom: 12,

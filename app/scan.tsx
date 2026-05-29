@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: '#ffffff',
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 2,
   },
@@ -1043,7 +1043,7 @@ const styles = StyleSheet.create({
   },
   markerText: {
     color: '#22d15a',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 2,
   },
@@ -1299,7 +1299,7 @@ const styles = StyleSheet.create({
   },
   hudStatusText: {
     color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: 1.8,
     marginTop: 24,
@@ -1318,6 +1318,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: 24,
+    minHeight: 44,
   },
   hudCancelText: {
     color: '#FFFFFF',
@@ -1358,9 +1359,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   tipsCloseBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1425,7 +1426,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   tipsStepBadgeText: {
-    fontSize: 9,
+    fontSize: 12,
     fontFamily: 'InstrumentSerif_400Regular',
     letterSpacing: 1,
   },
@@ -1452,9 +1453,10 @@ const styles = StyleSheet.create({
   },
   tipsFooterBtnPrim: {
     flex: 1,
-    paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
+    minHeight: 44,
+    justifyContent: 'center',
   },
   tipsFooterBtnTextPrim: {
     fontSize: 14,
@@ -1462,10 +1464,11 @@ const styles = StyleSheet.create({
   },
   tipsFooterBtnSec: {
     flex: 1,
-    paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   tipsFooterBtnTextSec: {
     fontSize: 14,
