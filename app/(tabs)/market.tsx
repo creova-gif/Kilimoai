@@ -1,20 +1,58 @@
 /**
- * Market & Intel — Price Feed, Price Alerts, Make Offer, Sell Listing
- * Redesigned with bilingual localization support, robust category filters,
- * and high accessibility.
+ * Market & Intel — Price Feed, Price Alerts, Make Offer, Sell Listing,
+ * and comprehensive Agricultural Inputs Store (Pembejeo) with categories,
+ * comparison overlays, cart drawer, and seller reviews.
  */
 import React, { useState, useMemo } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, TouchableOpacity, TextInput,
-  Dimensions, SafeAreaView, Platform, StatusBar, RefreshControl, Modal,
-  KeyboardAvoidingView, Alert,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Dimensions,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+  RefreshControl,
+  Modal,
+  KeyboardAvoidingView,
+  Alert,
+  Image,
 } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInUp, FadeOut } from 'react-native-reanimated';
 import {
-  Globe, TrendingUp, TrendingDown, BarChart3, Activity, ArrowUpRight,
-  Sparkles, Cpu, ShoppingBag, Leaf, Search, ChevronLeft, Bell,
-  Filter, ArrowRight, Layers, FileSignature, Wallet, Plus, X, Check,
-  Package, Tag, MapPin
+  Globe,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  Activity,
+  ArrowUpRight,
+  Sparkles,
+  Cpu,
+  ShoppingBag,
+  Leaf,
+  Search,
+  ChevronLeft,
+  Bell,
+  Filter,
+  ArrowRight,
+  Layers,
+  FileSignature,
+  Wallet,
+  Plus,
+  X,
+  Check,
+  Package,
+  Tag,
+  MapPin,
+  ShoppingCart,
+  Star,
+  Scale,
+  Clock,
+  MessageSquare,
+  CheckCircle2,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -22,6 +60,7 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { GlassCard } from '../../components/PageScaffold';
 import { RequireVerification } from '../../components/RequireVerification';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 
@@ -38,21 +77,134 @@ const MARKET_DATA = [
   { id: '7', nameSw: 'Alizeti (Mbegu)', nameEn: 'Sunflower Seeds', price: 95_000, unitSw: 'Mfuko wa 100kg', unitEn: '100kg Bag', trend: '-0.5%', positive: false, market: 'Singida Market', region: 'Singida', emoji: '🌻', category: 'trending', volatilitySw: 'Kati', volatilityEn: 'Medium', demandSw: 'Imara', demandEn: 'Stable', outlookSw: 'Kawaida', outlookEn: 'Neutral', priceNum: 95_000 },
 ];
 
-const CATEGORIES = [
-  { id: 'all', labelSw: 'Yote', labelEn: 'All', icon: <Layers size={14} /> },
-  { id: 'grains', labelSw: 'Nafaka', labelEn: 'Grains', icon: <Leaf size={14} /> },
-  { id: 'veg', labelSw: 'Mbogamboga', labelEn: 'Vegetables', icon: <ShoppingBag size={14} /> },
-  { id: 'trending', labelSw: 'Inayovuma', labelEn: 'Trending', icon: <TrendingUp size={14} /> },
-];
-
 const CROPS_SELL = ['Mahindi', 'Mchele', 'Maharage', 'Nyanya', 'Vitunguu', 'Kahawa', 'Alizeti', 'Soya', 'Mpunga', 'Kabichi'];
 const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
+
+// ─── Pembejeo Store Data ──────────────────────────────────────────────────────
+interface Product {
+  id: string;
+  name: string;
+  nameSw: string;
+  category: 'seeds' | 'fertilizers' | 'tools';
+  price: number;
+  rating: number;
+  reviewsCount: number;
+  stock: number;
+  seller: string;
+  spec: string;
+  specSw: string;
+  suitability: string;
+  suitabilitySw: string;
+  image: string;
+}
+
+const STORE_PRODUCTS: Product[] = [
+  {
+    id: 'p1',
+    name: 'PAN 53 Hybrid Maize Seeds',
+    nameSw: 'Mbegu za Mahindi Chotara PAN 53',
+    category: 'seeds',
+    price: 12500,
+    rating: 4.8,
+    reviewsCount: 24,
+    stock: 15,
+    seller: 'Pannar Seeds Tanzania',
+    spec: '2kg bag · High germination',
+    specSw: 'Mfuko wa 2kg · Uotaji wa 98%',
+    suitability: 'Low-to-medium altitude fields',
+    suitabilitySw: 'Nyanda za chini hadi za kati',
+    image: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 'p2',
+    name: 'DK 8031 Highland Maize Seeds',
+    nameSw: 'Mbegu za Mahindi DK 8031 (Nyanda za Juu)',
+    category: 'seeds',
+    price: 14000,
+    rating: 4.9,
+    reviewsCount: 18,
+    stock: 45,
+    seller: 'Dekalb Tanzania',
+    spec: '2kg bag · Drought-tolerant',
+    specSw: 'Mfuko wa 2kg · Inastahimili ukame',
+    suitability: 'High-altitude/cold regions',
+    suitabilitySw: 'Maeneo ya baridi / nyanda za juu',
+    image: 'https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 'p3',
+    name: 'YaraMila CEREAL Fertilizer',
+    nameSw: 'Mbolea ya YaraMila CEREAL',
+    category: 'fertilizers',
+    price: 75000,
+    rating: 4.7,
+    reviewsCount: 35,
+    stock: 10,
+    seller: 'Yara East Africa',
+    spec: '50kg bag · NPK balanced',
+    specSw: 'Mfuko wa 50kg · Mchanganyiko wa NPK',
+    suitability: 'Maize, wheat, and rice topdressing',
+    suitabilitySw: 'Kuzia mahindi, ngano na mpunga',
+    image: 'https://images.unsplash.com/photo-1592982537447-6f2334208f0a?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 'p4',
+    name: 'Minjingu Organic Fertilizer',
+    nameSw: 'Mbolea ya Asili ya Minjingu',
+    category: 'fertilizers',
+    price: 45000,
+    rating: 4.2,
+    reviewsCount: 12,
+    stock: 100,
+    seller: 'Minjingu Mines & Fertilizers',
+    spec: '50kg bag · High phosphate',
+    specSw: 'Mfuko wa 50kg · Phosphate ya kutosha',
+    suitability: 'All crops during planting',
+    suitabilitySw: 'Mazao yote wakati wa kupanda',
+    image: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 'p5',
+    name: 'Solar Drip Irrigation Kit',
+    nameSw: 'Mfumo wa Umwagiliaji wa Drip wa Solar',
+    category: 'tools',
+    price: 380000,
+    rating: 4.5,
+    reviewsCount: 8,
+    stock: 3,
+    seller: 'Gadget Farm Tanzania',
+    spec: '1/4 Acre capacity · Solar controller',
+    specSw: 'Uwezo wa robo ekari · Mdhibiti wa jua',
+    suitability: 'Horticulture, tomatoes & onions',
+    suitabilitySw: 'Mbogamboga, nyanya na vitunguu',
+    image: 'https://images.unsplash.com/photo-1590682680695-43b964a3ae17?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 'p6',
+    name: 'Knapsack Sprayer 16L',
+    nameSw: 'Bomba la Kupuliza Dawa 16L',
+    category: 'tools',
+    price: 48000,
+    rating: 4.6,
+    reviewsCount: 14,
+    stock: 25,
+    seller: 'Pembejeo Hub Tanzania',
+    spec: '16 Liter · Ergonomic straps',
+    specSw: 'Lita 16 · Mikanda laini ya mgongoni',
+    suitability: 'Pesticide & liquid fertilizer spraying',
+    suitabilitySw: 'Kupulizia dawa na mbolea ya maji',
+    image: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=300',
+  },
+];
+
+const STORE_REVIEWS = [
+  { id: '1', author: 'Juma S. (Dodoma)', rating: 5, comment: 'Mbegu hizi ziliota haraka na kuvumilia ukame mkubwa wa Dodoma! Kupata magunia 12.', commentEn: 'These seeds germinated fast and survived the dry Dodoma season! Harvested 12 bags.' },
+  { id: '2', author: 'Maria K. (Mbeya)', rating: 4, comment: 'Mbolea nzuri sana. Bei ipo juu kidogo lakini matokeo yanaonekana kwa macho.', commentEn: 'Great fertilizer. Price is a bit high but results are visible to the eye.' },
+];
 
 type PriceAlert = { id: string; crop: string; direction: 'above' | 'below'; threshold: number; active: boolean };
 
 // ─── Sparkline ─────────────────────────────────────────────────────────────────
-// SVG-based sparkline that renders actual data values as a smooth area chart
-
 function sparkPath(data: number[], w: number, h: number): { line: string; area: string } {
   if (!data || data.length < 2) return { line: '', area: '' };
   const min = Math.min(...data);
@@ -73,7 +225,8 @@ function sparkPath(data: number[], w: number, h: number): { line: string; area: 
 const NeuralSparkline = ({ data, positive }: { data: number[]; positive: boolean }) => {
   const { colors } = useTheme();
   const color = positive ? colors.primary : '#ef4444';
-  const W = 80; const H = 28;
+  const W = 80;
+  const H = 28;
   const { line, area } = sparkPath(data, W, H);
   if (!line) return null;
   return (
@@ -92,60 +245,805 @@ const NeuralSparkline = ({ data, positive }: { data: number[]; positive: boolean
   );
 };
 
-// ─── Intelligence bento ───────────────────────────────────
-const IntelligenceBento = ({ isDark, colors, router, language }: any) => (
-  <View style={styles.bentoContainer}>
-    <Animated.View entering={FadeInDown} style={[styles.bentoMain, { borderColor: colors.border }]}>
-      <BlurView intensity={isDark ? 25 : 85} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-      <LinearGradient colors={isDark ? ['rgba(34, 209, 90, 0.15)', 'rgba(15, 23, 42, 0.9)'] : ['rgba(34, 209, 90, 0.1)', 'rgba(255, 255, 255, 0.9)']} style={StyleSheet.absoluteFill} />
-      <View style={styles.bentoHeader}>
-        <View style={styles.intelBadge}><Cpu size={14} color={colors.primary} /><Text style={[styles.intelBadgeText, { color: colors.primary }]}>AI ENGINE V4.5</Text></View>
-        <Animated.View><Sparkles size={20} color={colors.primary} opacity={0.6} /></Animated.View>
+// ─── Main screen ──────────────────────────────────────────────────────────────
+export default function MarketScreen() {
+  const { colors, isDark } = useTheme();
+  const router = useRouter();
+  const addNotification = useKilimoStore((s) => s.addNotification);
+  const language = useKilimoStore((s) => s.language);
+
+  // Tab State
+  const [activeTab, setActiveTab] = useState<'prices' | 'store' | 'orders'>('store');
+  const [activeStoreCat, setActiveStoreCat] = useState<'all' | 'seeds' | 'fertilizers' | 'tools'>('all');
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [showSell, setShowSell] = useState(false);
+  const [offerItem, setOfferItem] = useState<typeof MARKET_DATA[0] | null>(null);
+  const [priceAlerts, setPriceAlerts] = useState<PriceAlert[]>([]);
+
+  // Cart State
+  const [cart, setCart] = useState<{ product: Product; qty: number }[]>([]);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
+
+  // Comparison State
+  const [comparedIds, setComparedIds] = useState<string[]>([]);
+  const [showCompModal, setShowCompModal] = useState(false);
+
+  // Reviews Modal State
+  const [reviewProduct, setReviewProduct] = useState<Product | null>(null);
+
+  // Mocks Order History
+  const [orders, setOrders] = useState([
+    { id: 'KIL-9901', date: '28 Mei 2026', total: 89000, status: 'On the Way', items: 'PAN 53 Seeds x2, Fertilizer x1' },
+    { id: 'KIL-9812', date: '10 Apr 2026', total: 48000, status: 'Delivered', items: 'Knapsack Sprayer 16L x1' },
+  ]);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTimeout(() => setRefreshing(false), 2000);
+  }, []);
+
+  const filteredPrices = MARKET_DATA.filter((item) => {
+    const itemName = language === 'sw' ? item.nameSw : item.nameEn;
+    return (
+      !searchQuery.trim() ||
+      itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.market.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
+  const filteredProducts = STORE_PRODUCTS.filter((item) => {
+    const catMatch = activeStoreCat === 'all' || item.category === activeStoreCat;
+    const itemName = language === 'sw' ? item.nameSw : item.name;
+    const queryMatch =
+      !searchQuery.trim() ||
+      itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.seller.toLowerCase().includes(searchQuery.toLowerCase());
+    return catMatch && queryMatch;
+  });
+
+  // Cart operations
+  const addToCart = (product: Product) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setCart((prev) => {
+      const idx = prev.findIndex((x) => x.product.id === product.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx].qty += 1;
+        return copy;
+      }
+      return [...prev, { product, qty: 1 }];
+    });
+    addNotification({
+      title: language === 'sw' ? '🛒 Kikapu Kimeongezwa' : '🛒 Item Added to Cart',
+      body: language === 'sw' ? `${product.nameSw} imeongezwa kwenye kikapu.` : `${product.name} added to cart.`,
+      type: 'success',
+    });
+  };
+
+  const updateCartQty = (id: string, next: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setCart((prev) => {
+      if (next <= 0) return prev.filter((x) => x.product.id !== id);
+      return prev.map((x) => (x.product.id === id ? { ...x, qty: next } : x));
+    });
+  };
+
+  const checkoutTotal = cart.reduce((sum, item) => sum + item.product.price * item.qty, 0);
+
+  const handleCheckout = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const newOrder = {
+      id: `KIL-${Math.floor(Math.random() * 9000 + 1000)}`,
+      date: 'Leo',
+      total: checkoutTotal,
+      status: 'On the Way',
+      items: cart.map((c) => `${c.product.nameSw} x${c.qty}`).join(', '),
+    };
+    setOrders((prev) => [newOrder, ...prev]);
+    setCart([]);
+    setShowCartDrawer(false);
+    setActiveTab('orders');
+    Alert.alert(
+      language === 'sw' ? 'Agizo Limetumwa!' : 'Order Placed!',
+      language === 'sw' ? 'Utapokea ujumbe wa uthibitisho hivi karibuni kwenye simu yako.' : 'You will receive a confirmation message shortly.'
+    );
+  };
+
+  // Comparison operations
+  const toggleComparison = (id: string) => {
+    Haptics.selectionAsync();
+    setComparedIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= 2) {
+        Alert.alert(
+          language === 'sw' ? 'Ukomo wa Kulinganisha' : 'Comparison Limit',
+          language === 'sw' ? 'Unaweza kulinganisha bidhaa 2 tu kwa wakati mmoja.' : 'You can only compare 2 products at once.'
+        );
+        return prev;
+      }
+      return [...prev, id];
+    });
+  };
+
+  const getComparedProducts = useMemo(() => {
+    return STORE_PRODUCTS.filter((p) => comparedIds.includes(p.id));
+  }, [comparedIds]);
+
+  return (
+    <RequireVerification>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+        <View style={StyleSheet.absoluteFill}>
+          <LinearGradient
+            colors={[isDark ? '#020617' : '#ffffff', isDark ? '#020617ee' : '#ffffffee', 'transparent']}
+            style={styles.bgOverlay}
+          />
+        </View>
+
+        <SafeAreaView style={styles.safeArea}>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+              activeOpacity={0.7}
+            >
+              <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconButton, { borderColor: colors.border }]}>
+                <ChevronLeft size={24} color={colors.text} />
+              </BlurView>
+            </TouchableOpacity>
+
+            <View style={styles.headerCenter}>
+              <Text style={[styles.headerTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Soko la Pembejeo' : 'Pembejeo Marketplace'}
+              </Text>
+              <View style={styles.locationContainer}>
+                <View style={[styles.statusDot, { backgroundColor: colors.success }]} />
+                <Text style={[styles.locationText, { color: colors.textMute }]}>EAST AFRICA FEED</Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                Haptics.selectionAsync();
+                setShowAlerts(true);
+              }}
+            >
+              <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconButton, { borderColor: colors.border }]}>
+                <Bell size={20} color={colors.text} />
+                {priceAlerts.length > 0 && <View style={[styles.notifDot, { backgroundColor: colors.error }]} />}
+              </BlurView>
+            </TouchableOpacity>
+          </View>
+
+          {/* Sub Navigation Tabs */}
+          <View style={styles.tabBar}>
+            {[
+              { id: 'store', label: language === 'sw' ? 'Duka la Pembejeo' : 'Store' },
+              { id: 'prices', label: language === 'sw' ? 'Bei za Mazao' : 'Crop Prices' },
+              { id: 'orders', label: language === 'sw' ? 'Oda Zangu' : 'My Orders' },
+            ].map((tab) => {
+              const active = activeTab === tab.id;
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  onPress={() => {
+                    Haptics.selectionAsync();
+                    setActiveTab(tab.id as any);
+                  }}
+                  style={[
+                    styles.tabItem,
+                    active && { borderBottomColor: colors.primary, borderBottomWidth: 2 },
+                  ]}
+                >
+                  <Text style={[styles.tabText, { color: active ? colors.text : colors.textMute, fontWeight: active ? '700' : '500' }]}>
+                    {tab.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* Search container */}
+            <View style={[styles.searchContainer, searchFocused && styles.searchContainerFocused]}>
+              <View
+                style={[
+                  styles.searchBar,
+                  {
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : colors.card,
+                    borderColor: searchFocused ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <View style={[styles.searchIconWrap, { backgroundColor: (searchFocused ? colors.primary : colors.textMute) + '18' }]}>
+                  <Search size={17} color={searchFocused ? colors.primary : colors.textMute} />
+                </View>
+                <TextInput
+                  placeholder={
+                    activeTab === 'store'
+                      ? language === 'sw'
+                        ? 'Tafuta mbegu, mbolea, vifaa...'
+                        : 'Search seeds, fertilizers, tools...'
+                      : language === 'sw'
+                      ? 'Tafuta bidhaa, masoko, mikoa...'
+                      : 'Search crops, markets, regions...'
+                  }
+                  placeholderTextColor={colors.textMute}
+                  style={[styles.searchInput, { color: colors.text }]}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  onFocus={() => {
+                    setSearchFocused(true);
+                    Haptics.selectionAsync();
+                  }}
+                  onBlur={() => setSearchFocused(false)}
+                />
+              </View>
+            </View>
+
+            {/* Store Tab Content */}
+            {activeTab === 'store' && (
+              <View style={{ gap: 16 }}>
+                {/* Store categories selector */}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                  {[
+                    { id: 'all', label: language === 'sw' ? 'Yote' : 'All' },
+                    { id: 'seeds', label: language === 'sw' ? 'Mbegu' : 'Seeds' },
+                    { id: 'fertilizers', label: language === 'sw' ? 'Mbolea' : 'Fertilizers' },
+                    { id: 'tools', label: language === 'sw' ? 'Zana' : 'Tools' },
+                  ].map((cat) => {
+                    const selected = activeStoreCat === cat.id;
+                    return (
+                      <TouchableOpacity
+                        key={cat.id}
+                        onPress={() => {
+                          Haptics.selectionAsync();
+                          setActiveStoreCat(cat.id as any);
+                        }}
+                        style={[
+                          styles.storeCatPill,
+                          {
+                            borderColor: selected ? colors.primary : colors.border,
+                            backgroundColor: selected ? colors.primary + '15' : 'transparent',
+                          },
+                        ]}
+                      >
+                        <Text style={[styles.storeCatTxt, { color: selected ? colors.primary : colors.textMute }]}>
+                          {cat.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+
+                {/* Product Catalog Grid */}
+                <View style={styles.storeGrid}>
+                  {filteredProducts.map((prod) => {
+                    const isCompared = comparedIds.includes(prod.id);
+                    return (
+                      <GlassCard key={prod.id} style={styles.prodCard}>
+                        <View style={styles.prodImageContainer}>
+                          <Image source={{ uri: prod.image }} style={styles.prodImage} />
+                          <TouchableOpacity
+                            onPress={() => toggleComparison(prod.id)}
+                            style={[
+                              styles.compareIconBtn,
+                              { backgroundColor: isCompared ? colors.primary : 'rgba(0,0,0,0.5)' },
+                            ]}
+                          >
+                            <Scale size={12} color={isCompared ? '#000' : '#fff'} />
+                          </TouchableOpacity>
+                        </View>
+                        <View style={{ padding: 12, gap: 4 }}>
+                          <Text style={[styles.prodName, { color: colors.text }]} numberOfLines={1}>
+                            {language === 'sw' ? prod.nameSw : prod.name}
+                          </Text>
+                          <Text style={[styles.prodSeller, { color: colors.textMute }]}>{prod.seller}</Text>
+                          <Text style={[styles.prodSpec, { color: colors.textMute }]}>
+                            {language === 'sw' ? prod.specSw : prod.spec}
+                          </Text>
+
+                          {/* Ratings and reviews click */}
+                          <TouchableOpacity
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                              setReviewProduct(prod);
+                            }}
+                            style={styles.ratingRow}
+                          >
+                            <Star size={10} color="#f59e0b" fill="#f59e0b" />
+                            <Text style={styles.ratingText}>
+                              {prod.rating} ({prod.reviewsCount} reviews)
+                            </Text>
+                          </TouchableOpacity>
+
+                          <View style={styles.prodCardFooter}>
+                            <Text style={[styles.prodPrice, { color: colors.text }]}>TSh {fmt(prod.price)}</Text>
+                            <TouchableOpacity onPress={() => addToCart(prod)} style={styles.addToCartBtn}>
+                              <ShoppingCart size={12} color="#000" />
+                              <Text style={styles.addToCartText}>{language === 'sw' ? 'Ongeza' : 'Add'}</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      </GlassCard>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+
+            {/* Crop Prices Tab Content */}
+            {activeTab === 'prices' && (
+              <View style={styles.marketGrid}>
+                {filteredPrices.map((item) => {
+                  const isExpanded = expandedId === item.id;
+                  const sparkData = [40, 45, 42, 48, 52, 50, 58, 62, 60, 65].map((v) =>
+                    item.positive ? v : 100 - v
+                  );
+                  const itemName = language === 'sw' ? item.nameSw : item.nameEn;
+                  const itemUnit = language === 'sw' ? item.unitSw : item.unitEn;
+                  const itemVol = language === 'sw' ? item.volatilitySw : item.volatilityEn;
+                  const itemOutlook = language === 'sw' ? item.outlookSw : item.outlookEn;
+                  const itemDemand = language === 'sw' ? item.demandSw : item.demandEn;
+
+                  return (
+                    <TouchableOpacity
+                      key={item.id}
+                      onPress={() => {
+                        setExpandedId(isExpanded ? null : item.id);
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      }}
+                      activeOpacity={0.9}
+                    >
+                      <BlurView
+                        intensity={isDark ? 20 : 60}
+                        tint={isDark ? 'dark' : 'light'}
+                        style={[
+                          styles.premiumCard,
+                          { borderColor: colors.border },
+                          isExpanded && { borderColor: colors.primary + '40', borderWidth: 2 },
+                        ]}
+                      >
+                        <View style={styles.cardHeader}>
+                          <View style={[styles.emojiContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}>
+                            <Text style={styles.cardEmoji}>{item.emoji}</Text>
+                          </View>
+                          <View style={styles.cardMeta}>
+                            <Text style={[styles.itemName, { color: colors.text }]}>{itemName}</Text>
+                            <Text style={[styles.itemMarket, { color: colors.textMute }]}>
+                              {item.market} · {item.region}
+                            </Text>
+                          </View>
+                          <View
+                            style={[
+                              styles.volatilityBadge,
+                              {
+                                backgroundColor:
+                                  item.volatilitySw === 'High' || item.volatilityEn === 'High'
+                                    ? colors.error + '15'
+                                    : colors.success + '15',
+                              },
+                            ]}
+                          >
+                            <Text style={[styles.volatilityText, { color: item.volatilitySw === 'High' || item.volatilityEn === 'High' ? colors.error : colors.success }]}>
+                              {itemVol}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.cardBody}>
+                          <View style={styles.priceContainer}>
+                            <Text style={[styles.priceLabel, { color: colors.textMute }]}>
+                              {language === 'sw' ? 'Wastani wa Bei' : 'Average Price'}
+                            </Text>
+                            <Text style={[styles.priceBig, { color: colors.text }]}>TZS {fmt(item.priceNum)}</Text>
+                          </View>
+                          <View style={styles.trendArea}>
+                            <NeuralSparkline data={sparkData} positive={item.positive} />
+                            <View
+                              style={[
+                                styles.trendPill,
+                                { backgroundColor: item.positive ? colors.success + '20' : colors.error + '20' },
+                              ]}
+                            >
+                              {item.positive ? (
+                                <TrendingUp size={12} color={colors.success} />
+                              ) : (
+                                <TrendingDown size={12} color={colors.error} />
+                              )}
+                              <Text style={[styles.trendPercent, { color: item.positive ? colors.success : colors.error }]}>
+                                {item.trend}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+
+                        {isExpanded && (
+                          <Animated.View entering={FadeInDown} style={styles.expandedContent}>
+                            <View style={[styles.intelDivider, { backgroundColor: colors.border }]} />
+                            <View style={styles.analysisRow}>
+                              <View style={styles.analysisItem}>
+                                <Text style={[styles.analysisLabel, { color: colors.textMute }]}>AI Outlook</Text>
+                                <View style={styles.outlookBadge}>
+                                  <Sparkles size={12} color={colors.primary} />
+                                  <Text style={[styles.outlookText, { color: colors.primary }]}>{itemOutlook}</Text>
+                                </View>
+                              </View>
+                              <View style={styles.analysisItem}>
+                                <Text style={[styles.analysisLabel, { color: colors.textMute }]}>
+                                  {language === 'sw' ? 'Mahitaji' : 'Demand'}
+                                </Text>
+                                <Text style={[styles.analysisValue, { color: colors.text }]}>{itemDemand}</Text>
+                              </View>
+                              <View style={styles.analysisItem}>
+                                <Text style={[styles.analysisLabel, { color: colors.textMute }]}>
+                                  {language === 'sw' ? 'Kipimo' : 'Unit'}
+                                </Text>
+                                <Text style={[styles.analysisValue, { color: colors.text }]}>{itemUnit}</Text>
+                              </View>
+                            </View>
+                            <View style={styles.actionGrid}>
+                              <TouchableOpacity
+                                style={[styles.contractBtn, { backgroundColor: colors.primary }]}
+                                onPress={() => {
+                                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                                  setExpandedId(null);
+                                  setOfferItem(item);
+                                }}
+                              >
+                                <Wallet size={16} color="#000" />
+                                <Text style={[styles.contractBtnText, { color: '#000' }]}>
+                                  {language === 'sw' ? 'Toa Ofa' : 'Make Offer'}
+                                </Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={[styles.contractBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
+                                onPress={() => {
+                                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                  router.push('/contracts');
+                                }}
+                              >
+                                <FileSignature size={16} color={colors.text} />
+                                <Text style={[styles.contractBtnText, { color: colors.text }]}>Smart Contract</Text>
+                              </TouchableOpacity>
+                            </View>
+                          </Animated.View>
+                        )}
+                      </BlurView>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+
+            {/* My Orders Tab Content */}
+            {activeTab === 'orders' && (
+              <View style={{ gap: 12 }}>
+                {orders.map((ord) => (
+                  <GlassCard key={ord.id} style={{ padding: 16 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 13, color: colors.text }}>
+                        Order: #{ord.id}
+                      </Text>
+                      <View style={{ backgroundColor: ord.status === 'Delivered' ? '#22d15a20' : '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
+                        <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? '#22d15a' : '#f59e0b' }}>
+                          {ord.status}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={{ color: colors.textMute, fontSize: 11, fontFamily: 'Inter_600SemiBold', marginTop: 4 }}>
+                      Date: {ord.date}
+                    </Text>
+                    <Text style={{ color: colors.text, fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 8 }} numberOfLines={1}>
+                      {ord.items}
+                    </Text>
+                    <Text style={{ color: colors.text, fontSize: 13, fontFamily: 'Inter_800ExtraBold', marginTop: 8, textAlign: 'right' }}>
+                      Total: TSh {fmt(ord.total)}
+                    </Text>
+                  </GlassCard>
+                ))}
+              </View>
+            )}
+
+            <View style={{ height: 120 }} />
+          </ScrollView>
+
+          {/* Cart Floating Button (Only on Store Tab) */}
+          {activeTab === 'store' && cart.length > 0 && (
+            <Animated.View entering={FadeInDown} style={styles.cartFab}>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                  setShowCartDrawer(true);
+                }}
+                style={styles.cartFabBtn}
+              >
+                <ShoppingCart size={18} color="#000" />
+                <View style={styles.cartCountBadge}>
+                  <Text style={styles.cartCountBadgeTxt}>{cart.reduce((sum, c) => sum + c.qty, 0)}</Text>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          {/* Comparison Bar (Only when comparedIds has items) */}
+          {comparedIds.length > 0 && (
+            <Animated.View entering={FadeInUp} style={styles.compBar}>
+              <View style={styles.compBarInner}>
+                <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_700Bold' }}>
+                  {comparedIds.length} {language === 'sw' ? 'kulinganisha' : 'to compare'}
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <TouchableOpacity
+                    onPress={() => setComparedIds([])}
+                    style={{ padding: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8 }}
+                  >
+                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>Clear</Text>
+                  </TouchableOpacity>
+                  {comparedIds.length === 2 && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                        setShowCompModal(true);
+                      }}
+                      style={{ padding: 8, backgroundColor: colors.primary, borderRadius: 8 }}
+                    >
+                      <Text style={{ color: '#000', fontSize: 11, fontFamily: 'Inter_700Bold' }}>
+                        {language === 'sw' ? 'Linganisha' : 'Compare'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            </Animated.View>
+          )}
+
+          {/* Sell FAB (Only on Crop Prices Tab) */}
+          {activeTab === 'prices' && (
+            <Animated.View entering={FadeInDown} style={styles.fab}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowSell(true);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                }}
+                activeOpacity={0.85}
+              >
+                <LinearGradient colors={[colors.success, '#0a3d18']} style={styles.fabGrad}>
+                  <Package size={20} color="#fff" />
+                  <Text style={styles.fabText}>{language === 'sw' ? 'UZA' : 'SELL'}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+        </SafeAreaView>
+
+        {/* Modals and Sheets */}
+        <PriceAlertsModal
+          visible={showAlerts}
+          onClose={() => setShowAlerts(false)}
+          alerts={priceAlerts}
+          colors={colors}
+          isDark={isDark}
+          language={language}
+          onAdd={(a: PriceAlert) => {
+            setPriceAlerts((p) => [a, ...p]);
+            addNotification({
+              title: language === 'sw' ? '🔔 Arifa Imewekwa' : '🔔 Alert Set',
+              body:
+                language === 'sw'
+                  ? `${a.crop} — ikifika ${a.direction === 'above' ? 'zaidi ya' : 'chini ya'} TZS ${fmt(a.threshold)}, utaarifiwa.`
+                  : `${a.crop} — when price goes ${a.direction === 'above' ? 'above' : 'below'} TZS ${fmt(a.threshold)}, you will be notified.`,
+              type: 'info',
+            });
+          }}
+          onDelete={(id: string) => setPriceAlerts((p) => p.filter((a) => a.id !== id))}
+        />
+
+        {offerItem && (
+          <MakeOfferModal
+            item={offerItem}
+            onClose={() => setOfferItem(null)}
+            colors={colors}
+            isDark={isDark}
+            addNotification={addNotification}
+            language={language}
+          />
+        )}
+
+        <SellListingModal
+          visible={showSell}
+          onClose={() => setShowSell(false)}
+          colors={colors}
+          isDark={isDark}
+          addNotification={addNotification}
+          language={language}
+        />
+
+        {/* Product Comparison Modal */}
+        <Modal visible={showCompModal} transparent animationType="slide" onRequestClose={() => setShowCompModal(false)}>
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+            <View style={[styles.modalSheet, { backgroundColor: colors.card }]}>
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>
+                  {language === 'sw' ? 'Ulinganisho wa Bidhaa' : 'Product Comparison'}
+                </Text>
+                <TouchableOpacity onPress={() => setShowCompModal(false)} style={styles.closeBtn}>
+                  <X size={20} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+
+              {getComparedProducts.length === 2 && (
+                <View style={styles.compGrid}>
+                  <View style={styles.compCol}>
+                    <Text style={[styles.compHead, { color: colors.text }]}>
+                      {language === 'sw' ? getComparedProducts[0].nameSw : getComparedProducts[0].name}
+                    </Text>
+                    <Text style={[styles.compValue, { color: colors.primary }]}>
+                      TSh {fmt(getComparedProducts[0].price)}
+                    </Text>
+                    <Text style={[styles.compLabel, { color: colors.textMute }]}>Rating</Text>
+                    <Text style={[styles.compValue, { color: colors.text }]}>{getComparedProducts[0].rating}</Text>
+                    <Text style={[styles.compLabel, { color: colors.textMute }]}>Specification</Text>
+                    <Text style={[styles.compValue, { color: colors.text }]}>
+                      {language === 'sw' ? getComparedProducts[0].specSw : getComparedProducts[0].spec}
+                    </Text>
+                    <Text style={[styles.compLabel, { color: colors.textMute }]}>Suitability</Text>
+                    <Text style={[styles.compValue, { color: colors.text }]}>
+                      {language === 'sw' ? getComparedProducts[0].suitabilitySw : getComparedProducts[0].suitability}
+                    </Text>
+                  </View>
+
+                  <View style={[styles.compDivider, { backgroundColor: colors.border }]} />
+
+                  <View style={styles.compCol}>
+                    <Text style={[styles.compHead, { color: colors.text }]}>
+                      {language === 'sw' ? getComparedProducts[1].nameSw : getComparedProducts[1].name}
+                    </Text>
+                    <Text style={[styles.compValue, { color: colors.primary }]}>
+                      TSh {fmt(getComparedProducts[1].price)}
+                    </Text>
+                    <Text style={[styles.compLabel, { color: colors.textMute }]}>Rating</Text>
+                    <Text style={[styles.compValue, { color: colors.text }]}>{getComparedProducts[1].rating}</Text>
+                    <Text style={[styles.compLabel, { color: colors.textMute }]}>Specification</Text>
+                    <Text style={[styles.compValue, { color: colors.text }]}>
+                      {language === 'sw' ? getComparedProducts[1].specSw : getComparedProducts[1].spec}
+                    </Text>
+                    <Text style={[styles.compLabel, { color: colors.textMute }]}>Suitability</Text>
+                    <Text style={[styles.compValue, { color: colors.text }]}>
+                      {language === 'sw' ? getComparedProducts[1].suitabilitySw : getComparedProducts[1].suitability}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
+          </View>
+        </Modal>
+
+        {/* Product Reviews Modal */}
+        <Modal visible={!!reviewProduct} transparent animationType="slide" onRequestClose={() => setReviewProduct(null)}>
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+            <View style={[styles.modalSheet, { backgroundColor: colors.card }]}>
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>
+                  {language === 'sw' ? 'Maoni ya Wakulima' : 'Farmer Reviews'}
+                </Text>
+                <TouchableOpacity onPress={() => setReviewProduct(null)} style={styles.closeBtn}>
+                  <X size={20} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: colors.text }}>
+                {reviewProduct ? (language === 'sw' ? reviewProduct.nameSw : reviewProduct.name) : ''}
+              </Text>
+
+              <ScrollView contentContainerStyle={{ gap: 12 }}>
+                {STORE_REVIEWS.map((rev) => (
+                  <GlassCard key={rev.id} style={{ padding: 14 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <Text style={{ fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>
+                        {rev.author}
+                      </Text>
+                      <View style={{ flexDirection: 'row', gap: 2 }}>
+                        {Array.from({ length: rev.rating }).map((_, i) => (
+                          <Star key={i} size={10} color="#f59e0b" fill="#f59e0b" />
+                        ))}
+                      </View>
+                    </View>
+                    <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute, lineHeight: 18 }}>
+                      {language === 'sw' ? rev.comment : rev.commentEn}
+                    </Text>
+                  </GlassCard>
+                ))}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Cart Drawer Checkout Sheet */}
+        <Modal visible={showCartDrawer} transparent animationType="slide" onRequestClose={() => setShowCartDrawer(false)}>
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+            <View style={[styles.modalSheet, { backgroundColor: colors.card }]}>
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>
+                  {language === 'sw' ? 'Kikapu Changu' : 'My Shopping Cart'}
+                </Text>
+                <TouchableOpacity onPress={() => setShowCartDrawer(false)} style={styles.closeBtn}>
+                  <X size={20} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={{ maxHeight: 240 }} contentContainerStyle={{ gap: 10 }}>
+                {cart.map((item) => (
+                  <View key={item.product.id} style={[styles.cartRowItem, { borderColor: colors.border }]}>
+                    <Image source={{ uri: item.product.image }} style={styles.cartRowImg} />
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }} numberOfLines={1}>
+                        {language === 'sw' ? item.product.nameSw : item.product.name}
+                      </Text>
+                      <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 11, color: colors.primary }}>
+                        TSh {fmt(item.product.price)}
+                      </Text>
+                    </View>
+                    <View style={styles.qtyControlRow}>
+                      <TouchableOpacity onPress={() => updateCartQty(item.product.id, item.qty - 1)} style={styles.qtyBtn}>
+                        <Text style={{ color: colors.text }}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }}>{item.qty}</Text>
+                      <TouchableOpacity onPress={() => updateCartQty(item.product.id, item.qty + 1)} style={styles.qtyBtn}>
+                        <Text style={{ color: colors.text }}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+
+              <View style={[styles.cartTotalSection, { borderColor: colors.border }]}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold', fontSize: 12 }}>
+                    {language === 'sw' ? 'Jumla Kuu' : 'Grand Total'}
+                  </Text>
+                  <Text style={{ color: colors.text, fontFamily: 'Inter_800ExtraBold', fontSize: 18 }}>
+                    TSh {fmt(checkoutTotal)}
+                  </Text>
+                </View>
+
+                {/* Mobile Money Integration Note */}
+                <View style={styles.mobiMoneyNote}>
+                  <CheckCircle2 size={12} color="#22d15a" />
+                  <Text style={styles.mobiMoneyText}>
+                    {language === 'sw'
+                      ? 'Lipa salama kupitia M-Pesa / TigoPesa'
+                      : 'Pay securely using M-Pesa or TigoPesa'}
+                  </Text>
+                </View>
+
+                <TouchableOpacity onPress={handleCheckout} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
+                  <Text style={styles.saveBtnText}>
+                    {language === 'sw' ? 'Agiza Sasa (Checkout)' : 'Place Order (Checkout)'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
-      <Text style={[styles.bentoTitle, { color: colors.text }]}>
-        {language === 'sw' ? 'Tahadhari ya Soko' : 'Market Alert'}
-      </Text>
-      <Text style={[styles.bentoDesc, { color: colors.textMute }]}>
-        {language === 'sw' 
-          ? 'Njia ya Mbeya inaonyesha ucheleweshaji wa 15%. Athari kwa bei ya mahindi inatarajiwa katika masaa 48.' 
-          : 'Mbeya route shows 15% transit delay. Impact on maize price expected in 48 hours.'}
-      </Text>
-      <View style={styles.bentoFooter}>
-        <TouchableOpacity
-          style={[styles.bentoAction, { backgroundColor: colors.primary }]}
-          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/map'); }}
-          accessibilityRole="button"
-          accessibilityLabel={language === 'sw' ? 'Angalia ramani ya masoko na pembejeo' : 'View interactive market and inputs map'}
-        >
-          <Text style={styles.bentoActionText}>
-            {language === 'sw' ? 'Angalia Ramani' : 'View Map'}
-          </Text>
-          <ArrowUpRight size={14} color="#FCFBF7" />
-        </TouchableOpacity>
-      </View>
-    </Animated.View>
-    <View style={styles.bentoSidebar}>
-      <Animated.View entering={FadeInDown} style={[styles.bentoSmall, { borderColor: colors.border }]}>
-        <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-        <TrendingUp size={20} color={colors.primary} />
-        <Text style={[styles.bentoSmallTitle, { color: colors.text }]}>+2.4%</Text>
-        <Text style={[styles.bentoSmallDesc, { color: colors.textMute }]}>
-          {language === 'sw' ? 'Kadirio la Mahindi' : 'Maize Index'}
-        </Text>
-      </Animated.View>
-      <Animated.View entering={FadeInDown} style={[styles.bentoSmall, { borderColor: colors.border }]}>
-        <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
-        <Activity size={20} color={colors.primary} />
-        <Text style={[styles.bentoSmallTitle, { color: colors.text }]}>
-          {language === 'sw' ? 'Imara' : 'Stable'}
-        </Text>
-        <Text style={[styles.bentoSmallDesc, { color: colors.textMute }]}>
-          {language === 'sw' ? 'Mabadiliko ya Soko' : 'Market Volatility'}
-        </Text>
-      </Animated.View>
-    </View>
-  </View>
-);
+    </RequireVerification>
+  );
+}
 
 // ─── Price Alerts Modal ───────────────────────────────────────────────────────
 function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, isDark, language }: any) {
@@ -161,7 +1059,8 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     onAdd({ id: Date.now().toString(), crop, direction, threshold: parseFloat(threshold), active: true });
-    setThreshold(''); setAdding(false);
+    setThreshold('');
+    setAdding(false);
   }
 
   return (
@@ -174,12 +1073,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
             <Text style={[pm.title, { color: colors.text }]}>
               {language === 'sw' ? 'Arifa za Bei' : 'Price Alerts'}
             </Text>
-            <TouchableOpacity
-              onPress={onClose}
-              style={[pm.closeBtn, { backgroundColor: colors.background }]}
-              accessibilityRole="button"
-              accessibilityLabel="Close alerts modal"
-            >
+            <TouchableOpacity onPress={onClose} style={[pm.closeBtn, { backgroundColor: colors.background }]}>
               <X size={16} color={colors.textMute} />
             </TouchableOpacity>
           </View>
@@ -191,18 +1085,14 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               </Text>
             </View>
           ) : (
-            <ScrollView style={{ maxHeight: 200 }} showsVerticalScrollIndicator={false} >
+            <ScrollView style={{ maxHeight: 200 }} showsVerticalScrollIndicator={false}>
               {alerts.map((a: PriceAlert) => (
                 <View key={a.id} style={[pm.alertRow, { borderColor: colors.border }]}>
                   <View style={[pm.alertDot, { backgroundColor: a.direction === 'above' ? colors.success : colors.error }]} />
                   <Text style={[pm.alertText, { color: colors.text }]}>
                     {a.crop} — {a.direction === 'above' ? (language === 'sw' ? 'zaidi ya' : 'above') : (language === 'sw' ? 'chini ya' : 'below')} TZS {fmt(a.threshold)}
                   </Text>
-                  <TouchableOpacity
-                    onPress={() => { Haptics.selectionAsync(); onDelete(a.id); }}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Delete alert for ${a.crop}`}
-                  >
+                  <TouchableOpacity onPress={() => { Haptics.selectionAsync(); onDelete(a.id); }}>
                     <X size={16} color={colors.textMute} />
                   </TouchableOpacity>
                 </View>
@@ -220,9 +1110,6 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
                     key={c}
                     onPress={() => { setCrop(c); Haptics.selectionAsync(); }}
                     style={[pm.pill, { borderColor: crop === c ? colors.primary : colors.border, backgroundColor: crop === c ? colors.primary + '18' : 'transparent' }]}
-                    accessibilityRole="button"
-                    accessibilityLabel={c}
-                    accessibilityState={{ selected: crop === c }}
                   >
                     <Text style={[pm.pillText, { color: crop === c ? colors.primary : colors.textMute }]}>{c}</Text>
                   </TouchableOpacity>
@@ -233,14 +1120,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               </Text>
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 {(['above', 'below'] as const).map((d) => (
-                  <TouchableOpacity
-                    key={d}
-                    onPress={() => { setDirection(d); Haptics.selectionAsync(); }}
-                    style={{ flex: 1 }}
-                    accessibilityRole="button"
-                    accessibilityLabel={d === 'above' ? 'Alert if price goes above' : 'Alert if price goes below'}
-                    accessibilityState={{ selected: direction === d }}
-                  >
+                  <TouchableOpacity key={d} onPress={() => { setDirection(d); Haptics.selectionAsync(); }} style={{ flex: 1 }}>
                     <View style={[pm.dirBtn, { borderColor: direction === d ? (d === 'above' ? colors.success : colors.error) : colors.border, backgroundColor: direction === d ? (d === 'above' ? colors.success + '18' : colors.error + '18') : 'transparent' }]}>
                       {d === 'above' ? <TrendingUp size={14} color={direction === d ? colors.success : colors.textMute} /> : <TrendingDown size={14} color={direction === d ? colors.error : colors.textMute} />}
                       <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: direction === d ? (d === 'above' ? colors.success : colors.error) : colors.textMute }}>
@@ -261,26 +1141,15 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
                   style={[pm.input, { color: colors.text }]}
                   placeholderTextColor={colors.textMute}
                   placeholder="e.g. 90000"
-                  accessibilityLabel="Price threshold"
                 />
               </View>
               <View style={{ flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity
-                  onPress={() => setAdding(false)}
-                  style={[pm.cancelBtn, { borderColor: colors.border }]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Cancel"
-                >
+                <TouchableOpacity onPress={() => setAdding(false)} style={[pm.cancelBtn, { borderColor: colors.border }]}>
                   <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold' }}>
                     {language === 'sw' ? 'Ghairi' : 'Cancel'}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={save}
-                  style={[pm.saveBtn, { backgroundColor: colors.primary, flex: 1 }]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Save price alert"
-                >
+                <TouchableOpacity onPress={save} style={[pm.saveBtn, { backgroundColor: colors.primary, flex: 1 }]}>
                   <Check size={16} color={isDark ? '#000' : '#fff'} />
                   <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular' }}>
                     {language === 'sw' ? 'Hifadhi Arifa' : 'Save Alert'}
@@ -289,12 +1158,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
               </View>
             </View>
           ) : (
-            <TouchableOpacity
-              onPress={() => setAdding(true)}
-              style={[pm.addBtn, { backgroundColor: colors.primary }]}
-              accessibilityRole="button"
-              accessibilityLabel="Add price alert"
-            >
+            <TouchableOpacity onPress={() => setAdding(true)} style={[pm.addBtn, { backgroundColor: colors.primary }]}>
               <Plus size={18} color={isDark ? '#000' : '#fff'} />
               <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular' }}>
                 {language === 'sw' ? 'Ongeza Arifa Mpya' : 'Add New Alert'}
@@ -311,7 +1175,7 @@ function PriceAlertsModal({ visible, onClose, alerts, onAdd, onDelete, colors, i
 // ─── Make Offer Modal ─────────────────────────────────────────────────────────
 function MakeOfferModal({ item, onClose, colors, isDark, addNotification, language }: any) {
   const [qty, setQty] = useState('');
-  const [offerPrice, setOfferPrice] = useState(item ? String(item.priceNum) : '');
+  const [offerPrice, setOfferPrice] = useState(item ? String(item.price) : '');
   const [delivery, setDelivery] = useState('Wiki 1');
   const [message, setMessage] = useState('');
 
@@ -323,17 +1187,18 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addNotification({ 
-      title: language === 'sw' ? '✅ Ofa Imetumwa' : '✅ Offer Sent', 
-      body: language === 'sw' 
-        ? `Ofa yako ya ${item.nameSw} (${qty}kg @ TZS ${fmt(parseFloat(offerPrice))} / mfuko) imetumwa kwa muuzaji.`
-        : `Your offer for ${item.nameEn} (${qty}kg @ TZS ${fmt(parseFloat(offerPrice))} / bag) was sent to the seller.`, 
-      type: 'info' 
+    addNotification({
+      title: language === 'sw' ? '✅ Ofa Imetumwa' : '✅ Offer Sent',
+      body:
+        language === 'sw'
+          ? `Ofa yako ya ${item.nameSw} (${qty}kg @ TZS ${fmt(parseFloat(offerPrice))} / mfuko) imetumwa kwa muuzaji.`
+          : `Your offer for ${item.nameEn} (${qty}kg @ TZS ${fmt(parseFloat(offerPrice))} / bag) was sent to the seller.`,
+      type: 'info',
     });
     onClose();
   }
 
-  const total = parseFloat(qty) > 0 && parseFloat(offerPrice) > 0 ? parseFloat(qty) * parseFloat(offerPrice) / 100 : 0;
+  const total = parseFloat(qty) > 0 && parseFloat(offerPrice) > 0 ? (parseFloat(qty) * parseFloat(offerPrice)) / 100 : 0;
   const deliveryOptions = language === 'sw' ? ['Siku 3', 'Wiki 1', 'Wiki 2'] : ['3 Days', '1 Week', '2 Weeks'];
 
   return (
@@ -351,12 +1216,7 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                 {item.emoji} {language === 'sw' ? item.nameSw : item.nameEn} · {item.market}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={onClose}
-              style={[pm.closeBtn, { backgroundColor: colors.background }]}
-              accessibilityRole="button"
-              accessibilityLabel="Close modal"
-            >
+            <TouchableOpacity onPress={onClose} style={[pm.closeBtn, { backgroundColor: colors.background }]}>
               <X size={16} color={colors.textMute} />
             </TouchableOpacity>
           </View>
@@ -372,7 +1232,6 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                 style={[pm.input, { color: colors.text }]}
                 placeholderTextColor={colors.textMute}
                 placeholder="e.g. 500"
-                accessibilityLabel="Quantity"
               />
             </View>
             <Text style={[pm.label, { color: colors.textMute }]}>
@@ -385,8 +1244,7 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                 keyboardType="decimal-pad"
                 style={[pm.input, { color: colors.text }]}
                 placeholderTextColor={colors.textMute}
-                placeholder={String(item.priceNum)}
-                accessibilityLabel="Offer Price"
+                placeholder={String(item.price)}
               />
             </View>
             <Text style={[pm.label, { color: colors.textMute }]}>
@@ -398,9 +1256,6 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                   key={d}
                   onPress={() => { setDelivery(d); Haptics.selectionAsync(); }}
                   style={[pm.pill, { flex: 1, justifyContent: 'center', borderColor: delivery === d ? colors.primary : colors.border, backgroundColor: delivery === d ? colors.primary + '18' : 'transparent' }]}
-                  accessibilityRole="button"
-                  accessibilityLabel={d}
-                  accessibilityState={{ selected: delivery === d }}
                 >
                   <Text style={[pm.pillText, { color: delivery === d ? colors.primary : colors.textMute }]}>{d}</Text>
                 </TouchableOpacity>
@@ -417,7 +1272,6 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                 style={[pm.input, { color: colors.text }]}
                 placeholderTextColor={colors.textMute}
                 placeholder={language === 'sw' ? 'Maelezo ya ziada...' : 'Additional details...'}
-                accessibilityLabel="Message"
               />
             </View>
             {total > 0 && (
@@ -428,12 +1282,7 @@ function MakeOfferModal({ item, onClose, colors, isDark, addNotification, langua
                 <Text style={{ color: colors.primary, fontFamily: 'InstrumentSerif_400Regular', fontSize: 18 }}>TZS {fmt(Math.round(total))}</Text>
               </View>
             )}
-            <TouchableOpacity
-              onPress={sendOffer}
-              style={[pm.saveBtn, { backgroundColor: colors.primary, marginTop: 16 }]}
-              accessibilityRole="button"
-              accessibilityLabel="Send Offer"
-            >
+            <TouchableOpacity onPress={sendOffer} style={[pm.saveBtn, { backgroundColor: colors.primary, marginTop: 16 }]}>
               <Check size={16} color={isDark ? '#000' : '#fff'} />
               <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 15 }}>
                 {language === 'sw' ? 'Tuma Ofa' : 'Send Offer'}
@@ -464,14 +1313,17 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addNotification({ 
-      title: language === 'sw' ? '📦 Tangazo Limewekwa' : '📦 Listing Posted', 
-      body: language === 'sw'
-        ? `${crop} ${qty}kg @ TZS ${fmt(parseFloat(price))}/kg limetangazwa kwenye soko.`
-        : `${crop} ${qty}kg @ TZS ${fmt(parseFloat(price))}/kg listed on the marketplace.`, 
-      type: 'success' 
+    addNotification({
+      title: language === 'sw' ? '📦 Tangazo Limewekwa' : '📦 Listing Posted',
+      body:
+        language === 'sw'
+          ? `${crop} ${qty}kg @ TZS ${fmt(parseFloat(price))}/kg limetangazwa kwenye soko.`
+          : `${crop} ${qty}kg @ TZS ${fmt(parseFloat(price))}/kg listed on the marketplace.`,
+      type: 'success',
     });
-    setQty(''); setPrice(''); setNotes('');
+    setQty('');
+    setPrice('');
+    setNotes('');
     onClose();
   }
 
@@ -490,12 +1342,7 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                 {language === 'sw' ? 'Weka tangazo kwenye soko' : 'List your crops on the marketplace'}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={onClose}
-              style={[pm.closeBtn, { backgroundColor: colors.background }]}
-              accessibilityRole="button"
-              accessibilityLabel="Close modal"
-            >
+            <TouchableOpacity onPress={onClose} style={[pm.closeBtn, { backgroundColor: colors.background }]}>
               <X size={16} color={colors.textMute} />
             </TouchableOpacity>
           </View>
@@ -509,9 +1356,6 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                   key={c}
                   onPress={() => { setCrop(c); Haptics.selectionAsync(); }}
                   style={[pm.pill, { borderColor: crop === c ? colors.success : colors.border, backgroundColor: crop === c ? colors.success + '18' : 'transparent' }]}
-                  accessibilityRole="button"
-                  accessibilityLabel={c}
-                  accessibilityState={{ selected: crop === c }}
                 >
                   <Text style={[pm.pillText, { color: crop === c ? colors.success : colors.textMute }]}>{c}</Text>
                 </TouchableOpacity>
@@ -530,7 +1374,6 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                     style={[pm.input, { color: colors.text }]}
                     placeholderTextColor={colors.textMute}
                     placeholder="500"
-                    accessibilityLabel="Quantity"
                   />
                 </View>
               </View>
@@ -546,7 +1389,6 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                     style={[pm.input, { color: colors.text }]}
                     placeholderTextColor={colors.textMute}
                     placeholder="850"
-                    accessibilityLabel="Price per kg"
                   />
                 </View>
               </View>
@@ -562,7 +1404,6 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                 style={[pm.input, { color: colors.text }]}
                 placeholderTextColor={colors.textMute}
                 placeholder={language === 'sw' ? 'Hali ya mazao, mahali..."' : 'Crop condition, location...'}
-                accessibilityLabel="Notes"
               />
             </View>
             {qty && price && parseFloat(qty) > 0 && parseFloat(price) > 0 && (
@@ -573,12 +1414,7 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
                 <Text style={{ color: colors.success, fontFamily: 'InstrumentSerif_400Regular', fontSize: 18 }}>TZS {fmt(parseFloat(qty) * parseFloat(price))}</Text>
               </View>
             )}
-            <TouchableOpacity
-              onPress={publish}
-              style={[pm.saveBtn, { backgroundColor: colors.success, marginTop: 16 }]}
-              accessibilityRole="button"
-              accessibilityLabel="Publish listing"
-            >
+            <TouchableOpacity onPress={publish} style={[pm.saveBtn, { backgroundColor: colors.success, marginTop: 16 }]}>
               <Globe size={16} color={isDark ? '#000' : '#fff'} />
               <Text style={{ color: isDark ? '#000' : '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 15 }}>
                 {language === 'sw' ? 'Chapisha Tangazo' : 'Publish Listing'}
@@ -592,370 +1428,9 @@ function SellListingModal({ visible, onClose, colors, isDark, addNotification, l
   );
 }
 
-// ─── Main screen ──────────────────────────────────────────────────────────────
-export default function MarketScreen() {
-  const { colors, isDark } = useTheme();
-  const router = useRouter();
-  const addNotification = useKilimoStore((s) => s.addNotification);
-  const language = useKilimoStore((s) => s.language);
-
-  const [refreshing, setRefreshing] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [showAlerts, setShowAlerts] = useState(false);
-  const [showSell, setShowSell] = useState(false);
-  const [offerItem, setOfferItem] = useState<typeof MARKET_DATA[0] | null>(null);
-  const [priceAlerts, setPriceAlerts] = useState<PriceAlert[]>([]);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setTimeout(() => setRefreshing(false), 2000);
-  }, []);
-
-  const filtered = MARKET_DATA.filter((item) => {
-    const catMatch = activeCategory === 'all' || item.category === activeCategory;
-    const itemName = language === 'sw' ? item.nameSw : item.nameEn;
-    const qMatch = !searchQuery.trim() || 
-      itemName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.market.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.region.toLowerCase().includes(searchQuery.toLowerCase());
-    return catMatch && qMatch;
-  });
-
-  return (
-    <RequireVerification>
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-
-      <View style={StyleSheet.absoluteFill}>
-        <LinearGradient colors={[isDark ? '#020617' : '#ffffff', isDark ? '#020617ee' : '#ffffffee', 'transparent']} style={styles.bgOverlay} />
-      </View>
-
-      {/* Modals */}
-      <PriceAlertsModal visible={showAlerts} onClose={() => setShowAlerts(false)} alerts={priceAlerts} colors={colors} isDark={isDark} language={language}
-        onAdd={(a: PriceAlert) => { 
-          setPriceAlerts((p) => [a, ...p]); 
-          addNotification({ 
-            title: language === 'sw' ? '🔔 Arifa Imewekwa' : '🔔 Alert Set', 
-            body: language === 'sw' 
-              ? `${a.crop} — ikifika ${a.direction === 'above' ? 'zaidi ya' : 'chini ya'} TZS ${fmt(a.threshold)}, utaarifiwa.`
-              : `${a.crop} — when price goes ${a.direction === 'above' ? 'above' : 'below'} TZS ${fmt(a.threshold)}, you will be notified.`, 
-            type: 'info' 
-          }); 
-        }}
-        onDelete={(id: string) => setPriceAlerts((p) => p.filter((a) => a.id !== id))}
-      />
-      {offerItem && <MakeOfferModal item={offerItem} onClose={() => setOfferItem(null)} colors={colors} isDark={isDark} addNotification={addNotification} language={language} />}
-      <SellListingModal visible={showSell} onClose={() => setShowSell(false)} colors={colors} isDark={isDark} addNotification={addNotification} language={language} />
-
-      <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
-        <Animated.View entering={FadeInDown} style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel={language === 'sw' ? 'Nenda Nyuma' : 'Go back'}
-          >
-            <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconButton, { borderColor: colors.border }]}>
-              <ChevronLeft size={24} color={colors.text} />
-            </BlurView>
-          </TouchableOpacity>
-
-          <View style={styles.headerCenter}>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>
-              {language === 'sw' ? 'Soko & Intel' : 'Market & Intel'}
-            </Text>
-            <View style={styles.locationContainer}>
-              <View style={[styles.statusDot, { backgroundColor: colors.success }]} />
-              <Text style={[styles.locationText, { color: colors.textMute }]}>EAST AFRICA FEED</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => { Haptics.selectionAsync(); setShowAlerts(true); }}
-            accessibilityRole="button"
-            accessibilityLabel={language === 'sw' ? 'Arifa za bei' : 'Price alerts'}
-          >
-            <BlurView intensity={isDark ? 30 : 60} tint={isDark ? 'dark' : 'light'} style={[styles.iconButton, { borderColor: colors.border }]}>
-              <Bell size={20} color={colors.text} />
-              {priceAlerts.length > 0 && <View style={[styles.notifDot, { backgroundColor: colors.error }]} />}
-            </BlurView>
-          </TouchableOpacity>
-        </Animated.View>
-
-        <ScrollView
-          showsVerticalScrollIndicator={false} onScroll={(e) => { const y = e.nativeEvent.contentOffset.y; if (y > 40 && !scrolled) setScrolled(true); if (y <= 40 && scrolled) setScrolled(false); }}
-          scrollEventThrottle={16}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
-          contentContainerStyle={styles.scrollContent}
-          stickyHeaderIndices={[1]}
-        >
-          {/* Search */}
-          <Animated.View style={[styles.searchContainer, searchFocused && styles.searchContainerFocused]}>
-            <View style={[styles.searchBar, {
-              backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : colors.card,
-              borderColor: searchFocused ? colors.primary : colors.border,
-            }]}>
-              <View style={[styles.searchIconWrap, { backgroundColor: (searchFocused ? colors.primary : colors.textMute) + '18' }]}>
-                <Search size={17} color={searchFocused ? colors.primary : colors.textMute} />
-              </View>
-              <TextInput
-                placeholder={language === 'sw' ? 'Tafuta bidhaa, masoko, mikoa...' : 'Search crops, markets, regions...'}
-                placeholderTextColor={colors.textMute}
-                style={[styles.searchInput, { color: colors.text }]}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                onFocus={() => { setSearchFocused(true); Haptics.selectionAsync(); }}
-                onBlur={() => setSearchFocused(false)}
-                accessibilityLabel={language === 'sw' ? 'Tafuta sokoni' : 'Search marketplace'}
-              />
-              <View style={styles.searchActions}>
-                {searchQuery.length > 0 ? (
-                  <TouchableOpacity
-                    onPress={() => { setSearchQuery(''); Haptics.selectionAsync(); }}
-                    accessibilityRole="button"
-                    accessibilityLabel="Clear"
-                  >
-                    <View style={[styles.searchClearBtn, { backgroundColor: colors.textMute + '20' }]}>
-                      <X size={13} color={colors.textMute} />
-                    </View>
-                  </TouchableOpacity>
-                ) : searchFocused ? (
-                  <TouchableOpacity
-                    onPress={() => setSearchFocused(false)}
-                    accessibilityRole="button"
-                    accessibilityLabel="Done"
-                  >
-                    <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 12, letterSpacing: 0.5 }}>DONE</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.searchActionBtn}
-                    onPress={() => { Haptics.selectionAsync(); Alert.alert(language === 'sw' ? 'Chuja' : 'Sort & Filter', language === 'sw' ? 'Pangilia kwa:' : 'Order by:', [{ text: language === 'sw' ? 'Bei: Juu → Chini' : 'Price: High → Low', onPress: () => {} }, { text: language === 'sw' ? 'Bei: Chini → Juu' : 'Price: Low → High', onPress: () => {} }, { text: language === 'sw' ? 'Ghairi' : 'Cancel', style: 'cancel' }]); }}
-                    accessibilityRole="button"
-                    accessibilityLabel="Filter menu"
-                  >
-                    <View style={[styles.searchFilterBtn, { backgroundColor: colors.primary + '18', borderColor: colors.primary + '30' }]}>
-                      <Filter size={14} color={colors.primary} />
-                    </View>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-          </Animated.View>
-
-          {/* Categories (sticky) */}
-          <View style={styles.stickyCategory}>
-            <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContent}>
-              {CATEGORIES.map((cat) => {
-                const active = activeCategory === cat.id;
-                const label = language === 'sw' ? cat.labelSw : cat.labelEn;
-                return (
-                  <Animated.View key={cat.id} entering={FadeInDown}>
-                    <TouchableOpacity
-                      onPress={() => { setActiveCategory(cat.id); Haptics.selectionAsync(); }}
-                      accessibilityRole="button"
-                      accessibilityLabel={`Category ${label}`}
-                      accessibilityState={{ selected: active }}
-                    >
-                      <BlurView intensity={active ? 0 : (isDark ? 20 : 50)} tint={isDark ? 'dark' : 'light'}
-                        style={[styles.categoryPill, active ? { backgroundColor: colors.primary, borderColor: colors.primary, borderWidth: 1 } : { borderColor: colors.border, borderWidth: 1 }]}>
-                        {React.cloneElement(cat.icon as any, { color: active ? '#FFFFFF' : colors.textMute })}
-                        <Text style={[styles.categoryText, active ? { color: '#FFFFFF', fontFamily: 'Inter_800ExtraBold' } : { color: colors.textMute }]}>{label}</Text>
-                      </BlurView>
-                    </TouchableOpacity>
-                  </Animated.View>
-                );
-              })}
-              {/* UZA pill */}
-              <Animated.View entering={FadeInDown}>
-                <TouchableOpacity
-                  onPress={() => { setShowSell(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Sell crops"
-                >
-                  <View style={[styles.categoryPill, { backgroundColor: colors.primary, borderColor: colors.primary, borderWidth: 1 }]}>
-                    <Tag size={14} color="#FFFFFF" />
-                    <Text style={[styles.categoryText, { color: '#FFFFFF', fontFamily: 'Inter_800ExtraBold' }]}>
-                      {language === 'sw' ? 'UZA MAZAO' : 'SELL CROPS'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </Animated.View>
-            </ScrollView>
-          </View>
-
-          {/* Intelligence bento */}
-          <IntelligenceBento isDark={isDark} colors={colors} router={router} language={language} />
-
-          {/* Market data */}
-          <View style={styles.sectionHeader}>
-            <BarChart3 size={18} color={colors.primary} />
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {language === 'sw' ? 'Bei za Moja kwa Moja' : 'Live Market Feed'}
-            </Text>
-            <Text style={[{ color: colors.textMute, fontFamily: 'Inter_500Medium', fontSize: 11, marginLeft: 'auto' }]}>
-              {language === 'sw' ? `Leo · Bidhaa ${filtered.length}` : `Today · ${filtered.length} listings`}
-            </Text>
-          </View>
-
-          <View style={styles.marketGrid}>
-            {filtered.map((item) => {
-              const isExpanded = expandedId === item.id;
-              const sparkData = [40, 45, 42, 48, 52, 50, 58, 62, 60, 65].map((v) => item.positive ? v : 100 - v);
-              const itemName = language === 'sw' ? item.nameSw : item.nameEn;
-              const itemUnit = language === 'sw' ? item.unitSw : item.unitEn;
-              const itemVol = language === 'sw' ? item.volatilitySw : item.volatilityEn;
-              const itemOutlook = language === 'sw' ? item.outlookSw : item.outlookEn;
-              const itemDemand = language === 'sw' ? item.demandSw : item.demandEn;
-
-              return (
-                <Animated.View key={item.id} entering={FadeInDown}>
-                  <TouchableOpacity
-                    onPress={() => { setExpandedId(isExpanded ? null : item.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-                    activeOpacity={0.9}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${itemName} at ${item.market}. Price is TZS ${fmt(item.priceNum)} per ${itemUnit}.`}
-                    accessibilityState={{ expanded: isExpanded }}
-                  >
-                    <BlurView intensity={isDark ? 20 : 60} tint={isDark ? 'dark' : 'light'}
-                      style={[styles.premiumCard, { borderColor: colors.border }, isExpanded && { borderColor: colors.primary + '40', borderWidth: 2 }]}>
-                      <View style={styles.cardHeader}>
-                        <View style={[styles.emojiContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}>
-                          <Text style={styles.cardEmoji}>{item.emoji}</Text>
-                        </View>
-                        <View style={styles.cardMeta}>
-                          <Text style={[styles.itemName, { color: colors.text }]}>{itemName}</Text>
-                          <Text style={[styles.itemMarket, { color: colors.textMute }]}>{item.market} · {item.region}</Text>
-                        </View>
-                        <View style={[styles.volatilityBadge, { backgroundColor: item.volatilitySw === 'High' || item.volatilityEn === 'High' ? colors.error + '15' : colors.success + '15' }]}>
-                          <Text style={[styles.volatilityText, { color: item.volatilitySw === 'High' || item.volatilityEn === 'High' ? colors.error : colors.success }]}>
-                            {itemVol}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.cardBody}>
-                        <View style={styles.priceContainer}>
-                          <Text style={[styles.priceLabel, { color: colors.textMute }]}>
-                            {language === 'sw' ? 'Wastani wa Bei' : 'Average Price'}
-                          </Text>
-                          <Text style={[styles.priceBig, { color: colors.text }]}>TZS {fmt(item.priceNum)}</Text>
-                        </View>
-                        <View style={styles.trendArea}>
-                          <NeuralSparkline data={sparkData} positive={item.positive} />
-                          <View style={[styles.trendPill, { backgroundColor: item.positive ? colors.success + '20' : colors.error + '20' }]}>
-                            {item.positive ? <TrendingUp size={12} color={colors.success} /> : <TrendingDown size={12} color={colors.error} />}
-                            <Text style={[styles.trendPercent, { color: item.positive ? colors.success : colors.error }]}>{item.trend}</Text>
-                          </View>
-                        </View>
-                      </View>
-
-                      {isExpanded && (
-                        <Animated.View entering={FadeInDown} style={styles.expandedContent}>
-                          <View style={[styles.intelDivider, { backgroundColor: colors.border }]} />
-                          <View style={styles.analysisRow}>
-                            <View style={styles.analysisItem}>
-                              <Text style={[styles.analysisLabel, { color: colors.textMute }]}>AI Outlook</Text>
-                              <View style={styles.outlookBadge}>
-                                <Sparkles size={12} color={colors.primary} />
-                                <Text style={[styles.outlookText, { color: colors.primary }]}>{itemOutlook}</Text>
-                              </View>
-                            </View>
-                            <View style={styles.analysisItem}>
-                              <Text style={[styles.analysisLabel, { color: colors.textMute }]}>
-                                {language === 'sw' ? 'Mahitaji' : 'Demand'}
-                              </Text>
-                              <Text style={[styles.analysisValue, { color: colors.text }]}>{itemDemand}</Text>
-                            </View>
-                            <View style={styles.analysisItem}>
-                              <Text style={[styles.analysisLabel, { color: colors.textMute }]}>
-                                {language === 'sw' ? 'Kipimo' : 'Unit'}
-                              </Text>
-                              <Text style={[styles.analysisValue, { color: colors.text }]}>{itemUnit}</Text>
-                            </View>
-                          </View>
-                          <View style={styles.actionGrid}>
-                            <TouchableOpacity
-                              style={[styles.contractBtn, { backgroundColor: colors.primary }]}
-                              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setExpandedId(null); setOfferItem(item); }}
-                              accessibilityRole="button"
-                              accessibilityLabel={`Make offer on ${itemName}`}
-                            >
-                              <Wallet size={16} color="#000" />
-                              <Text style={[styles.contractBtnText, { color: '#000' }]}>
-                                {language === 'sw' ? 'Toa Ofa' : 'Make Offer'}
-                              </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              style={[styles.contractBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
-                              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/contracts'); }}
-                              accessibilityRole="button"
-                              accessibilityLabel="View Smart Contracts"
-                            >
-                              <FileSignature size={16} color={colors.text} />
-                              <Text style={[styles.contractBtnText, { color: colors.text }]}>Smart Contract</Text>
-                            </TouchableOpacity>
-                          </View>
-                        </Animated.View>
-                      )}
-
-                      {!isExpanded && (
-                        <View style={[styles.cardFooter, { borderColor: colors.border }]}>
-                          <Text style={[styles.unitLabel, { color: colors.textMute }]}>{itemUnit}</Text>
-                          <TouchableOpacity
-                            style={styles.cardDetailBtn}
-                            onPress={(e) => { e.stopPropagation?.(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setOfferItem(item); }}
-                            accessibilityRole="button"
-                            accessibilityLabel={`Make offer on ${itemName}`}
-                          >
-                            <Text style={[styles.detailBtnText, { color: colors.primary }]}>
-                              {language === 'sw' ? 'Toa Ofa' : 'Make Offer'}
-                            </Text>
-                            <ArrowRight size={14} color={colors.primary} />
-                          </TouchableOpacity>
-                        </View>
-                      )}
-                    </BlurView>
-                  </TouchableOpacity>
-                </Animated.View>
-              );
-            })}
-          </View>
-          <View style={{ height: 120 }} />
-        </ScrollView>
-
-        {/* Sell FAB */}
-        <Animated.View entering={FadeInDown} style={styles.fab}>
-          <TouchableOpacity
-            onPress={() => { setShowSell(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); }}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={language === 'sw' ? 'Uza mazao' : 'Sell crops'}
-          >
-            <LinearGradient colors={[colors.success, '#0a3d18']} style={styles.fabGrad}>
-              <Package size={20} color="#fff" />
-              <Text style={styles.fabText}>
-                {language === 'sw' ? 'UZA' : 'SELL'}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </Animated.View>
-      </SafeAreaView>
-    </View>
-    </RequireVerification>
-  );
-}
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   safeArea: { flex: 1 },
-  bgOrb: { position: 'absolute' },
   bgOverlay: { position: 'absolute', top: 0, left: 0, right: 0, height: SCREEN_HEIGHT },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16, zIndex: 100 },
   headerCenter: { alignItems: 'center' },
@@ -966,35 +1441,51 @@ const styles = StyleSheet.create({
   iconButton: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', borderWidth: 1, overflow: 'hidden' },
   notifDot: { position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4 },
   scrollContent: { paddingHorizontal: 24, paddingTop: 16 },
-  searchContainer: { marginBottom: 24 },
+  searchContainer: { marginBottom: 16 },
   searchContainerFocused: { zIndex: 50 },
-  searchBar: { flexDirection: 'row', alignItems: 'center', height: 56, borderRadius: 28, paddingHorizontal: 14, borderWidth: 1.5, gap: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.07, shadowRadius: 10, elevation: 3 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', height: 52, borderRadius: 26, paddingHorizontal: 14, borderWidth: 1.5, gap: 10 },
   searchIconWrap: { width: 34, height: 34, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   searchInput: { flex: 1, fontSize: 14, fontFamily: 'Inter_500Medium' },
-  searchActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  searchActionBtn: { padding: 0 },
-  searchClearBtn: { width: 26, height: 26, borderRadius: 13, alignItems: 'center' as const, justifyContent: 'center' as const },
-  searchFilterBtn: { width: 34, height: 34, borderRadius: 11, borderWidth: 1, alignItems: 'center' as const, justifyContent: 'center' as const },
-  stickyCategory: { marginBottom: 32, marginHorizontal: -24, zIndex: 10 },
-  categoryContent: { paddingHorizontal: 24, gap: 12 },
-  categoryPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 20, gap: 8 },
-  categoryText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-  bentoContainer: { flexDirection: 'row', gap: 16, marginBottom: 32, height: 230 },
-  bentoMain: { flex: 1.5, borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden', justifyContent: 'space-between' },
-  bentoHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  intelBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(34, 209, 90, 0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-  intelBadgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
-  bentoTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', marginTop: 12, marginBottom: 4 },
-  bentoDesc: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
-  bentoFooter: { marginTop: 16 },
-  bentoAction: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, gap: 8 },
-  bentoActionText: { color: '#FCFBF7', fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  bentoSidebar: { flex: 1, gap: 16 },
-  bentoSmall: { flex: 1, borderRadius: 24, padding: 16, borderWidth: 1, overflow: 'hidden', justifyContent: 'center' },
-  bentoSmallTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', marginTop: 8, marginBottom: 2 },
-  bentoSmallDesc: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
-  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  sectionTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
+  tabBar: { flexDirection: 'row', paddingHorizontal: 24, marginBottom: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(0,0,0,0.08)' },
+  tabItem: { flex: 1, paddingVertical: 10, alignItems: 'center' },
+  tabText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
+  storeCatPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
+  storeCatTxt: { fontSize: 12, fontFamily: 'Inter_700Bold' },
+  storeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingVertical: 10 },
+  prodCard: { width: '48%', padding: 0, borderRadius: 20, overflow: 'hidden', borderWidth: 1 },
+  prodImageContainer: { position: 'relative' },
+  prodImage: { width: '100%', height: 110 },
+  compareIconBtn: { position: 'absolute', top: 8, right: 8, width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  prodName: { fontSize: 12.5, fontFamily: 'Inter_700Bold', marginTop: 4 },
+  prodSeller: { fontSize: 10, fontFamily: 'Inter_500Medium', marginTop: 1 },
+  prodSpec: { fontSize: 9.5, fontFamily: 'Inter_500Medium' },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  ratingText: { fontSize: 9, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
+  prodCardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(0,0,0,0.08)', paddingTop: 6 },
+  prodPrice: { fontSize: 12.5, fontFamily: 'Inter_800ExtraBold' },
+  addToCartBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#22d15a', paddingHorizontal: 8, paddingVertical: 5, borderRadius: 8 },
+  addToCartText: { fontSize: 9.5, fontFamily: 'Inter_800ExtraBold', color: '#000' },
+  cartFab: { position: 'absolute', bottom: 32, right: 24, zIndex: 100 },
+  cartFabBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#22d15a', alignItems: 'center', justifyContent: 'center', position: 'relative', shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5 },
+  cartCountBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: '#000', borderRadius: 8, width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
+  cartCountBadgeTxt: { color: '#fff', fontSize: 9, fontFamily: 'Inter_800ExtraBold' },
+  compBar: { position: 'absolute', bottom: 32, left: 24, right: 24, zIndex: 90 },
+  compBarInner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#000', borderRadius: 16, padding: 12 },
+  compGrid: { flexDirection: 'row', paddingVertical: 14, gap: 10 },
+  compCol: { flex: 1, gap: 6 },
+  compHead: { fontSize: 12.5, fontFamily: 'Inter_700Bold' },
+  compLabel: { fontSize: 9, fontFamily: 'Inter_600SemiBold', marginTop: 8 },
+  compValue: { fontSize: 11.5, fontFamily: 'Inter_600SemiBold' },
+  compDivider: { width: 1, backgroundColor: 'rgba(0,0,0,0.08)' },
+  cartRowItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: StyleSheet.hairlineWidth },
+  cartRowImg: { width: 44, height: 44, borderRadius: 8 },
+  qtyControlRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  qtyBtn: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
+  cartTotalSection: { borderTopWidth: 1, paddingTop: 16, marginTop: 10, gap: 10 },
+  mobiMoneyNote: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  mobiMoneyText: { fontSize: 10.5, fontFamily: 'Inter_500Medium' },
+
+  // Original Feed Styling
   marketGrid: { gap: 16 },
   premiumCard: { borderRadius: 28, padding: 20, borderWidth: 1, overflow: 'hidden' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
@@ -1011,7 +1502,6 @@ const styles = StyleSheet.create({
   priceBig: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1 },
   trendArea: { alignItems: 'flex-end', gap: 8 },
   sparklineOuter: { width: 80, height: 28, overflow: 'hidden' },
-  sparkBar: { width: 4, borderRadius: 2 },
   trendPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, gap: 4 },
   trendPercent: { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
   expandedContent: { overflow: 'hidden', marginTop: 8 },
@@ -1025,13 +1515,18 @@ const styles = StyleSheet.create({
   actionGrid: { flexDirection: 'row', gap: 12 },
   contractBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 16, gap: 8 },
   contractBtnText: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
-  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTopWidth: 1 },
-  unitLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
-  cardDetailBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  detailBtnText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   fab: { position: 'absolute', bottom: 32, right: 24 },
   fabGrad: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingVertical: 16, borderRadius: 28 },
   fabText: { color: '#fff', fontFamily: 'InstrumentSerif_400Regular', fontSize: 14, letterSpacing: 0.5 },
+
+  // Modals Overlay and Sheets
+  modalOverlay: { flex: 1, justifyContent: 'flex-end' },
+  modalSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: Platform.OS === 'ios' ? 44 : 24, gap: 16 },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  modalTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular' },
+  closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' },
+  saveBtn: { paddingVertical: 14, borderRadius: 16, alignItems: 'center', flexDirection: 'row', gap: 8, justifyContent: 'center' },
+  saveBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold', color: '#000' },
 });
 
 const pm = StyleSheet.create({
@@ -1053,8 +1548,5 @@ const pm = StyleSheet.create({
   cancelBtn: { paddingHorizontal: 20, paddingVertical: 14, borderRadius: 12, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
   saveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16 },
   addBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, marginTop: 8 },
-  gradeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 12, borderWidth: 1.5 },
-  gradeRadio: { width: 18, height: 18, borderRadius: 9, borderWidth: 2, justifyContent: 'center', alignItems: 'center' },
-  gradeInner: { width: 8, height: 8, borderRadius: 4 },
   preview: { marginTop: 12, padding: 16, borderRadius: 14, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
 });

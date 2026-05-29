@@ -4,11 +4,11 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Modal, TextInput,
-  ScrollView, KeyboardAvoidingView, Platform, Alert,
+  ScrollView, KeyboardAvoidingView, Platform, Alert, Dimensions,
 } from 'react-native';
 import {
   Beef, Bird, Plus, Syringe, Trash2, CheckCircle2, AlertTriangle,
-  HeartPulse, ChevronDown, ChevronUp, X,
+  HeartPulse, ChevronDown, ChevronUp, X, Cpu, ShieldAlert, TrendingUp,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { BlurView } from 'expo-blur';
@@ -17,6 +17,9 @@ import PageScaffold, { GlassCard, SectionHeader, EmptyState } from '../component
 import { useTheme } from '../constants/Theme';
 import { useFarmDataStore, LivestockAnimal, LivestockSpecies } from '../store/useFarmDataStore';
 import { Gate } from '../lib/access';
+import Svg, { Polyline, Circle as SvgCircle, Rect } from 'react-native-svg';
+
+const { width: SW } = Dimensions.get('window');
 
 // ─── Species config ───────────────────────────────────────────────────────────
 const SPECIES: { key: LivestockSpecies; label: string; swahili: string; color: string }[] = [
@@ -43,6 +46,50 @@ function SpeciesIcon({ species, size, color }: { species: LivestockSpecies; size
 
 function daysUntil(iso: string) {
   return Math.ceil((new Date(iso).getTime() - Date.now()) / 86400_000);
+}
+
+// ─── RIFT Micro Chart ───────────────────────────────────────────────────────────
+function VitalTrendChart({ data, color }: { data: number[]; color: string }) {
+  const chartW = SW - 80;
+  const chartH = 60;
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data, 0);
+  const points = data
+    .map((val, index) => {
+      const x = (index / (data.length - 1)) * (chartW - 10) + 5;
+      const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 10) - 5;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  return (
+    <View style={{ marginVertical: 8, height: chartH }}>
+      <Svg width={chartW} height={chartH}>
+        <Rect width={chartW} height={chartH} fill="rgba(0,0,0,0.02)" rx={8} />
+        <Polyline
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          points={points}
+        />
+        {data.map((val, index) => {
+          const x = (index / (data.length - 1)) * (chartW - 10) + 5;
+          const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 10) - 5;
+          return (
+            <SvgCircle
+              key={index}
+              cx={x}
+              cy={y}
+              r="3.5"
+              fill={color}
+              stroke="#FFF"
+              strokeWidth="1.5"
+            />
+          );
+        })}
+      </Svg>
+    </View>
+  );
 }
 
 // ─── Add modal ────────────────────────────────────────────────────────────────
@@ -190,6 +237,13 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
     ? Math.min(1, Math.max(0, vacDays < 0 ? 1 : (90 - vacDays) / 90))
     : 0;
 
+  // Mock LoRaEarTag Vitals derived from ID
+  const tagSerialNumber = `RIFT-HT-${a.tag.replace(/[^0-9]/g, '') || '82'}`;
+  const batteryPct = 95 - (idx * 3) % 15;
+  const bodyTemp = a.healthStatus === 'sick' ? 40.2 : a.healthStatus === 'attention' ? 39.4 : 38.6;
+  const ruminationIndex = a.healthStatus === 'sick' ? 42 : a.healthStatus === 'attention' ? 50 : 64; // min/day
+  const movementActivity = a.healthStatus === 'sick' ? 'Lying down' : 'Grazing';
+
   function cycleHealth() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const i = HEALTH.findIndex((h) => h.key === a.healthStatus);
@@ -264,6 +318,24 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
               </TouchableOpacity>
             </View>
 
+            {/* RIFT HerdTag Vital Overview */}
+            <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: colors.background, padding: 8, borderRadius: 10, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border }}>
+              <View style={{ alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontSize: 8, color: colors.textMute, fontFamily: 'Inter_700Bold' }}>BODY TEMP</Text>
+                <Text style={{ fontSize: 12, color: bodyTemp > 39 ? '#ef4444' : colors.text, fontFamily: 'Inter_800ExtraBold' }}>{bodyTemp}°C</Text>
+              </View>
+              <View style={{ width: 1, backgroundColor: colors.border }} />
+              <View style={{ alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontSize: 8, color: colors.textMute, fontFamily: 'Inter_700Bold' }}>RUMINATION</Text>
+                <Text style={{ fontSize: 12, color: ruminationIndex < 45 ? '#f59e0b' : colors.text, fontFamily: 'Inter_800ExtraBold' }}>{ruminationIndex}m/d</Text>
+              </View>
+              <View style={{ width: 1, backgroundColor: colors.border }} />
+              <View style={{ alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontSize: 8, color: colors.textMute, fontFamily: 'Inter_700Bold' }}>ACTIVITY</Text>
+                <Text style={{ fontSize: 10, color: colors.text, fontFamily: 'Inter_700Bold' }} numberOfLines={1}>{movementActivity}</Text>
+              </View>
+            </View>
+
             {/* Vaccine section */}
             {a.nextVaccineDue && (
               <View style={{ marginTop: 12 }}>
@@ -307,6 +379,38 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
             entering={FadeInDown}
             style={[ac.expandedBox, { borderTopColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }]}
           >
+            {/* RIFT HerdTag System Overlay Info */}
+            <View style={{ marginBottom: 12, padding: 10, backgroundColor: 'rgba(34, 209, 90, 0.05)', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.2)' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <Cpu size={14} color="#22d15a" />
+                <Text style={{ fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>RIFT HerdTag LoRa ear tag</Text>
+              </View>
+              <Detail label="Serial Number" value={tagSerialNumber} />
+              <Detail label="Ear Tag Battery" value={`${batteryPct}% (Solar-Charged)`} />
+              <Detail label="Last Ping" value="2 minutes ago" />
+              
+              {/* Abnormal vitals alert triggers */}
+              {bodyTemp > 39.5 && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, padding: 8, backgroundColor: '#ef444415', borderRadius: 8, borderWidth: 0.5, borderColor: '#ef444444' }}>
+                  <ShieldAlert size={14} color="#ef4444" />
+                  <Text style={{ fontSize: 9.5, fontFamily: 'Inter_800ExtraBold', color: '#ef4444', flex: 1 }}>ALERT: Heat Stress or Fever detected! Body Temp: {bodyTemp}°C</Text>
+                </View>
+              )}
+              {ruminationIndex < 45 && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6, padding: 8, backgroundColor: '#f59e0b15', borderRadius: 8, borderWidth: 0.5, borderColor: '#f59e0b44' }}>
+                  <ShieldAlert size={14} color="#f59e0b" />
+                  <Text style={{ fontSize: 9.5, fontFamily: 'Inter_800ExtraBold', color: '#f59e0b', flex: 1 }}>WARNING: Rumination index down 35%! Possible digestive issue.</Text>
+                </View>
+              )}
+              
+              {/* Visual chart overlay */}
+              <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, marginTop: 10, letterSpacing: 0.5 }}>RUMINATION PATTERN (PAST 6 HOURS)</Text>
+              <VitalTrendChart data={a.healthStatus === 'sick' ? [45, 43, 40, 42, 41, 42] : [62, 65, 60, 61, 63, 64]} color="#22d15a" />
+              
+              <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, marginTop: 6, letterSpacing: 0.5 }}>HEAT STRESS PROFILE (BODY TEMP TREND)</Text>
+              <VitalTrendChart data={a.healthStatus === 'sick' ? [38.6, 38.9, 39.2, 39.7, 40.1, 40.2] : [38.5, 38.6, 38.5, 38.6, 38.7, 38.6]} color="#ef4444" />
+            </View>
+
             {a.birthDate && <Detail label="Tarehe ya kuzaliwa" value={new Date(a.birthDate).toLocaleDateString('en-GB')} />}
             {a.lastVaccineDate && <Detail label="Chanjo ya mwisho" value={new Date(a.lastVaccineDate).toLocaleDateString('en-GB')} />}
             {a.notes && <Detail label="Maelezo" value={a.notes} />}
@@ -366,7 +470,7 @@ export default function LivestockScreen() {
       >
         {/* Summary ribbon */}
         {animals.length > 0 && (
-          <View style={{ paddingHorizontal: 24 }}>
+          <View style={{ paddingHorizontal: 24, gap: 12 }}>
             <Animated.View entering={FadeInDown}>
               <GlassCard style={s.summaryCard}>
                 <SummaryPill count={healthy}   label="Wazima"     color="#22d15a" />
@@ -374,6 +478,55 @@ export default function LivestockScreen() {
                 <SummaryPill count={sick}      label="Wagonjwa"   color="#ef4444" />
                 {dueSoon.length > 0 && <SummaryPill count={dueSoon.length} label="Chanjo Hivi Karibuni" color="#3b82f6" />}
               </GlassCard>
+            </Animated.View>
+
+            {/* Species Breakdown */}
+            <Animated.View entering={FadeInDown.delay(100)}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, marginBottom: 2 }}>
+                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: colors.textMute, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+                  AINA YA MIFUGO · BY SPECIES
+                </Text>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8, paddingVertical: 4 }}
+              >
+                {SPECIES.map((sp) => {
+                  const count = animals.filter((a) => a.species === sp.key).length;
+                  return (
+                    <GlassCard
+                      key={sp.key}
+                      style={{
+                        width: 90,
+                        paddingVertical: 10,
+                        paddingHorizontal: 8,
+                        alignItems: 'center',
+                        borderColor: count > 0 ? sp.color + '40' : colors.border,
+                        borderWidth: count > 0 ? 1.5 : 1,
+                      }}
+                    >
+                      <View style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 8,
+                        backgroundColor: sp.color + '12',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: 4,
+                      }}>
+                        <SpeciesIcon species={sp.key} size={14} color={sp.color} />
+                      </View>
+                      <Text style={{ fontSize: 15, fontFamily: 'InstrumentSerif_400Regular', color: colors.text, fontWeight: '600' }}>
+                        {count}
+                      </Text>
+                      <Text style={{ fontSize: 8.5, fontFamily: 'Inter_700Bold', color: colors.textMute, marginTop: 1 }}>
+                        {sp.swahili}
+                      </Text>
+                    </GlassCard>
+                  );
+                })}
+              </ScrollView>
             </Animated.View>
           </View>
         )}

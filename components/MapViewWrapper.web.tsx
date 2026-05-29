@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Appearance } from 'react-native';
+import { View, StyleSheet, Appearance } from 'react-native';
 
 export const PROVIDER_GOOGLE = 'google' as const;
 export type Region = {
@@ -9,11 +9,60 @@ export type Region = {
   longitudeDelta: number;
 };
 
-export function MapView({ style, children }: { style?: any; children?: React.ReactNode }) {
-  const isDark = Appearance.getColorScheme() === 'dark';
+export function MapView({ style, children, region }: { style?: any; children?: React.ReactNode; mapType?: string; region?: Region }) {
+  // Default coordinates to Tanzania farm center if not provided
+  const lat = region?.latitude ?? -6.8280;
+  const lng = region?.longitude ?? 37.6695;
+  const zoom = 14;
+
+  const srcDoc = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <style>
+        html, body, #map {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          background: #0A0D0A;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map"></div>
+      <script>
+        const map = L.map('map', {
+          zoomControl: false,
+          attributionControl: false
+        }).setView([${lat}, ${lng}], ${zoom});
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19
+        }).addTo(map);
+
+        L.circle([${lat}, ${lng}], {
+          color: '#22d15a',
+          fillColor: '#22d15a',
+          fillOpacity: 0.25,
+          radius: 180
+        }).addTo(map);
+      </script>
+    </body>
+    </html>
+  `;
+
   return (
-    <View style={[styles.stub, { backgroundColor: isDark ? '#0d1f0d' : '#c8d6c8' }, style]}>
-      <Text style={[styles.label, { color: isDark ? 'rgba(34,209,90,0.5)' : 'rgba(34,209,90,0.7)' }]}>🗺 Map (mobile only)</Text>
+    <View style={[styles.stub, style]}>
+      <iframe
+        srcDoc={srcDoc}
+        style={{ width: '100%', height: '100%', border: 'none' }}
+        title="Satellite Map Tiles"
+      />
       {children}
     </View>
   );
@@ -28,11 +77,9 @@ export default MapView;
 
 const styles = StyleSheet.create({
   stub: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 13,
-    fontFamily: 'Inter_500Medium',
+    width: '100%',
+    height: '100%',
+    borderRadius: 16,
+    overflow: 'hidden',
   },
 });

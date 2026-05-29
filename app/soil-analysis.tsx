@@ -8,16 +8,96 @@ import {
   ImageBackground,
   Platform,
   Image,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Info, Sprout, ArrowUpRight } from 'lucide-react-native';
+import { ChevronLeft, Info, Sprout, ArrowUpRight, AlertTriangle, ShieldAlert, BookOpen } from 'lucide-react-native';
 import { useTheme } from '../constants/Theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Polyline, Circle as SvgCircle, Rect, Line as SvgLine, Text as SvgText } from 'react-native-svg';
+import { useKilimoStore } from '../store/useKilimoStore';
+
+const { width: SW } = Dimensions.get('window');
+
+// ─── Soil pH Trend SVG Chart ───────────────────────────────────────────────────
+function SoilPHTrendChart({ data, months, colors }: { data: number[]; months: string[]; colors: any }) {
+  const chartW = SW - 80;
+  const chartH = 80;
+  const max = 7.5;
+  const min = 4.5;
+  const points = data
+    .map((val, index) => {
+      const x = (index / (data.length - 1)) * (chartW - 20) + 10;
+      const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 20) - 15;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  return (
+    <View style={{ marginVertical: 12, height: chartH }}>
+      <Svg width={chartW} height={chartH}>
+        <Rect width={chartW} height={chartH} fill="rgba(0,0,0,0.02)" rx={8} />
+        
+        {/* pH Reference Lines */}
+        <SvgLine x1="10" y1={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} x2={chartW - 10} y2={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} stroke="#22d15a" strokeDasharray="3,3" strokeWidth="1" />
+        <SvgText x={chartW - 35} y={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 18} fontSize="7" fill="#22d15a" fontFamily="Inter_700Bold">Optimum (6.5)</SvgText>
+
+        <Polyline
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth="2.5"
+          points={points}
+        />
+        {data.map((val, index) => {
+          const x = (index / (data.length - 1)) * (chartW - 20) + 10;
+          const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 20) - 15;
+          return (
+            <React.Fragment key={index}>
+              <SvgCircle
+                cx={x}
+                cy={y}
+                r="3.5"
+                fill={val < 5.5 ? '#ef4444' : '#22d15a'}
+                stroke="#FFF"
+                strokeWidth="1.5"
+              />
+              <SvgText
+                x={x}
+                y={y - 6}
+                fontSize="7.5"
+                fontFamily="Inter_700Bold"
+                fill={colors.text}
+                textAnchor="middle"
+              >
+                {val}
+              </SvgText>
+              <SvgText
+                x={x}
+                y={chartH - 2}
+                fontSize="7"
+                fontFamily="Inter_600SemiBold"
+                fill={colors.textMute}
+                textAnchor="middle"
+              >
+                {months[index]}
+              </SvgText>
+            </React.Fragment>
+          );
+        })}
+      </Svg>
+    </View>
+  );
+}
 
 export default function SoilAnalysis() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
+  const language = useKilimoStore((s) => s.language);
+
+  // Mock pH historical readings (showing a drop)
+  const phTrendData = [6.8, 6.5, 6.4, 5.9, 5.5, 5.2];
+  const phTrendMonths = ['Des', 'Jan', 'Feb', 'Mac', 'Apr', 'Mei'];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -40,7 +120,9 @@ export default function SoilAnalysis() {
             </TouchableOpacity>
             
             <View style={styles.heroContent}>
-              <Text style={styles.heroTitle}>Soil Nutrient Analysis</Text>
+              <Text style={styles.heroTitle}>
+                {language === 'sw' ? 'Uchunguzi wa Udongo' : 'Soil Nutrient Analysis'}
+              </Text>
             </View>
           </SafeAreaView>
         </ImageBackground>
@@ -50,13 +132,13 @@ export default function SoilAnalysis() {
           <View style={[styles.statusCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.statusHeader}>
               <View>
-                <Text style={[styles.statusLabel, { color: colors.textMute }]}>Overall Health</Text>
+                <Text style={[styles.statusLabel, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Afya ya Udongo' : 'Overall Soil Health'}
+                </Text>
                 <View style={styles.statusRow}>
-                  <Text style={[styles.statusMain, { color: colors.text }]}>Optimal</Text>
-                  <View style={styles.statusBadge}>
-                    <ArrowUpRight size={12} color="#22d15a" />
-                    <Text style={styles.statusBadgeText}>+15%</Text>
-                  </View>
+                  <Text style={[styles.statusMain, { color: '#ef4444' }]}>
+                    {language === 'sw' ? 'Tishio la Asidi' : 'Acidic Alert'}
+                  </Text>
                 </View>
               </View>
               <View style={[styles.infoIcon, { backgroundColor: colors.background }]}>
@@ -72,21 +154,59 @@ export default function SoilAnalysis() {
             </View>
           </View>
 
+          {/* Soil pH Anomaly Alert Banner */}
+          <View style={[styles.anomalyAlert, { backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
+            <ShieldAlert size={20} color="#ef4444" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.anomalyTitle}>
+                {language === 'sw' ? 'TAHADHARI YA pH YA UDONGO' : 'CRITICAL pH ANOMALY DETECTED'}
+              </Text>
+              <Text style={styles.anomalyDesc}>
+                {language === 'sw'
+                  ? 'pH ya udongo imeshuka kwa kasi kutoka 6.8 (Desemba) hadi 5.2 (Mwezi huu) katika Block A. Udongo ni asidi sana!'
+                  : 'pH levels dropped sharply from 6.8 (Dec) to 5.2 (This Month) in Block A. High soil acidification!'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Soil pH History Line Chart Section */}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {language === 'sw' ? 'Mwenendo wa pH (Mwisho Miezi 6)' : 'pH Level History (Past 6 Months)'}
+          </Text>
+          <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <SoilPHTrendChart data={phTrendData} months={phTrendMonths} colors={colors} />
+            <Text style={{ fontSize: 10, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
+              {language === 'sw' ? 'Kiwango cha pH kinapaswa kuwa kati ya 6.0 na 7.0 kwa mazao mengi' : 'pH levels should ideally range between 6.0 and 7.0 for most staple crops'}
+            </Text>
+          </View>
+
           {/* Urgent Recommendations */}
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Urgent Recommendations</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {language === 'sw' ? 'Mapendekezo ya Haraka' : 'Urgent Recommendations'}
+          </Text>
           
           <RecommendationItem 
-            title="Low Nitrogen detected"
-            desc="Apply Urea immediately."
+            title={language === 'sw' ? 'Weka Chokaa cha Kilimo (Agri-Lime)' : 'Apply Agriculture Agri-Lime'}
+            desc={language === 'sw' ? 'Weka tani 1.5 za Minjingu Agri-Lime kwa hekta ili kupunguza asidi na kupandisha pH.' : 'Apply 1.5 Tonnes of Minjingu Agri-Lime per hectare to raise pH back to optimum.'}
             imageUri="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=300&auto=format&fit=crop"
             onPress={() => router.push('/tasks' as any)}
+            btnText={language === 'sw' ? 'Tengeneza Kazi' : 'Create Task'}
           />
-          
+
           <RecommendationItem 
-            title="Potassium deficiency"
-            desc="Boost suggested in Zone 5."
+            title={language === 'sw' ? 'Badilisha Mazao yanayohimili Asidi' : 'Shift to Acid-Tolerant Crops'}
+            desc={language === 'sw' ? 'Hustawisha chai, muhogo, au viazi vitamu ambavyo vinaweza kuhimili pH ya chini hadi 5.0.' : 'Plant acid-tolerant crops like tea, cassava, or sweet potatoes if soil pH remains low.'}
             imageUri="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?q=80&w=300&auto=format&fit=crop"
+            onPress={() => router.push('/crop-library' as any)}
+            btnText={language === 'sw' ? 'Maktaba ya Mazao' : 'Crop Library'}
+          />
+
+          <RecommendationItem 
+            title={language === 'sw' ? 'Epuka Mbolea zenye Ammonium' : 'Avoid Ammonium Fertilizers'}
+            desc={language === 'sw' ? 'Mbolea zenye ammonium (e.g. Ammonium Sulphate) huongeza zaidi asidi kwenye udongo.' : 'Avoid acidifying ammonium-based fertilizers. Prefer nitrate-based nitrogen sources.'}
+            imageUri="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=300&auto=format&fit=crop"
             onPress={() => router.push('/consultations' as any)}
+            btnText={language === 'sw' ? 'Ongea na Mtaalamu' : 'Ask Agronomist'}
           />
 
         </View>
@@ -110,16 +230,16 @@ function NutrientBar({ label, value, color }: { label: string; value: number; co
   );
 }
 
-function RecommendationItem({ title, desc, imageUri, onPress }: { title: string; desc: string; imageUri: string; onPress: () => void }) {
+function RecommendationItem({ title, desc, imageUri, onPress, btnText }: { title: string; desc: string; imageUri: string; onPress: () => void; btnText: string }) {
   const { colors } = useTheme();
   return (
     <View style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Image source={{ uri: imageUri }} style={styles.recImage} />
       <View style={styles.recContent}>
-        <Text style={[styles.recTitle, { color: colors.text }]}>{title}</Text>
-        <Text style={[styles.recDesc, { color: colors.textMute }]}>{desc}</Text>
+        <Text style={[styles.recTitle, { color: colors.text }]} numberOfLines={1}>{title}</Text>
+        <Text style={[styles.recDesc, { color: colors.textMute }]} numberOfLines={3}>{desc}</Text>
         <TouchableOpacity style={styles.recAction} onPress={onPress}>
-          <Text style={styles.recActionText}>View details</Text>
+          <Text style={styles.recActionText}>{btnText}</Text>
           <ChevronLeft color="#22d15a" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
       </View>
@@ -136,7 +256,7 @@ const styles = StyleSheet.create({
   },
   heroBackground: {
     width: '100%',
-    height: 280,
+    height: 240,
     justifyContent: 'flex-start',
   },
   headerSafe: {
@@ -167,12 +287,13 @@ const styles = StyleSheet.create({
   contentPadding: {
     paddingHorizontal: 20,
     paddingTop: 10,
+    gap: 12,
   },
   statusCard: {
     borderRadius: 20,
     borderWidth: 1,
     padding: 20,
-    marginTop: -30, // Pull up over the background
+    marginTop: -30,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -198,19 +319,6 @@ const styles = StyleSheet.create({
   statusMain: {
     fontSize: 24,
     fontFamily: 'Inter_800ExtraBold',
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(34, 209, 90, 0.1)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  statusBadgeText: {
-    color: '#22d15a',
-    fontSize: 12,
-    fontFamily: 'Inter_700Bold',
   },
   infoIcon: {
     width: 36,
@@ -248,18 +356,44 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 4,
   },
+  anomalyAlert: {
+    flexDirection: 'row',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 12,
+    marginTop: 8,
+  },
+  anomalyTitle: {
+    fontSize: 10.5,
+    fontFamily: 'Inter_800ExtraBold',
+    color: '#ef4444',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  anomalyDesc: {
+    fontSize: 11.5,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 18,
+  },
   sectionTitle: {
     fontSize: 18,
     fontFamily: 'Inter_800ExtraBold',
-    marginTop: 32,
-    marginBottom: 16,
+    marginTop: 24,
+    marginBottom: 4,
+  },
+  chartCard: {
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
   },
   recCard: {
     flexDirection: 'row',
     borderRadius: 16,
     borderWidth: 1,
     overflow: 'hidden',
-    marginBottom: 16,
+    height: 124,
   },
   recImage: {
     width: 100,
@@ -267,18 +401,18 @@ const styles = StyleSheet.create({
   },
   recContent: {
     flex: 1,
-    padding: 16,
+    padding: 12,
     justifyContent: 'center',
+    gap: 4,
   },
   recTitle: {
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: 'Inter_700Bold',
-    marginBottom: 4,
   },
   recDesc: {
-    fontSize: 13,
+    fontSize: 10.5,
     fontFamily: 'Inter_500Medium',
-    marginBottom: 12,
+    lineHeight: 15,
   },
   recAction: {
     flexDirection: 'row',
@@ -286,13 +420,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     backgroundColor: 'rgba(34, 209, 90, 0.08)',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderRadius: 8,
     gap: 4,
+    marginTop: 2,
   },
   recActionText: {
     color: '#22d15a',
-    fontSize: 12,
+    fontSize: 10.5,
     fontFamily: 'Inter_700Bold',
   },
 });

@@ -274,15 +274,11 @@ export default function CalendarScreen() {
       status: 'pending',
       dueDate: newDate.toISOString(),
       xpReward: newPriority === 'critical' ? 40 : newPriority === 'high' ? 25 : 15,
-      syncedOffline: false,
     });
     addNotification({
-      id: `cal-${Date.now()}`,
       type: 'info',
       title: language === 'sw' ? 'Kazi Mpya Imeongezwa' : 'Task Added',
       body: newTitle.trim(),
-      read: false,
-      createdAt: new Date().toISOString(),
     });
     setNewTitle(''); setNewPriority('medium'); setNewCategory('general');
     setSaving(false); setShowAdd(false);
@@ -297,12 +293,9 @@ export default function CalendarScreen() {
       completeTask(task.id);
       setCompletingId(null);
       addNotification({
-        id: `done-${Date.now()}`,
         type: 'success',
         title: language === 'sw' ? '✓ Kazi Imekamilika!' : '✓ Task Completed!',
         body: language === 'sw' ? task.titleSw || task.title : task.title,
-        read: false,
-        createdAt: new Date().toISOString(),
       });
     }, 700);
   }, [completeTask, addNotification, language]);
@@ -333,9 +326,10 @@ export default function CalendarScreen() {
           (t.status === 'pending' || t.status === 'in_progress')
         );
         for (const t of todayPending) {
+          const { id, createdAt, syncedOffline, ...rest } = t;
           await cancelTask(t.id);
           await createTask({
-            ...t,
+            ...rest,
             status: 'pending',
             dueDate: new Date(today.getTime() + 86400000).toISOString(),
           });
@@ -354,7 +348,6 @@ export default function CalendarScreen() {
             status: 'pending',
             dueDate: parsed.date.toISOString(),
             xpReward: 20,
-            syncedOffline: false,
           });
           setSelected(parsed.date);
           setCurYear(parsed.date.getFullYear());

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
-  Plus, Handshake, ChevronRight, X, FileText,
+  Plus, Handshake, ChevronRight, ChevronLeft, X, FileText,
   User, MapPin, Wheat, TrendingUp, CheckCircle2,
   Circle, ArrowUpRight,
 } from 'lucide-react-native';
@@ -50,6 +50,7 @@ const STATUS_ICON: Record<ContractStatus, React.ReactNode> = {
   milestone_due:<Circle       size={10} color="#f59e0b" fill="#f59e0b" />,
   completed:    <CheckCircle2 size={10} color="#22d15a" />,
   cancelled:    <Circle       size={10} color="#ef4444" fill="#ef4444" />,
+  disputed:     <Circle       size={10} color="#ef4444" fill="#ef4444" />,
 };
 
 // ─── Create Modal ──────────────────────────────────────────────────────────────
@@ -241,12 +242,20 @@ export default function ContractsScreen() {
               <View style={s.heroInner}>
                 {/* Back-row */}
                 <View style={s.heroTop}>
-                  <View>
-                    <View style={s.heroBadge}>
-                      <View style={s.heroBadgeDot} />
-                      <Text style={s.heroBadgeText}>CONTRACT FARMING</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <TouchableOpacity
+                      onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+                      style={{ padding: 6, borderRadius: 12, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card }}
+                    >
+                      <ChevronLeft size={20} color={colors.text} />
+                    </TouchableOpacity>
+                    <View>
+                      <View style={s.heroBadge}>
+                        <View style={s.heroBadgeDot} />
+                        <Text style={s.heroBadgeText}>CONTRACT FARMING</Text>
+                      </View>
+                      <Text style={[s.heroTitle, { color: colors.text }]}>Mikataba</Text>
                     </View>
-                    <Text style={[s.heroTitle, { color: colors.text }]}>Mikataba</Text>
                   </View>
                   <TouchableOpacity
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}

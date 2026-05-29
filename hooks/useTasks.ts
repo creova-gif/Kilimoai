@@ -3,10 +3,11 @@
  *
  * Full task management with:
  * - Supabase persistence
- * - Offline queue integration (tasks created offline queue to sync)
+ * - Offline queue integration
  * - Co-op shared tasks via coop_id
  * - XP gamification
  * - Optimistic UI updates
+ * - Assigned roles (vet, mechanic, employee)
  */
 
 import { useEffect, useState, useCallback } from 'react';
@@ -16,6 +17,7 @@ import { useKilimoStore } from '../store/useKilimoStore';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 export type TaskStatus = 'pending' | 'in_progress' | 'done' | 'cancelled';
 export type TaskCategory = 'irrigation' | 'planting' | 'harvest' | 'scouting' | 'finance' | 'general';
+export type AssignedRole = 'vet' | 'mechanic' | 'employee';
 
 export interface Task {
   id: string;
@@ -32,37 +34,66 @@ export interface Task {
   coopId?: string;
   syncedOffline: boolean;
   createdAt: string;
+  assignedRole?: AssignedRole;
 }
 
 // ─── Seed tasks ───────────────────────────────────────────────────────────────
 const SEED_TASKS: Task[] = [
   {
-    id: 't1', title: 'Irrigate Block B', titleSw: 'Mwagilia Sehemu B',
-    category: 'irrigation', priority: 'high', status: 'pending',
+    id: 't1',
+    title: 'Irrigate Block B',
+    titleSw: 'Mwagilia Sehemu B',
+    category: 'irrigation',
+    priority: 'high',
+    status: 'pending',
     dueDate: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-    xpReward: 25, farmBlock: 'Block B', syncedOffline: false,
+    xpReward: 25,
+    farmBlock: 'Block B',
+    syncedOffline: false,
     createdAt: new Date().toISOString(),
+    assignedRole: 'employee',
   },
   {
-    id: 't2', title: 'Scout for Pests', titleSw: 'Kagua Wadudu',
-    category: 'scouting', priority: 'medium', status: 'in_progress',
+    id: 't2',
+    title: 'Scout for Pests',
+    titleSw: 'Kagua Wadudu',
+    category: 'scouting',
+    priority: 'medium',
+    status: 'in_progress',
     dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    xpReward: 15, farmBlock: 'Block A', syncedOffline: false,
+    xpReward: 15,
+    farmBlock: 'Block A',
+    syncedOffline: false,
     createdAt: new Date().toISOString(),
+    assignedRole: 'employee',
   },
   {
-    id: 't3', title: 'Apply Fertilizer', titleSw: 'Weka Mbolea',
-    category: 'planting', priority: 'medium', status: 'pending',
+    id: 't3',
+    title: 'Apply Fertilizer',
+    titleSw: 'Weka Mbolea',
+    category: 'planting',
+    priority: 'medium',
+    status: 'pending',
     dueDate: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-    xpReward: 20, farmBlock: 'Block C', syncedOffline: false,
+    xpReward: 20,
+    farmBlock: 'Block C',
+    syncedOffline: false,
     createdAt: new Date().toISOString(),
+    assignedRole: 'employee',
   },
   {
-    id: 't4', title: 'Co-op Payment Due', titleSw: 'Malipo ya AMCOS',
-    category: 'finance', priority: 'critical', status: 'pending',
+    id: 't4',
+    title: 'Co-op Payment Due',
+    titleSw: 'Malipo ya AMCOS',
+    category: 'finance',
+    priority: 'critical',
+    status: 'pending',
     dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-    xpReward: 30, coopId: 'AMCOS-KIL-001', syncedOffline: false,
+    xpReward: 30,
+    coopId: 'AMCOS-KIL-001',
+    syncedOffline: false,
     createdAt: new Date().toISOString(),
+    assignedRole: 'employee',
   },
 ];
 
@@ -112,7 +143,9 @@ export function useTasks() {
     }
   }, [isOffline]);
 
-  useEffect(() => { fetchTasks(); }, []);
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   // ── Complete a task (offline-aware) ───────────────────────────────────────
   const completeTask = useCallback(async (id: string) => {
@@ -120,7 +153,7 @@ export function useTasks() {
 
     // Optimistic update
     setTasks((prev) =>
-      prev.map((t) => t.id === id ? { ...t, status: 'done', completedAt: now } : t)
+      prev.map((t) => (t.id === id ? { ...t, status: 'done', completedAt: now } : t))
     );
 
     if (isOffline) {
@@ -169,6 +202,7 @@ export function useTasks() {
         farm_block: task.farmBlock,
         coop_id: task.coopId,
         synced_offline: false,
+        assigned_role: task.assignedRole,
       });
       if (error) console.warn('[Tasks] Create failed:', error);
     }
@@ -176,7 +210,7 @@ export function useTasks() {
 
   // ── Delete / cancel task ──────────────────────────────────────────────────
   const cancelTask = useCallback(async (id: string) => {
-    setTasks((prev) => prev.map((t) => t.id === id ? { ...t, status: 'cancelled' } : t));
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: 'cancelled' } : t)));
     if (!isOffline && supabase) {
       await supabase.from('tasks').update({ status: 'cancelled' }).eq('id', id);
     }
@@ -214,5 +248,6 @@ function mapDbToTask(row: any): Task {
     coopId: row.coop_id,
     syncedOffline: row.synced_offline ?? false,
     createdAt: row.created_at,
+    assignedRole: row.assigned_role,
   };
 }

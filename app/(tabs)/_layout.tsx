@@ -34,7 +34,10 @@ function TabIcon({
   }));
 
   const iconAnimStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: iconScale.value }, { translateY: focused ? -4 : 0 }],
+    transform: [
+      { scale: iconScale.value },
+      { translateY: focused ? -4 : 0 }
+    ] as any,
   }));
 
   return (

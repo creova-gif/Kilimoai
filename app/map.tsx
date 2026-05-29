@@ -6,12 +6,10 @@ import {
   TouchableOpacity, 
   SafeAreaView, 
   Dimensions, 
-  Image, 
   Platform,
   StatusBar,
   Alert,
   ScrollView,
-  TextInput
 } from 'react-native';
 import { 
   ChevronLeft, 
@@ -28,7 +26,9 @@ import {
   Sun,
   Droplets,
   CloudRain,
-  ArrowRight
+  ArrowRight,
+  Volume2,
+  VolumeX
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -37,6 +37,7 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
 import Animated, { FadeIn, FadeOut, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useKilimoStore } from '../store/useKilimoStore';
+import MapView from '../components/MapViewWrapper';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -48,13 +49,22 @@ const FIELDS_LIST = [
 
 export default function MapScreen() {
   const router = useRouter();
-  const { colors, isDark, radius } = useTheme();
+  const { colors, isDark } = useTheme();
   const language = useKilimoStore((s) => s.language);
   const farmProfile = useKilimoStore((s) => s.farmProfile);
   const agroId = useKilimoStore((s) => s.agroId);
 
   const [activeLayer, setActiveLayer] = useState<'ndvi'|'moisture'|'standard'>('standard');
   const [selectedField, setSelectedField] = useState('2');
+  const [voiceText, setVoiceText] = useState('');
+  const [voicePlaying, setVoicePlaying] = useState(false);
+
+  const region = {
+    latitude: -6.8280,
+    longitude: 37.6695,
+    latitudeDelta: 0.012,
+    longitudeDelta: 0.012,
+  };
   
   const LAYER_LABELS = { 
     ndvi: language === 'sw' ? 'NDVI (Afya ya Mimea)' : 'NDVI (Plant Health)', 
@@ -62,17 +72,51 @@ export default function MapScreen() {
     standard: language === 'sw' ? 'Ramani ya Kawaida' : 'Standard Map' 
   };
 
+  const speak = (text: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setVoiceText(text);
+    setVoicePlaying(true);
+    
+    if (Platform.OS === 'web' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = language === 'sw' ? 'sw-TZ' : 'en-US';
+      utterance.onend = () => setVoicePlaying(false);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      setTimeout(() => {
+        setVoicePlaying(false);
+      }, 3500);
+    }
+  };
+
+  const triggerVoiceGuidance = () => {
+    const text = language === 'sw' 
+      ? "Umeingia kwenye eneo lako la mkataba wa kilimo. Udongo hapa una pH ya sita nukta nne, na unyevu ni wa wastani."
+      : "You have entered your contract farming zone. The soil here has a pH of 6.4, and moisture levels are optimal.";
+    speak(text);
+  };
+
   const handleLayers = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const next = activeLayer === 'standard' ? 'ndvi' : activeLayer === 'ndvi' ? 'moisture' : 'standard';
     setSelectedField(next === 'ndvi' ? '3' : next === 'moisture' ? '2' : '1');
     setActiveLayer(next);
-    Alert.alert(language === 'sw' ? 'Tabaka la Ramani' : 'Map Layer', `${language === 'sw' ? 'Umebadilisha hadi' : 'Changed to'}: ${LAYER_LABELS[next]}`);
+    const text = language === 'sw'
+      ? `Kubadilisha tabaka la ramani kwenda ${LAYER_LABELS[next]}`
+      : `Changing map layer to ${LAYER_LABELS[next]}`;
+    speak(text);
   };
+
   const handleLocate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const text = language === 'sw'
+      ? `Nafasi ya GPS imethibitishwa. Upo mkoa wa ${farmProfile?.region || 'Arusha'}, kitalu A.`
+      : `GPS position confirmed. You are located in ${farmProfile?.region || 'Arusha'}, Block A.`;
+    speak(text);
     Alert.alert('GPS', `Eneo lako: ${farmProfile?.region || 'Arusha'}, Kitalu A\nHekta 2.4\n8.9° S, 33.4° E`);
   };
+
   const handleFullscreen = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Alert.alert(language === 'sw' ? 'Ramani Kamili' : 'Full Map', language === 'sw' ? 'Fungua KILIMO AI kwenye simu yako ili upate ramani kamili ya mwingiliano.' : 'Interactive maps optimized for mobile devices.');
@@ -82,14 +126,15 @@ export default function MapScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* High-Fidelity Satellite View Mock */}
-      <Image 
-        source={{ uri: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2832&auto=format&fit=crop' }} 
-        style={styles.mapImage}
+      {/* Actual Satellite Map View */}
+      <MapView 
+        style={StyleSheet.absoluteFillObject}
+        region={region}
       />
       <LinearGradient
         colors={['rgba(0,0,0,0.5)', 'transparent', 'rgba(0,0,0,0.6)']}
         style={StyleSheet.absoluteFill}
+        pointerEvents="none"
       />
 
       <SafeAreaView style={styles.overlay}>
@@ -123,8 +168,20 @@ export default function MapScreen() {
             </TouchableOpacity>
           </View>
 
+          {/* Voice guidance alerts visualizer overlay */}
+          {voicePlaying && (
+            <Animated.View entering={FadeInUp} exiting={FadeOut} style={styles.voiceGuidanceCard}>
+              <BlurView intensity={70} tint="dark" style={styles.voiceGuidanceInner}>
+                <Volume2 size={16} color="#22d15a" style={styles.voiceIconPulse} />
+                <Text style={styles.voiceGuidanceText} numberOfLines={2}>
+                  {voiceText}
+                </Text>
+              </BlurView>
+            </Animated.View>
+          )}
+
           {/* Floating Weather widget overlay */}
-          <Animated.View entering={FadeInUp.delay(200)} style={styles.weatherCard}>
+          <Animated.View entering={FadeInUp.delay(200)} style={[styles.weatherCard, voicePlaying && { top: 180 }]}>
             <BlurView intensity={65} tint="dark" style={styles.weatherInner}>
               <View style={styles.weatherRow}>
                 <Sun size={18} color="#F59E0B" />
@@ -158,6 +215,12 @@ export default function MapScreen() {
             <TouchableOpacity onPress={handleLocate} style={styles.controlItem}>
               <BlurView intensity={50} tint="dark" style={[styles.controlInner, { borderColor: colors.primary }]}>
                 <Locate size={20} color={colors.primary} />
+              </BlurView>
+            </TouchableOpacity>
+            {/* Trigger Voice guidance manually */}
+            <TouchableOpacity onPress={triggerVoiceGuidance} style={styles.controlItem}>
+              <BlurView intensity={50} tint="dark" style={[styles.controlInner, voicePlaying && { borderColor: '#22d15a' }]}>
+                <Volume2 size={20} color={voicePlaying ? '#22d15a' : '#fff'} />
               </BlurView>
             </TouchableOpacity>
           </View>
@@ -336,4 +399,10 @@ const styles = StyleSheet.create({
   
   fullAnalysisBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, borderWidth: 1 },
   fullAnalysisText: { fontSize: 13, fontFamily: 'Inter_800ExtraBold' },
+  
+  // Voice Guidance UI
+  voiceGuidanceCard: { position: 'absolute', top: 120, left: 16, right: 80, borderRadius: 16, overflow: 'hidden', zIndex: 30 },
+  voiceGuidanceInner: { flexDirection: 'row', alignItems: 'center', padding: 12, gap: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.3)', backgroundColor: 'rgba(10,26,11,0.75)' },
+  voiceGuidanceText: { color: '#fff', fontSize: 11, fontFamily: 'Inter_600SemiBold', flex: 1 },
+  voiceIconPulse: { padding: 4 },
 });
