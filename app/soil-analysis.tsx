@@ -24,7 +24,7 @@ export default function SoilAnalysis() {
       <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={styles.scrollContent}>
         {/* Hero Background */}
         <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1592982537447-6f2334208f0a?q=80&w=600&auto=format&fit=crop' }}
+          source={{ uri: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800' }}
           style={styles.heroBackground}
         >
           <LinearGradient
@@ -78,14 +78,14 @@ export default function SoilAnalysis() {
           <RecommendationItem 
             title="Low Nitrogen detected"
             desc="Apply Urea immediately."
-            imageUri="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=300&auto=format&fit=crop"
+            imageUri="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=300"
             onPress={() => router.push('/tasks' as any)}
           />
           
           <RecommendationItem 
             title="Potassium deficiency"
             desc="Boost suggested in Zone 5."
-            imageUri="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?q=80&w=300&auto=format&fit=crop"
+            imageUri="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=300"
             onPress={() => router.push('/consultations' as any)}
           />
 
