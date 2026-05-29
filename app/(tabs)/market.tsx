@@ -491,7 +491,7 @@ function MarketCard({ item, isExpanded, onPress, onOffer, onWishlist, onCompare,
   return (
     <Animated.View entering={FadeInDown.duration(320)}>
       <TouchableOpacity onPress={onPress} activeOpacity={0.92}
-        accessibilityRole="button" accessibilityLabel={`${itemName} at ${item.market}. TZS ${fmt(item.priceNum)}`}
+        accessibilityLabel={`${itemName} at ${item.market}. TZS ${fmt(item.priceNum)}`}
         accessibilityState={{ expanded: isExpanded }}>
         <View style={[S.card, { backgroundColor: colors.card, borderColor: isExpanded ? `${PRIMARY}40` : colors.border, borderWidth: isExpanded ? 1.5 : 1 }]}>
           {isExpanded && (

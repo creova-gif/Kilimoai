@@ -2164,9 +2164,9 @@ export default function HomeScreen() {
                         <View style={[styles.statIconBg, { backgroundColor: stat.color + '12' }]}>
                           {stat.icon}
                         </View>
-                        <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                        <View onTouchStart={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                           <MoreHorizontal size={16} color={colors.textMute} />
-                        </TouchableOpacity>
+                        </View>
                       </View>
                       <View style={styles.statMainBody}>
                         <View style={{ flex: 1 }}>
