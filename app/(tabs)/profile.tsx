@@ -24,7 +24,8 @@ import {
   Globe,
   Bot,
   Award,
-  Tv
+  Tv,
+  Calendar,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -115,6 +116,7 @@ export default function ProfileScreen() {
     {
       title: language === 'sw' ? 'KILIMO CHA KISASA' : 'SMART FARMING',
       items: [
+        { id: 'calendar', title: language === 'sw' ? 'Kalenda ya Shamba' : 'Farm Calendar', icon: <Calendar size={20} color="#22d15a" />, hasSwitch: false, value: language === 'sw' ? 'Ratiba & Kazi' : 'Schedule & Tasks', onPress: () => router.push('/calendar' as any) },
         { id: 'iot', title: language === 'sw' ? 'Mifumo ya IoT & Drones' : 'IoT & Drone Systems', icon: <Settings size={20} color="#0ea5e9" />, hasSwitch: false, value: language === 'sw' ? 'Inatafuta...' : 'Searching...', onPress: () => router.push('/iot-systems' as any) },
         { id: 'soil', title: language === 'sw' ? 'Uchambuzi wa Udongo' : 'Soil Analysis', icon: <Database size={20} color="#a3e635" />, hasSwitch: false, value: '', onPress: () => router.push('/soil-analysis' as any) },
       ]
