@@ -5,9 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  ImageBackground,
   Platform,
-  Image,
   Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -102,30 +100,37 @@ export default function SoilAnalysis() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={styles.scrollContent}>
-        {/* Hero Background */}
-        <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1592982537447-6f2334208f0a?q=80&w=600&auto=format&fit=crop' }}
+        {/* Hero */}
+        <LinearGradient
+          colors={isDark ? ['#0a2010', '#0c1a08', '#071205'] : ['#1a4a22', '#0d2e12', '#082009']}
           style={styles.heroBackground}
         >
-          <LinearGradient
-            colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.1)', colors.background]}
-            style={StyleSheet.absoluteFill}
-          />
           <SafeAreaView edges={['top']} style={styles.headerSafe}>
-            <TouchableOpacity 
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
-              style={[styles.backBtn, { backgroundColor: 'rgba(255,255,255,0.2)' }]}
-            >
-              <ChevronLeft color="#FFF" size={24} />
-            </TouchableOpacity>
-            
+            <View style={styles.headerRow}>
+              <TouchableOpacity 
+                onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
+                style={styles.backBtn}
+              >
+                <ChevronLeft color="#FFF" size={22} />
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.heroContent}>
+              <View style={styles.heroBadge}>
+                <Sprout size={11} color="#22d15a" />
+                <Text style={styles.heroBadgeText}>
+                  {language === 'sw' ? 'UCHAMBUZI' : 'ANALYSIS'}
+                </Text>
+              </View>
               <Text style={styles.heroTitle}>
                 {language === 'sw' ? 'Uchunguzi wa Udongo' : 'Soil Nutrient Analysis'}
               </Text>
+              <Text style={styles.heroSub}>
+                {language === 'sw' ? 'Tathmini afya ya udongo wako' : 'Assess your soil health'}
+              </Text>
             </View>
           </SafeAreaView>
-        </ImageBackground>
+        </LinearGradient>
 
         {/* N-P-K Status Card */}
         <View style={styles.contentPadding}>
@@ -256,33 +261,64 @@ const styles = StyleSheet.create({
   },
   heroBackground: {
     width: '100%',
-    height: 240,
+    height: 230,
     justifyContent: 'flex-start',
   },
   headerSafe: {
     width: '100%',
     flex: 1,
+    position: 'relative',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 0 : 16,
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 16,
-    marginTop: Platform.OS === 'ios' ? 0 : 16,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   heroContent: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 24,
     left: 20,
     right: 20,
   },
+  heroBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(34,209,90,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  heroBadgeText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 9,
+    color: '#22d15a',
+    letterSpacing: 1,
+  },
   heroTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontFamily: 'InstrumentSerif_400Regular',
     color: '#FFF',
     letterSpacing: -0.5,
+  },
+  heroSub: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
+    color: 'rgba(255,255,255,0.65)',
+    marginTop: 4,
   },
   contentPadding: {
     paddingHorizontal: 20,
