@@ -1,0 +1,244 @@
+Full App Workflows (Contract Farming, IoT, Maps, Finance, Community, and More)
+Context
+We are building a comprehensive agricultural platform for Tanzania. The app includes contract farming, IoT device integration (livestock monitoring, water levels, RFID gates), digital farm twin, satellite imagery, voice overs, marketplace (Pembejeo), task/notification page (Kazi), financial ledger (Daftari la Fedha), insurance, farmer groups (Vikundi), professional directory (Wataalamu), and a full crop library.
+UI/UX must remain as is (light theme, Instrument Serif font, existing branding). We only add features and creative improvements on top – no dark mode, no font changes.
+
+1. Mandatory Audit & Fixes (Immediate Issues)
+1.1 Contract Farming Page
+Missing backend plan – design and document the required backend structure (contracts, farmer‑buyer agreements, payment schedules, compliance tracking).
+
+Navigation bug – when on the contract farming page, the user cannot go back. Fix this immediately (browser back button, in‑app back navigation).
+
+1.2 Maps, GPS & Satellite Imagery
+Real satellite imagery must work as originally planned. Audit the current implementation – if using placeholder tiles, replace with actual satellite layers (e.g., Mapbox Satellite, Google Satellite, or Sentinel hub).
+
+GPS tracking for livestock, fields, and devices must be live and accurate.
+
+Voice overs – integrate text‑to‑speech or recorded voice guidance for key actions (e.g., “You have entered your contract farming zone”).
+
+1.3 Mifugo Page (Livestock)
+Add features:
+
+Herd overview (species, count, health status).
+
+Integration with RIFT HerdTag System (LoRa‑enabled ear tags with IMU + temperature sensors).
+
+Visualisation of rumination, heat stress, and movement patterns.
+
+Alert system for abnormal vitals or location breaches.
+
+1.4 IoT & Device Ecosystem
+The RIFT HerdTag System
+Must display real‑time data from ear tags.
+
+Include solar‑powered water level monitoring and RFID‑automated gate tracking.
+
+Prepare UI for: device health, battery level, last communication timestamp.
+
+Digital Farm Twin Model
+Must be ready to connect with devices (no dummy data).
+
+Provide a 2D/3D visual representation of the farm with overlays for sensor data.
+
+Pembejeo Page (Agricultural Store)
+Act as a full marketplace with: product categories (seeds, fertilisers, tools), cart, checkout, order history, seller ratings.
+
+Creative UI with product comparisons and stock alerts.
+
+Kazi Page (Tasks & Monitoring)
+Notification centre for alerts (e.g., “Cow #123 heat stress detected”).
+
+Assignment workflow: assign tasks to workers (e.g., “Check water pump at North field”), with status (pending, in progress, completed).
+
+Calendar view for task deadlines (integrated with Sankofa AI).
+
+IoT Page – Creative & Detailed
+Must allow easy connection to our own devices via phone or iPad.
+
+Device registration flow:
+
+Scan QR code / enter serial number → link to user’s Agro ID.
+
+Optional maintenance membership fee (monthly/yearly) for premium support and data cloud storage.
+
+Dashboard showing all registered devices, their status, and data streams.
+
+Temporary images can be used until real device photos are provided – but no fake imagery for satellite or maps.
+
+1.5 Drones, Sensors & Additional Monitoring
+Think as an engineer and customer: add workflows for:
+
+Drone flight planning (waypoints, coverage maps).
+
+Sensor calibration reminders.
+
+Threshold alerts (soil moisture, temperature, humidity).
+
+All new systems must follow the same design language and be testable.
+
+2. Data Management, Interpretation & Access Control
+2.1 Data Collected by Devices
+How is it interpreted?
+
+Provide dashboards with raw values + AI‑generated insights (e.g., “Rumination down 20% – possible illness”).
+
+Graphs, anomalies (e.g., sudden pH change in soil), and historical trends.
+
+Exportability – allow export to CSV/JSON/PDF for farm owners.
+
+Long‑term storage – data should not stay only on devices; sync to cloud with retention policies (e.g., 2 years for basic, unlimited for premium members).
+
+2.2 Access Control (Commercial & Multi‑user)
+Farm owner – full access.
+
+Employees – role‑based access (e.g., vet sees animal health, mechanic sees equipment sensors).
+
+Multiple devices per account – plans based on acres or headcount. Example:
+
+Small farm (≤10 acres) → 3 registered devices.
+
+Medium (11–50 acres) → 5 devices.
+
+Large (50+ acres) → custom.
+
+Allow the app to be installed on up to 3 additional devices per subscription tier (family/team plan).
+
+2.3 Udongo & pH Page (Soil)
+Show anomaly detection (e.g., “pH dropped from 6.8 to 5.2 in 2 days”).
+
+Graphs over time (line, bar, scatter).
+
+Sample suggestions – based on soil data, recommend fertilisers or crops.
+
+Integration with IoT soil sensors (real‑time or periodic readings).
+
+3. Financial & Insurance Integration
+3.1 Daftari la Fedha (Financial Ledger)
+Evolve into a self‑sufficient financial page with:
+
+Income/expense tracking (categorised by crop, livestock, equipment).
+
+Profit/loss reports.
+
+Budgeting tools.
+
+Invoice generation for contract farming.
+
+Link to mobile money or bank APIs (conceptual workflow).
+
+Creative interactions: visual cash flow charts, predictive cash alerts (“You may run low on operational funds in 2 weeks”).
+
+3.2 Insurance
+Must be interconnected with personal info and Agro ID.
+
+Logic:
+
+User fills insurance application → pre‑fill data from profile (name, farm size, crop types).
+
+Policies for crop failure, livestock death, equipment damage.
+
+Claim submission with photo/document upload.
+
+Ensure compliance with Tanzanian agricultural insurance providers (research real options).
+
+4. Community & Professional Network
+4.1 Vikundi Page (Groups)
+Link with external platforms:
+
+Telegram (create group or deep‑link to existing).
+
+WhatsApp (share invite link).
+
+Social media (Facebook groups, X communities).
+
+In‑app group features:
+
+Discussion forum (text/images).
+
+Event calendar for farmer meetups.
+
+Shared task lists (e.g., “Group irrigation schedule”).
+
+Build carefully to anticipate all customer needs (language options, privacy controls).
+
+4.2 Wataalamu Page (Professionals Directory)
+Real‑life search – list professionals across Tanzania by region.
+
+Categories: agronomists, vets, equipment technicians, financial advisors, insurance agents.
+
+Each entry must include: name, contact (phone/email), location (region/district), organisation, website (if any), and a short bio.
+
+Community organisations & companies that support agriculture – add their contacts, services, and website links.
+
+Allow users to rate and review professionals.
+
+5. Crop Library (Gemini Integration)
+5.1 Full Tanzanian Crop Database
+Deep research required – include all crops grown in Tanzania:
+
+Staple crops (maize, rice, cassava, sorghum, millet).
+
+Cash crops (coffee, tea, cotton, cashew, tobacco, sisal).
+
+Horticulture (tomatoes, onions, cabbages, mangoes, oranges, avocados).
+
+Legumes (beans, cowpeas, groundnuts).
+
+Spices (cloves, black pepper, vanilla).
+
+For each crop, provide:
+
+Botanical name, common names (Swahili/English).
+
+Growing regions, optimal soil & climate, planting/harvesting calendar.
+
+Common pests/diseases and organic/chemical controls.
+
+Market price trends (if available).
+
+5.2 Image Usage (Gemini API)
+Where crop pictures are needed, use Gemini creatively and efficiently to generate or retrieve accurate images.
+
+Ensure images match the crop variety grown in Tanzania (no generic stock photos of wrong species).
+
+Fallback to high‑quality placeholders only if Gemini fails.
+
+6. UI/UX & Branding Constraints (Critical)
+Do not change existing UI/UX – only add new elements or improve workflows.
+
+Typography – Instrument Serif remains the primary font. No substitution.
+
+Theme – Keep light theme as default; respect system dark mode only if the user’s phone forces it, but do not add a dark theme toggle or override.
+
+Branding – Consistent logo, colour palette, iconography, and spacing.
+
+No vibe‑coded rushed areas – every new page or component must be polished, tested, and visually coherent.
+
+7. Deliverables for This Brute Audit
+Fixed navigation issue on contract farming page.
+
+Backend plan for contract farming (database schema, API endpoints, state machine).
+
+Working satellite imagery on maps – proof that real tiles load.
+
+IoT device registration flow with Agro ID and membership fee logic.
+
+Data interpretation dashboard (graphs, anomalies, export).
+
+Access control model (owner, employees, device limits).
+
+Fully designed pages (Mifugo, Pembejeo, Kazi, IoT, Udongo, Daftari la Fedha, Insurance, Vikundi, Wataalamu) with creative, non‑breaking additions.
+
+Crop library populated with real Tanzanian crops and Gemini images.
+
+Test report – every workflow (including AI and voice overs) must be 100% functional or document why not.
+
+8. Final Instructions
+Do not hallucinate – if real data is missing (e.g., professional contacts), state that it requires further research, but provide the structure.
+
+Think like a customer – ease of use, clear error messages, offline capabilities where sensible.
+
+Engineer thoroughly – propose realistic tech stacks for IoT, real‑time data, and cloud sync.
+
+Begin the brute audit immediately. Document all findings, fixes, and creative improvements. Leave nothing untested.
+
