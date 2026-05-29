@@ -213,6 +213,11 @@ const SEED_SUPPLIERS: InputSupplier[] = [
   { id: 's2', name: 'East African Seed Co.', vetted: true, region: 'Arusha', rating: 4.8, category: 'Seed' },
   { id: 's3', name: 'Bayer CropScience', vetted: true, region: 'Dar es Salaam', rating: 4.5, category: 'Pesticide' },
   { id: 's4', name: 'Mbeya Agro Supplies', vetted: false, region: 'Mbeya', rating: 4.1, category: 'General' },
+  { id: 's5', name: 'TANSEED International', vetted: true, region: 'Arusha', rating: 4.6, category: 'Seed' },
+  { id: 's6', name: 'Syngenta Tanzania', vetted: true, region: 'Dar es Salaam', rating: 4.4, category: 'Pesticide' },
+  { id: 's7', name: 'Moshi Cooperative Union', vetted: true, region: 'Kilimanjaro', rating: 4.9, category: 'General' },
+  { id: 's8', name: 'Dodoma Mbolea Ltd', vetted: false, region: 'Dodoma', rating: 3.9, category: 'Fertilizer' },
+  { id: 's9', name: 'ICM Agro Tanzania', vetted: true, region: 'Dar es Salaam', rating: 4.3, category: 'Pesticide' },
 ];
 
 const SEED_ORDERS: InputOrder[] = [
@@ -222,7 +227,11 @@ const SEED_ORDERS: InputOrder[] = [
 const SEED_GROUPS: PeerGroup[] = [
   { id: 'g1', name: 'Wakulima wa Mahindi · Arusha', topic: 'Maize · Arusha', region: 'Arusha', memberCount: 482, joined: true, lastActivity: new Date(Date.now() - 30 * 60_000).toISOString() },
   { id: 'g2', name: 'Mpunga Bora Mbeya', topic: 'Rice · Mbeya', region: 'Mbeya', memberCount: 211, joined: false, lastActivity: new Date(Date.now() - 6 * 3600_000).toISOString() },
-  { id: 'g3', name: 'Ufugaji wa Ng\'ombe', topic: 'Dairy Cattle', region: 'National', memberCount: 893, joined: false, lastActivity: new Date(Date.now() - 2 * 3600_000).toISOString() },
+  { id: 'g3', name: 'Ufugaji wa Ng\'ombe · Taifa', topic: 'Dairy Cattle', region: 'National', memberCount: 893, joined: false, lastActivity: new Date(Date.now() - 2 * 3600_000).toISOString() },
+  { id: 'g4', name: 'Korosho Tanzania · Mtwara', topic: 'Cashew · Mtwara', region: 'Mtwara', memberCount: 1240, joined: false, lastActivity: new Date(Date.now() - 45 * 60_000).toISOString() },
+  { id: 'g5', name: 'Kahawa ya Kilimanjaro', topic: 'Coffee · Kilimanjaro', region: 'Kilimanjaro', memberCount: 678, joined: false, lastActivity: new Date(Date.now() - 3 * 3600_000).toISOString() },
+  { id: 'g6', name: 'Wakulima Wanawake Iringa', topic: 'Mixed Crops · Iringa', region: 'Iringa', memberCount: 344, joined: false, lastActivity: new Date(Date.now() - 12 * 3600_000).toISOString() },
+  { id: 'g7', name: 'Horticulture Hub · Arusha', topic: 'Vegetables · Arusha', region: 'Arusha', memberCount: 529, joined: false, lastActivity: new Date(Date.now() - 1 * 3600_000).toISOString() },
 ];
 
 const SEED_POSTS: PeerPost[] = [
@@ -231,9 +240,16 @@ const SEED_POSTS: PeerPost[] = [
 ];
 
 const SEED_EXPERTS: Expert[] = [
-  { id: 'e1', name: 'Dr. Esther Mushi', specialty: 'Soil & Fertility', yearsExperience: 14, languages: ['Swahili', 'English'], ratePerHourTZS: 35_000, rating: 4.9, avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200' },
-  { id: 'e2', name: 'Bw. Daudi Kileo', specialty: 'Pest & Disease', yearsExperience: 9, languages: ['Swahili'], ratePerHourTZS: 25_000, rating: 4.7 },
-  { id: 'e3', name: 'Dr. Neema Kessy', specialty: 'Livestock Health', yearsExperience: 18, languages: ['Swahili', 'English'], ratePerHourTZS: 40_000, rating: 4.95, avatarUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200' },
+  { id: 'e1', name: 'Dkt. Esther Mushi', specialty: 'Udongo & Mbolea', yearsExperience: 14, languages: ['Kiswahili', 'English'], ratePerHourTZS: 35_000, rating: 4.9, avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200' },
+  { id: 'e2', name: 'Bw. Daudi Kileo', specialty: 'Wadudu & Magonjwa', yearsExperience: 9, languages: ['Kiswahili'], ratePerHourTZS: 25_000, rating: 4.7 },
+  { id: 'e3', name: 'Dkt. Neema Kessy', specialty: 'Afya ya Mifugo', yearsExperience: 18, languages: ['Kiswahili', 'English'], ratePerHourTZS: 40_000, rating: 4.95, avatarUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200' },
+  { id: 'e4', name: 'Bw. Joseph Mramba', specialty: 'Kahawa & Korosho', yearsExperience: 22, languages: ['Kiswahili', 'English'], ratePerHourTZS: 45_000, rating: 4.88 },
+  { id: 'e5', name: 'Bi. Grace Lyimo', specialty: 'Bustani & Mboga', yearsExperience: 11, languages: ['Kiswahili', 'English', 'French'], ratePerHourTZS: 30_000, rating: 4.82, avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200' },
+  { id: 'e6', name: 'Bw. Hassan Juma', specialty: 'Umwagiliaji & Maji', yearsExperience: 15, languages: ['Kiswahili', 'Arabic'], ratePerHourTZS: 32_000, rating: 4.76 },
+  { id: 'e7', name: 'Dkt. Amina Suleiman', specialty: 'Mpunga & Nafaka', yearsExperience: 12, languages: ['Kiswahili', 'English'], ratePerHourTZS: 38_000, rating: 4.91, avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=200' },
+  { id: 'e8', name: 'Bw. Peter Nkwame', specialty: 'Biashara ya Mazao', yearsExperience: 8, languages: ['Kiswahili', 'English'], ratePerHourTZS: 22_000, rating: 4.65 },
+  { id: 'e9', name: 'Dkt. Fatuma Rashidi', specialty: 'Viumbe-Hai & Organic', yearsExperience: 16, languages: ['Kiswahili', 'English'], ratePerHourTZS: 42_000, rating: 4.93, avatarUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=200' },
+  { id: 'e10', name: 'Bw. Emmanuel Tarimo', specialty: 'Teknolojia ya Kilimo', yearsExperience: 7, languages: ['Kiswahili', 'English'], ratePerHourTZS: 28_000, rating: 4.72 },
 ];
 
 const SEED_CONSULTATIONS: Consultation[] = [

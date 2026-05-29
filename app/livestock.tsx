@@ -415,6 +415,10 @@ export default function LivestockScreen() {
             ))}
           </View>
         )}
+
+        {/* ── RIFT HerdTag IoT Section ─────────────────────── */}
+        <RIFTHerdTagSection animals={animals} />
+
       </PageScaffold>
     </Gate>
   );
@@ -430,8 +434,116 @@ function SummaryPill({ count, label, color }: { count: number; label: string; co
   );
 }
 
+// ─── RIFT HerdTag IoT Section ────────────────────────────────────────────────
+const RIFT_FEATURES = [
+  { icon: '📡', title: 'GPS Tracking', desc: 'Eneo la mnyama kwa wakati halisi — accuracy ±3m' },
+  { icon: '💓', title: 'Mapigo ya Moyo', desc: 'Heart rate & temperature monitoring ya masaa 24' },
+  { icon: '⚡', title: 'Betri ya Mwaka 2', desc: 'Ultra-low power design — kubadilisha mara moja kwa miaka 2' },
+  { icon: '🔔', title: 'Tahadhari za Haraka', desc: 'SMS + in-app alert ukiwa nje ya eneo au mnyama ana homa' },
+];
+
+function RIFTHerdTagSection({ animals }: { animals: LivestockAnimal[] }) {
+  const { colors, isDark } = useTheme();
+  const [registered, setRegistered] = React.useState<Set<string>>(new Set(['a1']));
+
+  function toggleTag(id: string) {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setRegistered((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  return (
+    <>
+      <SectionHeader title="RIFT HerdTag · IoT Masikio" />
+      <View style={{ paddingHorizontal: 24, gap: 10 }}>
+
+        {/* Feature pills */}
+        <View style={[rt.featureCard, { backgroundColor: isDark ? 'rgba(34,209,90,0.06)' : 'rgba(34,209,90,0.04)', borderColor: '#22d15a30' }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <View style={[rt.tagIconBg, { backgroundColor: '#22d15a18' }]}>
+              <Text style={{ fontSize: 16 }}>🏷️</Text>
+            </View>
+            <View>
+              <Text style={[rt.tagTitle, { color: colors.text }]}>RIFT HerdTag™</Text>
+              <Text style={[rt.tagSub, { color: '#22d15a' }]}>Smart Ear Tag · 4G + BLE + GPS</Text>
+            </View>
+          </View>
+          <View style={rt.featureGrid}>
+            {RIFT_FEATURES.map((f) => (
+              <View key={f.icon} style={rt.featurePill}>
+                <Text style={{ fontSize: 14 }}>{f.icon}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={[rt.featureTitle, { color: colors.text }]}>{f.title}</Text>
+                  <Text style={[rt.featureDesc, { color: colors.textMute }]}>{f.desc}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Per-animal registration */}
+        {animals.map((a) => {
+          const isReg = registered.has(a.id);
+          const sp = SPECIES.find((x) => x.key === a.species);
+          return (
+            <GlassCard key={a.id} style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}>
+              <View style={[rt.animalIcon, { backgroundColor: (sp?.color ?? '#22d15a') + '18' }]}>
+                <SpeciesIcon species={a.species} size={18} color={sp?.color ?? '#22d15a'} />
+              </View>
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <Text style={[rt.animalTag, { color: colors.text }]}>{a.tag}{a.name ? ` · ${a.name}` : ''}</Text>
+                <Text style={[rt.animalSub, { color: isReg ? '#22d15a' : colors.textMute }]}>
+                  {isReg ? '📡 RIFT tag imeunganishwa · Ikiangaliwa' : 'Haijaunganishwa na RIFT tag'}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => toggleTag(a.id)}
+                style={[rt.regBtn, {
+                  backgroundColor: isReg ? '#22d15a' : colors.primary + '15',
+                  borderColor: isReg ? '#22d15a' : colors.primary + '40',
+                }]}
+              >
+                <Text style={[rt.regText, { color: isReg ? '#000' : colors.primary }]}>
+                  {isReg ? 'Imesajiliwa ✓' : 'Sajili'}
+                </Text>
+              </TouchableOpacity>
+            </GlassCard>
+          );
+        })}
+
+        {animals.length === 0 && (
+          <GlassCard style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ fontSize: 13, fontFamily: 'Inter_600SemiBold', color: colors.textMute, textAlign: 'center' }}>
+              Ongeza mnyama kwanza ili kuweza kusajili RIFT HerdTag.
+            </Text>
+          </GlassCard>
+        )}
+      </View>
+    </>
+  );
+}
+
+const rt = StyleSheet.create({
+  featureCard: { borderRadius: 18, borderWidth: 1, padding: 16 },
+  tagIconBg:   { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  tagTitle:    { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular' },
+  tagSub:      { fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.3 },
+  featureGrid: { gap: 10 },
+  featurePill: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  featureTitle: { fontSize: 12, fontFamily: 'Inter_700Bold' },
+  featureDesc:  { fontSize: 11, fontFamily: 'Inter_500Medium', lineHeight: 15, marginTop: 1 },
+  animalIcon:  { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  animalTag:   { fontSize: 13, fontFamily: 'Inter_700Bold' },
+  animalSub:   { fontSize: 11, fontFamily: 'Inter_500Medium', marginTop: 2 },
+  regBtn:      { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1 },
+  regText:     { fontSize: 11, fontFamily: 'Inter_800ExtraBold' },
+});
+
 function AccessDenied() {
-  const { colors } = useTheme();
   return (
     <EmptyState
       icon={<AlertTriangle size={36} color="#f59e0b" />}

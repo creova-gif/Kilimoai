@@ -295,6 +295,96 @@ export default function IOTSystems() {
               ))}
             </View>
           </Animated.View>
+          {/* RIFT HerdTag Section */}
+          <Animated.View entering={FadeInDown.delay(350).springify()}>
+            <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
+              {language === 'sw' ? 'RIFT HerdTag™ · Ufuatiliaji wa Mifugo' : 'RIFT HerdTag™ · Livestock Tracking'}
+            </Text>
+            <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: '#22d15a30', borderWidth: 1.5 }]}>
+              {/* Header */}
+              <View style={styles.cardHeader}>
+                <View style={styles.cardTitleRow}>
+                  <View style={[styles.iconBadge, { backgroundColor: 'rgba(34,209,90,0.1)' }]}>
+                    <Target size={20} color="#22d15a" />
+                  </View>
+                  <View>
+                    <Text style={[styles.cardTitle, { color: colors.text }]}>RIFT HerdTag™</Text>
+                    <Text style={[styles.cardSubtitle, { color: '#22d15a' }]}>
+                      {language === 'sw' ? 'Masikio Smart · 4G + BLE + GPS' : 'Smart Ear Tag · 4G + BLE + GPS'}
+                    </Text>
+                  </View>
+                </View>
+                <View style={{ alignItems: 'flex-end', gap: 4 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    <Animated.View style={[styles.statusPulseDot, animatedPulse, { backgroundColor: '#22d15a' }]} />
+                    <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: '#22d15a' }}>
+                      {language === 'sw' ? '1 IMESAJILIWA' : '1 REGISTERED'}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Tag metrics */}
+              <View style={[styles.statsRow, { marginTop: 0, marginBottom: 16 }]}>
+                {[
+                  { label: language === 'sw' ? 'Wanyama' : 'Animals', value: '3' },
+                  { label: language === 'sw' ? 'Tag Hai' : 'Tags Active', value: '1' },
+                  { label: language === 'sw' ? 'Maonyo' : 'Alerts', value: '0' },
+                ].map((s) => (
+                  <View key={s.label} style={styles.statBox}>
+                    <Text style={[styles.statValue, { color: colors.text }]}>{s.value}</Text>
+                    <Text style={[styles.statLabel, { color: colors.textMute }]}>{s.label}</Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Registered tag */}
+              <View style={{ gap: 8 }}>
+                {[
+                  { tag: 'TZ-0421', species: language === 'sw' ? 'Ng\'ombe' : 'Cattle', name: 'Sita', lat: -3.3869, lng: 36.6830, heartRate: 68, temp: 38.2, battery: 87, active: true },
+                  { tag: 'TZ-0422', species: language === 'sw' ? 'Ng\'ombe' : 'Cattle', name: 'Bahati', lat: -3.3871, lng: 36.6832, heartRate: 72, temp: 38.5, battery: 72, active: false },
+                  { tag: 'GT-118',  species: language === 'sw' ? 'Mbuzi' : 'Goat', name: '—', lat: -3.3875, lng: 36.6828, heartRate: 82, temp: 39.1, battery: 95, active: false },
+                ].map((a) => (
+                  <View key={a.tag} style={[{
+                    flexDirection: 'row', alignItems: 'center', padding: 12,
+                    borderRadius: 14, borderWidth: 1,
+                    backgroundColor: a.active ? 'rgba(34,209,90,0.05)' : 'rgba(0,0,0,0.02)',
+                    borderColor: a.active ? '#22d15a40' : colors.border,
+                  }]}>
+                    <View style={[styles.deviceIconBox, { backgroundColor: a.active ? '#22d15a18' : colors.background }]}>
+                      <BatteryCharging size={16} color={a.active ? '#22d15a' : colors.textMute} />
+                    </View>
+                    <View style={{ flex: 1, marginLeft: 10 }}>
+                      <Text style={[styles.deviceName, { color: colors.text }]}>{a.tag} · {a.name} ({a.species})</Text>
+                      <Text style={[styles.deviceType, { color: colors.textMute }]}>
+                        {a.active
+                          ? `❤️ ${a.heartRate} bpm · 🌡 ${a.temp}°C · 🔋 ${a.battery}%`
+                          : language === 'sw' ? 'Haijasajiliwa bado' : 'Not registered yet'}
+                      </Text>
+                    </View>
+                    <View style={[styles.deviceStatusRow]}>
+                      <View style={[styles.statusPulseDot, { backgroundColor: a.active ? '#22d15a' : '#94a3b8' }]} />
+                      <Text style={[styles.deviceStatusText, { color: a.active ? '#22d15a' : '#94a3b8' }]}>
+                        {a.active ? (language === 'sw' ? 'Hai' : 'Live') : (language === 'sw' ? 'Tumisha' : 'Activate')}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+
+              {/* CTA */}
+              <TouchableOpacity
+                onPress={() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)}
+                style={[styles.actionBtn, { backgroundColor: '#22d15a', marginTop: 14 }]}
+              >
+                <Map size={16} color="#000" />
+                <Text style={[styles.actionBtnText, { color: '#000' }]}>
+                  {language === 'sw' ? 'Ona Ramani ya Mifugo' : 'View Herd Map'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+
           <View style={{ height: 40 }} />
         </ScrollView>
       </SafeAreaView>
