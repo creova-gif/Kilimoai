@@ -29,6 +29,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, {
   Polyline,
+  Path,
   Circle as SvgCircle,
   Defs,
   LinearGradient as SvgGradient,
@@ -39,6 +40,92 @@ import Svg, {
 } from 'react-native-svg';
 
 const { width: SW } = Dimensions.get('window');
+const GAUGE_SIZE = Math.min(100, Math.floor((SW - 96) / 3));
+
+function polarToXY(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function NutrientGauge({
+  letter, labelSw, labelEn, data, language, colors,
+}: {
+  letter: string;
+  labelSw: string;
+  labelEn: string;
+  data: { statusEn: string; statusSw: string; value: string; color: string };
+  language: string;
+  colors: any;
+}) {
+  const S = GAUGE_SIZE;
+  const STROKE = 9;
+  const R = (S - STROKE) / 2;
+  const CX = S / 2;
+  const CY = S / 2;
+  const START = 135;
+  const SWEEP = 270;
+  const pct = parseInt(data.value, 10) / 100;
+
+  const bgStart = polarToXY(CX, CY, R, START);
+  const bgEnd = polarToXY(CX, CY, R, START + SWEEP);
+  const bgPath = `M ${bgStart.x.toFixed(2)} ${bgStart.y.toFixed(2)} A ${R} ${R} 0 1 1 ${bgEnd.x.toFixed(2)} ${bgEnd.y.toFixed(2)}`;
+
+  const progAngle = START + SWEEP * pct;
+  const progEnd = polarToXY(CX, CY, R, progAngle);
+  const largeArc = SWEEP * pct > 180 ? 1 : 0;
+  const progPath = pct > 0.01
+    ? `M ${bgStart.x.toFixed(2)} ${bgStart.y.toFixed(2)} A ${R} ${R} 0 ${largeArc} 1 ${progEnd.x.toFixed(2)} ${progEnd.y.toFixed(2)}`
+    : '';
+
+  return (
+    <View style={gaugeStyles.wrap}>
+      <Svg width={S} height={S}>
+        <Path d={bgPath} stroke={colors.border} strokeWidth={STROKE} fill="none" strokeLinecap="round" />
+        {pct > 0.01 && (
+          <Path d={progPath} stroke={data.color} strokeWidth={STROKE} fill="none" strokeLinecap="round" />
+        )}
+        <SvgCircle cx={CX} cy={CY} r={R - STROKE / 2 - 2} fill={data.color + '0e'} />
+        <SvgText x={CX} y={CY - 5} textAnchor="middle" fontSize={Math.round(S * 0.22)} fontFamily="Inter_800ExtraBold" fill={data.color}>
+          {letter}
+        </SvgText>
+        <SvgText x={CX} y={CY + 12} textAnchor="middle" fontSize={Math.round(S * 0.14)} fontFamily="Inter_700Bold" fill={colors.textMute}>
+          {data.value}
+        </SvgText>
+      </Svg>
+      <Text style={[gaugeStyles.name, { color: colors.text }]} numberOfLines={1}>
+        {language === 'sw' ? labelSw : labelEn}
+      </Text>
+      <View style={[gaugeStyles.pill, { backgroundColor: data.color + '18', borderColor: data.color + '44' }]}>
+        <Text style={[gaugeStyles.pillText, { color: data.color }]}>
+          {language === 'sw' ? data.statusSw : data.statusEn}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const gaugeStyles = StyleSheet.create({
+  wrap: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 6,
+  },
+  name: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 11,
+    textAlign: 'center',
+  },
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  pillText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 10,
+  },
+});
 
 const HISTORICAL_DATA = [
   { month: 'Jan', val: 0.3 },
@@ -266,39 +353,34 @@ export default function FieldDetailScreen() {
             </View>
 
             <View style={[styles.nutrientCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              {nutrients.map((n, i) => {
-                const isLast = i === nutrients.length - 1;
-                return (
-                  <View key={n.letter} style={[styles.nutrientRow, !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border }]}>
-                    <View style={[styles.nutrientLetter, { backgroundColor: n.data.color + '22', borderColor: n.data.color + '44' }]}>
-                      <Text style={[styles.nutrientLetterText, { color: n.data.color }]}>{n.letter}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View style={styles.nutrientLabelRow}>
-                        <Text style={[styles.nutrientName, { color: colors.text }]}>
-                          {language === 'sw' ? n.labelSw : n.labelEn}
-                        </Text>
-                        <View style={[styles.statusPill, { backgroundColor: n.data.color + '18', borderColor: n.data.color + '40' }]}>
-                          <Text style={[styles.statusPillText, { color: n.data.color }]}>
-                            {language === 'sw' ? n.data.statusSw : n.data.statusEn}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={[styles.nutrientTrack, { backgroundColor: colors.border }]}>
-                        <LinearGradient
-                          colors={[n.data.color + 'cc', n.data.color]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 0 }}
-                          style={[styles.nutrientFill, { width: n.data.value as any }]}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                );
-              })}
+              {/* Gauge header strip */}
+              <LinearGradient
+                colors={['#22d15a0a', 'transparent']}
+                style={styles.nutrientGaugeHeader}
+              >
+                <Text style={[styles.nutrientHeaderLabel, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Virutubisho vya Udongo — NPK' : 'Soil Nutrient Levels — NPK'}
+                </Text>
+              </LinearGradient>
 
+              {/* Three arc gauges */}
+              <View style={styles.gaugesRow}>
+                {nutrients.map(n => (
+                  <NutrientGauge
+                    key={n.letter}
+                    letter={n.letter}
+                    labelSw={n.labelSw}
+                    labelEn={n.labelEn}
+                    data={n.data}
+                    language={language}
+                    colors={colors}
+                  />
+                ))}
+              </View>
+
+              {/* Footer link */}
               <TouchableOpacity
-                style={styles.nutrientMore}
+                style={[styles.nutrientMore, { borderTopColor: colors.border }]}
                 onPress={() => router.push('/soil-analysis' as any)}
               >
                 <Text style={[styles.nutrientMoreText, { color: colors.primary }]}>
@@ -554,53 +636,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
   },
-  nutrientRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
+  nutrientGaugeHeader: {
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingTop: 14,
+    paddingBottom: 10,
   },
-  nutrientLetter: {
-    width: 36,
-    height: 36,
-    borderRadius: 11,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  nutrientHeaderLabel: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 11,
+    letterSpacing: 0.3,
   },
-  nutrientLetterText: {
-    fontFamily: 'Inter_800ExtraBold',
-    fontSize: 14,
-  },
-  nutrientLabelRow: {
+  gaugesRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 7,
-  },
-  nutrientName: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 13,
-  },
-  statusPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  statusPillText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10,
-  },
-  nutrientTrack: {
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  nutrientFill: {
-    height: '100%',
-    borderRadius: 3,
+    justifyContent: 'space-around',
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+    gap: 8,
   },
   nutrientMore: {
     flexDirection: 'row',
