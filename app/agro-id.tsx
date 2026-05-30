@@ -211,32 +211,62 @@ export default function AgroIdScreen() {
               </View>
             </View>
 
-            {/* Section 3: Track Records timeline */}
+            {/* Section 3: Track Records — 2×2 card grid */}
             <View style={styles.section}>
-              <Text style={[styles.sectionHeader, { color: colors.textMute }]}>TRACK RECORDS</Text>
-              <View style={{ position: 'relative', marginTop: 12 }}>
-                {/* Dotted Line */}
-                <View style={[styles.trackBgLine, { backgroundColor: isDark ? '#263322' : '#E2E8DF' }]} />
-                
-                <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trackScroll}>
-                  {TRACK_RECORDS.map((item, idx) => (
-                    <View key={idx} style={styles.trackStep}>
-                      <View style={[
-                        styles.stepDot, 
-                        { 
-                          backgroundColor: item.completed ? colors.primary : isDark ? '#171D15' : '#FFFFFF',
-                          borderColor: item.completed ? colors.primary : isDark ? '#2A3326' : '#C4D0C0',
-                          borderWidth: 2,
-                        }
-                      ]}>
-                        {item.completed && <View style={styles.activeDotInner} />}
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>TRACK RECORDS</Text>
+                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: '#22d15a' }}>
+                  {TRACK_RECORDS.filter(r => r.completed).length}/{TRACK_RECORDS.length} Done
+                </Text>
+              </View>
+
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                {TRACK_RECORDS.map((item, idx) => {
+                  const nextIdx = TRACK_RECORDS.findIndex(r => !r.completed);
+                  const isCompleted = item.completed;
+                  const isNext = !item.completed && nextIdx === idx;
+                  const accentColor = isCompleted ? '#22d15a' : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.1)' : '#c4d0c0');
+                  return (
+                    <View key={idx} style={[styles.trackCard2, {
+                      backgroundColor: isCompleted
+                        ? (isDark ? 'rgba(34,209,90,0.07)' : 'rgba(34,209,90,0.05)')
+                        : isNext
+                        ? (isDark ? 'rgba(245,158,11,0.07)' : 'rgba(245,158,11,0.05)')
+                        : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
+                      borderColor: isCompleted ? 'rgba(34,209,90,0.22)' : isNext ? 'rgba(245,158,11,0.28)' : colors.border,
+                    }]}>
+                      {/* Left accent bar */}
+                      <View style={[styles.trackAccentBar, { backgroundColor: accentColor }]} />
+
+                      {/* Card content */}
+                      <View style={styles.trackCardBody}>
+                        {/* Top row: status circle + date */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+                          <View style={[styles.trackStatusCircle, {
+                            backgroundColor: isCompleted ? 'rgba(34,209,90,0.15)' : isNext ? 'rgba(245,158,11,0.15)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
+                          }]}>
+                            {isCompleted
+                              ? <Check size={10} color="#22d15a" strokeWidth={3} />
+                              : isNext
+                              ? <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#f59e0b' }} />
+                              : <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4d0c0' }} />}
+                          </View>
+                          <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute }}>
+                            {item.date}
+                          </Text>
+                        </View>
+
+                        {/* Title + subtitle */}
+                        <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: isDark ? '#fff' : colors.text, marginBottom: 2 }} numberOfLines={1}>
+                          {item.title}
+                        </Text>
+                        <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 11, color: colors.textMute }} numberOfLines={1}>
+                          {item.subtitle}
+                        </Text>
                       </View>
-                      <Text style={[styles.stepDate, { color: colors.textMute }]}>{item.date}</Text>
-                      <Text style={[styles.stepMainTitle, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
-                      <Text style={[styles.stepSubtitle, { color: colors.textMute }]} numberOfLines={1}>{item.subtitle}</Text>
                     </View>
-                  ))}
-                </ScrollView>
+                  );
+                })}
               </View>
             </View>
 
@@ -609,53 +639,27 @@ const styles = StyleSheet.create({
     height: 1,
   },
 
-  // Track records
-  trackBgLine: {
-    position: 'absolute',
-    top: 10,
-    left: 20,
-    right: 20,
-    height: 1,
-    borderStyle: 'dashed',
+  // Track records — 2×2 card grid
+  trackCard2: {
+    width: '47.5%',
+    borderRadius: 14,
     borderWidth: 1,
-    borderRadius: 1,
-    borderColor: '#C4D0C0',
+    overflow: 'hidden',
+    flexDirection: 'row',
   },
-  trackScroll: {
-    paddingRight: 20,
+  trackAccentBar: {
+    width: 4,
   },
-  trackStep: {
-    width: 90,
-    alignItems: 'center',
-    marginRight: 10,
+  trackCardBody: {
+    flex: 1,
+    padding: 12,
   },
-  stepDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+  trackStatusCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 6,
-    zIndex: 3,
-  },
-  activeDotInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FFFFFF',
-  },
-  stepDate: {
-    fontSize: 9,
-    fontFamily: 'Inter_600SemiBold',
-    marginBottom: 1,
-  },
-  stepMainTitle: {
-    fontSize: 11,
-    fontFamily: 'Inter_800ExtraBold',
-  },
-  stepSubtitle: {
-    fontSize: 9,
-    fontFamily: 'Inter_500Medium',
   },
 
   // Ledger summary
