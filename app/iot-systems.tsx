@@ -1109,6 +1109,26 @@ export default function IOTSystems() {
     }
   };
 
+  const getSignalBars = (latencyMs: number, color: string) => {
+    const bars = latencyMs < 100 ? 3 : latencyMs < 150 ? 2 : 1;
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 2 }}>
+        {[5, 8, 11].map((h, idx) => (
+          <View key={idx} style={{ width: 3, height: h, borderRadius: 1.5, backgroundColor: idx < bars ? color : isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)' }} />
+        ))}
+      </View>
+    );
+  };
+
+  const getDeviceBatBar = (pct: number) => {
+    const col = pct > 60 ? '#22d15a' : pct > 30 ? '#f59e0b' : '#ef4444';
+    return (
+      <View style={{ width: 40, height: 4, borderRadius: 3, backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+        <View style={{ width: `${pct}%` as any, height: '100%', backgroundColor: col, borderRadius: 3 }} />
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ImageBackground
@@ -1156,6 +1176,9 @@ export default function IOTSystems() {
                   <Text style={[styles.deviceHubTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'KITUO CHA VIFAA' : 'DEVICE HUB'}
                   </Text>
+                  <View style={{ paddingHorizontal: 7, paddingVertical: 2, borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.15)', marginLeft: 6 }}>
+                    <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>{devices.length} ONLINE</Text>
+                  </View>
                 </View>
                 <TouchableOpacity
                   onPress={() => {
@@ -1178,6 +1201,9 @@ export default function IOTSystems() {
 
               {devices.map((device, i) => {
                 const color = getDeviceColor(device.type);
+                const batColor = device.battery > 60 ? '#22d15a' : device.battery > 30 ? '#f59e0b' : '#ef4444';
+                const typeLabelMap: Record<string, string> = { DRONE: 'DRONE', SENSOR: 'SENSOR', WEATHER: 'WEATHER', IRRIGATION: 'IRRIG', GATE: 'GATE', WATER: 'MAJI' };
+                const typeLabel = typeLabelMap[device.type] ?? device.type;
                 return (
                   <TouchableOpacity
                     key={device.id}
@@ -1190,50 +1216,43 @@ export default function IOTSystems() {
                       entering={FadeInDown.delay(80 + i * 50).springify()}
                       style={[styles.deviceRow, { borderTopWidth: 0 }]}
                     >
-                      <View style={[styles.deviceIconBox, { backgroundColor: color + '15' }]}>
+                      <View style={[styles.deviceIconBox, { backgroundColor: color + '18' }]}>
                         {getDeviceIcon(device.iconName, color)}
                       </View>
-                      <View style={styles.deviceInfo}>
-                        <Text style={[styles.deviceName, { color: colors.text }]}>
-                          {language === 'sw' ? device.nameSw : device.name}
-                        </Text>
-                        <Text style={[styles.deviceType, { color: colors.textMute }]}>
-                          S/N: {device.serialNumber} {device.agroIdLinked ? `· Linked` : ''}
-                        </Text>
-                        
-                        {/* Sub telemetry status */}
-                        <View style={styles.telemetryMiniRow}>
-                          <View style={styles.telemetryMiniBox}>
-                            <BatteryCharging size={10} color={colors.textMute} />
-                            <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>{device.battery}%</Text>
+                      <View style={[styles.deviceInfo, { gap: 5 }]}>
+                        {/* Name + type pill */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <Text style={[styles.deviceName, { color: colors.text, flex: 1 }]} numberOfLines={1}>
+                            {language === 'sw' ? device.nameSw : device.name}
+                          </Text>
+                          <View style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 5, backgroundColor: color + '18' }}>
+                            <Text style={{ fontSize: 8, fontFamily: 'Inter_700Bold', color, letterSpacing: 0.6 }}>{typeLabel}</Text>
                           </View>
-                          <View style={styles.telemetryMiniBox}>
-                            <Wifi size={10} color={colors.textMute} />
-                            <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>{device.latency}ms</Text>
-                          </View>
-                          <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>
-                            Seen: {language === 'sw' ? device.lastSeenSw : device.lastSeen}
+                        </View>
+                        {/* Telemetry strip */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          {getDeviceBatBar(device.battery)}
+                          <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: batColor }}>{device.battery}%</Text>
+                          <View style={{ width: 1, height: 9, backgroundColor: colors.border, marginHorizontal: 1 }} />
+                          {getSignalBars(device.latency, color)}
+                          <Text style={{ flex: 1 }} />
+                          <Text style={{ fontSize: 9, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
+                            {language === 'sw' ? device.lastSeenSw : device.lastSeen}
                           </Text>
                         </View>
                       </View>
-
-                      <View style={styles.deviceStatusRow}>
-                        <View style={[styles.statusPulseDot, { backgroundColor: '#22d15a' }]} />
-                        <Text style={[styles.deviceStatusText, { color: '#22d15a' }]}>
-                          {language === 'sw' ? 'Imekamilika' : 'Connected'}
-                        </Text>
-                      </View>
+                      <Animated.View style={[{ width: 8, height: 8, borderRadius: 4, marginLeft: 10 }, animatedPulse, { backgroundColor: device.status === 'active' ? '#22d15a' : '#94a3b8' }]} />
                     </Animated.View>
                   </TouchableOpacity>
                 );
               })}
 
               <View style={[styles.deviceHubFooter, { borderTopColor: colors.border }]}>
-                <Wifi size={12} color={colors.textMute} />
+                <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' }, animatedPulse]} />
                 <Text style={[styles.deviceHubFooterText, { color: colors.textMute }]}>
                   {language === 'sw'
-                    ? 'Mifumo imeunganishwa salama · LoRaWAN Gateway active'
-                    : 'System nodes connected securely · LoRaWAN Gateway active'}
+                    ? 'Salama · LoRaWAN + 4G LTE · Vifaa vyote vinajibu'
+                    : 'Encrypted · LoRaWAN + 4G LTE · All nodes responding'}
                 </Text>
               </View>
             </View>
@@ -1242,7 +1261,7 @@ export default function IOTSystems() {
           {/* Drone Control Panel */}
           <Animated.View entering={FadeInDown.delay(100).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
-              {language === 'sw' ? 'Udhibiti wa Ndege Nyuki (Drone)' : 'Agricultural Drone Control'}
+              {language === 'sw' ? 'DRONE CONTROL' : 'DRONE CONTROL'}
             </Text>
 
             <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -1252,7 +1271,7 @@ export default function IOTSystems() {
                     <Target size={20} color="#3b82f6" />
                   </View>
                   <View>
-                    <Text style={[styles.cardTitle, { color: colors.text }]}>KilimoAI AgriDrone AD-40</Text>
+                    <Text style={[styles.cardTitle, { color: colors.text }]}>AD-40 AgriDrone</Text>
                     <Text style={[styles.cardSubtitle, { color: '#3b82f6' }]}>
                       {droneActive
                         ? language === 'sw'
@@ -1276,24 +1295,18 @@ export default function IOTSystems() {
               <View style={styles.statsRow}>
                 <View style={styles.statBox}>
                   <BatteryCharging size={18} color="#22c55e" />
-                  <Text style={[styles.statValue, { color: colors.text }]}>84%</Text>
-                  <Text style={[styles.statLabel, { color: colors.textMute }]}>
-                    {language === 'sw' ? 'Chaji' : 'Battery'}
-                  </Text>
+                  <Text style={[styles.statValue, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular' }]}>84%</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>BATTERY</Text>
                 </View>
                 <View style={styles.statBox}>
                   <Wifi size={18} color="#3b82f6" />
-                  <Text style={[styles.statValue, { color: colors.text }]}>92 ms</Text>
-                  <Text style={[styles.statLabel, { color: colors.textMute }]}>
-                    {language === 'sw' ? 'Mawasiliano' : 'Latency'}
-                  </Text>
+                  <Text style={[styles.statValue, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular' }]}>92 ms</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>LATENCY</Text>
                 </View>
                 <View style={styles.statBox}>
                   <Droplets size={18} color="#0ea5e9" />
-                  <Text style={[styles.statValue, { color: colors.text }]}>12 L</Text>
-                  <Text style={[styles.statLabel, { color: colors.textMute }]}>
-                    {language === 'sw' ? 'Payload' : 'Payload'}
-                  </Text>
+                  <Text style={[styles.statValue, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular' }]}>12 L</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMute }]}>PAYLOAD</Text>
                 </View>
               </View>
 
@@ -1345,7 +1358,7 @@ export default function IOTSystems() {
           {/* Premium Subscription Module */}
           <Animated.View entering={FadeInDown.delay(180).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
-              {language === 'sw' ? 'Msaada wa Matunzo (Premium)' : 'Premium Maintenance Support'}
+              {language === 'sw' ? 'PREMIUM CARE' : 'PREMIUM CARE'}
             </Text>
 
             <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -1407,7 +1420,7 @@ export default function IOTSystems() {
           {/* Smart Irrigation */}
           <Animated.View entering={FadeInDown.delay(220).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
-              {language === 'sw' ? 'Umwagiliaji wa Akili' : 'Smart Irrigation'}
+              {language === 'sw' ? 'SMART IRRIGATION' : 'SMART IRRIGATION'}
             </Text>
 
             <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -1424,7 +1437,7 @@ export default function IOTSystems() {
                   </Animated.View>
                   <View>
                     <Text style={[styles.cardTitle, { color: colors.text }]}>
-                      {language === 'sw' ? 'Bomba Kuu (Kanda 1-4)' : 'Main Valve (Zones 1-4)'}
+                      {language === 'sw' ? 'Bomba Kuu · Kanda 1–4' : 'Main Valve · Zones 1–4'}
                     </Text>
                     <Text style={[styles.cardSubtitle, { color: irrigationActive ? '#0ea5e9' : colors.textMute }]}>
                       {irrigationActive
@@ -1451,8 +1464,8 @@ export default function IOTSystems() {
                   <Text style={[styles.iStatLabel, { color: colors.textMute }]}>
                     {language === 'sw' ? 'Unyevu wa Udongo' : 'Soil Moisture'}
                   </Text>
-                  <Text style={[styles.iStatValue, { color: colors.text }]}>
-                    42% <Text style={{ color: '#ef4444', fontSize: 12, fontFamily: 'Inter_500Medium' }}>(Chini)</Text>
+                  <Text style={[styles.iStatValue, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular' }]}>
+                    42% <Text style={{ color: '#ef4444', fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>LOW</Text>
                   </Text>
                   <View style={styles.progressBarBg}>
                     <View style={[styles.progressBarFill, { width: '42%', backgroundColor: '#ef4444' }]} />
@@ -1462,7 +1475,7 @@ export default function IOTSystems() {
                   <Text style={[styles.iStatLabel, { color: colors.textMute }]}>
                     {language === 'sw' ? 'Lengo la Unyevu' : 'Target Moisture'}
                   </Text>
-                  <Text style={[styles.iStatValue, { color: colors.text }]}>65%</Text>
+                  <Text style={[styles.iStatValue, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular' }]}>65%</Text>
                   <View style={styles.progressBarBg}>
                     <View style={[styles.progressBarFill, { width: '65%', backgroundColor: '#22c55e' }]} />
                   </View>
@@ -1474,32 +1487,51 @@ export default function IOTSystems() {
           {/* Environmental Sensors */}
           <Animated.View entering={FadeInDown.delay(300).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
-              {language === 'sw' ? 'Sensori za Mazingira' : 'Environmental Sensors'}
+              {language === 'sw' ? 'FIELD SENSORS' : 'FIELD SENSORS'}
             </Text>
 
             <View style={styles.sensorsGrid}>
-              {[
+              {([
                 {
-                  icon: <Wind size={24} color="#a855f7" />,
+                  icon: <Wind size={22} color="#a855f7" />,
                   label: language === 'sw' ? 'Upepo' : 'Wind Speed',
                   value: '14 km/h',
+                  trend: '↑ +2',
+                  trendColor: '#f59e0b',
                   color: '#a855f7',
                 },
                 {
-                  icon: <Zap size={24} color="#f59e0b" />,
+                  icon: <Zap size={22} color="#f59e0b" />,
                   label: language === 'sw' ? 'Joto la Udongo' : 'Soil Temp',
                   value: '24°C',
+                  trend: language === 'sw' ? '→ Imara' : '→ Stable',
+                  trendColor: '#22d15a',
                   color: '#f59e0b',
                 },
-                { icon: <Droplets size={24} color="#3b82f6" />, label: 'pH Level', value: '6.4', color: '#3b82f6' },
-                { icon: <Target size={24} color="#22c55e" />, label: 'Nitrogen (N)', value: 'Optimal', color: '#22c55e' },
-              ].map((s, i) => (
+                {
+                  icon: <Droplets size={22} color="#3b82f6" />,
+                  label: 'pH Level',
+                  value: '6.4',
+                  trend: '↑ Optimal',
+                  trendColor: '#22d15a',
+                  color: '#3b82f6',
+                },
+                {
+                  icon: <Target size={22} color="#22c55e" />,
+                  label: 'N · P · K',
+                  value: language === 'sw' ? 'Bora' : 'Optimal',
+                  trend: language === 'sw' ? '✓ Sawa' : '✓ Balanced',
+                  trendColor: '#22d15a',
+                  color: '#22c55e',
+                },
+              ] as { icon: React.ReactNode; label: string; value: string; trend: string; trendColor: string; color: string }[]).map((s, i) => (
                 <View key={i} style={[styles.sensorCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={[styles.sensorIcon, { backgroundColor: s.color + '15' }]}>
                     {s.icon}
                   </View>
-                  <Text style={[styles.sensorValue, { color: colors.text }]}>{s.value}</Text>
+                  <Text style={[styles.sensorValue, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular' }]}>{s.value}</Text>
                   <Text style={[styles.sensorLabel, { color: colors.textMute }]}>{s.label}</Text>
+                  <Text style={{ fontSize: 9, fontFamily: 'Inter_600SemiBold', color: s.trendColor, marginTop: 5 }}>{s.trend}</Text>
                 </View>
               ))}
             </View>
@@ -1565,11 +1597,23 @@ export default function IOTSystems() {
                     </View>
                     <View style={{ flex: 1, marginLeft: 10 }}>
                       <Text style={[styles.deviceName, { color: colors.text }]}>{a.tag} · {a.name} ({a.species})</Text>
-                      <Text style={[styles.deviceType, { color: colors.textMute }]}>
-                        {a.active
-                          ? `❤️ ${a.heartRate} bpm · 🌡 ${a.temp}°C · 🔋 ${a.battery}%`
-                          : language === 'sw' ? 'Haijasajiliwa bado' : 'Not registered yet'}
-                      </Text>
+                      {a.active ? (
+                        <View style={{ flexDirection: 'row', gap: 5, marginTop: 4, flexWrap: 'wrap' }}>
+                          <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: 'rgba(239,68,68,0.1)' }}>
+                            <Text style={{ fontSize: 9, fontFamily: 'Inter_700Bold', color: '#ef4444' }}>{a.heartRate} bpm</Text>
+                          </View>
+                          <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: 'rgba(245,158,11,0.1)' }}>
+                            <Text style={{ fontSize: 9, fontFamily: 'Inter_700Bold', color: '#f59e0b' }}>{a.temp}°C</Text>
+                          </View>
+                          <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: 'rgba(34,209,90,0.1)' }}>
+                            <Text style={{ fontSize: 9, fontFamily: 'Inter_700Bold', color: '#22d15a' }}>{a.battery}%</Text>
+                          </View>
+                        </View>
+                      ) : (
+                        <Text style={[styles.deviceType, { color: colors.textMute }]}>
+                          {language === 'sw' ? 'Haijasajiliwa bado' : 'Not registered yet'}
+                        </Text>
+                      )}
                     </View>
                     <View style={[styles.deviceStatusRow]}>
                       <View style={[styles.statusPulseDot, { backgroundColor: a.active ? '#22d15a' : '#94a3b8' }]} />
