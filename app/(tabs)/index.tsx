@@ -203,86 +203,81 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
         <View style={[styles.trackProgressFill, { width: `${progressPct}%` as any }]} />
       </View>
 
-      {/* Steps scroll */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.trackScroll}
-        style={{ marginTop: 14 }}
-      >
+      {/* Vertical timeline */}
+      <View style={{ marginTop: 18 }}>
         {records.map((item: any, idx: number) => {
           const isCompleted = item.completed;
           const isNext = idx === nextIdx;
           const isActive = activeStep === idx;
-          const dotColor = isCompleted ? '#22d15a' : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.12)' : '#e2e8df');
-          const lineColor = isCompleted ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.06)' : '#e2e8df');
+          const isLast = idx === records.length - 1;
+          const dotBorder = isCompleted ? '#22d15a' : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.22)' : colors.border);
+          const lineColor = isCompleted ? 'rgba(34,209,90,0.35)' : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)');
 
           return (
             <TouchableOpacity
               key={idx}
               onPress={() => { Haptics.selectionAsync(); setActiveStep(isActive ? null : idx); }}
-              activeOpacity={0.8}
-              style={styles.trackStep}
+              activeOpacity={0.75}
+              style={styles.trackRow}
               accessibilityRole="button"
               accessibilityState={{ selected: isActive }}
-              accessibilityLabel={language === 'sw' ? `${item.title}, ${item.subtitle}, ${isCompleted ? 'Imekamilika' : isNext ? 'Inayofuata' : 'Inasubiri'}` : `${item.title}, ${item.subtitle}, ${isCompleted ? 'Completed' : isNext ? 'Next' : 'Pending'}`}
             >
-              {/* Connector line */}
-              {idx < records.length - 1 && (
-                <View style={[styles.trackConnector, { backgroundColor: lineColor }]} />
-              )}
-
-              {/* Dot */}
-              <View style={[styles.stepDot, {
-                backgroundColor: isCompleted ? '#22d15a' : isNext ? 'rgba(245,158,11,0.15)' : (isDark ? 'rgba(255,255,255,0.05)' : '#fff'),
-                borderColor: dotColor,
-                borderWidth: isNext ? 2 : 1.5,
-              }]}>
-                {isCompleted
-                  ? <Check size={7} color="#000" strokeWidth={3} />
-                  : isNext
-                  ? <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#f59e0b' }} />
-                  : null
-                }
-              </View>
-
-              {/* Date chip */}
-              <View style={[styles.stepDateChip, {
-                backgroundColor: isCompleted ? 'rgba(34,209,90,0.1)' : isNext ? 'rgba(245,158,11,0.1)' : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
-                borderColor: isCompleted ? 'rgba(34,209,90,0.2)' : isNext ? 'rgba(245,158,11,0.25)' : 'transparent',
-              }]}>
-                <Text style={[styles.stepDate, {
-                  color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute
-                }]}>
-                  {item.date}
-                </Text>
-              </View>
-
-              <Text style={[styles.stepMainTitle, { color: isDark ? '#fff' : colors.text }]} numberOfLines={1}>
-                {item.title}
-              </Text>
-              <Text style={[styles.stepSubtitle, { color: colors.textMute }]} numberOfLines={1}>
-                {item.subtitle}
-              </Text>
-
-              {/* Status chip */}
-              <View style={[styles.stepStatusChip, {
-                backgroundColor: isCompleted ? 'rgba(34,209,90,0.12)' : isNext ? 'rgba(245,158,11,0.1)' : 'transparent',
-              }]}>
-                <Text style={[styles.stepStatusText, {
-                  color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute,
+              {/* Left column: dot + vertical connector */}
+              <View style={styles.trackRowLeft}>
+                <View style={[styles.trackRowDot, {
+                  backgroundColor: isCompleted ? '#22d15a' : isNext ? 'rgba(245,158,11,0.12)' : (isDark ? 'rgba(255,255,255,0.05)' : colors.background),
+                  borderColor: dotBorder,
+                  borderWidth: isNext ? 2.5 : 2,
                 }]}>
                   {isCompleted
-                    ? (language === 'sw' ? '✓ IMEKAMILIKA' : '✓ DONE')
+                    ? <Check size={11} color="#000" strokeWidth={3} />
                     : isNext
-                    ? (language === 'sw' ? '▶ INAYOFUATA' : '▶ NEXT')
-                    : (language === 'sw' ? 'INANGOJA' : 'PENDING')}
+                    ? <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#f59e0b' }} />
+                    : null}
+                </View>
+                {!isLast && (
+                  <View style={[styles.trackRowLine, { backgroundColor: lineColor }]} />
+                )}
+              </View>
+
+              {/* Right column: content */}
+              <View style={[styles.trackRowContent, isLast && { paddingBottom: 4 }]}>
+                <View style={styles.trackRowTopRow}>
+                  <View style={[styles.trackRowDateChip, {
+                    backgroundColor: isCompleted ? 'rgba(34,209,90,0.1)' : isNext ? 'rgba(245,158,11,0.1)' : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                    borderColor: isCompleted ? 'rgba(34,209,90,0.25)' : isNext ? 'rgba(245,158,11,0.3)' : 'transparent',
+                  }]}>
+                    <Text style={[styles.trackRowDateText, {
+                      color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute,
+                    }]}>
+                      {item.date}
+                    </Text>
+                  </View>
+                  <View style={[styles.trackRowStatusChip, {
+                    backgroundColor: isCompleted ? 'rgba(34,209,90,0.1)' : isNext ? 'rgba(245,158,11,0.08)' : 'transparent',
+                  }]}>
+                    <Text style={[styles.trackRowStatusText, {
+                      color: isCompleted ? '#22d15a' : isNext ? '#f59e0b' : colors.textMute,
+                    }]}>
+                      {isCompleted
+                        ? (language === 'sw' ? '✓ IMEKAMILIKA' : '✓ DONE')
+                        : isNext
+                        ? (language === 'sw' ? '▶ INAYOFUATA' : '▶ NEXT')
+                        : (language === 'sw' ? 'INANGOJA' : 'PENDING')}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={[styles.trackRowTitle, { color: isDark ? '#fff' : colors.text }]}>
+                  {item.title}
+                </Text>
+                <Text style={[styles.trackRowSub, { color: colors.textMute }]}>
+                  {item.subtitle}
                 </Text>
               </View>
             </TouchableOpacity>
           );
         })}
-      </ScrollView>
+      </View>
 
       {/* Expanded step detail */}
       {activeStep !== null && (
@@ -3157,73 +3152,69 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#22d15a',
   },
-  trackScroll: {
-    paddingRight: 16,
-    paddingBottom: 4,
+  trackRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
-  trackStep: {
-    width: 100,
+  trackRowLeft: {
+    width: 36,
     alignItems: 'center',
-    marginRight: 8,
-    paddingTop: 4,
-    position: 'relative',
+    alignSelf: 'stretch',
   },
-  trackConnector: {
-    position: 'absolute',
-    top: 14,
-    left: '55%',
-    right: -8,
-    height: 1.5,
-    zIndex: 0,
-  },
-  stepDot: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+  trackRowDot: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
-    zIndex: 3,
+    zIndex: 2,
   },
-  activeDotInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FFFFFF',
+  trackRowLine: {
+    flex: 1,
+    width: 2,
+    borderRadius: 1,
+    marginTop: 6,
+    minHeight: 16,
   },
-  stepDateChip: {
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 6,
+  trackRowContent: {
+    flex: 1,
+    paddingLeft: 12,
+    paddingBottom: 20,
+    gap: 4,
+  },
+  trackRowTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  trackRowDateChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
     borderWidth: 1,
-    marginBottom: 5,
   },
-  stepDate: {
-    fontSize: 12,
+  trackRowDateText: {
     fontFamily: 'Inter_700Bold',
-    letterSpacing: 0.3,
+    fontSize: 11,
   },
-  stepMainTitle: {
-    fontSize: 12,
+  trackRowStatusChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 7,
+  },
+  trackRowStatusText: {
+    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 9,
+    letterSpacing: 0.6,
+  },
+  trackRowTitle: {
     fontFamily: 'Inter_700Bold',
-    textAlign: 'center',
-    marginBottom: 2,
+    fontSize: 14,
   },
-  stepSubtitle: {
-    fontSize: 12,
+  trackRowSub: {
     fontFamily: 'Inter_500Medium',
-    textAlign: 'center',
-    marginBottom: 5,
-  },
-  stepStatusChip: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 5,
-  },
-  stepStatusText: {
     fontSize: 12,
-    fontFamily: 'Inter_700Bold',
-    letterSpacing: 0.3,
   },
   trackExpanded: {
     marginTop: 12,
