@@ -306,7 +306,7 @@ function ItemCard({ item, idx, adjust, remove }: {
                     TZS {fmt(item.costPerUnitTZS)}/{item.unit}
                   </Text>
                   <Text style={[ic.totalTag, { color: colors.text }]}>
-                    Thamani: <Text style={{ color: cm.color }}>TZS {fmt(totalValue)}</Text>
+                    Thamani: <Text style={{ color: cm.color, fontFamily: 'Inter_500Medium' }}>TZS {fmt(totalValue)}</Text>
                   </Text>
                 </>
               ) : (

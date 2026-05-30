@@ -92,7 +92,7 @@ export default function AgroIdScreen() {
   if (!agroId) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: colors.textMute }}>Sign in to view your Agro ID.</Text>
+        <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium' }}>Sign in to view your Agro ID.</Text>
       </SafeAreaView>
     );
   }
@@ -103,7 +103,7 @@ export default function AgroIdScreen() {
         <Card variant="solid" style={{ padding: 24, alignItems: 'center' }}>
           <ShieldCheck size={32} color={colors.textMute} />
           <Text style={{ color: colors.text, fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 }}>Access Denied</Text>
-          <Text style={{ color: colors.textMute, textAlign: 'center', marginTop: 8 }}>Your tier does not support Agro ID verification passport.</Text>
+          <Text style={{ color: colors.textMute, textAlign: 'center', marginTop: 8, fontFamily: 'Inter_500Medium' }}>Your tier does not support Agro ID verification passport.</Text>
         </Card>
       </SafeAreaView>
     }>
@@ -283,7 +283,7 @@ export default function AgroIdScreen() {
               
               <View style={[styles.cardBlock, { borderColor: colors.border, padding: 12 }]}>
                 {ledger.length === 0 ? (
-                  <Text style={{ color: colors.textMute, fontSize: 12, textAlign: 'center', paddingVertical: 12 }}>
+                  <Text style={{ color: colors.textMute, fontSize: 12, textAlign: 'center', paddingVertical: 12, fontFamily: 'Inter_500Medium' }}>
                     No financial records found. Tap Update Info to add.
                   </Text>
                 ) : (

@@ -35,7 +35,7 @@ export default function VRASetupScreen() {
       <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}>Zone Not Found</Text>
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={{ marginTop: 20 }}>
-          <Text style={{ color: colors.primary }}>Go Back</Text>
+          <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold' }}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );

@@ -1055,7 +1055,7 @@ export default function MarketScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={language === 'sw' ? 'Punguza idadi' : 'Decrease quantity'}
                       >
-                        <Text style={{ color: colors.text }}>-</Text>
+                        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>-</Text>
                       </TouchableOpacity>
                       <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }}>{item.qty}</Text>
                       <TouchableOpacity
@@ -1064,7 +1064,7 @@ export default function MarketScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={language === 'sw' ? 'Ongeza idadi' : 'Increase quantity'}
                       >
-                        <Text style={{ color: colors.text }}>+</Text>
+                        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>+</Text>
                       </TouchableOpacity>
                     </View>
                   </View>

@@ -203,7 +203,7 @@ export default function FieldDetailScreen() {
       <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}>Field Not Found</Text>
         <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')}>
-          <Text style={{ color: colors.primary, marginTop: 16 }}>Go Back</Text>
+          <Text style={{ color: colors.primary, marginTop: 16, fontFamily: 'Inter_700Bold' }}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );

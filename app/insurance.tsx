@@ -471,7 +471,7 @@ export default function InsuranceScreen() {
                         TZS {fmt((selectedEnrollPolicy?.payoutMaxTZS ?? 0) * (parseFloat(farmAcres) || 1))}
                       </Text>
                     </View>
-                    <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 4, fontFamily: 'Inter_500Medium' }}>
                       Payout is adjusted dynamically based on satellite NDVI vegetation stress index readings.
                     </Text>
                   </GlassCard>
@@ -521,7 +521,7 @@ export default function InsuranceScreen() {
                     </View>
                     <View style={{ gap: 2 }}>
                       <Text style={{ fontSize: 13, fontFamily: 'Inter_700Bold', color: colors.text }}>Vodacom M-Pesa</Text>
-                      <Text style={{ fontSize: 12, color: colors.textMute }}>Auto-deduct linked number: {farmerPhone || 'Not set'}</Text>
+                      <Text style={{ fontSize: 12, color: colors.textMute, fontFamily: 'Inter_500Medium' }}>Auto-deduct linked number: {farmerPhone || 'Not set'}</Text>
                     </View>
                   </TouchableOpacity>
 
@@ -537,7 +537,7 @@ export default function InsuranceScreen() {
                     </View>
                     <View style={{ gap: 2 }}>
                       <Text style={{ fontSize: 13, fontFamily: 'Inter_700Bold', color: colors.text }}>Tigo Pesa</Text>
-                      <Text style={{ fontSize: 12, color: colors.textMute }}>Manual push USSD prompt</Text>
+                      <Text style={{ fontSize: 12, color: colors.textMute, fontFamily: 'Inter_500Medium' }}>Manual push USSD prompt</Text>
                     </View>
                   </TouchableOpacity>
 
@@ -705,7 +705,7 @@ export default function InsuranceScreen() {
                       <Text style={{ fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: '#ef4444', marginTop: 4 }}>
                         TZS {fmt(Math.round(selectedClaimPolicy.payoutMaxTZS * (damageLevel === 'low' ? 0.2 : damageLevel === 'medium' ? 0.5 : damageLevel === 'high' ? 0.8 : 1.0)))}
                       </Text>
-                      <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 4 }}>
+                      <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 4, fontFamily: 'Inter_500Medium' }}>
                         * Fidia halisi imedhamiriwa baada ya ukaguzi wa picha na uthibitisho wa satelaiti.
                       </Text>
                     </GlassCard>
@@ -827,14 +827,14 @@ export default function InsuranceScreen() {
                       <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.text }}>
                         {language === 'sw' ? 'Ushahidi wa picha umepakiwa' : 'Photo evidence attached'}
                       </Text>
-                      <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 1 }} numberOfLines={2}>
+                      <Text style={{ fontSize: 12, color: colors.textMute, marginTop: 1, fontFamily: 'Inter_500Medium' }} numberOfLines={2}>
                         {claimReason || 'No text description entered.'}
                       </Text>
                     </View>
                   </View>
 
                   <View style={s.agreeBox}>
-                    <Text style={{ fontSize: 12, color: colors.textMute, lineHeight: 15 }}>
+                    <Text style={{ fontSize: 12, color: colors.textMute, lineHeight: 15, fontFamily: 'Inter_500Medium' }}>
                       Nathibitisha kuwa taarifa zote zilizotolewa hapa ni za kweli na zinaonyesha uhalisia wa hasara iliyotokea shambani kwangu.
                     </Text>
                   </View>

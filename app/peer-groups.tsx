@@ -346,7 +346,7 @@ export default function PeerGroupsScreen() {
                           </View>
                         </View>
 
-                        <Text style={{ fontSize: 11.5, color: colors.text, marginTop: 8, lineHeight: 17 }}>{t.desc}</Text>
+                        <Text style={{ fontSize: 11.5, color: colors.text, marginTop: 8, lineHeight: 17, fontFamily: 'Inter_500Medium' }}>{t.desc}</Text>
 
                         {activeGroup.joined ? (
                           <TouchableOpacity
@@ -410,7 +410,7 @@ export default function PeerGroupsScreen() {
                           </View>
                         </View>
 
-                        {e.desc && <Text style={{ fontSize: 11.5, color: colors.text, marginTop: 8, lineHeight: 17 }}>{e.desc}</Text>}
+                        {e.desc && <Text style={{ fontSize: 11.5, color: colors.text, marginTop: 8, lineHeight: 17, fontFamily: 'Inter_500Medium' }}>{e.desc}</Text>}
 
                         {activeGroup.joined ? (
                           <TouchableOpacity

@@ -1452,7 +1452,7 @@ export default function IOTSystems() {
                     {language === 'sw' ? 'Unyevu wa Udongo' : 'Soil Moisture'}
                   </Text>
                   <Text style={[styles.iStatValue, { color: colors.text }]}>
-                    42% <Text style={{ color: '#ef4444', fontSize: 12 }}>(Chini)</Text>
+                    42% <Text style={{ color: '#ef4444', fontSize: 12, fontFamily: 'Inter_500Medium' }}>(Chini)</Text>
                   </Text>
                   <View style={styles.progressBarBg}>
                     <View style={[styles.progressBarFill, { width: '42%', backgroundColor: '#ef4444' }]} />

@@ -817,7 +817,7 @@ export default function TasksScreen() {
                 accessibilityLabel={language === 'sw' ? 'Punguza siku' : 'Decrease days'}
                 accessibilityHint={language === 'sw' ? 'Inapunguza muda wa kukamilisha kwa siku moja' : 'Decreases due date by one day'}
               >
-                <Text style={{ fontSize: 18, color: colors.text }}>−</Text>
+                <Text style={{ fontSize: 18, color: colors.text, fontFamily: 'Inter_700Bold' }}>−</Text>
               </TouchableOpacity>
               <View style={[st.stepVal, { backgroundColor: 'rgba(34,209,90,0.1)', borderColor: 'rgba(34,209,90,0.25)' }]}>
                 <Text style={{ fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', color: '#22d15a' }}>{newDueDays}</Text>
@@ -830,7 +830,7 @@ export default function TasksScreen() {
                 accessibilityLabel={language === 'sw' ? 'Ongeza siku' : 'Increase days'}
                 accessibilityHint={language === 'sw' ? 'Inaongeza muda wa kukamilisha kwa siku moja' : 'Increases due date by one day'}
               >
-                <Text style={{ fontSize: 18, color: colors.text }}>+</Text>
+                <Text style={{ fontSize: 18, color: colors.text, fontFamily: 'Inter_700Bold' }}>+</Text>
               </TouchableOpacity>
             </View>
 

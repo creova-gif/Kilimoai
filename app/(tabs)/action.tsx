@@ -6,7 +6,7 @@ export default function ActionScreen() {
   const { colors } = useTheme();
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={{ color: colors.text }}>Action Screen</Text>
+      <Text style={{ color: colors.text, fontFamily: 'Inter_500Medium' }}>Action Screen</Text>
     </View>
   );
 }

@@ -403,7 +403,7 @@ export default function ConsultationsScreen() {
                                   <Text style={{ fontSize: 9.5, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>{r.rating}</Text>
                                 </View>
                               </View>
-                              <Text style={{ fontSize: 11.5, color: colors.textMute, fontStyle: 'italic', marginTop: 2 }}>
+                              <Text style={{ fontSize: 11.5, color: colors.textMute, fontStyle: 'italic', marginTop: 2, fontFamily: 'Inter_500Medium' }}>
                                 "{r.text}"
                               </Text>
                             </View>

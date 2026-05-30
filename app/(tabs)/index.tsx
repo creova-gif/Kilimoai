@@ -714,7 +714,7 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <TouchableOpacity onPress={exportReport} style={[styles.rangeBtn, { backgroundColor: colors.primaryLight }]}>
-            <Text style={{ color: colors.primary, fontSize: 12, fontWeight: 'bold' }}>Export</Text>
+            <Text style={{ color: colors.primary, fontSize: 12, fontFamily: 'Inter_700Bold' }}>Export</Text>
           </TouchableOpacity>
           <View style={[styles.rangeSelector, { backgroundColor: isDark ? '#121711' : '#EDF1EC' }]}>
             {['W', 'M', 'Y'].map((range) => (
@@ -1812,7 +1812,7 @@ export default function HomeScreen() {
             {isOffline && (
               <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(239, 68, 68, 0.8)', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, alignSelf: 'flex-start', marginTop: 12 }}>
                 <WifiOff size={12} color="#fff" />
-                <Text style={{ color: '#fff', fontSize: 11, fontWeight: 'bold', marginLeft: 4 }}>OFFLINE ({syncQueue.length} Q)</Text>
+                <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_800ExtraBold', marginLeft: 4 }}>OFFLINE ({syncQueue.length} Q)</Text>
               </View>
             )}
           </SafeAreaView>
@@ -2305,7 +2305,7 @@ export default function HomeScreen() {
               {insightLoading && (
                 <Card variant="solid" style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border, alignItems: 'center', padding: 20 }]}>
                   <ActivityIndicator size="small" color={colors.primary} />
-                  <Text style={{ color: colors.textMute, marginTop: 8, fontSize: 12 }}>
+                  <Text style={{ color: colors.textMute, marginTop: 8, fontSize: 12, fontFamily: 'Inter_500Medium' }}>
                     {language === 'sw' ? 'Inapakia Ushauri wa AI...' : 'Generating Weekly Insights...'}
                   </Text>
                 </Card>
