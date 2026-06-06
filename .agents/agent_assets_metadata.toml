@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "uvnx4aSfbtNe6O_6oES_m"
+uri = "file://KILIMO_AI_PRD.md"
+type = "text"
+title = "KILIMO AI — PRD, Features, User Stories & Launch Readiness"
