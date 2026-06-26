@@ -23,7 +23,7 @@ const { width: SW } = Dimensions.get('window');
 
 // ─── Categories ──────────────────────────────────────────────────────────────
 const CATEGORIES = [
-  { id: 'all',          title: 'Yote',                  color: '#22d15a' },
+  { id: 'all',          title: 'Yote',                  color: '#2E6F40' },
   { id: 'staple',       title: 'Nafaka & Mizizi',       color: '#f59e0b' },
   { id: 'cash',         title: 'Biashara',              color: '#3b82f6' },
   { id: 'horticulture', title: 'Matunda & Mboga',       color: '#a855f7' },
@@ -412,11 +412,11 @@ const CROPS = [
 ];
 
 const PROFIT_COLOR: Record<string, string> = {
-  'Chini': '#64748b', 'Kati': '#f59e0b', 'Juu': '#22d15a', 'Juu Sana': '#22d15a',
+  'Chini': '#64748b', 'Kati': '#f59e0b', 'Juu': '#2E6F40', 'Juu Sana': '#2E6F40',
 };
 
 const DIFF_COLOR: Record<string, string> = {
-  'Rahisi': '#22d15a', 'Kati': '#f59e0b', 'Nguvu': '#ef4444',
+  'Rahisi': '#2E6F40', 'Kati': '#f59e0b', 'Nguvu': '#ef4444',
 };
 
 // ─── Profit score dots ───────────────────────────────────────────────────────
@@ -428,7 +428,7 @@ function ProfitDots({ score }: { score: number }) {
           key={i}
           style={{
             width: 5, height: 5, borderRadius: 3,
-            backgroundColor: i <= score ? '#22d15a' : 'rgba(0,0,0,0.1)',
+            backgroundColor: i <= score ? '#2E6F40' : 'rgba(0,0,0,0.1)',
           }}
         />
       ))}
@@ -446,7 +446,7 @@ function CropCard({ crop, index, onPress }: { crop: any; index: number; onPress:
       <TouchableOpacity onPress={onPress} activeOpacity={0.88} style={{ width: SW * 0.44 }}>
         <View style={[cc.wrap, {
           backgroundColor: colors.card,
-          borderColor: isHighProfit ? 'rgba(34,209,90,0.25)' : colors.border,
+          borderColor: isHighProfit ? 'rgba(46, 111, 64,0.25)' : colors.border,
           borderWidth: isHighProfit ? 1.5 : 1,
         }]}>
           {/* Image */}
@@ -511,7 +511,7 @@ const cc = StyleSheet.create({
     position: 'absolute', top: 8, right: 8,
     flexDirection: 'row', alignItems: 'center', gap: 3,
     paddingHorizontal: 7, paddingVertical: 3,
-    borderRadius: 20, backgroundColor: '#22d15a',
+    borderRadius: 20, backgroundColor: '#2E6F40',
   },
   hotText: { fontSize: 7, fontFamily: 'Inter_700Bold', color: '#000' },
   body: { padding: 10, gap: 3 },
@@ -584,7 +584,7 @@ export default function CropLibraryScreen() {
           </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
             <View style={s.badge}>
-              <BookOpen size={10} color="#22d15a" />
+              <BookOpen size={10} color="#2E6F40" />
               <Text style={s.badgeText}>MAKTABA</Text>
             </View>
             <Text style={[s.title, { color: colors.text }]}>Maktaba ya Mazao</Text>
@@ -599,7 +599,7 @@ export default function CropLibraryScreen() {
             borderColor: colors.border,
           }]}>
             <LinearGradient
-              colors={['rgba(34,209,90,0.05)', 'transparent']}
+              colors={['rgba(46, 111, 64,0.05)', 'transparent']}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
               style={StyleSheet.absoluteFill}
               pointerEvents="none"
@@ -610,7 +610,7 @@ export default function CropLibraryScreen() {
             </View>
             <View style={s.statDivider} />
             <View style={s.statCol}>
-              <Text style={[s.statNum, { color: '#22d15a' }]}>
+              <Text style={[s.statNum, { color: '#2E6F40' }]}>
                 {CROPS.filter((c) => c.profitScore >= 3).length}
               </Text>
               <Text style={[s.statLbl, { color: colors.textMute }]}>Faida Juu</Text>
@@ -696,7 +696,7 @@ export default function CropLibraryScreen() {
               {/* Stats grid */}
               <View style={s.statsGrid}>
                 {[
-                  { icon: <Clock size={16} color="#22d15a" />, label: 'Kukomaa', value: selectedCrop?.duration },
+                  { icon: <Clock size={16} color="#2E6F40" />, label: 'Kukomaa', value: selectedCrop?.duration },
                   { icon: <TrendingUp size={16} color="#f59e0b" />, label: 'Kipato', value: selectedCrop?.profit },
                   { icon: <Leaf size={16} color="#3b82f6" />, label: 'Ugumu', value: selectedCrop?.difficulty },
                   { icon: <Droplets size={16} color="#0ea5e9" />, label: 'Maji', value: selectedCrop?.water },
@@ -739,8 +739,8 @@ export default function CropLibraryScreen() {
                   <View style={s.paramRow}>
                     <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: colors.textMute }}>Price Trend / Masoko:</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                      <TrendingUp size={12} color="#22d15a" />
-                      <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>{selectedCrop?.priceTrend}</Text>
+                      <TrendingUp size={12} color="#2E6F40" />
+                      <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' }}>{selectedCrop?.priceTrend}</Text>
                     </View>
                   </View>
                 </View>
@@ -748,17 +748,17 @@ export default function CropLibraryScreen() {
 
               {/* AI guide */}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                <Sparkles size={18} color="#22d15a" />
+                <Sparkles size={18} color="#2E6F40" />
                 <Text style={[s.sectionTitleText, { color: colors.text }]}>Mwongozo wa Sankofa AI</Text>
               </View>
 
               <View style={[s.aiBox, {
-                backgroundColor: isDark ? 'rgba(34,209,90,0.06)' : 'rgba(34,209,90,0.04)',
-                borderColor: 'rgba(34,209,90,0.15)',
+                backgroundColor: isDark ? 'rgba(46, 111, 64,0.06)' : 'rgba(46, 111, 64,0.04)',
+                borderColor: 'rgba(46, 111, 64,0.15)',
               }]}>
                 {loading ? (
                   <View style={{ padding: 24, alignItems: 'center', gap: 12 }}>
-                    <ActivityIndicator size="large" color="#22d15a" />
+                    <ActivityIndicator size="large" color="#2E6F40" />
                     <Text style={{ color: colors.textMute, fontFamily: 'Inter_600SemiBold', fontSize: 12.5 }}>
                       Sankofa AI inachambua na kuandaa mwongozo...
                     </Text>
@@ -783,7 +783,7 @@ const s = StyleSheet.create({
   glow: {
     position: 'absolute', top: -60, right: -60,
     width: 280, height: 280, borderRadius: 140,
-    backgroundColor: 'rgba(34,209,90,0.05)',
+    backgroundColor: 'rgba(46, 111, 64,0.05)',
   },
   header: {
     flexDirection: 'row', alignItems: 'center',
@@ -799,9 +799,9 @@ const s = StyleSheet.create({
   badge: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 9, paddingVertical: 3,
-    borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.1)', marginBottom: 4,
+    borderRadius: 8, backgroundColor: 'rgba(46, 111, 64,0.1)', marginBottom: 4,
   },
-  badgeText: { fontSize: 8.5, fontFamily: 'Inter_800ExtraBold', color: '#22d15a', letterSpacing: 1 },
+  badgeText: { fontSize: 8.5, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40', letterSpacing: 1 },
   title: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.4, fontWeight: 'bold' },
 
   statsBar: {

@@ -32,7 +32,7 @@ const TYPE_CONFIG = {
   alert:   { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
   warning: { icon: Zap,           color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
   info:    { icon: Info,          color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
-  success: { icon: CheckCircle2,  color: '#22d15a', bg: 'rgba(34, 209, 90, 0.12)' },
+  success: { icon: CheckCircle2,  color: '#2E6F40', bg: 'rgba(46, 111, 64, 0.12)' },
 };
 
 function timeAgo(iso: string): string {

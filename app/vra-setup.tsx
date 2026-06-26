@@ -74,7 +74,7 @@ export default function VRASetupScreen() {
       let color = `${colors.primary}`; // default base
       
       if (activeInput === 'fertilizer') {
-        color = intensity > 0.6 ? '#D97706' : intensity > 0.3 ? '#10B981' : '#22d15a';
+        color = intensity > 0.6 ? '#D97706' : intensity > 0.3 ? '#10B981' : '#2E6F40';
       } else if (activeInput === 'water') {
         color = intensity > 0.6 ? '#3B82F6' : '#93C5FD';
       } else {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 30,
     gap: 12,
-    shadowColor: '#22d15a',
+    shadowColor: '#2E6F40',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,

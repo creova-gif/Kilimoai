@@ -22,7 +22,7 @@ import { Gate } from '../lib/access';
 
 // ─── Category config ──────────────────────────────────────────────────────────
 const CATEGORIES: { key: InventoryItem['category']; label: string; swahili: string; color: string; Icon: any }[] = [
-  { key: 'seed',       label: 'Seed',       swahili: 'Mbegu',   color: '#22d15a', Icon: Wheat    },
+  { key: 'seed',       label: 'Seed',       swahili: 'Mbegu',   color: '#2E6F40', Icon: Wheat    },
   { key: 'fertilizer', label: 'Fertilizer', swahili: 'Mbolea',  color: '#3b82f6', Icon: Sprout   },
   { key: 'pesticide',  label: 'Pesticide',  swahili: 'Dawa',    color: '#f59e0b', Icon: Syringe  },
   { key: 'feed',       label: 'Feed',       swahili: 'Chakula', color: '#8b5cf6', Icon: Beef     },
@@ -403,11 +403,11 @@ export default function InventoryScreen() {
                 accent={colors.primary}
               />
               <StatTile
-                icon={<TrendingDown size={18} color={lowStock.length > 0 ? '#ef4444' : '#22d15a'} />}
+                icon={<TrendingDown size={18} color={lowStock.length > 0 ? '#ef4444' : '#2E6F40'} />}
                 label="Stock Chini"
                 value={String(lowStock.length)}
                 sub={lowStock.length > 0 ? 'Angalia' : 'Salama'}
-                accent={lowStock.length > 0 ? '#ef4444' : '#22d15a'}
+                accent={lowStock.length > 0 ? '#ef4444' : '#2E6F40'}
               />
               <StatTile
                 icon={<DollarSign size={18} color="#8b5cf6" />}

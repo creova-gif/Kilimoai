@@ -32,7 +32,7 @@ const TYPE_LABELS: Record<TxnType, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  completed: '#22d15a',
+  completed: '#2E6F40',
   pending:   '#f59e0b',
   failed:    '#ef4444',
   reversed:  '#94a3b8',
@@ -56,10 +56,10 @@ function SummaryBanner({ items }: { items: Transaction[] }) {
   return (
     <View style={[bn.wrap, {
       backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
-      borderColor: 'rgba(34,209,90,0.15)',
+      borderColor: 'rgba(46, 111, 64,0.15)',
     }]}>
       <LinearGradient
-        colors={['rgba(34,209,90,0.09)', 'transparent']}
+        colors={['rgba(46, 111, 64,0.09)', 'transparent']}
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
         style={bn.shimmer}
       />
@@ -67,11 +67,11 @@ function SummaryBanner({ items }: { items: Transaction[] }) {
       {/* Total in */}
       <View style={bn.col}>
         <View style={bn.iconBox}>
-          <TrendingDown size={13} color="#22d15a" />
+          <TrendingDown size={13} color="#2E6F40" />
         </View>
         <View>
           <Text style={bn.label}>MAPOKEZI</Text>
-          <Text style={[bn.val, { color: '#22d15a' }]}>+{fmt(totalIn)}</Text>
+          <Text style={[bn.val, { color: '#2E6F40' }]}>+{fmt(totalIn)}</Text>
         </View>
       </View>
 
@@ -114,7 +114,7 @@ function TxnCard({ item, index }: { item: Transaction; index: number }) {
 
   const isOut     = item.type === 'payout' || item.type === 'fee';
   const isFailed  = item.status === 'failed' || item.status === 'reversed';
-  const accent    = isFailed ? '#94a3b8' : isOut ? '#ef4444' : '#22d15a';
+  const accent    = isFailed ? '#94a3b8' : isOut ? '#ef4444' : '#2E6F40';
   const statusClr = STATUS_COLORS[item.status] ?? '#94a3b8';
 
   const dateStr = new Date(item.createdAt).toLocaleDateString('sw-TZ', {
@@ -221,15 +221,15 @@ export default function TransactionsScreen() {
                   s.pill,
                   {
                     backgroundColor: active
-                      ? '#22d15a'
+                      ? '#2E6F40'
                       : (isDark ? 'rgba(255,255,255,0.04)' : colors.card),
                     borderColor: active
-                      ? '#22d15a'
+                      ? '#2E6F40'
                       : (isDark ? 'rgba(255,255,255,0.1)' : colors.border),
                   },
                 ]}
               >
-                <Text style={[s.pillSymbol, { color: active ? '#064e1a' : '#22d15a' }]}>
+                <Text style={[s.pillSymbol, { color: active ? '#064e1a' : '#2E6F40' }]}>
                   {f.symbol}
                 </Text>
                 <Text style={[s.pillText, { color: active ? '#000' : colors.text }]}>
@@ -326,7 +326,7 @@ const bn = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 8,
-    backgroundColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(46, 111, 64,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },

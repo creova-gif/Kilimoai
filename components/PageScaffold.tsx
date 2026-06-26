@@ -84,7 +84,7 @@ export default function PageScaffold({
         >
           <View style={[styles.iconBtn, {
             borderColor: colors.border,
-            backgroundColor: isDark ? 'rgba(34,209,90,0.08)' : 'rgba(34,209,90,0.06)',
+            backgroundColor: isDark ? 'rgba(46, 111, 64,0.08)' : 'rgba(46, 111, 64,0.06)',
           }]}>
             <ChevronLeft size={22} color={colors.text} />
           </View>

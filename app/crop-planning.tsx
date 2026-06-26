@@ -45,21 +45,21 @@ const SEASONS = [
 const CROP_DATA: Record<Season, CropRec[]> = {
   masika: [
     { id: 'm1', name: 'Maize', nameSw: 'Mahindi', emoji: '🌽', daysToHarvest: 120, yieldPerAcre: '2.5 t', yieldNum: 2.5, price: 'TSh 85,000/mfuko', priceNum: 85, water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Tumia mbegu DK8031 au H614D', 'Weka CAN wiki 4 baada ya kupanda', 'Dhibiti wadudu wa buni mapema'] },
-    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 t', yieldNum: 0.8, price: 'TSh 210,000/mfuko', priceNum: 210, water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
+    { id: 'm2', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.8 t', yieldNum: 0.8, price: 'TSh 210,000/mfuko', priceNum: 210, water: 'Wastani', risk: 'Chini', color: '#2E6F40', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Weka Rhizobium kabla ya kupanda', 'Epuka udongo wenye maji', 'Vuna mapema kuepuka mvua'] },
     { id: 'm3', name: 'Paddy Rice', nameSw: 'Mpunga', emoji: '🌾', daysToHarvest: 150, yieldPerAcre: '3.0 t', yieldNum: 3.0, price: 'TSh 120,000/mfuko', priceNum: 120, water: 'Juu', risk: 'Wastani', color: '#3b82f6', plantWeeks: 3, growWeeks: 16, harvestWeeks: 2, tips: ['Hitaji mfumo mzuri wa umwagiliaji', 'Tumia mbegu SARO 5 au TXD 306', 'Kagua mara kwa mara kwa magonjwa'] },
     { id: 'm4', name: 'Tomatoes', nameSw: 'Nyanya', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '5.0 t', yieldNum: 5.0, price: 'TSh 38,000/crate', priceNum: 38, water: 'Wastani', risk: 'Juu', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda katika kitalu kwanza wiki 3', 'Weka steki na uunganishe sawa', 'Dhibiti Blossom End Rot'] },
   ],
   vuli: [
     { id: 'v1', name: 'Short Maize', nameSw: 'Mahindi (Mfupi)', emoji: '🌽', daysToHarvest: 90, yieldPerAcre: '2.0 t', yieldNum: 2.0, price: 'TSh 85,000/mfuko', priceNum: 85, water: 'Wastani', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 1, tips: ['Chagua SEEDCO SC403 (siku 90)', 'Panda siku 1-3 za mvua za kwanza', 'Funika udongo (mulching)'] },
     { id: 'v2', name: 'Onions', nameSw: 'Vitunguu', emoji: '🧅', daysToHarvest: 120, yieldPerAcre: '4.0 t', yieldNum: 4.0, price: 'TSh 45,000/net 20kg', priceNum: 45, water: 'Wastani', risk: 'Wastani', color: '#a855f7', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Anzisha kitalu wiki 4-6 mapema', 'Udongo wenye rutuba na mifereji', 'Kausha vizuri kabla ya kuhifadhi'] },
-    { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 t', yieldNum: 6.0, price: 'TSh 15,000/kichwa', priceNum: 15, water: 'Wastani', risk: 'Chini', color: '#22d15a', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda kitalu wiki 3 mapema', 'Weka mbolea CAN mara kwa mara', 'Dhibiti viwavi mapema'] },
-    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 t', yieldNum: 0.7, price: 'TSh 210,000/mfuko', priceNum: 210, water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia Jesca au Lyamungu 85', 'Inafaa mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
+    { id: 'v3', name: 'Cabbage', nameSw: 'Kabichi', emoji: '🥬', daysToHarvest: 90, yieldPerAcre: '6.0 t', yieldNum: 6.0, price: 'TSh 15,000/kichwa', priceNum: 15, water: 'Wastani', risk: 'Chini', color: '#2E6F40', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Panda kitalu wiki 3 mapema', 'Weka mbolea CAN mara kwa mara', 'Dhibiti viwavi mapema'] },
+    { id: 'v4', name: 'Beans', nameSw: 'Maharage', emoji: '🫘', daysToHarvest: 80, yieldPerAcre: '0.7 t', yieldNum: 0.7, price: 'TSh 210,000/mfuko', priceNum: 210, water: 'Chini', risk: 'Chini', color: '#2E6F40', plantWeeks: 1, growWeeks: 9, harvestWeeks: 1, tips: ['Tumia Jesca au Lyamungu 85', 'Inafaa mvua kidogo', 'Vuna mapema kuepuka mvua ya mwisho'] },
   ],
   kiangazi: [
     { id: 'k1', name: 'Sunflower', nameSw: 'Alizeti', emoji: '🌻', daysToHarvest: 95, yieldPerAcre: '0.5 t', yieldNum: 0.5, price: 'TSh 95,000/mfuko', priceNum: 95, water: 'Chini', risk: 'Chini', color: '#f59e0b', plantWeeks: 2, growWeeks: 10, harvestWeeks: 2, tips: ['Umbali 75cm × 30cm', 'Faa maeneo kame', 'Fua mbegu kabla ya kuuza'] },
     { id: 'k2', name: 'Irrig. Tomatoes', nameSw: 'Nyanya (Umwagiliaji)', emoji: '🍅', daysToHarvest: 90, yieldPerAcre: '7.0 t', yieldNum: 7.0, price: 'TSh 38,000/crate', priceNum: 38, water: 'Juu', risk: 'Wastani', color: '#ef4444', plantWeeks: 2, growWeeks: 9, harvestWeeks: 2, tips: ['Hitaji drip au flood irrigation', 'Bei nzuri wakati wa kiangazi', 'Dhibiti Late Blight'] },
     { id: 'k3', name: 'Chili Peppers', nameSw: 'Pilipili Kali', emoji: '🌶️', daysToHarvest: 120, yieldPerAcre: '1.2 t', yieldNum: 1.2, price: 'TSh 800/kg fresh', priceNum: 80, water: 'Wastani', risk: 'Chini', color: '#f97316', plantWeeks: 2, growWeeks: 13, harvestWeeks: 2, tips: ['Panda kitalu wiki 4 mapema', 'Inaweza kukaa miaka 2-3', 'Soko la export linalipa vizuri'] },
-    { id: 'k4', name: 'Sorghum', nameSw: 'Mtama', emoji: '🌿', daysToHarvest: 90, yieldPerAcre: '1.5 t', yieldNum: 1.5, price: 'TSh 55,000/mfuko', priceNum: 55, water: 'Chini', risk: 'Chini', color: '#22d15a', plantWeeks: 1, growWeeks: 10, harvestWeeks: 2, tips: ['Ustahimili ukame zaidi ya mahindi', 'Inafaa Dodoma/Singida', 'Kwa chakula na lishe ya wanyama'] },
+    { id: 'k4', name: 'Sorghum', nameSw: 'Mtama', emoji: '🌿', daysToHarvest: 90, yieldPerAcre: '1.5 t', yieldNum: 1.5, price: 'TSh 55,000/mfuko', priceNum: 55, water: 'Chini', risk: 'Chini', color: '#2E6F40', plantWeeks: 1, growWeeks: 10, harvestWeeks: 2, tips: ['Ustahimili ukame zaidi ya mahindi', 'Inafaa Dodoma/Singida', 'Kwa chakula na lishe ya wanyama'] },
   ],
 };
 
@@ -93,7 +93,7 @@ const yc = StyleSheet.create({
     alignItems: 'flex-end',
   },
   col: { flex: 1, alignItems: 'center', gap: 3 },
-  val: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  val: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#2E6F40' },
   trackWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
   track: {
     width: '100%', flex: 1, borderRadius: 4,
@@ -150,7 +150,7 @@ function PlantingTimeline({ crop }: { crop: CropRec }) {
             style={{ flexDirection: 'row', alignItems: 'center', gap: 4, opacity: activePhase === ph.key ? 1 : 0.5 }}
           >
             <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: ph.color }} />
-            <Text style={[pt.phaseLbl, activePhase === ph.key && { color: '#22d15a' }]}>
+            <Text style={[pt.phaseLbl, activePhase === ph.key && { color: '#2E6F40' }]}>
               {ph.label} ({ph.weeks}w)
             </Text>
           </TouchableOpacity>
@@ -175,8 +175,8 @@ const pt = StyleSheet.create({
   phaseLbl: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#64748b' },
   infoBox: {
     padding: 12, borderRadius: 12,
-    backgroundColor: 'rgba(34,209,90,0.06)',
-    borderWidth: 1, borderColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(46, 111, 64,0.06)',
+    borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.12)',
     gap: 4,
   },
   infoTitle: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.6 },
@@ -232,13 +232,13 @@ export default function CropPlanningScreen() {
           </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
             <View style={st.aiBadge}>
-              <Sparkles size={10} color="#22d15a" />
+              <Sparkles size={10} color="#2E6F40" />
               <Text style={st.aiBadgeText}>AI MSHAURI</Text>
             </View>
             <Text style={[st.headerTitle, { color: colors.text }]}>Upangaji Mazao</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/tasks')} style={st.iconBtn}>
-            <Calendar size={19} color="#22d15a" />
+            <Calendar size={19} color="#2E6F40" />
           </TouchableOpacity>
         </View>
 
@@ -313,7 +313,7 @@ export default function CropPlanningScreen() {
               borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
             }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <BarChart3 size={16} color="#22d15a" />
+                <BarChart3 size={16} color="#2E6F40" />
                 <Text style={[st.chartTitle, { color: colors.text }]}>Ulinganisho wa Mavuno</Text>
                 <Text style={[st.chartSub, { color: colors.textMute }]}>tani/eka</Text>
               </View>
@@ -323,7 +323,7 @@ export default function CropPlanningScreen() {
 
           {/* ── Crop cards ── */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <Leaf size={17} color="#22d15a" />
+            <Leaf size={17} color="#2E6F40" />
             <Text style={[st.sectionTitle, { color: colors.text }]}>Mazao Yanayopendekezwa</Text>
           </View>
 
@@ -385,7 +385,7 @@ export default function CropPlanningScreen() {
                         <View style={[st.statDiv, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]} />
                         <View style={st.stat}>
                           <Text style={[st.statLbl, { color: colors.textMute }]}>Bei ya Soko</Text>
-                          <Text style={[st.statVal, { color: '#22d15a' }]}>{crop.price}</Text>
+                          <Text style={[st.statVal, { color: '#2E6F40' }]}>{crop.price}</Text>
                         </View>
                         <View style={[st.statDiv, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]} />
                         <View style={st.stat}>
@@ -435,7 +435,7 @@ export default function CropPlanningScreen() {
                                   </Text>
                                 </View>
                               : <LinearGradient
-                                  colors={['#22d15a', '#048038']}
+                                  colors={['#2E6F40', '#1C4A29']}
                                   start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
                                   style={st.planBtn}
                                 >
@@ -457,15 +457,15 @@ export default function CropPlanningScreen() {
           <Animated.View entering={FadeInDown.delay(200)} style={{ marginTop: 20 }}>
             <View style={[st.tipCard, {
               backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
-              borderColor: 'rgba(34,209,90,0.18)',
+              borderColor: 'rgba(46, 111, 64,0.18)',
             }]}>
               <LinearGradient
-                colors={['rgba(34,209,90,0.1)', 'transparent']}
+                colors={['rgba(46, 111, 64,0.1)', 'transparent']}
                 style={StyleSheet.absoluteFill}
                 pointerEvents="none"
               />
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9, marginBottom: 10 }}>
-                <Target size={17} color="#22d15a" />
+                <Target size={17} color="#2E6F40" />
                 <Text style={[st.tipCardTitle, { color: colors.text }]}>Ushauri wa Msimu huu</Text>
               </View>
               <Text style={[st.tipCardBody, { color: colors.textMute }]}>
@@ -475,7 +475,7 @@ export default function CropPlanningScreen() {
                 onPress={() => router.push('/tasks')}
                 style={st.tipCardBtn}
               >
-                <TrendingUp size={13} color="#22d15a" />
+                <TrendingUp size={13} color="#2E6F40" />
                 <Text style={st.tipCardBtnText}>Enda kwenye Ratiba</Text>
               </TouchableOpacity>
             </View>
@@ -493,12 +493,12 @@ const st = StyleSheet.create({
   glowTR: {
     position: 'absolute', top: -80, right: -60,
     width: 300, height: 300, borderRadius: 150,
-    backgroundColor: 'rgba(34,209,90,0.07)',
+    backgroundColor: 'rgba(46, 111, 64,0.07)',
   },
   glowBL: {
     position: 'absolute', bottom: 100, left: -80,
     width: 220, height: 220, borderRadius: 110,
-    backgroundColor: 'rgba(34,209,90,0.04)',
+    backgroundColor: 'rgba(46, 111, 64,0.04)',
   },
   header: {
     flexDirection: 'row', alignItems: 'center',
@@ -514,9 +514,9 @@ const st = StyleSheet.create({
   aiBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 9, paddingVertical: 3,
-    borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.1)', marginBottom: 4,
+    borderRadius: 8, backgroundColor: 'rgba(46, 111, 64,0.1)', marginBottom: 4,
   },
-  aiBadgeText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
+  aiBadgeText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#2E6F40', letterSpacing: 1 },
   headerTitle: { fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.4 },
 
   seasonTab: {
@@ -604,8 +604,8 @@ const st = StyleSheet.create({
   tipCardBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 8,
-    borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.3)',
-    backgroundColor: 'rgba(34,209,90,0.08)',
+    borderRadius: 10, borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.3)',
+    backgroundColor: 'rgba(46, 111, 64,0.08)',
   },
-  tipCardBtnText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  tipCardBtnText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#2E6F40' },
 });

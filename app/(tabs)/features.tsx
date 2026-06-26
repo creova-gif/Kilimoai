@@ -45,12 +45,12 @@ function ActivitySparkline({ isDark }: { isDark: boolean }) {
     <Svg width={CHART_W} height={CHART_H}>
       <Defs>
         <SvgGrad id="spkGrad" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor="#22d15a" stopOpacity="0.28" />
-          <Stop offset="1" stopColor="#22d15a" stopOpacity="0" />
+          <Stop offset="0" stopColor="#2E6F40" stopOpacity="0.28" />
+          <Stop offset="1" stopColor="#2E6F40" stopOpacity="0" />
         </SvgGrad>
       </Defs>
       <Path d={area} fill="url(#spkGrad)" />
-      <Path d={line} fill="none" stroke="#22d15a" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+      <Path d={line} fill="none" stroke="#2E6F40" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
     </Svg>
   );
 }
@@ -60,7 +60,7 @@ const STAT_CHIPS = [
   {
     key: 'pest',  labelSw: 'WADUDU',  labelEn: 'PEST',
     value: '18%', subSw: 'Kiwango cha Kawaida', subEn: 'Normal Level',
-    bg: '#22d15a', text: '#000',
+    bg: '#2E6F40', text: '#000',
   },
   {
     key: 'water', labelSw: 'MAJI',    labelEn: 'WATER',
@@ -94,68 +94,68 @@ type FeatureEntry = {
 };
 
 const ALL_FEATURES: FeatureEntry[] = [
-  { feature: 'ai_chat',              label: 'Sankofa AI',        sub: 'Mshauri wako wa AI',            route: '/(tabs)/ai',       icon: null, color: '#22d15a', pinned: true },
+  { feature: 'ai_chat',              label: 'Sankofa AI',        sub: 'Mshauri wako wa AI',            route: '/(tabs)/ai',       icon: null, color: '#2E6F40', pinned: true },
   { feature: 'voice_assistant',      label: 'Sauti AI',          sub: 'Ongea na AI kwa sauti',         route: '/ai-voice',        icon: null, color: '#F59E0B' },
-  { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',    sub: 'Tambua magonjwa ya mazao',      route: '/scan',            icon: null, color: '#22d15a', pinned: true },
+  { feature: 'photo_diagnosis',      label: 'Skani ya Mazao',    sub: 'Tambua magonjwa ya mazao',      route: '/scan',            icon: null, color: '#2E6F40', pinned: true },
   { feature: 'analytics_predictive', label: 'Uchanganuzi wa AI', sub: 'Utabiri na takwimu',            route: '/analytics',       icon: null, color: '#F59E0B' },
   { feature: 'digital_farm_twin',    label: 'Shamba Dijiti',     sub: 'Mfano wa kidijiti',             route: '/farm-twin',       icon: null, color: '#8b5cf6' },
-  { feature: 'crop_planning',        label: 'Upangaji Mazao',    sub: 'Panga mzunguko wa mazao',       route: '/crop-planning',   icon: null, color: '#22d15a' },
-  { feature: 'crop_library',         label: 'Maktaba ya Mazao',  sub: 'Miongozo ya kilimo & magonjwa', route: '/crop-library',    icon: null, color: '#22d15a', pinned: true },
-  { feature: 'market_prices',        label: 'Bei za Soko',       sub: 'Bei za mazao ya sasa hivi',     route: '/market',          icon: null, color: '#22d15a', pinned: true },
+  { feature: 'crop_planning',        label: 'Upangaji Mazao',    sub: 'Panga mzunguko wa mazao',       route: '/crop-planning',   icon: null, color: '#2E6F40' },
+  { feature: 'crop_library',         label: 'Maktaba ya Mazao',  sub: 'Miongozo ya kilimo & magonjwa', route: '/crop-library',    icon: null, color: '#2E6F40', pinned: true },
+  { feature: 'market_prices',        label: 'Bei za Soko',       sub: 'Bei za mazao ya sasa hivi',     route: '/market',          icon: null, color: '#2E6F40', pinned: true },
   { feature: 'contract_farming',     label: 'Mikataba',          sub: 'Mkataba wa ukulima',            route: '/contracts',       icon: null, color: '#8b5cf6' },
   { feature: 'input_supply',         label: 'Wauzaji',           sub: 'Vifaa vya kilimo',              route: '/input-supply',    icon: null, color: '#3b82f6' },
-  { feature: 'marketplace',          label: 'Soko la Bidhaa',    sub: 'Nunua na uza mazao',            route: '/market',          icon: null, color: '#22d15a' },
-  { feature: 'farm_mapping',         label: 'Ramani ya Shamba',  sub: 'GPS na safu za NDVI',           route: '/map',             icon: null, color: '#22d15a', pinned: true },
+  { feature: 'marketplace',          label: 'Soko la Bidhaa',    sub: 'Nunua na uza mazao',            route: '/market',          icon: null, color: '#2E6F40' },
+  { feature: 'farm_mapping',         label: 'Ramani ya Shamba',  sub: 'GPS na safu za NDVI',           route: '/map',             icon: null, color: '#2E6F40', pinned: true },
   { feature: 'livestock',            label: 'Mifugo',            sub: 'Simamia mifugo yako',           route: '/livestock',       icon: null, color: '#F59E0B' },
   { feature: 'inventory',            label: 'Pembejeo',          sub: 'Ghala na vifaa',                route: '/inventory',       icon: null, color: '#8b5cf6' },
   { feature: 'task_management',      label: 'Kazi',              sub: 'Orodha ya kazi za shamba',      route: '/tasks',           icon: null, color: '#64748b' },
   { feature: 'offline_mode',         label: 'Nje ya Mtandao',    sub: 'Skani bila mtandao',            route: '/offline-queue',   icon: null, color: '#64748b' },
   { feature: 'iot_systems',          label: 'IoT & Drones',      sub: 'Mifumo ya kisasa ya shamba',    route: '/iot-systems',     icon: null, color: '#0ea5e9' },
   { feature: 'soil_analysis',        label: 'Udongo & pH',       sub: 'Uchambuzi wa afya ya udongo',   route: '/soil-analysis',   icon: null, color: '#a3e635' },
-  { feature: 'finance_tracker',      label: 'Daftari la Fedha',  sub: 'Matumizi na mapato',            route: '/finance',         icon: null, color: '#22d15a', pinned: true },
-  { feature: 'mobile_money',         label: 'M-Pesa / Airtel',   sub: 'Tuma na pokea pesa',            route: '/mobile-money',    icon: null, color: '#22d15a' },
-  { feature: 'wallet_admin',         label: 'Pochi Msimamizi',   sub: 'Malipo na akaunti',             route: '/wallet-admin',    icon: null, color: '#22d15a' },
+  { feature: 'finance_tracker',      label: 'Daftari la Fedha',  sub: 'Matumizi na mapato',            route: '/finance',         icon: null, color: '#2E6F40', pinned: true },
+  { feature: 'mobile_money',         label: 'M-Pesa / Airtel',   sub: 'Tuma na pokea pesa',            route: '/mobile-money',    icon: null, color: '#2E6F40' },
+  { feature: 'wallet_admin',         label: 'Pochi Msimamizi',   sub: 'Malipo na akaunti',             route: '/wallet-admin',    icon: null, color: '#2E6F40' },
   { feature: 'insurance',            label: 'Bima',              sub: 'Ulinzi wa mazao yako',          route: '/insurance',       icon: null, color: '#8b5cf6' },
   { feature: 'agro_id',              label: 'Agro ID',           sub: 'Kitambulisho · PDF ya P&L',     route: '/agro-id',         icon: null, color: '#3b82f6' },
   { feature: 'peer_groups',          label: 'Vikundi',           sub: 'Vikundi vya wakulima',          route: '/peer-groups',     icon: null, color: '#8b5cf6' },
-  { feature: 'expert_consultations', label: 'Wataalamu',         sub: 'Ushauri wa wataalamu',          route: '/consultations',   icon: null, color: '#22d15a' },
+  { feature: 'expert_consultations', label: 'Wataalamu',         sub: 'Ushauri wa wataalamu',          route: '/consultations',   icon: null, color: '#2E6F40' },
   { feature: 'weather_alerts',       label: 'Hali ya Hewa',      sub: 'Utabiri wa hali ya hewa',       route: '/forecast',        icon: null, color: '#F59E0B' },
 ];
 
 const ICONS: Record<Feature, React.ReactNode> = {
-  ai_chat:              <Sparkles size={20} color="#22d15a" />,
-  photo_diagnosis:      <Camera size={20} color="#22d15a" />,
+  ai_chat:              <Sparkles size={20} color="#2E6F40" />,
+  photo_diagnosis:      <Camera size={20} color="#2E6F40" />,
   analytics_predictive: <BarChart3 size={20} color="#F59E0B" />,
   digital_farm_twin:    <Cpu size={20} color="#8b5cf6" />,
-  crop_planning:        <Sprout size={20} color="#22d15a" />,
-  crop_library:         <Leaf size={20} color="#22d15a" />,
-  market_prices:        <TrendingUp size={20} color="#22d15a" />,
+  crop_planning:        <Sprout size={20} color="#2E6F40" />,
+  crop_library:         <Leaf size={20} color="#2E6F40" />,
+  market_prices:        <TrendingUp size={20} color="#2E6F40" />,
   contract_farming:     <FileText size={20} color="#8b5cf6" />,
   input_supply:         <Truck size={20} color="#3b82f6" />,
-  marketplace:          <ShoppingBag size={20} color="#22d15a" />,
-  farm_mapping:         <MapPin size={20} color="#22d15a" />,
+  marketplace:          <ShoppingBag size={20} color="#2E6F40" />,
+  farm_mapping:         <MapPin size={20} color="#2E6F40" />,
   livestock:            <Beef size={20} color="#F59E0B" />,
   inventory:            <Package size={20} color="#8b5cf6" />,
   task_management:      <ClipboardList size={20} color="#64748b" />,
-  wallet_admin:         <Wallet size={20} color="#22d15a" />,
+  wallet_admin:         <Wallet size={20} color="#2E6F40" />,
   insurance:            <ShieldCheck size={20} color="#8b5cf6" />,
   agro_id:              <User size={20} color="#3b82f6" />,
   peer_groups:          <Users size={20} color="#8b5cf6" />,
-  expert_consultations: <GraduationCap size={20} color="#22d15a" />,
+  expert_consultations: <GraduationCap size={20} color="#2E6F40" />,
   weather_alerts:       <Bell size={20} color="#F59E0B" />,
   voice_assistant:      <Zap size={20} color="#F59E0B" />,
-  finance_tracker:      <BarChart3 size={20} color="#22d15a" />,
-  mobile_money:         <Wallet size={20} color="#22d15a" />,
+  finance_tracker:      <BarChart3 size={20} color="#2E6F40" />,
+  mobile_money:         <Wallet size={20} color="#2E6F40" />,
   offline_mode:         <Zap size={20} color="#64748b" />,
   iot_systems:          <Cpu size={20} color="#0ea5e9" />,
   soil_analysis:        <Leaf size={20} color="#a3e635" />,
 };
 
 const CATEGORIES = [
-  { key: 'ai',        title: 'Akili Bandia', titleEn: 'AI',        color: '#22d15a', features: ['ai_chat','voice_assistant','photo_diagnosis','analytics_predictive','digital_farm_twin','crop_planning','crop_library'] as Feature[] },
-  { key: 'market',    title: 'Soko',         titleEn: 'Market',    color: '#22d15a', features: ['market_prices','contract_farming','input_supply','marketplace'] as Feature[] },
+  { key: 'ai',        title: 'Akili Bandia', titleEn: 'AI',        color: '#2E6F40', features: ['ai_chat','voice_assistant','photo_diagnosis','analytics_predictive','digital_farm_twin','crop_planning','crop_library'] as Feature[] },
+  { key: 'market',    title: 'Soko',         titleEn: 'Market',    color: '#2E6F40', features: ['market_prices','contract_farming','input_supply','marketplace'] as Feature[] },
   { key: 'farm',      title: 'Shamba',       titleEn: 'Farm',      color: '#F59E0B', features: ['farm_mapping','livestock','inventory','task_management','offline_mode','iot_systems','soil_analysis'] as Feature[] },
-  { key: 'finance',   title: 'Fedha',        titleEn: 'Finance',   color: '#22d15a', features: ['finance_tracker','mobile_money','wallet_admin','insurance','agro_id'] as Feature[] },
+  { key: 'finance',   title: 'Fedha',        titleEn: 'Finance',   color: '#2E6F40', features: ['finance_tracker','mobile_money','wallet_admin','insurance','agro_id'] as Feature[] },
   { key: 'community', title: 'Jamii',        titleEn: 'Community', color: '#8b5cf6', features: ['peer_groups','expert_consultations','weather_alerts'] as Feature[] },
 ];
 
@@ -233,7 +233,7 @@ export default function FeaturesScreen() {
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      <View style={[s.orb1, { backgroundColor: isDark ? 'rgba(34,209,90,0.1)' : 'rgba(34,209,90,0.05)' }]} />
+      <View style={[s.orb1, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.1)' : 'rgba(46, 111, 64,0.05)' }]} />
       <View style={[s.orb2, { backgroundColor: isDark ? 'rgba(46,90,39,0.08)' : 'rgba(46,90,39,0.04)' }]} />
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -243,12 +243,12 @@ export default function FeaturesScreen() {
           <Animated.View entering={FadeInDown.springify()}>
             <LinearGradient
               colors={isDark ? ['#0c250c', '#080f08'] : ['#f0fdf4', '#f8fafc']}
-              style={[s.hero, { borderColor: isDark ? 'rgba(34,209,90,0.22)' : 'rgba(34,209,90,0.15)' }]}
+              style={[s.hero, { borderColor: isDark ? 'rgba(46, 111, 64,0.22)' : 'rgba(46, 111, 64,0.15)' }]}
             >
               {/* Top row */}
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <View style={{ flex: 1, gap: 4 }}>
-                  <View style={[s.heroBadge, { backgroundColor: isDark ? 'rgba(34,209,90,0.25)' : 'rgba(34,209,90,0.1)' }]}>
+                  <View style={[s.heroBadge, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.25)' : 'rgba(46, 111, 64,0.1)' }]}>
                     <Sparkles size={11} color={isDark ? '#6B9E5F' : colors.primary} />
                     <Text style={[s.heroBadgeText, { color: isDark ? '#6B9E5F' : colors.primary }]}>FEATURES HUB</Text>
                   </View>
@@ -257,15 +257,15 @@ export default function FeaturesScreen() {
                   </Text>
                   <Text style={[s.heroRole, { color: colors.textMute }]}>{roleLabel(role)}</Text>
                 </View>
-                <LinearGradient colors={['#22d15a', '#0a3d18']} style={s.heroCircle}>
+                <LinearGradient colors={['#2E6F40', '#0a3d18']} style={s.heroCircle}>
                   <LayoutGrid size={22} color="#fff" strokeWidth={2.5} />
                 </LinearGradient>
               </View>
 
               {/* Sparkline label */}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 18, marginBottom: 10 }}>
-                <Activity size={11} color="#22d15a" />
-                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 9, color: '#22d15a', letterSpacing: 1 }}>
+                <Activity size={11} color="#2E6F40" />
+                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 9, color: '#2E6F40', letterSpacing: 1 }}>
                   {lang === 'sw' ? 'SHUGHULI ZA WIKI HILI' : 'WEEKLY FARM ACTIVITY'}
                 </Text>
               </View>
@@ -301,13 +301,13 @@ export default function FeaturesScreen() {
               <View style={[s.statChip, {
                 backgroundColor: isDark ? '#091a09' : '#e8f5e9',
                 borderWidth: 1,
-                borderColor: isDark ? 'rgba(34,209,90,0.22)' : 'rgba(34,209,90,0.3)',
+                borderColor: isDark ? 'rgba(46, 111, 64,0.22)' : 'rgba(46, 111, 64,0.3)',
               }]}>
-                <Text style={[s.statChipLabel, { color: '#22d15a', opacity: 0.85 }]}>
+                <Text style={[s.statChipLabel, { color: '#2E6F40', opacity: 0.85 }]}>
                   {lang === 'sw' ? 'VIFAA' : 'DEVICES'}
                 </Text>
                 <Text style={[s.statChipVal, { color: isDark ? '#fff' : colors.text }]}>6</Text>
-                <Text style={[s.statChipSub, { color: '#22d15a', opacity: 0.8 }]}>
+                <Text style={[s.statChipSub, { color: '#2E6F40', opacity: 0.8 }]}>
                   {lang === 'sw' ? 'Mtandaoni' : 'Online'}
                 </Text>
               </View>
@@ -343,7 +343,7 @@ export default function FeaturesScreen() {
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                     <View style={s.livePulse} />
-                    <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: '#22d15a' }}>LIVE</Text>
+                    <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: '#2E6F40' }}>LIVE</Text>
                     <ChevronRight size={14} color={colors.textMute} />
                   </View>
                 </View>
@@ -359,12 +359,12 @@ export default function FeaturesScreen() {
                       <View style={s.batTrack}>
                         <View style={[s.batFill, {
                           width: `${dev.bat}%` as any,
-                          backgroundColor: dev.bat > 60 ? '#22d15a' : dev.bat > 30 ? '#f59e0b' : '#ef4444',
+                          backgroundColor: dev.bat > 60 ? '#2E6F40' : dev.bat > 30 ? '#f59e0b' : '#ef4444',
                         }]} />
                       </View>
                       <Text style={{
                         fontFamily: 'Inter_700Bold', fontSize: 10, width: 32, textAlign: 'right',
-                        color: dev.bat > 60 ? '#22d15a' : '#f59e0b',
+                        color: dev.bat > 60 ? '#2E6F40' : '#f59e0b',
                       }}>
                         {dev.bat}%
                       </Text>
@@ -483,7 +483,7 @@ const s = StyleSheet.create({
   // IoT preview
   iotCard:    { borderRadius: 20, borderWidth: 1, padding: 16 },
   iotIconRing:{ width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(14,165,233,0.12)', justifyContent: 'center', alignItems: 'center' },
-  livePulse:  { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22d15a' },
+  livePulse:  { width: 6, height: 6, borderRadius: 3, backgroundColor: '#2E6F40' },
   batTrack:   { width: 56, height: 4, borderRadius: 2, backgroundColor: 'rgba(128,128,128,0.15)', overflow: 'hidden' },
   batFill:    { height: '100%', borderRadius: 2 },
 

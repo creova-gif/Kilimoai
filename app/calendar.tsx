@@ -34,7 +34,7 @@ const DAYS_SW = ['J','A','J','A','A','I','J'];
 const DAYS_EN = ['S','M','T','W','T','F','S'];
 
 const PRIORITY_COLOR: Record<string, string> = {
-  critical: '#ef4444', high: '#f59e0b', medium: '#22d15a', low: '#94a3b8',
+  critical: '#ef4444', high: '#f59e0b', medium: '#2E6F40', low: '#94a3b8',
 };
 const PRIORITY_LABEL_SW: Record<string, string> = {
   critical: 'DHARURA', high: 'JUU', medium: 'KATI', low: 'CHINI',
@@ -168,7 +168,7 @@ const CompletionBurst = ({ onDone }: { onDone: () => void }) => {
   }));
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center', zIndex: 99 }, style]}>
-      <View style={{ backgroundColor: '#22d15a', borderRadius: 20, padding: 10 }}>
+      <View style={{ backgroundColor: '#2E6F40', borderRadius: 20, padding: 10 }}>
         <Check size={20} color="#000" strokeWidth={3} />
       </View>
     </Animated.View>
@@ -420,7 +420,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
 
     return (
       <View style={[styles.gridCard, { backgroundColor: isDark ? 'rgba(6,14,8,0.98)' : colors.card, borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border }]}>
-        <LinearGradient colors={['rgba(34,209,90,0.07)','transparent']} start={{x:0,y:0}} end={{x:1,y:1}} style={StyleSheet.absoluteFill} pointerEvents="none" />
+        <LinearGradient colors={['rgba(46, 111, 64,0.07)','transparent']} start={{x:0,y:0}} end={{x:1,y:1}} style={StyleSheet.absoluteFill} pointerEvents="none" />
 
         {/* Month nav */}
         <View style={styles.monthNav}>
@@ -474,7 +474,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
               >
                 <Text style={[
                   styles.cellNum,
-                  { color: isSel ? '#000' : isToday ? '#22d15a' : isPast ? colors.textMute + '60' : isDark ? '#fff' : colors.text },
+                  { color: isSel ? '#000' : isToday ? '#2E6F40' : isPast ? colors.textMute + '60' : isDark ? '#fff' : colors.text },
                   isSel && { fontFamily: 'Inter_700Bold' },
                 ]}>
                   {day}
@@ -482,7 +482,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
                 {dots.length > 0 && (
                   <View style={styles.dotRow}>
                     {dots.map((t, di) => (
-                      <View key={di} style={[styles.taskDot, { backgroundColor: PRIORITY_COLOR[t.priority] || '#22d15a' }]} />
+                      <View key={di} style={[styles.taskDot, { backgroundColor: PRIORITY_COLOR[t.priority] || '#2E6F40' }]} />
                     ))}
                   </View>
                 )}
@@ -510,7 +510,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
             onPress={() => { Haptics.selectionAsync(); setFilter(f.id); }}
             style={[
               styles.filterPill,
-              filter === f.id && { backgroundColor: '#22d15a', borderColor: '#22d15a' },
+              filter === f.id && { backgroundColor: '#2E6F40', borderColor: '#2E6F40' },
               filter !== f.id && { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', borderColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border },
             ]}
           >
@@ -543,9 +543,9 @@ If suggesting task changes, be specific. Max 3 sentences.`;
           </View>
           <TouchableOpacity
             onPress={() => openAdd()}
-            style={[styles.addDayBtn, { backgroundColor: 'rgba(34,209,90,0.12)', borderColor: 'rgba(34,209,90,0.25)' }]}
+            style={[styles.addDayBtn, { backgroundColor: 'rgba(46, 111, 64,0.12)', borderColor: 'rgba(46, 111, 64,0.25)' }]}
           >
-            <Plus size={14} color="#22d15a" />
+            <Plus size={14} color="#2E6F40" />
             <Text style={styles.addDayBtnText}>{language === 'sw' ? 'Ongeza' : 'Add'}</Text>
           </TouchableOpacity>
         </View>
@@ -568,7 +568,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 120 }}>
             {dayTasks.map((task, idx) => {
-              const pc = PRIORITY_COLOR[task.priority] || '#22d15a';
+              const pc = PRIORITY_COLOR[task.priority] || '#2E6F40';
               const isDone = task.status === 'done';
               const isCompleting = completingId === task.id;
 
@@ -611,9 +611,9 @@ If suggesting task changes, be specific. Max 3 sentences.`;
                       {!isDone && (
                         <TouchableOpacity
                           onPress={() => handleComplete(task)}
-                          style={[styles.completeBtn, { backgroundColor: 'rgba(34,209,90,0.12)', borderColor: 'rgba(34,209,90,0.25)' }]}
+                          style={[styles.completeBtn, { backgroundColor: 'rgba(46, 111, 64,0.12)', borderColor: 'rgba(46, 111, 64,0.25)' }]}
                         >
-                          <Check size={13} color="#22d15a" strokeWidth={2.5} />
+                          <Check size={13} color="#2E6F40" strokeWidth={2.5} />
                         </TouchableOpacity>
                       )}
                       <TouchableOpacity
@@ -640,7 +640,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
         <TouchableOpacity style={StyleSheet.absoluteFill} onPress={() => setShowAdd(false)} />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <Animated.View entering={SlideInUp.springify()} style={[styles.modalSheet, { backgroundColor: isDark ? '#0a130b' : colors.card, borderColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]}>
-            <LinearGradient colors={['rgba(34,209,90,0.08)','transparent']} start={{x:0,y:0}} end={{x:1,y:1}} style={StyleSheet.absoluteFill} pointerEvents="none" />
+            <LinearGradient colors={['rgba(46, 111, 64,0.08)','transparent']} start={{x:0,y:0}} end={{x:1,y:1}} style={StyleSheet.absoluteFill} pointerEvents="none" />
 
             {/* Modal header */}
             <View style={styles.modalHeader}>
@@ -701,12 +701,12 @@ If suggesting task changes, be specific. Max 3 sentences.`;
                     key={c.id}
                     onPress={() => { Haptics.selectionAsync(); setNewCategory(c.id); }}
                     style={[styles.catBtn, {
-                      backgroundColor: newCategory === c.id ? 'rgba(34,209,90,0.15)' : 'transparent',
-                      borderColor: newCategory === c.id ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border),
+                      backgroundColor: newCategory === c.id ? 'rgba(46, 111, 64,0.15)' : 'transparent',
+                      borderColor: newCategory === c.id ? '#2E6F40' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border),
                     }]}
                   >
-                    <CatIcon cat={c.id} size={14} color={newCategory === c.id ? '#22d15a' : colors.textMute} />
-                    <Text style={[styles.catBtnText, { color: newCategory === c.id ? '#22d15a' : colors.textMute }]}>
+                    <CatIcon cat={c.id} size={14} color={newCategory === c.id ? '#2E6F40' : colors.textMute} />
+                    <Text style={[styles.catBtnText, { color: newCategory === c.id ? '#2E6F40' : colors.textMute }]}>
                       {language === 'sw' ? c.labelSw : c.labelEn}
                     </Text>
                   </TouchableOpacity>
@@ -717,10 +717,10 @@ If suggesting task changes, be specific. Max 3 sentences.`;
             {/* AI quick-add hint */}
             <TouchableOpacity
               onPress={() => { setShowAdd(false); setShowAI(true); }}
-              style={[styles.aiHint, { backgroundColor: 'rgba(34,209,90,0.07)', borderColor: 'rgba(34,209,90,0.2)' }]}
+              style={[styles.aiHint, { backgroundColor: 'rgba(46, 111, 64,0.07)', borderColor: 'rgba(46, 111, 64,0.2)' }]}
             >
-              <BrainCircuit size={13} color="#22d15a" />
-              <Text style={[styles.aiHintText, { color: '#22d15a' }]}>
+              <BrainCircuit size={13} color="#2E6F40" />
+              <Text style={[styles.aiHintText, { color: '#2E6F40' }]}>
                 {language === 'sw' ? 'Tumia Sankofa AI kuongeza kazi kwa lugha ya kawaida →' : 'Use Sankofa AI to add tasks in plain language →'}
               </Text>
             </TouchableOpacity>
@@ -733,7 +733,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
               <TouchableOpacity
                 onPress={handleSaveTask}
                 disabled={!newTitle.trim() || saving}
-                style={[styles.saveBtn, { backgroundColor: newTitle.trim() ? '#22d15a' : colors.textMute + '40' }]}
+                style={[styles.saveBtn, { backgroundColor: newTitle.trim() ? '#2E6F40' : colors.textMute + '40' }]}
               >
                 {saving ? <ActivityIndicator size="small" color="#000" /> : (
                   <>
@@ -760,13 +760,13 @@ If suggesting task changes, be specific. Max 3 sentences.`;
         <TouchableOpacity style={{ flex: 1 }} onPress={() => setShowAI(false)} />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <Animated.View entering={SlideInUp.springify()} style={[styles.aiSheet, { backgroundColor: isDark ? '#08110a' : colors.card, borderColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]}>
-            <LinearGradient colors={['rgba(34,209,90,0.1)','rgba(34,209,90,0.03)','transparent']} start={{x:0,y:0}} end={{x:1,y:1}} style={StyleSheet.absoluteFill} pointerEvents="none" />
+            <LinearGradient colors={['rgba(46, 111, 64,0.1)','rgba(46, 111, 64,0.03)','transparent']} start={{x:0,y:0}} end={{x:1,y:1}} style={StyleSheet.absoluteFill} pointerEvents="none" />
 
             {/* AI header */}
             <View style={styles.aiHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                 <View style={styles.aiAvatar}>
-                  <BrainCircuit size={18} color="#22d15a" />
+                  <BrainCircuit size={18} color="#2E6F40" />
                 </View>
                 <View>
                   <Text style={[styles.aiTitle, { color: isDark ? '#fff' : colors.text }]}>Sankofa AI</Text>
@@ -774,9 +774,9 @@ If suggesting task changes, be specific. Max 3 sentences.`;
                     {language === 'sw' ? 'Msaidizi wa Kalenda' : 'Calendar Assistant'}
                   </Text>
                 </View>
-                <View style={[styles.aiLiveDot, { backgroundColor: 'rgba(34,209,90,0.15)', borderColor: 'rgba(34,209,90,0.3)' }]}>
-                  <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#22d15a' }} />
-                  <Text style={{ fontSize: 8, fontFamily: 'Inter_700Bold', color: '#22d15a' }}>LIVE</Text>
+                <View style={[styles.aiLiveDot, { backgroundColor: 'rgba(46, 111, 64,0.15)', borderColor: 'rgba(46, 111, 64,0.3)' }]}>
+                  <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#2E6F40' }} />
+                  <Text style={{ fontSize: 8, fontFamily: 'Inter_700Bold', color: '#2E6F40' }}>LIVE</Text>
                 </View>
               </View>
               <TouchableOpacity onPress={() => setShowAI(false)} style={[styles.closeBtn, { borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border }]}>
@@ -805,7 +805,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
                   <View style={[
                     styles.chatBubble,
                     msg.role === 'user'
-                      ? [styles.chatUser, { backgroundColor: '#22d15a' }]
+                      ? [styles.chatUser, { backgroundColor: '#2E6F40' }]
                       : [styles.chatAI, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]
                   ]}>
                     <Text style={[styles.chatText, { color: msg.role === 'user' ? '#000' : (isDark ? '#fff' : colors.text) }]}>
@@ -816,7 +816,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
               ))}
               {aiLoading && (
                 <View style={[styles.chatAI, styles.chatBubble, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]}>
-                  <ActivityIndicator size="small" color="#22d15a" />
+                  <ActivityIndicator size="small" color="#2E6F40" />
                 </View>
               )}
             </ScrollView>
@@ -835,9 +835,9 @@ If suggesting task changes, be specific. Max 3 sentences.`;
               <TouchableOpacity
                 onPress={() => handleAI()}
                 disabled={!aiInput.trim() || aiLoading}
-                style={[styles.aiSendBtn, { backgroundColor: aiInput.trim() ? '#22d15a' : 'transparent' }]}
+                style={[styles.aiSendBtn, { backgroundColor: aiInput.trim() ? '#2E6F40' : 'transparent' }]}
               >
-                {aiLoading ? <ActivityIndicator size="small" color="#22d15a" /> : <Send size={16} color={aiInput.trim() ? '#000' : colors.textMute} />}
+                {aiLoading ? <ActivityIndicator size="small" color="#2E6F40" /> : <Send size={16} color={aiInput.trim() ? '#000' : colors.textMute} />}
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -867,14 +867,14 @@ If suggesting task changes, be specific. Max 3 sentences.`;
           </View>
           <TouchableOpacity
             onPress={() => setShowAI(true)}
-            style={[styles.aiHeaderBtn, { backgroundColor: 'rgba(34,209,90,0.12)', borderColor: 'rgba(34,209,90,0.25)' }]}
+            style={[styles.aiHeaderBtn, { backgroundColor: 'rgba(46, 111, 64,0.12)', borderColor: 'rgba(46, 111, 64,0.25)' }]}
           >
-            <BrainCircuit size={16} color="#22d15a" />
+            <BrainCircuit size={16} color="#2E6F40" />
             <Text style={styles.aiHeaderBtnText}>AI</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => openAdd()}
-            style={[styles.addHeaderBtn, { backgroundColor: '#22d15a' }]}
+            style={[styles.addHeaderBtn, { backgroundColor: '#2E6F40' }]}
           >
             <Plus size={16} color="#000" strokeWidth={2.5} />
           </TouchableOpacity>
@@ -897,7 +897,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
       {/* FAB */}
       <TouchableOpacity
         onPress={() => openAdd()}
-        style={[styles.fab, { backgroundColor: '#22d15a' }]}
+        style={[styles.fab, { backgroundColor: '#2E6F40' }]}
         activeOpacity={0.85}
       >
         <Plus size={24} color="#000" strokeWidth={2.5} />
@@ -923,7 +923,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, borderWidth: 1,
   },
-  aiHeaderBtnText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  aiHeaderBtnText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#2E6F40' },
   addHeaderBtn: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
 
   filterRow: { paddingHorizontal: 16, paddingBottom: 10, gap: 8 },
@@ -943,8 +943,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', paddingTop: 4,
     borderRadius: 10,
   },
-  cellSelected: { backgroundColor: '#22d15a' },
-  cellToday:    { borderWidth: 1.5, borderColor: '#22d15a', borderRadius: 10 },
+  cellSelected: { backgroundColor: '#2E6F40' },
+  cellToday:    { borderWidth: 1.5, borderColor: '#2E6F40', borderRadius: 10 },
   cellNum:      { fontSize: 13, fontFamily: 'InstrumentSerif_400Regular' },
   dotRow:       { flexDirection: 'row', gap: 2, marginTop: 2 },
   taskDot:      { width: 4, height: 4, borderRadius: 2 },
@@ -959,7 +959,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12,
     paddingVertical: 6, borderRadius: 12, borderWidth: 1,
   },
-  addDayBtnText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  addDayBtnText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#2E6F40' },
 
   emptyDay: { alignItems: 'center', paddingTop: 32, gap: 10 },
   emptyDayText: { fontSize: 13, fontFamily: 'Inter_500Medium', textAlign: 'center' },
@@ -988,7 +988,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute', bottom: 28, right: 24, width: 56, height: 56,
     borderRadius: 28, alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#22d15a', shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#2E6F40', shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4, shadowRadius: 12, elevation: 8,
   },
 
@@ -1042,7 +1042,7 @@ const styles = StyleSheet.create({
   },
   aiAvatar: {
     width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(34,209,90,0.15)', borderWidth: 1, borderColor: 'rgba(34,209,90,0.3)',
+    backgroundColor: 'rgba(46, 111, 64,0.15)', borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.3)',
   },
   aiTitle: { fontSize: 15, fontFamily: 'InstrumentSerif_400Regular' },
   aiSub:   { fontSize: 10, fontFamily: 'Inter_500Medium' },

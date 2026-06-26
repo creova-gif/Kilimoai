@@ -67,7 +67,7 @@ function SectionTitle({ label }: { label: string }) {
 }
 const ST = StyleSheet.create({
   row:    { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 28, marginBottom: 12 },
-  accent: { width: 3, height: 14, borderRadius: 2, backgroundColor: '#22d15a' },
+  accent: { width: 3, height: 14, borderRadius: 2, backgroundColor: '#2E6F40' },
   label:  { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
 });
 
@@ -76,7 +76,7 @@ function DetailRow({ label, value, accent }: { label: string; value: string; acc
   return (
     <View style={DR.row}>
       <Text style={[DR.label, { color: colors.textMute }]}>{label}</Text>
-      <Text style={[DR.value, { color: accent ? '#22d15a' : colors.text }]} numberOfLines={1}>
+      <Text style={[DR.value, { color: accent ? '#2E6F40' : colors.text }]} numberOfLines={1}>
         {value}
       </Text>
     </View>
@@ -94,8 +94,8 @@ function SignatureRow({ label, when, colors, isDark }: { label: string; when?: s
       <Text style={[DR.label, { color: colors.textMute }]}>{label}</Text>
       {when ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <CheckCircle2 size={14} color="#22d15a" />
-          <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>
+          <CheckCircle2 size={14} color="#2E6F40" />
+          <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' }}>
             {new Date(when).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
           </Text>
         </View>
@@ -131,9 +131,9 @@ export default function ContractDetail() {
         </Text>
         <TouchableOpacity
           onPress={() => router.canGoBack() ? router.back() : router.replace('/contracts')}
-          style={{ backgroundColor: '#22d15a20', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12 }}
+          style={{ backgroundColor: '#2E6F4020', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12 }}
         >
-          <Text style={{ color: '#22d15a', fontFamily: 'Inter_700Bold' }}>Rudi Nyuma</Text>
+          <Text style={{ color: '#2E6F40', fontFamily: 'Inter_700Bold' }}>Rudi Nyuma</Text>
         </TouchableOpacity>
       </View>
     );
@@ -212,7 +212,7 @@ export default function ContractDetail() {
               {/* Floating annotation: milestone count */}
               {contract.milestones.length > 0 && (
                 <View style={S.floatAnnotation}>
-                  <View style={[S.floatDot, { backgroundColor: '#22d15a' }]} />
+                  <View style={[S.floatDot, { backgroundColor: '#2E6F40' }]} />
                   <Text style={S.floatText}>
                     {contract.milestones.filter((m) => m.paid).length}/{contract.milestones.length} {sw ? 'Hatua Zimekamilika' : 'Milestones Done'}
                   </Text>
@@ -247,10 +247,10 @@ export default function ContractDetail() {
             {/* ── Contract Value ─────────────────────────── */}
             <Animated.View entering={FadeInDown.delay(60).springify()}>
               <View style={[S.valueCard, {
-                backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : 'rgba(34,209,90,0.05)',
-                borderColor: isDark ? 'rgba(34,209,90,0.22)' : 'rgba(34,209,90,0.14)',
+                backgroundColor: isDark ? 'rgba(46, 111, 64,0.07)' : 'rgba(46, 111, 64,0.05)',
+                borderColor: isDark ? 'rgba(46, 111, 64,0.22)' : 'rgba(46, 111, 64,0.14)',
               }]}>
-                <LinearGradient colors={['#22d15a10', '#22d15a00']} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={['#2E6F4010', '#2E6F4000']} style={StyleSheet.absoluteFill} />
                 <View style={{ flex: 1 }}>
                   <Text style={[S.valueLabel, { color: colors.textMute }]}>
                     {sw ? 'Thamani ya Mkataba' : 'Contract Value'}
@@ -261,14 +261,14 @@ export default function ContractDetail() {
                   </Text>
                   {paidAmount > 0 && (
                     <View style={S.paidRow}>
-                      <TrendingUp size={11} color="#22d15a" />
+                      <TrendingUp size={11} color="#2E6F40" />
                       <Text style={S.paidText}>
                         TZS {fmt(paidAmount)} {sw ? 'Imelipwa' : 'paid'} · TZS {fmt(total - paidAmount)} {sw ? 'Imesalia' : 'remaining'}
                       </Text>
                     </View>
                   )}
                 </View>
-                <View style={[S.cropBadge, { backgroundColor: '#22d15a18', borderColor: '#22d15a35' }]}>
+                <View style={[S.cropBadge, { backgroundColor: '#2E6F4018', borderColor: '#2E6F4035' }]}>
                   <Text style={S.cropBadgeText}>{contract.crop}</Text>
                 </View>
               </View>
@@ -285,13 +285,13 @@ export default function ContractDetail() {
                     <View key={m.id} style={S.timelineItem}>
                       <View style={S.timelineConnRow}>
                         <View style={[S.tlDot, {
-                          backgroundColor: m.paid ? '#22d15a' : isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
-                          borderColor: m.paid ? '#22d15a' : colors.border,
+                          backgroundColor: m.paid ? '#2E6F40' : isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
+                          borderColor: m.paid ? '#2E6F40' : colors.border,
                         }]}>
                           {m.paid && <CheckCircle2 size={11} color="#fff" />}
                         </View>
                         {i < contract.milestones.length - 1 && (
-                          <View style={[S.tlLine, { backgroundColor: m.paid ? '#22d15a' : colors.border }]} />
+                          <View style={[S.tlLine, { backgroundColor: m.paid ? '#2E6F40' : colors.border }]} />
                         )}
                       </View>
                       <Text style={[S.tlLabel, { color: colors.textMute }]} numberOfLines={2}>{m.label}</Text>
@@ -310,12 +310,12 @@ export default function ContractDetail() {
                       entering={FadeInDown.delay(120 + i * 45).springify()}
                       style={[S.mCard, {
                         backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff',
-                        borderColor: m.paid ? '#22d15a30' : colors.border,
+                        borderColor: m.paid ? '#2E6F4030' : colors.border,
                       }]}
                     >
-                      <View style={[S.mCardLeft, { backgroundColor: m.paid ? '#22d15a18' : isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }]}>
+                      <View style={[S.mCardLeft, { backgroundColor: m.paid ? '#2E6F4018' : isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc' }]}>
                         {m.paid
-                          ? <CheckCircle2 size={20} color="#22d15a" />
+                          ? <CheckCircle2 size={20} color="#2E6F40" />
                           : <Circle size={20} color={colors.textMute} />
                         }
                       </View>
@@ -327,18 +327,18 @@ export default function ContractDetail() {
                             {new Date(m.dueDate).toLocaleDateString('en-GB')}
                           </Text>
                         </View>
-                        <Text style={[S.mAmt, { color: '#22d15a' }]}>TZS {fmt(m.amountTZS)}</Text>
+                        <Text style={[S.mAmt, { color: '#2E6F40' }]}>TZS {fmt(m.amountTZS)}</Text>
                       </View>
                       {!m.paid ? (
                         <TouchableOpacity
                           onPress={() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); markMilestonePaid(contract!.id, m.id); }}
-                          style={[S.payBtn, { backgroundColor: '#22d15a18', borderColor: '#22d15a50' }]}
+                          style={[S.payBtn, { backgroundColor: '#2E6F4018', borderColor: '#2E6F4050' }]}
                         >
-                          <Banknote size={12} color="#22d15a" />
+                          <Banknote size={12} color="#2E6F40" />
                           <Text style={S.payText}>{sw ? 'Lipia' : 'Mark Paid'}</Text>
                         </TouchableOpacity>
                       ) : (
-                        <View style={[S.paidBadge, { backgroundColor: '#22d15a12' }]}>
+                        <View style={[S.paidBadge, { backgroundColor: '#2E6F4012' }]}>
                           <Text style={S.paidBadgeText}>
                             ✓ {m.completedAt ? new Date(m.completedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'Paid'}
                           </Text>
@@ -393,14 +393,14 @@ export default function ContractDetail() {
                     <View key={step} style={S.lcRow}>
                       <View style={S.lcDotCol}>
                         <View style={[S.lcDot, {
-                          backgroundColor: done ? '#22d15a' : current ? sc : isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0',
+                          backgroundColor: done ? '#2E6F40' : current ? sc : isDark ? 'rgba(255,255,255,0.10)' : '#e2e8f0',
                           borderWidth: current ? 2.5 : 0,
                           borderColor: current ? sc : 'transparent',
                         }]}>
                           {done && <CheckCircle2 size={12} color="#fff" />}
                         </View>
                         {i < LIFECYCLE.length - 1 && (
-                          <View style={[S.lcConnector, { backgroundColor: done ? '#22d15a' : isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0' }]} />
+                          <View style={[S.lcConnector, { backgroundColor: done ? '#2E6F40' : isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0' }]} />
                         )}
                       </View>
                       <View style={[S.lcTextRow, { marginBottom: i < LIFECYCLE.length - 1 ? 0 : 0 }]}>
@@ -442,7 +442,7 @@ export default function ContractDetail() {
                         </View>
                       ) : (
                         <LinearGradient
-                          colors={isSign ? ['#22d15a', '#0a3d18'] : [statusColor + 'ee', statusColor + 'bb']}
+                          colors={isSign ? ['#2E6F40', '#0a3d18'] : [statusColor + 'ee', statusColor + 'bb']}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 0 }}
                           style={S.actionBtn}
@@ -520,9 +520,9 @@ const S = StyleSheet.create({
   valueAmt: { fontSize: 28, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
   valueSub: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 4 },
   paidRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8 },
-  paidText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  paidText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#2E6F40' },
   cropBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, borderWidth: 1, alignSelf: 'flex-start', marginLeft: 10 },
-  cropBadgeText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  cropBadgeText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
 
   // Timeline
   timelineScroll: { paddingHorizontal: 2, paddingBottom: 16, paddingTop: 4, gap: 0 },
@@ -540,9 +540,9 @@ const S = StyleSheet.create({
   mDue: { fontSize: 11, fontFamily: 'Inter_500Medium' },
   mAmt: { fontSize: 14, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3, marginTop: 4 },
   payBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 10, borderWidth: 1, margin: 12 },
-  payText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  payText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
   paidBadge: { paddingHorizontal: 9, paddingVertical: 5, borderRadius: 8, margin: 12 },
-  paidBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  paidBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
 
   // Detail card
   detailCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },

@@ -32,7 +32,7 @@ const fmt = (n: number) => `TSh ${new Intl.NumberFormat('en-US').format(n)}`;
 const STATUS_COLOR: Record<PayoutStatus, string> = {
   requested: '#f59e0b',
   approved:  '#3b82f6',
-  settled:   '#22d15a',
+  settled:   '#2E6F40',
   rejected:  '#ef4444',
 };
 

@@ -37,7 +37,7 @@ const SAMPLE_TXNS: Txn[] = [
 
 const QUICK_ACTIONS = [
   { id: 'send',    icon: ArrowUpRight,   label: 'Tuma Pesa',   labelEn: 'Send',       color: '#ef4444' },
-  { id: 'receive', icon: ArrowDownLeft,  label: 'Pokea Pesa',  labelEn: 'Receive',    color: '#22d15a' },
+  { id: 'receive', icon: ArrowDownLeft,  label: 'Pokea Pesa',  labelEn: 'Receive',    color: '#2E6F40' },
   { id: 'airtime', icon: Smartphone,     label: 'Nunua Airtime', labelEn: 'Airtime',  color: '#8b5cf6' },
   { id: 'bills',   icon: Receipt,        label: 'Lipa Bili',   labelEn: 'Pay Bills',  color: '#f59e0b' },
 ];
@@ -232,9 +232,9 @@ export default function MobileMoneyScreen() {
               {SAMPLE_TXNS.map((t, i) => (
                 <Animated.View key={t.id} entering={FadeInDown.delay(i * 40).springify()}>
                   <View style={[s.txnRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <View style={[s.txnDot, { backgroundColor: t.direction === 'in' ? '#22d15a22' : '#ef444422' }]}>
+                    <View style={[s.txnDot, { backgroundColor: t.direction === 'in' ? '#2E6F4022' : '#ef444422' }]}>
                       {t.direction === 'in'
-                        ? <ArrowDownLeft size={16} color="#22d15a" />
+                        ? <ArrowDownLeft size={16} color="#2E6F40" />
                         : <ArrowUpRight size={16} color="#ef4444" />}
                     </View>
                     <View style={{ flex: 1, gap: 2 }}>
@@ -246,7 +246,7 @@ export default function MobileMoneyScreen() {
                         {t.status === 'pending' && <AlertCircle size={10} color="#f59e0b" />}
                       </View>
                     </View>
-                    <Text style={[s.txnAmount, { color: t.direction === 'in' ? '#22d15a' : '#ef4444' }]}>
+                    <Text style={[s.txnAmount, { color: t.direction === 'in' ? '#2E6F40' : '#ef4444' }]}>
                       {t.direction === 'in' ? '+' : '-'}{fmtTZS(t.amount)}
                     </Text>
                   </View>

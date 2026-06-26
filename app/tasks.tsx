@@ -76,7 +76,7 @@ const CAT_LABEL: Record<TaskCategory, string> = {
 
 const CAT_COLOR: Record<TaskCategory, string> = {
   irrigation: '#3b82f6',
-  planting: '#22d15a',
+  planting: '#2E6F40',
   harvest: '#f59e0b',
   scouting: '#a855f7',
   finance: '#10b981',
@@ -85,7 +85,7 @@ const CAT_COLOR: Record<TaskCategory, string> = {
 
 const CAT_ICON: Record<TaskCategory, React.ReactNode> = {
   irrigation: <Droplets size={14} color="#3b82f6" />,
-  planting: <Leaf size={14} color="#22d15a" />,
+  planting: <Leaf size={14} color="#2E6F40" />,
   harvest: <Wheat size={14} color="#f59e0b" />,
   scouting: <Eye size={14} color="#a855f7" />,
   finance: <Wallet size={14} color="#10b981" />,
@@ -102,7 +102,7 @@ const PRI_COLOR: Record<TaskPriority, string> = {
 const STATUS_COLOR: Record<string, string> = {
   pending: '#f59e0b',
   in_progress: '#3b82f6',
-  done: '#22d15a',
+  done: '#2E6F40',
   cancelled: '#94a3b8',
 };
 
@@ -270,7 +270,7 @@ export default function TasksScreen() {
 
           <View style={{ alignItems: 'center' }}>
             <View style={st.commandBadge}>
-              <Target size={12} color="#22d15a" />
+              <Target size={12} color="#2E6F40" />
               <Text style={st.commandText}>OPERESHENI</Text>
             </View>
             <Text style={[st.headerTitle, { color: colors.text }]}>Kazi za Shamba</Text>
@@ -286,15 +286,15 @@ export default function TasksScreen() {
             accessibilityRole="button"
             accessibilityLabel={language === 'sw' ? 'Ongeza kazi mpya' : 'Add new task'}
           >
-            {isOffline ? <WifiOff size={18} color="#ef4444" /> : <Plus size={22} color="#22d15a" />}
+            {isOffline ? <WifiOff size={18} color="#ef4444" /> : <Plus size={22} color="#2E6F40" />}
           </TouchableOpacity>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={st.scrollContent}>
           {/* Progress dashboard */}
-          <View style={[st.dashCard, { backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card, borderColor: 'rgba(34,209,90,0.15)' }]}>
+          <View style={[st.dashCard, { backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card, borderColor: 'rgba(46, 111, 64,0.15)' }]}>
             <LinearGradient
-              colors={['rgba(34,209,90,0.1)', 'transparent']}
+              colors={['rgba(46, 111, 64,0.1)', 'transparent']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={StyleSheet.absoluteFill}
@@ -318,7 +318,7 @@ export default function TasksScreen() {
             </View>
             <View style={[st.barTrack, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }]}>
               <LinearGradient
-                colors={['#22d15a', '#048038']}
+                colors={['#2E6F40', '#1C4A29']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={[st.barFill, { width: `${progress}%` as any }]}
@@ -433,15 +433,15 @@ export default function TasksScreen() {
                 style={[
                   st.filterBtn,
                   {
-                    backgroundColor: viewMode === 'calendar' ? 'rgba(34,209,90,0.12)' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                    borderColor: viewMode === 'calendar' ? '#22d15a' : colors.border,
+                    backgroundColor: viewMode === 'calendar' ? 'rgba(46, 111, 64,0.12)' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                    borderColor: viewMode === 'calendar' ? '#2E6F40' : colors.border,
                   },
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Badilisha mtazamo wa kalenda na orodha' : 'Toggle calendar and list view'}
                 accessibilityState={{ checked: viewMode === 'calendar' }}
               >
-                {viewMode === 'calendar' ? <LayoutGrid size={17} color="#22d15a" /> : <CalendarIcon size={17} color={colors.textMute} />}
+                {viewMode === 'calendar' ? <LayoutGrid size={17} color="#2E6F40" /> : <CalendarIcon size={17} color={colors.textMute} />}
               </TouchableOpacity>
               {(['all', 'pending', 'done'] as const).map((f) => {
                 const isSelected = filter === f;
@@ -460,8 +460,8 @@ export default function TasksScreen() {
                     style={[
                       st.filterBtn,
                       {
-                        backgroundColor: filter === f ? '#22d15a' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
-                        borderColor: filter === f ? '#22d15a' : colors.border,
+                        backgroundColor: filter === f ? '#2E6F40' : isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                        borderColor: filter === f ? '#2E6F40' : colors.border,
                         paddingHorizontal: 10,
                       },
                     ]}
@@ -518,7 +518,7 @@ export default function TasksScreen() {
             <Animated.View entering={FadeInDown} exiting={FadeOut} style={{ marginBottom: 20 }}>
               <View style={[st.calCard, { backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card, borderColor: isDark ? 'rgba(255,255,255,0.08)' : colors.border }]}>
                 <LinearGradient
-                  colors={['rgba(34,209,90,0.07)', 'transparent']}
+                  colors={['rgba(46, 111, 64,0.07)', 'transparent']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 48, borderTopLeftRadius: 22, borderTopRightRadius: 22 }}
@@ -571,12 +571,12 @@ export default function TasksScreen() {
                         accessibilityLabel={`${day} ${MONTH_NAMES[calMonth]} ${calYear}`}
                         accessibilityState={{ selected: isSel }}
                       >
-                        <View style={[st.calDayNum, isToday && { backgroundColor: 'rgba(34,209,90,0.2)' }, isSel && { backgroundColor: '#22d15a' }]}>
+                        <View style={[st.calDayNum, isToday && { backgroundColor: 'rgba(46, 111, 64,0.2)' }, isSel && { backgroundColor: '#2E6F40' }]}>
                           <Text
                             style={{
                               fontSize: 13,
                               fontFamily: isToday ? 'Inter_700Bold' : 'Inter_500Medium',
-                              color: isSel ? '#000' : isToday ? '#22d15a' : isDark ? 'rgba(255,255,255,0.8)' : colors.text,
+                              color: isSel ? '#000' : isToday ? '#2E6F40' : isDark ? 'rgba(255,255,255,0.8)' : colors.text,
                             }}
                           >
                             {day}
@@ -585,7 +585,7 @@ export default function TasksScreen() {
                         {dayTasks.length > 0 && (
                           <View style={st.calDots}>
                             {dayTasks.slice(0, 3).map((t, ti) => (
-                              <View key={ti} style={[st.calDot, { backgroundColor: PRI_COLOR[t.priority as TaskPriority] ?? '#22d15a' }]} />
+                              <View key={ti} style={[st.calDot, { backgroundColor: PRI_COLOR[t.priority as TaskPriority] ?? '#2E6F40' }]} />
                             ))}
                           </View>
                         )}
@@ -595,9 +595,9 @@ export default function TasksScreen() {
                 </View>
 
                 {selectedDay !== null && (
-                  <View style={[st.calSelBanner, { backgroundColor: 'rgba(34,209,90,0.1)', borderColor: 'rgba(34,209,90,0.2)' }]}>
-                    <CalendarIcon size={13} color="#22d15a" />
-                    <Text style={[st.calSelText, { color: '#22d15a' }]}>
+                  <View style={[st.calSelBanner, { backgroundColor: 'rgba(46, 111, 64,0.1)', borderColor: 'rgba(46, 111, 64,0.2)' }]}>
+                    <CalendarIcon size={13} color="#2E6F40" />
+                    <Text style={[st.calSelText, { color: '#2E6F40' }]}>
                       {selectedDay} {MONTH_NAMES[calMonth]} — kazi {displayTasks.length}
                     </Text>
                     <View style={{ flex: 1 }} />
@@ -611,7 +611,7 @@ export default function TasksScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={language === 'sw' ? 'Ongeza kazi kwa siku hii' : 'Add task for this day'}
                     >
-                      <Plus size={11} color="#22d15a" />
+                      <Plus size={11} color="#2E6F40" />
                       <Text style={st.calAddText}>Ongeza</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -621,7 +621,7 @@ export default function TasksScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={language === 'sw' ? 'Funga mabango ya kuchagua' : 'Close selected day banner'}
                     >
-                      <X size={14} color="#22d15a" />
+                      <X size={14} color="#2E6F40" />
                     </TouchableOpacity>
                   </View>
                 )}
@@ -655,13 +655,13 @@ export default function TasksScreen() {
                       {
                         backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
                         borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
-                        borderLeftColor: isDone ? '#22d15a' : priColor,
+                        borderLeftColor: isDone ? '#2E6F40' : priColor,
                         opacity: isDone ? 0.72 : 1,
                       },
                     ]}
                   >
                     <LinearGradient
-                      colors={[`${isDone ? '#22d15a' : priColor}1a`, 'transparent']}
+                      colors={[`${isDone ? '#2E6F40' : priColor}1a`, 'transparent']}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={StyleSheet.absoluteFill}
@@ -703,8 +703,8 @@ export default function TasksScreen() {
                         style={[
                           st.checkBtn,
                           {
-                            backgroundColor: isDone ? '#22d15a' : 'transparent',
-                            borderColor: isDone ? '#22d15a' : isDark ? 'rgba(255,255,255,0.18)' : colors.border,
+                            backgroundColor: isDone ? '#2E6F40' : 'transparent',
+                            borderColor: isDone ? '#2E6F40' : isDark ? 'rgba(255,255,255,0.18)' : colors.border,
                           },
                         ]}
                         hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
@@ -732,13 +732,13 @@ export default function TasksScreen() {
                     <View style={st.cardFooter}>
                       {task.farmBlock && (
                         <View style={st.chip}>
-                          <MapPin size={9} color="#22d15a" />
+                          <MapPin size={9} color="#2E6F40" />
                           <Text style={st.chipText}>{task.farmBlock}</Text>
                         </View>
                       )}
                       {task.dueDate && (
                         <View style={st.chip}>
-                          <Clock size={9} color="#22d15a" />
+                          <Clock size={9} color="#2E6F40" />
                           <Text style={st.chipText}>{formatDue(task.dueDate)}</Text>
                         </View>
                       )}
@@ -819,9 +819,9 @@ export default function TasksScreen() {
               >
                 <Text style={{ fontSize: 18, color: colors.text, fontFamily: 'Inter_700Bold' }}>−</Text>
               </TouchableOpacity>
-              <View style={[st.stepVal, { backgroundColor: 'rgba(34,209,90,0.1)', borderColor: 'rgba(34,209,90,0.25)' }]}>
-                <Text style={{ fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', color: '#22d15a' }}>{newDueDays}</Text>
-                <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: '#22d15a' }}>siku</Text>
+              <View style={[st.stepVal, { backgroundColor: 'rgba(46, 111, 64,0.1)', borderColor: 'rgba(46, 111, 64,0.25)' }]}>
+                <Text style={{ fontSize: 20, fontFamily: 'InstrumentSerif_400Regular', color: '#2E6F40' }}>{newDueDays}</Text>
+                <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: '#2E6F40' }}>siku</Text>
               </View>
               <TouchableOpacity
                 onPress={() => setNewDueDays((d) => Math.min(90, d + 1))}
@@ -849,8 +849,8 @@ export default function TasksScreen() {
                     st.priBtn,
                     {
                       flex: 1,
-                      backgroundColor: newRole === role.id ? 'rgba(34,209,90,0.12)' : 'transparent',
-                      borderColor: newRole === role.id ? '#22d15a' : colors.border,
+                      backgroundColor: newRole === role.id ? 'rgba(46, 111, 64,0.12)' : 'transparent',
+                      borderColor: newRole === role.id ? '#2E6F40' : colors.border,
                       height: 44,
                       justifyContent: 'center',
                       borderRadius: 12,
@@ -862,7 +862,7 @@ export default function TasksScreen() {
                   accessibilityLabel={role.label}
                   accessibilityState={{ selected: newRole === role.id }}
                 >
-                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: newRole === role.id ? '#22d15a' : colors.textMute }}>
+                  <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: newRole === role.id ? '#2E6F40' : colors.textMute }}>
                     {role.label}
                   </Text>
                 </TouchableOpacity>
@@ -926,7 +926,7 @@ export default function TasksScreen() {
               accessibilityRole="button"
               accessibilityLabel={language === 'sw' ? 'Ongeza Kazi mpya' : 'Add Task'}
             >
-              <LinearGradient colors={['#22d15a', '#048038']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={st.createBtnGrad}>
+              <LinearGradient colors={['#2E6F40', '#1C4A29']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={st.createBtnGrad}>
                 <Plus size={18} color="#fff" />
                 <Text style={st.createBtnText}>Ongeza Kazi</Text>
               </LinearGradient>
@@ -941,21 +941,21 @@ export default function TasksScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const st = StyleSheet.create({
   container: { flex: 1 },
-  glowTR: { position: 'absolute', top: -80, right: -60, width: 320, height: 320, borderRadius: 160, backgroundColor: 'rgba(34,209,90,0.08)' },
-  glowBL: { position: 'absolute', bottom: 80, left: -80, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(34,209,90,0.05)' },
+  glowTR: { position: 'absolute', top: -80, right: -60, width: 320, height: 320, borderRadius: 160, backgroundColor: 'rgba(46, 111, 64,0.08)' },
+  glowBL: { position: 'absolute', bottom: 80, left: -80, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(46, 111, 64,0.05)' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   iconBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  commandBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(34,209,90,0.1)', marginBottom: 4 },
-  commandText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1 },
+  commandBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, backgroundColor: 'rgba(46, 111, 64,0.1)', marginBottom: 4 },
+  commandText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#2E6F40', letterSpacing: 1 },
   headerTitle: { fontSize: 21, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
   scrollContent: { padding: 16, gap: 14 },
   dashCard: { borderRadius: 22, borderWidth: 1, overflow: 'hidden', padding: 20 },
   dashRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
-  dashLabel: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#22d15a', letterSpacing: 1, marginBottom: 6 },
+  dashLabel: { fontSize: 12, fontFamily: 'Inter_700Bold', color: '#2E6F40', letterSpacing: 1, marginBottom: 6 },
   dashTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.3, marginBottom: 3 },
   dashSub: { fontSize: 12, fontFamily: 'Inter_500Medium' },
-  dashCircle: { width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: 'rgba(34,209,90,0.3)', justifyContent: 'center', alignItems: 'center' },
-  dashPct: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', color: '#22d15a' },
+  dashCircle: { width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: 'rgba(46, 111, 64,0.3)', justifyContent: 'center', alignItems: 'center' },
+  dashPct: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', color: '#2E6F40' },
   xpRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 12 },
   xpText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
   barTrack: { height: 8, borderRadius: 4, overflow: 'hidden' },
@@ -979,8 +979,8 @@ const st = StyleSheet.create({
   calDot: { width: 4, height: 4, borderRadius: 2 },
   calSelBanner: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12, borderWidth: 1, marginTop: 14 },
   calSelText: { fontSize: 12, fontFamily: 'Inter_700Bold', marginLeft: 6 },
-  calAddBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: 'rgba(34,209,90,0.1)' },
-  calAddText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  calAddBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: 'rgba(46, 111, 64,0.1)' },
+  calAddText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
   emptyCard: { padding: 32, borderRadius: 18, borderWidth: 1, alignItems: 'center', gap: 8 },
   emptyText: { fontSize: 13, fontFamily: 'Inter_600SemiBold' },
   taskCard: { borderRadius: 18, borderWidth: 1, borderLeftWidth: 4, padding: 14, position: 'relative', overflow: 'hidden' },

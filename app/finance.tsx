@@ -75,7 +75,7 @@ const INITIAL_ENTRIES: Entry[] = [
 ];
 
 const CAT_META: Record<Category, { icon: (c: string) => React.ReactNode; color: string; label: string; labelEn: string }> = {
-  mazao: { icon: (c) => <Wheat size={14} color={c} />, color: '#22d15a', label: 'Mazao', labelEn: 'Crops' },
+  mazao: { icon: (c) => <Wheat size={14} color={c} />, color: '#2E6F40', label: 'Mazao', labelEn: 'Crops' },
   mbolea: { icon: (c) => <Package size={14} color={c} />, color: '#f59e0b', label: 'Mbolea', labelEn: 'Inputs' },
   usafirishaji: { icon: (c) => <Truck size={14} color={c} />, color: '#3b82f6', label: 'Usafirishaji', labelEn: 'Transport' },
   umwagiliaji: { icon: (c) => <Droplets size={14} color={c} />, color: '#06b6d4', label: 'Umwagiliaji', labelEn: 'Irrigation' },
@@ -116,7 +116,7 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
     <View>
       <View style={{ flexDirection: 'row', gap: 16, marginBottom: 8, paddingHorizontal: 4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: '#22d15a' }} />
+          <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: '#2E6F40' }} />
           <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, color: colors.textMute }}>Mapato</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -127,7 +127,7 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
       <Svg width={CW} height={H}>
         <SvgDefs>
           <SvgGrad id="incGrad" x1="0" y1="0" x2="0" y2="1">
-            <SvgStop offset="0%" stopColor="#22d15a" stopOpacity="1" />
+            <SvgStop offset="0%" stopColor="#2E6F40" stopOpacity="1" />
             <SvgStop offset="100%" stopColor="#16a34a" stopOpacity="0.9" />
           </SvgGrad>
           <SvgGrad id="expGrad" x1="0" y1="0" x2="0" y2="1">
@@ -163,7 +163,7 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
                 width={barW}
                 height={incH}
                 rx="3"
-                fill={isLast ? 'url(#incGrad)' : '#22d15a'}
+                fill={isLast ? 'url(#incGrad)' : '#2E6F40'}
                 opacity={isLast ? 1 : 0.45}
               />
               <SvgRect
@@ -179,7 +179,7 @@ function MonthlyChart({ months, colors }: { months: { label: string; income: num
                 {m.label}
               </SvgText>
               {isLast && (
-                <SvgText x={cx - barW / 2 - 1} y={toY(m.income) - 3} fontSize="12" fontFamily="Inter_700Bold" fill="#22d15a" textAnchor="middle">
+                <SvgText x={cx - barW / 2 - 1} y={toY(m.income) - 3} fontSize="12" fontFamily="Inter_700Bold" fill="#2E6F40" textAnchor="middle">
                   {fmtK(m.income)}
                 </SvgText>
               )}
@@ -325,12 +325,12 @@ export default function FinanceScreen() {
           <Animated.View entering={FadeInUp.springify()} style={{ paddingHorizontal: 16, marginTop: 8 }}>
             <LinearGradient
               colors={isDark ? ['#0d1f0e', '#080f09'] : ['#f0fdf4', '#e8f9ed']}
-              style={[s.plCard, { borderColor: isDark ? '#22d15a22' : '#22d15a33' }]}
+              style={[s.plCard, { borderColor: isDark ? '#2E6F4022' : '#2E6F4033' }]}
             >
               <View style={s.plRow}>
                 <View style={s.plItem}>
                   <Text style={[s.plLabel, { color: colors.textMute }]}>{language === 'sw' ? 'MAPATO' : 'INCOME'}</Text>
-                  <Text style={[s.plValue, { color: '#22d15a' }]}>{fmtTZS(totalIncome)}</Text>
+                  <Text style={[s.plValue, { color: '#2E6F40' }]}>{fmtTZS(totalIncome)}</Text>
                 </View>
                 <View style={[s.plDivider, { backgroundColor: colors.border }]} />
                 <View style={s.plItem}>
@@ -341,8 +341,8 @@ export default function FinanceScreen() {
                 <View style={s.plItem}>
                   <Text style={[s.plLabel, { color: colors.textMute }]}>{language === 'sw' ? 'FAIDA' : 'PROFIT'}</Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                    {profit >= 0 ? <TrendingUp size={14} color="#22d15a" /> : <TrendingDown size={14} color="#ef4444" />}
-                    <Text style={[s.plValue, { color: profit >= 0 ? '#22d15a' : '#ef4444' }]}>{fmtTZS(Math.abs(profit))}</Text>
+                    {profit >= 0 ? <TrendingUp size={14} color="#2E6F40" /> : <TrendingDown size={14} color="#ef4444" />}
+                    <Text style={[s.plValue, { color: profit >= 0 ? '#2E6F40' : '#ef4444' }]}>{fmtTZS(Math.abs(profit))}</Text>
                   </View>
                 </View>
               </View>
@@ -366,7 +366,7 @@ export default function FinanceScreen() {
                     s.budgetBarFill,
                     {
                       width: `${budgetProgressPct * 100}%`,
-                      backgroundColor: budgetProgressPct > 0.85 ? '#ef4444' : '#22d15a',
+                      backgroundColor: budgetProgressPct > 0.85 ? '#ef4444' : '#2E6F40',
                     },
                   ]}
                 />
@@ -387,7 +387,7 @@ export default function FinanceScreen() {
                   {language === 'sw' ? 'Muhtasari wa Miezi 6' : '6-Month Overview'}
                 </Text>
                 <View style={s.legendRow}>
-                  <View style={[s.legendDot, { backgroundColor: '#22d15a' }]} />
+                  <View style={[s.legendDot, { backgroundColor: '#2E6F40' }]} />
                   <Text style={[s.legendTxt, { color: colors.textMute }]}>{language === 'sw' ? 'Mapato' : 'Income'}</Text>
                   <View style={[s.legendDot, { backgroundColor: '#ef4444' }]} />
                   <Text style={[s.legendTxt, { color: colors.textMute }]}>{language === 'sw' ? 'Matumizi' : 'Expenses'}</Text>
@@ -404,7 +404,7 @@ export default function FinanceScreen() {
                 {language === 'sw' ? 'Akaunti za Mobile Money zilizounganishwa' : 'Linked Mobile Money Integrations'}
               </Text>
               <View style={s.syncRow}>
-                <Smartphone size={16} color="#22d15a" />
+                <Smartphone size={16} color="#2E6F40" />
                 <View style={{ flex: 1 }}>
                   <Text style={[s.syncTitle, { color: colors.text }]}>Vodacom M-Pesa</Text>
                   <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute }}>
@@ -447,14 +447,14 @@ export default function FinanceScreen() {
                       <View style={{ flex: 1, gap: 4 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                           <Text style={[s.catLabel, { color: colors.text }]}>{language === 'sw' ? meta.label : meta.labelEn}</Text>
-                          <Text style={[s.catVal, { color: val >= 0 ? '#22d15a' : '#ef4444' }]}>
+                          <Text style={[s.catVal, { color: val >= 0 ? '#2E6F40' : '#ef4444' }]}>
                             {val >= 0 ? '+' : ''}
                             {fmtTZS(Math.abs(val))}
                           </Text>
                         </View>
                         <View style={[s.catTrack, { backgroundColor: colors.background }]}>
                           <View
-                            style={[s.catFill, { width: `${pct * 100}%`, backgroundColor: val >= 0 ? '#22d15a' : '#ef4444' }]}
+                            style={[s.catFill, { width: `${pct * 100}%`, backgroundColor: val >= 0 ? '#2E6F40' : '#ef4444' }]}
                           />
                         </View>
                       </View>
@@ -477,7 +477,7 @@ export default function FinanceScreen() {
                 style={[
                   s.filterTab,
                   {
-                    backgroundColor: filter === f ? (f === 'income' ? '#22d15a' : f === 'expense' ? '#ef4444' : colors.primary) : colors.card,
+                    backgroundColor: filter === f ? (f === 'income' ? '#2E6F40' : f === 'expense' ? '#ef4444' : colors.primary) : colors.card,
                     borderColor: filter === f ? 'transparent' : colors.border,
                   },
                 ]}
@@ -549,7 +549,7 @@ export default function FinanceScreen() {
                       style={[
                         s.typeBtn,
                         {
-                          backgroundColor: newType === t ? (t === 'income' ? '#22d15a' : '#ef4444') : colors.background,
+                          backgroundColor: newType === t ? (t === 'income' ? '#2E6F40' : '#ef4444') : colors.background,
                           borderColor: colors.border,
                         },
                       ]}
@@ -652,7 +652,7 @@ export default function FinanceScreen() {
                         <Text style={[s.entryDate, { color: colors.textMute }]}>{fmtDate(e.ts)}</Text>
                       </View>
                     </View>
-                    <Text style={[s.entryAmt, { color: e.type === 'income' ? '#22d15a' : '#ef4444' }]}>
+                    <Text style={[s.entryAmt, { color: e.type === 'income' ? '#2E6F40' : '#ef4444' }]}>
                       {e.type === 'income' ? '+' : '-'}
                       {fmtTZS(e.amount)}
                     </Text>
@@ -821,8 +821,8 @@ const s = StyleSheet.create({
   // Sync rows
   syncRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 },
   syncTitle: { fontSize: 12, fontFamily: 'Inter_700Bold' },
-  syncStatusBadge: { backgroundColor: 'rgba(34,209,90,0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
-  syncStatusText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  syncStatusBadge: { backgroundColor: 'rgba(46, 111, 64,0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  syncStatusText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
 
   // Modals
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' },

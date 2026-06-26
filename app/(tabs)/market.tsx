@@ -763,8 +763,8 @@ export default function MarketScreen() {
                       <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 13, color: colors.text }}>
                         Order: #{ord.id}
                       </Text>
-                      <View style={{ backgroundColor: ord.status === 'Delivered' ? '#22d15a20' : '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
-                        <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? '#22d15a' : '#f59e0b' }}>
+                      <View style={{ backgroundColor: ord.status === 'Delivered' ? '#2E6F4020' : '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
+                        <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? '#2E6F40' : '#f59e0b' }}>
                           {ord.status}
                         </Text>
                       </View>
@@ -1083,7 +1083,7 @@ export default function MarketScreen() {
 
                 {/* Mobile Money Integration Note */}
                 <View style={styles.mobiMoneyNote}>
-                  <CheckCircle2 size={12} color="#22d15a" />
+                  <CheckCircle2 size={12} color="#2E6F40" />
                   <Text style={styles.mobiMoneyText}>
                     {language === 'sw'
                       ? 'Lipa salama kupitia M-Pesa / TigoPesa'
@@ -1528,10 +1528,10 @@ const styles = StyleSheet.create({
   ratingText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#f59e0b' },
   prodCardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(0,0,0,0.08)', paddingTop: 6 },
   prodPrice: { fontSize: 12.5, fontFamily: 'Inter_800ExtraBold' },
-  addToCartBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#22d15a', paddingHorizontal: 8, borderRadius: 8, minHeight: 44, justifyContent: 'center' },
+  addToCartBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#2E6F40', paddingHorizontal: 8, borderRadius: 8, minHeight: 44, justifyContent: 'center' },
   addToCartText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#000' },
   cartFab: { position: 'absolute', bottom: 32, right: 24, zIndex: 100 },
-  cartFabBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#22d15a', alignItems: 'center', justifyContent: 'center', position: 'relative', shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5 },
+  cartFabBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#2E6F40', alignItems: 'center', justifyContent: 'center', position: 'relative', shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5 },
   cartCountBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: '#000', borderRadius: 8, width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
   cartCountBadgeTxt: { color: '#fff', fontSize: 12, fontFamily: 'Inter_800ExtraBold' },
   compBar: { position: 'absolute', bottom: 32, left: 24, right: 24, zIndex: 90 },
@@ -1574,7 +1574,7 @@ const styles = StyleSheet.create({
   analysisRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   analysisItem: { flex: 1 },
   analysisLabel: { fontSize: 12, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
-  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(34, 209, 90, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
+  outlookBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(46, 111, 64, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
   outlookText: { fontSize: 12, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.5 },
   analysisValue: { fontSize: 14, fontFamily: 'Inter_800ExtraBold' },
   actionGrid: { flexDirection: 'row', gap: 12 },

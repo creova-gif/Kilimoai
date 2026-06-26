@@ -46,8 +46,8 @@ export function MapView({ style, children, region }: { style?: any; children?: R
         }).addTo(map);
 
         L.circle([${lat}, ${lng}], {
-          color: '#22d15a',
-          fillColor: '#22d15a',
+          color: '#2E6F40',
+          fillColor: '#2E6F40',
           fillOpacity: 0.25,
           radius: 180
         }).addTo(map);

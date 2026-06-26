@@ -153,8 +153,8 @@ export default function FarmTwinList() {
           {/* Metric rows with mini bars */}
           <View style={s.metricRow}>
             <Text style={[s.metricLabel, { color: colors.textMute }]}>Mavuno</Text>
-            <MiniBar value={output.totalYieldTonnes} max={maxYield} color="#22d15a" />
-            <Text style={[s.metricValue, { color: '#22d15a' }]}>{output.totalYieldTonnes}t</Text>
+            <MiniBar value={output.totalYieldTonnes} max={maxYield} color="#2E6F40" />
+            <Text style={[s.metricValue, { color: '#2E6F40' }]}>{output.totalYieldTonnes}t</Text>
           </View>
           <View style={s.metricRow}>
             <Text style={[s.metricLabel, { color: colors.textMute }]}>Faida</Text>
@@ -240,8 +240,8 @@ export default function FarmTwinList() {
                   {/* Pasture 1: North Grazing Zone */}
                   <Polygon
                     points="20,20 180,20 160,110 20,110"
-                    fill={pastureMoistures.north < 45 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 209, 90, 0.15)'}
-                    stroke={pastureMoistures.north < 45 ? '#ef4444' : '#22d15a'}
+                    fill={pastureMoistures.north < 45 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(46, 111, 64, 0.15)'}
+                    stroke={pastureMoistures.north < 45 ? '#ef4444' : '#2E6F40'}
                     strokeWidth={selectedZone === 'north' ? '2.5' : '1.5'}
                     onPress={() => handleZonePress('north', 'Kanda ya Kaskazini')}
                   />
@@ -255,8 +255,8 @@ export default function FarmTwinList() {
                   {/* Pasture 2: South Forage Area */}
                   <Polygon
                     points="20,130 150,130 170,220 20,220"
-                    fill="rgba(34, 209, 90, 0.15)"
-                    stroke="#22d15a"
+                    fill="rgba(46, 111, 64, 0.15)"
+                    stroke="#2E6F40"
                     strokeWidth={selectedZone === 'south' ? '2.5' : '1.5'}
                     onPress={() => handleZonePress('south', 'Kanda ya Kusini')}
                   />
@@ -270,8 +270,8 @@ export default function FarmTwinList() {
                   {/* Pasture 3: East Orchard */}
                   <Polygon
                     points="200,20 380,20 380,150 220,150"
-                    fill="rgba(34, 209, 90, 0.15)"
-                    stroke="#22d15a"
+                    fill="rgba(46, 111, 64, 0.15)"
+                    stroke="#2E6F40"
                     strokeWidth={selectedZone === 'east' ? '2.5' : '1.5'}
                     onPress={() => handleZonePress('east', 'Kanda ya Mashariki')}
                   />
@@ -284,8 +284,8 @@ export default function FarmTwinList() {
 
                   {/* RFID Gate Location */}
                   <G onPress={toggleGate}>
-                    <Rect x="165" y="115" width="20" height="20" fill={gateOpen ? 'rgba(34, 209, 90, 0.2)' : 'rgba(245, 158, 11, 0.2)'} rx="4" />
-                    <Circle cx="175" cy="125" r="5" fill={gateOpen ? '#22d15a' : '#f59e0b'} />
+                    <Rect x="165" y="115" width="20" height="20" fill={gateOpen ? 'rgba(46, 111, 64, 0.2)' : 'rgba(245, 158, 11, 0.2)'} rx="4" />
+                    <Circle cx="175" cy="125" r="5" fill={gateOpen ? '#2E6F40' : '#f59e0b'} />
                     <SvgText x="175" y="150" fill={colors.textMute} fontSize="8" fontFamily="Inter_600SemiBold" textAnchor="middle">
                       {gateOpen ? 'GATE OPEN' : 'GATE LOCK'}
                     </SvgText>
@@ -311,7 +311,7 @@ export default function FarmTwinList() {
                     </Text>
                     <View style={s.detailsTelemetryRow}>
                       <View style={s.telemetryValBox}>
-                        <Droplets size={12} color="#22d15a" />
+                        <Droplets size={12} color="#2E6F40" />
                         <Text style={[s.telemetryValText, { color: colors.text }]}>
                           Moisture: {selectedZone === 'north' ? pastureMoistures.north : selectedZone === 'south' ? pastureMoistures.south : pastureMoistures.east}%
                         </Text>
@@ -337,7 +337,7 @@ export default function FarmTwinList() {
 
                 <View style={s.twinActionsRow}>
                   <TouchableOpacity onPress={toggleGate} style={[s.twinActionBtn, { borderColor: colors.border }]}>
-                    {gateOpen ? <Unlock size={14} color="#22d15a" /> : <Lock size={14} color="#f59e0b" />}
+                    {gateOpen ? <Unlock size={14} color="#2E6F40" /> : <Lock size={14} color="#f59e0b" />}
                     <Text style={[s.twinActionBtnTxt, { color: colors.text }]}>
                       {gateOpen ? (language === 'sw' ? 'Funga Lango' : 'Lock Gate') : (language === 'sw' ? 'Fungua Lango' : 'Unlock Gate')}
                     </Text>

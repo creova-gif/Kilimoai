@@ -39,8 +39,8 @@ function SoilPHTrendChart({ data, months, colors }: { data: number[]; months: st
         <Rect width={chartW} height={chartH} fill="rgba(0,0,0,0.02)" rx={8} />
         
         {/* pH Reference Lines */}
-        <SvgLine x1="10" y1={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} x2={chartW - 10} y2={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} stroke="#22d15a" strokeDasharray="3,3" strokeWidth="1" />
-        <SvgText x={chartW - 35} y={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 18} fontSize="7" fill="#22d15a" fontFamily="Inter_700Bold">Optimum (6.5)</SvgText>
+        <SvgLine x1="10" y1={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} x2={chartW - 10} y2={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} stroke="#2E6F40" strokeDasharray="3,3" strokeWidth="1" />
+        <SvgText x={chartW - 35} y={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 18} fontSize="7" fill="#2E6F40" fontFamily="Inter_700Bold">Optimum (6.5)</SvgText>
 
         <Polyline
           fill="none"
@@ -57,7 +57,7 @@ function SoilPHTrendChart({ data, months, colors }: { data: number[]; months: st
                 cx={x}
                 cy={y}
                 r="3.5"
-                fill={val < 5.5 ? '#ef4444' : '#22d15a'}
+                fill={val < 5.5 ? '#ef4444' : '#2E6F40'}
                 stroke="#FFF"
                 strokeWidth="1.5"
               />
@@ -119,7 +119,7 @@ export default function SoilAnalysis() {
             </View>
             <View style={styles.heroContent}>
               <View style={styles.heroBadge}>
-                <Sprout size={11} color="#22d15a" />
+                <Sprout size={11} color="#2E6F40" />
                 <Text style={styles.heroBadgeText}>
                   {language === 'sw' ? 'UCHAMBUZI' : 'ANALYSIS'}
                 </Text>
@@ -155,7 +155,7 @@ export default function SoilAnalysis() {
 
             {/* Bars */}
             <View style={styles.barsContainer}>
-              <NutrientBar label="Nitrogen (N)" value={85} color="#22d15a" />
+              <NutrientBar label="Nitrogen (N)" value={85} color="#2E6F40" />
               <NutrientBar label="Phosphorus (P)" value={70} color="#F59E0B" />
               <NutrientBar label="Potassium (K)" value={60} color="#3b82f6" />
             </View>
@@ -252,7 +252,7 @@ function RecommendationItem({ title, desc, imageUri, onPress, btnText }: { title
           accessibilityLabel={btnText}
         >
           <Text style={styles.recActionText}>{btnText}</Text>
-          <ChevronLeft color="#22d15a" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
+          <ChevronLeft color="#2E6F40" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(34,209,90,0.2)',
+    backgroundColor: 'rgba(46, 111, 64,0.2)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 20,
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   heroBadgeText: {
     fontFamily: 'Inter_700Bold',
     fontSize: 9,
-    color: '#22d15a',
+    color: '#2E6F40',
     letterSpacing: 1,
   },
   heroTitle: {
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(34, 209, 90, 0.08)',
+    backgroundColor: 'rgba(46, 111, 64, 0.08)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   recActionText: {
-    color: '#22d15a',
+    color: '#2E6F40',
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },

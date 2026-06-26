@@ -412,9 +412,9 @@ export default function SankofaScreen() {
             <View style={styles.headerCenter}>
               <View style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center' }}>
                 <LinearGradient colors={['#112519', '#060e08']} style={styles.aiAvatar}>
-                  <BrainCircuit size={19} color="#22d15a" />
+                  <BrainCircuit size={19} color="#2E6F40" />
                 </LinearGradient>
-                <View style={[styles.avatarRing, { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : 'rgba(34,209,90,0.5)' }]} />
+                <View style={[styles.avatarRing, { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : 'rgba(46, 111, 64,0.5)' }]} />
               </View>
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
@@ -424,7 +424,7 @@ export default function SankofaScreen() {
                   </View>
                 </View>
                 <View style={styles.statusRow}>
-                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#22d15a' }]} />
+                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#2E6F40' }]} />
                   <Text style={styles.statusLabel}>
                     {isOffline ? 'SMS Fallback' : 'Neural Link Active'}
                   </Text>
@@ -504,26 +504,26 @@ export default function SankofaScreen() {
                     <View key={i} style={[styles.voiceRipple, {
                       width: sz, height: sz, borderRadius: sz / 2,
                       borderColor: voiceState === 'LISTENING'
-                        ? `rgba(34,209,90,${0.4 - i * 0.12})`
+                        ? `rgba(46, 111, 64,${0.4 - i * 0.12})`
                         : voiceState === 'PROCESSING'
                         ? `rgba(139,92,246,${0.4 - i * 0.12})`
-                        : `rgba(34,209,90,${0.15 - i * 0.04})`,
+                        : `rgba(46, 111, 64,${0.15 - i * 0.04})`,
                     }]} />
                   ))}
                   <LinearGradient
                     colors={voiceState === 'LISTENING'
-                      ? ['#22d15a', '#16a34a']
+                      ? ['#2E6F40', '#16a34a']
                       : voiceState === 'PROCESSING'
                       ? ['rgba(139,92,246,0.4)', 'rgba(139,92,246,0.1)']
-                      : ['rgba(34,209,90,0.2)', 'rgba(34,209,90,0.05)']
+                      : ['rgba(46, 111, 64,0.2)', 'rgba(46, 111, 64,0.05)']
                     }
                     style={styles.voiceOrbCore}
                   >
                     {voiceState === 'PROCESSING'
                       ? <BrainCircuit size={44} color="#a78bfa" />
                       : voiceState === 'SPEAKING'
-                      ? <Zap size={44} color="#22d15a" />
-                      : <Mic size={44} color={voiceState === 'LISTENING' ? '#fff' : '#22d15a'} />
+                      ? <Zap size={44} color="#2E6F40" />
+                      : <Mic size={44} color={voiceState === 'LISTENING' ? '#fff' : '#2E6F40'} />
                     }
                   </LinearGradient>
                 </TouchableOpacity>
@@ -553,12 +553,12 @@ export default function SankofaScreen() {
                     {SUGGESTED_PROMPTS.map((prompt, i) => (
                       <TouchableOpacity
                         key={i}
-                        style={[styles.suggestionBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card }]}
+                        style={[styles.suggestionBtn, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.07)' : colors.card }]}
                         onPress={() => { setInputText(prompt); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
                         accessibilityRole="button"
                         accessibilityLabel={language === 'sw' ? `Uliza pendekezo: ${prompt}` : `Ask suggestion: ${prompt}`}
                       >
-                        <Sparkles size={11} color="#22d15a" style={{ marginRight: 5 }} />
+                        <Sparkles size={11} color="#2E6F40" style={{ marginRight: 5 }} />
                         <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
                       </TouchableOpacity>
                     ))}
@@ -599,7 +599,7 @@ export default function SankofaScreen() {
                         <Mic size={19} color={isDark ? "rgba(255,255,255,0.4)" : colors.textMute} />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
+                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#2E6F40' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
                         onPress={handleSend}
                         disabled={!inputText.trim() || isTyping}
                         accessibilityRole="button"
@@ -623,9 +623,9 @@ export default function SankofaScreen() {
               <Text style={[styles.sheetTitle, { color: colors.text }]}>{language === 'sw' ? 'Zana za Sankofa' : 'Sankofa Tools'}</Text>
 
               {[
-                { icon: <FileSpreadsheet size={22} color="#22d15a" />, title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet', sub: 'Excel / CSV → Q&A', onPress: handleExcelPick },
-                { icon: <Leaf size={22} color="#22d15a" />, title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment', sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist', onPress: () => { setAttachmentMenuVisible(false); setDiseaseModalVisible(true); } },
-                { icon: <Camera size={22} color="#22d15a" />, title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner', sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves', onPress: () => { setAttachmentMenuVisible(false); router.push('/scan' as any); } },
+                { icon: <FileSpreadsheet size={22} color="#2E6F40" />, title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet', sub: 'Excel / CSV → Q&A', onPress: handleExcelPick },
+                { icon: <Leaf size={22} color="#2E6F40" />, title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment', sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist', onPress: () => { setAttachmentMenuVisible(false); setDiseaseModalVisible(true); } },
+                { icon: <Camera size={22} color="#2E6F40" />, title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner', sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves', onPress: () => { setAttachmentMenuVisible(false); router.push('/scan' as any); } },
               ].map((item, i) => (
                 <TouchableOpacity key={i} style={[styles.sheetOption, i < 2 && { borderBottomColor: colors.border }]} onPress={item.onPress}>
                   <View style={styles.sheetIconWrap}>{item.icon}</View>
@@ -649,7 +649,7 @@ export default function SankofaScreen() {
         {isParsingExcel && (
           <View style={styles.loaderOverlay}>
             <View style={[styles.loaderCard, { backgroundColor: isDark ? '#111a10' : colors.card }]}>
-              <ActivityIndicator size="large" color="#22d15a" />
+              <ActivityIndicator size="large" color="#2E6F40" />
               <Text style={[styles.loaderText, { color: colors.text }]}>{language === 'sw' ? 'Inasoma lahajedwali…' : 'Parsing spreadsheet…'}</Text>
             </View>
           </View>
@@ -694,19 +694,19 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
     <Animated.View entering={FadeInDown} style={[styles.msgRow, isAi ? styles.msgRowAi : styles.msgRowUser]}>
       {isAi && (
         <LinearGradient colors={['#112519', '#060e08']} style={styles.avatar}>
-          <BrainCircuit size={14} color="#22d15a" />
+          <BrainCircuit size={14} color="#2E6F40" />
         </LinearGradient>
       )}
 
       {isAi ? (
         <View style={styles.aiBubble}>
           <LinearGradient
-            colors={['rgba(34,209,90,0.13)', 'transparent']}
+            colors={['rgba(46, 111, 64,0.13)', 'transparent']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             style={styles.aiBubbleShimmer}
           />
           <View style={styles.aiBubbleSourceRow}>
-            <BrainCircuit size={9} color="#22d15a" />
+            <BrainCircuit size={9} color="#2E6F40" />
             <Text style={styles.aiBubbleSourceText}>SANKOFA</Text>
           </View>
           <Text style={[styles.msgText, styles.aiText]}>{item.text}</Text>
@@ -756,11 +756,11 @@ function TypingIndicator() {
   return (
     <View style={styles.typingRow}>
       <LinearGradient colors={['#112519', '#060e08']} style={styles.avatar}>
-        <BrainCircuit size={14} color="#22d15a" />
+        <BrainCircuit size={14} color="#2E6F40" />
       </LinearGradient>
       <View>
         <View style={styles.aiBubbleSourceRow}>
-          <BrainCircuit size={8} color="#22d15a" />
+          <BrainCircuit size={8} color="#2E6F40" />
           <Text style={styles.aiBubbleSourceText}>SANKOFA</Text>
         </View>
         <View style={styles.typingBubble}>
@@ -781,7 +781,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
     <Animated.View entering={FadeInDown} style={styles.excelCard}>
       <View style={styles.excelHeader}>
         <View style={styles.excelIconBox}>
-          <FileSpreadsheet size={20} color="#22d15a" />
+          <FileSpreadsheet size={20} color="#2E6F40" />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <Text style={[styles.excelFileName, { color: colors.text }]} numberOfLines={1}>{data.fileName}</Text>
@@ -836,7 +836,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           { key: 'compare', label: language === 'sw' ? 'Linganisha' : 'Compare' },
         ].map((s) => (
           <TouchableOpacity key={s.key} style={styles.shortcutBtn} onPress={() => onShortcut(s.key)}>
-            <Sparkles size={11} color="#22d15a" style={{ marginRight: 4 }} />
+            <Sparkles size={11} color="#2E6F40" style={{ marginRight: 4 }} />
             <Text style={styles.shortcutText}>{s.label}</Text>
           </TouchableOpacity>
         ))}
@@ -862,7 +862,7 @@ const styles = StyleSheet.create({
     width: 340,
     height: 340,
     borderRadius: 170,
-    backgroundColor: 'rgba(34,209,90,0.1)',
+    backgroundColor: 'rgba(46, 111, 64,0.1)',
     ...(Platform.OS === 'web' ? { filter: 'blur(90px)' } as any : {}),
   },
   glowBL: {
@@ -872,7 +872,7 @@ const styles = StyleSheet.create({
     width: 260,
     height: 260,
     borderRadius: 130,
-    backgroundColor: 'rgba(34,209,90,0.06)',
+    backgroundColor: 'rgba(46, 111, 64,0.06)',
     ...(Platform.OS === 'web' ? { filter: 'blur(70px)' } as any : {}),
   },
 
@@ -885,7 +885,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 11,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(34,209,90,0.12)',
+    borderBottomColor: 'rgba(46, 111, 64,0.12)',
     backgroundColor: 'rgba(6,12,7,0.97)',
   },
   iconBtn: {
@@ -910,7 +910,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.35)',
+    borderColor: 'rgba(46, 111, 64,0.35)',
   },
   avatarRing: {
     position: 'absolute',
@@ -921,9 +921,9 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   engineBadge: {
-    backgroundColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(46, 111, 64,0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.28)',
+    borderColor: 'rgba(46, 111, 64,0.28)',
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 6,
@@ -931,7 +931,7 @@ const styles = StyleSheet.create({
   engineBadgeText: {
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
-    color: '#22d15a',
+    color: '#2E6F40',
     letterSpacing: 0.5,
   },
   headerTitle: {
@@ -983,7 +983,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.3)',
+    borderColor: 'rgba(46, 111, 64,0.3)',
   },
   userAvatar: {
     width: 34,
@@ -1008,9 +1008,9 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderTopLeftRadius: 4,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
     borderLeftWidth: 3,
-    borderLeftColor: '#22d15a',
+    borderLeftColor: '#2E6F40',
     paddingHorizontal: 14,
     paddingVertical: 12,
     maxWidth: '100%',
@@ -1032,7 +1032,7 @@ const styles = StyleSheet.create({
   aiBubbleSourceText: {
     fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
-    color: '#22d15a',
+    color: '#2E6F40',
     letterSpacing: 1,
   },
   userBubble: {
@@ -1075,16 +1075,16 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderTopLeftRadius: 4,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
     borderLeftWidth: 3,
-    borderLeftColor: '#22d15a',
+    borderLeftColor: '#2E6F40',
     gap: 5,
   },
   typingDot: {
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: '#22d15a',
+    backgroundColor: '#2E6F40',
   },
 
   // Suggestions
@@ -1101,9 +1101,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 20,
-    backgroundColor: 'rgba(34,209,90,0.06)',
+    backgroundColor: 'rgba(46, 111, 64,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.22)',
+    borderColor: 'rgba(46, 111, 64,0.22)',
     marginRight: 8,
   },
   suggestionText: {
@@ -1118,7 +1118,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
     paddingBottom: Platform.OS === 'ios' ? 30 : 18,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(34,209,90,0.12)',
+    borderTopColor: 'rgba(46, 111, 64,0.12)',
     backgroundColor: 'rgba(5,10,6,0.99)',
   },
   inputRow: {
@@ -1145,7 +1145,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     backgroundColor: 'rgba(255,255,255,0.04)',
     borderWidth: 1.5,
-    borderColor: 'rgba(34,209,90,0.28)',
+    borderColor: 'rgba(46, 111, 64,0.28)',
   },
   input: {
     flex: 1,
@@ -1221,7 +1221,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.4)',
+    borderColor: 'rgba(46, 111, 64,0.4)',
   },
   exitVoiceBtn: {
     flexDirection: 'row',
@@ -1251,7 +1251,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.12)',
+    borderColor: 'rgba(46, 111, 64,0.12)',
     padding: 24,
     paddingBottom: Platform.OS === 'ios' ? 44 : 28,
   },
@@ -1285,9 +1285,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(34,209,90,0.1)',
+    backgroundColor: 'rgba(46, 111, 64,0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
   },
   sheetOptionTitle: {
     fontSize: 15,
@@ -1328,7 +1328,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 14,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
   },
   loaderText: {
     fontSize: 14,
@@ -1340,8 +1340,8 @@ const styles = StyleSheet.create({
   excelCard: {
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
-    backgroundColor: 'rgba(34,209,90,0.04)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
+    backgroundColor: 'rgba(46, 111, 64,0.04)',
     padding: 16,
     marginBottom: 20,
   },
@@ -1355,7 +1355,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(46, 111, 64,0.12)',
   },
   excelFileName: {
     fontSize: 15,
@@ -1389,15 +1389,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingVertical: 9,
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
     borderRadius: 10,
     alignItems: 'center',
-    backgroundColor: 'rgba(34,209,90,0.05)',
+    backgroundColor: 'rgba(46, 111, 64,0.05)',
   },
   excelToggleText: {
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
-    color: '#22d15a',
+    color: '#2E6F40',
   },
   table: {
     borderWidth: 1,
@@ -1416,7 +1416,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tableHeaderCell: {
-    backgroundColor: 'rgba(34,209,90,0.08)',
+    backgroundColor: 'rgba(46, 111, 64,0.08)',
   },
   tableHeaderText: {
     fontSize: 12,
@@ -1440,14 +1440,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 9,
     borderRadius: 10,
-    backgroundColor: 'rgba(34,209,90,0.08)',
+    backgroundColor: 'rgba(46, 111, 64,0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(34,209,90,0.2)',
+    borderColor: 'rgba(46, 111, 64,0.2)',
   },
   shortcutText: {
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
-    color: '#22d15a',
+    color: '#2E6F40',
   },
 
   // Detached

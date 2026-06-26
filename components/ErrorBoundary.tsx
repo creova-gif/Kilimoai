@@ -70,6 +70,6 @@ const s = StyleSheet.create({
   title:     { fontSize: 24, fontFamily: 'Inter_900Black', marginBottom: 8, textAlign: 'center' },
   subtitle:  { fontSize: 15, marginBottom: 16, textAlign: 'center', fontFamily: 'Inter_500Medium' },
   errorMsg:  { fontSize: 11, fontFamily: 'Inter_500Medium', padding: 12, borderRadius: 10, marginBottom: 24, width: '100%' },
-  btn:       { backgroundColor: '#22d15a', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 },
+  btn:       { backgroundColor: '#2E6F40', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 },
   btnText:   { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
 });

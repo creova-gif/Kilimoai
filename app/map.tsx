@@ -149,14 +149,14 @@ export default function MapScreen() {
             </TouchableOpacity>
             
             <View style={styles.headerCenter}>
-              <View style={[styles.spatialBadge, { backgroundColor: 'rgba(34, 209, 90, 0.25)' }]}>
+              <View style={[styles.spatialBadge, { backgroundColor: 'rgba(46, 111, 64, 0.25)' }]}>
                 <Globe size={10} color={colors.primary} />
                 <Text style={[styles.spatialText, { color: colors.primary }]}>SPATIAL INTELLIGENCE v4.1</Text>
               </View>
               <View style={[styles.locationPill, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
                 <MapPin size={12} color={colors.primary} />
                 <Text style={styles.locationText} numberOfLines={1}>
-                  {farmProfile?.region || agroId?.location || 'Bali, Indonesia'}
+                  {farmProfile?.region || agroId?.location || 'Tanzania'}
                 </Text>
               </View>
             </View>
@@ -172,7 +172,7 @@ export default function MapScreen() {
           {voicePlaying && (
             <Animated.View entering={FadeInUp} exiting={FadeOut} style={styles.voiceGuidanceCard}>
               <BlurView intensity={70} tint="dark" style={styles.voiceGuidanceInner}>
-                <Volume2 size={16} color="#22d15a" style={styles.voiceIconPulse} />
+                <Volume2 size={16} color="#2E6F40" style={styles.voiceIconPulse} />
                 <Text style={styles.voiceGuidanceText} numberOfLines={2}>
                   {voiceText}
                 </Text>
@@ -219,8 +219,8 @@ export default function MapScreen() {
             </TouchableOpacity>
             {/* Trigger Voice guidance manually */}
             <TouchableOpacity onPress={triggerVoiceGuidance} style={styles.controlItem}>
-              <BlurView intensity={50} tint="dark" style={[styles.controlInner, voicePlaying && { borderColor: '#22d15a' }]}>
-                <Volume2 size={20} color={voicePlaying ? '#22d15a' : '#fff'} />
+              <BlurView intensity={50} tint="dark" style={[styles.controlInner, voicePlaying && { borderColor: '#2E6F40' }]}>
+                <Volume2 size={20} color={voicePlaying ? '#2E6F40' : '#fff'} />
               </BlurView>
             </TouchableOpacity>
           </View>
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   
   // Voice Guidance UI
   voiceGuidanceCard: { position: 'absolute', top: 120, left: 16, right: 80, borderRadius: 16, overflow: 'hidden', zIndex: 30 },
-  voiceGuidanceInner: { flexDirection: 'row', alignItems: 'center', padding: 12, gap: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.3)', backgroundColor: 'rgba(10,26,11,0.75)' },
+  voiceGuidanceInner: { flexDirection: 'row', alignItems: 'center', padding: 12, gap: 10, borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.3)', backgroundColor: 'rgba(10,26,11,0.75)' },
   voiceGuidanceText: { color: '#fff', fontSize: 11, fontFamily: 'Inter_600SemiBold', flex: 1 },
   voiceIconPulse: { padding: 4 },
 });

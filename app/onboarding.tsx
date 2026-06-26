@@ -58,8 +58,8 @@ const CROPS = [
 ];
 
 const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }> = {
-  smallholder:       { icon: <Leaf size={22} color="#22d15a" />,    color: '#22d15a' },
-  farmer:            { icon: <Sprout size={22} color="#22d15a" />,   color: '#22d15a' },
+  smallholder:       { icon: <Leaf size={22} color="#2E6F40" />,    color: '#2E6F40' },
+  farmer:            { icon: <Sprout size={22} color="#2E6F40" />,   color: '#2E6F40' },
   commercial_farmer: { icon: <Tractor size={22} color="#3b82f6" />,  color: '#3b82f6' },
   farm_manager:      { icon: <UserCog size={22} color="#8b5cf6" />,  color: '#8b5cf6' },
   commercial_admin:  { icon: <Building2 size={22} color="#f59e0b" />,color: '#f59e0b' },
@@ -69,8 +69,8 @@ const ROLE_META: Record<CanonicalRole, { icon: React.ReactNode; color: string }>
 };
 
 const FEATURES = [
-  { icon: <Sparkles size={20} color="#22d15a" />, bg: 'rgba(34, 209, 90, 0.12)', label: 'Sankofa AI', sub: 'Ushauri wa AI' },
-  { icon: <Leaf size={20} color="#22d15a" />,     bg: 'rgba(34, 209, 90, 0.12)', label: 'Crop Scan',  sub: 'Tambua magonjwa' },
+  { icon: <Sparkles size={20} color="#2E6F40" />, bg: 'rgba(46, 111, 64, 0.12)', label: 'Sankofa AI', sub: 'Ushauri wa AI' },
+  { icon: <Leaf size={20} color="#2E6F40" />,     bg: 'rgba(46, 111, 64, 0.12)', label: 'Crop Scan',  sub: 'Tambua magonjwa' },
   { icon: <TrendingUp size={20} color="#3b82f6" />,bg:'rgba(59,130,246,0.12)', label: 'Soko',       sub: 'Bei za sasa' },
   { icon: <ShieldCheck size={20} color="#f59e0b" />,bg:'rgba(245,158,11,0.12)',label: 'Bima',       sub: 'Ulinzi wa mazao' },
 ];
@@ -887,7 +887,7 @@ function DoneStep({ t, name, role, lang }: any) {
 
       {/* ID card preview */}
       <LinearGradient
-        colors={isDark ? ['rgba(34, 209, 90, 0.12)', 'rgba(34, 209, 90, 0.03)'] : ['#F0FAF2', '#FFFFFF']}
+        colors={isDark ? ['rgba(46, 111, 64, 0.12)', 'rgba(46, 111, 64, 0.03)'] : ['#F0FAF2', '#FFFFFF']}
         style={[s.idCard, { borderColor: colors.border }]}
       >
         <View style={s.idRow}>
@@ -932,8 +932,8 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
     backText: { color: colors.textMute, fontSize: 14, fontFamily: 'Inter_600SemiBold' },
     progressPills: { flexDirection: 'row', gap: 5 },
     progressPill: { width: 20, height: 4, borderRadius: 2, backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' },
-    progressActive: { backgroundColor: '#22d15a', width: 32 },
-    progressDone: { backgroundColor: 'rgba(34, 209, 90, 0.5)' },
+    progressActive: { backgroundColor: '#2E6F40', width: 32 },
+    progressDone: { backgroundColor: 'rgba(46, 111, 64, 0.5)' },
     stepNum: { color: colors.textMute, fontSize: 12, fontFamily: 'Inter_700Bold', minWidth: 28, textAlign: 'right' },
 
     // Scroll containers
@@ -954,9 +954,9 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
 
     // Pills
     pill: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 20, borderWidth: 1, borderColor: colors.border },
-    pillActive: { borderColor: '#22d15a', backgroundColor: 'rgba(34, 209, 90, 0.15)' },
+    pillActive: { borderColor: '#2E6F40', backgroundColor: 'rgba(46, 111, 64, 0.15)' },
     pillText: { color: colors.textMute, fontSize: 13, fontFamily: 'Inter_600SemiBold' },
-    pillTextActive: { color: '#22d15a' },
+    pillTextActive: { color: '#2E6F40' },
     cropGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     cropPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: colors.border, minHeight: 44, justifyContent: 'center' },
     actBtn: { flex: 1, paddingVertical: 13, borderRadius: 12, borderWidth: 1, borderColor: colors.border, alignItems: 'center' },
@@ -970,25 +970,25 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
     ctaWrap: { borderRadius: 100, overflow: 'hidden' },
     ctaGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, paddingLeft: 28, paddingRight: 10 },
     ctaText: { color: '#FCFBF7', fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 0.3, flex: 1 },
-    ctaArrow: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
+    ctaArrow: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#2E6F40', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
 
     // ── Lang step ─────────────────────────────────────────────
     langRoot: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 24, paddingBottom: 24 },
     logoWrap: { width: 96, height: 96, justifyContent: 'center', alignItems: 'center', marginBottom: 24, position: 'relative' },
     logoGrad: { width: 88, height: 88, borderRadius: 26, justifyContent: 'center', alignItems: 'center' },
-    logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(34, 209, 90, 0.3)', top: 0, left: 0 },
+    logoRing: { position: 'absolute', width: 96, height: 96, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(46, 111, 64, 0.3)', top: 0, left: 0 },
     logoImg: { width: 80, height: 80 },
     langHeadline: { color: colors.text, fontSize: 34, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -1.2, textAlign: 'center' },
     taglineRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
-    taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#22d15a' },
+    taglineDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#2E6F40' },
     langTagline: { color: colors.textMute, fontSize: 13, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 },
-    langDivider: { width: 40, height: 1.5, backgroundColor: 'rgba(34, 209, 90, 0.3)', marginVertical: 28 },
+    langDivider: { width: 40, height: 1.5, backgroundColor: 'rgba(46, 111, 64, 0.3)', marginVertical: 28 },
     langPick: { color: colors.textMute, fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: 16, alignSelf: 'flex-start' },
     langCards: { flexDirection: 'row', gap: 12, alignSelf: 'stretch' },
     langCard: { borderRadius: 18, borderWidth: 1.5, borderColor: colors.border, paddingVertical: 20, paddingHorizontal: 16, alignItems: 'center', gap: 10, overflow: 'hidden' },
     langFlag: { fontSize: 32 },
     langLabel: { color: colors.text, fontSize: 15, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
-    langCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#22d15a', justifyContent: 'center', alignItems: 'center' },
+    langCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#2E6F40', justifyContent: 'center', alignItems: 'center' },
     langCheckEmpty: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: colors.border },
     langCtaWrap: { alignSelf: 'stretch', borderRadius: 16, overflow: 'hidden', marginTop: 28 },
     langCta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 17 },
@@ -996,7 +996,7 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
     langFootnote: { color: colors.textMute, fontSize: 11, fontFamily: 'Inter_400Regular', marginTop: 16, textAlign: 'center' },
 
     // ── Welcome step ──────────────────────────────────────────
-    welcomeLogoWrap: { width: 80, height: 80, borderRadius: 20, overflow: 'hidden', marginBottom: 22, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.25)' },
+    welcomeLogoWrap: { width: 80, height: 80, borderRadius: 20, overflow: 'hidden', marginBottom: 22, borderWidth: 1, borderColor: 'rgba(46, 111, 64, 0.25)' },
     welcomeLogoBg: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     welcomeLogoImg: { width: 60, height: 60 },
     featureGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 24 },
@@ -1013,15 +1013,15 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
     roleRadio: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
 
     // ── Done step ─────────────────────────────────────────────
-    doneRingOuter: { width: 100, height: 100, borderRadius: 50, padding: 3, backgroundColor: 'rgba(34, 209, 90, 0.15)' },
+    doneRingOuter: { width: 100, height: 100, borderRadius: 50, padding: 3, backgroundColor: 'rgba(46, 111, 64, 0.15)' },
     doneRingInner: { flex: 1, borderRadius: 47, justifyContent: 'center', alignItems: 'center' },
-    idCard: { alignSelf: 'stretch', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.2)', padding: 18, marginTop: 28 },
+    idCard: { alignSelf: 'stretch', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(46, 111, 64, 0.2)', padding: 18, marginTop: 28 },
     idRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
     idIconWrap: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
     idName: { color: '#fff', fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
     idRole: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Inter_600SemiBold', marginTop: 2 },
-    idBadge: { backgroundColor: 'rgba(34, 209, 90, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(34, 209, 90, 0.3)' },
-    idBadgeText: { color: '#22d15a', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
+    idBadge: { backgroundColor: 'rgba(46, 111, 64, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(46, 111, 64, 0.3)' },
+    idBadgeText: { color: '#2E6F40', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 },
     idDivider: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 14 },
     idFooter: { color: 'rgba(255,255,255,0.5)', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
     methodToggle: {
@@ -1104,7 +1104,7 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
       width: '100%',
       backgroundColor: 'rgba(10, 61, 24, 0.62)',
       borderWidth: 1.5,
-      borderColor: 'rgba(34, 209, 90, 0.32)',
+      borderColor: 'rgba(46, 111, 64, 0.32)',
     },
     welcomeCtaInner: {
       flexDirection: 'row',
@@ -1124,7 +1124,7 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
       width: 52,
       height: 52,
       borderRadius: 26,
-      backgroundColor: '#22d15a',
+      backgroundColor: '#2E6F40',
       justifyContent: 'center',
       alignItems: 'center',
       flexShrink: 0,
@@ -1165,7 +1165,7 @@ function createStyles(colors: ReturnType<typeof useTheme>["colors"], isDark: boo
       borderRadius: 17,
     },
     welcomeLangTabActive: {
-      backgroundColor: '#22d15a',
+      backgroundColor: '#2E6F40',
     },
     welcomeLangTabText: {
       color: 'rgba(252, 251, 247, 0.6)',

@@ -23,7 +23,7 @@ const { width: SW } = Dimensions.get('window');
 
 // ─── Species config ───────────────────────────────────────────────────────────
 const SPECIES: { key: LivestockSpecies; label: string; swahili: string; color: string }[] = [
-  { key: 'cattle', label: 'Cattle', swahili: 'Ng\'ombe', color: '#22d15a' },
+  { key: 'cattle', label: 'Cattle', swahili: 'Ng\'ombe', color: '#2E6F40' },
   { key: 'goat',   label: 'Goat',   swahili: 'Mbuzi',    color: '#f59e0b' },
   { key: 'sheep',  label: 'Sheep',  swahili: 'Kondoo',   color: '#8b5cf6' },
   { key: 'poultry',label: 'Poultry',swahili: 'Kuku',     color: '#3b82f6' },
@@ -31,7 +31,7 @@ const SPECIES: { key: LivestockSpecies; label: string; swahili: string; color: s
 ];
 
 const HEALTH: { key: LivestockAnimal['healthStatus']; label: string; color: string; icon: any }[] = [
-  { key: 'healthy',   label: 'Mzima',     color: '#22d15a', icon: CheckCircle2 },
+  { key: 'healthy',   label: 'Mzima',     color: '#2E6F40', icon: CheckCircle2 },
   { key: 'attention', label: 'Tahadhari', color: '#f59e0b', icon: AlertTriangle },
   { key: 'sick',      label: 'Mgonjwa',   color: '#ef4444', icon: HeartPulse },
 ];
@@ -230,7 +230,7 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
 
   const vacDays = a.nextVaccineDue ? daysUntil(a.nextVaccineDue) : null;
   const vacColor = vacDays !== null
-    ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#22d15a')
+    ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#2E6F40')
     : colors.textMute;
   // Urgency fill: 0 = far away, 1 = overdue
   const vacUrgency = vacDays !== null
@@ -380,9 +380,9 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
             style={[ac.expandedBox, { borderTopColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }]}
           >
             {/* RIFT HerdTag System Overlay Info */}
-            <View style={{ marginBottom: 12, padding: 10, backgroundColor: 'rgba(34, 209, 90, 0.05)', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(34,209,90,0.2)' }}>
+            <View style={{ marginBottom: 12, padding: 10, backgroundColor: 'rgba(46, 111, 64, 0.05)', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.2)' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                <Cpu size={14} color="#22d15a" />
+                <Cpu size={14} color="#2E6F40" />
                 <Text style={{ fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>RIFT HerdTag LoRa ear tag</Text>
               </View>
               <Detail label="Serial Number" value={tagSerialNumber} />
@@ -405,7 +405,7 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
               
               {/* Visual chart overlay */}
               <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, marginTop: 10, letterSpacing: 0.5 }}>RUMINATION PATTERN (PAST 6 HOURS)</Text>
-              <VitalTrendChart data={a.healthStatus === 'sick' ? [45, 43, 40, 42, 41, 42] : [62, 65, 60, 61, 63, 64]} color="#22d15a" />
+              <VitalTrendChart data={a.healthStatus === 'sick' ? [45, 43, 40, 42, 41, 42] : [62, 65, 60, 61, 63, 64]} color="#2E6F40" />
               
               <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, marginTop: 6, letterSpacing: 0.5 }}>HEAT STRESS PROFILE (BODY TEMP TREND)</Text>
               <VitalTrendChart data={a.healthStatus === 'sick' ? [38.6, 38.9, 39.2, 39.7, 40.1, 40.2] : [38.5, 38.6, 38.5, 38.6, 38.7, 38.6]} color="#ef4444" />
@@ -473,7 +473,7 @@ export default function LivestockScreen() {
           <View style={{ paddingHorizontal: 24, gap: 12 }}>
             <Animated.View entering={FadeInDown}>
               <GlassCard style={s.summaryCard}>
-                <SummaryPill count={healthy}   label="Wazima"     color="#22d15a" />
+                <SummaryPill count={healthy}   label="Wazima"     color="#2E6F40" />
                 <SummaryPill count={attention} label="Tahadhari"  color="#f59e0b" />
                 <SummaryPill count={sick}      label="Wagonjwa"   color="#ef4444" />
                 {dueSoon.length > 0 && <SummaryPill count={dueSoon.length} label="Chanjo Hivi Karibuni" color="#3b82f6" />}
@@ -615,14 +615,14 @@ function RIFTHerdTagSection({ animals }: { animals: LivestockAnimal[] }) {
       <View style={{ paddingHorizontal: 24, gap: 10 }}>
 
         {/* Feature pills */}
-        <View style={[rt.featureCard, { backgroundColor: isDark ? 'rgba(34,209,90,0.06)' : 'rgba(34,209,90,0.04)', borderColor: '#22d15a30' }]}>
+        <View style={[rt.featureCard, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.06)' : 'rgba(46, 111, 64,0.04)', borderColor: '#2E6F4030' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <View style={[rt.tagIconBg, { backgroundColor: '#22d15a18' }]}>
+            <View style={[rt.tagIconBg, { backgroundColor: '#2E6F4018' }]}>
               <Text style={{ fontSize: 16 }}>🏷️</Text>
             </View>
             <View>
               <Text style={[rt.tagTitle, { color: colors.text }]}>RIFT HerdTag™</Text>
-              <Text style={[rt.tagSub, { color: '#22d15a' }]}>Smart Ear Tag · 4G + BLE + GPS</Text>
+              <Text style={[rt.tagSub, { color: '#2E6F40' }]}>Smart Ear Tag · 4G + BLE + GPS</Text>
             </View>
           </View>
           <View style={rt.featureGrid}>
@@ -644,20 +644,20 @@ function RIFTHerdTagSection({ animals }: { animals: LivestockAnimal[] }) {
           const sp = SPECIES.find((x) => x.key === a.species);
           return (
             <GlassCard key={a.id} style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[rt.animalIcon, { backgroundColor: (sp?.color ?? '#22d15a') + '18' }]}>
-                <SpeciesIcon species={a.species} size={18} color={sp?.color ?? '#22d15a'} />
+              <View style={[rt.animalIcon, { backgroundColor: (sp?.color ?? '#2E6F40') + '18' }]}>
+                <SpeciesIcon species={a.species} size={18} color={sp?.color ?? '#2E6F40'} />
               </View>
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={[rt.animalTag, { color: colors.text }]}>{a.tag}{a.name ? ` · ${a.name}` : ''}</Text>
-                <Text style={[rt.animalSub, { color: isReg ? '#22d15a' : colors.textMute }]}>
+                <Text style={[rt.animalSub, { color: isReg ? '#2E6F40' : colors.textMute }]}>
                   {isReg ? '📡 RIFT tag imeunganishwa · Ikiangaliwa' : 'Haijaunganishwa na RIFT tag'}
                 </Text>
               </View>
               <TouchableOpacity
                 onPress={() => toggleTag(a.id)}
                 style={[rt.regBtn, {
-                  backgroundColor: isReg ? '#22d15a' : colors.primary + '15',
-                  borderColor: isReg ? '#22d15a' : colors.primary + '40',
+                  backgroundColor: isReg ? '#2E6F40' : colors.primary + '15',
+                  borderColor: isReg ? '#2E6F40' : colors.primary + '40',
                 }]}
               >
                 <Text style={[rt.regText, { color: isReg ? '#000' : colors.primary }]}>
