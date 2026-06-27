@@ -9,9 +9,18 @@ export type Region = {
   longitudeDelta: number;
 };
 
-export function MapView({ style, children, region }: { style?: any; children?: React.ReactNode; mapType?: string; region?: Region }) {
+export function MapView({
+  style,
+  children,
+  region,
+}: {
+  style?: any;
+  children?: React.ReactNode;
+  mapType?: string;
+  region?: Region;
+}) {
   // Default coordinates to Tanzania farm center if not provided
-  const lat = region?.latitude ?? -6.8280;
+  const lat = region?.latitude ?? -6.828;
   const lng = region?.longitude ?? 37.6695;
   const zoom = 14;
 
@@ -68,7 +77,9 @@ export function MapView({ style, children, region }: { style?: any; children?: R
   );
 }
 
-export function Polygon(_props: any) { return null; }
+export function Polygon(_props: any) {
+  return null;
+}
 export function Marker({ children }: { children?: React.ReactNode }) {
   return <>{children}</>;
 }

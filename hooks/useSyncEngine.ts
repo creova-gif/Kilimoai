@@ -13,18 +13,20 @@ import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { getSupabase } from '../lib/supabase';
 
-async function pushItem(item: ReturnType<typeof useKilimoStore.getState>['syncQueue'][0]): Promise<boolean> {
+async function pushItem(
+  item: ReturnType<typeof useKilimoStore.getState>['syncQueue'][0]
+): Promise<boolean> {
   try {
     const supabase = getSupabase();
     if (!supabase) return false;
-    
+
     const { error } = await supabase.from('offline_sync_logs').insert({
       sync_id: item.id,
       event_type: item.type,
       payload: item.payload,
       created_at: item.createdAt,
     });
-    
+
     if (error) {
       console.error('Supabase sync error:', error);
       return false;

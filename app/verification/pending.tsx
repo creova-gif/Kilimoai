@@ -16,11 +16,12 @@ export default function VerificationPending() {
         <View style={styles.iconWrap}>
           <Clock size={64} color="#f59e0b" />
         </View>
-        
+
         <GlassCard style={styles.card}>
           <Text style={[styles.title, { color: colors.text }]}>Verification Pending</Text>
           <Text style={[styles.body, { color: colors.textMute }]}>
-            Your identity documents have been submitted securely and are currently under review. This usually takes 24-48 hours.
+            Your identity documents have been submitted securely and are currently under review.
+            This usually takes 24-48 hours.
           </Text>
         </GlassCard>
 

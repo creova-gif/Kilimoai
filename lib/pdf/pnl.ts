@@ -14,25 +14,28 @@ import { Platform } from 'react-native';
 import { AgroID } from '../../store/useKilimoStore';
 
 export interface PnlLineItem {
-  date: string;          // ISO
+  date: string; // ISO
   category: string;
   description: string;
-  amount: number;        // positive = income, negative = expense
+  amount: number; // positive = income, negative = expense
 }
 
 export interface PnlReport {
   agroId: AgroID;
-  seasonLabel: string;   // e.g. "Msimu wa Mvua Ndefu 2026"
+  seasonLabel: string; // e.g. "Msimu wa Mvua Ndefu 2026"
   items: PnlLineItem[];
   generatedAt: string;
-  qrPayload: string;     // String to encode in the QR — usually a verification URL
+  qrPayload: string; // String to encode in the QR — usually a verification URL
 }
 
 const fmtTZS = (n: number) =>
   new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Math.abs(n));
 
 function htmlEscape(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  return s.replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!
+  );
 }
 
 /**
@@ -49,7 +52,10 @@ function renderHtml(r: PnlReport): string {
   const income = r.items.filter((i) => i.amount > 0).reduce((s, i) => s + i.amount, 0);
   const expense = r.items.filter((i) => i.amount < 0).reduce((s, i) => s + Math.abs(i.amount), 0);
   const net = income - expense;
-  const generated = new Date(r.generatedAt).toLocaleString('en-GB', { dateStyle: 'long', timeStyle: 'short' });
+  const generated = new Date(r.generatedAt).toLocaleString('en-GB', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  });
 
   const rows = r.items
     .slice()

@@ -34,14 +34,13 @@ export async function processSyncQueue() {
   for (const item of store.syncQueue) {
     try {
       console.log(`[OfflineManager] Syncing item: ${item.type} [${item.id}]`);
-      
+
       // Simulate network request to backend
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       // Successfully synced! Remove from queue.
       store.dequeueAction(item.id);
       store.removeFromSyncQueue(item.id); // for safety
-      
     } catch (err) {
       console.warn(`[OfflineManager] Failed to sync item ${item.id}`, err);
       // It will remain in the queue to be retried next time

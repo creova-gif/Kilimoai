@@ -7,8 +7,16 @@
 
 import React, { useEffect } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView,
-  Dimensions, StatusBar, Platform, RefreshControl,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  Dimensions,
+  StatusBar,
+  Platform,
+  RefreshControl,
 } from 'react-native';
 import { ChevronLeft, Sparkles } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,8 +25,12 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
 import Animated, {
-  useSharedValue, useAnimatedStyle,
-  withRepeat, withTiming, withSequence, Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+  Easing,
 } from 'react-native-reanimated';
 
 const { width: SW, height: SH } = Dimensions.get('window');
@@ -30,9 +42,10 @@ const NeuralOrb = ({ color, size, x, y, delay }: any) => {
     progress.value = withRepeat(
       withSequence(
         withTiming(1, { duration, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration, easing: Easing.inOut(Easing.ease) })
       ),
-      -1, true,
+      -1,
+      true
     );
   }, []);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -67,8 +80,14 @@ export interface PageScaffoldProps {
 }
 
 export default function PageScaffold({
-  title, subtitle, badge, headerRight,
-  scroll = true, refreshing, onRefresh, children,
+  title,
+  subtitle,
+  badge,
+  headerRight,
+  scroll = true,
+  refreshing,
+  onRefresh,
+  children,
 }: PageScaffoldProps) {
   const { colors, isDark } = useTheme();
   const router = useRouter();
@@ -77,25 +96,38 @@ export default function PageScaffold({
     <>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.back(); }}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.back();
+          }}
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <View style={[styles.iconBtn, {
-            borderColor: colors.border,
-            backgroundColor: isDark ? 'rgba(34,209,90,0.08)' : 'rgba(34,209,90,0.06)',
-          }]}>
+          <View
+            style={[
+              styles.iconBtn,
+              {
+                borderColor: colors.border,
+                backgroundColor: isDark ? 'rgba(34,209,90,0.08)' : 'rgba(34,209,90,0.06)',
+              },
+            ]}
+          >
             <ChevronLeft size={22} color={colors.text} />
           </View>
         </TouchableOpacity>
 
         <View style={{ flex: 1, alignItems: 'center' }}>
           {badge ? (
-            <View style={[styles.badge, {
-              backgroundColor: colors.primary + '18',
-              borderColor: colors.primary + '50',
-            }]}>
+            <View
+              style={[
+                styles.badge,
+                {
+                  backgroundColor: colors.primary + '18',
+                  borderColor: colors.primary + '50',
+                },
+              ]}
+            >
               <Sparkles size={11} color={colors.primary} />
               <Text style={[styles.badgeText, { color: colors.primary }]}>{badge}</Text>
             </View>
@@ -139,9 +171,13 @@ export default function PageScaffold({
             contentContainerStyle={{ paddingBottom: 120 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
-              onRefresh
-                ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
-                : undefined
+              onRefresh ? (
+                <RefreshControl
+                  refreshing={!!refreshing}
+                  onRefresh={onRefresh}
+                  tintColor={colors.primary}
+                />
+              ) : undefined
             }
           >
             {body}
@@ -176,13 +212,23 @@ export function GlassCard({ children, style }: { children: React.ReactNode; styl
 }
 
 /** Standardised section header. */
-export function SectionHeader({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
+export function SectionHeader({
+  title,
+  action,
+  onAction,
+}: {
+  title: string;
+  action?: string;
+  onAction?: () => void;
+}) {
   const { colors } = useTheme();
   return (
     <View style={scStyles.sectionHeader}>
       <View style={scStyles.sectionTitleRow}>
         <View style={[scStyles.sectionAccent, { backgroundColor: colors.primary }]} />
-        <Text style={[scStyles.sectionTitle, { color: colors.textMute }]}>{title.toUpperCase()}</Text>
+        <Text style={[scStyles.sectionTitle, { color: colors.textMute }]}>
+          {title.toUpperCase()}
+        </Text>
       </View>
       {action ? (
         <TouchableOpacity onPress={onAction} activeOpacity={0.7}>
@@ -194,8 +240,18 @@ export function SectionHeader({ title, action, onAction }: { title: string; acti
 }
 
 /** Standardised empty state. */
-export function EmptyState({ icon, title, body, cta, onCta }: {
-  icon: React.ReactNode; title: string; body: string; cta?: string; onCta?: () => void;
+export function EmptyState({
+  icon,
+  title,
+  body,
+  cta,
+  onCta,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  cta?: string;
+  onCta?: () => void;
 }) {
   const { colors } = useTheme();
   return (
@@ -205,7 +261,10 @@ export function EmptyState({ icon, title, body, cta, onCta }: {
       <Text style={[scStyles.emptyBody, { color: colors.textMute }]}>{body}</Text>
       {cta ? (
         <TouchableOpacity
-          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); onCta?.(); }}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            onCta?.();
+          }}
           style={[scStyles.emptyCta, { backgroundColor: colors.primary }]}
           activeOpacity={0.85}
         >
@@ -220,20 +279,38 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   orb: { position: 'absolute' },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 24, paddingTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 16,
   },
   iconBtn: {
-    width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, overflow: 'hidden',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    overflow: 'hidden',
   },
   badge: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
   },
   badgeText: { fontSize: 10, fontFamily: 'Inter_900Black', letterSpacing: 1.5 },
   titleBlock: { paddingHorizontal: 24, paddingTop: 18, paddingBottom: 8 },
-  title: { fontSize: 34, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, lineHeight: 40 },
+  title: {
+    fontSize: 34,
+    fontFamily: 'InstrumentSerif_400Regular',
+    letterSpacing: -0.5,
+    lineHeight: 40,
+  },
   subtitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   subtitleDot: { width: 5, height: 5, borderRadius: 3 },
   subtitle: { fontSize: 13, fontFamily: 'Inter_500Medium' },
@@ -242,18 +319,35 @@ const styles = StyleSheet.create({
 
 const scStyles = StyleSheet.create({
   glass: {
-    borderRadius: 20, borderWidth: StyleSheet.hairlineWidth * 2, overflow: 'hidden',
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    overflow: 'hidden',
   },
   sectionHeader: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 24, paddingTop: 20, paddingBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 8,
   },
   sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   sectionAccent: { width: 3, height: 12, borderRadius: 2 },
   sectionTitle: { fontSize: 11, fontFamily: 'Inter_900Black', letterSpacing: 1.5 },
   sectionAction: { fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.3 },
-  emptyTitle: { fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', marginBottom: 6, textAlign: 'center' },
-  emptyBody: { fontSize: 13, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 19, maxWidth: 260 },
+  emptyTitle: {
+    fontSize: 18,
+    fontFamily: 'InstrumentSerif_400Regular',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  emptyBody: {
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    textAlign: 'center',
+    lineHeight: 19,
+    maxWidth: 260,
+  },
   emptyCta: { marginTop: 18, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 14 },
   emptyCtaText: { color: '#000', fontSize: 13, fontFamily: 'Inter_900Black', letterSpacing: 0.5 },
 });

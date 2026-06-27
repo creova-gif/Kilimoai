@@ -24,13 +24,13 @@ export function Card({
     return (
       <View
         style={[
-          styles.card, 
-          { 
-            backgroundColor: colors.card, 
+          styles.card,
+          {
+            backgroundColor: colors.card,
             borderColor: colors.border,
-            ...shadows.sm
-          }, 
-          style
+            ...shadows.sm,
+          },
+          style,
         ]}
         {...rest}
       >
@@ -44,12 +44,12 @@ export function Card({
       intensity={isDark ? 20 : 60}
       tint={tint || (isDark ? 'dark' : 'light')}
       style={[
-        styles.card, 
-        { 
+        styles.card,
+        {
           borderColor: colors.border,
-          backgroundColor: isDark ? 'rgba(19, 23, 20, 0.45)' : 'rgba(255, 255, 255, 0.65)'
-        }, 
-        style
+          backgroundColor: isDark ? 'rgba(19, 23, 20, 0.45)' : 'rgba(255, 255, 255, 0.65)',
+        },
+        style,
       ]}
       {...rest}
     >

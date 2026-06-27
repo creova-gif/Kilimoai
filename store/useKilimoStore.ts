@@ -44,12 +44,12 @@ export interface SyncQueueItem {
 }
 
 export interface FarmVitals {
-  soilHealth: number;       // 0–100
-  moisture: number;         // 0–100
-  temperature: number;      // °C
-  yieldEstimate: number;    // tonnes
+  soilHealth: number; // 0–100
+  moisture: number; // 0–100
+  temperature: number; // °C
+  yieldEstimate: number; // tonnes
   lastUpdated: string;
-  soilPh: number;           // 0-14
+  soilPh: number; // 0-14
 }
 
 export interface Notification {
@@ -109,7 +109,7 @@ interface KilimoState {
   themePreference: ThemePreference;
   farmProfile: FarmProfile | null;
   registeredIds: string[];
-  
+
   // Network / Offline
   isOffline: boolean;
   // Offline Sync
@@ -119,7 +119,7 @@ interface KilimoState {
 
   // Farm Intelligence
   farmVitals: FarmVitals;
-  
+
   // Notifications
   notifications: Notification[];
   unreadCount: number;
@@ -268,10 +268,10 @@ export const useKilimoStore = create<KilimoState>()(
       sankofaHistory: [
         {
           id: '1',
-          text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
+          text: 'Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?',
           sender: 'ai',
           timestamp: new Date().toISOString(),
-        }
+        },
       ],
 
       activities: [],
@@ -319,7 +319,7 @@ export const useKilimoStore = create<KilimoState>()(
         set((state) => ({
           syncQueue: state.syncQueue.filter((item) => item.id !== id),
         })),
-      
+
       // ── Offline Actions ────────────────────────────────────────
       setOnlineStatus: (status) => set({ isOnline: status }),
       setLastSyncedAt: (timestamp) => set({ lastSyncedAt: timestamp }),
@@ -368,9 +368,7 @@ export const useKilimoStore = create<KilimoState>()(
 
       markNotificationRead: (id) =>
         set((state) => ({
-          notifications: state.notifications.map((n) =>
-            n.id === id ? { ...n, read: true } : n
-          ),
+          notifications: state.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
           unreadCount: Math.max(0, state.unreadCount - 1),
         })),
 
@@ -389,8 +387,7 @@ export const useKilimoStore = create<KilimoState>()(
           };
         }),
 
-      clearNotifications: () =>
-        set({ notifications: [], unreadCount: 0 }),
+      clearNotifications: () => set({ notifications: [], unreadCount: 0 }),
 
       // ── Wallet Actions ─────────────────────────────────────────
       updateWallet: (patch) => set((s) => ({ wallet: { ...s.wallet, ...patch } })),
@@ -405,29 +402,34 @@ export const useKilimoStore = create<KilimoState>()(
       // ── AI Settings Actions ────────────────────────────────────
       setCustomSystemPrompt: (customSystemPrompt) => set({ customSystemPrompt }),
       addSeededDocument: (doc) => set((s) => ({ seededDocuments: [...s.seededDocuments, doc] })),
-      removeSeededDocument: (doc) => set((s) => ({ seededDocuments: s.seededDocuments.filter((d) => d !== doc) })),
-      completeModule: (modId) => set((s) => {
-        const nextModules = s.completedModules.includes(modId)
-          ? s.completedModules
-          : [...s.completedModules, modId];
+      removeSeededDocument: (doc) =>
+        set((s) => ({ seededDocuments: s.seededDocuments.filter((d) => d !== doc) })),
+      completeModule: (modId) =>
+        set((s) => {
+          const nextModules = s.completedModules.includes(modId)
+            ? s.completedModules
+            : [...s.completedModules, modId];
 
-        const isCertifiedNow = nextModules.length >= 5;
-        const updatedAgroId = s.agroId ? {
-          ...s.agroId,
-          certifications: s.agroId.certifications?.includes('Sankofa AI Certified')
-            ? s.agroId.certifications
-            : [...(s.agroId.certifications || []), 'Sankofa AI Certified']
-        } : null;
+          const isCertifiedNow = nextModules.length >= 5;
+          const updatedAgroId = s.agroId
+            ? {
+                ...s.agroId,
+                certifications: s.agroId.certifications?.includes('Sankofa AI Certified')
+                  ? s.agroId.certifications
+                  : [...(s.agroId.certifications || []), 'Sankofa AI Certified'],
+              }
+            : null;
 
-        return {
-          completedModules: nextModules,
-          aiCertified: isCertifiedNow ? true : s.aiCertified,
-          agroId: isCertifiedNow ? updatedAgroId : s.agroId
-        };
-      }),
+          return {
+            completedModules: nextModules,
+            aiCertified: isCertifiedNow ? true : s.aiCertified,
+            agroId: isCertifiedNow ? updatedAgroId : s.agroId,
+          };
+        }),
       setAiAccuracy: (aiAccuracy) => set({ aiAccuracy }),
-      
-      addCropHealthLog: (log) => set((s) => ({ cropHealthLogs: [log, ...s.cropHealthLogs].slice(0, 100) })),
+
+      addCropHealthLog: (log) =>
+        set((s) => ({ cropHealthLogs: [log, ...s.cropHealthLogs].slice(0, 100) })),
       clearCropHealthLogs: () => set({ cropHealthLogs: [] }),
       setActiveExcelData: (activeExcelData) => set({ activeExcelData }),
     }),

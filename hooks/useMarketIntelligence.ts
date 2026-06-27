@@ -30,35 +30,67 @@ export interface MarketListing {
 // Seeded mock data — replaced by Supabase query in production
 const SEED_LISTINGS: MarketListing[] = [
   {
-    id: 'm1', cropName: 'Maize', cropNameSw: 'Mahindi',
-    quantityKg: 5000, pricePerKg: 480, currency: 'TZS',
-    location: 'Mbeya', qualityGrade: 'A', status: 'active',
-    smartContract: true, escrowFunded: false,
-    trend: 'up', changePercent: 12.4,
+    id: 'm1',
+    cropName: 'Maize',
+    cropNameSw: 'Mahindi',
+    quantityKg: 5000,
+    pricePerKg: 480,
+    currency: 'TZS',
+    location: 'Mbeya',
+    qualityGrade: 'A',
+    status: 'active',
+    smartContract: true,
+    escrowFunded: false,
+    trend: 'up',
+    changePercent: 12.4,
     createdAt: new Date().toISOString(),
   },
   {
-    id: 'm2', cropName: 'Coffee', cropNameSw: 'Kahawa',
-    quantityKg: 200, pricePerKg: 8200, currency: 'TZS',
-    location: 'Kilimanjaro', qualityGrade: 'A', status: 'active',
-    smartContract: true, escrowFunded: true,
-    trend: 'stable', changePercent: 0.8,
+    id: 'm2',
+    cropName: 'Coffee',
+    cropNameSw: 'Kahawa',
+    quantityKg: 200,
+    pricePerKg: 8200,
+    currency: 'TZS',
+    location: 'Kilimanjaro',
+    qualityGrade: 'A',
+    status: 'active',
+    smartContract: true,
+    escrowFunded: true,
+    trend: 'stable',
+    changePercent: 0.8,
     createdAt: new Date().toISOString(),
   },
   {
-    id: 'm3', cropName: 'Beans', cropNameSw: 'Maharage',
-    quantityKg: 800, pricePerKg: 1200, currency: 'TZS',
-    location: 'Arusha', qualityGrade: 'B', status: 'active',
-    smartContract: false, escrowFunded: false,
-    trend: 'down', changePercent: -3.2,
+    id: 'm3',
+    cropName: 'Beans',
+    cropNameSw: 'Maharage',
+    quantityKg: 800,
+    pricePerKg: 1200,
+    currency: 'TZS',
+    location: 'Arusha',
+    qualityGrade: 'B',
+    status: 'active',
+    smartContract: false,
+    escrowFunded: false,
+    trend: 'down',
+    changePercent: -3.2,
     createdAt: new Date().toISOString(),
   },
   {
-    id: 'm4', cropName: 'Rice', cropNameSw: 'Mchele',
-    quantityKg: 2500, pricePerKg: 1850, currency: 'TZS',
-    location: 'Morogoro', qualityGrade: 'A', status: 'active',
-    smartContract: false, escrowFunded: false,
-    trend: 'up', changePercent: 5.1,
+    id: 'm4',
+    cropName: 'Rice',
+    cropNameSw: 'Mchele',
+    quantityKg: 2500,
+    pricePerKg: 1850,
+    currency: 'TZS',
+    location: 'Morogoro',
+    qualityGrade: 'A',
+    status: 'active',
+    smartContract: false,
+    escrowFunded: false,
+    trend: 'up',
+    changePercent: 5.1,
     createdAt: new Date().toISOString(),
   },
 ];
@@ -123,7 +155,7 @@ export function useMarketIntelligence() {
             setListings((prev) => [mapDbToListing(payload.new), ...prev]);
           } else if (payload.eventType === 'UPDATE') {
             setListings((prev) =>
-              prev.map((l) => l.id === payload.new.id ? mapDbToListing(payload.new) : l)
+              prev.map((l) => (l.id === payload.new.id ? mapDbToListing(payload.new) : l))
             );
           } else if (payload.eventType === 'DELETE') {
             setListings((prev) => prev.filter((l) => l.id !== payload.old.id));
@@ -133,31 +165,39 @@ export function useMarketIntelligence() {
       )
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // ── Create listing (offline-aware) ────────────────────────────────────────
-  const createListing = useCallback(async (listing: Omit<MarketListing, 'id' | 'createdAt' | 'trend' | 'changePercent'>) => {
-    const payload = { ...listing, created_at: new Date().toISOString() };
+  const createListing = useCallback(
+    async (listing: Omit<MarketListing, 'id' | 'createdAt' | 'trend' | 'changePercent'>) => {
+      const payload = { ...listing, created_at: new Date().toISOString() };
 
-    if (isOffline) {
-      addToSyncQueue({ type: 'market_order', payload });
-      // Optimistically add to local state
-      setListings((prev) => [{
-        ...listing,
-        id: `local_${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        trend: 'stable',
-        changePercent: 0,
-      }, ...prev]);
-      return;
-    }
+      if (isOffline) {
+        addToSyncQueue({ type: 'market_order', payload });
+        // Optimistically add to local state
+        setListings((prev) => [
+          {
+            ...listing,
+            id: `local_${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            trend: 'stable',
+            changePercent: 0,
+          },
+          ...prev,
+        ]);
+        return;
+      }
 
-    if (supabase) {
-      const { error } = await supabase.from('market_listings').insert(payload);
-      if (error) throw error;
-    }
-  }, [isOffline, addToSyncQueue]);
+      if (supabase) {
+        const { error } = await supabase.from('market_listings').insert(payload);
+        if (error) throw error;
+      }
+    },
+    [isOffline, addToSyncQueue]
+  );
 
   return {
     listings,

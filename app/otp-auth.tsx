@@ -5,9 +5,17 @@
  */
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  StyleSheet, View, Text, TextInput, TouchableOpacity,
-  SafeAreaView, StatusBar, KeyboardAvoidingView, Platform,
-  ActivityIndicator, Keyboard,
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -44,9 +52,7 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
   const updateAgroId = useKilimoStore((s) => s.updateAgroId);
   const isSw = language === 'sw';
 
-  const [step, setStep] = useState<AuthStep>(
-    SUPABASE_CONFIGURED ? 'phone' : 'not_configured'
-  );
+  const [step, setStep] = useState<AuthStep>(SUPABASE_CONFIGURED ? 'phone' : 'not_configured');
   const [phone, setPhone] = useState('+255');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,14 +61,19 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
   const cooldownRef = useRef<any>(null);
 
   useEffect(() => {
-    return () => { if (cooldownRef.current) clearInterval(cooldownRef.current); };
+    return () => {
+      if (cooldownRef.current) clearInterval(cooldownRef.current);
+    };
   }, []);
 
   const startCooldown = () => {
     setCooldown(60);
     cooldownRef.current = setInterval(() => {
       setCooldown((c) => {
-        if (c <= 1) { clearInterval(cooldownRef.current); return 0; }
+        if (c <= 1) {
+          clearInterval(cooldownRef.current);
+          return 0;
+        }
         return c - 1;
       });
     }, 1000);
@@ -170,9 +181,19 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
                 : "We'll send you a verification code by SMS."}
             </Text>
             <TextInput
-              style={[s.input, { color: colors.text, borderColor: error ? '#ef4444' : colors.border, backgroundColor: colors.background }]}
+              style={[
+                s.input,
+                {
+                  color: colors.text,
+                  borderColor: error ? '#ef4444' : colors.border,
+                  backgroundColor: colors.background,
+                },
+              ]}
               value={phone}
-              onChangeText={(t) => { setPhone(t); setError(''); }}
+              onChangeText={(t) => {
+                setPhone(t);
+                setError('');
+              }}
               keyboardType="phone-pad"
               placeholder="+255 712 000 000"
               placeholderTextColor={colors.textMute}
@@ -187,9 +208,11 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
               disabled={loading}
               accessibilityLabel={isSw ? 'Tuma OTP' : 'Send OTP'}
             >
-              {loading
-                ? <ActivityIndicator color="#000" />
-                : <Text style={s.btnText}>{isSw ? 'Tuma Nambari' : 'Send Code'}</Text>}
+              {loading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <Text style={s.btnText}>{isSw ? 'Tuma Nambari' : 'Send Code'}</Text>
+              )}
             </TouchableOpacity>
             {onSkip && (
               <TouchableOpacity style={s.skipLink} onPress={onSkip}>
@@ -211,9 +234,20 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
               {isSw ? `Imetumwa kwa ${phone}` : `Sent to ${phone}`}
             </Text>
             <TextInput
-              style={[s.input, s.otpInput, { color: colors.text, borderColor: error ? '#ef4444' : colors.border, backgroundColor: colors.background }]}
+              style={[
+                s.input,
+                s.otpInput,
+                {
+                  color: colors.text,
+                  borderColor: error ? '#ef4444' : colors.border,
+                  backgroundColor: colors.background,
+                },
+              ]}
               value={otp}
-              onChangeText={(t) => { setOtp(t.replace(/\D/g, '')); setError(''); }}
+              onChangeText={(t) => {
+                setOtp(t.replace(/\D/g, ''));
+                setError('');
+              }}
               keyboardType="number-pad"
               placeholder="000000"
               placeholderTextColor={colors.textMute}
@@ -228,19 +262,27 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
               disabled={loading || otp.length < 6}
               accessibilityLabel={isSw ? 'Thibitisha' : 'Verify'}
             >
-              {loading
-                ? <ActivityIndicator color="#000" />
-                : <Text style={s.btnText}>{isSw ? 'Thibitisha' : 'Verify'}</Text>}
+              {loading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <Text style={s.btnText}>{isSw ? 'Thibitisha' : 'Verify'}</Text>
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               style={s.skipLink}
               onPress={cooldown === 0 ? sendOtp : undefined}
               disabled={cooldown > 0}
             >
-              <Text style={[s.skipLinkText, { color: cooldown > 0 ? colors.textMute : colors.primary }]}>
+              <Text
+                style={[s.skipLinkText, { color: cooldown > 0 ? colors.textMute : colors.primary }]}
+              >
                 {cooldown > 0
-                  ? (isSw ? `Tuma tena baada ya ${cooldown}s` : `Resend in ${cooldown}s`)
-                  : (isSw ? 'Tuma tena' : 'Resend code')}
+                  ? isSw
+                    ? `Tuma tena baada ya ${cooldown}s`
+                    : `Resend in ${cooldown}s`
+                  : isSw
+                    ? 'Tuma tena'
+                    : 'Resend code'}
               </Text>
             </TouchableOpacity>
           </>
@@ -262,12 +304,13 @@ export default function OtpAuthScreen() {
       <LinearGradient
         colors={['rgba(34,209,90,0.12)', 'transparent']}
         style={StyleSheet.absoluteFill}
-        start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 0.5 }}
       />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={s.header}>
           <TouchableOpacity
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
             style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             accessibilityLabel={isSw ? 'Rudi' : 'Back'}
           >
@@ -276,8 +319,8 @@ export default function OtpAuthScreen() {
         </View>
         <View style={s.content}>
           <OtpAuthFlow
-            onSuccess={() => router.canGoBack() ? router.back() : router.replace('/')}
-            onSkip={() => router.canGoBack() ? router.back() : router.replace('/')}
+            onSuccess={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+            onSkip={() => (router.canGoBack() ? router.back() : router.replace('/'))}
           />
         </View>
       </SafeAreaView>
@@ -286,26 +329,51 @@ export default function OtpAuthScreen() {
 }
 
 const s = StyleSheet.create({
-  root:           { flex: 1 },
-  header:         { paddingHorizontal: 20, paddingTop: Platform.OS === 'android' ? 16 : 8, paddingBottom: 12 },
-  backBtn:        { width: 42, height: 42, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  content:        { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
-  card:           { borderRadius: 20, borderWidth: 1, padding: 22 },
-  iconRow:        { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
-  cardTitle:      { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
-  cardSub:        { fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 18, lineHeight: 20 },
-  input:          { borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 13, fontSize: 16, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
-  otpInput:       { textAlign: 'center', letterSpacing: 8, fontSize: 24 },
-  errorText:      { color: '#ef4444', fontSize: 12, fontFamily: 'Inter_500Medium', marginBottom: 10 },
-  btn:            { borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 4 },
-  btnText:        { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#020617' },
-  skipLink:       { alignItems: 'center', marginTop: 14 },
-  skipLinkText:   { fontSize: 13, fontFamily: 'Inter_500Medium' },
-  notConfigured:  { borderRadius: 20, borderWidth: 1, padding: 24, alignItems: 'center', gap: 12 },
-  ncTitle:        { fontSize: 16, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
-  ncBody:         { fontSize: 13, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 20 },
-  skipBtn:        { borderWidth: 1, borderRadius: 10, paddingHorizontal: 20, paddingVertical: 10, marginTop: 4 },
-  skipText:       { fontSize: 13, fontFamily: 'Inter_500Medium' },
-  successWrap:    { borderRadius: 20, borderWidth: 1, padding: 32, alignItems: 'center', gap: 14 },
-  successText:    { fontSize: 18, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
+  root: { flex: 1 },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'android' ? 16 : 8,
+    paddingBottom: 12,
+  },
+  backBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  content: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
+  card: { borderRadius: 20, borderWidth: 1, padding: 22 },
+  iconRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
+  cardTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
+  cardSub: { fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 18, lineHeight: 20 },
+  input: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
+    marginBottom: 8,
+  },
+  otpInput: { textAlign: 'center', letterSpacing: 8, fontSize: 24 },
+  errorText: { color: '#ef4444', fontSize: 12, fontFamily: 'Inter_500Medium', marginBottom: 10 },
+  btn: { borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 4 },
+  btnText: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', color: '#020617' },
+  skipLink: { alignItems: 'center', marginTop: 14 },
+  skipLinkText: { fontSize: 13, fontFamily: 'Inter_500Medium' },
+  notConfigured: { borderRadius: 20, borderWidth: 1, padding: 24, alignItems: 'center', gap: 12 },
+  ncTitle: { fontSize: 16, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
+  ncBody: { fontSize: 13, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 20 },
+  skipBtn: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 4,
+  },
+  skipText: { fontSize: 13, fontFamily: 'Inter_500Medium' },
+  successWrap: { borderRadius: 20, borderWidth: 1, padding: 32, alignItems: 'center', gap: 14 },
+  successText: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', textAlign: 'center' },
 });

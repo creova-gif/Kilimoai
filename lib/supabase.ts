@@ -17,7 +17,7 @@ export function getSupabase() {
     const { createClient } = require('@supabase/supabase-js');
     _client = createClient(
       process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
-      process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '',
+      process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? ''
     );
     return _client;
   } catch {

@@ -61,11 +61,7 @@ export function ScreenHeader({
         )}
       </View>
 
-      {trailing && (
-        <View style={styles.trailingWrap}>
-          {trailing}
-        </View>
-      )}
+      {trailing && <View style={styles.trailingWrap}>{trailing}</View>}
     </View>
   );
 }

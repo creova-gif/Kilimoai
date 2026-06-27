@@ -25,7 +25,7 @@ export function parseExcelBase64(base64Data: string, fileName: string): ExcelPar
   const sheetNames = workbook.SheetNames;
   const firstSheetName = sheetNames[0];
   const worksheet = workbook.Sheets[firstSheetName];
-  
+
   // Convert sheet to json (header: 1 returns 2D array of rows)
   const rawRows = XLSX.utils.sheet_to_json<any[]>(worksheet, { header: 1 });
   if (rawRows.length === 0) {
@@ -35,9 +35,12 @@ export function parseExcelBase64(base64Data: string, fileName: string): ExcelPar
   // 2. Extract headers and data rows
   const headers: string[] = (rawRows[0] || []).map((h: any) => String(h || '').trim());
   const dataRowsRaw = rawRows.slice(1);
-  
+
   // Filter out completely empty rows
-  const dataRows = dataRowsRaw.filter(row => row && row.some((val: any) => val !== null && val !== undefined && String(val).trim() !== ''));
+  const dataRows = dataRowsRaw.filter(
+    (row) =>
+      row && row.some((val: any) => val !== null && val !== undefined && String(val).trim() !== '')
+  );
   const rowCount = dataRows.length;
   const columnCount = headers.length;
 
@@ -61,25 +64,25 @@ export function parseExcelBase64(base64Data: string, fileName: string): ExcelPar
 
   // 4. Compute statistics for numeric columns
   const numericSummaries: string[] = [];
-  headers.forEach(h => {
+  headers.forEach((h) => {
     const values = dataRows
-      .map(row => {
+      .map((row) => {
         const val = row[headers.indexOf(h)];
         if (val === null || val === undefined) return NaN;
         const num = Number(val);
         return isNaN(num) ? NaN : num;
       })
-      .filter(v => !isNaN(v));
+      .filter((v) => !isNaN(v));
 
     if (values.length > 0) {
       const sum = values.reduce((a, b) => a + b, 0);
       const avg = sum / values.length;
       const min = Math.min(...values);
       const max = Math.max(...values);
-      
+
       const isYield = h.toLowerCase().includes('yield') || h.toLowerCase().includes('mavuno');
       const isNitrogen = h.toLowerCase().includes('nitro') || h.toLowerCase().includes('n');
-      
+
       numericSummaries.push(
         `- **${h}**: Min=${min.toFixed(1)}, Max=${max.toFixed(1)}, Wastani (Average)=${avg.toFixed(1)}`
       );

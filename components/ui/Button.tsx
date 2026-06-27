@@ -1,5 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, TouchableOpacityProps, View } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacityProps,
+  View,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
@@ -36,11 +43,13 @@ export function Button({
   const isOutline = variant === 'outline';
   const isGhost = variant === 'ghost';
 
-  const textColor = 
-    isPrimary ? '#000' : 
-    isDestructive ? '#fff' : 
-    (isSecondary || isOutline || isGhost) ? colors.text : 
-    colors.text;
+  const textColor = isPrimary
+    ? '#000'
+    : isDestructive
+      ? '#fff'
+      : isSecondary || isOutline || isGhost
+        ? colors.text
+        : colors.text;
 
   const btnContent = (
     <View style={[styles.inner, size === 'sm' && styles.innerSm, size === 'lg' && styles.innerLg]}>
@@ -84,11 +93,21 @@ export function Button({
       {...rest}
     >
       {isPrimary ? (
-        <LinearGradient colors={[colors.primary, colors.primaryDim]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.gradient}>
+        <LinearGradient
+          colors={[colors.primary, colors.primaryDim]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}
+        >
           {btnContent}
         </LinearGradient>
       ) : isDestructive ? (
-        <LinearGradient colors={['#ef4444', '#dc2626']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.gradient}>
+        <LinearGradient
+          colors={['#ef4444', '#dc2626']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}
+        >
           {btnContent}
         </LinearGradient>
       ) : (

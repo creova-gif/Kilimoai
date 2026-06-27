@@ -9,7 +9,7 @@ export default function PersonalVerification() {
   const router = useRouter();
   const [nida, setNida] = useState('');
   const [dob, setDob] = useState('');
-  
+
   const isValid = nida.length >= 8 && dob.length >= 4;
 
   return (

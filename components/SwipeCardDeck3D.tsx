@@ -17,8 +17,14 @@
  */
 import React, { useRef, useState, useEffect } from 'react';
 import {
-  View, StyleSheet, PanResponder, Animated,
-  Dimensions, TouchableOpacity, Text, Platform,
+  View,
+  StyleSheet,
+  PanResponder,
+  Animated,
+  Dimensions,
+  TouchableOpacity,
+  Text,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight } from 'lucide-react-native';
@@ -27,20 +33,20 @@ import { useRouter } from 'expo-router';
 
 const { width: SW } = Dimensions.get('window');
 
-const CARD_W  = Math.min(SW - 64, 360);
-const CARD_H  = 200;
-const GAP     = 14;
-const STEP    = CARD_W + GAP;
-const SIDE    = (SW - CARD_W) / 2;
+const CARD_W = Math.min(SW - 64, 360);
+const CARD_H = 200;
+const GAP = 14;
+const STEP = CARD_W + GAP;
+const SIDE = (SW - CARD_W) / 2;
 
 export interface SwipeCard {
-  id:             string;
-  label:          string;
-  desc:           string;
-  emoji:          string;
+  id: string;
+  label: string;
+  desc: string;
+  emoji: string;
   gradientColors: [string, string];
-  route:          string;
-  icon:           React.ReactNode;
+  route: string;
+  icon: React.ReactNode;
 }
 
 interface Props {
@@ -48,10 +54,10 @@ interface Props {
 }
 
 export default function SwipeCardDeck3D({ cards }: Props) {
-  const router            = useRouter();
-  const activeIndexRef    = useRef(0);
+  const router = useRouter();
+  const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const translateX        = useRef(new Animated.Value(0)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
 
   // ── Hint animation — brief tease on mount ─────────────────────────────────
   useEffect(() => {
@@ -137,7 +143,7 @@ export default function SwipeCardDeck3D({ cards }: Props) {
       onPanResponderRelease: (_, { dx, vx }) => {
         translateX.flattenOffset();
         const cur = activeIndexRef.current;
-        let next  = cur;
+        let next = cur;
 
         if (vx < -0.55 || dx < -(STEP * 0.28)) {
           next = Math.min(cards.length - 1, cur + 1);
@@ -156,7 +162,7 @@ export default function SwipeCardDeck3D({ cards }: Props) {
           toValue: -next * STEP,
           stiffness: 320,
           damping: 28,
-          mass:     0.85,
+          mass: 0.85,
           useNativeDriver: true,
         }).start();
       },
@@ -172,7 +178,7 @@ export default function SwipeCardDeck3D({ cards }: Props) {
       toValue: -i * STEP,
       stiffness: 320,
       damping: 28,
-      mass:     0.85,
+      mass: 0.85,
       useNativeDriver: true,
     }).start();
   }
@@ -186,17 +192,14 @@ export default function SwipeCardDeck3D({ cards }: Props) {
           {...panResponder.panHandlers}
         >
           {cards.map((card, i) => (
-            <View
-              key={card.id}
-              style={[s.cardSlot, i < cards.length - 1 && { marginRight: GAP }]}
-            >
+            <View key={card.id} style={[s.cardSlot, i < cards.length - 1 && { marginRight: GAP }]}>
               {/* Floating elliptical shadow */}
               <Animated.View
                 style={[
                   s.shadow,
                   {
                     transform: [{ scaleX: shadowScaleFor(i) }],
-                    opacity:   shadowOpacityFor(i),
+                    opacity: shadowOpacityFor(i),
                   },
                 ]}
               />
@@ -210,7 +213,7 @@ export default function SwipeCardDeck3D({ cards }: Props) {
                     transform: [
                       { perspective: 900 },
                       { rotateY: rotateYFor(i) as any },
-                      { scale:   scaleFor(i) },
+                      { scale: scaleFor(i) },
                     ],
                   },
                 ]}
@@ -241,9 +244,7 @@ export default function SwipeCardDeck3D({ cards }: Props) {
 
                     {/* Top row */}
                     <View style={s.topRow}>
-                      <View style={s.iconCircle}>
-                        {card.icon}
-                      </View>
+                      <View style={s.iconCircle}>{card.icon}</View>
                       <View style={s.badge}>
                         <Text style={s.badgeText}>KILIMO AI</Text>
                       </View>
@@ -279,7 +280,11 @@ export default function SwipeCardDeck3D({ cards }: Props) {
         {cards.map((_, i) => {
           const isActive = i === activeIndex;
           return (
-            <TouchableOpacity key={i} onPress={() => goTo(i)} hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}>
+            <TouchableOpacity
+              key={i}
+              onPress={() => goTo(i)}
+              hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+            >
               <View style={[s.dot, isActive && s.dotActive]} />
             </TouchableOpacity>
           );
@@ -308,20 +313,18 @@ const s = StyleSheet.create({
     width: CARD_W,
   },
   shadow: {
-    position:     'absolute',
-    bottom:       -8,
-    left:         20,
-    right:        20,
-    height:       28,
+    position: 'absolute',
+    bottom: -8,
+    left: 20,
+    right: 20,
+    height: 28,
     borderRadius: 14,
     backgroundColor: 'rgba(0,0,0,1)',
-    ...(Platform.OS === 'web'
-      ? ({ filter: 'blur(14px)' } as object)
-      : {}),
+    ...(Platform.OS === 'web' ? ({ filter: 'blur(14px)' } as object) : {}),
   },
   cardWrap: {
     borderRadius: 26,
-    overflow:     'hidden',
+    overflow: 'hidden',
     ...(Platform.OS === 'web'
       ? ({ boxShadow: '0 8px 32px rgba(0,0,0,0.12)' } as object)
       : {
@@ -333,65 +336,65 @@ const s = StyleSheet.create({
         }),
   },
   card: {
-    width:         CARD_W,
-    height:        CARD_H,
-    borderRadius:  26,
-    padding:       22,
+    width: CARD_W,
+    height: CARD_H,
+    borderRadius: 26,
+    padding: 22,
     paddingBottom: 18,
     justifyContent: 'space-between',
-    overflow:      'hidden',
+    overflow: 'hidden',
   },
   innerHighlight: {
-    position:            'absolute',
-    top:                 0,
-    left:                0,
-    right:               0,
-    height:              CARD_H * 0.42,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: CARD_H * 0.42,
     borderTopLeftRadius: 26,
-    borderTopRightRadius:26,
-    backgroundColor:     'rgba(255,255,255,0.13)',
+    borderTopRightRadius: 26,
+    backgroundColor: 'rgba(255,255,255,0.13)',
   },
   circleA: {
-    position:      'absolute',
-    right:         -40,
-    top:           -40,
-    width:         160,
-    height:        160,
-    borderRadius:  80,
+    position: 'absolute',
+    right: -40,
+    top: -40,
+    width: 160,
+    height: 160,
+    borderRadius: 80,
     backgroundColor: 'rgba(255,255,255,0.06)',
   },
   circleB: {
-    position:      'absolute',
-    right:         20,
-    bottom:        -30,
-    width:         100,
-    height:        100,
-    borderRadius:  50,
+    position: 'absolute',
+    right: 20,
+    bottom: -30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: 'rgba(255,255,255,0.05)',
   },
   topRow: {
-    flexDirection:  'row',
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:     'center',
+    alignItems: 'center',
   },
   iconCircle: {
-    width:           48,
-    height:          48,
-    borderRadius:    24,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(255,255,255,0.22)',
-    justifyContent:  'center',
-    alignItems:      'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   badge: {
-    backgroundColor:  'rgba(255,255,255,0.16)',
+    backgroundColor: 'rgba(255,255,255,0.16)',
     paddingHorizontal: 10,
-    paddingVertical:   4,
-    borderRadius:      8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   badgeText: {
-    color:       'rgba(255,255,255,0.9)',
-    fontSize:    9,
-    fontFamily:  'Inter_800ExtraBold',
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 9,
+    fontFamily: 'Inter_800ExtraBold',
     letterSpacing: 1.5,
   },
   content: {
@@ -399,52 +402,52 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   cardLabel: {
-    color:      '#fff',
-    fontSize:   22,
+    color: '#fff',
+    fontSize: 22,
     fontFamily: 'Inter_900Black',
     letterSpacing: -0.5,
     lineHeight: 26,
   },
   cardDesc: {
-    color:      'rgba(255,255,255,0.68)',
-    fontSize:   12,
+    color: 'rgba(255,255,255,0.68)',
+    fontSize: 12,
     fontFamily: 'Inter_500Medium',
-    marginTop:  3,
+    marginTop: 3,
   },
   bottomRow: {
-    flexDirection:  'row',
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:     'center',
+    alignItems: 'center',
   },
   emoji: {
     fontSize: 26,
     lineHeight: 32,
   },
   ctaBtn: {
-    width:           38,
-    height:          38,
-    borderRadius:    19,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: 'rgba(255,255,255,0.92)',
-    justifyContent:  'center',
-    alignItems:      'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dots: {
-    flexDirection:  'row',
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems:     'center',
-    gap:            6,
-    marginTop:      4,
-    marginBottom:   8,
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+    marginBottom: 8,
   },
   dot: {
-    width:        6,
-    height:       6,
+    width: 6,
+    height: 6,
     borderRadius: 3,
     backgroundColor: 'rgba(0,0,0,0.14)',
   },
   dotActive: {
-    width:           20,
+    width: 20,
     backgroundColor: '#22d15a',
-    borderRadius:    3,
+    borderRadius: 3,
   },
 });

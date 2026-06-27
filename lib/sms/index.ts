@@ -14,22 +14,21 @@
 
 import { useKilimoStore } from '../../store/useKilimoStore';
 
-export type SmsEvent =
-  | 'critical_diagnosis'
-  | 'price_alert'
-  | 'severe_weather'
-  | 'payment_received';
+export type SmsEvent = 'critical_diagnosis' | 'price_alert' | 'severe_weather' | 'payment_received';
 
 export interface SmsPayload {
-  to: string;          // E.164, e.g. "+255712345678"
-  body: string;        // Plain text, < 160 chars ideally
+  to: string; // E.164, e.g. "+255712345678"
+  body: string; // Plain text, < 160 chars ideally
   event: SmsEvent;
   meta?: Record<string, unknown>;
 }
 
-const AT_API_KEY = process.env.EXPO_PUBLIC_AT_API_KEY || process.env.EXPO_PUBLIC_AFRICAS_TALKING_API_KEY || '';
-const AT_USERNAME = process.env.EXPO_PUBLIC_AT_USERNAME || process.env.EXPO_PUBLIC_AFRICAS_TALKING_USERNAME || '';
-const AT_SENDER_ID = process.env.EXPO_PUBLIC_AT_SENDER_ID || process.env.EXPO_PUBLIC_AFRICAS_TALKING_SENDER_ID || '';
+const AT_API_KEY =
+  process.env.EXPO_PUBLIC_AT_API_KEY || process.env.EXPO_PUBLIC_AFRICAS_TALKING_API_KEY || '';
+const AT_USERNAME =
+  process.env.EXPO_PUBLIC_AT_USERNAME || process.env.EXPO_PUBLIC_AFRICAS_TALKING_USERNAME || '';
+const AT_SENDER_ID =
+  process.env.EXPO_PUBLIC_AT_SENDER_ID || process.env.EXPO_PUBLIC_AFRICAS_TALKING_SENDER_ID || '';
 
 const PROVIDER_CONFIGURED = AT_API_KEY.length > 0 && AT_USERNAME.length > 0;
 
@@ -52,7 +51,7 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
       username: AT_USERNAME,
       to: payload.to,
       message: payload.body,
-      ...(AT_SENDER_ID ? { from: AT_SENDER_ID } : {})
+      ...(AT_SENDER_ID ? { from: AT_SENDER_ID } : {}),
     };
 
     // urlencoded payload format required by Africa's Talking
@@ -63,9 +62,9 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
     const response = await fetch('https://api.africastalking.com/version1/messaging', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded',
-        'apiKey': AT_API_KEY,
+        apiKey: AT_API_KEY,
       },
       body: formBody,
     });
@@ -93,10 +92,14 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
 
 function labelForEvent(e: SmsEvent): string {
   switch (e) {
-    case 'critical_diagnosis': return 'Critical Diagnosis';
-    case 'price_alert': return 'Price Alert';
-    case 'severe_weather': return 'Severe Weather';
-    case 'payment_received': return 'Payment Received';
+    case 'critical_diagnosis':
+      return 'Critical Diagnosis';
+    case 'price_alert':
+      return 'Price Alert';
+    case 'severe_weather':
+      return 'Severe Weather';
+    case 'payment_received':
+      return 'Payment Received';
   }
 }
 

@@ -14,7 +14,10 @@ const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY ?? '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export class AIError extends Error {
-  constructor(message: string, public kind: 'not_configured' | 'unauthorized' | 'network' | 'server' | 'validation') {
+  constructor(
+    message: string,
+    public kind: 'not_configured' | 'unauthorized' | 'network' | 'server' | 'validation'
+  ) {
     super(message);
   }
 }
@@ -35,7 +38,9 @@ export async function chat(messages: ChatMessage[]): Promise<string> {
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const customPrompt = useKilimoStore.getState().customSystemPrompt;
-  const systemText = customPrompt || `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki...
+  const systemText =
+    customPrompt ||
+    `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki...
 KANUNI ZA LAZIMA: 
 1. UKWELI KWANZA 
 2. USALAMA WA KEMIKALI 
@@ -51,13 +56,15 @@ KANUNI ZA LAZIMA:
       const res = await fetch('https://api.openai.com/v1/embeddings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${OPENAI_API_KEY}` },
-        body: JSON.stringify({ input: lastMessageContent, model: 'text-embedding-3-small' })
+        body: JSON.stringify({ input: lastMessageContent, model: 'text-embedding-3-small' }),
       });
       if (res.ok) {
         const data = await res.json();
         const embedding = data.data[0].embedding;
         const { data: docs } = await supabase.rpc('match_knowledge', {
-          query_embedding: embedding, match_threshold: 0.7, match_count: 3
+          query_embedding: embedding,
+          match_threshold: 0.7,
+          match_count: 3,
         });
         if (docs && docs.length > 0) {
           const docStr = docs.map((d: any) => `[${d.title}]: ${d.content}`).join('\n\n');
@@ -65,13 +72,13 @@ KANUNI ZA LAZIMA:
         }
       }
     } catch (e) {
-      console.log("RAG fetch failed or skipped", e);
+      console.log('RAG fetch failed or skipped', e);
     }
   }
 
-  const formattedHistory = messages.map(m => ({
+  const formattedHistory = messages.map((m) => ({
     role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
+    parts: [{ text: m.content }],
   }));
 
   try {
@@ -79,7 +86,7 @@ KANUNI ZA LAZIMA:
       history: [
         { role: 'user', parts: [{ text: systemText }] },
         { role: 'model', parts: [{ text: 'Understood. I am Sankofa AI.' }] },
-        ...formattedHistory.slice(0, -1)
+        ...formattedHistory.slice(0, -1),
       ],
     });
 
@@ -91,19 +98,19 @@ KANUNI ZA LAZIMA:
   }
 }
 
-export type Severity   = 'low' | 'medium' | 'high' | 'critical';
+export type Severity = 'low' | 'medium' | 'high' | 'critical';
 export type Confidence = 'low' | 'medium' | 'high';
 export type ImgQuality = 'good' | 'poor' | 'unusable';
 
 export interface VisionDiagnosis {
-  crop?:          string;
-  disease?:       string;
-  severity?:      Severity;
-  confidence?:    Confidence;
-  imageQuality?:  ImgQuality;
+  crop?: string;
+  disease?: string;
+  severity?: Severity;
+  confidence?: Confidence;
+  imageQuality?: ImgQuality;
   consultExpert?: boolean;
-  actions?:       string[];
-  raw:            string;
+  actions?: string[];
+  raw: string;
 }
 
 export function normalizeSeverity(input: unknown): Severity | undefined {
@@ -119,12 +126,14 @@ export function normalizeSeverity(input: unknown): Severity | undefined {
 
 export async function diagnoseCropPhoto(
   imageBase64: string,
-  opts: { mimeType?: string; prompt?: string } = {},
+  opts: { mimeType?: string; prompt?: string } = {}
 ): Promise<VisionDiagnosis> {
   if (!aiConfigured()) throw new AIError('Gemini API key not configured', 'not_configured');
 
   const mimeType = opts.mimeType ?? 'image/jpeg';
-  const prompt = opts.prompt ?? `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu.
+  const prompt =
+    opts.prompt ??
+    `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu.
 Jibu LAZIMA kwa JSON iliyosafi tu:
 {
   "crop": "jina la mmea kwa Kiswahili",
@@ -145,9 +154,9 @@ HAKIKISHA JSON YAKO NI SAHIHI.`;
       {
         inlineData: {
           data: imageBase64,
-          mimeType: mimeType
-        }
-      }
+          mimeType: mimeType,
+        },
+      },
     ]);
 
     const content = result.response.text();
@@ -165,15 +174,29 @@ HAKIKISHA JSON YAKO NI SAHIHI.`;
     const severity = normalizeSeverity(parsed.severity);
     const rawConf = typeof parsed.confidence === 'string' ? parsed.confidence.toLowerCase() : '';
     const confidence: Confidence | undefined =
-      rawConf === 'high' ? 'high' : rawConf === 'medium' ? 'medium' : rawConf === 'low' ? 'low' : undefined;
+      rawConf === 'high'
+        ? 'high'
+        : rawConf === 'medium'
+          ? 'medium'
+          : rawConf === 'low'
+            ? 'low'
+            : undefined;
 
-    const rawQuality = typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
+    const rawQuality =
+      typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
     const imageQuality: ImgQuality | undefined =
-      rawQuality === 'good' ? 'good' : rawQuality === 'poor' ? 'poor' : rawQuality === 'unusable' ? 'unusable' : undefined;
+      rawQuality === 'good'
+        ? 'good'
+        : rawQuality === 'poor'
+          ? 'poor'
+          : rawQuality === 'unusable'
+            ? 'unusable'
+            : undefined;
 
     const consultExpert: boolean =
-      typeof parsed.consultExpert === 'boolean' ? parsed.consultExpert
-      : severity === 'critical' || severity === 'high' || confidence === 'low';
+      typeof parsed.consultExpert === 'boolean'
+        ? parsed.consultExpert
+        : severity === 'critical' || severity === 'high' || confidence === 'low';
 
     return { ...parsed, severity, confidence, imageQuality, consultExpert, raw: content };
   } catch (err: any) {
@@ -184,7 +207,7 @@ HAKIKISHA JSON YAKO NI SAHIHI.`;
 // Fallback stub for audio since Gemini doesn't have a direct equivalent to Whisper form upload out of the box in this snippet
 export async function transcribeAudio(
   audioBase64: string,
-  opts: { mimeType?: string; language?: string } = {},
+  opts: { mimeType?: string; language?: string } = {}
 ): Promise<string> {
-  return "Audio transcription is currently handled server-side.";
+  return 'Audio transcription is currently handled server-side.';
 }
