@@ -13,6 +13,7 @@ export default [
       'build/**',
       'web-build/**',
       'vendor/**',
+      'artifacts/**',
       'supabase/functions/**',
       '*.config.js',
       '*.config.mjs',

@@ -50,6 +50,10 @@ externalPort = 8081
 localPort = 8082
 externalPort = 3001
 
+[[ports]]
+localPort = 23636
+externalPort = 4200
+
 [deployment]
 deploymentTarget = "static"
 build = ["npx", "expo", "export", "--platform", "web"]

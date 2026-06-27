@@ -48,12 +48,7 @@ function polarToXY(cx: number, cy: number, r: number, angleDeg: number) {
 }
 
 function NutrientGauge({
-  letter,
-  labelSw,
-  labelEn,
-  data,
-  language,
-  colors,
+  letter, labelSw, labelEn, data, language, colors,
 }: {
   letter: string;
   labelSw: string;
@@ -78,61 +73,29 @@ function NutrientGauge({
   const progAngle = START + SWEEP * pct;
   const progEnd = polarToXY(CX, CY, R, progAngle);
   const largeArc = SWEEP * pct > 180 ? 1 : 0;
-  const progPath =
-    pct > 0.01
-      ? `M ${bgStart.x.toFixed(2)} ${bgStart.y.toFixed(2)} A ${R} ${R} 0 ${largeArc} 1 ${progEnd.x.toFixed(2)} ${progEnd.y.toFixed(2)}`
-      : '';
+  const progPath = pct > 0.01
+    ? `M ${bgStart.x.toFixed(2)} ${bgStart.y.toFixed(2)} A ${R} ${R} 0 ${largeArc} 1 ${progEnd.x.toFixed(2)} ${progEnd.y.toFixed(2)}`
+    : '';
 
   return (
     <View style={gaugeStyles.wrap}>
       <Svg width={S} height={S}>
-        <Path
-          d={bgPath}
-          stroke={colors.border}
-          strokeWidth={STROKE}
-          fill="none"
-          strokeLinecap="round"
-        />
+        <Path d={bgPath} stroke={colors.border} strokeWidth={STROKE} fill="none" strokeLinecap="round" />
         {pct > 0.01 && (
-          <Path
-            d={progPath}
-            stroke={data.color}
-            strokeWidth={STROKE}
-            fill="none"
-            strokeLinecap="round"
-          />
+          <Path d={progPath} stroke={data.color} strokeWidth={STROKE} fill="none" strokeLinecap="round" />
         )}
         <SvgCircle cx={CX} cy={CY} r={R - STROKE / 2 - 2} fill={data.color + '0e'} />
-        <SvgText
-          x={CX}
-          y={CY - 5}
-          textAnchor="middle"
-          fontSize={Math.round(S * 0.22)}
-          fontFamily="Inter_800ExtraBold"
-          fill={data.color}
-        >
+        <SvgText x={CX} y={CY - 5} textAnchor="middle" fontSize={Math.round(S * 0.22)} fontFamily="Inter_800ExtraBold" fill={data.color}>
           {letter}
         </SvgText>
-        <SvgText
-          x={CX}
-          y={CY + 12}
-          textAnchor="middle"
-          fontSize={Math.round(S * 0.14)}
-          fontFamily="Inter_700Bold"
-          fill={colors.textMute}
-        >
+        <SvgText x={CX} y={CY + 12} textAnchor="middle" fontSize={Math.round(S * 0.14)} fontFamily="Inter_700Bold" fill={colors.textMute}>
           {data.value}
         </SvgText>
       </Svg>
       <Text style={[gaugeStyles.name, { color: colors.text }]} numberOfLines={1}>
         {language === 'sw' ? labelSw : labelEn}
       </Text>
-      <View
-        style={[
-          gaugeStyles.pill,
-          { backgroundColor: data.color + '18', borderColor: data.color + '44' },
-        ]}
-      >
+      <View style={[gaugeStyles.pill, { backgroundColor: data.color + '18', borderColor: data.color + '44' }]}>
         <Text style={[gaugeStyles.pillText, { color: data.color }]}>
           {language === 'sw' ? data.statusSw : data.statusEn}
         </Text>
@@ -187,10 +150,10 @@ function NDVIChart({ colors }: { colors: any }) {
     month: d.month,
   }));
 
-  const linePoints = pts.map((p) => `${p.x},${p.y}`).join(' ');
+  const linePoints = pts.map(p => `${p.x},${p.y}`).join(' ');
   const areaPoints = [
     `${pts[0].x},${PAD.t + innerH}`,
-    ...pts.map((p) => `${p.x},${p.y}`),
+    ...pts.map(p => `${p.x},${p.y}`),
     `${pts[pts.length - 1].x},${PAD.t + innerH}`,
   ].join(' ');
 
@@ -202,51 +165,23 @@ function NDVIChart({ colors }: { colors: any }) {
           <Stop offset="100%" stopColor="#22d15a" stopOpacity="0.01" />
         </SvgGradient>
       </Defs>
-      {[0.25, 0.5, 0.75, 1.0].map((v) => {
+      {[0.25, 0.5, 0.75, 1.0].map(v => {
         const y = PAD.t + (1 - v) * innerH;
         return (
           <React.Fragment key={v}>
-            <SvgLine
-              x1={PAD.l}
-              y1={y}
-              x2={W - PAD.r}
-              y2={y}
-              stroke={colors.border}
-              strokeWidth="0.7"
-            />
-            <SvgText
-              x={PAD.l - 4}
-              y={y + 3}
-              fontSize="7"
-              fill={colors.textMute}
-              textAnchor="end"
-              fontFamily="Inter_500Medium"
-            >
+            <SvgLine x1={PAD.l} y1={y} x2={W - PAD.r} y2={y} stroke={colors.border} strokeWidth="0.7" />
+            <SvgText x={PAD.l - 4} y={y + 3} fontSize="7" fill={colors.textMute} textAnchor="end" fontFamily="Inter_500Medium">
               {v.toFixed(2)}
             </SvgText>
           </React.Fragment>
         );
       })}
       <SvgPolygon points={areaPoints} fill="url(#ndviArea)" />
-      <Polyline
-        points={linePoints}
-        fill="none"
-        stroke="#22d15a"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
+      <Polyline points={linePoints} fill="none" stroke="#22d15a" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
       {pts.map((p, i) => (
         <React.Fragment key={i}>
           <SvgCircle cx={p.x} cy={p.y} r="4" fill="#22d15a" stroke="#FFF" strokeWidth="1.5" />
-          <SvgText
-            x={p.x}
-            y={H - 6}
-            fontSize="7.5"
-            fill={colors.textMute}
-            textAnchor="middle"
-            fontFamily="Inter_500Medium"
-          >
+          <SvgText x={p.x} y={H - 6} fontSize="7.5" fill={colors.textMute} textAnchor="middle" fontFamily="Inter_500Medium">
             {p.month}
           </SvgText>
         </React.Fragment>
@@ -259,39 +194,23 @@ export default function FieldDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { colors, isDark } = useTheme();
-  const language = useKilimoStore((s) => s.language);
+  const language = useKilimoStore(s => s.language);
 
-  const zone = ZONES.find((z) => z.id === Number(id));
+  const zone = ZONES.find(z => z.id === Number(id));
 
   if (!zone) {
     return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
-        ]}
-      >
-        <Text
-          style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}
-        >
-          Field Not Found
-        </Text>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-        >
-          <Text style={{ color: colors.primary, marginTop: 16 }}>Go Back</Text>
+      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}>Field Not Found</Text>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')}>
+          <Text style={{ color: colors.primary, marginTop: 16, fontFamily: 'Inter_700Bold' }}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   const isWarning = zone.alertType === 'warning';
-  const productivityColor =
-    zone.productivity === 'High'
-      ? '#22d15a'
-      : zone.productivity === 'Average'
-        ? '#F59E0B'
-        : '#ef4444';
+  const productivityColor = zone.productivity === 'High' ? '#22d15a' : zone.productivity === 'Average' ? '#F59E0B' : '#ef4444';
 
   const handleVraSetup = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -354,13 +273,15 @@ export default function FieldDetailScreen() {
       >
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <LinearGradient
-          colors={isDark ? ['#071c0d', '#0d2e14', '#0f3a18'] : ['#0a3d18', '#1a5c28', '#0d2e14']}
+          colors={isDark
+            ? ['#071c0d', '#0d2e14', '#0f3a18']
+            : ['#0a3d18', '#1a5c28', '#0d2e14']}
           style={styles.hero}
         >
           <SafeAreaView edges={['top']} style={{ width: '100%' }}>
             <View style={styles.heroNav}>
               <TouchableOpacity
-                onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+                onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
                 style={styles.backBtn}
               >
                 <ArrowLeft color="#FFF" size={20} />
@@ -383,32 +304,31 @@ export default function FieldDetailScreen() {
                 {language === 'sw' ? 'UCHAGUZI WA BASA' : 'FIELD SELECTION'}
               </Text>
             </View>
-            <Text style={styles.heroTitle}>{language === 'sw' ? zone.nameSw : zone.nameEn}</Text>
+            <Text style={styles.heroTitle}>
+              {language === 'sw' ? zone.nameSw : zone.nameEn}
+            </Text>
             <View style={styles.heroStatusRow}>
-              {isWarning ? (
-                <AlertTriangle size={12} color="#F59E0B" />
-              ) : (
-                <Sprout size={12} color="#22d15a" />
-              )}
+              {isWarning
+                ? <AlertTriangle size={12} color="#F59E0B" />
+                : <Sprout size={12} color="#22d15a" />}
               <Text style={[styles.heroStatus, { color: isWarning ? '#F59E0B' : '#22d15a' }]}>
                 {language === 'sw' ? zone.messageSw : zone.messageEn}
               </Text>
             </View>
           </View>
 
-          <LinearGradient colors={['transparent', colors.background]} style={styles.heroFade} />
+          <LinearGradient
+            colors={['transparent', colors.background]}
+            style={styles.heroFade}
+          />
         </LinearGradient>
 
         {/* ── Stats Strip (overlaps hero) ──────────────────────────── */}
         <Animated.View entering={FadeInUp.delay(80)} style={styles.statsStrip}>
-          <View
-            style={[styles.statsCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-          >
+          <View style={[styles.statsCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {stats.map((s, i) => (
               <React.Fragment key={i}>
-                {i > 0 && (
-                  <View style={[styles.statsDivider, { backgroundColor: colors.border }]} />
-                )}
+                {i > 0 && <View style={[styles.statsDivider, { backgroundColor: colors.border }]} />}
                 <View style={styles.statCell}>
                   <View style={styles.statIcon}>{s.icon}</View>
                   <Text style={[styles.statValue, { color: colors.text }]}>{s.value}</Text>
@@ -422,6 +342,7 @@ export default function FieldDetailScreen() {
         </Animated.View>
 
         <View style={styles.content}>
+
           {/* ── Nutrient Analysis ─────────────────────────────────── */}
           <Animated.View entering={FadeInUp.delay(160)}>
             <View style={styles.sectionHeader}>
@@ -431,27 +352,20 @@ export default function FieldDetailScreen() {
               </Text>
             </View>
 
-            <View
-              style={[
-                styles.nutrientCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}
-            >
+            <View style={[styles.nutrientCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               {/* Gauge header strip */}
               <LinearGradient
                 colors={['#22d15a0a', 'transparent']}
                 style={styles.nutrientGaugeHeader}
               >
                 <Text style={[styles.nutrientHeaderLabel, { color: colors.textMute }]}>
-                  {language === 'sw'
-                    ? 'Virutubisho vya Udongo — NPK'
-                    : 'Soil Nutrient Levels — NPK'}
+                  {language === 'sw' ? 'Virutubisho vya Udongo — NPK' : 'Soil Nutrient Levels — NPK'}
                 </Text>
               </LinearGradient>
 
               {/* Three arc gauges */}
               <View style={styles.gaugesRow}>
-                {nutrients.map((n) => (
+                {nutrients.map(n => (
                   <NutrientGauge
                     key={n.letter}
                     letter={n.letter}
@@ -489,12 +403,7 @@ export default function FieldDetailScreen() {
               </View>
             </View>
 
-            <View
-              style={[
-                styles.chartCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}
-            >
+            <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <NDVIChart colors={colors} />
               <Text style={[styles.chartFootnote, { color: colors.textMute }]}>
                 {language === 'sw'
@@ -519,32 +428,24 @@ export default function FieldDetailScreen() {
                   {language === 'sw' ? zone.cropSw : zone.cropEn}
                 </Text>
               </View>
-              <View
-                style={[
-                  styles.productivityChip,
-                  {
-                    backgroundColor: productivityColor + '22',
-                    borderColor: productivityColor + '44',
-                  },
-                ]}
-              >
+              <View style={[styles.productivityChip, { backgroundColor: productivityColor + '22', borderColor: productivityColor + '44' }]}>
                 <Text style={[styles.productivityChipText, { color: productivityColor }]}>
                   {language === 'sw' ? zone.productivitySw : zone.productivity}
                 </Text>
               </View>
             </LinearGradient>
           </Animated.View>
+
         </View>
       </ScrollView>
 
       {/* ── Floating CTA ──────────────────────────────────────────── */}
-      <View
-        style={[
-          styles.floatingBar,
-          { backgroundColor: colors.background + 'f0', borderTopColor: colors.border },
-        ]}
-      >
-        <TouchableOpacity style={styles.ctaBtn} activeOpacity={0.85} onPress={handleVraSetup}>
+      <View style={[styles.floatingBar, { backgroundColor: colors.background + 'f0', borderTopColor: colors.border }]}>
+        <TouchableOpacity
+          style={styles.ctaBtn}
+          activeOpacity={0.85}
+          onPress={handleVraSetup}
+        >
           <LinearGradient
             colors={['#22d15a', '#18a847']}
             start={{ x: 0, y: 0 }}

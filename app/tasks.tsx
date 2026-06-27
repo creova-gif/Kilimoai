@@ -1046,7 +1046,7 @@ export default function TasksScreen() {
                     : 'Decreases due date by one day'
                 }
               >
-                <Text style={{ fontSize: 18, color: colors.text }}>−</Text>
+                <Text style={{ fontSize: 18, color: colors.text, fontFamily: 'Inter_700Bold' }}>−</Text>
               </TouchableOpacity>
               <View
                 style={[
@@ -1084,7 +1084,7 @@ export default function TasksScreen() {
                     : 'Increases due date by one day'
                 }
               >
-                <Text style={{ fontSize: 18, color: colors.text }}>+</Text>
+                <Text style={{ fontSize: 18, color: colors.text, fontFamily: 'Inter_700Bold' }}>+</Text>
               </TouchableOpacity>
             </View>
 

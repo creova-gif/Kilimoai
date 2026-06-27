@@ -379,7 +379,7 @@ function LabelRow({
     >
       {icon}
       <Text style={[cm.fieldLabel, { color: colors.textMute }]}>{label}</Text>
-      {required && <Text style={{ color: '#22d15a', fontSize: 10 }}>*</Text>}
+      {required && <Text style={{ color: '#22d15a', fontSize: 10, fontFamily: 'Inter_700Bold' }}>*</Text>}
     </View>
   );
 }

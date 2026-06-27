@@ -1548,7 +1548,7 @@ export default function MarketScreen() {
                           language === 'sw' ? 'Punguza idadi' : 'Decrease quantity'
                         }
                       >
-                        <Text style={{ color: colors.text }}>-</Text>
+                        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>-</Text>
                       </TouchableOpacity>
                       <Text
                         style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.text }}
@@ -1563,7 +1563,7 @@ export default function MarketScreen() {
                           language === 'sw' ? 'Ongeza idadi' : 'Increase quantity'
                         }
                       >
-                        <Text style={{ color: colors.text }}>+</Text>
+                        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>+</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
