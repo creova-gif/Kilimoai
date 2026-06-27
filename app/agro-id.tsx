@@ -1,9 +1,37 @@
 import React, { useMemo, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert, Platform, StatusBar, SafeAreaView, Modal, Dimensions, TextInput, KeyboardAvoidingView
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Alert,
+  Platform,
+  StatusBar,
+  SafeAreaView,
+  Modal,
+  Dimensions,
+  TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
-  ChevronLeft, MapPin, Calendar, QrCode, ShieldCheck, Download, Plus, Info, Check, Trash2, ArrowUpRight, ArrowDownLeft, ChevronRight, Layers, AlertCircle, X
+  ChevronLeft,
+  MapPin,
+  Calendar,
+  QrCode,
+  ShieldCheck,
+  Download,
+  Plus,
+  Info,
+  Check,
+  Trash2,
+  ArrowUpRight,
+  ArrowDownLeft,
+  ChevronRight,
+  Layers,
+  AlertCircle,
+  X,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
@@ -24,7 +52,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
 
-const fmt = (n: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Math.abs(n));
+const fmt = (n: number) =>
+  new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Math.abs(n));
 
 const INCOME_CATEGORIES = ['Sale · Mazao', 'Cooperative', 'Mkataba', 'Other'];
 const EXPENSE_CATEGORIES = ['Input · Mbegu', 'Input · Mbolea', 'Labour', 'Transport', 'Other'];
@@ -59,19 +88,22 @@ export default function AgroIdScreen() {
 
   const { income, expense, net } = useMemo(() => {
     const inc = ledger.filter((e) => e.amountTZS > 0).reduce((s, e) => s + e.amountTZS, 0);
-    const exp = ledger.filter((e) => e.amountTZS < 0).reduce((s, e) => s + Math.abs(e.amountTZS), 0);
+    const exp = ledger
+      .filter((e) => e.amountTZS < 0)
+      .reduce((s, e) => s + Math.abs(e.amountTZS), 0);
     return { income: inc, expense: exp, net: inc - exp };
   }, [ledger]);
 
   // Transparent, rule-based credit score derived from the verified ledger.
   const credit = useMemo(
-    () => computeCreditScore({
-      ledger,
-      nowISO: new Date().toISOString(),
-      hasActiveInsurance: insurance.some((p) => p.status === 'active'),
-      contractsCompleted: 0,
-    }),
-    [ledger, insurance],
+    () =>
+      computeCreditScore({
+        ledger,
+        nowISO: new Date().toISOString(),
+        hasActiveInsurance: insurance.some((p) => p.status === 'active'),
+        contractsCompleted: 0,
+      }),
+    [ledger, insurance]
   );
 
   // Verifiable QR — points at the public verify-agro-id edge function when the
@@ -118,11 +150,12 @@ export default function AgroIdScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(
         sw ? 'Kiasi si sahihi' : 'Invalid amount',
-        sw ? 'Tafadhali weka kiasi sahihi cha TZS.' : 'Please enter a valid TZS amount.',
+        sw ? 'Tafadhali weka kiasi sahihi cha TZS.' : 'Please enter a valid TZS amount.'
       );
       return;
     }
-    const cat = entryCategory || (entryType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0]);
+    const cat =
+      entryCategory || (entryType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0]);
     // One id shared by the local row and the server row so the two can be
     // reconciled/deduped (the store keeps this id; pushLedgerEntry sends it as
     // client_id).
@@ -147,43 +180,90 @@ export default function AgroIdScreen() {
     Alert.alert(
       sw ? 'Imehifadhiwa' : 'Saved',
       sync.ok
-        ? (sw ? 'Muamala umehifadhiwa na kusawazishwa.' : 'Entry saved and synced to your ledger.')
-        : (sw ? 'Muamala umehifadhiwa kwenye kifaa; itasawazishwa ukiwa mtandaoni.' : 'Entry saved on device; it will sync when you’re online.'),
+        ? sw
+          ? 'Muamala umehifadhiwa na kusawazishwa.'
+          : 'Entry saved and synced to your ledger.'
+        : sw
+          ? 'Muamala umehifadhiwa kwenye kifaa; itasawazishwa ukiwa mtandaoni.'
+          : 'Entry saved on device; it will sync when you’re online.'
     );
   }
 
   const handleInfoPress = (label: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert(label, language === 'sw' ? 'Maelezo ya ziada kuhusu kitalu chako yaliyothibitishwa na Ushirika wako.' : 'Verified details retrieved from your cooperative farm profile.');
+    Alert.alert(
+      label,
+      language === 'sw'
+        ? 'Maelezo ya ziada kuhusu kitalu chako yaliyothibitishwa na Ushirika wako.'
+        : 'Verified details retrieved from your cooperative farm profile.'
+    );
   };
 
   if (!agroId) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium' }}>Sign in to view your Agro ID.</Text>
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <Text style={{ color: colors.textMute, fontFamily: 'Inter_500Medium' }}>
+          Sign in to view your Agro ID.
+        </Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <Gate feature="agro_id" fallback={
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', padding: 24 }]}>
-        <Card variant="solid" style={{ padding: 24, alignItems: 'center' }}>
-          <ShieldCheck size={32} color={colors.textMute} />
-          <Text style={{ color: colors.text, fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 }}>Access Denied</Text>
-          <Text style={{ color: colors.textMute, textAlign: 'center', marginTop: 8, fontFamily: 'Inter_500Medium' }}>Your tier does not support Agro ID verification passport.</Text>
-        </Card>
-      </SafeAreaView>
-    }>
+    <Gate
+      feature="agro_id"
+      fallback={
+        <SafeAreaView
+          style={[
+            styles.container,
+            {
+              backgroundColor: colors.background,
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: 24,
+            },
+          ]}
+        >
+          <Card variant="solid" style={{ padding: 24, alignItems: 'center' }}>
+            <ShieldCheck size={32} color={colors.textMute} />
+            <Text
+              style={{
+                color: colors.text,
+                fontFamily: 'Inter_800ExtraBold',
+                fontSize: 16,
+                marginTop: 12,
+              }}
+            >
+              Access Denied
+            </Text>
+            <Text
+              style={{
+                color: colors.textMute,
+                textAlign: 'center',
+                marginTop: 8,
+                fontFamily: 'Inter_500Medium',
+              }}
+            >
+              Your tier does not support Agro ID verification passport.
+            </Text>
+          </Card>
+        </SafeAreaView>
+      }
+    >
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar barStyle="light-content" />
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
           {/* Top Hero Photo */}
           <View style={styles.heroWrapper}>
-            <Image 
-              source={require('../assets/images/rice-field-bg.png')} 
-              style={styles.heroImage} 
+            <Image
+              source={require('../assets/images/rice-field-bg.png')}
+              style={styles.heroImage}
             />
             <LinearGradient
               colors={['rgba(0,0,0,0.4)', 'transparent', 'rgba(0,0,0,0.1)']}
@@ -191,7 +271,13 @@ export default function AgroIdScreen() {
             />
 
             <SafeAreaView style={styles.heroHeader}>
-              <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} activeOpacity={0.7} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} accessibilityRole="button" accessibilityLabel={sw ? 'Rudi nyuma' : 'Go back'}>
+              <TouchableOpacity
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+                activeOpacity={0.7}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                accessibilityRole="button"
+                accessibilityLabel={sw ? 'Rudi nyuma' : 'Go back'}
+              >
                 <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
                   <ChevronLeft size={22} color="#fff" />
                 </BlurView>
@@ -199,7 +285,9 @@ export default function AgroIdScreen() {
 
               <View style={[styles.locationPill, { backgroundColor: 'rgba(0,0,0,0.4)' }]}>
                 <MapPin size={12} color={colors.primary} />
-                <Text style={styles.locationText}>{farmProfile?.region || agroId?.location || (sw ? 'Tanzania' : 'Tanzania')}</Text>
+                <Text style={styles.locationText}>
+                  {farmProfile?.region || agroId?.location || (sw ? 'Tanzania' : 'Tanzania')}
+                </Text>
               </View>
 
               <View style={styles.heroAvatarBorder}>
@@ -215,20 +303,39 @@ export default function AgroIdScreen() {
           </View>
 
           {/* Details Card Content (mokupoku UI) */}
-          <View style={[styles.contentCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View
+            style={[
+              styles.contentCard,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
             <Text style={[styles.cropTitle, { color: colors.text }]}>
-              {farmProfile?.primaryCrops?.[0] ? `${farmProfile.primaryCrops[0]} Farming` : (sw ? 'Shamba Langu' : 'My Farm')}
+              {farmProfile?.primaryCrops?.[0]
+                ? `${farmProfile.primaryCrops[0]} Farming`
+                : sw
+                  ? 'Shamba Langu'
+                  : 'My Farm'}
             </Text>
 
             {/* Credit Score — transparent, ledger-derived */}
-            <View style={[styles.creditCard, { backgroundColor: isDark ? colors.primary + '14' : colors.primary + '0D', borderColor: colors.primary + '33' }]}>
+            <View
+              style={[
+                styles.creditCard,
+                {
+                  backgroundColor: isDark ? colors.primary + '14' : colors.primary + '0D',
+                  borderColor: colors.primary + '33',
+                },
+              ]}
+            >
               <View style={styles.creditTop}>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.creditLabel, { color: colors.textMute }]}>
                     {sw ? 'ALAMA YA MIKOPO' : 'CREDIT SCORE'}
                   </Text>
                   <View style={styles.creditScoreRow}>
-                    <Text style={[styles.creditScoreNum, { color: colors.primary }]}>{credit.score}</Text>
+                    <Text style={[styles.creditScoreNum, { color: colors.primary }]}>
+                      {credit.score}
+                    </Text>
                     <Text style={[styles.creditScoreMax, { color: colors.textMute }]}>/ 850</Text>
                   </View>
                 </View>
@@ -252,47 +359,92 @@ export default function AgroIdScreen() {
               </View>
 
               <View style={[styles.creditTrack, { backgroundColor: colors.border }]}>
-                <View style={[styles.creditFill, { width: `${Math.round(((credit.score - 300) / 550) * 100)}%`, backgroundColor: colors.primary }]} />
+                <View
+                  style={[
+                    styles.creditFill,
+                    {
+                      width: `${Math.round(((credit.score - 300) / 550) * 100)}%`,
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                />
               </View>
 
               <View style={styles.factorList}>
                 {credit.factors.map((f) => (
                   <View key={f.key} style={styles.factorRow}>
                     <View style={{ flex: 1.4 }}>
-                      <Text style={[styles.factorLabel, { color: colors.text }]} numberOfLines={1}>{sw ? f.labelSw : f.label}</Text>
-                      <Text style={[styles.factorDetail, { color: colors.textMute }]} numberOfLines={1}>{sw ? f.detailSw : f.detail}</Text>
+                      <Text style={[styles.factorLabel, { color: colors.text }]} numberOfLines={1}>
+                        {sw ? f.labelSw : f.label}
+                      </Text>
+                      <Text
+                        style={[styles.factorDetail, { color: colors.textMute }]}
+                        numberOfLines={1}
+                      >
+                        {sw ? f.detailSw : f.detail}
+                      </Text>
                     </View>
                     <View style={[styles.factorBarTrack, { backgroundColor: colors.border }]}>
-                      <View style={[styles.factorBarFill, { width: `${Math.round((f.score / f.max) * 100)}%`, backgroundColor: colors.primary }]} />
+                      <View
+                        style={[
+                          styles.factorBarFill,
+                          {
+                            width: `${Math.round((f.score / f.max) * 100)}%`,
+                            backgroundColor: colors.primary,
+                          },
+                        ]}
+                      />
                     </View>
                   </View>
                 ))}
               </View>
 
               <Text style={[styles.creditFootnote, { color: colors.textMute }]}>
-                {sw ? 'Imehesabiwa kutoka leja yako iliyothibitishwa. Si ushauri wa kifedha.' : 'Computed from your verified ledger. Not financial advice.'}
+                {sw
+                  ? 'Imehesabiwa kutoka leja yako iliyothibitishwa. Si ushauri wa kifedha.'
+                  : 'Computed from your verified ledger. Not financial advice.'}
               </Text>
             </View>
 
             {/* Section 1: Market Conditions */}
             <View style={styles.section}>
-              <Text style={[styles.sectionHeader, { color: colors.textMute }]}>{sw ? 'HALI YA SOKO' : 'MARKET CONDITIONS'}</Text>
+              <Text style={[styles.sectionHeader, { color: colors.textMute }]}>
+                {sw ? 'HALI YA SOKO' : 'MARKET CONDITIONS'}
+              </Text>
               <View style={[styles.cardBlock, { borderColor: colors.border }]}>
                 <View style={styles.detailRow}>
                   <Text style={[styles.detailLabel, { color: colors.textMute }]}>Market Price</Text>
                   <View style={styles.detailRight}>
-                    <Text style={[styles.detailValue, { color: colors.text }]}>$50.00 / TZS 120k</Text>
-                    <TouchableOpacity onPress={() => handleInfoPress('Market Price')} style={styles.infoCircle} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} accessibilityRole="button" accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>
+                      $50.00 / TZS 120k
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => handleInfoPress('Market Price')}
+                      style={styles.infoCircle}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}
+                    >
                       <Info size={12} color={colors.primary} />
                     </TouchableOpacity>
                   </View>
                 </View>
                 <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Highest Demand</Text>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>
+                    Highest Demand
+                  </Text>
                   <View style={styles.detailRight}>
-                    <Text style={[styles.detailValue, { color: colors.text }]}>{farmProfile?.region || 'Mbeya, Arusha, Dodoma'}</Text>
-                    <TouchableOpacity onPress={() => handleInfoPress('Highest Demand')} style={styles.infoCircle} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} accessibilityRole="button" accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>
+                      {farmProfile?.region || 'Mbeya, Arusha, Dodoma'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => handleInfoPress('Highest Demand')}
+                      style={styles.infoCircle}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}
+                    >
                       <Info size={12} color={colors.primary} />
                     </TouchableOpacity>
                   </View>
@@ -312,20 +464,40 @@ export default function AgroIdScreen() {
                 </View>
                 <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Fertilization</Text>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>
+                    Fertilization
+                  </Text>
                   <View style={styles.detailRight}>
-                    <Text style={[styles.detailValue, { color: colors.text }]}>Urea, SP-36, KCl and ZA</Text>
-                    <TouchableOpacity onPress={() => handleInfoPress('Fertilization')} style={styles.infoCircle} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} accessibilityRole="button" accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>
+                      Urea, SP-36, KCl and ZA
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => handleInfoPress('Fertilization')}
+                      style={styles.infoCircle}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}
+                    >
                       <Info size={12} color={colors.primary} />
                     </TouchableOpacity>
                   </View>
                 </View>
                 <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>Certification</Text>
+                  <Text style={[styles.detailLabel, { color: colors.textMute }]}>
+                    Certification
+                  </Text>
                   <View style={styles.detailRight}>
-                    <Text style={[styles.detailValue, { color: colors.text }]}>Land and Fertilizer</Text>
-                    <TouchableOpacity onPress={() => handleInfoPress('Certification')} style={styles.infoCircle} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} accessibilityRole="button" accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>
+                      Land and Fertilizer
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => handleInfoPress('Certification')}
+                      style={styles.infoCircle}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={sw ? 'Maelezo zaidi' : 'More info'}
+                    >
                       <Info size={12} color={colors.primary} />
                     </TouchableOpacity>
                   </View>
@@ -335,54 +507,144 @@ export default function AgroIdScreen() {
 
             {/* Section 3: Track Records — 2×2 card grid */}
             <View style={styles.section}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>TRACK RECORDS</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 14,
+                }}
+              >
+                <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>
+                  TRACK RECORDS
+                </Text>
                 <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: colors.primary }}>
-                  {TRACK_RECORDS.filter(r => r.completed).length}/{TRACK_RECORDS.length} Done
+                  {TRACK_RECORDS.filter((r) => r.completed).length}/{TRACK_RECORDS.length} Done
                 </Text>
               </View>
 
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
                 {TRACK_RECORDS.map((item, idx) => {
-                  const nextIdx = TRACK_RECORDS.findIndex(r => !r.completed);
+                  const nextIdx = TRACK_RECORDS.findIndex((r) => !r.completed);
                   const isCompleted = item.completed;
                   const isNext = !item.completed && nextIdx === idx;
-                  const accentColor = isCompleted ? colors.primary : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.1)' : '#c4d0c0');
+                  const accentColor = isCompleted
+                    ? colors.primary
+                    : isNext
+                      ? '#f59e0b'
+                      : isDark
+                        ? 'rgba(255,255,255,0.1)'
+                        : '#c4d0c0';
                   return (
-                    <View key={idx} style={[styles.trackCard2, {
-                      backgroundColor: isCompleted
-                        ? (isDark ? colors.primary + '12' : colors.primary + '0D')
-                        : isNext
-                        ? (isDark ? 'rgba(245,158,11,0.07)' : 'rgba(245,158,11,0.05)')
-                        : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
-                      borderColor: isCompleted ? colors.primary + '38' : isNext ? 'rgba(245,158,11,0.28)' : colors.border,
-                    }]}>
+                    <View
+                      key={idx}
+                      style={[
+                        styles.trackCard2,
+                        {
+                          backgroundColor: isCompleted
+                            ? isDark
+                              ? colors.primary + '12'
+                              : colors.primary + '0D'
+                            : isNext
+                              ? isDark
+                                ? 'rgba(245,158,11,0.07)'
+                                : 'rgba(245,158,11,0.05)'
+                              : isDark
+                                ? 'rgba(255,255,255,0.03)'
+                                : 'rgba(0,0,0,0.02)',
+                          borderColor: isCompleted
+                            ? colors.primary + '38'
+                            : isNext
+                              ? 'rgba(245,158,11,0.28)'
+                              : colors.border,
+                        },
+                      ]}
+                    >
                       {/* Left accent bar */}
                       <View style={[styles.trackAccentBar, { backgroundColor: accentColor }]} />
 
                       {/* Card content */}
                       <View style={styles.trackCardBody}>
                         {/* Top row: status circle + date */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
-                          <View style={[styles.trackStatusCircle, {
-                            backgroundColor: isCompleted ? colors.primary + '26' : isNext ? 'rgba(245,158,11,0.15)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
-                          }]}>
-                            {isCompleted
-                              ? <Check size={10} color={colors.primary} strokeWidth={3} />
-                              : isNext
-                              ? <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#f59e0b' }} />
-                              : <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4d0c0' }} />}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: 9,
+                          }}
+                        >
+                          <View
+                            style={[
+                              styles.trackStatusCircle,
+                              {
+                                backgroundColor: isCompleted
+                                  ? colors.primary + '26'
+                                  : isNext
+                                    ? 'rgba(245,158,11,0.15)'
+                                    : isDark
+                                      ? 'rgba(255,255,255,0.06)'
+                                      : 'rgba(0,0,0,0.05)',
+                              },
+                            ]}
+                          >
+                            {isCompleted ? (
+                              <Check size={10} color={colors.primary} strokeWidth={3} />
+                            ) : isNext ? (
+                              <View
+                                style={{
+                                  width: 5,
+                                  height: 5,
+                                  borderRadius: 3,
+                                  backgroundColor: '#f59e0b',
+                                }}
+                              />
+                            ) : (
+                              <View
+                                style={{
+                                  width: 5,
+                                  height: 5,
+                                  borderRadius: 3,
+                                  backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4d0c0',
+                                }}
+                              />
+                            )}
                           </View>
-                          <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: isCompleted ? colors.primary : isNext ? '#f59e0b' : colors.textMute }}>
+                          <Text
+                            style={{
+                              fontFamily: 'Inter_700Bold',
+                              fontSize: 10,
+                              color: isCompleted
+                                ? colors.primary
+                                : isNext
+                                  ? '#f59e0b'
+                                  : colors.textMute,
+                            }}
+                          >
                             {item.date}
                           </Text>
                         </View>
 
                         {/* Title + subtitle */}
-                        <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 13, color: isDark ? '#fff' : colors.text, marginBottom: 2 }} numberOfLines={1}>
+                        <Text
+                          style={{
+                            fontFamily: 'Inter_700Bold',
+                            fontSize: 13,
+                            color: isDark ? '#fff' : colors.text,
+                            marginBottom: 2,
+                          }}
+                          numberOfLines={1}
+                        >
                           {item.title}
                         </Text>
-                        <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 11, color: colors.textMute }} numberOfLines={1}>
+                        <Text
+                          style={{
+                            fontFamily: 'Inter_500Medium',
+                            fontSize: 11,
+                            color: colors.textMute,
+                          }}
+                          numberOfLines={1}
+                        >
                           {item.subtitle}
                         </Text>
                       </View>
@@ -398,28 +660,57 @@ export default function AgroIdScreen() {
                 <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>
                   {language === 'sw' ? 'RIPOTI YA MAPATO NA MATUMIZI' : 'FINANCIAL PASSPORT LEDGER'}
                 </Text>
-                <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: net < 0 ? '#ef4444' : colors.primary }}>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontFamily: 'Inter_800ExtraBold',
+                    color: net < 0 ? '#ef4444' : colors.primary,
+                  }}
+                >
                   NET: {net < 0 ? '−' : ''}TZS {fmt(net)}
                 </Text>
               </View>
-              
+
               <View style={[styles.cardBlock, { borderColor: colors.border, padding: 12 }]}>
                 {ledger.length === 0 ? (
-                  <Text style={{ color: colors.textMute, fontSize: 12, textAlign: 'center', paddingVertical: 12, fontFamily: 'Inter_500Medium' }}>
+                  <Text
+                    style={{
+                      color: colors.textMute,
+                      fontSize: 12,
+                      textAlign: 'center',
+                      paddingVertical: 12,
+                      fontFamily: 'Inter_500Medium',
+                    }}
+                  >
                     No financial records found. Tap Update Info to add.
                   </Text>
                 ) : (
                   ledger.slice(0, 5).map((e, idx) => (
                     <View key={e.id}>
                       <View style={styles.ledgerRow}>
-                        <View style={[styles.ledgerDot, { backgroundColor: e.amountTZS > 0 ? colors.primary : '#ef4444' }]} />
+                        <View
+                          style={[
+                            styles.ledgerDot,
+                            { backgroundColor: e.amountTZS > 0 ? colors.primary : '#ef4444' },
+                          ]}
+                        />
                         <View style={{ flex: 1, marginLeft: 10 }}>
-                          <Text style={[styles.ledgerDesc, { color: colors.text }]} numberOfLines={1}>{e.description}</Text>
+                          <Text
+                            style={[styles.ledgerDesc, { color: colors.text }]}
+                            numberOfLines={1}
+                          >
+                            {e.description}
+                          </Text>
                           <Text style={[styles.ledgerMeta, { color: colors.textMute }]}>
                             {e.category} · {new Date(e.date).toLocaleDateString('en-GB')}
                           </Text>
                         </View>
-                        <Text style={[styles.ledgerAmt, { color: e.amountTZS > 0 ? colors.primary : '#ef4444' }]}>
+                        <Text
+                          style={[
+                            styles.ledgerAmt,
+                            { color: e.amountTZS > 0 ? colors.primary : '#ef4444' },
+                          ]}
+                        >
                           {e.amountTZS > 0 ? '+' : '−'} {fmt(e.amountTZS)}
                         </Text>
                       </View>
@@ -434,7 +725,7 @@ export default function AgroIdScreen() {
 
             {/* Bottom Actions Row */}
             <View style={styles.actionsRow}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.downloadBtn, { backgroundColor: isDark ? '#263322' : '#D4E9CD' }]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -442,10 +733,12 @@ export default function AgroIdScreen() {
                 }}
               >
                 <QrCode size={18} color={isDark ? '#FFFFFF' : colors.primary} />
-                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : colors.primary }]}>Download QR</Text>
+                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : colors.primary }]}>
+                  Download QR
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.updateBtn, { backgroundColor: '#0a3d18' }]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -457,7 +750,7 @@ export default function AgroIdScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          
+
           <View style={{ height: 100 }} />
         </ScrollView>
 
@@ -470,25 +763,36 @@ export default function AgroIdScreen() {
         >
           <View style={styles.modalOverlay}>
             <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
-            <View style={[styles.modalCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.modalCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               <View style={styles.modalHeader}>
                 <ShieldCheck size={24} color={colors.primary} />
-                <Text style={[styles.modalTitle, { color: colors.text }]}>Verified Crop Passport</Text>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>
+                  Verified Crop Passport
+                </Text>
               </View>
               <Text style={[styles.modalDesc, { color: colors.textMute }]}>
                 ID: {agroId.id} • {agroId.name}
               </Text>
-              
+
               <View style={styles.modalQrContainer}>
                 <QRCode value={qrPayload} size={160} backgroundColor="#fff" color="#000" />
               </View>
-              
+
               <Text style={[styles.modalHint, { color: colors.textMute }]}>
-                Banks, buyers, and agricultural cooperatives scan this code to instantly verify your farm record, certifications, and P&L history.
+                Banks, buyers, and agricultural cooperatives scan this code to instantly verify your
+                farm record, certifications, and P&L history.
               </Text>
 
-              <TouchableOpacity 
-                style={[styles.modalCtaBtn, { backgroundColor: colors.primary, opacity: exporting ? 0.6 : 1 }]}
+              <TouchableOpacity
+                style={[
+                  styles.modalCtaBtn,
+                  { backgroundColor: colors.primary, opacity: exporting ? 0.6 : 1 },
+                ]}
                 onPress={() => {
                   setQrModalVisible(false);
                   handleExport();
@@ -501,7 +805,7 @@ export default function AgroIdScreen() {
                 </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.modalCloseBtn}
                 onPress={() => setQrModalVisible(false)}
               >
@@ -518,10 +822,22 @@ export default function AgroIdScreen() {
           animationType="slide"
           onRequestClose={() => setUpdateModalVisible(false)}
         >
-          <KeyboardAvoidingView style={styles.addSheetOverlay} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <KeyboardAvoidingView
+            style={styles.addSheetOverlay}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
             <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFill} />
-            <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={() => setUpdateModalVisible(false)} />
-            <View style={[styles.addSheet, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <TouchableOpacity
+              style={StyleSheet.absoluteFill}
+              activeOpacity={1}
+              onPress={() => setUpdateModalVisible(false)}
+            />
+            <View
+              style={[
+                styles.addSheet,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               {/* Drag handle */}
               <View style={[styles.addSheetHandle, { backgroundColor: colors.border }]} />
 
@@ -540,7 +856,10 @@ export default function AgroIdScreen() {
                 </View>
                 <TouchableOpacity
                   onPress={() => setUpdateModalVisible(false)}
-                  style={[styles.addSheetClose, { backgroundColor: colors.background, borderColor: colors.border }]}
+                  style={[
+                    styles.addSheetClose,
+                    { backgroundColor: colors.background, borderColor: colors.border },
+                  ]}
                 >
                   <X size={16} color={colors.textMute} />
                 </TouchableOpacity>
@@ -558,17 +877,33 @@ export default function AgroIdScreen() {
                     <TouchableOpacity
                       key={t}
                       activeOpacity={0.85}
-                      onPress={() => { Haptics.selectionAsync(); setEntryType(t); setEntryCategory(''); }}
-                      style={[styles.segmentBtn, { borderColor: active ? accent : colors.border, backgroundColor: active ? accent + '14' : 'transparent' }]}
+                      onPress={() => {
+                        Haptics.selectionAsync();
+                        setEntryType(t);
+                        setEntryCategory('');
+                      }}
+                      style={[
+                        styles.segmentBtn,
+                        {
+                          borderColor: active ? accent : colors.border,
+                          backgroundColor: active ? accent + '14' : 'transparent',
+                        },
+                      ]}
                       accessibilityRole="button"
                       accessibilityState={{ selected: active }}
-                      accessibilityLabel={t === 'income' ? (sw ? 'Mapato' : 'Income') : (sw ? 'Gharama' : 'Expense')}
+                      accessibilityLabel={
+                        t === 'income' ? (sw ? 'Mapato' : 'Income') : sw ? 'Gharama' : 'Expense'
+                      }
                     >
-                      {t === 'income'
-                        ? <ArrowDownLeft size={16} color={active ? accent : colors.textMute} />
-                        : <ArrowUpRight size={16} color={active ? accent : colors.textMute} />}
-                      <Text style={[styles.segmentText, { color: active ? accent : colors.textMute }]}>
-                        {t === 'income' ? (sw ? 'Mapato' : 'Income') : (sw ? 'Gharama' : 'Expense')}
+                      {t === 'income' ? (
+                        <ArrowDownLeft size={16} color={active ? accent : colors.textMute} />
+                      ) : (
+                        <ArrowUpRight size={16} color={active ? accent : colors.textMute} />
+                      )}
+                      <Text
+                        style={[styles.segmentText, { color: active ? accent : colors.textMute }]}
+                      >
+                        {t === 'income' ? (sw ? 'Mapato' : 'Income') : sw ? 'Gharama' : 'Expense'}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -576,8 +911,15 @@ export default function AgroIdScreen() {
               </View>
 
               {/* Amount */}
-              <Text style={[styles.fieldLabel, { color: colors.textMute }]}>{sw ? 'Kiasi (TZS)' : 'Amount (TZS)'}</Text>
-              <View style={[styles.amountWrap, { borderColor: colors.border, backgroundColor: colors.background }]}>
+              <Text style={[styles.fieldLabel, { color: colors.textMute }]}>
+                {sw ? 'Kiasi (TZS)' : 'Amount (TZS)'}
+              </Text>
+              <View
+                style={[
+                  styles.amountWrap,
+                  { borderColor: colors.border, backgroundColor: colors.background },
+                ]}
+              >
                 <Text style={[styles.amountPrefix, { color: colors.textMute }]}>TZS</Text>
                 <TextInput
                   value={entryAmount}
@@ -592,39 +934,72 @@ export default function AgroIdScreen() {
               </View>
 
               {/* Category chips */}
-              <Text style={[styles.fieldLabel, { color: colors.textMute }]}>{sw ? 'Aina' : 'Category'}</Text>
+              <Text style={[styles.fieldLabel, { color: colors.textMute }]}>
+                {sw ? 'Aina' : 'Category'}
+              </Text>
               <View style={styles.chipRow}>
                 {(entryType === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map((c) => {
-                  const selected = (entryCategory || (entryType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0])) === c;
+                  const selected =
+                    (entryCategory ||
+                      (entryType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0])) ===
+                    c;
                   return (
                     <TouchableOpacity
                       key={c}
                       activeOpacity={0.85}
-                      onPress={() => { Haptics.selectionAsync(); setEntryCategory(c); }}
-                      style={[styles.chip, { borderColor: selected ? colors.primary : colors.border, backgroundColor: selected ? colors.primary + '14' : 'transparent' }]}
+                      onPress={() => {
+                        Haptics.selectionAsync();
+                        setEntryCategory(c);
+                      }}
+                      style={[
+                        styles.chip,
+                        {
+                          borderColor: selected ? colors.primary : colors.border,
+                          backgroundColor: selected ? colors.primary + '14' : 'transparent',
+                        },
+                      ]}
                       accessibilityRole="button"
                       accessibilityState={{ selected }}
                     >
-                      <Text style={[styles.chipText, { color: selected ? colors.primary : colors.textMute }]}>{c}</Text>
+                      <Text
+                        style={[
+                          styles.chipText,
+                          { color: selected ? colors.primary : colors.textMute },
+                        ]}
+                      >
+                        {c}
+                      </Text>
                     </TouchableOpacity>
                   );
                 })}
               </View>
 
               {/* Note */}
-              <Text style={[styles.fieldLabel, { color: colors.textMute }]}>{sw ? 'Maelezo (hiari)' : 'Note (optional)'}</Text>
+              <Text style={[styles.fieldLabel, { color: colors.textMute }]}>
+                {sw ? 'Maelezo (hiari)' : 'Note (optional)'}
+              </Text>
               <TextInput
                 value={entryNote}
                 onChangeText={setEntryNote}
                 placeholder={sw ? 'mf. Mauzo ya mahindi 200kg' : 'e.g. Maize sale 200kg'}
                 placeholderTextColor={colors.textMute}
-                style={[styles.noteInput, { color: colors.text, borderColor: colors.border, backgroundColor: colors.background }]}
+                style={[
+                  styles.noteInput,
+                  {
+                    color: colors.text,
+                    borderColor: colors.border,
+                    backgroundColor: colors.background,
+                  },
+                ]}
                 accessibilityLabel={sw ? 'Maelezo' : 'Note'}
               />
 
               {/* Save */}
               <TouchableOpacity
-                style={[styles.saveBtn, { backgroundColor: colors.primary, opacity: savingEntry ? 0.6 : 1 }]}
+                style={[
+                  styles.saveBtn,
+                  { backgroundColor: colors.primary, opacity: savingEntry ? 0.6 : 1 },
+                ]}
                 onPress={submitEntry}
                 disabled={savingEntry}
                 accessibilityRole="button"
@@ -636,7 +1011,6 @@ export default function AgroIdScreen() {
             </View>
           </KeyboardAvoidingView>
         </Modal>
-
       </View>
     </Gate>
   );
@@ -645,7 +1019,7 @@ export default function AgroIdScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { paddingTop: 0 },
-  
+
   // Hero Image
   heroWrapper: {
     height: 250,
@@ -723,7 +1097,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     marginBottom: 20,
   },
-  
+
   // Grouped rows block
   section: {
     marginBottom: 20,

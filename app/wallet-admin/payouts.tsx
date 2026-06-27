@@ -20,27 +20,27 @@ import { useWalletAdminStore, PayoutRequest, PayoutStatus } from '../../store/us
 import { useKilimoStore } from '../../store/useKilimoStore';
 
 const FILTERS: { key: 'all' | PayoutStatus; label: string }[] = [
-  { key: 'all',       label: 'Yote' },
+  { key: 'all', label: 'Yote' },
   { key: 'requested', label: 'Kusubiri' },
-  { key: 'approved',  label: 'Imeidhinishwa' },
-  { key: 'settled',   label: 'Imelipwa' },
-  { key: 'rejected',  label: 'Imekataliwa' },
+  { key: 'approved', label: 'Imeidhinishwa' },
+  { key: 'settled', label: 'Imelipwa' },
+  { key: 'rejected', label: 'Imekataliwa' },
 ];
 
 const fmt = (n: number) => `TSh ${new Intl.NumberFormat('en-US').format(n)}`;
 
 const STATUS_COLOR: Record<PayoutStatus, string> = {
   requested: '#f59e0b',
-  approved:  '#3b82f6',
-  settled:   '#2E6F40',
-  rejected:  '#ef4444',
+  approved: '#3b82f6',
+  settled: '#2E6F40',
+  rejected: '#ef4444',
 };
 
 const STATUS_LABEL: Record<PayoutStatus, string> = {
   requested: 'Kusubiri',
-  approved:  'Imeidhinishwa',
-  settled:   'Imelipwa',
-  rejected:  'Imekataliwa',
+  approved: 'Imeidhinishwa',
+  settled: 'Imelipwa',
+  rejected: 'Imekataliwa',
 };
 
 export default function PayoutsScreen() {
@@ -59,7 +59,7 @@ export default function PayoutsScreen() {
 
   const filtered = useMemo(
     () => (filter === 'all' ? payouts : payouts.filter((p) => p.status === filter)),
-    [payouts, filter],
+    [payouts, filter]
   );
 
   function onApprove(p: PayoutRequest) {
@@ -112,8 +112,18 @@ export default function PayoutsScreen() {
         </View>
 
         {item.status === 'rejected' && item.rejectionReason && (
-          <View style={[s.note, { backgroundColor: `${STATUS_COLOR.rejected}11`, borderColor: `${STATUS_COLOR.rejected}55` }]}>
-            <Text style={[s.noteLabel, { color: STATUS_COLOR.rejected }]}>Sababu ya kukataliwa</Text>
+          <View
+            style={[
+              s.note,
+              {
+                backgroundColor: `${STATUS_COLOR.rejected}11`,
+                borderColor: `${STATUS_COLOR.rejected}55`,
+              },
+            ]}
+          >
+            <Text style={[s.noteLabel, { color: STATUS_COLOR.rejected }]}>
+              Sababu ya kukataliwa
+            </Text>
             <Text style={[s.noteBody, { color: colors.text }]}>{item.rejectionReason}</Text>
           </View>
         )}
@@ -177,12 +187,17 @@ export default function PayoutsScreen() {
               <TouchableOpacity
                 key={f.key}
                 onPress={() => setFilter(f.key)}
-                style={[s.pill, {
-                  backgroundColor: active ? colors.primary : colors.card,
-                  borderColor: active ? colors.primary : colors.border,
-                }]}
+                style={[
+                  s.pill,
+                  {
+                    backgroundColor: active ? colors.primary : colors.card,
+                    borderColor: active ? colors.primary : colors.border,
+                  },
+                ]}
               >
-                <Text style={[s.pillText, { color: active ? '#000' : colors.text }]}>{f.label}</Text>
+                <Text style={[s.pillText, { color: active ? '#000' : colors.text }]}>
+                  {f.label}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -205,7 +220,9 @@ export default function PayoutsScreen() {
             />
           </View>
         ) : (
-          <FlatList showsVerticalScrollIndicator={false} data={filtered}
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={filtered}
             keyExtractor={(i) => i.id}
             renderItem={renderItem}
             contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 }}
@@ -214,7 +231,9 @@ export default function PayoutsScreen() {
 
         {/* Reject modal (inline sheet) */}
         {rejecting && (
-          <View style={[s.sheet, { backgroundColor: colors.background, borderColor: colors.border }]}>
+          <View
+            style={[s.sheet, { backgroundColor: colors.background, borderColor: colors.border }]}
+          >
             <Text style={[s.sheetTitle, { color: colors.text }]}>Kataa malipo</Text>
             <TextInput
               value={rejecting.reason}
@@ -225,10 +244,19 @@ export default function PayoutsScreen() {
               multiline
             />
             <View style={s.sheetActions}>
-              <TouchableOpacity style={[s.btn, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }]} onPress={() => setRejecting(null)}>
+              <TouchableOpacity
+                style={[
+                  s.btn,
+                  { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 },
+                ]}
+                onPress={() => setRejecting(null)}
+              >
                 <Text style={[s.btnText, { color: colors.text }]}>Ghairi</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[s.btn, { backgroundColor: STATUS_COLOR.rejected }]} onPress={onConfirmReject}>
+              <TouchableOpacity
+                style={[s.btn, { backgroundColor: STATUS_COLOR.rejected }]}
+                onPress={onConfirmReject}
+              >
                 <Text style={s.btnText}>Thibitisha</Text>
               </TouchableOpacity>
             </View>
@@ -237,7 +265,9 @@ export default function PayoutsScreen() {
 
         {/* Settle modal */}
         {settling && (
-          <View style={[s.sheet, { backgroundColor: colors.background, borderColor: colors.border }]}>
+          <View
+            style={[s.sheet, { backgroundColor: colors.background, borderColor: colors.border }]}
+          >
             <Text style={[s.sheetTitle, { color: colors.text }]}>Weka risiti ya M-Pesa</Text>
             <TextInput
               value={settling.receipt}
@@ -248,10 +278,19 @@ export default function PayoutsScreen() {
               style={[s.input, { color: colors.text, borderColor: colors.border }]}
             />
             <View style={s.sheetActions}>
-              <TouchableOpacity style={[s.btn, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }]} onPress={() => setSettling(null)}>
+              <TouchableOpacity
+                style={[
+                  s.btn,
+                  { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 },
+                ]}
+                onPress={() => setSettling(null)}
+              >
                 <Text style={[s.btnText, { color: colors.text }]}>Ghairi</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[s.btn, { backgroundColor: STATUS_COLOR.settled }]} onPress={onConfirmSettle}>
+              <TouchableOpacity
+                style={[s.btn, { backgroundColor: STATUS_COLOR.settled }]}
+                onPress={onConfirmSettle}
+              >
                 <Text style={[s.btnText, { color: '#fff' }]}>Thibitisha</Text>
               </TouchableOpacity>
             </View>
@@ -263,30 +302,65 @@ export default function PayoutsScreen() {
 }
 
 const s = StyleSheet.create({
-  filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 16, paddingTop: 12 },
-  pill:      { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: StyleSheet.hairlineWidth },
-  pillText:  { fontFamily: 'Inter_700Bold', fontSize: 11 },
-  readonly:  { fontFamily: 'Inter_500Medium', fontSize: 11, fontStyle: 'italic' },
-  card:      { padding: 14, gap: 6 },
-  cardHeader:{ flexDirection: 'row', alignItems: 'center' },
-  name:      { fontFamily: 'Inter_800ExtraBold', fontSize: 14 },
-  sub:       { fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 2 },
-  statusPill:{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
-  statusText:{ fontFamily: 'Inter_700Bold', fontSize: 10 },
-  amount:    { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, marginTop: 4 },
-  reason:    { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 2 },
-  metaRow:   { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  metaText:  { fontFamily: 'Inter_500Medium', fontSize: 10 },
-  note:      { marginTop: 8, padding: 10, borderRadius: 10, borderWidth: StyleSheet.hairlineWidth },
+  filterRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  pill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  pillText: { fontFamily: 'Inter_700Bold', fontSize: 11 },
+  readonly: { fontFamily: 'Inter_500Medium', fontSize: 11, fontStyle: 'italic' },
+  card: { padding: 14, gap: 6 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center' },
+  name: { fontFamily: 'Inter_800ExtraBold', fontSize: 14 },
+  sub: { fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 2 },
+  statusPill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
+  statusText: { fontFamily: 'Inter_700Bold', fontSize: 10 },
+  amount: { fontFamily: 'InstrumentSerif_400Regular', fontSize: 22, marginTop: 4 },
+  reason: { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 2 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+  metaText: { fontFamily: 'Inter_500Medium', fontSize: 10 },
+  note: { marginTop: 8, padding: 10, borderRadius: 10, borderWidth: StyleSheet.hairlineWidth },
   noteLabel: { fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 0.5 },
-  noteBody:  { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 4 },
-  actions:   { flexDirection: 'row', gap: 8, marginTop: 10 },
-  btn:       { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 12 },
-  btnText:   { fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: '#fff' },
-  sheet:     { position: 'absolute', left: 16, right: 16, bottom: 24, padding: 16, borderRadius: 16, borderWidth: StyleSheet.hairlineWidth, gap: 10 },
-  sheetTitle:{ fontFamily: 'Inter_800ExtraBold', fontSize: 14 },
-  input:     { borderWidth: StyleSheet.hairlineWidth, borderRadius: 10, padding: 10, fontFamily: 'Inter_500Medium', fontSize: 13, minHeight: 44 },
-  sheetActions:{ flexDirection: 'row', gap: 8 },
+  noteBody: { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 4 },
+  actions: { flexDirection: 'row', gap: 8, marginTop: 10 },
+  btn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  btnText: { fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: '#fff' },
+  sheet: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 24,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: 10,
+  },
+  sheetTitle: { fontFamily: 'Inter_800ExtraBold', fontSize: 14 },
+  input: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    padding: 10,
+    fontFamily: 'Inter_500Medium',
+    fontSize: 13,
+    minHeight: 44,
+  },
+  sheetActions: { flexDirection: 'row', gap: 8 },
   fallbackTitle: { fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 },
-  fallbackBody:  { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 6, textAlign: 'center' },
+  fallbackBody: { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 6, textAlign: 'center' },
 });

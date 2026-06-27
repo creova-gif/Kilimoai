@@ -22,36 +22,49 @@ export default function VRASetupScreen() {
   const { zoneId } = useLocalSearchParams();
   const router = useRouter();
   const { colors, isDark } = useTheme();
-  const language = useKilimoStore(s => s.language);
-  
+  const language = useKilimoStore((s) => s.language);
+
   const [activeInput, setActiveInput] = useState('fertilizer');
   const [baseRate, setBaseRate] = useState(150); // kg/ha or L/ha
   const [isPushing, setIsPushing] = useState(false);
 
-  const zone = ZONES.find(z => z.id === Number(zoneId));
+  const zone = ZONES.find((z) => z.id === Number(zoneId));
 
   if (!zone) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}>Zone Not Found</Text>
-        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={{ marginTop: 20 }}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <Text
+          style={{ color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }}
+        >
+          Zone Not Found
+        </Text>
+        <TouchableOpacity
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+          style={{ marginTop: 20 }}
+        >
           <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold' }}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  const minLat = Math.min(...zone.coordinates.map(c => c.latitude));
-  const maxLat = Math.max(...zone.coordinates.map(c => c.latitude));
-  const minLng = Math.min(...zone.coordinates.map(c => c.longitude));
-  const maxLng = Math.max(...zone.coordinates.map(c => c.longitude));
+  const minLat = Math.min(...zone.coordinates.map((c) => c.latitude));
+  const maxLat = Math.max(...zone.coordinates.map((c) => c.latitude));
+  const minLng = Math.min(...zone.coordinates.map((c) => c.longitude));
+  const maxLng = Math.max(...zone.coordinates.map((c) => c.longitude));
 
   const handlePush = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setIsPushing(true);
     setTimeout(() => {
       setIsPushing(false);
-      if (router.canGoBack()) router.back(); else router.replace('/');
+      if (router.canGoBack()) router.back();
+      else router.replace('/');
     }, 2000);
   };
 
@@ -63,12 +76,12 @@ export default function VRASetupScreen() {
     for (let c = 0; c < gridCols; c++) {
       const latStep = (maxLat - minLat) / gridRows;
       const lngStep = (maxLng - minLng) / gridCols;
-      
+
       const cellMinLat = minLat + r * latStep;
       const cellMaxLat = cellMinLat + latStep;
       const cellMinLng = minLng + c * lngStep;
       const cellMaxLng = cellMinLng + lngStep;
-      
+
       // Randomize intensity based on active input
       const intensity = Math.random();
       let color: string;
@@ -89,7 +102,7 @@ export default function VRASetupScreen() {
           { latitude: cellMaxLat, longitude: cellMinLng },
           { latitude: cellMaxLat, longitude: cellMaxLng },
           { latitude: cellMinLat, longitude: cellMaxLng },
-        ]
+        ],
       });
     }
   }
@@ -97,8 +110,15 @@ export default function VRASetupScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Custom Header */}
-      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
+      <View
+        style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}
+      >
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+          style={styles.backBtn}
+        >
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text }]}>VRA Setup</Text>
@@ -106,7 +126,6 @@ export default function VRASetupScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
         <Animated.View entering={FadeInUp.delay(100)} style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Select Input Type</Text>
           <View style={styles.segmentedControl}>
@@ -116,10 +135,7 @@ export default function VRASetupScreen() {
               return (
                 <TouchableOpacity
                   key={input.id}
-                  style={[
-                    styles.segmentBtn,
-                    isActive && { backgroundColor: colors.primary }
-                  ]}
+                  style={[styles.segmentBtn, isActive && { backgroundColor: colors.primary }]}
                   onPress={() => {
                     Haptics.selectionAsync();
                     setActiveInput(input.id);
@@ -127,10 +143,12 @@ export default function VRASetupScreen() {
                   activeOpacity={0.8}
                 >
                   <Icon color={isActive ? '#FFF' : colors.text + '80'} size={20} />
-                  <Text style={[
-                    styles.segmentText,
-                    isActive ? { color: '#FFF' } : { color: colors.text + '80' }
-                  ]}>
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      isActive ? { color: '#FFF' } : { color: colors.text + '80' },
+                    ]}
+                  >
                     {language === 'sw' ? input.labelSw : input.labelEn}
                   </Text>
                 </TouchableOpacity>
@@ -139,10 +157,14 @@ export default function VRASetupScreen() {
           </View>
         </Animated.View>
 
-        <Animated.View entering={FadeInUp.delay(200)} layout={Layout.springify()} style={styles.section}>
+        <Animated.View
+          entering={FadeInUp.delay(200)}
+          layout={Layout.springify()}
+          style={styles.section}
+        >
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Prescription Map</Text>
           <View style={styles.mapWrapper}>
-            <MapView 
+            <MapView
               provider={PROVIDER_GOOGLE}
               style={StyleSheet.absoluteFillObject}
               initialRegion={{
@@ -157,7 +179,7 @@ export default function VRASetupScreen() {
               mapType="satellite"
             >
               {gridCells.map((cell) => (
-                <Polygon 
+                <Polygon
                   key={cell.id}
                   coordinates={cell.coordinates}
                   fillColor={cell.color}
@@ -174,7 +196,9 @@ export default function VRASetupScreen() {
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.sliderHeader}>
               <Text style={[styles.sliderLabel, { color: colors.text }]}>Base Rate</Text>
-              <Text style={[styles.sliderValue, { color: colors.primary }]}>{baseRate} {activeInput === 'water' ? 'L/ha' : 'kg/ha'}</Text>
+              <Text style={[styles.sliderValue, { color: colors.primary }]}>
+                {baseRate} {activeInput === 'water' ? 'L/ha' : 'kg/ha'}
+              </Text>
             </View>
             <Slider
               style={styles.slider}
@@ -197,20 +221,24 @@ export default function VRASetupScreen() {
       </ScrollView>
 
       {/* Action Footer */}
-      <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
-        <TouchableOpacity 
+      <View
+        style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}
+      >
+        <TouchableOpacity
           style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
           activeOpacity={0.8}
           onPress={handlePush}
           disabled={isPushing}
         >
-          {isPushing ? (
-            <Check color="#FFF" size={24} />
-          ) : (
-            <Combine color="#FFF" size={24} />
-          )}
+          {isPushing ? <Check color="#FFF" size={24} /> : <Combine color="#FFF" size={24} />}
           <Text style={styles.primaryBtnText}>
-            {isPushing ? (language === 'sw' ? 'Imetumwa' : 'Synced Successfully') : (language === 'sw' ? 'Tuma Kwenye Mtambo' : 'Sync to Equipment')}
+            {isPushing
+              ? language === 'sw'
+                ? 'Imetumwa'
+                : 'Synced Successfully'
+              : language === 'sw'
+                ? 'Tuma Kwenye Mtambo'
+                : 'Sync to Equipment'}
           </Text>
         </TouchableOpacity>
       </View>

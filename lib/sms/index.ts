@@ -17,22 +17,19 @@
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { supabase } from '../supabase';
 
-export type SmsEvent =
-  | 'critical_diagnosis'
-  | 'price_alert'
-  | 'severe_weather'
-  | 'payment_received';
+export type SmsEvent = 'critical_diagnosis' | 'price_alert' | 'severe_weather' | 'payment_received';
 
 export interface SmsPayload {
-  to: string;          // E.164, e.g. "+255712345678"
-  body: string;        // Plain text, < 160 chars ideally
+  to: string; // E.164, e.g. "+255712345678"
+  body: string; // Plain text, < 160 chars ideally
   event: SmsEvent;
   meta?: Record<string, unknown>;
 }
 
 export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reason?: string }> {
   if (!supabase) {
-    if (__DEV__) console.log('[SMS:stub]', payload.event, '→', maskNumber(payload.to), '· [redacted]');
+    if (__DEV__)
+      console.log('[SMS:stub]', payload.event, '→', maskNumber(payload.to), '· [redacted]');
 
     // Mirror to in-app notification so the user sees the channel firing
     useKilimoStore.getState().addNotification({
@@ -72,10 +69,14 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
 
 function labelForEvent(e: SmsEvent): string {
   switch (e) {
-    case 'critical_diagnosis': return 'Critical Diagnosis';
-    case 'price_alert': return 'Price Alert';
-    case 'severe_weather': return 'Severe Weather';
-    case 'payment_received': return 'Payment Received';
+    case 'critical_diagnosis':
+      return 'Critical Diagnosis';
+    case 'price_alert':
+      return 'Price Alert';
+    case 'severe_weather':
+      return 'Severe Weather';
+    case 'payment_received':
+      return 'Payment Received';
   }
 }
 

@@ -20,7 +20,10 @@ import { supabase } from './supabase';
 const AI_FN = 'openai-proxy';
 
 export class AIError extends Error {
-  constructor(message: string, public kind: 'not_configured' | 'unauthorized' | 'network' | 'server' | 'validation') {
+  constructor(
+    message: string,
+    public kind: 'not_configured' | 'unauthorized' | 'network' | 'server' | 'validation'
+  ) {
     super(message);
   }
 }
@@ -56,19 +59,19 @@ export async function chat(messages: ChatMessage[]): Promise<string> {
   return content ?? '';
 }
 
-export type Severity   = 'low' | 'medium' | 'high' | 'critical';
+export type Severity = 'low' | 'medium' | 'high' | 'critical';
 export type Confidence = 'low' | 'medium' | 'high';
 export type ImgQuality = 'good' | 'poor' | 'unusable';
 
 export interface VisionDiagnosis {
-  crop?:          string;
-  disease?:       string;
-  severity?:      Severity;
-  confidence?:    Confidence;
-  imageQuality?:  ImgQuality;
+  crop?: string;
+  disease?: string;
+  severity?: Severity;
+  confidence?: Confidence;
+  imageQuality?: ImgQuality;
   consultExpert?: boolean;
-  actions?:       string[];
-  raw:            string;
+  actions?: string[];
+  raw: string;
 }
 
 export function normalizeSeverity(input: unknown): Severity | undefined {
@@ -84,12 +87,14 @@ export function normalizeSeverity(input: unknown): Severity | undefined {
 
 export async function diagnoseCropPhoto(
   imageBase64: string,
-  opts: { mimeType?: string; prompt?: string } = {},
+  opts: { mimeType?: string; prompt?: string } = {}
 ): Promise<VisionDiagnosis> {
   if (!aiConfigured()) throw new AIError('AI backend not configured', 'not_configured');
 
   const mimeType = opts.mimeType ?? 'image/jpeg';
-  const prompt = opts.prompt ?? `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu.
+  const prompt =
+    opts.prompt ??
+    `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu.
 Jibu LAZIMA kwa JSON iliyosafi tu:
 {
   "crop": "jina la mmea kwa Kiswahili",
@@ -123,15 +128,29 @@ HAKIKISHA JSON YAKO NI SAHIHI.`;
     const severity = normalizeSeverity(parsed.severity);
     const rawConf = typeof parsed.confidence === 'string' ? parsed.confidence.toLowerCase() : '';
     const confidence: Confidence | undefined =
-      rawConf === 'high' ? 'high' : rawConf === 'medium' ? 'medium' : rawConf === 'low' ? 'low' : undefined;
+      rawConf === 'high'
+        ? 'high'
+        : rawConf === 'medium'
+          ? 'medium'
+          : rawConf === 'low'
+            ? 'low'
+            : undefined;
 
-    const rawQuality = typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
+    const rawQuality =
+      typeof parsed.imageQuality === 'string' ? parsed.imageQuality.toLowerCase() : '';
     const imageQuality: ImgQuality | undefined =
-      rawQuality === 'good' ? 'good' : rawQuality === 'poor' ? 'poor' : rawQuality === 'unusable' ? 'unusable' : undefined;
+      rawQuality === 'good'
+        ? 'good'
+        : rawQuality === 'poor'
+          ? 'poor'
+          : rawQuality === 'unusable'
+            ? 'unusable'
+            : undefined;
 
     const consultExpert: boolean =
-      typeof parsed.consultExpert === 'boolean' ? parsed.consultExpert
-      : severity === 'critical' || severity === 'high' || confidence === 'low';
+      typeof parsed.consultExpert === 'boolean'
+        ? parsed.consultExpert
+        : severity === 'critical' || severity === 'high' || confidence === 'low';
 
     return { ...parsed, severity, confidence, imageQuality, consultExpert, raw: content };
   } catch (err: any) {
@@ -142,7 +161,7 @@ HAKIKISHA JSON YAKO NI SAHIHI.`;
 /** Voice transcription, routed server-side through the proxy (Whisper). */
 export async function transcribeAudio(
   audioBase64: string,
-  opts: { mimeType?: string; language?: string } = {},
+  opts: { mimeType?: string; language?: string } = {}
 ): Promise<string> {
   if (!aiConfigured()) throw new AIError('AI backend not configured', 'not_configured');
   const { text } = await invokeAI<{ text: string }>({

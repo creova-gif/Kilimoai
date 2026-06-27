@@ -70,7 +70,7 @@ export default function FarmTwinList() {
   const [gateOpen, setGateOpen] = useState(false);
   const [pumpActive, setPumpActive] = useState(true);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
-  
+
   // Custom interactive metrics
   const [pastureMoistures, setPastureMoistures] = useState({
     north: 42,
@@ -78,8 +78,12 @@ export default function FarmTwinList() {
     east: 55,
   });
 
-  const maxYield = scenarios.length > 0 ? Math.max(...scenarios.map((s) => s.output.totalYieldTonnes), 1) : 1;
-  const maxProfit = scenarios.length > 0 ? Math.max(...scenarios.map((s) => Math.max(0, s.output.netProfitTZS)), 1) : 1;
+  const maxYield =
+    scenarios.length > 0 ? Math.max(...scenarios.map((s) => s.output.totalYieldTonnes), 1) : 1;
+  const maxProfit =
+    scenarios.length > 0
+      ? Math.max(...scenarios.map((s) => Math.max(0, s.output.netProfitTZS)), 1)
+      : 1;
 
   function handleCreate() {
     const name = newName.trim() || `Hali ${scenarios.length + 1}`;
@@ -91,21 +95,17 @@ export default function FarmTwinList() {
   }
 
   function handleDelete(sc: Scenario) {
-    Alert.alert(
-      'Futa hali',
-      `Futa "${sc.name}"? Hii haiwezi kutenduliwa.`,
-      [
-        { text: 'Ghairi', style: 'cancel' },
-        {
-          text: 'Futa',
-          style: 'destructive',
-          onPress: () => {
-            deleteScenario(sc.id);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          },
+    Alert.alert('Futa hali', `Futa "${sc.name}"? Hii haiwezi kutenduliwa.`, [
+      { text: 'Ghairi', style: 'cancel' },
+      {
+        text: 'Futa',
+        style: 'destructive',
+        onPress: () => {
+          deleteScenario(sc.id);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         },
-      ]
-    );
+      },
+    ]);
   }
 
   const renderItem = ({ item }: { item: Scenario }) => {
@@ -118,7 +118,8 @@ export default function FarmTwinList() {
             <View style={{ flex: 1 }}>
               <Text style={[s.cardName, { color: colors.text }]}>{item.name}</Text>
               <Text style={[s.cardSub, { color: colors.textMute }]}>
-                {item.inputs.crop} · {item.inputs.areaHa} ha · {item.inputs.irrigated ? 'Umwagiliaji' : 'Mvua'}
+                {item.inputs.crop} · {item.inputs.areaHa} ha ·{' '}
+                {item.inputs.irrigated ? 'Umwagiliaji' : 'Mvua'}
               </Text>
             </View>
             <View style={s.cardActions}>
@@ -126,7 +127,10 @@ export default function FarmTwinList() {
                 onPress={(e) => {
                   e.stopPropagation();
                   if (scenarios.length >= MAX_SCENARIOS) {
-                    Alert.alert('Ukomo', `Unaweza kuwa na hadi ${MAX_SCENARIOS} hali kwa wakati mmoja.`);
+                    Alert.alert(
+                      'Ukomo',
+                      `Unaweza kuwa na hadi ${MAX_SCENARIOS} hali kwa wakati mmoja.`
+                    );
                     return;
                   }
                   const id = duplicateScenario(item.id);
@@ -159,7 +163,9 @@ export default function FarmTwinList() {
           <View style={s.metricRow}>
             <Text style={[s.metricLabel, { color: colors.textMute }]}>Faida</Text>
             <MiniBar value={Math.max(0, output.netProfitTZS)} max={maxProfit} color="#3b82f6" />
-            <Text style={[s.metricValue, { color: output.netProfitTZS >= 0 ? '#3b82f6' : '#ef4444' }]}>
+            <Text
+              style={[s.metricValue, { color: output.netProfitTZS >= 0 ? '#3b82f6' : '#ef4444' }]}
+            >
               {fmtTZS(output.netProfitTZS)}
             </Text>
           </View>
@@ -205,7 +211,8 @@ export default function FarmTwinList() {
               <ShieldCheck size={32} color={colors.textMute} />
               <Text style={[s.fallbackTitle, { color: colors.text }]}>Hairuhusiwi</Text>
               <Text style={[s.fallbackBody, { color: colors.textMute }]}>
-                Shamba Dijiti inapatikana kwa Wasimamizi wa Shamba, Wakulima wa Biashara, na Wasimamizi Wakuu tu.
+                Shamba Dijiti inapatikana kwa Wasimamizi wa Shamba, Wakulima wa Biashara, na
+                Wasimamizi Wakuu tu.
               </Text>
             </GlassCard>
           </View>
@@ -227,7 +234,10 @@ export default function FarmTwinList() {
           ) : undefined
         }
       >
-        <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Section: Live 2D Interactive Map */}
           <SectionHeader title="Ramani ya Shamba · Live 2D Twin" />
           <View style={{ paddingHorizontal: 16 }}>
@@ -235,20 +245,45 @@ export default function FarmTwinList() {
               <View style={s.mapContainer}>
                 <Svg width="100%" height="240" viewBox="0 0 400 240">
                   {/* Background Grid */}
-                  <Rect x="0" y="0" width="400" height="240" fill={isDark ? '#0d150e' : '#f9fbf9'} rx="12" />
+                  <Rect
+                    x="0"
+                    y="0"
+                    width="400"
+                    height="240"
+                    fill={isDark ? '#0d150e' : '#f9fbf9'}
+                    rx="12"
+                  />
 
                   {/* Pasture 1: North Grazing Zone */}
                   <Polygon
                     points="20,20 180,20 160,110 20,110"
-                    fill={pastureMoistures.north < 45 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(46, 111, 64, 0.15)'}
+                    fill={
+                      pastureMoistures.north < 45
+                        ? 'rgba(239, 68, 68, 0.15)'
+                        : 'rgba(46, 111, 64, 0.15)'
+                    }
                     stroke={pastureMoistures.north < 45 ? '#ef4444' : '#2E6F40'}
                     strokeWidth={selectedZone === 'north' ? '2.5' : '1.5'}
                     onPress={() => handleZonePress('north', 'Kanda ya Kaskazini')}
                   />
-                  <SvgText x="90" y="60" fill={colors.text} fontSize="10" fontFamily="Inter_700Bold" textAnchor="middle">
+                  <SvgText
+                    x="90"
+                    y="60"
+                    fill={colors.text}
+                    fontSize="10"
+                    fontFamily="Inter_700Bold"
+                    textAnchor="middle"
+                  >
                     Kaskazini (North)
                   </SvgText>
-                  <SvgText x="90" y="75" fill={colors.textMute} fontSize="9" fontFamily="Inter_500Medium" textAnchor="middle">
+                  <SvgText
+                    x="90"
+                    y="75"
+                    fill={colors.textMute}
+                    fontSize="9"
+                    fontFamily="Inter_500Medium"
+                    textAnchor="middle"
+                  >
                     Moisture: {pastureMoistures.north}%
                   </SvgText>
 
@@ -260,10 +295,24 @@ export default function FarmTwinList() {
                     strokeWidth={selectedZone === 'south' ? '2.5' : '1.5'}
                     onPress={() => handleZonePress('south', 'Kanda ya Kusini')}
                   />
-                  <SvgText x="85" y="170" fill={colors.text} fontSize="10" fontFamily="Inter_700Bold" textAnchor="middle">
+                  <SvgText
+                    x="85"
+                    y="170"
+                    fill={colors.text}
+                    fontSize="10"
+                    fontFamily="Inter_700Bold"
+                    textAnchor="middle"
+                  >
                     Kusini (South)
                   </SvgText>
-                  <SvgText x="85" y="185" fill={colors.textMute} fontSize="9" fontFamily="Inter_500Medium" textAnchor="middle">
+                  <SvgText
+                    x="85"
+                    y="185"
+                    fill={colors.textMute}
+                    fontSize="9"
+                    fontFamily="Inter_500Medium"
+                    textAnchor="middle"
+                  >
                     Moisture: {pastureMoistures.south}%
                   </SvgText>
 
@@ -275,27 +324,67 @@ export default function FarmTwinList() {
                     strokeWidth={selectedZone === 'east' ? '2.5' : '1.5'}
                     onPress={() => handleZonePress('east', 'Kanda ya Mashariki')}
                   />
-                  <SvgText x="290" y="80" fill={colors.text} fontSize="10" fontFamily="Inter_700Bold" textAnchor="middle">
+                  <SvgText
+                    x="290"
+                    y="80"
+                    fill={colors.text}
+                    fontSize="10"
+                    fontFamily="Inter_700Bold"
+                    textAnchor="middle"
+                  >
                     Mashariki (Orchard)
                   </SvgText>
-                  <SvgText x="290" y="95" fill={colors.textMute} fontSize="9" fontFamily="Inter_500Medium" textAnchor="middle">
+                  <SvgText
+                    x="290"
+                    y="95"
+                    fill={colors.textMute}
+                    fontSize="9"
+                    fontFamily="Inter_500Medium"
+                    textAnchor="middle"
+                  >
                     Moisture: {pastureMoistures.east}%
                   </SvgText>
 
                   {/* RFID Gate Location */}
                   <G onPress={toggleGate}>
-                    <Rect x="165" y="115" width="20" height="20" fill={gateOpen ? 'rgba(46, 111, 64, 0.2)' : 'rgba(245, 158, 11, 0.2)'} rx="4" />
+                    <Rect
+                      x="165"
+                      y="115"
+                      width="20"
+                      height="20"
+                      fill={gateOpen ? 'rgba(46, 111, 64, 0.2)' : 'rgba(245, 158, 11, 0.2)'}
+                      rx="4"
+                    />
                     <Circle cx="175" cy="125" r="5" fill={gateOpen ? '#2E6F40' : '#f59e0b'} />
-                    <SvgText x="175" y="150" fill={colors.textMute} fontSize="8" fontFamily="Inter_600SemiBold" textAnchor="middle">
+                    <SvgText
+                      x="175"
+                      y="150"
+                      fill={colors.textMute}
+                      fontSize="8"
+                      fontFamily="Inter_600SemiBold"
+                      textAnchor="middle"
+                    >
                       {gateOpen ? 'GATE OPEN' : 'GATE LOCK'}
                     </SvgText>
                   </G>
 
                   {/* Water Pump */}
                   <G onPress={togglePump}>
-                    <Circle cx="210" cy="180" r="16" fill={pumpActive ? 'rgba(14, 165, 233, 0.15)' : 'rgba(100, 116, 139, 0.15)'} />
+                    <Circle
+                      cx="210"
+                      cy="180"
+                      r="16"
+                      fill={pumpActive ? 'rgba(14, 165, 233, 0.15)' : 'rgba(100, 116, 139, 0.15)'}
+                    />
                     <Circle cx="210" cy="180" r="6" fill={pumpActive ? '#0ea5e9' : '#64748b'} />
-                    <SvgText x="210" y="210" fill={colors.textMute} fontSize="8" fontFamily="Inter_600SemiBold" textAnchor="middle">
+                    <SvgText
+                      x="210"
+                      y="210"
+                      fill={colors.textMute}
+                      fontSize="8"
+                      fontFamily="Inter_600SemiBold"
+                      textAnchor="middle"
+                    >
                       PUMP
                     </SvgText>
                   </G>
@@ -307,46 +396,84 @@ export default function FarmTwinList() {
                 {selectedZone ? (
                   <Animated.View entering={FadeIn} style={s.detailsBlock}>
                     <Text style={[s.detailsTitle, { color: colors.text }]}>
-                      {selectedZone === 'north' ? 'Kanda ya Kaskazini (North Zone)' : selectedZone === 'south' ? 'Kanda ya Kusini (South Zone)' : 'Kanda ya Mashariki (East Orchard)'}
+                      {selectedZone === 'north'
+                        ? 'Kanda ya Kaskazini (North Zone)'
+                        : selectedZone === 'south'
+                          ? 'Kanda ya Kusini (South Zone)'
+                          : 'Kanda ya Mashariki (East Orchard)'}
                     </Text>
                     <View style={s.detailsTelemetryRow}>
                       <View style={s.telemetryValBox}>
                         <Droplets size={12} color="#2E6F40" />
                         <Text style={[s.telemetryValText, { color: colors.text }]}>
-                          Moisture: {selectedZone === 'north' ? pastureMoistures.north : selectedZone === 'south' ? pastureMoistures.south : pastureMoistures.east}%
+                          Moisture:{' '}
+                          {selectedZone === 'north'
+                            ? pastureMoistures.north
+                            : selectedZone === 'south'
+                              ? pastureMoistures.south
+                              : pastureMoistures.east}
+                          %
                         </Text>
                       </View>
                       <View style={s.telemetryValBox}>
                         <Zap size={12} color="#f59e0b" />
-                        <Text style={[s.telemetryValText, { color: colors.text }]}>Soil Temp: 24°C</Text>
+                        <Text style={[s.telemetryValText, { color: colors.text }]}>
+                          Soil Temp: 24°C
+                        </Text>
                       </View>
                     </View>
                     {selectedZone === 'north' && pastureMoistures.north < 45 && (
                       <View style={s.warningBanner}>
                         <Text style={s.warningText}>
-                          {language === 'sw' ? 'Tahadhari: Udongo umekauka sana!' : 'Warning: High soil moisture depletion!'}
+                          {language === 'sw'
+                            ? 'Tahadhari: Udongo umekauka sana!'
+                            : 'Warning: High soil moisture depletion!'}
                         </Text>
                       </View>
                     )}
                   </Animated.View>
                 ) : (
                   <Text style={[s.instructText, { color: colors.textMute }]}>
-                    {language === 'sw' ? 'Gonga kanda za shamba au vifaa kuchunguza au kuendesha.' : 'Tap pasture zones, gate, or water pump on the map to interact.'}
+                    {language === 'sw'
+                      ? 'Gonga kanda za shamba au vifaa kuchunguza au kuendesha.'
+                      : 'Tap pasture zones, gate, or water pump on the map to interact.'}
                   </Text>
                 )}
 
                 <View style={s.twinActionsRow}>
-                  <TouchableOpacity onPress={toggleGate} style={[s.twinActionBtn, { borderColor: colors.border }]}>
-                    {gateOpen ? <Unlock size={14} color="#2E6F40" /> : <Lock size={14} color="#f59e0b" />}
+                  <TouchableOpacity
+                    onPress={toggleGate}
+                    style={[s.twinActionBtn, { borderColor: colors.border }]}
+                  >
+                    {gateOpen ? (
+                      <Unlock size={14} color="#2E6F40" />
+                    ) : (
+                      <Lock size={14} color="#f59e0b" />
+                    )}
                     <Text style={[s.twinActionBtnTxt, { color: colors.text }]}>
-                      {gateOpen ? (language === 'sw' ? 'Funga Lango' : 'Lock Gate') : (language === 'sw' ? 'Fungua Lango' : 'Unlock Gate')}
+                      {gateOpen
+                        ? language === 'sw'
+                          ? 'Funga Lango'
+                          : 'Lock Gate'
+                        : language === 'sw'
+                          ? 'Fungua Lango'
+                          : 'Unlock Gate'}
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={togglePump} style={[s.twinActionBtn, { borderColor: colors.border }]}>
+                  <TouchableOpacity
+                    onPress={togglePump}
+                    style={[s.twinActionBtn, { borderColor: colors.border }]}
+                  >
                     <Droplets size={14} color={pumpActive ? '#0ea5e9' : colors.textMute} />
                     <Text style={[s.twinActionBtnTxt, { color: colors.text }]}>
-                      {pumpActive ? (language === 'sw' ? 'Zima Bomba' : 'Deactivate Pump') : (language === 'sw' ? 'Washa Bomba' : 'Activate Pump')}
+                      {pumpActive
+                        ? language === 'sw'
+                          ? 'Zima Bomba'
+                          : 'Deactivate Pump'
+                        : language === 'sw'
+                          ? 'Washa Bomba'
+                          : 'Activate Pump'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -367,7 +494,9 @@ export default function FarmTwinList() {
             </View>
           ) : (
             <>
-              <SectionHeader title={`HALI MBALIMBALI · SCENARIOS (${scenarios.length}/${MAX_SCENARIOS})`} />
+              <SectionHeader
+                title={`HALI MBALIMBALI · SCENARIOS (${scenarios.length}/${MAX_SCENARIOS})`}
+              />
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={scenarios}
@@ -396,7 +525,10 @@ export default function FarmTwinList() {
             />
             <View style={s.modalActions}>
               <TouchableOpacity
-                style={[s.modalBtn, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }]}
+                style={[
+                  s.modalBtn,
+                  { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 },
+                ]}
                 onPress={() => {
                   setShowModal(false);
                   setNewName('');
@@ -404,7 +536,10 @@ export default function FarmTwinList() {
               >
                 <Text style={[s.modalBtnText, { color: colors.text }]}>Ghairi</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[s.modalBtn, { backgroundColor: colors.primary }]} onPress={handleCreate}>
+              <TouchableOpacity
+                style={[s.modalBtn, { backgroundColor: colors.primary }]}
+                onPress={handleCreate}
+              >
                 <Text style={[s.modalBtnText, { color: '#000' }]}>Unda</Text>
               </TouchableOpacity>
             </View>
@@ -416,7 +551,13 @@ export default function FarmTwinList() {
 }
 
 const s = StyleSheet.create({
-  addBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  addBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   card: { padding: 14, gap: 10 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   cardName: { fontFamily: 'Inter_800ExtraBold', fontSize: 14 },
@@ -428,10 +569,27 @@ const s = StyleSheet.create({
   metricValue: { fontFamily: 'Inter_800ExtraBold', fontSize: 11, width: 80, textAlign: 'right' },
   fallbackTitle: { fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginTop: 12 },
   fallbackBody: { fontFamily: 'Inter_500Medium', fontSize: 12, marginTop: 6, textAlign: 'center' },
-  overlay: { flex: 1, backgroundColor: '#00000099', justifyContent: 'center', alignItems: 'center' },
-  modal: { width: 320, padding: 20, borderRadius: 20, borderWidth: StyleSheet.hairlineWidth, gap: 14 },
+  overlay: {
+    flex: 1,
+    backgroundColor: '#00000099',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    width: 320,
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: 14,
+  },
   modalTitle: { fontFamily: 'Inter_800ExtraBold', fontSize: 16 },
-  input: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 10, padding: 10, fontFamily: 'Inter_500Medium', fontSize: 13 },
+  input: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    padding: 10,
+    fontFamily: 'Inter_500Medium',
+    fontSize: 13,
+  },
   modalActions: { flexDirection: 'row', gap: 10 },
   modalBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
   modalBtnText: { fontFamily: 'Inter_800ExtraBold', fontSize: 13 },

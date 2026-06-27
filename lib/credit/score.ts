@@ -21,16 +21,16 @@ export type CreditBand = 'building' | 'fair' | 'good' | 'strong';
 
 export interface CreditFactor {
   key: 'records' | 'profitability' | 'stability' | 'tenure' | 'formal';
-  label: string;      // English
-  labelSw: string;    // Swahili
-  score: number;      // points earned
-  max: number;        // max points for this factor
-  detail: string;     // short English explanation
-  detailSw: string;   // short Swahili explanation
+  label: string; // English
+  labelSw: string; // Swahili
+  score: number; // points earned
+  max: number; // max points for this factor
+  detail: string; // short English explanation
+  detailSw: string; // short Swahili explanation
 }
 
 export interface CreditScore {
-  score: number;          // 300–850
+  score: number; // 300–850
   band: CreditBand;
   bandLabel: string;
   bandLabelSw: string;
@@ -85,7 +85,7 @@ export function computeCreditScore(input: CreditInputs): CreditScore {
 
   // 2. Profitability — net margin vs income. No activity → 0; 40%+ margin → full.
   const hasActivity = ledger.length > 0;
-  const margin = totalIncome > 0 ? net / totalIncome : (hasActivity ? -1 : 0);
+  const margin = totalIncome > 0 ? net / totalIncome : hasActivity ? -1 : 0;
   const profScore = hasActivity
     ? clamp(Math.round(((margin + 0.2) / 0.6) * 140), 0, 140) // margin -0.2→0, +0.4→140
     : 0;
@@ -93,9 +93,11 @@ export function computeCreditScore(input: CreditInputs): CreditScore {
   // 3. Income stability — distinct income categories + count of income entries.
   const distinctIncomeCats = new Set(income.map((e) => e.category.split('·')[0].trim())).size;
   const stabScore = clamp(
-    Math.round((Math.min(distinctIncomeCats, 4) / 4) * 60 + (Math.min(income.length, 10) / 10) * 50),
+    Math.round(
+      (Math.min(distinctIncomeCats, 4) / 4) * 60 + (Math.min(income.length, 10) / 10) * 50
+    ),
     0,
-    110,
+    110
   );
 
   // 4. Tenure — months of verified history, 12+ months → full.
@@ -103,28 +105,63 @@ export function computeCreditScore(input: CreditInputs): CreditScore {
   const tenureScore = clamp(Math.round((Math.min(months, 12) / 12) * 90), 0, 90);
 
   // 5. Formal ties — cooperative/contract income, completed contracts, insurance.
-  const hasCoop = income.some((e) => /coop|amcos|ushirika|cooperative|contract|mkataba/i.test(e.category + e.description));
+  const hasCoop = income.some((e) =>
+    /coop|amcos|ushirika|cooperative|contract|mkataba/i.test(e.category + e.description)
+  );
   const formalScore = clamp(
     (hasCoop ? 40 : 0) +
       Math.min(input.contractsCompleted ?? 0, 3) * 12 +
       (input.hasActiveInsurance ? 14 : 0),
     0,
-    90,
+    90
   );
 
   const factors: CreditFactor[] = [
-    { key: 'records', label: 'Record-keeping', labelSw: 'Utunzaji rekodi', score: recScore, max: 120,
-      detail: `${ledger.length} logged entries`, detailSw: `Rekodi ${ledger.length} zimeingizwa` },
-    { key: 'profitability', label: 'Profitability', labelSw: 'Faida', score: profScore, max: 140,
+    {
+      key: 'records',
+      label: 'Record-keeping',
+      labelSw: 'Utunzaji rekodi',
+      score: recScore,
+      max: 120,
+      detail: `${ledger.length} logged entries`,
+      detailSw: `Rekodi ${ledger.length} zimeingizwa`,
+    },
+    {
+      key: 'profitability',
+      label: 'Profitability',
+      labelSw: 'Faida',
+      score: profScore,
+      max: 140,
       detail: totalIncome > 0 ? `${Math.round(margin * 100)}% net margin` : 'No income logged yet',
-      detailSw: totalIncome > 0 ? `Faida ${Math.round(margin * 100)}%` : 'Hakuna mapato bado' },
-    { key: 'stability', label: 'Income stability', labelSw: 'Uthabiti wa mapato', score: stabScore, max: 110,
-      detail: `${distinctIncomeCats} income source(s)`, detailSw: `Vyanzo ${distinctIncomeCats} vya mapato` },
-    { key: 'tenure', label: 'Account history', labelSw: 'Historia ya akaunti', score: tenureScore, max: 90,
-      detail: `${Math.round(months)} month(s) of history`, detailSw: `Miezi ${Math.round(months)} ya historia` },
-    { key: 'formal', label: 'Formal ties', labelSw: 'Uhusiano rasmi', score: formalScore, max: 90,
+      detailSw: totalIncome > 0 ? `Faida ${Math.round(margin * 100)}%` : 'Hakuna mapato bado',
+    },
+    {
+      key: 'stability',
+      label: 'Income stability',
+      labelSw: 'Uthabiti wa mapato',
+      score: stabScore,
+      max: 110,
+      detail: `${distinctIncomeCats} income source(s)`,
+      detailSw: `Vyanzo ${distinctIncomeCats} vya mapato`,
+    },
+    {
+      key: 'tenure',
+      label: 'Account history',
+      labelSw: 'Historia ya akaunti',
+      score: tenureScore,
+      max: 90,
+      detail: `${Math.round(months)} month(s) of history`,
+      detailSw: `Miezi ${Math.round(months)} ya historia`,
+    },
+    {
+      key: 'formal',
+      label: 'Formal ties',
+      labelSw: 'Uhusiano rasmi',
+      score: formalScore,
+      max: 90,
       detail: hasCoop ? 'Cooperative / contract income' : 'No formal ties yet',
-      detailSw: hasCoop ? 'Mapato ya ushirika/mkataba' : 'Hakuna uhusiano rasmi bado' },
+      detailSw: hasCoop ? 'Mapato ya ushirika/mkataba' : 'Hakuna uhusiano rasmi bado',
+    },
   ];
 
   const total = clamp(BASE + factors.reduce((s, f) => s + f.score, 0), 300, 850);

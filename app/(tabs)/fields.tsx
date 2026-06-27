@@ -27,30 +27,31 @@ import {
   Sparkles,
   X,
 } from 'lucide-react-native';
-import MapView, { Polygon as MapPolygon, Marker, PROVIDER_GOOGLE } from '../../components/MapViewWrapper';
+import MapView, {
+  Polygon as MapPolygon,
+  Marker,
+  PROVIDER_GOOGLE,
+} from '../../components/MapViewWrapper';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { RequireVerification } from '../../components/RequireVerification';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
   withSequence,
   FadeIn,
-  FadeInDown
+  FadeInDown,
 } from 'react-native-reanimated';
-
-
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
 // Data representing the farm zones (fields)
 import { ZoneData, ZONES } from '../../constants/FarmData';
-
 
 type MapFilter = 'productivity' | 'ndvi' | 'ph';
 
@@ -72,18 +73,12 @@ export default function FarmHub() {
 
   React.useEffect(() => {
     pulseVal.value = withRepeat(
-      withSequence(
-        withTiming(1.25, { duration: 900 }),
-        withTiming(0.9, { duration: 900 })
-      ),
+      withSequence(withTiming(1.25, { duration: 900 }), withTiming(0.9, { duration: 900 })),
       -1,
       true
     );
     pulseOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.3, { duration: 900 }),
-        withTiming(0.7, { duration: 900 })
-      ),
+      withSequence(withTiming(0.3, { duration: 900 }), withTiming(0.7, { duration: 900 })),
       -1,
       true
     );
@@ -106,7 +101,7 @@ export default function FarmHub() {
   const viewBox = useMemo(() => {
     // Find bounding box for active zone to frame it perfectly
     const activeZone = ZONES.find((z) => z.id === activeZoneId);
-    let lat = -6.8280;
+    let lat = -6.828;
     let lng = 37.6695;
     if (activeZone && zoomLevel > 1.0) {
       lat = activeZone.centerLat;
@@ -175,391 +170,591 @@ export default function FarmHub() {
     <RequireVerification>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      <SafeAreaView style={styles.safe}>
-        
-        {/* ── Top Header ───────────────────────────────────────── */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.iconBtn} 
-            accessibilityRole="button" 
-            accessibilityLabel="Menu"
-            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-          >
-            <Menu size={22} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>{farmName}</Text>
-          <TouchableOpacity 
-            style={styles.iconBtn} 
-            accessibilityRole="button" 
-            accessibilityLabel="Notifications"
-            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-          >
-            <Bell size={22} color={colors.text} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.mainContent}>
-          {/* ── Search Input overlay ────────────────────────────── */}
-          <View style={[styles.searchBar, {
-            backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card,
-            borderColor: fieldSearchFocused ? colors.primary : colors.border,
-          }]}>
-            <View style={[styles.searchIconWrap, { backgroundColor: (fieldSearchFocused ? colors.primary : colors.textMute) + '18' }]}>
-              <Search size={16} color={fieldSearchFocused ? colors.primary : colors.textMute} />
-            </View>
-            <TextInput
-              style={[styles.searchInput, { color: colors.text }]}
-              placeholder={language === 'sw' ? 'Tafuta maeneo, ukanda au sensa..' : 'Search fields, zone or sensor..'}
-              placeholderTextColor={colors.textMute}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              onFocus={() => setFieldSearchFocused(true)}
-              onBlur={() => setFieldSearchFocused(false)}
-              accessibilityLabel="Search Fields"
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear">
-                <View style={[styles.searchClearBtn, { backgroundColor: colors.textMute + '20' }]}>
-                  <X size={12} color={colors.textMute} />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          
-
-          {/* ── SVG Map Visualizer ───────────────────────────────── */}
-          <View style={[styles.mapContainer, { borderRadius: 0, marginHorizontal: -16, marginTop: -8, backgroundColor: colors.background }]}>
-            <MapView
-              style={StyleSheet.absoluteFillObject}
-              mapType="satellite"
-              region={viewBox}
-            >
-              {filteredZones.map((zone) => {
-                const isSelected = activeZoneId === zone.id;
-                const fillColor = getZoneColor(zone);
-                
-                return (
-                  <MapPolygon
-                    key={zone.id}
-                    coordinates={(zone as any).coordinates}
-                    fillColor={isSelected ? fillColor + '80' : fillColor + '30'}
-                    strokeColor={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
-                    strokeWidth={isSelected ? 3 : 1}
-                    tappable={true}
-                    onPress={() => handleZoneSelect(zone.id)}
-                  />
-                );
-              })}
-
-              {/* Markers for specific zones */}
-              {filteredZones.some(z => z.id === 8) && (
-                <Marker coordinate={{ latitude: -6.8290, longitude: 37.6688 }}>
-                  <View style={[styles.hudBadge, { position: 'relative', left: 0, top: 0 }]}>
-                    <Droplets size={10} color="#3b82f6" />
-                    <Text style={styles.hudBadgeText}>{language === 'sw' ? 'Unyevu 82%' : '82% Humidity'}</Text>
-                  </View>
-                </Marker>
-              )}
-
-              {filteredZones.some(z => z.id === 12) && (
-                <Marker coordinate={{ latitude: -6.8268, longitude: 37.6705 }}>
-                  <View style={[styles.hudLabel, { position: 'relative', left: 0, top: 0 }]}>
-                    <Text style={styles.hudLabelText}>{language === 'sw' ? 'Nitrojeni Chini' : 'Low Nitrogen'}</Text>
-                  </View>
-                </Marker>
-              )}
-            </MapView>
-
-            {/* Filter selectors floating over map */}
-            <View style={[styles.filterContainer, { position: 'absolute', top: 10, left: 16, right: 16, zIndex: 10 }]}>
-              {(['productivity', 'ndvi', 'ph'] as MapFilter[]).map((filter) => {
-                const active = activeFilter === filter;
-                let label = '';
-                if (filter === 'productivity') label = language === 'sw' ? 'Uzalishaji' : 'Productivity';
-                if (filter === 'ndvi') label = 'NDVI Index';
-                if (filter === 'ph') label = 'Soil pH';
-
-                return (
-                  <TouchableOpacity
-                    key={filter}
-                    onPress={() => {
-                      Haptics.selectionAsync();
-                      setActiveFilter(filter);
-                    }}
-                    style={[
-                      styles.filterPill,
-                      { borderColor: colors.border, backgroundColor: 'rgba(255,255,255,0.9)' },
-                      active && { backgroundColor: colors.primary, borderColor: colors.primary },
-                    ]}
-                  >
-                    <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : colors.primary }]}>
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-
-          {/* ── Active Selection Bottom Details Card ────────────── */}
-          <View style={styles.bottomSheetContainer}>
+        <SafeAreaView style={styles.safe}>
+          {/* ── Top Header ───────────────────────────────────────── */}
+          <View style={styles.header}>
             <TouchableOpacity
-              activeOpacity={0.92}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                router.push(`/field/${activeZone.id}`);
-              }}
+              style={styles.iconBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Menu"
+              onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
             >
-              {/* Card shell */}
-              <View style={[styles.bottomSheet, {
-                backgroundColor: isDark ? '#0b150d' : '#ffffff',
-                borderColor: activeZone.alertType === 'warning'
-                  ? 'rgba(245,158,11,0.35)'
-                  : isDark ? colors.primary + '33' : colors.primary + '40',
-                padding: 0,
-                flexDirection: 'row',
-                overflow: 'hidden',
-              }]}>
-
-                {/* ── Left accent strip ── */}
-                <LinearGradient
-                  colors={activeZone.alertType === 'warning'
-                    ? ['#F59E0B', '#D97706']
-                    : [colors.primary, '#1C4A29']}
-                  style={{ width: 4, alignSelf: 'stretch' }}
-                />
-
-                {/* ── Main content ── */}
-                <View style={{ flex: 1, padding: 15 }}>
-
-                  {/* Header row */}
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <View style={{ flex: 1, paddingRight: 8 }}>
-                      {/* Micro label + live dot */}
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 3 }}>
-                        <View style={{
-                          width: 5, height: 5, borderRadius: 3,
-                          backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : colors.primary,
-                        }} />
-                        <Text style={{
-                          fontSize: 8.5, fontFamily: 'Inter_700Bold',
-                          color: activeZone.alertType === 'warning' ? '#F59E0B' : colors.primary,
-                          letterSpacing: 1.6, textTransform: 'uppercase',
-                        }}>
-                          {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
-                        </Text>
-                      </View>
-                      {/* Zone title — editorial serif */}
-                      <Text style={{
-                        fontFamily: 'InstrumentSerif_400Regular',
-                        fontSize: 20, lineHeight: 23,
-                        color: colors.text,
-                      }}>
-                        {language === 'sw' ? activeZone.nameSw : activeZone.nameEn}
-                      </Text>
-                      {/* Status message */}
-                      <Text style={{
-                        fontFamily: 'Inter_500Medium', fontSize: 11,
-                        color: colors.textMute, marginTop: 3,
-                      }}>
-                        {language === 'sw' ? activeZone.messageSw : activeZone.messageEn}
-                      </Text>
-                    </View>
-
-                    {/* Recenter pill button */}
-                    <TouchableOpacity
-                      onPress={() => {
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                        setZoomLevel(1.5);
-                      }}
-                      style={[styles.recenterBtn, { backgroundColor: colors.primaryLight }]}
-                      accessibilityRole="button"
-                      accessibilityLabel="Recenter map"
-                    >
-                      <Target size={15} color={colors.primary} />
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Thin rule */}
-                  <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 12 }} />
-
-                  {/* ── Metrics grid ── */}
-                  <View style={{ flexDirection: 'row', gap: 7 }}>
-                    {([
-                      {
-                        key: 'size',
-                        label: language === 'sw' ? 'UKUBWA' : 'SIZE',
-                        value: activeZone.area,
-                        pct: 0.45,
-                        barColor: colors.primary,
-                      },
-                      {
-                        key: 'ndvi',
-                        label: 'NDVI',
-                        value: String(activeZone.ndvi),
-                        pct: activeZone.ndvi,
-                        barColor: colors.primary,
-                      },
-                      {
-                        key: 'ph',
-                        label: 'PH',
-                        value: String(activeZone.ph),
-                        pct: activeZone.ph / 14,
-                        barColor: activeZone.ph < 6.0 ? '#EA580C' : activeZone.ph <= 7.0 ? colors.primary : '#0891B2',
-                      },
-                      {
-                        key: 'moisture',
-                        label: language === 'sw' ? 'UNYEVU' : 'MOIST.',
-                        value: activeZone.moisture,
-                        pct: parseInt(activeZone.moisture) / 100,
-                        barColor: '#3B82F6',
-                      },
-                    ] as { key: string; label: string; value: string; pct: number; barColor: string }[]).map((m) => (
-                      <View key={m.key} style={{
-                        flex: 1,
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.025)',
-                        borderRadius: 11, padding: 9,
-                        borderWidth: 1, borderColor: colors.border,
-                        overflow: 'hidden',
-                      }}>
-                        <Text style={{
-                          fontSize: 7, fontFamily: 'Inter_700Bold',
-                          color: colors.textMute, letterSpacing: 0.8,
-                          marginBottom: 5,
-                        }}>
-                          {m.label}
-                        </Text>
-                        <Text style={{
-                          fontFamily: 'InstrumentSerif_400Regular',
-                          fontSize: 15, color: colors.text,
-                        }}>
-                          {m.value}
-                        </Text>
-                        {/* Percentage fill bar */}
-                        <View style={{
-                          height: 2, backgroundColor: colors.border,
-                          borderRadius: 1, marginTop: 8,
-                        }}>
-                          <View style={{
-                            height: 2, borderRadius: 1,
-                            backgroundColor: m.barColor,
-                            width: `${Math.min(Math.round(m.pct * 100), 100)}%`,
-                          }} />
-                        </View>
-                      </View>
-                    ))}
-                  </View>
-
-                  {/* ── Nutrient section ── */}
-                  <View style={{
-                    marginTop: 10,
-                    backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                    borderRadius: 13, padding: 11,
-                    borderWidth: 1, borderColor: colors.border,
-                  }}>
-                    {/* Section header */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 10 }}>
-                      <Sparkles size={11} color={colors.primary} />
-                      <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: colors.text, letterSpacing: 0.3 }}>
-                        {language === 'sw' ? 'Uchambuzi wa Virutubisho' : 'Soil Nutrient Analysis'}
-                      </Text>
-                    </View>
-
-                    {/* N / P / K rows */}
-                    {([
-                      {
-                        key: 'n', symbol: 'N',
-                        name: language === 'sw' ? 'Nitrojeni' : 'Nitrogen',
-                        data: activeZone.nitrogen,
-                      },
-                      {
-                        key: 'p', symbol: 'P',
-                        name: language === 'sw' ? 'Fosforasi' : 'Phosphorus',
-                        data: activeZone.phosphorus,
-                      },
-                      {
-                        key: 'k', symbol: 'K',
-                        name: language === 'sw' ? 'Potasiamu' : 'Potassium',
-                        data: activeZone.potassium,
-                      },
-                    ] as { key: string; symbol: string; name: string; data: { statusEn: string; statusSw: string; value: string; color: string } }[]).map((n, i) => (
-                      <View key={n.key} style={{ marginBottom: i < 2 ? 8 : 0 }}>
-                        {/* Label row */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                            {/* Symbol badge */}
-                            <View style={{
-                              width: 18, height: 18, borderRadius: 5,
-                              backgroundColor: n.data.color + '22',
-                              justifyContent: 'center', alignItems: 'center',
-                            }}>
-                              <Text style={{ fontFamily: 'Inter_800ExtraBold', fontSize: 8.5, color: n.data.color }}>
-                                {n.symbol}
-                              </Text>
-                            </View>
-                            <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 10, color: colors.textMute }}>
-                              {n.name}
-                            </Text>
-                          </View>
-                          {/* Status pill */}
-                          <View style={{
-                            backgroundColor: n.data.color + '18',
-                            paddingHorizontal: 7, paddingVertical: 2,
-                            borderRadius: 20,
-                          }}>
-                            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 9, color: n.data.color }}>
-                              {language === 'sw' ? n.data.statusSw : n.data.statusEn}
-                            </Text>
-                          </View>
-                        </View>
-                        {/* Progress bar */}
-                        <View style={{ height: 3, backgroundColor: colors.border, borderRadius: 1.5 }}>
-                          <LinearGradient
-                            colors={
-                              n.data.color === colors.primary ? [colors.primary, '#1C4A29']
-                              : n.data.color === '#D97706' ? ['#FBBF24', '#D97706']
-                              : ['#F87171', '#DC2626']
-                            }
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={{ height: 3, borderRadius: 1.5, width: n.data.value as any }}
-                          />
-                        </View>
-                      </View>
-                    ))}
-                  </View>
-
-                  {/* Tap hint */}
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 9, gap: 3, opacity: 0.38 }}>
-                    <ChevronRight size={9} color={colors.textMute} />
-                    <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 9, color: colors.textMute }}>
-                      {language === 'sw' ? 'Gusa kwa maelezo zaidi' : 'Tap for full details'}
-                    </Text>
-                  </View>
-
-                </View>
-              </View>
+              <Menu size={22} color={colors.text} />
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>{farmName}</Text>
+            <TouchableOpacity
+              style={styles.iconBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Notifications"
+              onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            >
+              <Bell size={22} color={colors.text} />
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/* Floating circular Add (+) button */}
-        <TouchableOpacity
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            router.push('/crop-planning');
-          }}
-          activeOpacity={0.85}
-          style={styles.floatingAddBtn}
-          accessibilityRole="button"
-          accessibilityLabel="Add Field"
-        >
-          <Plus size={24} color="#FCFBF7" />
-        </TouchableOpacity>
+          <View style={styles.mainContent}>
+            {/* ── Search Input overlay ────────────────────────────── */}
+            <View
+              style={[
+                styles.searchBar,
+                {
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card,
+                  borderColor: fieldSearchFocused ? colors.primary : colors.border,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.searchIconWrap,
+                  {
+                    backgroundColor: (fieldSearchFocused ? colors.primary : colors.textMute) + '18',
+                  },
+                ]}
+              >
+                <Search size={16} color={fieldSearchFocused ? colors.primary : colors.textMute} />
+              </View>
+              <TextInput
+                style={[styles.searchInput, { color: colors.text }]}
+                placeholder={
+                  language === 'sw'
+                    ? 'Tafuta maeneo, ukanda au sensa..'
+                    : 'Search fields, zone or sensor..'
+                }
+                placeholderTextColor={colors.textMute}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onFocus={() => setFieldSearchFocused(true)}
+                onBlur={() => setFieldSearchFocused(false)}
+                accessibilityLabel="Search Fields"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setSearchQuery('')}
+                  accessibilityRole="button"
+                  accessibilityLabel="Clear"
+                >
+                  <View
+                    style={[styles.searchClearBtn, { backgroundColor: colors.textMute + '20' }]}
+                  >
+                    <X size={12} color={colors.textMute} />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
 
-      </SafeAreaView>
-    </View>
+            {/* ── SVG Map Visualizer ───────────────────────────────── */}
+            <View
+              style={[
+                styles.mapContainer,
+                {
+                  borderRadius: 0,
+                  marginHorizontal: -16,
+                  marginTop: -8,
+                  backgroundColor: colors.background,
+                },
+              ]}
+            >
+              <MapView style={StyleSheet.absoluteFillObject} mapType="satellite" region={viewBox}>
+                {filteredZones.map((zone) => {
+                  const isSelected = activeZoneId === zone.id;
+                  const fillColor = getZoneColor(zone);
+
+                  return (
+                    <MapPolygon
+                      key={zone.id}
+                      coordinates={(zone as any).coordinates}
+                      fillColor={isSelected ? fillColor + '80' : fillColor + '30'}
+                      strokeColor={isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.4)'}
+                      strokeWidth={isSelected ? 3 : 1}
+                      tappable={true}
+                      onPress={() => handleZoneSelect(zone.id)}
+                    />
+                  );
+                })}
+
+                {/* Markers for specific zones */}
+                {filteredZones.some((z) => z.id === 8) && (
+                  <Marker coordinate={{ latitude: -6.829, longitude: 37.6688 }}>
+                    <View style={[styles.hudBadge, { position: 'relative', left: 0, top: 0 }]}>
+                      <Droplets size={10} color="#3b82f6" />
+                      <Text style={styles.hudBadgeText}>
+                        {language === 'sw' ? 'Unyevu 82%' : '82% Humidity'}
+                      </Text>
+                    </View>
+                  </Marker>
+                )}
+
+                {filteredZones.some((z) => z.id === 12) && (
+                  <Marker coordinate={{ latitude: -6.8268, longitude: 37.6705 }}>
+                    <View style={[styles.hudLabel, { position: 'relative', left: 0, top: 0 }]}>
+                      <Text style={styles.hudLabelText}>
+                        {language === 'sw' ? 'Nitrojeni Chini' : 'Low Nitrogen'}
+                      </Text>
+                    </View>
+                  </Marker>
+                )}
+              </MapView>
+
+              {/* Filter selectors floating over map */}
+              <View
+                style={[
+                  styles.filterContainer,
+                  { position: 'absolute', top: 10, left: 16, right: 16, zIndex: 10 },
+                ]}
+              >
+                {(['productivity', 'ndvi', 'ph'] as MapFilter[]).map((filter) => {
+                  const active = activeFilter === filter;
+                  let label = '';
+                  if (filter === 'productivity')
+                    label = language === 'sw' ? 'Uzalishaji' : 'Productivity';
+                  if (filter === 'ndvi') label = 'NDVI Index';
+                  if (filter === 'ph') label = 'Soil pH';
+
+                  return (
+                    <TouchableOpacity
+                      key={filter}
+                      onPress={() => {
+                        Haptics.selectionAsync();
+                        setActiveFilter(filter);
+                      }}
+                      style={[
+                        styles.filterPill,
+                        { borderColor: colors.border, backgroundColor: 'rgba(255,255,255,0.9)' },
+                        active && { backgroundColor: colors.primary, borderColor: colors.primary },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.filterText,
+                          active && styles.filterTextActive,
+                          { color: active ? '#FCFBF7' : colors.primary },
+                        ]}
+                      >
+                        {label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* ── Active Selection Bottom Details Card ────────────── */}
+            <View style={styles.bottomSheetContainer}>
+              <TouchableOpacity
+                activeOpacity={0.92}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push(`/field/${activeZone.id}`);
+                }}
+              >
+                {/* Card shell */}
+                <View
+                  style={[
+                    styles.bottomSheet,
+                    {
+                      backgroundColor: isDark ? '#0b150d' : '#ffffff',
+                      borderColor:
+                        activeZone.alertType === 'warning'
+                          ? 'rgba(245,158,11,0.35)'
+                          : isDark
+                            ? colors.primary + '33'
+                            : colors.primary + '40',
+                      padding: 0,
+                      flexDirection: 'row',
+                      overflow: 'hidden',
+                    },
+                  ]}
+                >
+                  {/* ── Left accent strip ── */}
+                  <LinearGradient
+                    colors={
+                      activeZone.alertType === 'warning'
+                        ? ['#F59E0B', '#D97706']
+                        : [colors.primary, '#1C4A29']
+                    }
+                    style={{ width: 4, alignSelf: 'stretch' }}
+                  />
+
+                  {/* ── Main content ── */}
+                  <View style={{ flex: 1, padding: 15 }}>
+                    {/* Header row */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <View style={{ flex: 1, paddingRight: 8 }}>
+                        {/* Micro label + live dot */}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 5,
+                            marginBottom: 3,
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: 5,
+                              height: 5,
+                              borderRadius: 3,
+                              backgroundColor:
+                                activeZone.alertType === 'warning' ? '#F59E0B' : colors.primary,
+                            }}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 8.5,
+                              fontFamily: 'Inter_700Bold',
+                              color:
+                                activeZone.alertType === 'warning' ? '#F59E0B' : colors.primary,
+                              letterSpacing: 1.6,
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
+                          </Text>
+                        </View>
+                        {/* Zone title — editorial serif */}
+                        <Text
+                          style={{
+                            fontFamily: 'InstrumentSerif_400Regular',
+                            fontSize: 20,
+                            lineHeight: 23,
+                            color: colors.text,
+                          }}
+                        >
+                          {language === 'sw' ? activeZone.nameSw : activeZone.nameEn}
+                        </Text>
+                        {/* Status message */}
+                        <Text
+                          style={{
+                            fontFamily: 'Inter_500Medium',
+                            fontSize: 11,
+                            color: colors.textMute,
+                            marginTop: 3,
+                          }}
+                        >
+                          {language === 'sw' ? activeZone.messageSw : activeZone.messageEn}
+                        </Text>
+                      </View>
+
+                      {/* Recenter pill button */}
+                      <TouchableOpacity
+                        onPress={() => {
+                          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                          setZoomLevel(1.5);
+                        }}
+                        style={[styles.recenterBtn, { backgroundColor: colors.primaryLight }]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Recenter map"
+                      >
+                        <Target size={15} color={colors.primary} />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Thin rule */}
+                    <View
+                      style={{ height: 1, backgroundColor: colors.border, marginVertical: 12 }}
+                    />
+
+                    {/* ── Metrics grid ── */}
+                    <View style={{ flexDirection: 'row', gap: 7 }}>
+                      {(
+                        [
+                          {
+                            key: 'size',
+                            label: language === 'sw' ? 'UKUBWA' : 'SIZE',
+                            value: activeZone.area,
+                            pct: 0.45,
+                            barColor: colors.primary,
+                          },
+                          {
+                            key: 'ndvi',
+                            label: 'NDVI',
+                            value: String(activeZone.ndvi),
+                            pct: activeZone.ndvi,
+                            barColor: colors.primary,
+                          },
+                          {
+                            key: 'ph',
+                            label: 'PH',
+                            value: String(activeZone.ph),
+                            pct: activeZone.ph / 14,
+                            barColor:
+                              activeZone.ph < 6.0
+                                ? '#EA580C'
+                                : activeZone.ph <= 7.0
+                                  ? colors.primary
+                                  : '#0891B2',
+                          },
+                          {
+                            key: 'moisture',
+                            label: language === 'sw' ? 'UNYEVU' : 'MOIST.',
+                            value: activeZone.moisture,
+                            pct: parseInt(activeZone.moisture) / 100,
+                            barColor: '#3B82F6',
+                          },
+                        ] as {
+                          key: string;
+                          label: string;
+                          value: string;
+                          pct: number;
+                          barColor: string;
+                        }[]
+                      ).map((m) => (
+                        <View
+                          key={m.key}
+                          style={{
+                            flex: 1,
+                            backgroundColor: isDark
+                              ? 'rgba(255,255,255,0.04)'
+                              : 'rgba(0,0,0,0.025)',
+                            borderRadius: 11,
+                            padding: 9,
+                            borderWidth: 1,
+                            borderColor: colors.border,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 7,
+                              fontFamily: 'Inter_700Bold',
+                              color: colors.textMute,
+                              letterSpacing: 0.8,
+                              marginBottom: 5,
+                            }}
+                          >
+                            {m.label}
+                          </Text>
+                          <Text
+                            style={{
+                              fontFamily: 'InstrumentSerif_400Regular',
+                              fontSize: 15,
+                              color: colors.text,
+                            }}
+                          >
+                            {m.value}
+                          </Text>
+                          {/* Percentage fill bar */}
+                          <View
+                            style={{
+                              height: 2,
+                              backgroundColor: colors.border,
+                              borderRadius: 1,
+                              marginTop: 8,
+                            }}
+                          >
+                            <View
+                              style={{
+                                height: 2,
+                                borderRadius: 1,
+                                backgroundColor: m.barColor,
+                                width: `${Math.min(Math.round(m.pct * 100), 100)}%`,
+                              }}
+                            />
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+
+                    {/* ── Nutrient section ── */}
+                    <View
+                      style={{
+                        marginTop: 10,
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                        borderRadius: 13,
+                        padding: 11,
+                        borderWidth: 1,
+                        borderColor: colors.border,
+                      }}
+                    >
+                      {/* Section header */}
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 5,
+                          marginBottom: 10,
+                        }}
+                      >
+                        <Sparkles size={11} color={colors.primary} />
+                        <Text
+                          style={{
+                            fontFamily: 'Inter_700Bold',
+                            fontSize: 10,
+                            color: colors.text,
+                            letterSpacing: 0.3,
+                          }}
+                        >
+                          {language === 'sw'
+                            ? 'Uchambuzi wa Virutubisho'
+                            : 'Soil Nutrient Analysis'}
+                        </Text>
+                      </View>
+
+                      {/* N / P / K rows */}
+                      {(
+                        [
+                          {
+                            key: 'n',
+                            symbol: 'N',
+                            name: language === 'sw' ? 'Nitrojeni' : 'Nitrogen',
+                            data: activeZone.nitrogen,
+                          },
+                          {
+                            key: 'p',
+                            symbol: 'P',
+                            name: language === 'sw' ? 'Fosforasi' : 'Phosphorus',
+                            data: activeZone.phosphorus,
+                          },
+                          {
+                            key: 'k',
+                            symbol: 'K',
+                            name: language === 'sw' ? 'Potasiamu' : 'Potassium',
+                            data: activeZone.potassium,
+                          },
+                        ] as {
+                          key: string;
+                          symbol: string;
+                          name: string;
+                          data: {
+                            statusEn: string;
+                            statusSw: string;
+                            value: string;
+                            color: string;
+                          };
+                        }[]
+                      ).map((n, i) => (
+                        <View key={n.key} style={{ marginBottom: i < 2 ? 8 : 0 }}>
+                          {/* Label row */}
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: 4,
+                            }}
+                          >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                              {/* Symbol badge */}
+                              <View
+                                style={{
+                                  width: 18,
+                                  height: 18,
+                                  borderRadius: 5,
+                                  backgroundColor: n.data.color + '22',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontFamily: 'Inter_800ExtraBold',
+                                    fontSize: 8.5,
+                                    color: n.data.color,
+                                  }}
+                                >
+                                  {n.symbol}
+                                </Text>
+                              </View>
+                              <Text
+                                style={{
+                                  fontFamily: 'Inter_600SemiBold',
+                                  fontSize: 10,
+                                  color: colors.textMute,
+                                }}
+                              >
+                                {n.name}
+                              </Text>
+                            </View>
+                            {/* Status pill */}
+                            <View
+                              style={{
+                                backgroundColor: n.data.color + '18',
+                                paddingHorizontal: 7,
+                                paddingVertical: 2,
+                                borderRadius: 20,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontFamily: 'Inter_700Bold',
+                                  fontSize: 9,
+                                  color: n.data.color,
+                                }}
+                              >
+                                {language === 'sw' ? n.data.statusSw : n.data.statusEn}
+                              </Text>
+                            </View>
+                          </View>
+                          {/* Progress bar */}
+                          <View
+                            style={{ height: 3, backgroundColor: colors.border, borderRadius: 1.5 }}
+                          >
+                            <LinearGradient
+                              colors={
+                                n.data.color === colors.primary
+                                  ? [colors.primary, '#1C4A29']
+                                  : n.data.color === '#D97706'
+                                    ? ['#FBBF24', '#D97706']
+                                    : ['#F87171', '#DC2626']
+                              }
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 0 }}
+                              style={{ height: 3, borderRadius: 1.5, width: n.data.value as any }}
+                            />
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+
+                    {/* Tap hint */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: 9,
+                        gap: 3,
+                        opacity: 0.38,
+                      }}
+                    >
+                      <ChevronRight size={9} color={colors.textMute} />
+                      <Text
+                        style={{
+                          fontFamily: 'Inter_600SemiBold',
+                          fontSize: 9,
+                          color: colors.textMute,
+                        }}
+                      >
+                        {language === 'sw' ? 'Gusa kwa maelezo zaidi' : 'Tap for full details'}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Floating circular Add (+) button */}
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push('/crop-planning');
+            }}
+            activeOpacity={0.85}
+            style={styles.floatingAddBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Add Field"
+          >
+            <Plus size={24} color="#FCFBF7" />
+          </TouchableOpacity>
+        </SafeAreaView>
+      </View>
     </RequireVerification>
   );
 }
