@@ -107,7 +107,7 @@ export default function MobileMoneyScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
@@ -141,7 +141,7 @@ export default function MobileMoneyScreen() {
                   <Text style={s.balLabel}>{language === 'sw' ? 'Salio Lako' : 'Your Balance'}</Text>
                   <Text style={s.balProvider}>{provider === 'mpesa' ? 'M-PESA' : 'AIRTEL MONEY'}</Text>
                 </View>
-                <TouchableOpacity onPress={() => { Haptics.selectionAsync(); setHideBalance(v => !v); }}
+                <TouchableOpacity accessibilityRole="button" accessibilityLabel="Toggle balance visibility" onPress={() => { Haptics.selectionAsync(); setHideBalance(v => !v); }}
                   style={s.eyeBtn}>
                   {hideBalance ? <EyeOff size={18} color="rgba(255,255,255,0.7)" /> : <Eye size={18} color="rgba(255,255,255,0.7)" />}
                 </TouchableOpacity>

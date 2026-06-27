@@ -6,7 +6,13 @@ import { Home, User, Bot, Tractor, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, interpolateColor } from 'react-native-reanimated';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  interpolateColor,
+} from 'react-native-reanimated';
 
 const ICON_ACTIVE = '#10b981';
 
@@ -34,17 +40,12 @@ function TabIcon({
   }));
 
   const iconAnimStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: iconScale.value },
-      { translateY: focused ? -4 : 0 }
-    ] as any,
+    transform: [{ scale: iconScale.value }, { translateY: focused ? -4 : 0 }] as any,
   }));
 
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center', width: 60 }}>
-      <Animated.View style={iconAnimStyle}>
-        {children}
-      </Animated.View>
+      <Animated.View style={iconAnimStyle}>{children}</Animated.View>
       <Animated.View
         style={[
           {

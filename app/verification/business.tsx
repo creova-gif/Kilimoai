@@ -22,23 +22,23 @@ export default function BusinessVerification() {
     setIsLoading(true);
     try {
       const supabase = getSupabase();
-      if (!supabase) throw new Error("Could not initialize Supabase client");
-      
+      if (!supabase) throw new Error('Could not initialize Supabase client');
+
       const { data, error } = await supabase.functions.invoke('submit-verification', {
-        body: { 
+        body: {
           agroId: agroId,
-          tin, 
+          tin,
           regNumber,
-          verificationType: 'business'
-        }
+          verificationType: 'business',
+        },
       });
 
       if (error) throw error;
-      
+
       updateAgroId({ verificationStatus: 'pending' });
       router.replace('/verification/pending');
     } catch (error: any) {
-      console.warn("Failed to submit verification to Edge Function:", error);
+      console.warn('Failed to submit verification to Edge Function:', error);
       // Fallback: still update state to pending so user can proceed if offline or missing edge function
       updateAgroId({ verificationStatus: 'pending' });
       router.replace('/verification/pending');

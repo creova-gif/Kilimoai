@@ -237,7 +237,7 @@ export default function CropPlanningScreen() {
             </View>
             <Text style={[st.headerTitle, { color: colors.text }]}>Upangaji Mazao</Text>
           </View>
-          <TouchableOpacity onPress={() => router.push('/tasks')} style={st.iconBtn}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Open tasks" onPress={() => router.push('/tasks')} style={st.iconBtn}>
             <Calendar size={19} color="#2E6F40" />
           </TouchableOpacity>
         </View>

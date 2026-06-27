@@ -51,7 +51,7 @@ export default function VRASetupScreen() {
     setIsPushing(true);
     setTimeout(() => {
       setIsPushing(false);
-      router.canGoBack() ? router.back() : router.replace('/');
+      if (router.canGoBack()) router.back(); else router.replace('/');
     }, 2000);
   };
 
@@ -71,8 +71,8 @@ export default function VRASetupScreen() {
       
       // Randomize intensity based on active input
       const intensity = Math.random();
-      let color = `${colors.primary}`; // default base
-      
+      let color: string;
+
       if (activeInput === 'fertilizer') {
         color = intensity > 0.6 ? '#D97706' : intensity > 0.3 ? '#10B981' : colors.primary;
       } else if (activeInput === 'water') {
@@ -98,7 +98,7 @@ export default function VRASetupScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Custom Header */}
       <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.backBtn}>
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text }]}>VRA Setup</Text>

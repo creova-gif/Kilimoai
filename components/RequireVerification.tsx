@@ -25,21 +25,25 @@ export function RequireVerification({ children }: { children: React.ReactNode })
     router.replace('/(tabs)');
   };
 
-  const title = language === 'sw'
-    ? (status === 'pending' ? 'Uhakiki Unasubiriwa' : 'Uhakiki Unahitajika')
-    : (status === 'pending' ? 'Verification Pending' : 'Verification Required');
+  const title =
+    language === 'sw'
+      ? status === 'pending'
+        ? 'Uhakiki Unasubiriwa'
+        : 'Uhakiki Unahitajika'
+      : status === 'pending'
+        ? 'Verification Pending'
+        : 'Verification Required';
 
-  const body = language === 'sw'
-    ? (status === 'pending'
-      ? 'Kitambulisho chako kinakaguliwa kwa sasa. Kipengele hiki kitafunguliwa kiotomatiki mara kitakapothibitishwa shambani.'
-      : 'Ili kulinda jamii na kufuata kanuni za Kilimo AI, lazima uhakiki kitambulisho chako ili kupata huduma hii.')
-    : (status === 'pending'
-      ? 'Your identity is currently under review. This feature will unlock automatically once approved.'
-      : 'To protect the community and comply with Kilimo AI guidelines, you must verify your identity to access this feature.');
+  const body =
+    language === 'sw'
+      ? status === 'pending'
+        ? 'Kitambulisho chako kinakaguliwa kwa sasa. Kipengele hiki kitafunguliwa kiotomatiki mara kitakapothibitishwa shambani.'
+        : 'Ili kulinda jamii na kufuata kanuni za Kilimo AI, lazima uhakiki kitambulisho chako ili kupata huduma hii.'
+      : status === 'pending'
+        ? 'Your identity is currently under review. This feature will unlock automatically once approved.'
+        : 'To protect the community and comply with Kilimo AI guidelines, you must verify your identity to access this feature.';
 
-  const btnLabel = language === 'sw'
-    ? 'Nenda Nyumbani Kuwezesha'
-    : 'Go to Home to Activate';
+  const btnLabel = language === 'sw' ? 'Nenda Nyumbani Kuwezesha' : 'Go to Home to Activate';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -49,12 +53,8 @@ export function RequireVerification({ children }: { children: React.ReactNode })
         </View>
         <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
         <Text style={[styles.body, { color: colors.textMute }]}>{body}</Text>
-        
-        <Button
-          label={btnLabel}
-          onPress={handleGoHome}
-          style={{ marginTop: 24, width: '100%' }}
-        />
+
+        <Button label={btnLabel} onPress={handleGoHome} style={{ marginTop: 24, width: '100%' }} />
       </GlassCard>
     </View>
   );

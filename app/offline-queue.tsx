@@ -113,7 +113,7 @@ export default function OfflineQueueScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
@@ -197,7 +197,7 @@ export default function OfflineQueueScreen() {
                     </View>
                   </View>
                   {!done && (
-                    <TouchableOpacity onPress={() => handleDelete(item.id)} style={[s.deleteBtn, { backgroundColor: '#ef444418' }]}>
+                    <TouchableOpacity accessibilityRole="button" accessibilityLabel="Delete queued item" onPress={() => handleDelete(item.id)} style={[s.deleteBtn, { backgroundColor: '#ef444418' }]}>
                       <Trash2 size={14} color="#ef4444" />
                     </TouchableOpacity>
                   )}

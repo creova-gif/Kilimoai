@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  Dimensions, 
-  Image, 
-  StatusBar, 
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
+  Image,
+  StatusBar,
   Platform,
   Alert,
-  Modal
+  Modal,
 } from 'react-native';
-import { 
-  X, 
-  Zap, 
-  Image as ImageIcon, 
-  RotateCw, 
+import {
+  X,
+  Zap,
+  Image as ImageIcon,
+  RotateCw,
   WifiOff,
   Info,
   AlertCircle,
@@ -28,17 +28,17 @@ import {
   CheckCircle2,
   Activity,
   Sun,
-  Leaf
+  Leaf,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import Animated, { 
-  FadeIn, 
-  FadeOut, 
-  FadeInDown, 
+import Animated, {
+  FadeIn,
+  FadeOut,
+  FadeInDown,
   FadeInUp,
   useSharedValue,
   useAnimatedStyle,
@@ -46,7 +46,7 @@ import Animated, {
   withTiming,
   withSequence,
   SlideInRight,
-  SlideOutLeft
+  SlideOutLeft,
 } from 'react-native-reanimated';
 import { useTasks } from '../hooks/useTasks';
 import { useNotifications } from '../hooks/useNotifications';
@@ -61,11 +61,14 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 type ScanPhase = 'IDLE' | 'SCANNING' | 'ANALYZING' | 'RESULT' | 'ERROR';
 
-const MOCK_BG = 'https://images.unsplash.com/photo-1594488651083-023b8a4a3b1e?q=80&w=2940&auto=format&fit=crop';
+const MOCK_BG =
+  'https://images.unsplash.com/photo-1594488651083-023b8a4a3b1e?q=80&w=2940&auto=format&fit=crop';
 
 // Fallback used only when the AI returns unparseable content — keeps the UI
 // from rendering "undefined".
-const FALLBACK_RESULT: Required<Pick<VisionDiagnosis, 'disease' | 'severity'>> & { recommendation: string } = {
+const FALLBACK_RESULT: Required<Pick<VisionDiagnosis, 'disease' | 'severity'>> & {
+  recommendation: string;
+} = {
   disease: 'Diagnosis incomplete',
   severity: 'medium',
   recommendation: 'Picha haikutoa matokeo wazi. Tafadhali piga picha nyingine yenye mwanga mzuri.',
@@ -102,26 +105,17 @@ export default function ScanScreen() {
   useEffect(() => {
     if (showTipsModal) {
       tipsDistanceVal.value = withRepeat(
-        withSequence(
-          withTiming(15, { duration: 1200 }),
-          withTiming(-15, { duration: 1200 })
-        ),
+        withSequence(withTiming(15, { duration: 1200 }), withTiming(-15, { duration: 1200 })),
         -1,
         true
       );
       tipsLightVal.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 1000 }),
-          withTiming(0.4, { duration: 1000 })
-        ),
+        withSequence(withTiming(1, { duration: 1000 }), withTiming(0.4, { duration: 1000 })),
         -1,
         true
       );
       tipsReticleVal.value = withRepeat(
-        withSequence(
-          withTiming(1.15, { duration: 900 }),
-          withTiming(0.95, { duration: 900 })
-        ),
+        withSequence(withTiming(1.15, { duration: 900 }), withTiming(0.95, { duration: 900 })),
         -1,
         true
       );
@@ -133,15 +127,30 @@ export default function ScanScreen() {
   }, [showTipsModal]);
 
   const animatedDistanceStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: tipsDistanceVal.value }]
+    transform: [{ translateY: tipsDistanceVal.value }],
   }));
 
   const animatedLightStyle = useAnimatedStyle(() => ({
-    opacity: tipsLightVal.value
+    opacity: tipsLightVal.value,
   }));
 
   const animatedReticleStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: tipsReticleVal.value }]
+    transform: [{ scale: tipsReticleVal.value }],
+  }));
+
+  // Moving scan-line (laser) — sweeps down the frame while SCANNING
+  const scanLineVal = useSharedValue(0);
+  useEffect(() => {
+    if (phase === 'SCANNING') {
+      scanLineVal.value = 0;
+      scanLineVal.value = withRepeat(withTiming(SCREEN_HEIGHT - 160, { duration: 1800 }), -1, true);
+    } else {
+      scanLineVal.value = 0;
+    }
+  }, [phase]);
+
+  const animatedScanLineStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: scanLineVal.value }],
   }));
 
   // Cycle through analysis text to feel agentic
@@ -151,7 +160,7 @@ export default function ScanScreen() {
         'Extracting spectral bio-markers...',
         'Cross-referencing East African pathogen database...',
         'Validating confidence levels...',
-        'Compiling predictive treatment plan...'
+        'Compiling predictive treatment plan...',
       ];
       let i = 0;
       const interval = setInterval(() => {
@@ -163,9 +172,10 @@ export default function ScanScreen() {
   }, [phase]);
 
   const pickPhoto = async (source: 'camera' | 'library') => {
-    const perm = source === 'camera'
-      ? await ImagePicker.requestCameraPermissionsAsync()
-      : await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const perm =
+      source === 'camera'
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       setErrorMsg('Tafadhali ruhusu app kufikia kamera/picha kwenye mipangilio.');
       setPhase('ERROR');
@@ -180,9 +190,10 @@ export default function ScanScreen() {
       allowsEditing: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     } as const;
-    const result = source === 'camera'
-      ? await ImagePicker.launchCameraAsync(opts)
-      : await ImagePicker.launchImageLibraryAsync(opts);
+    const result =
+      source === 'camera'
+        ? await ImagePicker.launchCameraAsync(opts)
+        : await ImagePicker.launchImageLibraryAsync(opts);
     if (result.canceled) return null;
     return result.assets[0];
   };
@@ -216,7 +227,8 @@ export default function ScanScreen() {
         let mimeType = 'image/jpeg';
         if (asset.uri.startsWith('data:')) {
           const m = asset.uri.match(/^data:([^;]+);base64,(.*)$/);
-          if (!m) throw new AIError('Picha haikuweza kusomwa. Jaribu picha nyingine.', 'validation');
+          if (!m)
+            throw new AIError('Picha haikuweza kusomwa. Jaribu picha nyingine.', 'validation');
           mimeType = m[1];
           base64 = m[2];
         } else {
@@ -228,7 +240,9 @@ export default function ScanScreen() {
           } catch (e) {
             if (e instanceof AIError) throw e;
           }
-          base64 = await FileSystem.readAsStringAsync(asset.uri, { encoding: FileSystem.EncodingType.Base64 });
+          base64 = await FileSystem.readAsStringAsync(asset.uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
           if (asset.uri.toLowerCase().endsWith('.png')) mimeType = 'image/png';
         }
         return await diagnoseCropPhoto(base64, { mimeType });
@@ -257,10 +271,13 @@ export default function ScanScreen() {
       if (scanSeq.current !== seq) return;
       const e = err as AIError;
       const friendly =
-        e?.kind === 'validation' ? e.message
-        : e?.kind === 'unauthorized' ? 'Tafadhali ingia tena ili kutumia uchunguzi wa picha.'
-        : e?.kind === 'network' ? 'Hakuna mtandao. Picha itahifadhiwa na kuchanganuliwa baadaye.'
-        : 'Samahani, uchunguzi wa picha umeshindikana. Jaribu tena.';
+        e?.kind === 'validation'
+          ? e.message
+          : e?.kind === 'unauthorized'
+            ? 'Tafadhali ingia tena ili kutumia uchunguzi wa picha.'
+            : e?.kind === 'network'
+              ? 'Hakuna mtandao. Picha itahifadhiwa na kuchanganuliwa baadaye.'
+              : 'Samahani, uchunguzi wa picha umeshindikana. Jaribu tena.';
       setErrorMsg(friendly);
       setPhase('ERROR');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -301,8 +318,10 @@ export default function ScanScreen() {
         'Follow-up · Crop diagnosis',
         `Check progress on ${disease} containment.`,
         4 * 60 * 60,
-        '/tasks',
-      ).catch(() => { /* permission may be denied — silent */ });
+        '/tasks'
+      ).catch(() => {
+        /* permission may be denied — silent */
+      });
 
       if (agroId?.phoneNumber) {
         sendSms({
@@ -310,7 +329,9 @@ export default function ScanScreen() {
           event: 'critical_diagnosis',
           body: `KILIMO AI: ${disease} imegunduliwa. Tenga mimea ndani ya 24h. Angalia app.`,
           meta: { disease },
-        }).catch(() => { /* stub may log but never throws */ });
+        }).catch(() => {
+          /* stub may log but never throws */
+        });
       }
     } catch (err) {
       console.warn('[scan] critical side effects failed:', err);
@@ -351,56 +372,48 @@ export default function ScanScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Cinematic Camera View */}
-      <Animated.View 
-        /* Reanimated Todo */
-        style={styles.cameraView}
-      >
-        <Image
-          source={{ uri: photoUri ?? MOCK_BG }}
-          style={styles.mockCamera}
-        />
-        
+      <Animated.View entering={FadeIn.duration(600)} style={styles.cameraView}>
+        <Image source={{ uri: photoUri ?? MOCK_BG }} style={styles.mockCamera} />
+
         {/* Dynamic Scan Line Overlay */}
-        
-          {phase === 'SCANNING' && (
-            <Animated.View 
-              entering={FadeInDown} exiting={FadeOut}
-              style={StyleSheet.absoluteFill}
-            >
-              <Animated.View 
-                /* Reanimated Todo */
-                style={styles.scanOverlay}
-              >
-                <LinearGradient
-                  colors={['transparent', colors.primary + '80', colors.primary, colors.primary + '80', 'transparent']}
-                  style={styles.scanLine}
-                  start={{ x: 0, y: 0.5 }}
-                  end={{ x: 1, y: 0.5 }}
-                />
-                <Animated.View 
-                  /* Reanimated Todo */
-                  style={[styles.scanGlow, { backgroundColor: colors.primary + '30' }]} 
-                />
-              </Animated.View>
+
+        {phase === 'SCANNING' && (
+          <Animated.View entering={FadeInDown} exiting={FadeOut} style={StyleSheet.absoluteFill}>
+            <Animated.View style={[styles.scanOverlay, animatedScanLineStyle]}>
+              <LinearGradient
+                colors={[
+                  'transparent',
+                  colors.primary + '80',
+                  colors.primary,
+                  colors.primary + '80',
+                  'transparent',
+                ]}
+                style={styles.scanLine}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+              />
+              <View style={[styles.scanGlow, { backgroundColor: colors.primary + '30' }]} />
             </Animated.View>
-          )}
-        
+          </Animated.View>
+        )}
       </Animated.View>
 
       <SafeAreaView style={styles.safeArea}>
         {/* Floating Header */}
-        <Animated.View 
-          /* Reanimated Todo */
-          style={styles.header}
-        >
-          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} activeOpacity={0.7} accessibilityLabel="Go back" accessibilityRole="button">
+        <Animated.View entering={FadeInDown.duration(500)} style={styles.header}>
+          <TouchableOpacity
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+            activeOpacity={0.7}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+          >
             <BlurView intensity={40} tint="dark" style={styles.iconButton}>
               <X size={24} color="#ffffff" />
             </BlurView>
           </TouchableOpacity>
-          
+
           <View style={styles.headerTitleBox}>
             <BlurView intensity={30} tint="dark" style={styles.badge}>
               <Sparkles size={12} color={colors.primary} />
@@ -408,295 +421,373 @@ export default function ScanScreen() {
             </BlurView>
           </View>
 
-          <TouchableOpacity onPress={toggleNetwork} activeOpacity={0.7} accessibilityLabel="Toggle offline mode" accessibilityRole="button">
-            <BlurView intensity={40} tint="dark" style={[styles.iconButton, isOffline && { borderColor: '#ef4444' }]}>
-              {isOffline ? <WifiOff size={20} color="#ef4444" /> : <Zap size={22} color={colors.primary} />}
+          <TouchableOpacity
+            onPress={toggleNetwork}
+            activeOpacity={0.7}
+            accessibilityLabel="Toggle offline mode"
+            accessibilityRole="button"
+          >
+            <BlurView
+              intensity={40}
+              tint="dark"
+              style={[styles.iconButton, isOffline && { borderColor: '#ef4444' }]}
+            >
+              {isOffline ? (
+                <WifiOff size={20} color="#ef4444" />
+              ) : (
+                <Zap size={22} color={colors.primary} />
+              )}
             </BlurView>
           </TouchableOpacity>
         </Animated.View>
 
         {/* Offline Warning Toast */}
-        
-          {isOffline && phase === 'IDLE' && (
+
+        {isOffline && phase === 'IDLE' && (
+          <Animated.View entering={FadeInDown} exiting={FadeOut} style={styles.offlineToast}>
+            <BlurView intensity={60} tint="dark" style={styles.offlineInner}>
+              <CloudOff size={16} color="#fbbf24" />
+              <Text style={styles.offlineText}>
+                Offline Mode: Diagnosis will be queued and synced.
+              </Text>
+            </BlurView>
+          </Animated.View>
+        )}
+
+        <View style={styles.content}>
+          {/* IDLE PHASE */}
+          {phase === 'IDLE' && (
             <Animated.View
-              entering={FadeInDown} exiting={FadeOut}
-              style={styles.offlineToast}
+              key="scanner"
+              entering={FadeInDown}
+              exiting={FadeOut}
+              style={styles.scannerInterface}
             >
-              <BlurView intensity={60} tint="dark" style={styles.offlineInner}>
-                <CloudOff size={16} color="#fbbf24" />
-                <Text style={styles.offlineText}>Offline Mode: Diagnosis will be queued and synced.</Text>
+              {/* Aiming Reticle */}
+              <View style={styles.reticleContainer}>
+                {[styles.tl, styles.tr, styles.bl, styles.br].map((posStyle, idx) => (
+                  <Animated.View key={idx} style={[styles.corner, posStyle]} />
+                ))}
+              </View>
+
+              <Animated.View style={styles.instructions}>
+                <Text style={styles.instructionLarge}>
+                  {language === 'sw' ? 'Mlengelwe Kwenye Jani' : 'Target Crop Anomaly'}
+                </Text>
+                <Text style={styles.instructionSmall}>
+                  {language === 'sw'
+                    ? 'Hakikisha jani lililoathirika lina mwanga wa kutosha.'
+                    : 'Ensure the affected leaf is well-lit and in focus.'}
+                </Text>
+              </Animated.View>
+            </Animated.View>
+          )}
+
+          {/* SCANNING & ANALYZING PHASE */}
+          {(phase === 'SCANNING' || phase === 'ANALYZING') && (
+            <Animated.View
+              key="scanning_hud"
+              entering={FadeInDown}
+              exiting={FadeOut}
+              style={styles.hudOverlayContainer}
+            >
+              {/* Crop Target Box */}
+              <View style={styles.hudTargetBox}>
+                {/* Corners for Target Box */}
+                <View
+                  style={[
+                    styles.targetCorner,
+                    { top: -2, left: -2, borderTopWidth: 4, borderLeftWidth: 4 },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.targetCorner,
+                    { top: -2, right: -2, borderTopWidth: 4, borderRightWidth: 4 },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.targetCorner,
+                    { bottom: -2, left: -2, borderBottomWidth: 4, borderLeftWidth: 4 },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.targetCorner,
+                    { bottom: -2, right: -2, borderBottomWidth: 4, borderRightWidth: 4 },
+                  ]}
+                />
+
+                {/* Progress Badge */}
+                <View style={[styles.hudProgressBadge, { backgroundColor: colors.primary }]}>
+                  <Sparkles size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
+                  <Text style={styles.hudProgressText}>
+                    {analysisProgress}% {language === 'sw' ? 'Uchambuzi' : 'Analyse'}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Segmented Progress Loader */}
+              <View style={styles.segmentedLoader}>
+                {Array.from({ length: 10 }).map((_, idx) => {
+                  const isActive = analysisProgress >= (idx + 1) * 10;
+                  return (
+                    <View
+                      key={idx}
+                      style={[
+                        styles.loaderSegment,
+                        {
+                          backgroundColor: isActive ? colors.primary : 'rgba(255, 255, 255, 0.2)',
+                        },
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+
+              {/* Status / Instructions Text */}
+              <Text style={styles.hudStatusText}>
+                {phase === 'SCANNING'
+                  ? language === 'sw'
+                    ? 'Inafunga Shabaha...'
+                    : 'LOCKING TARGET...'
+                  : language === 'sw'
+                    ? 'Inachambua jani...'
+                    : 'ANALYZING LEAF PATTERNS...'}
+              </Text>
+
+              {/* Cancel Button at bottom */}
+              <TouchableOpacity
+                onPress={handleReset}
+                activeOpacity={0.85}
+                style={styles.hudCancelBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Cancel scan"
+              >
+                <BlurView intensity={30} tint="dark" style={styles.hudCancelInner}>
+                  <Text style={styles.hudCancelText}>
+                    {language === 'sw' ? 'Ghairi' : 'Cancel'}
+                  </Text>
+                </BlurView>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          {/* ERROR PHASE */}
+          {phase === 'ERROR' && (
+            <Animated.View
+              key="error"
+              entering={FadeInDown}
+              exiting={FadeOut}
+              style={styles.resultWrapper}
+            >
+              <BlurView
+                intensity={isDark ? 40 : 90}
+                tint={isDark ? 'dark' : 'light'}
+                style={[styles.resultCard, { borderColor: 'rgba(239,68,68,0.3)' }]}
+              >
+                <View style={styles.resultHeader}>
+                  <View style={[styles.resultIcon, { backgroundColor: '#ef4444' }]}>
+                    <AlertCircle size={32} color="#fff" />
+                  </View>
+                  <View style={styles.resultMeta}>
+                    <Text style={[styles.resultName, { color: colors.text }]}>Imeshindikana</Text>
+                    <Text style={[styles.confText, { color: colors.textMute }]}>
+                      Uchunguzi haukufanyika
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={[
+                    styles.detailCard,
+                    { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' },
+                  ]}
+                >
+                  <Text style={[styles.detailBody, { color: colors.textMute }]}>
+                    {errorMsg ?? 'Hitilafu isiyojulikana.'}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.resetBtn}
+                  onPress={handleReset}
+                  accessibilityLabel="Try again"
+                  accessibilityRole="button"
+                >
+                  <RotateCw size={18} color={colors.textMute} />
+                  <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Jaribu Tena</Text>
+                </TouchableOpacity>
               </BlurView>
             </Animated.View>
           )}
-        
 
-        <View style={styles.content}>
-          
-            
-            {/* IDLE PHASE */}
-            {phase === 'IDLE' && (
-              <Animated.View 
-                key="scanner"
-                entering={FadeInDown} exiting={FadeOut}
-                style={styles.scannerInterface}
+          {/* RESULT PHASE */}
+          {phase === 'RESULT' && (
+            <Animated.View
+              key="result"
+              entering={FadeInDown}
+              exiting={FadeOut}
+              style={styles.resultWrapper}
+            >
+              <BlurView
+                intensity={isDark ? 40 : 90}
+                tint={isDark ? 'dark' : 'light'}
+                style={[styles.resultCard, { borderColor: 'rgba(255,255,255,0.1)' }]}
               >
-                {/* Aiming Reticle */}
-                <View style={styles.reticleContainer}>
-                  {[styles.tl, styles.tr, styles.bl, styles.br].map((posStyle, idx) => (
-                    <Animated.View 
-                      key={idx}
-                      style={[styles.corner, posStyle]} 
-                    />
-                  ))}
-                </View>
+                <LinearGradient
+                  colors={[colors.primary + '15', 'transparent']}
+                  style={StyleSheet.absoluteFill}
+                />
 
-                <Animated.View style={styles.instructions}>
-                  <Text style={styles.instructionLarge}>
-                    {language === 'sw' ? 'Mlengelwe Kwenye Jani' : 'Target Crop Anomaly'}
-                  </Text>
-                  <Text style={styles.instructionSmall}>
-                    {language === 'sw' ? 'Hakikisha jani lililoathirika lina mwanga wa kutosha.' : 'Ensure the affected leaf is well-lit and in focus.'}
-                  </Text>
-                </Animated.View>
-              </Animated.View>
-            )}
-
-            {/* SCANNING & ANALYZING PHASE */}
-            {(phase === 'SCANNING' || phase === 'ANALYZING') && (
-              <Animated.View 
-                key="scanning_hud"
-                entering={FadeInDown} exiting={FadeOut}
-                style={styles.hudOverlayContainer}
-              >
-                {/* Crop Target Box */}
-                <View style={styles.hudTargetBox}>
-                  {/* Corners for Target Box */}
-                  <View style={[styles.targetCorner, { top: -2, left: -2, borderTopWidth: 4, borderLeftWidth: 4 }]} />
-                  <View style={[styles.targetCorner, { top: -2, right: -2, borderTopWidth: 4, borderRightWidth: 4 }]} />
-                  <View style={[styles.targetCorner, { bottom: -2, left: -2, borderBottomWidth: 4, borderLeftWidth: 4 }]} />
-                  <View style={[styles.targetCorner, { bottom: -2, right: -2, borderBottomWidth: 4, borderRightWidth: 4 }]} />
-
-                  {/* Progress Badge */}
-                  <View style={[styles.hudProgressBadge, { backgroundColor: colors.primary }]}>
-                    <Sparkles size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
-                    <Text style={styles.hudProgressText}>
-                      {analysisProgress}% {language === 'sw' ? 'Uchambuzi' : 'Analyse'}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Segmented Progress Loader */}
-                <View style={styles.segmentedLoader}>
-                  {Array.from({ length: 10 }).map((_, idx) => {
-                    const isActive = analysisProgress >= (idx + 1) * 10;
-                    return (
-                      <View
-                        key={idx}
-                        style={[
-                          styles.loaderSegment,
-                          {
-                            backgroundColor: isActive 
-                              ? colors.primary 
-                              : 'rgba(255, 255, 255, 0.2)'
-                          }
-                        ]}
-                      />
-                    );
-                  })}
-                </View>
-
-                {/* Status / Instructions Text */}
-                <Text style={styles.hudStatusText}>
-                  {phase === 'SCANNING'
-                    ? (language === 'sw' ? 'Inafunga Shabaha...' : 'LOCKING TARGET...')
-                    : (language === 'sw' ? 'Inachambua jani...' : 'ANALYZING LEAF PATTERNS...')}
-                </Text>
-
-                {/* Cancel Button at bottom */}
-                <TouchableOpacity
-                  onPress={handleReset}
-                  activeOpacity={0.85}
-                  style={styles.hudCancelBtn}
-                  accessibilityRole="button"
-                  accessibilityLabel="Cancel scan"
-                >
-                  <BlurView intensity={30} tint="dark" style={styles.hudCancelInner}>
-                    <Text style={styles.hudCancelText}>
-                      {language === 'sw' ? 'Ghairi' : 'Cancel'}
-                    </Text>
-                  </BlurView>
-                </TouchableOpacity>
-              </Animated.View>
-            )}
-
-            {/* ERROR PHASE */}
-            {phase === 'ERROR' && (
-              <Animated.View
-                key="error"
-                entering={FadeInDown} exiting={FadeOut}
-                style={styles.resultWrapper}
-              >
-                <BlurView intensity={isDark ? 40 : 90} tint={isDark ? 'dark' : 'light'} style={[styles.resultCard, { borderColor: 'rgba(239,68,68,0.3)' }]}>
-                  <View style={styles.resultHeader}>
-                    <View style={[styles.resultIcon, { backgroundColor: '#ef4444' }]}>
-                      <AlertCircle size={32} color="#fff" />
-                    </View>
-                    <View style={styles.resultMeta}>
-                      <Text style={[styles.resultName, { color: colors.text }]}>Imeshindikana</Text>
-                      <Text style={[styles.confText, { color: colors.textMute }]}>Uchunguzi haukufanyika</Text>
-                    </View>
-                  </View>
-                  <View style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}>
-                    <Text style={[styles.detailBody, { color: colors.textMute }]}>{errorMsg ?? 'Hitilafu isiyojulikana.'}</Text>
-                  </View>
-                  <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Try again" accessibilityRole="button">
-                    <RotateCw size={18} color={colors.textMute} />
-                    <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Jaribu Tena</Text>
-                  </TouchableOpacity>
-                </BlurView>
-              </Animated.View>
-            )}
-
-            {/* RESULT PHASE */}
-            {phase === 'RESULT' && (
-              <Animated.View 
-                key="result"
-                entering={FadeInDown} exiting={FadeOut}
-                style={styles.resultWrapper}
-              >
-                <BlurView intensity={isDark ? 40 : 90} tint={isDark ? "dark" : "light"} style={[styles.resultCard, { borderColor: 'rgba(255,255,255,0.1)' }]}>
-                  <LinearGradient
-                    colors={[colors.primary + '15', 'transparent']}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  
-                  {(() => {
-                    const sev = diagnosis?.severity ?? FALLBACK_RESULT.severity;
-                    const sevColor = sev === 'critical' ? '#ef4444'
-                      : sev === 'high' ? '#f97316'
-                      : sev === 'medium' ? '#eab308'
-                      : '#22c55e';
-                    const sevLabel = sev === 'critical' ? 'Critical Priority'
-                      : sev === 'high' ? 'High Priority'
-                      : sev === 'medium' ? 'Medium Priority'
-                      : 'Low Priority';
-                    const disease = diagnosis?.disease ?? FALLBACK_RESULT.disease;
-                    const cropLine = diagnosis?.crop ? `${diagnosis.crop} · ` : '';
-                    const actions = diagnosis?.actions ?? [];
-                    const body = actions.length > 0
+                {(() => {
+                  const sev = diagnosis?.severity ?? FALLBACK_RESULT.severity;
+                  const sevColor =
+                    sev === 'critical'
+                      ? '#ef4444'
+                      : sev === 'high'
+                        ? '#f97316'
+                        : sev === 'medium'
+                          ? '#eab308'
+                          : '#22c55e';
+                  const sevLabel =
+                    sev === 'critical'
+                      ? 'Critical Priority'
+                      : sev === 'high'
+                        ? 'High Priority'
+                        : sev === 'medium'
+                          ? 'Medium Priority'
+                          : 'Low Priority';
+                  const disease = diagnosis?.disease ?? FALLBACK_RESULT.disease;
+                  const cropLine = diagnosis?.crop ? `${diagnosis.crop} · ` : '';
+                  const actions = diagnosis?.actions ?? [];
+                  const body =
+                    actions.length > 0
                       ? actions.map((a) => `• ${a}`).join('\n')
                       : (diagnosis?.raw?.slice(0, 280) ?? FALLBACK_RESULT.recommendation);
-                    return (
-                      <>
-                        <View style={styles.resultHeader}>
-                          <Animated.View
-                            entering={FadeInDown}
-                            style={[styles.resultIcon, { backgroundColor: colors.primary }]}
-                          >
-                            <BrainCircuit size={32} color={isDark ? '#000' : '#FCFBF7'} />
-                          </Animated.View>
-                          <View style={styles.resultMeta}>
-                            <Text style={[styles.resultName, { color: colors.text }]}>{disease}</Text>
-                            <Animated.View
-                              entering={FadeInDown}
-                              style={styles.confBadge}
-                            >
-                              <Text style={styles.confText}>{cropLine}AI Diagnosis</Text>
-                            </Animated.View>
-                          </View>
-                        </View>
-
-                        {isOffline && (
-                          <Animated.View entering={FadeInDown} style={styles.offlineNoticeBox}>
-                            <CloudOff size={16} color="#fbbf24" />
-                            <Text style={styles.offlineNoticeText}>Saved locally. Will sync to your Agro ID when online.</Text>
-                          </Animated.View>
-                        )}
-
+                  return (
+                    <>
+                      <View style={styles.resultHeader}>
                         <Animated.View
                           entering={FadeInDown}
-                          style={[styles.detailCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' }]}
+                          style={[styles.resultIcon, { backgroundColor: colors.primary }]}
                         >
-                          <View style={styles.detailTitleRow}>
-                            <AlertCircle size={18} color={sevColor} />
-                            <Text style={[styles.detailTitle, { color: colors.text }]}>{sevLabel}</Text>
-                          </View>
-                          <Text style={[styles.detailBody, { color: colors.textMute }]}>{body}</Text>
+                          <BrainCircuit size={32} color={isDark ? '#000' : '#FCFBF7'} />
                         </Animated.View>
-                      </>
-                    );
-                  })()}
+                        <View style={styles.resultMeta}>
+                          <Text style={[styles.resultName, { color: colors.text }]}>{disease}</Text>
+                          <Animated.View entering={FadeInDown} style={styles.confBadge}>
+                            <Text style={styles.confText}>{cropLine}AI Diagnosis</Text>
+                          </Animated.View>
+                        </View>
+                      </View>
 
-                  <Animated.View entering={FadeInDown}>
-                    <TouchableOpacity 
-                      style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
-                      activeOpacity={0.8}
-                      onPress={() => {
-                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                         router.push('/(tabs)/ai' as any);
-                      }}
-                      accessibilityRole="button"
-                      accessibilityLabel="Speak with AI Agronomist"
-                    >
-                      <Text style={[styles.primaryBtnText, { color: '#FFFFFF' }]}>Ask AI Agronomist</Text>
-                      <ArrowRight size={20} color="#FFFFFF" />
-                    </TouchableOpacity>
+                      {isOffline && (
+                        <Animated.View entering={FadeInDown} style={styles.offlineNoticeBox}>
+                          <CloudOff size={16} color="#fbbf24" />
+                          <Text style={styles.offlineNoticeText}>
+                            Saved locally. Will sync to your Agro ID when online.
+                          </Text>
+                        </Animated.View>
+                      )}
 
-                    <TouchableOpacity style={styles.resetBtn} onPress={handleReset} accessibilityLabel="Retake Scan" accessibilityRole="button">
-                      <RotateCw size={18} color={colors.textMute} />
-                      <Text style={[styles.resetBtnText, { color: colors.textMute }]}>Scan Another Plant</Text>
-                    </TouchableOpacity>
-                  </Animated.View>
-                </BlurView>
-              </Animated.View>
-            )}
-          
+                      <Animated.View
+                        entering={FadeInDown}
+                        style={[
+                          styles.detailCard,
+                          {
+                            backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+                          },
+                        ]}
+                      >
+                        <View style={styles.detailTitleRow}>
+                          <AlertCircle size={18} color={sevColor} />
+                          <Text style={[styles.detailTitle, { color: colors.text }]}>
+                            {sevLabel}
+                          </Text>
+                        </View>
+                        <Text style={[styles.detailBody, { color: colors.textMute }]}>{body}</Text>
+                      </Animated.View>
+                    </>
+                  );
+                })()}
+
+                <Animated.View entering={FadeInDown}>
+                  <TouchableOpacity
+                    style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                      router.push('/(tabs)/ai' as any);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Speak with AI Agronomist"
+                  >
+                    <Text style={[styles.primaryBtnText, { color: '#FFFFFF' }]}>
+                      Ask AI Agronomist
+                    </Text>
+                    <ArrowRight size={20} color="#FFFFFF" />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.resetBtn}
+                    onPress={handleReset}
+                    accessibilityLabel="Retake Scan"
+                    accessibilityRole="button"
+                  >
+                    <RotateCw size={18} color={colors.textMute} />
+                    <Text style={[styles.resetBtnText, { color: colors.textMute }]}>
+                      Scan Another Plant
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              </BlurView>
+            </Animated.View>
+          )}
         </View>
 
         {/* Shutter Controls */}
-        
-          {phase === 'IDLE' && (
-            <Animated.View 
-              entering={FadeInDown} exiting={FadeOut}
-              style={styles.footer}
+
+        {phase === 'IDLE' && (
+          <Animated.View entering={FadeInDown} exiting={FadeOut} style={styles.footer}>
+            <TouchableOpacity
+              style={styles.auxBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Open gallery"
+              onPress={handlePickFromGallery}
             >
-              <TouchableOpacity style={styles.auxBtn} accessibilityRole="button" accessibilityLabel="Open gallery" onPress={handlePickFromGallery}>
-                <BlurView intensity={40} tint="dark" style={styles.auxInner}>
-                  <ImageIcon size={24} color="#ffffff" />
-                </BlurView>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.shutterRing, { borderColor: colors.primary }]}
-                onPress={handleScan}
-                activeOpacity={0.8}
-                accessibilityRole="button"
-                accessibilityLabel="Take picture for AI diagnosis"
-              >
-                <Animated.View 
-                  style={[styles.shutterCore, { backgroundColor: '#ffffff' }]}
-                >
-                  <Camera size={34} color="#000" />
-                </Animated.View>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={styles.auxBtn} 
-                accessibilityRole="button" 
-                accessibilityLabel="Scanning tips" 
-                onPress={() => { 
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  setActiveTipsStep(0);
-                  setShowTipsModal(true); 
-                }}
-              >
-                <BlurView intensity={40} tint="dark" style={styles.auxInner}>
-                  <Info size={24} color="#ffffff" />
-                </BlurView>
-              </TouchableOpacity>
-            </Animated.View>
-          )}
-        
+              <BlurView intensity={40} tint="dark" style={styles.auxInner}>
+                <ImageIcon size={24} color="#ffffff" />
+              </BlurView>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.shutterRing, { borderColor: colors.primary }]}
+              onPress={handleScan}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel="Take picture for AI diagnosis"
+            >
+              <Animated.View style={[styles.shutterCore, { backgroundColor: '#ffffff' }]}>
+                <Camera size={34} color="#000" />
+              </Animated.View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.auxBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Scanning tips"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setActiveTipsStep(0);
+                setShowTipsModal(true);
+              }}
+            >
+              <BlurView intensity={40} tint="dark" style={styles.auxInner}>
+                <Info size={24} color="#ffffff" />
+              </BlurView>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
       </SafeAreaView>
 
       {/* ── Custom Animated Scanner Tips Modal ────────────────── */}
@@ -708,14 +799,25 @@ export default function ScanScreen() {
       >
         <View style={styles.tipsModalContainer}>
           <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
-          
-          <BlurView 
-            intensity={isDark ? 30 : 80} 
-            tint={isDark ? "dark" : "light"} 
-            style={[styles.tipsSheet, { backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)', borderColor: colors.border }]}
+
+          <BlurView
+            intensity={isDark ? 30 : 80}
+            tint={isDark ? 'dark' : 'light'}
+            style={[
+              styles.tipsSheet,
+              {
+                backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)',
+                borderColor: colors.border,
+              },
+            ]}
           >
             {/* Grabber indicator */}
-            <View style={[styles.tipsSheetGrabber, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
+            <View
+              style={[
+                styles.tipsSheetGrabber,
+                { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
+              ]}
+            />
 
             {/* Header */}
             <View style={styles.tipsHeader}>
@@ -740,15 +842,19 @@ export default function ScanScreen() {
               {[0, 1, 2].map((step) => {
                 const isActive = activeTipsStep === step;
                 return (
-                  <View 
-                    key={step} 
+                  <View
+                    key={step}
                     style={[
-                      styles.tipsIndicatorBar, 
-                      { 
-                        backgroundColor: isActive ? colors.primary : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
-                        flex: 1
-                      }
-                    ]} 
+                      styles.tipsIndicatorBar,
+                      {
+                        backgroundColor: isActive
+                          ? colors.primary
+                          : isDark
+                            ? 'rgba(255,255,255,0.1)'
+                            : 'rgba(0,0,0,0.1)',
+                        flex: 1,
+                      },
+                    ]}
                   />
                 );
               })}
@@ -757,7 +863,11 @@ export default function ScanScreen() {
             {/* Step Body */}
             <View style={styles.tipsContentBox}>
               {activeTipsStep === 0 && (
-                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.tipsSlide}>
+                <Animated.View
+                  entering={SlideInRight}
+                  exiting={SlideOutLeft}
+                  style={styles.tipsSlide}
+                >
                   {/* Distance Animation */}
                   <View style={styles.tipsAnimWindow}>
                     <Animated.View style={[styles.tipsPhoneContainer, animatedDistanceStyle]}>
@@ -765,12 +875,14 @@ export default function ScanScreen() {
                     </Animated.View>
                     <Leaf size={48} color="#22c55e" style={styles.tipsLeafBg} />
                   </View>
-                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>HATUA YA 1: UMBALI SAHIHI</Text>
+                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>
+                    HATUA YA 1: UMBALI SAHIHI
+                  </Text>
                   <Text style={[styles.tipsStepHeading, { color: colors.text }]}>
                     {language === 'sw' ? 'Shika Simu sm 15-30' : 'Maintain 15-30cm Distance'}
                   </Text>
                   <Text style={[styles.tipsStepBody, { color: colors.textMute }]}>
-                    {language === 'sw' 
+                    {language === 'sw'
                       ? 'Weka kamera ya simu yako umbali wa sm 15 hadi 30 (nusu rula) kutoka kwenye jani. Kaa karibu vya kutosha kuona maelezo lakini usikaribie sana hadi picha izibwe.'
                       : 'Position your device camera 15 to 30 cm away from the target leaf. Close enough to capture fine details, but far enough to avoid lens distortion or shadows.'}
                   </Text>
@@ -778,19 +890,25 @@ export default function ScanScreen() {
               )}
 
               {activeTipsStep === 1 && (
-                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.tipsSlide}>
+                <Animated.View
+                  entering={SlideInRight}
+                  exiting={SlideOutLeft}
+                  style={styles.tipsSlide}
+                >
                   {/* Lighting Animation */}
                   <View style={styles.tipsAnimWindow}>
                     <Animated.View style={[styles.tipsSunGlow, animatedLightStyle]}>
                       <Sun size={52} color="#f59e0b" />
                     </Animated.View>
                   </View>
-                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>HATUA YA 2: MWANGA WA KUTOSHA</Text>
+                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>
+                    HATUA YA 2: MWANGA WA KUTOSHA
+                  </Text>
                   <Text style={[styles.tipsStepHeading, { color: colors.text }]}>
                     {language === 'sw' ? 'Mwangaza Mzuri wa Jua' : 'Ensure Optimal Lighting'}
                   </Text>
                   <Text style={[styles.tipsStepBody, { color: colors.textMute }]}>
-                    {language === 'sw' 
+                    {language === 'sw'
                       ? 'Piga picha wakati kuna mwanga wa jua lakini epuka kivuli cha simu yako au mwili wako kuangukia kwenye jani. Usipige picha gizani.'
                       : 'Take photos under bright, indirect sunlight. Ensure your own body shadow or device shadow does not drape over the leaf block.'}
                   </Text>
@@ -798,20 +916,32 @@ export default function ScanScreen() {
               )}
 
               {activeTipsStep === 2 && (
-                <Animated.View entering={SlideInRight} exiting={SlideOutLeft} style={styles.tipsSlide}>
+                <Animated.View
+                  entering={SlideInRight}
+                  exiting={SlideOutLeft}
+                  style={styles.tipsSlide}
+                >
                   {/* Reticle / Anomaly Animation */}
                   <View style={styles.tipsAnimWindow}>
-                    <Animated.View style={[styles.tipsReticleBox, animatedReticleStyle, { borderColor: colors.primary }]}>
+                    <Animated.View
+                      style={[
+                        styles.tipsReticleBox,
+                        animatedReticleStyle,
+                        { borderColor: colors.primary },
+                      ]}
+                    >
                       <View style={[styles.tipsReticleTarget, { backgroundColor: '#ef4444' }]} />
                     </Animated.View>
                     <Leaf size={48} color="#22c55e" style={styles.tipsLeafBgCenter} />
                   </View>
-                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>HATUA YA 3: ZINGATIA ALAMA YA UGONJWA</Text>
+                  <Text style={[styles.tipsStepBadgeText, { color: colors.primary }]}>
+                    HATUA YA 3: ZINGATIA ALAMA YA UGONJWA
+                  </Text>
                   <Text style={[styles.tipsStepHeading, { color: colors.text }]}>
                     {language === 'sw' ? 'Weka Doa Katikati' : 'Center the Leaf Anomaly'}
                   </Text>
                   <Text style={[styles.tipsStepBody, { color: colors.textMute }]}>
-                    {language === 'sw' 
+                    {language === 'sw'
                       ? 'Lenga doa au sehemu iliyoathirika ya jani iwe katikati ya kisanduku cha kulenga. AI inategemea alama hiyo kufanya uchambuzi sahihi.'
                       : 'Lock the camera focus precisely on the diseased spot or leaf damage. Centering the anomaly ensures the neural model scans the correct pixels.'}
                   </Text>
@@ -849,7 +979,9 @@ export default function ScanScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Next"
                 >
-                  <Text style={[styles.tipsFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}>
+                  <Text
+                    style={[styles.tipsFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}
+                  >
                     {language === 'sw' ? 'Mbele' : 'Next'}
                   </Text>
                 </TouchableOpacity>
@@ -863,17 +995,17 @@ export default function ScanScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Done"
                 >
-                  <Text style={[styles.tipsFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}>
+                  <Text
+                    style={[styles.tipsFooterBtnTextPrim, { color: isDark ? '#000' : '#FCFBF7' }]}
+                  >
                     {language === 'sw' ? 'Nimeelewa' : 'Got It'}
                   </Text>
                 </TouchableOpacity>
               )}
             </View>
-
           </BlurView>
         </View>
       </Modal>
-
     </View>
   );
 }
@@ -906,7 +1038,7 @@ const styles = StyleSheet.create({
   scanLine: {
     width: '100%',
     height: 6,
-    shadowColor: "#2E6F40",
+    shadowColor: '#2E6F40',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 25,
@@ -1102,7 +1234,7 @@ const styles = StyleSheet.create({
     padding: 32,
     overflow: 'hidden',
     borderWidth: 1,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.5,
     shadowRadius: 30,
@@ -1119,7 +1251,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: "#2E6F40",
+    shadowColor: '#2E6F40',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 24,
@@ -1186,7 +1318,7 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     borderRadius: 28,
     marginBottom: 16,
-    shadowColor: "#2E6F40",
+    shadowColor: '#2E6F40',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -1273,7 +1405,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,

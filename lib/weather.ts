@@ -21,17 +21,30 @@ export interface CurrentWeather {
 }
 
 export interface ForecastDay {
-  day: string;          // 'Jumatatu'
-  date: string;         // '12 Okt'
+  day: string; // 'Jumatatu'
+  date: string; // '12 Okt'
   high: number;
   low: number;
   condition: WeatherCondition;
-  pop: string;          // '85%'
-  desc: string;         // farmer-friendly Swahili tip
+  pop: string; // '85%'
+  desc: string; // farmer-friendly Swahili tip
 }
 
 const SW_DAYS = ['Jumapili', 'Jumatatu', 'Jumanne', 'Jumatano', 'Alhamisi', 'Ijumaa', 'Jumamosi'];
-const SW_MONTHS = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ago', 'Sep', 'Okt', 'Nov', 'Des'];
+const SW_MONTHS = [
+  'Jan',
+  'Feb',
+  'Mac',
+  'Apr',
+  'Mei',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Sep',
+  'Okt',
+  'Nov',
+  'Des',
+];
 
 export function weatherConfigured(): boolean {
   return API_KEY.length > 0;
@@ -61,7 +74,10 @@ function swDate(d: Date): string {
 }
 
 export class WeatherError extends Error {
-  constructor(message: string, public kind: 'not_configured' | 'unknown_location' | 'network' | 'unknown') {
+  constructor(
+    message: string,
+    public kind: 'not_configured' | 'unknown_location' | 'network' | 'unknown'
+  ) {
     super(message);
   }
 }
@@ -146,7 +162,8 @@ export async function fetchForecast(location: string): Promise<ForecastDay[]> {
       const c = mapCondition(e.weather[0]?.main ?? '');
       counts[c] = (counts[c] ?? 0) + 1;
     }
-    const condition = (Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'sun') as WeatherCondition;
+    const condition = (Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ??
+      'sun') as WeatherCondition;
 
     // Reconstruct a noon-local Date for that bucket to pick the right weekday label.
     const noonUtcSec = new Date(key + 'T12:00:00Z').getTime() / 1000 - tzOffsetSec;

@@ -51,7 +51,9 @@ const INTENT_RULES: IntentRule[] = [
   },
   {
     intent: 'disease',
-    patterns: [/\b(ugonjwa|magonjwa|disease|blight|kutu|mold|ukungu|rust|wilt|majani|yellow|njano|kuoza)\b/i],
+    patterns: [
+      /\b(ugonjwa|magonjwa|disease|blight|kutu|mold|ukungu|rust|wilt|majani|yellow|njano|kuoza)\b/i,
+    ],
   },
   {
     intent: 'soil',
@@ -63,7 +65,9 @@ const INTENT_RULES: IntentRule[] = [
   },
   {
     intent: 'weather',
-    patterns: [/\b(hali ya hewa|mvua|rain|weather|joto|heat|baridi|cold|forecast|tabiri|upepo|wind)\b/i],
+    patterns: [
+      /\b(hali ya hewa|mvua|rain|weather|joto|heat|baridi|cold|forecast|tabiri|upepo|wind)\b/i,
+    ],
   },
   {
     intent: 'fertilizer',
@@ -87,11 +91,15 @@ const INTENT_RULES: IntentRule[] = [
   },
   {
     intent: 'livestock',
-    patterns: [/\b(mifugo|ng'ombe|ng.ombe|kuku|kondoo|mbuzi|cattle|cow|chicken|poultry|goat|sheep)\b/i],
+    patterns: [
+      /\b(mifugo|ng'ombe|ng.ombe|kuku|kondoo|mbuzi|cattle|cow|chicken|poultry|goat|sheep)\b/i,
+    ],
   },
   {
     intent: 'planning',
-    patterns: [/\b(panda|kupanda|plant|season|msimu|ratiba|schedule|plan|mpango|masika|vuli|kiangazi)\b/i],
+    patterns: [
+      /\b(panda|kupanda|plant|season|msimu|ratiba|schedule|plan|mpango|masika|vuli|kiangazi)\b/i,
+    ],
   },
   {
     intent: 'finance',
@@ -116,12 +124,12 @@ const RESPONSES: Record<Intent, string[]> = {
     'Kwa wadudu wanaoshambulia mizizi, tumia granules za imidacloprid wakati wa kupanda. Njia za asili: jua la kuchoma ardhi (solarization) kabla ya msimu, au mzunguko wa mazao (crop rotation).',
   ],
   disease: [
-    'Dalili za kutu ya mahindi (Maize Streak Virus): madoa ya njano kwenye majani. Inasambazwa na wadudu (leafhopper). Hakuna tiba — ng\'oa mimea iliyoathirika na ichome ili kuzuia kuenea. Tumia mbegu sugu msimu ujao.',
+    "Dalili za kutu ya mahindi (Maize Streak Virus): madoa ya njano kwenye majani. Inasambazwa na wadudu (leafhopper). Hakuna tiba — ng'oa mimea iliyoathirika na ichome ili kuzuia kuenea. Tumia mbegu sugu msimu ujao.",
     'Ukungu wa mpunga (Blast) unaonekana kwa madoa ya kijivu-nyeupe kwenye majani. Dawa: Tricyclazole au Isoprothiolane. Epuka kumwagilia kupita kiasi na hakikisha mzunguko wa hewa shambani.',
     'Uoza wa mizizi (Root rot) husababishwa na maji mengi. Punguza umwagiliaji, fanya mfumo mzuri wa mifereji, na nyunyizia Mancozeb au dawa ya copper oxychloride kwenye ardhi.',
   ],
   soil: [
-    'Udongo bora kwa mazao mengi una pH kati ya 6.0–6.8. Kama pH yako iko chini (tindikali), ongeza chokaa (lime) — gramu 200 kwa mita mraba. Kama pH ni juu (alkali), ongeza sulfuri au matumizi ya samadi ya ng\'ombe.',
+    "Udongo bora kwa mazao mengi una pH kati ya 6.0–6.8. Kama pH yako iko chini (tindikali), ongeza chokaa (lime) — gramu 200 kwa mita mraba. Kama pH ni juu (alkali), ongeza sulfuri au matumizi ya samadi ya ng'ombe.",
     'Ili kuboresha rutuba ya udongo: changanya samadi iliyooza vizuri (compost) — kilo 2 kwa mita mraba — na mbolea ya DAP wakati wa kupanda. Msimu ujao, tumia mzunguko wa mazao ya kunde (legumes) kuboresha nitrojeni.',
     'Udongo wa Tanzania wa eneo la Rift Valley una potassium nyingi lakini upungufu wa zinc na boron. Wasiliana na mtaalamu wa udongo ili kupata uchambuzi kamili wa soil test kabla ya msimu.',
   ],
@@ -137,7 +145,7 @@ const RESPONSES: Record<Intent, string[]> = {
   ],
   fertilizer: [
     'Mpango bora wa mbolea kwa mahindi (ekari moja): Kupanda — DAP kilo 50. Wiki 4 baada ya kupanda — CAN kilo 50 (top dressing 1). Wiki 8 — CAN kilo 25 (top dressing 2). Jumla ya gharama: TZS 85,000–110,000.',
-    'Mbolea ya asili (organic) inaboresha udongo vizuri zaidi kuliko kemikali peke yake. Changanya: samadi ya ng\'ombe iliyooza (kilo 500/ekari) + compost ya majani + mbolea ya kijani (green manure). Hii inapunguza gharama kwa 30%.',
+    "Mbolea ya asili (organic) inaboresha udongo vizuri zaidi kuliko kemikali peke yake. Changanya: samadi ya ng'ombe iliyooza (kilo 500/ekari) + compost ya majani + mbolea ya kijani (green manure). Hii inapunguza gharama kwa 30%.",
     'Urea ina nitrojeni nyingi (46%) — nzuri kwa ukuaji wa majani. Lakini usitumie zaidi ya kiasi — inachoma mizizi. Tumia gramu 2–3 kwa mita mraba wakati wa top dressing la kwanza.',
   ],
   maize: [
@@ -157,11 +165,11 @@ const RESPONSES: Record<Intent, string[]> = {
   ],
   beans: [
     'Maharage yanafaa kwa mzunguko wa mazao baada ya mahindi — yanaboresha nitrojeni ya udongo. Panda aina ya Jesca, Selian 97, au LYAMUNGU 85 kwa mavuno mazuri.',
-    'Ugonjwa wa Bean Common Mosaic Virus: madoa ya njano ya mosaic kwenye majani. Ng\'oa mimea iliyoathirika. Epuka kwa mbegu safi na kudhibiti aphids (wanaosambaza virusi).',
+    "Ugonjwa wa Bean Common Mosaic Virus: madoa ya njano ya mosaic kwenye majani. Ng'oa mimea iliyoathirika. Epuka kwa mbegu safi na kudhibiti aphids (wanaosambaza virusi).",
     'Soko la maharage linafanya vizuri — bei ni TZS 1,200–1,600/kg kulingana na aina. Maharage nyekundu (kidney beans) yana bei bora zaidi. Hifadhi vizuri kwenye gunia zilizofunikwa.',
   ],
   livestock: [
-    'Kwa ng\'ombe wa maziwa, lishe nzuri ni muhimu sana. Tumia napier grass (bana) + concentrate (kilo 2–3/siku) + chumvi ya madini. Ng\'ombe mzuri anaweza kutoa lita 15–20/siku.',
+    "Kwa ng'ombe wa maziwa, lishe nzuri ni muhimu sana. Tumia napier grass (bana) + concentrate (kilo 2–3/siku) + chumvi ya madini. Ng'ombe mzuri anaweza kutoa lita 15–20/siku.",
     'Chanjo muhimu kwa mifugo Tanzania: FMD (Homa ya miguu na mdomo) — kila miezi 6, Anthrax — kila mwaka, CBPP (magonjwa ya mapafu) — kila mwaka. Wasiliana na daktari wa mifugo wa karibu.',
     'Kuku wa kienyeji wanaweza kuuzwa TZS 8,000–15,000 kila mmoja. Chanjo ya Newcastle (siku 7 na siku 21) inapunguza vifo sana. Lishe: nafaka (mahindi) 60% + protein (samaki uliochomwa) 20% + vitamini.',
   ],
@@ -243,7 +251,7 @@ const DEMO_DIAGNOSES: VisionDiagnosis[] = [
     disease: 'Maize Streak Virus (MSV)',
     severity: 'medium',
     actions: [
-      'Ng\'oa mimea yote iliyoathirika na ichome mbali na shamba',
+      "Ng'oa mimea yote iliyoathirika na ichome mbali na shamba",
       'Dhibiti leafhopper (wadudu wanaosambaza virusi) kwa Imidacloprid',
       'Msimu ujao: tumia mbegu sugu kama DK8031 au SEEDCO 403',
       'Epuka kupanda karibu na mahindi ya zamani (ambayo inaweza kuwa chanzo cha virusi)',

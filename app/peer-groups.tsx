@@ -177,7 +177,7 @@ export default function PeerGroupsScreen() {
                     <TouchableOpacity
                       onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                        g.joined ? leaveGroup(g.id) : joinGroup(g.id);
+                        if (g.joined) leaveGroup(g.id); else joinGroup(g.id);
                       }}
                       style={[s.joinBtn, {
                         backgroundColor: g.joined ? '#ef444425' : colors.primary,

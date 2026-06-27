@@ -462,7 +462,7 @@ export default function LivestockScreen() {
         subtitle={`${animals.length} wanyama`}
         badge="LIVESTOCK"
         headerRight={
-          <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Add livestock" onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}
             style={[s.addBtn, { backgroundColor: colors.primary }]}>
             <Plus size={20} color="#000" />
           </TouchableOpacity>

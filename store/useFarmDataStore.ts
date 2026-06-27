@@ -23,7 +23,7 @@ export type LivestockSpecies = 'cattle' | 'goat' | 'sheep' | 'poultry' | 'pig';
 
 export interface LivestockAnimal {
   id: string;
-  tag: string;             // ear-tag / RFID
+  tag: string; // ear-tag / RFID
   species: LivestockSpecies;
   name?: string;
   birthDate?: string;
@@ -54,7 +54,7 @@ export type InsurancePolicyStatus = 'browse' | 'pending' | 'active' | 'expired' 
 
 export interface InsurancePolicy {
   id: string;
-  product: string;          // e.g. "Drought Shield — Maize"
+  product: string; // e.g. "Drought Shield — Maize"
   provider: string;
   coverage: 'crop' | 'livestock';
   premiumTZS: number;
@@ -75,7 +75,7 @@ export interface InputSupplier {
   name: string;
   vetted: boolean;
   region: string;
-  rating: number;     // 0–5
+  rating: number; // 0–5
   category: string;
 }
 
@@ -95,7 +95,7 @@ export interface InputOrder {
 export interface PeerGroup {
   id: string;
   name: string;
-  topic: string;       // e.g. "Maize · Arusha"
+  topic: string; // e.g. "Maize · Arusha"
   region: string;
   memberCount: number;
   joined: boolean;
@@ -111,12 +111,17 @@ export interface PeerPost {
 }
 
 // ─── Expert Consultations ────────────────────────────────────────────────────
-export type ConsultationStatus = 'available' | 'requested' | 'scheduled' | 'completed' | 'cancelled';
+export type ConsultationStatus =
+  | 'available'
+  | 'requested'
+  | 'scheduled'
+  | 'completed'
+  | 'cancelled';
 
 export interface Expert {
   id: string;
   name: string;
-  specialty: string;     // e.g. "Soil & Fertility"
+  specialty: string; // e.g. "Soil & Fertility"
   yearsExperience: number;
   languages: string[];
   ratePerHourTZS: number;
@@ -136,10 +141,10 @@ export interface Consultation {
 // ─── P&L Ledger ──────────────────────────────────────────────────────────────
 export interface LedgerEntry {
   id: string;
-  date: string;         // ISO
-  category: string;     // e.g. "Sale · Maize", "Input · Fertilizer"
+  date: string; // ISO
+  category: string; // e.g. "Sale · Maize", "Input · Fertilizer"
   description: string;
-  amountTZS: number;    // +income / -expense
+  amountTZS: number; // +income / -expense
 }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -190,80 +195,448 @@ interface FarmDataState {
 
 // ─── Seeds ───────────────────────────────────────────────────────────────────
 const SEED_LIVESTOCK: LivestockAnimal[] = [
-  { id: 'a1', tag: 'TZ-0421', species: 'cattle', name: 'Sita', birthDate: '2022-03-12', weightKg: 380, lastVaccineDate: '2026-03-05', nextVaccineDue: '2026-09-05', healthStatus: 'healthy' },
-  { id: 'a2', tag: 'TZ-0422', species: 'cattle', name: 'Bahati', birthDate: '2023-08-01', weightKg: 290, lastVaccineDate: '2026-02-10', nextVaccineDue: '2026-08-10', healthStatus: 'attention', notes: 'Slight limp on rear leg' },
-  { id: 'a3', tag: 'GT-118', species: 'goat', birthDate: '2024-11-20', weightKg: 32, lastVaccineDate: '2026-04-15', nextVaccineDue: '2026-10-15', healthStatus: 'healthy' },
+  {
+    id: 'a1',
+    tag: 'TZ-0421',
+    species: 'cattle',
+    name: 'Sita',
+    birthDate: '2022-03-12',
+    weightKg: 380,
+    lastVaccineDate: '2026-03-05',
+    nextVaccineDue: '2026-09-05',
+    healthStatus: 'healthy',
+  },
+  {
+    id: 'a2',
+    tag: 'TZ-0422',
+    species: 'cattle',
+    name: 'Bahati',
+    birthDate: '2023-08-01',
+    weightKg: 290,
+    lastVaccineDate: '2026-02-10',
+    nextVaccineDue: '2026-08-10',
+    healthStatus: 'attention',
+    notes: 'Slight limp on rear leg',
+  },
+  {
+    id: 'a3',
+    tag: 'GT-118',
+    species: 'goat',
+    birthDate: '2024-11-20',
+    weightKg: 32,
+    lastVaccineDate: '2026-04-15',
+    nextVaccineDue: '2026-10-15',
+    healthStatus: 'healthy',
+  },
 ];
 
 const SEED_INVENTORY: InventoryItem[] = [
-  { id: 'i1', name: 'DAP Fertilizer', category: 'fertilizer', unit: 'bag', qty: 4, lowStockAt: 2, costPerUnitTZS: 95_000, supplier: 'YARA' },
-  { id: 'i2', name: 'Maize Seed — DK 8033', category: 'seed', unit: 'kg', qty: 15, lowStockAt: 5, costPerUnitTZS: 12_000, supplier: 'East African Seed' },
-  { id: 'i3', name: 'Bee Repellent', category: 'pesticide', unit: 'L', qty: 1, lowStockAt: 2, costPerUnitTZS: 18_000 },
-  { id: 'i4', name: 'Layer Mash', category: 'feed', unit: 'bag', qty: 6, lowStockAt: 3, costPerUnitTZS: 64_000 },
+  {
+    id: 'i1',
+    name: 'DAP Fertilizer',
+    category: 'fertilizer',
+    unit: 'bag',
+    qty: 4,
+    lowStockAt: 2,
+    costPerUnitTZS: 95_000,
+    supplier: 'YARA',
+  },
+  {
+    id: 'i2',
+    name: 'Maize Seed — DK 8033',
+    category: 'seed',
+    unit: 'kg',
+    qty: 15,
+    lowStockAt: 5,
+    costPerUnitTZS: 12_000,
+    supplier: 'East African Seed',
+  },
+  {
+    id: 'i3',
+    name: 'Bee Repellent',
+    category: 'pesticide',
+    unit: 'L',
+    qty: 1,
+    lowStockAt: 2,
+    costPerUnitTZS: 18_000,
+  },
+  {
+    id: 'i4',
+    name: 'Layer Mash',
+    category: 'feed',
+    unit: 'bag',
+    qty: 6,
+    lowStockAt: 3,
+    costPerUnitTZS: 64_000,
+  },
 ];
 
 const SEED_INSURANCE: InsurancePolicy[] = [
-  { id: 'p1', product: 'Drought Shield — Maize', provider: 'Britam', coverage: 'crop', premiumTZS: 45_000, payoutMaxTZS: 1_200_000, termMonths: 6, status: 'browse' },
-  { id: 'p2', product: 'Cattle Mortality Cover', provider: 'ACRE Africa', coverage: 'livestock', premiumTZS: 80_000, payoutMaxTZS: 2_500_000, termMonths: 12, status: 'active', startedAt: new Date(Date.now() - 90 * 86400_000).toISOString(), expiresAt: new Date(Date.now() + 275 * 86400_000).toISOString() },
-  { id: 'p3', product: 'Hail & Flood — Mixed Crops', provider: 'Jubilee', coverage: 'crop', premiumTZS: 62_000, payoutMaxTZS: 1_800_000, termMonths: 6, status: 'browse' },
+  {
+    id: 'p1',
+    product: 'Drought Shield — Maize',
+    provider: 'Britam',
+    coverage: 'crop',
+    premiumTZS: 45_000,
+    payoutMaxTZS: 1_200_000,
+    termMonths: 6,
+    status: 'browse',
+  },
+  {
+    id: 'p2',
+    product: 'Cattle Mortality Cover',
+    provider: 'ACRE Africa',
+    coverage: 'livestock',
+    premiumTZS: 80_000,
+    payoutMaxTZS: 2_500_000,
+    termMonths: 12,
+    status: 'active',
+    startedAt: new Date(Date.now() - 90 * 86400_000).toISOString(),
+    expiresAt: new Date(Date.now() + 275 * 86400_000).toISOString(),
+  },
+  {
+    id: 'p3',
+    product: 'Hail & Flood — Mixed Crops',
+    provider: 'Jubilee',
+    coverage: 'crop',
+    premiumTZS: 62_000,
+    payoutMaxTZS: 1_800_000,
+    termMonths: 6,
+    status: 'browse',
+  },
 ];
 
 const SEED_SUPPLIERS: InputSupplier[] = [
-  { id: 's1', name: 'YARA East Africa', vetted: true, region: 'Arusha', rating: 4.7, category: 'Fertilizer' },
-  { id: 's2', name: 'East African Seed Co.', vetted: true, region: 'Arusha', rating: 4.8, category: 'Seed' },
-  { id: 's3', name: 'Bayer CropScience', vetted: true, region: 'Dar es Salaam', rating: 4.5, category: 'Pesticide' },
-  { id: 's4', name: 'Mbeya Agro Supplies', vetted: false, region: 'Mbeya', rating: 4.1, category: 'General' },
-  { id: 's5', name: 'TANSEED International', vetted: true, region: 'Arusha', rating: 4.6, category: 'Seed' },
-  { id: 's6', name: 'Syngenta Tanzania', vetted: true, region: 'Dar es Salaam', rating: 4.4, category: 'Pesticide' },
-  { id: 's7', name: 'Moshi Cooperative Union', vetted: true, region: 'Kilimanjaro', rating: 4.9, category: 'General' },
-  { id: 's8', name: 'Dodoma Mbolea Ltd', vetted: false, region: 'Dodoma', rating: 3.9, category: 'Fertilizer' },
-  { id: 's9', name: 'ICM Agro Tanzania', vetted: true, region: 'Dar es Salaam', rating: 4.3, category: 'Pesticide' },
+  {
+    id: 's1',
+    name: 'YARA East Africa',
+    vetted: true,
+    region: 'Arusha',
+    rating: 4.7,
+    category: 'Fertilizer',
+  },
+  {
+    id: 's2',
+    name: 'East African Seed Co.',
+    vetted: true,
+    region: 'Arusha',
+    rating: 4.8,
+    category: 'Seed',
+  },
+  {
+    id: 's3',
+    name: 'Bayer CropScience',
+    vetted: true,
+    region: 'Dar es Salaam',
+    rating: 4.5,
+    category: 'Pesticide',
+  },
+  {
+    id: 's4',
+    name: 'Mbeya Agro Supplies',
+    vetted: false,
+    region: 'Mbeya',
+    rating: 4.1,
+    category: 'General',
+  },
+  {
+    id: 's5',
+    name: 'TANSEED International',
+    vetted: true,
+    region: 'Arusha',
+    rating: 4.6,
+    category: 'Seed',
+  },
+  {
+    id: 's6',
+    name: 'Syngenta Tanzania',
+    vetted: true,
+    region: 'Dar es Salaam',
+    rating: 4.4,
+    category: 'Pesticide',
+  },
+  {
+    id: 's7',
+    name: 'Moshi Cooperative Union',
+    vetted: true,
+    region: 'Kilimanjaro',
+    rating: 4.9,
+    category: 'General',
+  },
+  {
+    id: 's8',
+    name: 'Dodoma Mbolea Ltd',
+    vetted: false,
+    region: 'Dodoma',
+    rating: 3.9,
+    category: 'Fertilizer',
+  },
+  {
+    id: 's9',
+    name: 'ICM Agro Tanzania',
+    vetted: true,
+    region: 'Dar es Salaam',
+    rating: 4.3,
+    category: 'Pesticide',
+  },
 ];
 
 const SEED_ORDERS: InputOrder[] = [
-  { id: 'o1', supplierId: 's1', itemName: 'CAN Fertilizer', qty: 6, unit: 'bag', totalTZS: 510_000, status: 'dispatched', expectedDelivery: new Date(Date.now() + 2 * 86400_000).toISOString(), placedAt: new Date(Date.now() - 3 * 86400_000).toISOString() },
+  {
+    id: 'o1',
+    supplierId: 's1',
+    itemName: 'CAN Fertilizer',
+    qty: 6,
+    unit: 'bag',
+    totalTZS: 510_000,
+    status: 'dispatched',
+    expectedDelivery: new Date(Date.now() + 2 * 86400_000).toISOString(),
+    placedAt: new Date(Date.now() - 3 * 86400_000).toISOString(),
+  },
 ];
 
 const SEED_GROUPS: PeerGroup[] = [
-  { id: 'g1', name: 'Wakulima wa Mahindi · Arusha', topic: 'Maize · Arusha', region: 'Arusha', memberCount: 482, joined: true, lastActivity: new Date(Date.now() - 30 * 60_000).toISOString() },
-  { id: 'g2', name: 'Mpunga Bora Mbeya', topic: 'Rice · Mbeya', region: 'Mbeya', memberCount: 211, joined: false, lastActivity: new Date(Date.now() - 6 * 3600_000).toISOString() },
-  { id: 'g3', name: 'Ufugaji wa Ng\'ombe · Taifa', topic: 'Dairy Cattle', region: 'National', memberCount: 893, joined: false, lastActivity: new Date(Date.now() - 2 * 3600_000).toISOString() },
-  { id: 'g4', name: 'Korosho Tanzania · Mtwara', topic: 'Cashew · Mtwara', region: 'Mtwara', memberCount: 1240, joined: false, lastActivity: new Date(Date.now() - 45 * 60_000).toISOString() },
-  { id: 'g5', name: 'Kahawa ya Kilimanjaro', topic: 'Coffee · Kilimanjaro', region: 'Kilimanjaro', memberCount: 678, joined: false, lastActivity: new Date(Date.now() - 3 * 3600_000).toISOString() },
-  { id: 'g6', name: 'Wakulima Wanawake Iringa', topic: 'Mixed Crops · Iringa', region: 'Iringa', memberCount: 344, joined: false, lastActivity: new Date(Date.now() - 12 * 3600_000).toISOString() },
-  { id: 'g7', name: 'Horticulture Hub · Arusha', topic: 'Vegetables · Arusha', region: 'Arusha', memberCount: 529, joined: false, lastActivity: new Date(Date.now() - 1 * 3600_000).toISOString() },
+  {
+    id: 'g1',
+    name: 'Wakulima wa Mahindi · Arusha',
+    topic: 'Maize · Arusha',
+    region: 'Arusha',
+    memberCount: 482,
+    joined: true,
+    lastActivity: new Date(Date.now() - 30 * 60_000).toISOString(),
+  },
+  {
+    id: 'g2',
+    name: 'Mpunga Bora Mbeya',
+    topic: 'Rice · Mbeya',
+    region: 'Mbeya',
+    memberCount: 211,
+    joined: false,
+    lastActivity: new Date(Date.now() - 6 * 3600_000).toISOString(),
+  },
+  {
+    id: 'g3',
+    name: "Ufugaji wa Ng'ombe · Taifa",
+    topic: 'Dairy Cattle',
+    region: 'National',
+    memberCount: 893,
+    joined: false,
+    lastActivity: new Date(Date.now() - 2 * 3600_000).toISOString(),
+  },
+  {
+    id: 'g4',
+    name: 'Korosho Tanzania · Mtwara',
+    topic: 'Cashew · Mtwara',
+    region: 'Mtwara',
+    memberCount: 1240,
+    joined: false,
+    lastActivity: new Date(Date.now() - 45 * 60_000).toISOString(),
+  },
+  {
+    id: 'g5',
+    name: 'Kahawa ya Kilimanjaro',
+    topic: 'Coffee · Kilimanjaro',
+    region: 'Kilimanjaro',
+    memberCount: 678,
+    joined: false,
+    lastActivity: new Date(Date.now() - 3 * 3600_000).toISOString(),
+  },
+  {
+    id: 'g6',
+    name: 'Wakulima Wanawake Iringa',
+    topic: 'Mixed Crops · Iringa',
+    region: 'Iringa',
+    memberCount: 344,
+    joined: false,
+    lastActivity: new Date(Date.now() - 12 * 3600_000).toISOString(),
+  },
+  {
+    id: 'g7',
+    name: 'Horticulture Hub · Arusha',
+    topic: 'Vegetables · Arusha',
+    region: 'Arusha',
+    memberCount: 529,
+    joined: false,
+    lastActivity: new Date(Date.now() - 1 * 3600_000).toISOString(),
+  },
 ];
 
 const SEED_POSTS: PeerPost[] = [
-  { id: 'p1', groupId: 'g1', author: 'Asha M.', body: 'Bei ya mahindi imepanda Soko la Arusha leo — TZS 920/kg.', createdAt: new Date(Date.now() - 45 * 60_000).toISOString() },
-  { id: 'p2', groupId: 'g1', author: 'John K.', body: 'Nimepata Maize Streak kwenye plot 3. Sasa nasubiri ushauri wa Sankofa.', createdAt: new Date(Date.now() - 2 * 3600_000).toISOString() },
+  {
+    id: 'p1',
+    groupId: 'g1',
+    author: 'Asha M.',
+    body: 'Bei ya mahindi imepanda Soko la Arusha leo — TZS 920/kg.',
+    createdAt: new Date(Date.now() - 45 * 60_000).toISOString(),
+  },
+  {
+    id: 'p2',
+    groupId: 'g1',
+    author: 'John K.',
+    body: 'Nimepata Maize Streak kwenye plot 3. Sasa nasubiri ushauri wa Sankofa.',
+    createdAt: new Date(Date.now() - 2 * 3600_000).toISOString(),
+  },
 ];
 
 const SEED_EXPERTS: Expert[] = [
-  { id: 'e1', name: 'Dkt. Esther Mushi', specialty: 'Udongo & Mbolea', yearsExperience: 14, languages: ['Kiswahili', 'English'], ratePerHourTZS: 35_000, rating: 4.9, avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200' },
-  { id: 'e2', name: 'Bw. Daudi Kileo', specialty: 'Wadudu & Magonjwa', yearsExperience: 9, languages: ['Kiswahili'], ratePerHourTZS: 25_000, rating: 4.7 },
-  { id: 'e3', name: 'Dkt. Neema Kessy', specialty: 'Afya ya Mifugo', yearsExperience: 18, languages: ['Kiswahili', 'English'], ratePerHourTZS: 40_000, rating: 4.95, avatarUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200' },
-  { id: 'e4', name: 'Bw. Joseph Mramba', specialty: 'Kahawa & Korosho', yearsExperience: 22, languages: ['Kiswahili', 'English'], ratePerHourTZS: 45_000, rating: 4.88 },
-  { id: 'e5', name: 'Bi. Grace Lyimo', specialty: 'Bustani & Mboga', yearsExperience: 11, languages: ['Kiswahili', 'English', 'French'], ratePerHourTZS: 30_000, rating: 4.82, avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200' },
-  { id: 'e6', name: 'Bw. Hassan Juma', specialty: 'Umwagiliaji & Maji', yearsExperience: 15, languages: ['Kiswahili', 'Arabic'], ratePerHourTZS: 32_000, rating: 4.76 },
-  { id: 'e7', name: 'Dkt. Amina Suleiman', specialty: 'Mpunga & Nafaka', yearsExperience: 12, languages: ['Kiswahili', 'English'], ratePerHourTZS: 38_000, rating: 4.91, avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=200' },
-  { id: 'e8', name: 'Bw. Peter Nkwame', specialty: 'Biashara ya Mazao', yearsExperience: 8, languages: ['Kiswahili', 'English'], ratePerHourTZS: 22_000, rating: 4.65 },
-  { id: 'e9', name: 'Dkt. Fatuma Rashidi', specialty: 'Viumbe-Hai & Organic', yearsExperience: 16, languages: ['Kiswahili', 'English'], ratePerHourTZS: 42_000, rating: 4.93, avatarUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=200' },
-  { id: 'e10', name: 'Bw. Emmanuel Tarimo', specialty: 'Teknolojia ya Kilimo', yearsExperience: 7, languages: ['Kiswahili', 'English'], ratePerHourTZS: 28_000, rating: 4.72 },
+  {
+    id: 'e1',
+    name: 'Dkt. Esther Mushi',
+    specialty: 'Udongo & Mbolea',
+    yearsExperience: 14,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 35_000,
+    rating: 4.9,
+    avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200',
+  },
+  {
+    id: 'e2',
+    name: 'Bw. Daudi Kileo',
+    specialty: 'Wadudu & Magonjwa',
+    yearsExperience: 9,
+    languages: ['Kiswahili'],
+    ratePerHourTZS: 25_000,
+    rating: 4.7,
+  },
+  {
+    id: 'e3',
+    name: 'Dkt. Neema Kessy',
+    specialty: 'Afya ya Mifugo',
+    yearsExperience: 18,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 40_000,
+    rating: 4.95,
+    avatarUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200',
+  },
+  {
+    id: 'e4',
+    name: 'Bw. Joseph Mramba',
+    specialty: 'Kahawa & Korosho',
+    yearsExperience: 22,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 45_000,
+    rating: 4.88,
+  },
+  {
+    id: 'e5',
+    name: 'Bi. Grace Lyimo',
+    specialty: 'Bustani & Mboga',
+    yearsExperience: 11,
+    languages: ['Kiswahili', 'English', 'French'],
+    ratePerHourTZS: 30_000,
+    rating: 4.82,
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200',
+  },
+  {
+    id: 'e6',
+    name: 'Bw. Hassan Juma',
+    specialty: 'Umwagiliaji & Maji',
+    yearsExperience: 15,
+    languages: ['Kiswahili', 'Arabic'],
+    ratePerHourTZS: 32_000,
+    rating: 4.76,
+  },
+  {
+    id: 'e7',
+    name: 'Dkt. Amina Suleiman',
+    specialty: 'Mpunga & Nafaka',
+    yearsExperience: 12,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 38_000,
+    rating: 4.91,
+    avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=200',
+  },
+  {
+    id: 'e8',
+    name: 'Bw. Peter Nkwame',
+    specialty: 'Biashara ya Mazao',
+    yearsExperience: 8,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 22_000,
+    rating: 4.65,
+  },
+  {
+    id: 'e9',
+    name: 'Dkt. Fatuma Rashidi',
+    specialty: 'Viumbe-Hai & Organic',
+    yearsExperience: 16,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 42_000,
+    rating: 4.93,
+    avatarUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=200',
+  },
+  {
+    id: 'e10',
+    name: 'Bw. Emmanuel Tarimo',
+    specialty: 'Teknolojia ya Kilimo',
+    yearsExperience: 7,
+    languages: ['Kiswahili', 'English'],
+    ratePerHourTZS: 28_000,
+    rating: 4.72,
+  },
 ];
 
 const SEED_CONSULTATIONS: Consultation[] = [
-  { id: 'co1', expertId: 'e1', scheduledFor: new Date(Date.now() + 36 * 3600_000).toISOString(), status: 'scheduled', channel: 'video', topic: 'Soil test review for Block B' },
+  {
+    id: 'co1',
+    expertId: 'e1',
+    scheduledFor: new Date(Date.now() + 36 * 3600_000).toISOString(),
+    status: 'scheduled',
+    channel: 'video',
+    topic: 'Soil test review for Block B',
+  },
 ];
 
 const SEED_LEDGER: LedgerEntry[] = [
-  { id: 'l1', date: new Date(Date.now() - 60 * 86400_000).toISOString(), category: 'Input · Seed', description: 'Maize seed DK 8033 — 30kg', amountTZS: -360_000 },
-  { id: 'l2', date: new Date(Date.now() - 58 * 86400_000).toISOString(), category: 'Input · Fertilizer', description: 'DAP fertilizer — 8 bags', amountTZS: -760_000 },
-  { id: 'l3', date: new Date(Date.now() - 40 * 86400_000).toISOString(), category: 'Labour', description: 'Planting crew — 6 days', amountTZS: -180_000 },
-  { id: 'l4', date: new Date(Date.now() - 30 * 86400_000).toISOString(), category: 'Sale · Beans', description: 'Beans to local market — 200kg', amountTZS: 460_000 },
-  { id: 'l5', date: new Date(Date.now() - 10 * 86400_000).toISOString(), category: 'Sale · Maize', description: 'Maize harvest — 1,200kg @ TZS 850', amountTZS: 1_020_000 },
-  { id: 'l6', date: new Date(Date.now() - 7 * 86400_000).toISOString(), category: 'Cooperative', description: 'AMCOS milestone payout', amountTZS: 540_000 },
-  { id: 'l7', date: new Date(Date.now() - 3 * 86400_000).toISOString(), category: 'Input · Pesticide', description: 'Bee repellent — 4L', amountTZS: -72_000 },
+  {
+    id: 'l1',
+    date: new Date(Date.now() - 60 * 86400_000).toISOString(),
+    category: 'Input · Seed',
+    description: 'Maize seed DK 8033 — 30kg',
+    amountTZS: -360_000,
+  },
+  {
+    id: 'l2',
+    date: new Date(Date.now() - 58 * 86400_000).toISOString(),
+    category: 'Input · Fertilizer',
+    description: 'DAP fertilizer — 8 bags',
+    amountTZS: -760_000,
+  },
+  {
+    id: 'l3',
+    date: new Date(Date.now() - 40 * 86400_000).toISOString(),
+    category: 'Labour',
+    description: 'Planting crew — 6 days',
+    amountTZS: -180_000,
+  },
+  {
+    id: 'l4',
+    date: new Date(Date.now() - 30 * 86400_000).toISOString(),
+    category: 'Sale · Beans',
+    description: 'Beans to local market — 200kg',
+    amountTZS: 460_000,
+  },
+  {
+    id: 'l5',
+    date: new Date(Date.now() - 10 * 86400_000).toISOString(),
+    category: 'Sale · Maize',
+    description: 'Maize harvest — 1,200kg @ TZS 850',
+    amountTZS: 1_020_000,
+  },
+  {
+    id: 'l6',
+    date: new Date(Date.now() - 7 * 86400_000).toISOString(),
+    category: 'Cooperative',
+    description: 'AMCOS milestone payout',
+    amountTZS: 540_000,
+  },
+  {
+    id: 'l7',
+    date: new Date(Date.now() - 3 * 86400_000).toISOString(),
+    category: 'Input · Pesticide',
+    description: 'Bee repellent — 4L',
+    amountTZS: -72_000,
+  },
 ];
 
 const uid = (prefix: string) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -283,56 +656,92 @@ export const useFarmDataStore = create<FarmDataState>()(
       ledger: SEED_LEDGER,
 
       addAnimal: (a) => set((s) => ({ livestock: [{ ...a, id: uid('a') }, ...s.livestock] })),
-      updateAnimal: (id, patch) => set((s) => ({ livestock: s.livestock.map((x) => x.id === id ? { ...x, ...patch } : x) })),
+      updateAnimal: (id, patch) =>
+        set((s) => ({ livestock: s.livestock.map((x) => (x.id === id ? { ...x, ...patch } : x)) })),
       removeAnimal: (id) => set((s) => ({ livestock: s.livestock.filter((x) => x.id !== id) })),
 
       addItem: (i) => set((s) => ({ inventory: [{ ...i, id: uid('i') }, ...s.inventory] })),
-      adjustItem: (id, delta) => set((s) => ({
-        inventory: s.inventory.map((x) => x.id === id ? { ...x, qty: Math.max(0, x.qty + delta) } : x),
-      })),
+      adjustItem: (id, delta) =>
+        set((s) => ({
+          inventory: s.inventory.map((x) =>
+            x.id === id ? { ...x, qty: Math.max(0, x.qty + delta) } : x
+          ),
+        })),
       removeItem: (id) => set((s) => ({ inventory: s.inventory.filter((x) => x.id !== id) })),
 
-      enrollPolicy: (id) => set((s) => ({
-        insurance: s.insurance.map((p) => p.id === id ? {
-          ...p,
-          status: 'active',
-          startedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + p.termMonths * 30 * 86400_000).toISOString(),
-        } : p),
-      })),
-      fileClaim: (id, reason, amountTZS) => set((s) => ({
-        insurance: s.insurance.map((p) => p.id === id ? { ...p, status: 'claimed', claimReason: reason, claimAmountTZS: amountTZS } : p),
-      })),
+      enrollPolicy: (id) =>
+        set((s) => ({
+          insurance: s.insurance.map((p) =>
+            p.id === id
+              ? {
+                  ...p,
+                  status: 'active',
+                  startedAt: new Date().toISOString(),
+                  expiresAt: new Date(Date.now() + p.termMonths * 30 * 86400_000).toISOString(),
+                }
+              : p
+          ),
+        })),
+      fileClaim: (id, reason, amountTZS) =>
+        set((s) => ({
+          insurance: s.insurance.map((p) =>
+            p.id === id
+              ? { ...p, status: 'claimed', claimReason: reason, claimAmountTZS: amountTZS }
+              : p
+          ),
+        })),
 
-      placeOrder: (o) => set((s) => ({
-        orders: [{ ...o, id: uid('o'), status: 'placed', placedAt: new Date().toISOString() }, ...s.orders],
-      })),
-      advanceOrder: (id, status) => set((s) => ({
-        orders: s.orders.map((x) => x.id === id ? { ...x, status } : x),
-      })),
+      placeOrder: (o) =>
+        set((s) => ({
+          orders: [
+            { ...o, id: uid('o'), status: 'placed', placedAt: new Date().toISOString() },
+            ...s.orders,
+          ],
+        })),
+      advanceOrder: (id, status) =>
+        set((s) => ({
+          orders: s.orders.map((x) => (x.id === id ? { ...x, status } : x)),
+        })),
 
-      joinGroup: (id) => set((s) => ({
-        groups: s.groups.map((g) => g.id === id ? { ...g, joined: true, memberCount: g.memberCount + 1 } : g),
-      })),
-      leaveGroup: (id) => set((s) => ({
-        groups: s.groups.map((g) => g.id === id ? { ...g, joined: false, memberCount: Math.max(0, g.memberCount - 1) } : g),
-      })),
-      addPost: (groupId, author, body) => set((s) => ({
-        posts: [{ id: uid('p'), groupId, author, body, createdAt: new Date().toISOString() }, ...s.posts],
-      })),
+      joinGroup: (id) =>
+        set((s) => ({
+          groups: s.groups.map((g) =>
+            g.id === id ? { ...g, joined: true, memberCount: g.memberCount + 1 } : g
+          ),
+        })),
+      leaveGroup: (id) =>
+        set((s) => ({
+          groups: s.groups.map((g) =>
+            g.id === id ? { ...g, joined: false, memberCount: Math.max(0, g.memberCount - 1) } : g
+          ),
+        })),
+      addPost: (groupId, author, body) =>
+        set((s) => ({
+          posts: [
+            { id: uid('p'), groupId, author, body, createdAt: new Date().toISOString() },
+            ...s.posts,
+          ],
+        })),
 
-      requestConsultation: (expertId, topic, channel) => set((s) => ({
-        consultations: [{
-          id: uid('co'),
-          expertId,
-          status: 'requested',
-          channel,
-          topic,
-        }, ...s.consultations],
-      })),
-      cancelConsultation: (id) => set((s) => ({
-        consultations: s.consultations.map((c) => c.id === id ? { ...c, status: 'cancelled' } : c),
-      })),
+      requestConsultation: (expertId, topic, channel) =>
+        set((s) => ({
+          consultations: [
+            {
+              id: uid('co'),
+              expertId,
+              status: 'requested',
+              channel,
+              topic,
+            },
+            ...s.consultations,
+          ],
+        })),
+      cancelConsultation: (id) =>
+        set((s) => ({
+          consultations: s.consultations.map((c) =>
+            c.id === id ? { ...c, status: 'cancelled' } : c
+          ),
+        })),
 
       addLedgerEntry: (e) => set((s) => {
         // A caller may supply an explicit id for offline-first reconciliation

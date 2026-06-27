@@ -61,8 +61,8 @@ export function useNotifications() {
 
     try {
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log('[Notifications] Push token:', token);
-      
+      if (__DEV__) console.log('[Notifications] Push token:', token);
+
       // [NOTIFICATION ARCHITECTURE]
       // Push token should be saved to the newly created 'user_notification_preferences' table
       /*
@@ -87,28 +87,24 @@ export function useNotifications() {
     registerForPushNotifications();
 
     // Handle foreground notifications — add to global store
-    notificationListener.current = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        const { title, body } = notification.request.content;
-        if (title && body) {
-          addNotification({
-            title,
-            body,
-            type: 'info',
-          });
-        }
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      const { title, body } = notification.request.content;
+      if (title && body) {
+        addNotification({
+          title,
+          body,
+          type: 'info',
+        });
       }
-    );
+    });
 
     // Handle tap on notification → route to relevant screen
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const data = response.notification.request.content.data as Record<string, string>;
-        if (data?.route) {
-          router.push(data.route as any);
-        }
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data as Record<string, string>;
+      if (data?.route) {
+        router.push(data.route as any);
       }
-    );
+    });
 
     return () => {
       notificationListener.current?.remove();
@@ -124,7 +120,7 @@ export function useNotifications() {
     const fetchHistory = async () => {
       const { data: session } = await supabase.auth.getSession();
       if (!session?.session?.user) return;
-      
+
       const { data } = await supabase
         .from('notifications')
         .select('*')
@@ -135,7 +131,7 @@ export function useNotifications() {
       if (data) {
         // Clear and reload (simplified logic)
         useKilimoStore.getState().clearNotifications();
-        data.reverse().forEach(n => {
+        data.reverse().forEach((n) => {
           addNotification({
             title: n.title,
             body: n.content,

@@ -160,7 +160,7 @@ export default function ScenarioEditor() {
     if (!id) return;
     updateInputs(id, inputs);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.canGoBack() ? router.back() : router.replace('/farm-twin');
+    if (router.canGoBack()) router.back(); else router.replace('/farm-twin');
   }
 
   if (!scenario) return null;

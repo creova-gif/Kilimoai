@@ -35,7 +35,7 @@ export interface Transaction {
   type: TxnType;
   amountTZS: number;
   status: TxnStatus;
-  reference: string;       // M-Pesa receipt or internal ref
+  reference: string; // M-Pesa receipt or internal ref
   note?: string;
   createdAt: string;
 }
@@ -52,7 +52,7 @@ export interface PayoutRequest {
   status: PayoutStatus;
   requestedAt: string;
   decidedAt?: string;
-  decidedBy?: string;       // Admin agroId
+  decidedBy?: string; // Admin agroId
   rejectionReason?: string;
   settledTxnId?: string;
 }
@@ -60,7 +60,7 @@ export interface PayoutRequest {
 export interface Member {
   id: string;
   name: string;
-  mpesaPhone: string;       // E.164
+  mpesaPhone: string; // E.164
   balanceTZS: number;
   status: 'active' | 'suspended';
   joinedAt: string;
@@ -71,28 +71,138 @@ export interface Member {
 // Supabase rows once the wallet admin service is implemented (T205+).
 
 const SEED_MEMBERS: Member[] = [
-  { id: 'm1', name: 'Asha Mwangi',     mpesaPhone: '+255712345001', balanceTZS:  850_000, status: 'active', joinedAt: '2025-08-12' },
-  { id: 'm2', name: 'Juma Said',       mpesaPhone: '+255712345002', balanceTZS:  220_000, status: 'active', joinedAt: '2025-09-03' },
-  { id: 'm3', name: 'Neema Okello',    mpesaPhone: '+255712345003', balanceTZS: 1_400_000, status: 'active', joinedAt: '2025-10-21' },
-  { id: 'm4', name: 'Hassan Mbaga',    mpesaPhone: '+255712345004', balanceTZS:    0,     status: 'suspended', joinedAt: '2025-07-04' },
-  { id: 'm5', name: 'Grace Mushi',     mpesaPhone: '+255712345005', balanceTZS:  640_000, status: 'active', joinedAt: '2026-01-18' },
+  {
+    id: 'm1',
+    name: 'Asha Mwangi',
+    mpesaPhone: '+255712345001',
+    balanceTZS: 850_000,
+    status: 'active',
+    joinedAt: '2025-08-12',
+  },
+  {
+    id: 'm2',
+    name: 'Juma Said',
+    mpesaPhone: '+255712345002',
+    balanceTZS: 220_000,
+    status: 'active',
+    joinedAt: '2025-09-03',
+  },
+  {
+    id: 'm3',
+    name: 'Neema Okello',
+    mpesaPhone: '+255712345003',
+    balanceTZS: 1_400_000,
+    status: 'active',
+    joinedAt: '2025-10-21',
+  },
+  {
+    id: 'm4',
+    name: 'Hassan Mbaga',
+    mpesaPhone: '+255712345004',
+    balanceTZS: 0,
+    status: 'suspended',
+    joinedAt: '2025-07-04',
+  },
+  {
+    id: 'm5',
+    name: 'Grace Mushi',
+    mpesaPhone: '+255712345005',
+    balanceTZS: 640_000,
+    status: 'active',
+    joinedAt: '2026-01-18',
+  },
 ];
 
 const now = () => new Date().toISOString();
 const daysAgo = (d: number) => new Date(Date.now() - d * 86_400_000).toISOString();
 
 const SEED_TXNS: Transaction[] = [
-  { id: 't1', memberId: 'm1', memberName: 'Asha Mwangi', type: 'deposit', amountTZS: 250_000, status: 'completed', reference: 'NHJ4K9ZQX1', createdAt: daysAgo(1) },
-  { id: 't2', memberId: 'm3', memberName: 'Neema Okello', type: 'deposit', amountTZS: 400_000, status: 'completed', reference: 'NHJ4L0AB23', createdAt: daysAgo(2) },
-  { id: 't3', memberId: 'm2', memberName: 'Juma Said',    type: 'payout',  amountTZS:  80_000, status: 'completed', reference: 'NHJ4M1CD45', note: 'Pembejeo', createdAt: daysAgo(3) },
-  { id: 't4', memberId: 'm1', memberName: 'Asha Mwangi',  type: 'fee',     amountTZS:   2_500, status: 'completed', reference: 'FEE-AUG-25',   createdAt: daysAgo(5) },
-  { id: 't5', memberId: 'm5', memberName: 'Grace Mushi',  type: 'payout',  amountTZS: 120_000, status: 'pending',   reference: 'PAY-PENDING-1', createdAt: daysAgo(0) },
+  {
+    id: 't1',
+    memberId: 'm1',
+    memberName: 'Asha Mwangi',
+    type: 'deposit',
+    amountTZS: 250_000,
+    status: 'completed',
+    reference: 'NHJ4K9ZQX1',
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 't2',
+    memberId: 'm3',
+    memberName: 'Neema Okello',
+    type: 'deposit',
+    amountTZS: 400_000,
+    status: 'completed',
+    reference: 'NHJ4L0AB23',
+    createdAt: daysAgo(2),
+  },
+  {
+    id: 't3',
+    memberId: 'm2',
+    memberName: 'Juma Said',
+    type: 'payout',
+    amountTZS: 80_000,
+    status: 'completed',
+    reference: 'NHJ4M1CD45',
+    note: 'Pembejeo',
+    createdAt: daysAgo(3),
+  },
+  {
+    id: 't4',
+    memberId: 'm1',
+    memberName: 'Asha Mwangi',
+    type: 'fee',
+    amountTZS: 2_500,
+    status: 'completed',
+    reference: 'FEE-AUG-25',
+    createdAt: daysAgo(5),
+  },
+  {
+    id: 't5',
+    memberId: 'm5',
+    memberName: 'Grace Mushi',
+    type: 'payout',
+    amountTZS: 120_000,
+    status: 'pending',
+    reference: 'PAY-PENDING-1',
+    createdAt: daysAgo(0),
+  },
 ];
 
 const SEED_PAYOUTS: PayoutRequest[] = [
-  { id: 'p1', memberId: 'm5', memberName: 'Grace Mushi', amountTZS: 120_000, mpesaPhone: '+255712345005', reason: 'Mauzo ya mahindi — Mbeya soko',  status: 'requested', requestedAt: daysAgo(0) },
-  { id: 'p2', memberId: 'm2', memberName: 'Juma Said',   amountTZS:  60_000, mpesaPhone: '+255712345002', reason: 'Bidhaa za nyumbani',             status: 'requested', requestedAt: daysAgo(1) },
-  { id: 'p3', memberId: 'm3', memberName: 'Neema Okello', amountTZS: 300_000, mpesaPhone: '+255712345003', reason: 'Ununuzi wa mbegu',              status: 'approved',  requestedAt: daysAgo(2), decidedAt: daysAgo(1), decidedBy: 'admin' },
+  {
+    id: 'p1',
+    memberId: 'm5',
+    memberName: 'Grace Mushi',
+    amountTZS: 120_000,
+    mpesaPhone: '+255712345005',
+    reason: 'Mauzo ya mahindi — Mbeya soko',
+    status: 'requested',
+    requestedAt: daysAgo(0),
+  },
+  {
+    id: 'p2',
+    memberId: 'm2',
+    memberName: 'Juma Said',
+    amountTZS: 60_000,
+    mpesaPhone: '+255712345002',
+    reason: 'Bidhaa za nyumbani',
+    status: 'requested',
+    requestedAt: daysAgo(1),
+  },
+  {
+    id: 'p3',
+    memberId: 'm3',
+    memberName: 'Neema Okello',
+    amountTZS: 300_000,
+    mpesaPhone: '+255712345003',
+    reason: 'Ununuzi wa mbegu',
+    status: 'approved',
+    requestedAt: daysAgo(2),
+    decidedAt: daysAgo(1),
+    decidedBy: 'admin',
+  },
 ];
 
 // ─── Store interface ─────────────────────────────────────────────────────────
@@ -132,10 +242,7 @@ export const useWalletAdminStore = create<WalletAdminState>()(
       requestPayout: (input) => {
         const id = `p_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
         set((s) => ({
-          payouts: [
-            { ...input, id, status: 'requested', requestedAt: now() },
-            ...s.payouts,
-          ],
+          payouts: [{ ...input, id, status: 'requested', requestedAt: now() }, ...s.payouts],
         }));
         return id;
       },
@@ -146,7 +253,7 @@ export const useWalletAdminStore = create<WalletAdminState>()(
         if (!target || target.status !== 'requested') return;
         set((s) => ({
           payouts: s.payouts.map((p) =>
-            p.id === id ? { ...p, status: 'approved', decidedAt: now(), decidedBy: adminName } : p,
+            p.id === id ? { ...p, status: 'approved', decidedAt: now(), decidedBy: adminName } : p
           ),
         }));
         // SMS stub fires immediately; real Daraja STK push lands in T205.
@@ -170,8 +277,14 @@ export const useWalletAdminStore = create<WalletAdminState>()(
         set((s) => ({
           payouts: s.payouts.map((p) =>
             p.id === id
-              ? { ...p, status: 'rejected', decidedAt: now(), decidedBy: adminName, rejectionReason: reason }
-              : p,
+              ? {
+                  ...p,
+                  status: 'rejected',
+                  decidedAt: now(),
+                  decidedBy: adminName,
+                  rejectionReason: reason,
+                }
+              : p
           ),
         }));
         // Mirror rejection to member via SMS stub (consistent with approve path).
@@ -208,7 +321,7 @@ export const useWalletAdminStore = create<WalletAdminState>()(
         const txnId = `t_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
         set((s) => ({
           payouts: s.payouts.map((p) =>
-            p.id === id ? { ...p, status: 'settled', settledTxnId: txnId } : p,
+            p.id === id ? { ...p, status: 'settled', settledTxnId: txnId } : p
           ),
           transactions: [
             {
@@ -225,9 +338,7 @@ export const useWalletAdminStore = create<WalletAdminState>()(
             ...s.transactions,
           ],
           members: s.members.map((m) =>
-            m.id === target.memberId
-              ? { ...m, balanceTZS: m.balanceTZS - target.amountTZS }
-              : m,
+            m.id === target.memberId ? { ...m, balanceTZS: m.balanceTZS - target.amountTZS } : m
           ),
         }));
         // Notify member that payout has been sent.
@@ -257,6 +368,6 @@ export const useWalletAdminStore = create<WalletAdminState>()(
     {
       name: 'kilimo-wallet-admin-v1',
       storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
+    }
+  )
 );

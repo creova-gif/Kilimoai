@@ -405,7 +405,7 @@ export default function SankofaScreen() {
         <SafeAreaView style={styles.safeArea}>
           {/* ── Header ── */}
           <Animated.View entering={FadeInDown} style={styles.header}>
-            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.iconBtn}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.iconBtn}>
               <ChevronLeft size={22} color="rgba(255,255,255,0.8)" />
             </TouchableOpacity>
 
@@ -787,7 +787,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           <Text style={[styles.excelFileName, { color: colors.text }]} numberOfLines={1}>{data.fileName}</Text>
           <Text style={[styles.excelMeta, { color: colors.textMute }]}>{data.rowCount} rows · {data.columnCount} cols</Text>
         </View>
-        <TouchableOpacity onPress={onClear} style={styles.excelTrash}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Remove uploaded file" onPress={onClear} style={styles.excelTrash}>
           <Trash2 size={16} color="#ef4444" />
         </TouchableOpacity>
       </View>

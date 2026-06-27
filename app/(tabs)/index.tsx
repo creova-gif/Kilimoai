@@ -1876,11 +1876,11 @@ export default function HomeScreen() {
                       <Text style={styles.cropName}>{cropMeta.displayName}</Text>
                       {primaryCrops.length > 1 && (
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                          <TouchableOpacity onPress={() => setActiveCropIndex((prev) => (prev - 1 + primaryCrops.length) % primaryCrops.length)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Previous crop" onPress={() => setActiveCropIndex((prev) => (prev - 1 + primaryCrops.length) % primaryCrops.length)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                             <ChevronLeft size={16} color="rgba(255,255,255,0.7)" />
                           </TouchableOpacity>
                           <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 10, fontFamily: 'Inter_700Bold' }}>{activeCropIndex + 1}/{primaryCrops.length}</Text>
-                          <TouchableOpacity onPress={() => setActiveCropIndex((prev) => (prev + 1) % primaryCrops.length)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Next crop" onPress={() => setActiveCropIndex((prev) => (prev + 1) % primaryCrops.length)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                             <ChevronRight size={16} color="rgba(255,255,255,0.7)" />
                           </TouchableOpacity>
                         </View>

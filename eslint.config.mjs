@@ -5,27 +5,29 @@
 import js from '@eslint/js';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
-import prettier from 'eslint-plugin-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
     ignores: [
-      'node_modules/',
-      '.expo/',
-      'dist/',
-      'build/',
-      'artifacts/',
-      'supabase/functions/',
-      'shims/',
-      'scripts/',
+      'node_modules/**',
+      '.expo/**',
+      'dist/**',
+      'build/**',
+      'web-build/**',
+      'vendor/**',
+      'artifacts/**',
+      'supabase/functions/**',
+      'shims/**',
+      'scripts/**',
       '*.config.js',
+      '*.config.mjs',
       'babel.config.js',
       'metro.config.js',
       // One-off Node maintenance scripts at repo root (not app code).
+      'replace*.js',
       'map_migration.js',
-      'replace.js',
-      'replace_scrollviews.js',
     ],
   },
   js.configs.recommended,
@@ -34,24 +36,45 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        ecmaFeatures: { jsx: true },
+        ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: { jsx: true },
+      },
+      globals: {
+        console: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        __DEV__: 'readonly',
+        process: 'readonly',
+        global: 'readonly',
+        FormData: 'readonly',
+        Blob: 'readonly',
+        URL: 'readonly',
+        AbortController: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
-      prettier,
+      prettier: prettierPlugin,
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
+      'prettier/prettier': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       // TypeScript handles undefined-symbol checking; no-undef produces false
       // positives on RN/Expo globals (__DEV__, fetch, etc.).
       'no-undef': 'off',
-      'prettier/prettier': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-require-imports': 'off',
-      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
     },
   },
   prettierConfig,

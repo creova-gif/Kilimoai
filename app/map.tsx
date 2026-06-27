@@ -142,7 +142,7 @@ export default function MapScreen() {
           
           {/* Header controls */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} activeOpacity={0.7}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.canGoBack() ? router.back() : router.replace('/')} activeOpacity={0.7}>
               <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
                 <ChevronLeft size={22} color="#fff" />
               </BlurView>
@@ -161,7 +161,7 @@ export default function MapScreen() {
               </View>
             </View>
 
-            <TouchableOpacity onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }} activeOpacity={0.7}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Profile settings" onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/edit-profile' as any); }} activeOpacity={0.7}>
               <BlurView intensity={30} tint="dark" style={styles.iconBtn}>
                 <Settings size={20} color="#fff" />
               </BlurView>
@@ -202,23 +202,23 @@ export default function MapScreen() {
 
           {/* Map Controls */}
           <View style={styles.mapControls}>
-            <TouchableOpacity onPress={handleLayers} style={styles.controlItem}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Map layers" onPress={handleLayers} style={styles.controlItem}>
               <BlurView intensity={50} tint="dark" style={[styles.controlInner, activeLayer !== 'standard' && { borderColor: colors.primary }]}>
                 <Layers size={20} color={activeLayer !== 'standard' ? colors.primary : '#fff'} />
               </BlurView>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleFullscreen} style={styles.controlItem}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Toggle fullscreen map" onPress={handleFullscreen} style={styles.controlItem}>
               <BlurView intensity={50} tint="dark" style={styles.controlInner}>
                 <Maximize2 size={20} color="#fff" />
               </BlurView>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleLocate} style={styles.controlItem}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Center on my location" onPress={handleLocate} style={styles.controlItem}>
               <BlurView intensity={50} tint="dark" style={[styles.controlInner, { borderColor: colors.primary }]}>
                 <Locate size={20} color={colors.primary} />
               </BlurView>
             </TouchableOpacity>
             {/* Trigger Voice guidance manually */}
-            <TouchableOpacity onPress={triggerVoiceGuidance} style={styles.controlItem}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Play voice guidance" onPress={triggerVoiceGuidance} style={styles.controlItem}>
               <BlurView intensity={50} tint="dark" style={[styles.controlInner, voicePlaying && { borderColor: colors.primary }]}>
                 <Volume2 size={20} color={voicePlaying ? colors.primary : '#fff'} />
               </BlurView>

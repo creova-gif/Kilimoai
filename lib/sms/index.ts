@@ -32,7 +32,7 @@ export interface SmsPayload {
 
 export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reason?: string }> {
   if (!supabase) {
-    console.log('[SMS:stub]', payload.event, '→', maskNumber(payload.to), '· [redacted]');
+    if (__DEV__) console.log('[SMS:stub]', payload.event, '→', maskNumber(payload.to), '· [redacted]');
 
     // Mirror to in-app notification so the user sees the channel firing
     useKilimoStore.getState().addNotification({

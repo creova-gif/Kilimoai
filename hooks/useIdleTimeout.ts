@@ -13,7 +13,7 @@ import { useKilimoStore } from '../store/useKilimoStore';
  * `pingActivity()` from touch handlers to extend the session.
  */
 const IDLE_WARNING_MS = 14 * 60 * 1000; // 14 min
-const IDLE_LOGOUT_MS = 15 * 60 * 1000;  // 15 min
+const IDLE_LOGOUT_MS = 15 * 60 * 1000; // 15 min
 
 let lastActivity = Date.now();
 let warned = false;

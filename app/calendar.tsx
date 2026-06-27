@@ -424,7 +424,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
 
         {/* Month nav */}
         <View style={styles.monthNav}>
-          <TouchableOpacity onPress={prevMonth} hitSlop={{top:12,bottom:12,left:12,right:12}}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Previous month" onPress={prevMonth} hitSlop={{top:12,bottom:12,left:12,right:12}}>
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
           <View style={{alignItems:'center'}}>
@@ -433,7 +433,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
             </Text>
             <Text style={[styles.yearLabel, {color: colors.textMute}]}>{curYear}</Text>
           </View>
-          <TouchableOpacity onPress={nextMonth} hitSlop={{top:12,bottom:12,left:12,right:12}}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Next month" onPress={nextMonth} hitSlop={{top:12,bottom:12,left:12,right:12}}>
             <ChevronRight size={20} color={colors.text} />
           </TouchableOpacity>
         </View>
@@ -854,7 +854,7 @@ If suggesting task changes, be specific. Max 3 sentences.`;
 
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={{top:10,bottom:10,left:10,right:10}}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Go back" onPress={() => router.back()} hitSlop={{top:10,bottom:10,left:10,right:10}}>
             <ChevronLeft size={24} color={isDark ? '#fff' : colors.text} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>

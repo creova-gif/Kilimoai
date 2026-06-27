@@ -42,8 +42,22 @@ function makeSeeds(): Scenario[] {
     plantingDensityPct: 110,
   };
   return [
-    { id: 's1', name: 'Hali ya Sasa', createdAt: now, updatedAt: now, inputs: baseInputs, output: runTwinModel(baseInputs) },
-    { id: 's2', name: 'Hali Bora', createdAt: now, updatedAt: now, inputs: improvedInputs, output: runTwinModel(improvedInputs) },
+    {
+      id: 's1',
+      name: 'Hali ya Sasa',
+      createdAt: now,
+      updatedAt: now,
+      inputs: baseInputs,
+      output: runTwinModel(baseInputs),
+    },
+    {
+      id: 's2',
+      name: 'Hali Bora',
+      createdAt: now,
+      updatedAt: now,
+      inputs: improvedInputs,
+      output: runTwinModel(improvedInputs),
+    },
   ];
 }
 
@@ -69,7 +83,14 @@ export const useDigitalFarmTwinStore = create<DigitalFarmTwinState>()(
         set((s) => ({
           scenarios: [
             ...s.scenarios,
-            { id, name, createdAt: now, updatedAt: now, inputs: merged, output: runTwinModel(merged) },
+            {
+              id,
+              name,
+              createdAt: now,
+              updatedAt: now,
+              inputs: merged,
+              output: runTwinModel(merged),
+            },
           ],
         }));
         return id;
@@ -80,7 +101,7 @@ export const useDigitalFarmTwinStore = create<DigitalFarmTwinState>()(
           scenarios: s.scenarios.map((sc) =>
             sc.id === id
               ? { ...sc, inputs, output: runTwinModel(inputs), updatedAt: new Date().toISOString() }
-              : sc,
+              : sc
           ),
         }));
       },
@@ -88,7 +109,7 @@ export const useDigitalFarmTwinStore = create<DigitalFarmTwinState>()(
       renameScenario: (id, name) => {
         set((s) => ({
           scenarios: s.scenarios.map((sc) =>
-            sc.id === id ? { ...sc, name, updatedAt: new Date().toISOString() } : sc,
+            sc.id === id ? { ...sc, name, updatedAt: new Date().toISOString() } : sc
           ),
         }));
       },
@@ -116,8 +137,8 @@ export const useDigitalFarmTwinStore = create<DigitalFarmTwinState>()(
     {
       name: 'kilimo-farm-twin-v1',
       storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
+    }
+  )
 );
 
 export { DEFAULT_INPUTS };
