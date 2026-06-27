@@ -42,7 +42,7 @@ serve(async (req) => {
   const url = new URL(req.url);
   // Accept `token` (preferred) and fall back to `id` for older QR codes.
   const agroId = url.searchParams.get('token') ?? url.searchParams.get('id');
-  if (!agroId) return json({ verified: false, reason: 'missing token' }, 400);
+  if (!agroId) return json({ verified: false, reason: 'missing_token' }, 400);
 
   try {
     // Map the public Agro-ID to a user. Select ONLY the join key — no PII

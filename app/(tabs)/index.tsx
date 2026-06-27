@@ -1399,8 +1399,21 @@ export default function HomeScreen() {
       // readable doc-type tag, but make the unique part opaque/random so IDs
       // cannot be enumerated and national-ID/TIN digits never leak in the URL.
       const docTag = agroId?.nationalId ? 'NIDA' : agroId?.tinNumber ? 'TIN' : agroId?.businessLicense ? 'LIC' : 'REG';
-      const rand = () => Math.random().toString(36).slice(2, 10);
-      const opaque = `${rand()}${rand()}`.toUpperCase(); // ~16 chars of entropy
+      // Prefer the platform CSPRNG (Web Crypto) so the public id is genuinely
+      // unpredictable; fall back to Math.random only if it's unavailable. The
+      // id carries no PII and the verify endpoint returns only non-identifying
+      // data, so the fallback is acceptable. (Follow-up: mint the authoritative
+      // id server-side before marking the profile verified.)
+      const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const cryptoObj = (globalThis as any).crypto;
+      let opaque = '';
+      if (cryptoObj?.getRandomValues) {
+        const bytes = new Uint8Array(16);
+        cryptoObj.getRandomValues(bytes);
+        opaque = Array.from(bytes, (b: number) => ALPHA[b % ALPHA.length]).join('');
+      } else {
+        for (let i = 0; i < 16; i++) opaque += ALPHA[Math.floor(Math.random() * ALPHA.length)];
+      }
       const newId = `AGRO-2026-${docTag}-${opaque}`;
 
       updateAgroId({

@@ -334,7 +334,14 @@ export const useFarmDataStore = create<FarmDataState>()(
         consultations: s.consultations.map((c) => c.id === id ? { ...c, status: 'cancelled' } : c),
       })),
 
-      addLedgerEntry: (e) => set((s) => ({ ledger: [{ ...e, id: e.id ?? uid('l') }, ...s.ledger] })),
+      addLedgerEntry: (e) => set((s) => {
+        // A caller may supply an explicit id for offline-first reconciliation
+        // (same client_id added locally then re-synced); skip if it already
+        // exists so we never double-count in the income/expense/net reducers.
+        const id = e.id ?? uid('l');
+        if (s.ledger.some((x) => x.id === id)) return s;
+        return { ledger: [{ ...e, id }, ...s.ledger] };
+      }),
       removeLedgerEntry: (id) => set((s) => ({ ledger: s.ledger.filter((x) => x.id !== id) })),
     }),
     {

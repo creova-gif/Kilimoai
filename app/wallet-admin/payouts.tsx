@@ -252,7 +252,7 @@ export default function PayoutsScreen() {
                 <Text style={[s.btnText, { color: colors.text }]}>Ghairi</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[s.btn, { backgroundColor: STATUS_COLOR.settled }]} onPress={onConfirmSettle}>
-                <Text style={[s.btnText, { color: '#000' }]}>Thibitisha</Text>
+                <Text style={[s.btnText, { color: '#fff' }]}>Thibitisha</Text>
               </TouchableOpacity>
             </View>
           </View>
