@@ -66,7 +66,18 @@ serve(async (req) => {
     const { error: writeErr } = await admin
       .from('agro_profiles')
       .insert({ user_id: userId, agro_id: agroId, verification_status: 'verified' });
-    if (writeErr) return json({ error: 'mint_failed' }, 500);
+    if (writeErr) {
+      // Concurrency: two overlapping requests can both pass the read above and
+      // race the insert; the loser hits the user_id uniqueness constraint. Re-read
+      // and return the row that won so double-taps/retries stay idempotent.
+      const { data: raced } = await admin
+        .from('agro_profiles')
+        .select('agro_id')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (raced?.agro_id) return json({ agroId: raced.agro_id });
+      return json({ error: 'mint_failed' }, 500);
+    }
 
     return json({ agroId });
   } catch (err: any) {

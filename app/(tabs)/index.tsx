@@ -1401,10 +1401,14 @@ export default function HomeScreen() {
       // local CSPRNG fallback when offline) so IDs cannot be enumerated and no
       // national-ID/TIN digits ever leak into the URL.
       const docTag = agroId?.nationalId ? 'NIDA' : agroId?.tinNumber ? 'TIN' : agroId?.businessLicense ? 'LIC' : 'REG';
-      const { id: newId } = await mintAgroId(docTag);
+      const { id: newId, serverMinted } = await mintAgroId(docTag);
 
+      // Only a server-minted id is authoritative/verifiable; a local offline
+      // fallback is provisional and marked 'pending' so we don't claim a fake
+      // 'verified' state. A later activation while online re-mints (idempotent)
+      // and upgrades it to the authoritative id.
       updateAgroId({
-        verificationStatus: 'verified',
+        verificationStatus: serverMinted ? 'verified' : 'pending',
         id: newId,
       });
 

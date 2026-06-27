@@ -33,6 +33,11 @@ export function localAgroId(docTag: DocTag): string {
  * Mint an Agro-ID. Asks the server to generate and persist the authoritative id
  * (idempotent — returns the existing one if already minted); falls back to a
  * local CSPRNG id when there's no backend or the call fails.
+ *
+ * IMPORTANT: a local fallback id (`serverMinted: false`) is PROVISIONAL — it is
+ * not persisted server-side, so verify-agro-id won't find it and it may be
+ * replaced by the authoritative id on the next online mint. Callers MUST treat
+ * `serverMinted: false` as a non-verified/pending state, never as confirmed.
  */
 export async function mintAgroId(docTag: DocTag): Promise<{ id: string; serverMinted: boolean }> {
   if (supabase) {
