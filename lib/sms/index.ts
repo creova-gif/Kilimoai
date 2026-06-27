@@ -34,7 +34,7 @@ const PROVIDER_CONFIGURED = AT_API_KEY.length > 0 && AT_USERNAME.length > 0;
 
 export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reason?: string }> {
   if (!PROVIDER_CONFIGURED) {
-    console.log('[SMS:stub]', payload.event, '→', payload.to, '·', payload.body);
+    if (__DEV__) console.log('[SMS:stub]', payload.event, '→', payload.to, '·', payload.body);
 
     // Mirror to in-app notification so the user sees the channel firing
     useKilimoStore.getState().addNotification({
@@ -78,7 +78,7 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
     const data = await response.json();
     const recipient = data?.SMSMessageData?.Recipients?.[0];
     if (recipient?.status === 'Success') {
-      console.log('[SMS:AfricaTalking] Successfully sent SMS to:', payload.to);
+      if (__DEV__) console.log('[SMS:AfricaTalking] Successfully sent SMS to:', payload.to);
       return { ok: true };
     } else {
       console.error('[SMS:AfricaTalking] Dispatch failed:', recipient?.status || 'Unknown error');

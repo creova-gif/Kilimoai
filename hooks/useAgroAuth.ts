@@ -138,7 +138,7 @@ export function useAgroAuth() {
     setLoading(true);
     try {
       if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating phone OTP send for:', phone);
+        if (__DEV__) console.log('[AgroAuth MOCK] Simulating phone OTP send for:', phone);
         await new Promise((r) => setTimeout(r, 1000));
         await SecureStore.setItemAsync('kilimo_phone', phone);
         const { Alert } = require('react-native');
@@ -161,11 +161,11 @@ export function useAgroAuth() {
     }
   }, []);
   const signInWithEmail = useCallback(async (email: string) => {
-    console.log('[AgroAuth] signInWithEmail starting for:', email);
+    if (__DEV__) console.log('[AgroAuth] signInWithEmail starting for:', email);
     setLoading(true);
     try {
       if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating email OTP send for:', email);
+        if (__DEV__) console.log('[AgroAuth MOCK] Simulating email OTP send for:', email);
         await new Promise((r) => setTimeout(r, 1000));
         await SecureStore.setItemAsync('kilimo_email', email);
         const { Alert } = require('react-native');
@@ -175,7 +175,7 @@ export function useAgroAuth() {
         );
         return { success: true };
       }
-      console.log('[AgroAuth] Calling Supabase signInWithOtp for email...');
+      if (__DEV__) console.log('[AgroAuth] Calling Supabase signInWithOtp for email...');
       const { error } = await supabase.auth.signInWithOtp({
         email,
       });
@@ -200,12 +200,13 @@ export function useAgroAuth() {
       const isEmail = normalized.includes('@');
       try {
         if (!supabase) {
-          console.log(
-            '[AgroAuth MOCK] Simulating OTP verification for:',
-            normalized,
-            'token:',
-            token
-          );
+          if (__DEV__)
+            console.log(
+              '[AgroAuth MOCK] Simulating OTP verification for:',
+              normalized,
+              'token:',
+              token
+            );
           await new Promise((r) => setTimeout(r, 800));
           if (token === '123456') {
             await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');

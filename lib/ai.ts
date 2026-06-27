@@ -72,7 +72,7 @@ KANUNI ZA LAZIMA:
         }
       }
     } catch (e) {
-      console.log('RAG fetch failed or skipped', e);
+      if (__DEV__) console.warn('RAG fetch failed or skipped', e);
     }
   }
 

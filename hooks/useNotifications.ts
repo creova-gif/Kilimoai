@@ -61,7 +61,7 @@ export function useNotifications() {
 
     try {
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log('[Notifications] Push token:', token);
+      if (__DEV__) console.log('[Notifications] Push token:', token);
 
       // [NOTIFICATION ARCHITECTURE]
       // Push token should be saved to the newly created 'user_notification_preferences' table
