@@ -74,6 +74,7 @@ import * as Haptics from 'expo-haptics';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Rect, Text as SvgText, Circle } from 'react-native-svg';
 import { useTheme } from '../../constants/Theme';
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { mintAgroId } from '../../lib/agro/mintId';
 import { useTasks } from '../../hooks/useTasks';
 import { generateRecommendations, severityColor } from '../../lib/recommendations';
 import { Card } from '../../components/ui/Card';
@@ -1393,28 +1394,14 @@ export default function HomeScreen() {
 
     progress.value = withTiming(1, { duration: 1500 });
 
-    setTimeout(() => {
+    setTimeout(async () => {
       // The Agro-ID is embedded in a PUBLIC verification QR, so it must be
       // high-entropy and must NOT encode identifying document numbers. Keep a
-      // readable doc-type tag, but make the unique part opaque/random so IDs
-      // cannot be enumerated and national-ID/TIN digits never leak in the URL.
+      // readable doc-type tag; the unique part is minted server-side (or via a
+      // local CSPRNG fallback when offline) so IDs cannot be enumerated and no
+      // national-ID/TIN digits ever leak into the URL.
       const docTag = agroId?.nationalId ? 'NIDA' : agroId?.tinNumber ? 'TIN' : agroId?.businessLicense ? 'LIC' : 'REG';
-      // Prefer the platform CSPRNG (Web Crypto) so the public id is genuinely
-      // unpredictable; fall back to Math.random only if it's unavailable. The
-      // id carries no PII and the verify endpoint returns only non-identifying
-      // data, so the fallback is acceptable. (Follow-up: mint the authoritative
-      // id server-side before marking the profile verified.)
-      const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      const cryptoObj = (globalThis as any).crypto;
-      let opaque = '';
-      if (cryptoObj?.getRandomValues) {
-        const bytes = new Uint8Array(16);
-        cryptoObj.getRandomValues(bytes);
-        opaque = Array.from(bytes, (b: number) => ALPHA[b % ALPHA.length]).join('');
-      } else {
-        for (let i = 0; i < 16; i++) opaque += ALPHA[Math.floor(Math.random() * ALPHA.length)];
-      }
-      const newId = `AGRO-2026-${docTag}-${opaque}`;
+      const { id: newId } = await mintAgroId(docTag);
 
       updateAgroId({
         verificationStatus: 'verified',
