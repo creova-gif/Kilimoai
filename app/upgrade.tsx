@@ -4,8 +4,14 @@
  */
 import React, { useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar, Platform,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -108,7 +114,11 @@ export default function UpgradeScreen() {
   const [selected, setSelected] = useState<'Free' | 'Premium' | 'Cooperative'>(currentTier);
 
   const handleUpgrade = () => {
-    if (selected === currentTier) { router.canGoBack() ? router.back() : router.replace('/'); return; }
+    if (selected === currentTier) {
+      if (router.canGoBack()) router.back();
+      else router.replace('/');
+      return;
+    }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     updateAgroId({ tier: selected });
     addNotification({
@@ -118,7 +128,8 @@ export default function UpgradeScreen() {
         : `Switched to ${selected}. New features are now unlocked.`,
       type: 'success',
     });
-    router.canGoBack() ? router.back() : router.replace('/');
+    if (router.canGoBack()) router.back();
+    else router.replace('/');
   };
 
   return (
@@ -128,14 +139,19 @@ export default function UpgradeScreen() {
       <LinearGradient
         colors={['rgba(139,92,246,0.18)', 'transparent']}
         style={StyleSheet.absoluteFill}
-        start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 0.6 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 0.6 }}
       />
 
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.canGoBack() ? router.back() : router.replace('/'); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              if (router.canGoBack()) router.back();
+              else router.replace('/');
+            }}
             style={[s.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             accessibilityLabel={isSw ? 'Rudi' : 'Go back'}
           >
@@ -176,7 +192,11 @@ export default function UpgradeScreen() {
                   },
                 ]}
               >
-                <BlurView intensity={isDark ? 10 : 40} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+                <BlurView
+                  intensity={isDark ? 10 : 40}
+                  tint={isDark ? 'dark' : 'light'}
+                  style={StyleSheet.absoluteFill}
+                />
 
                 <View style={s.tierHeader}>
                   <View style={[s.tierIcon, { backgroundColor: tier.color + '18' }]}>
@@ -184,7 +204,9 @@ export default function UpgradeScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <View style={s.tierTitleRow}>
-                      <Text style={[s.tierLabel, { color: colors.text }]}>{isSw ? tier.labelSw : tier.label}</Text>
+                      <Text style={[s.tierLabel, { color: colors.text }]}>
+                        {isSw ? tier.labelSw : tier.label}
+                      </Text>
                       {isCurrent && (
                         <View style={[s.currentBadge, { backgroundColor: tier.color + '20' }]}>
                           <Text style={[s.currentBadgeText, { color: tier.color }]}>
@@ -194,7 +216,9 @@ export default function UpgradeScreen() {
                       )}
                       {(tier as any).badge && !isCurrent && (
                         <View style={[s.currentBadge, { backgroundColor: tier.color + '20' }]}>
-                          <Text style={[s.currentBadgeText, { color: tier.color }]}>{(tier as any).badge}</Text>
+                          <Text style={[s.currentBadgeText, { color: tier.color }]}>
+                            {(tier as any).badge}
+                          </Text>
                         </View>
                       )}
                     </View>
@@ -231,7 +255,12 @@ export default function UpgradeScreen() {
           <TouchableOpacity
             style={[
               s.ctaBtn,
-              { backgroundColor: selected === 'Free' ? colors.border : TIERS.find(t => t.id === selected)?.color ?? colors.primary },
+              {
+                backgroundColor:
+                  selected === 'Free'
+                    ? colors.border
+                    : (TIERS.find((t) => t.id === selected)?.color ?? colors.primary),
+              },
             ]}
             onPress={handleUpgrade}
             activeOpacity={0.85}
@@ -239,10 +268,16 @@ export default function UpgradeScreen() {
           >
             <Text style={[s.ctaText, { color: selected === 'Free' ? colors.textMute : '#fff' }]}>
               {selected === currentTier
-                ? (isSw ? 'Endelea na kiwango cha sasa' : 'Continue with current plan')
+                ? isSw
+                  ? 'Endelea na kiwango cha sasa'
+                  : 'Continue with current plan'
                 : selected === 'Free'
-                  ? (isSw ? 'Shuka kwa Bure' : 'Downgrade to Free')
-                  : (isSw ? `Pata ${selected}` : `Get ${selected}`)}
+                  ? isSw
+                    ? 'Shuka kwa Bure'
+                    : 'Downgrade to Free'
+                  : isSw
+                    ? `Pata ${selected}`
+                    : `Get ${selected}`}
             </Text>
           </TouchableOpacity>
 
@@ -254,26 +289,76 @@ export default function UpgradeScreen() {
 }
 
 const s = StyleSheet.create({
-  root:          { flex: 1 },
-  header:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: Platform.OS === 'android' ? 16 : 8, paddingBottom: 12 },
-  backBtn:       { width: 42, height: 42, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  headerTitle:   { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
-  scroll:        { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 24 },
-  subtitle:      { fontSize: 14, fontFamily: 'Inter_500Medium', textAlign: 'center', marginBottom: 24, lineHeight: 21 },
-  tierCard:      { borderRadius: 20, borderWidth: 1.5, padding: 18, marginBottom: 16, overflow: 'hidden' },
-  tierHeader:    { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
-  tierIcon:      { width: 48, height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  tierTitleRow:  { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' },
-  tierLabel:     { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
-  tierPrice:     { fontSize: 13, fontFamily: 'Inter_700Bold' },
-  currentBadge:  { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  root: { flex: 1 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'android' ? 16 : 8,
+    paddingBottom: 12,
+  },
+  backBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  headerTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
+  scroll: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 24 },
+  subtitle: {
+    fontSize: 14,
+    fontFamily: 'Inter_500Medium',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 21,
+  },
+  tierCard: {
+    borderRadius: 20,
+    borderWidth: 1.5,
+    padding: 18,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  tierHeader: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
+  tierIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tierTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 3,
+    flexWrap: 'wrap',
+  },
+  tierLabel: { fontSize: 18, fontFamily: 'Inter_800ExtraBold' },
+  tierPrice: { fontSize: 13, fontFamily: 'Inter_700Bold' },
+  currentBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
   currentBadgeText: { fontSize: 9, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: 1 },
-  checkCircle:   { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-  divider:       { height: StyleSheet.hairlineWidth, marginBottom: 12 },
-  featureRow:    { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
-  featureText:   { fontSize: 13, fontFamily: 'Inter_500Medium', flex: 1 },
-  noteWrap:      { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 20, paddingHorizontal: 8 },
-  noteText:      { fontSize: 12, fontFamily: 'Inter_500Medium', flex: 1, lineHeight: 18 },
-  ctaBtn:        { borderRadius: 16, paddingVertical: 16, alignItems: 'center', marginBottom: 8 },
-  ctaText:       { fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
+  checkCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divider: { height: StyleSheet.hairlineWidth, marginBottom: 12 },
+  featureRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
+  featureText: { fontSize: 13, fontFamily: 'Inter_500Medium', flex: 1 },
+  noteWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 20,
+    paddingHorizontal: 8,
+  },
+  noteText: { fontSize: 12, fontFamily: 'Inter_500Medium', flex: 1, lineHeight: 18 },
+  ctaBtn: { borderRadius: 16, paddingVertical: 16, alignItems: 'center', marginBottom: 8 },
+  ctaText: { fontSize: 16, fontFamily: 'Inter_800ExtraBold' },
 });

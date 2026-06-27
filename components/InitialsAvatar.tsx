@@ -11,8 +11,14 @@ interface Props {
 
 function nameToColor(name: string): string {
   const COLORS = [
-    '#22d15a', '#3b82f6', '#f59e0b', '#8b5cf6',
-    '#ec4899', '#06b6d4', '#ef4444', '#22d15a',
+    '#22d15a',
+    '#3b82f6',
+    '#f59e0b',
+    '#8b5cf6',
+    '#ec4899',
+    '#06b6d4',
+    '#ef4444',
+    '#22d15a',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -66,5 +72,5 @@ export function InitialsAvatar({ name, avatarUrl, size = 68, fontSize, primaryCo
 
 const s = StyleSheet.create({
   circle: { alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  text:   { fontFamily: 'Inter_900Black' },
+  text: { fontFamily: 'Inter_900Black' },
 });

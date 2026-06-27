@@ -16,7 +16,13 @@ import { useKilimoStore } from '../store/useKilimoStore';
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 export type TaskStatus = 'pending' | 'in_progress' | 'done' | 'cancelled';
-export type TaskCategory = 'irrigation' | 'planting' | 'harvest' | 'scouting' | 'finance' | 'general';
+export type TaskCategory =
+  | 'irrigation'
+  | 'planting'
+  | 'harvest'
+  | 'scouting'
+  | 'finance'
+  | 'general';
 export type AssignedRole = 'vet' | 'mechanic' | 'employee';
 
 export interface Task {
@@ -104,7 +110,9 @@ try {
     process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
     process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? ''
   );
-} catch {}
+} catch {
+  /* supabase-js unavailable; falls back to seed/offline data */
+}
 
 export function useTasks() {
   const isOffline = useKilimoStore((s) => s.isOffline);
@@ -117,9 +125,7 @@ export function useTasks() {
 
   // Compute XP from completed tasks
   useEffect(() => {
-    const xp = tasks
-      .filter((t) => t.status === 'done')
-      .reduce((sum, t) => sum + t.xpReward, 0);
+    const xp = tasks.filter((t) => t.status === 'done').reduce((sum, t) => sum + t.xpReward, 0);
     setTotalXP(xp);
   }, [tasks]);
 
@@ -148,73 +154,82 @@ export function useTasks() {
   }, []);
 
   // ── Complete a task (offline-aware) ───────────────────────────────────────
-  const completeTask = useCallback(async (id: string) => {
-    const now = new Date().toISOString();
+  const completeTask = useCallback(
+    async (id: string) => {
+      const now = new Date().toISOString();
 
-    // Optimistic update
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: 'done', completedAt: now } : t))
-    );
+      // Optimistic update
+      setTasks((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, status: 'done', completedAt: now } : t))
+      );
 
-    if (isOffline) {
-      addToSyncQueue({
-        type: 'task_complete',
-        payload: { taskId: id, completedAt: now, userId: agroId?.id },
-      });
-      return;
-    }
+      if (isOffline) {
+        addToSyncQueue({
+          type: 'task_complete',
+          payload: { taskId: id, completedAt: now, userId: agroId?.id },
+        });
+        return;
+      }
 
-    if (supabase) {
-      const { error } = await supabase
-        .from('tasks')
-        .update({ status: 'done', completed_at: now })
-        .eq('id', id);
-      if (error) console.warn('[Tasks] Complete failed:', error);
-    }
-  }, [isOffline, addToSyncQueue, agroId]);
+      if (supabase) {
+        const { error } = await supabase
+          .from('tasks')
+          .update({ status: 'done', completed_at: now })
+          .eq('id', id);
+        if (error) console.warn('[Tasks] Complete failed:', error);
+      }
+    },
+    [isOffline, addToSyncQueue, agroId]
+  );
 
   // ── Create task (offline-aware) ───────────────────────────────────────────
-  const createTask = useCallback(async (task: Omit<Task, 'id' | 'createdAt' | 'syncedOffline'>) => {
-    const newTask: Task = {
-      ...task,
-      id: `local_${Date.now()}`,
-      syncedOffline: isOffline,
-      createdAt: new Date().toISOString(),
-    };
+  const createTask = useCallback(
+    async (task: Omit<Task, 'id' | 'createdAt' | 'syncedOffline'>) => {
+      const newTask: Task = {
+        ...task,
+        id: `local_${Date.now()}`,
+        syncedOffline: isOffline,
+        createdAt: new Date().toISOString(),
+      };
 
-    // Optimistic add
-    setTasks((prev) => [newTask, ...prev]);
+      // Optimistic add
+      setTasks((prev) => [newTask, ...prev]);
 
-    if (isOffline) {
-      addToSyncQueue({ type: 'task_complete', payload: newTask as any });
-      return;
-    }
+      if (isOffline) {
+        addToSyncQueue({ type: 'task_complete', payload: newTask as any });
+        return;
+      }
 
-    if (supabase) {
-      const { error } = await supabase.from('tasks').insert({
-        title: task.title,
-        title_sw: task.titleSw,
-        category: task.category,
-        priority: task.priority,
-        status: task.status,
-        due_date: task.dueDate,
-        xp_reward: task.xpReward,
-        farm_block: task.farmBlock,
-        coop_id: task.coopId,
-        synced_offline: false,
-        assigned_role: task.assignedRole,
-      });
-      if (error) console.warn('[Tasks] Create failed:', error);
-    }
-  }, [isOffline, addToSyncQueue]);
+      if (supabase) {
+        const { error } = await supabase.from('tasks').insert({
+          title: task.title,
+          title_sw: task.titleSw,
+          category: task.category,
+          priority: task.priority,
+          status: task.status,
+          due_date: task.dueDate,
+          xp_reward: task.xpReward,
+          farm_block: task.farmBlock,
+          coop_id: task.coopId,
+          synced_offline: false,
+          assigned_role: task.assignedRole,
+        });
+        if (error) console.warn('[Tasks] Create failed:', error);
+      }
+    },
+    [isOffline, addToSyncQueue]
+  );
 
   // ── Delete / cancel task ──────────────────────────────────────────────────
-  const cancelTask = useCallback(async (id: string) => {
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: 'cancelled' } : t)));
-    if (!isOffline && supabase) {
-      await supabase.from('tasks').update({ status: 'cancelled' }).eq('id', id);
-    }
-  }, [isOffline]);
+  const cancelTask = useCallback(
+    async (id: string) => {
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: 'cancelled' } : t)));
+      if (!isOffline && supabase) {
+        await supabase.from('tasks').update({ status: 'cancelled' }).eq('id', id);
+      }
+    },
+    [isOffline]
+  );
 
   const pendingTasks = tasks.filter((t) => t.status === 'pending' || t.status === 'in_progress');
   const completedTasks = tasks.filter((t) => t.status === 'done');

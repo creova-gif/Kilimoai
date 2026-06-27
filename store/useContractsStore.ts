@@ -49,15 +49,15 @@ export interface Contract {
 }
 
 const STATUS_FLOW: Record<ContractStatus, ContractStatus[]> = {
-  draft:          ['sent', 'cancelled'],
-  sent:           ['under_review', 'cancelled'],
-  under_review:   ['signed', 'cancelled', 'disputed'],
-  signed:         ['active', 'cancelled'],
-  active:         ['milestone_due', 'completed', 'disputed'],
-  milestone_due:  ['active', 'completed', 'disputed'],
-  completed:      [],
-  cancelled:      [],
-  disputed:       ['active', 'cancelled'],
+  draft: ['sent', 'cancelled'],
+  sent: ['under_review', 'cancelled'],
+  under_review: ['signed', 'cancelled', 'disputed'],
+  signed: ['active', 'cancelled'],
+  active: ['milestone_due', 'completed', 'disputed'],
+  milestone_due: ['active', 'completed', 'disputed'],
+  completed: [],
+  cancelled: [],
+  disputed: ['active', 'cancelled'],
 };
 
 export function canAdvance(from: ContractStatus, to: ContractStatus): boolean {
@@ -94,7 +94,11 @@ export const STATUS_COLOR: Record<ContractStatus, string> = {
 
 interface ContractsState {
   contracts: Contract[];
-  createContract: (c: Omit<Contract, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'milestones'> & { milestones?: ContractMilestone[] }) => string;
+  createContract: (
+    c: Omit<Contract, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'milestones'> & {
+      milestones?: ContractMilestone[];
+    }
+  ) => string;
   advance: (id: string, to: ContractStatus) => { ok: boolean; reason?: string };
   signAsFarmer: (id: string) => void;
   signAsBuyer: (id: string) => void;
@@ -105,29 +109,66 @@ interface ContractsState {
 // Seed data — illustrates each lifecycle state
 const SEED: Contract[] = [
   {
-    id: 'c1', title: 'Mahindi Hifadhi ya 2026', crop: 'Maize', quantityKg: 5000, pricePerKgTZS: 850,
-    buyer: 'NMB Foods Ltd', buyerOrg: 'NMB', region: 'Arusha', status: 'active',
+    id: 'c1',
+    title: 'Mahindi Hifadhi ya 2026',
+    crop: 'Maize',
+    quantityKg: 5000,
+    pricePerKgTZS: 850,
+    buyer: 'NMB Foods Ltd',
+    buyerOrg: 'NMB',
+    region: 'Arusha',
+    status: 'active',
     signedByFarmerAt: new Date(Date.now() - 14 * 86400_000).toISOString(),
     signedByBuyerAt: new Date(Date.now() - 13 * 86400_000).toISOString(),
     milestones: [
-      { id: 'm1', label: 'Mavuno ya Awali', dueDate: new Date(Date.now() + 7 * 86400_000).toISOString(), amountTZS: 1_500_000, paid: false },
-      { id: 'm2', label: 'Uwasilishaji wa Mwisho', dueDate: new Date(Date.now() + 30 * 86400_000).toISOString(), amountTZS: 2_750_000, paid: false },
+      {
+        id: 'm1',
+        label: 'Mavuno ya Awali',
+        dueDate: new Date(Date.now() + 7 * 86400_000).toISOString(),
+        amountTZS: 1_500_000,
+        paid: false,
+      },
+      {
+        id: 'm2',
+        label: 'Uwasilishaji wa Mwisho',
+        dueDate: new Date(Date.now() + 30 * 86400_000).toISOString(),
+        amountTZS: 2_750_000,
+        paid: false,
+      },
     ],
     createdAt: new Date(Date.now() - 20 * 86400_000).toISOString(),
     updatedAt: new Date(Date.now() - 5 * 86400_000).toISOString(),
   },
   {
-    id: 'c2', title: 'Mpunga Bora Mbeya', crop: 'Rice', quantityKg: 2000, pricePerKgTZS: 1_400,
-    buyer: 'Kilimo Trust Coop', region: 'Mbeya', status: 'under_review',
+    id: 'c2',
+    title: 'Mpunga Bora Mbeya',
+    crop: 'Rice',
+    quantityKg: 2000,
+    pricePerKgTZS: 1_400,
+    buyer: 'Kilimo Trust Coop',
+    region: 'Mbeya',
+    status: 'under_review',
     milestones: [
-      { id: 'm1', label: 'Malipo ya Awali', dueDate: new Date(Date.now() + 14 * 86400_000).toISOString(), amountTZS: 1_400_000, paid: false },
+      {
+        id: 'm1',
+        label: 'Malipo ya Awali',
+        dueDate: new Date(Date.now() + 14 * 86400_000).toISOString(),
+        amountTZS: 1_400_000,
+        paid: false,
+      },
     ],
     createdAt: new Date(Date.now() - 3 * 86400_000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 86400_000).toISOString(),
   },
   {
-    id: 'c3', title: 'Maharage Mavuno Mafupi', crop: 'Beans', quantityKg: 800, pricePerKgTZS: 2_300,
-    buyer: 'East African Grains', region: 'Kilimanjaro', status: 'draft',
+    id: 'c3',
+    title: 'Maharage Mavuno Mafupi',
+    crop: 'Beans',
+    quantityKg: 800,
+    pricePerKgTZS: 2_300,
+    buyer: 'East African Grains',
+    region: 'Kilimanjaro',
+    status: 'draft',
     milestones: [],
     createdAt: new Date(Date.now() - 1 * 86400_000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 86400_000).toISOString(),
@@ -168,29 +209,48 @@ export const useContractsStore = create<ContractsState>()(
         return { ok: true };
       },
 
-      signAsFarmer: (id) => set((s) => ({
-        contracts: s.contracts.map((x) =>
-          x.id === id ? { ...x, signedByFarmerAt: new Date().toISOString(), updatedAt: new Date().toISOString() } : x
-        ),
-      })),
+      signAsFarmer: (id) =>
+        set((s) => ({
+          contracts: s.contracts.map((x) =>
+            x.id === id
+              ? {
+                  ...x,
+                  signedByFarmerAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                }
+              : x
+          ),
+        })),
 
-      signAsBuyer: (id) => set((s) => ({
-        contracts: s.contracts.map((x) =>
-          x.id === id ? { ...x, signedByBuyerAt: new Date().toISOString(), updatedAt: new Date().toISOString() } : x
-        ),
-      })),
+      signAsBuyer: (id) =>
+        set((s) => ({
+          contracts: s.contracts.map((x) =>
+            x.id === id
+              ? {
+                  ...x,
+                  signedByBuyerAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                }
+              : x
+          ),
+        })),
 
-      markMilestonePaid: (contractId, milestoneId) => set((s) => ({
-        contracts: s.contracts.map((c) =>
-          c.id !== contractId ? c : {
-            ...c,
-            milestones: c.milestones.map((m) =>
-              m.id === milestoneId ? { ...m, paid: true, completedAt: new Date().toISOString() } : m
-            ),
-            updatedAt: new Date().toISOString(),
-          }
-        ),
-      })),
+      markMilestonePaid: (contractId, milestoneId) =>
+        set((s) => ({
+          contracts: s.contracts.map((c) =>
+            c.id !== contractId
+              ? c
+              : {
+                  ...c,
+                  milestones: c.milestones.map((m) =>
+                    m.id === milestoneId
+                      ? { ...m, paid: true, completedAt: new Date().toISOString() }
+                      : m
+                  ),
+                  updatedAt: new Date().toISOString(),
+                }
+          ),
+        })),
 
       removeContract: (id) => set((s) => ({ contracts: s.contracts.filter((c) => c.id !== id) })),
     }),

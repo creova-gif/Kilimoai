@@ -15,7 +15,14 @@ interface NeuralOrbProps {
  * Decorative animated background orb using Framer Motion (web-only).
  * On native this renders a static semi-transparent circle — no crash risk.
  */
-const NeuralOrb = ({ color, size, delay, x, y, opacityRange = [0.08, 0.18, 0.12, 0.08] }: NeuralOrbProps) => {
+const NeuralOrb = ({
+  color,
+  size,
+  delay,
+  x,
+  y,
+  opacityRange = [0.08, 0.18, 0.12, 0.08],
+}: NeuralOrbProps) => {
   if (Platform.OS !== 'web') {
     return (
       <View

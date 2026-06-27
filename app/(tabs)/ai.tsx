@@ -57,7 +57,13 @@ import Animated, {
   withTiming,
   withDelay,
 } from 'react-native-reanimated';
-import { chat as aiChat, transcribeAudio, aiConfigured, AIError, ChatMessage as AIChatMessage } from '../../lib/ai';
+import {
+  chat as aiChat,
+  transcribeAudio,
+  aiConfigured,
+  AIError,
+  ChatMessage as AIChatMessage,
+} from '../../lib/ai';
 import { demoChat } from '../../lib/ai-demo';
 import { useKilimoStore } from '../../store/useKilimoStore';
 import { RequireVerification } from '../../components/RequireVerification';
@@ -75,12 +81,12 @@ import DiseaseModal from '../../components/diseaseModal';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const SUGGESTED_PROMPTS = [
-  "Angalia afya ya mazao yangu",
-  "Wadudu wanashambulia mahindi",
-  "Bei za soko wiki hii",
-  "Hali ya hewa — mvua inakuja?",
-  "Mbolea gani nitumie sasa?",
-  "Panga ratiba ya kupanda",
+  'Angalia afya ya mazao yangu',
+  'Wadudu wanashambulia mahindi',
+  'Bei za soko wiki hii',
+  'Hali ya hewa — mvua inakuja?',
+  'Mbolea gani nitumie sasa?',
+  'Panga ratiba ya kupanda',
 ];
 
 interface Message {
@@ -116,10 +122,10 @@ export default function SankofaScreen() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?",
+      text: 'Jambo! Mimi ni Sankofa AI, mshauri wako wa kilimo. Niko hapa kukusaidia kuhusu mahindi, mpunga, mbogamboga, mifugo, na masoko. Ninaweza kukusaidiaje leo?',
       sender: 'ai',
       timestamp: new Date(),
-    }
+    },
   ]);
   const flatListRef = useRef<FlatList>(null);
 
@@ -133,7 +139,9 @@ export default function SankofaScreen() {
   const [voiceReply, setVoiceReply] = useState<string>('');
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const messagesRef = useRef<Message[]>(messages);
-  useEffect(() => { messagesRef.current = messages; }, [messages]);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   type SendResult = 'sent' | 'busy' | 'invalid';
   const sendUserMessage = async (
@@ -159,12 +167,15 @@ export default function SankofaScreen() {
     setIsTyping(true);
 
     const appendAi = (txt: string) => {
-      const next = [...messagesRef.current, {
-        id: (Date.now() + 1).toString(),
-        text: txt,
-        sender: 'ai' as const,
-        timestamp: new Date(),
-      }];
+      const next = [
+        ...messagesRef.current,
+        {
+          id: (Date.now() + 1).toString(),
+          text: txt,
+          sender: 'ai' as const,
+          timestamp: new Date(),
+        },
+      ];
       messagesRef.current = next;
       setMessages(next);
       if (opts.fromVoice) {
@@ -186,26 +197,34 @@ export default function SankofaScreen() {
           const rows = activeExcel.rowCount;
           const cols = activeExcel.columnCount;
           const headers = activeExcel.headers.join(', ');
-          const isSummarize = trimmed.toLowerCase().includes('muhtasari') || trimmed.toLowerCase().includes('summar');
-          const isTrends = trimmed.toLowerCase().includes('mwenendo') || trimmed.toLowerCase().includes('trend');
-          const isCompare = trimmed.toLowerCase().includes('linganisha') || trimmed.toLowerCase().includes('compare');
+          const isSummarize =
+            trimmed.toLowerCase().includes('muhtasari') || trimmed.toLowerCase().includes('summar');
+          const isTrends =
+            trimmed.toLowerCase().includes('mwenendo') || trimmed.toLowerCase().includes('trend');
+          const isCompare =
+            trimmed.toLowerCase().includes('linganisha') ||
+            trimmed.toLowerCase().includes('compare');
 
           if (isSummarize) {
-            reply = language === 'sw'
-              ? `Muhtasari wa lahajedwali yako "${fileName}" (${rows} safu, ${cols} nguzo):\n- Safu zote: ${rows}\n- Vichwa: ${headers}`
-              : `Summary of "${fileName}" (${rows} rows, ${cols} cols):\n- Columns: ${headers}`;
+            reply =
+              language === 'sw'
+                ? `Muhtasari wa lahajedwali yako "${fileName}" (${rows} safu, ${cols} nguzo):\n- Safu zote: ${rows}\n- Vichwa: ${headers}`
+                : `Summary of "${fileName}" (${rows} rows, ${cols} cols):\n- Columns: ${headers}`;
           } else if (isTrends) {
-            reply = language === 'sw'
-              ? `Uchambuzi wa mwenendo wa "${fileName}":\n- Data inaonyesha uzalishaji thabiti na mabadiliko ya kawaida ya msimu.`
-              : `Trend analysis for "${fileName}":\n- Shows standard seasonal variations and solid yield indicators.`;
+            reply =
+              language === 'sw'
+                ? `Uchambuzi wa mwenendo wa "${fileName}":\n- Data inaonyesha uzalishaji thabiti na mabadiliko ya kawaida ya msimu.`
+                : `Trend analysis for "${fileName}":\n- Shows standard seasonal variations and solid yield indicators.`;
           } else if (isCompare) {
-            reply = language === 'sw'
-              ? `Uchambuzi wa kulinganisha wa "${fileName}":\n- Mlinganisho unaonesha tofauti ndogo za uzalishaji.`
-              : `Comparative analysis of "${fileName}":\n- Shows minor yield variances across zones.`;
+            reply =
+              language === 'sw'
+                ? `Uchambuzi wa kulinganisha wa "${fileName}":\n- Mlinganisho unaonesha tofauti ndogo za uzalishaji.`
+                : `Comparative analysis of "${fileName}":\n- Shows minor yield variances across zones.`;
           } else {
-            reply = language === 'sw'
-              ? `Nimesoma "${fileName}" (safu ${rows}, nguzo: ${headers}). Namba zinaonyesha maadili yako yapo kwenye wastani mzuri.`
-              : `Analyzed "${fileName}" (${rows} rows, cols: ${headers}). Values are within standard range.`;
+            reply =
+              language === 'sw'
+                ? `Nimesoma "${fileName}" (safu ${rows}, nguzo: ${headers}). Namba zinaonyesha maadili yako yapo kwenye wastani mzuri.`
+                : `Analyzed "${fileName}" (${rows} rows, cols: ${headers}). Values are within standard range.`;
           }
         } else {
           reply = await demoChat(trimmed);
@@ -213,7 +232,10 @@ export default function SankofaScreen() {
       } else {
         const history: AIChatMessage[] = [];
         if (activeExcel) {
-          history.push({ role: 'system', content: `Farmer uploaded spreadsheet:\n${activeExcel.summaryText}` });
+          history.push({
+            role: 'system',
+            content: `Farmer uploaded spreadsheet:\n${activeExcel.summaryText}`,
+          });
         }
         snapshot.slice(-16).forEach((m) => {
           if (m.sender === 'ai') history.push({ role: 'assistant', content: m.text });
@@ -228,10 +250,13 @@ export default function SankofaScreen() {
       if (requestSeqRef.current !== reqId) return 'sent';
       const e = err as AIError;
       const friendly =
-        e?.kind === 'validation' ? e.message
-        : e?.kind === 'unauthorized' ? 'Tafadhali ingia tena ili kutumia Sankofa AI.'
-        : e?.kind === 'network' ? 'Hakuna mtandao. Hakikisha umeunganishwa kisha jaribu tena.'
-        : 'Samahani, kuna hitilafu kwenye huduma ya AI kwa sasa.';
+        e?.kind === 'validation'
+          ? e.message
+          : e?.kind === 'unauthorized'
+            ? 'Tafadhali ingia tena ili kutumia Sankofa AI.'
+            : e?.kind === 'network'
+              ? 'Hakuna mtandao. Hakikisha umeunganishwa kisha jaribu tena.'
+              : 'Samahani, kuna hitilafu kwenye huduma ya AI kwa sasa.';
       appendAi(friendly);
       addNotification({ title: 'Sankofa AI', body: friendly, type: 'warning' });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -264,7 +289,11 @@ export default function SankofaScreen() {
     try {
       const perm = await requestRecordingPermissionsAsync();
       if (!perm.granted) {
-        addNotification({ title: 'Sankofa AI', body: 'Tafadhali ruhusu kipaza sauti kwenye mipangilio.', type: 'warning' });
+        addNotification({
+          title: 'Sankofa AI',
+          body: 'Tafadhali ruhusu kipaza sauti kwenye mipangilio.',
+          type: 'warning',
+        });
         return;
       }
       await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
@@ -273,7 +302,11 @@ export default function SankofaScreen() {
       setVoiceState('LISTENING');
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch (err) {
-      addNotification({ title: 'Sankofa AI', body: 'Kipaza sauti hakikuanzishwa.', type: 'warning' });
+      addNotification({
+        title: 'Sankofa AI',
+        body: 'Kipaza sauti hakikuanzishwa.',
+        type: 'warning',
+      });
       setVoiceState('IDLE');
     }
   };
@@ -298,20 +331,30 @@ export default function SankofaScreen() {
         if (e instanceof AIError) throw e;
       }
 
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
       if (stale()) return;
       const mimeType = uri.toLowerCase().endsWith('.wav') ? 'audio/wav' : 'audio/m4a';
       const transcript = await transcribeAudio(base64, { mimeType, language: 'sw' });
       if (stale()) return;
 
       if (!transcript || !transcript.trim()) {
-        addNotification({ title: 'Sankofa AI', body: 'Sikukusikia. Jaribu tena.', type: 'warning' });
+        addNotification({
+          title: 'Sankofa AI',
+          body: 'Sikukusikia. Jaribu tena.',
+          type: 'warning',
+        });
         setVoiceState('IDLE');
         return;
       }
       const result = await sendUserMessage(transcript, { fromVoice: true });
       if (result === 'busy') {
-        addNotification({ title: 'Sankofa AI', body: 'Subiri jibu la awali kumalizika.', type: 'warning' });
+        addNotification({
+          title: 'Sankofa AI',
+          body: 'Subiri jibu la awali kumalizika.',
+          type: 'warning',
+        });
         setVoiceState('IDLE');
       } else if (result === 'invalid') {
         setVoiceState('IDLE');
@@ -320,10 +363,13 @@ export default function SankofaScreen() {
       if (stale()) return;
       const e = err as AIError;
       const friendly =
-        e?.kind === 'validation' ? e.message
-        : e?.kind === 'unauthorized' ? 'Tafadhali ingia tena ili kutumia sauti.'
-        : e?.kind === 'network' ? 'Hakuna mtandao. Jaribu tena ukiunganishwa.'
-        : 'Samahani, sauti haijachanganuliwa. Jaribu tena.';
+        e?.kind === 'validation'
+          ? e.message
+          : e?.kind === 'unauthorized'
+            ? 'Tafadhali ingia tena ili kutumia sauti.'
+            : e?.kind === 'network'
+              ? 'Hakuna mtandao. Jaribu tena ukiunganishwa.'
+              : 'Samahani, sauti haijachanganuliwa. Jaribu tena.';
       addNotification({ title: 'Sankofa AI', body: friendly, type: 'warning' });
       setVoiceState('IDLE');
     }
@@ -338,10 +384,16 @@ export default function SankofaScreen() {
   const handleShortcut = async (type: 'summarize' | 'trends' | 'compare') => {
     const promptText =
       type === 'summarize'
-        ? (language === 'sw' ? "Tafadhali nisaidie kufanya muhtasari wa data hizi." : "Please summarize this spreadsheet data.")
+        ? language === 'sw'
+          ? 'Tafadhali nisaidie kufanya muhtasari wa data hizi.'
+          : 'Please summarize this spreadsheet data.'
         : type === 'trends'
-        ? (language === 'sw' ? "Tafuta mwenendo muhimu katika data hizi." : "Find key trends in this data.")
-        : (language === 'sw' ? "Nisaidie kulinganisha maadili katika data hizi." : "Help me compare values in this data.");
+          ? language === 'sw'
+            ? 'Tafuta mwenendo muhimu katika data hizi.'
+            : 'Find key trends in this data.'
+          : language === 'sw'
+            ? 'Nisaidie kulinganisha maadili katika data hizi.'
+            : 'Help me compare values in this data.';
     if (promptText) await sendUserMessage(promptText);
   };
 
@@ -350,38 +402,54 @@ export default function SankofaScreen() {
     if (isOffline) {
       Alert.alert(
         language === 'sw' ? 'Nje ya Mtandao' : 'Offline Mode',
-        language === 'sw' ? 'Kupakia lahajedwali kunahitaji mtandao.' : 'Uploading spreadsheets requires internet.'
+        language === 'sw'
+          ? 'Kupakia lahajedwali kunahitaji mtandao.'
+          : 'Uploading spreadsheets requires internet.'
       );
       return;
     }
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'text/csv', 'text/comma-separated-values'],
+        type: [
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/vnd.ms-excel',
+          'text/csv',
+          'text/comma-separated-values',
+        ],
         copyToCacheDirectory: true,
       });
       if (result.canceled) return;
       const asset = result.assets[0];
       if (asset.size && asset.size > 10 * 1024 * 1024) {
-        Alert.alert(language === 'sw' ? "Faili ni kubwa sana" : "File too large", language === 'sw' ? "Ukomo ni 10MB." : "Limit is 10MB.");
+        Alert.alert(
+          language === 'sw' ? 'Faili ni kubwa sana' : 'File too large',
+          language === 'sw' ? 'Ukomo ni 10MB.' : 'Limit is 10MB.'
+        );
         return;
       }
       setIsParsingExcel(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const base64Data = await FileSystem.readAsStringAsync(asset.uri, { encoding: FileSystem.EncodingType.Base64 });
+      const base64Data = await FileSystem.readAsStringAsync(asset.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
       const parsed = parseExcelBase64(base64Data, asset.name);
       setActiveExcelData(parsed);
       const excelMsg: Message = {
         id: `excel_${Date.now()}`,
-        text: language === 'sw' ? `Nimepakia faili: ${parsed.fileName}` : `Uploaded file: ${parsed.fileName}`,
+        text:
+          language === 'sw'
+            ? `Nimepakia faili: ${parsed.fileName}`
+            : `Uploaded file: ${parsed.fileName}`,
         sender: 'excel_preview',
         timestamp: new Date(),
         excelData: parsed,
       };
-      setMessages(prev => [...prev, excelMsg]);
+      setMessages((prev) => [...prev, excelMsg]);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       addNotification({
         title: language === 'sw' ? 'Lahajedwali Imepakiwa' : 'Spreadsheet Loaded',
-        body: language === 'sw' ? `"${parsed.fileName}" ipo tayari.` : `"${parsed.fileName}" is ready.`,
+        body:
+          language === 'sw' ? `"${parsed.fileName}" ipo tayari.` : `"${parsed.fileName}" is ready.`,
         type: 'success',
       });
     } catch (err: any) {
@@ -405,16 +473,28 @@ export default function SankofaScreen() {
         <SafeAreaView style={styles.safeArea}>
           {/* ── Header ── */}
           <Animated.View entering={FadeInDown} style={styles.header}>
-            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={styles.iconBtn}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+              style={styles.iconBtn}
+            >
               <ChevronLeft size={22} color="rgba(255,255,255,0.8)" />
             </TouchableOpacity>
 
             <View style={styles.headerCenter}>
-              <View style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center' }}>
+              <View
+                style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center' }}
+              >
                 <LinearGradient colors={['#112519', '#060e08']} style={styles.aiAvatar}>
                   <BrainCircuit size={19} color="#22d15a" />
                 </LinearGradient>
-                <View style={[styles.avatarRing, { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : 'rgba(34,209,90,0.5)' }]} />
+                <View
+                  style={[
+                    styles.avatarRing,
+                    { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : 'rgba(34,209,90,0.5)' },
+                  ]}
+                />
               </View>
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
@@ -424,7 +504,12 @@ export default function SankofaScreen() {
                   </View>
                 </View>
                 <View style={styles.statusRow}>
-                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#22d15a' }]} />
+                  <View
+                    style={[
+                      styles.statusDot,
+                      { backgroundColor: isOffline ? '#ef4444' : '#22d15a' },
+                    ]}
+                  />
                   <Text style={styles.statusLabel}>
                     {isOffline ? 'SMS Fallback' : 'Neural Link Active'}
                   </Text>
@@ -433,32 +518,42 @@ export default function SankofaScreen() {
             </View>
 
             <TouchableOpacity
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setOffline(!isOffline); }}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setOffline(!isOffline);
+              }}
               style={styles.iconBtn}
             >
-              {isOffline
-                ? <CloudOff size={20} color="#ef4444" />
-                : <MoreVertical size={20} color="rgba(255,255,255,0.4)" />
-              }
+              {isOffline ? (
+                <CloudOff size={20} color="#ef4444" />
+              ) : (
+                <MoreVertical size={20} color="rgba(255,255,255,0.4)" />
+              )}
             </TouchableOpacity>
           </Animated.View>
 
           {/* ── Chat / Voice ── */}
           {!isVoiceMode ? (
-            <Animated.View key="text" entering={FadeInDown} exiting={FadeOut} style={styles.chatContent}>
+            <Animated.View
+              key="text"
+              entering={FadeInDown}
+              exiting={FadeOut}
+              style={styles.chatContent}
+            >
               <FlatList
                 ref={flatListRef}
                 data={messages}
                 renderItem={({ item, index }) => (
                   <ChatMessage
-                    item={item} index={index}
+                    item={item}
+                    index={index}
                     language={language}
                     activeExcelData={activeExcelData}
                     setActiveExcelData={setActiveExcelData}
                     onShortcut={handleShortcut}
                   />
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.listPadding}
                 showsVerticalScrollIndicator={false}
                 ListFooterComponent={
@@ -471,16 +566,24 @@ export default function SankofaScreen() {
               />
             </Animated.View>
           ) : (
-            <Animated.View key="voice" entering={FadeInDown} exiting={FadeOut} style={styles.voiceModeContainer}>
+            <Animated.View
+              key="voice"
+              entering={FadeInDown}
+              exiting={FadeOut}
+              style={styles.voiceModeContainer}
+            >
               <View style={styles.voiceHeader}>
                 <Text style={[styles.voicePhaseText, { color: colors.text }]}>
-                  {voiceState === 'IDLE' && "Gusa kuongea na Sankofa"}
-                  {voiceState === 'LISTENING' && "Sankofa anakusikiliza…"}
-                  {voiceState === 'PROCESSING' && "Inachanganua sauti…"}
-                  {voiceState === 'SPEAKING' && "Sankofa anajibu"}
+                  {voiceState === 'IDLE' && 'Gusa kuongea na Sankofa'}
+                  {voiceState === 'LISTENING' && 'Sankofa anakusikiliza…'}
+                  {voiceState === 'PROCESSING' && 'Inachanganua sauti…'}
+                  {voiceState === 'SPEAKING' && 'Sankofa anajibu'}
                 </Text>
                 {voiceState === 'SPEAKING' && !!voiceReply && (
-                  <Animated.Text entering={FadeInDown} style={[styles.voiceTranscript, { color: colors.textMute }]}>
+                  <Animated.Text
+                    entering={FadeInDown}
+                    style={[styles.voiceTranscript, { color: colors.textMute }]}
+                  >
                     {voiceReply}
                   </Animated.Text>
                 )}
@@ -494,49 +597,77 @@ export default function SankofaScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={
                     voiceState === 'LISTENING'
-                      ? (language === 'sw' ? 'Acha kurekodi sauti' : 'Stop voice recording')
+                      ? language === 'sw'
+                        ? 'Acha kurekodi sauti'
+                        : 'Stop voice recording'
                       : voiceState === 'PROCESSING'
-                      ? (language === 'sw' ? 'Inatafakari sauti' : 'Processing voice')
-                      : (language === 'sw' ? 'Anza kurekodi sauti' : 'Start voice recording')
+                        ? language === 'sw'
+                          ? 'Inatafakari sauti'
+                          : 'Processing voice'
+                        : language === 'sw'
+                          ? 'Anza kurekodi sauti'
+                          : 'Start voice recording'
                   }
                 >
                   {[140, 170, 200].map((sz, i) => (
-                    <View key={i} style={[styles.voiceRipple, {
-                      width: sz, height: sz, borderRadius: sz / 2,
-                      borderColor: voiceState === 'LISTENING'
-                        ? `rgba(34,209,90,${0.4 - i * 0.12})`
-                        : voiceState === 'PROCESSING'
-                        ? `rgba(139,92,246,${0.4 - i * 0.12})`
-                        : `rgba(34,209,90,${0.15 - i * 0.04})`,
-                    }]} />
+                    <View
+                      key={i}
+                      style={[
+                        styles.voiceRipple,
+                        {
+                          width: sz,
+                          height: sz,
+                          borderRadius: sz / 2,
+                          borderColor:
+                            voiceState === 'LISTENING'
+                              ? `rgba(34,209,90,${0.4 - i * 0.12})`
+                              : voiceState === 'PROCESSING'
+                                ? `rgba(139,92,246,${0.4 - i * 0.12})`
+                                : `rgba(34,209,90,${0.15 - i * 0.04})`,
+                        },
+                      ]}
+                    />
                   ))}
                   <LinearGradient
-                    colors={voiceState === 'LISTENING'
-                      ? ['#22d15a', '#16a34a']
-                      : voiceState === 'PROCESSING'
-                      ? ['rgba(139,92,246,0.4)', 'rgba(139,92,246,0.1)']
-                      : ['rgba(34,209,90,0.2)', 'rgba(34,209,90,0.05)']
+                    colors={
+                      voiceState === 'LISTENING'
+                        ? ['#22d15a', '#16a34a']
+                        : voiceState === 'PROCESSING'
+                          ? ['rgba(139,92,246,0.4)', 'rgba(139,92,246,0.1)']
+                          : ['rgba(34,209,90,0.2)', 'rgba(34,209,90,0.05)']
                     }
                     style={styles.voiceOrbCore}
                   >
-                    {voiceState === 'PROCESSING'
-                      ? <BrainCircuit size={44} color="#a78bfa" />
-                      : voiceState === 'SPEAKING'
-                      ? <Zap size={44} color="#22d15a" />
-                      : <Mic size={44} color={voiceState === 'LISTENING' ? '#fff' : '#22d15a'} />
-                    }
+                    {voiceState === 'PROCESSING' ? (
+                      <BrainCircuit size={44} color="#a78bfa" />
+                    ) : voiceState === 'SPEAKING' ? (
+                      <Zap size={44} color="#22d15a" />
+                    ) : (
+                      <Mic size={44} color={voiceState === 'LISTENING' ? '#fff' : '#22d15a'} />
+                    )}
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
 
               <TouchableOpacity
-                style={[styles.exitVoiceBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card, borderColor: colors.border }]}
+                style={[
+                  styles.exitVoiceBtn,
+                  {
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card,
+                    borderColor: colors.border,
+                  },
+                ]}
                 onPress={toggleVoiceMode}
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Rudi kwenye maandishi' : 'Switch to Text'}
               >
-                <MessageSquare size={16} color={isDark ? "rgba(255,255,255,0.5)" : colors.textMute} />
-                <Text style={[styles.exitVoiceText, { color: colors.textMute }]}>Rudi maandishi</Text>
+                <MessageSquare
+                  size={16}
+                  color={isDark ? 'rgba(255,255,255,0.5)' : colors.textMute}
+                />
+                <Text style={[styles.exitVoiceText, { color: colors.textMute }]}>
+                  Rudi maandishi
+                </Text>
               </TouchableOpacity>
             </Animated.View>
           )}
@@ -549,63 +680,127 @@ export default function SankofaScreen() {
             >
               {!isTyping && messages.length < 3 && (
                 <Animated.View entering={FadeInDown} exiting={FadeOut} style={styles.suggestionBox}>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionScroll}>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.suggestionScroll}
+                  >
                     {SUGGESTED_PROMPTS.map((prompt, i) => (
                       <TouchableOpacity
                         key={i}
-                        style={[styles.suggestionBtn, { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card }]}
-                        onPress={() => { setInputText(prompt); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                        style={[
+                          styles.suggestionBtn,
+                          { backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : colors.card },
+                        ]}
+                        onPress={() => {
+                          setInputText(prompt);
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        }}
                         accessibilityRole="button"
-                        accessibilityLabel={language === 'sw' ? `Uliza pendekezo: ${prompt}` : `Ask suggestion: ${prompt}`}
+                        accessibilityLabel={
+                          language === 'sw'
+                            ? `Uliza pendekezo: ${prompt}`
+                            : `Ask suggestion: ${prompt}`
+                        }
                       >
                         <Sparkles size={11} color="#22d15a" style={{ marginRight: 5 }} />
-                        <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
+                        <Text style={[styles.suggestionText, { color: colors.text }]}>
+                          {prompt}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </ScrollView>
                 </Animated.View>
               )}
 
-              <View style={[styles.inputArea, { backgroundColor: isDark ? 'rgba(10,18,10,0.97)' : colors.card }]}>
+              <View
+                style={[
+                  styles.inputArea,
+                  { backgroundColor: isDark ? 'rgba(10,18,10,0.97)' : colors.card },
+                ]}
+              >
                 <View style={styles.inputRow}>
                   <TouchableOpacity
-                    style={[styles.plusBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card, borderColor: colors.border }]}
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setAttachmentMenuVisible(true); }}
+                    style={[
+                      styles.plusBtn,
+                      {
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card,
+                        borderColor: colors.border,
+                      },
+                    ]}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                      setAttachmentMenuVisible(true);
+                    }}
                     accessibilityRole="button"
-                    accessibilityLabel={language === 'sw' ? 'Fungua zana za ziada' : 'Open additional tools'}
+                    accessibilityLabel={
+                      language === 'sw' ? 'Fungua zana za ziada' : 'Open additional tools'
+                    }
                   >
-                    <Plus size={20} color={isDark ? "rgba(255,255,255,0.5)" : colors.textMute} />
+                    <Plus size={20} color={isDark ? 'rgba(255,255,255,0.5)' : colors.textMute} />
                   </TouchableOpacity>
 
-                  <View style={[styles.inputContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card }]}>
+                  <View
+                    style={[
+                      styles.inputContainer,
+                      { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.card },
+                    ]}
+                  >
                     <TextInput
                       style={[styles.input, { color: colors.text }]}
-                      placeholder={isOffline ? "Tuma SMS..." : "Uliza Sankofa..."}
-                      placeholderTextColor={isDark ? "rgba(255,255,255,0.3)" : colors.textMute}
+                      placeholder={isOffline ? 'Tuma SMS...' : 'Uliza Sankofa...'}
+                      placeholderTextColor={isDark ? 'rgba(255,255,255,0.3)' : colors.textMute}
                       value={inputText}
                       onChangeText={setInputText}
                       multiline
                       onFocus={() => Haptics.selectionAsync()}
-                      accessibilityLabel={language === 'sw' ? 'Uwanja wa swali' : 'Question input field'}
-                      accessibilityHint={language === 'sw' ? 'Weka ujumbe wako hapa' : 'Type your message here'}
+                      accessibilityLabel={
+                        language === 'sw' ? 'Uwanja wa swali' : 'Question input field'
+                      }
+                      accessibilityHint={
+                        language === 'sw' ? 'Weka ujumbe wako hapa' : 'Type your message here'
+                      }
                     />
                     <View style={styles.inputActions}>
                       <TouchableOpacity
                         style={styles.actionBtn}
                         onPress={toggleVoiceMode}
                         accessibilityRole="button"
-                        accessibilityLabel={language === 'sw' ? 'Washa kurekodi sauti' : 'Enable voice recording'}
+                        accessibilityLabel={
+                          language === 'sw' ? 'Washa kurekodi sauti' : 'Enable voice recording'
+                        }
                       >
-                        <Mic size={19} color={isDark ? "rgba(255,255,255,0.4)" : colors.textMute} />
+                        <Mic size={19} color={isDark ? 'rgba(255,255,255,0.4)' : colors.textMute} />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#22d15a' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
+                        style={[
+                          styles.sendBtn,
+                          {
+                            backgroundColor:
+                              inputText.trim() && !isTyping
+                                ? '#22d15a'
+                                : isDark
+                                  ? 'rgba(255,255,255,0.1)'
+                                  : colors.border,
+                          },
+                        ]}
                         onPress={handleSend}
                         disabled={!inputText.trim() || isTyping}
                         accessibilityRole="button"
-                        accessibilityLabel={language === 'sw' ? 'Tuma ujumbe sasa' : 'Send message now'}
+                        accessibilityLabel={
+                          language === 'sw' ? 'Tuma ujumbe sasa' : 'Send message now'
+                        }
                       >
-                        <Send size={15} color={inputText.trim() ? '#fff' : (isDark ? 'rgba(255,255,255,0.3)' : colors.textMute)} />
+                        <Send
+                          size={15}
+                          color={
+                            inputText.trim()
+                              ? '#fff'
+                              : isDark
+                                ? 'rgba(255,255,255,0.3)'
+                                : colors.textMute
+                          }
+                        />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -616,29 +811,90 @@ export default function SankofaScreen() {
         </SafeAreaView>
 
         {/* ── Attachment Modal ── */}
-        <Modal visible={attachmentMenuVisible} transparent animationType="slide" onRequestClose={() => setAttachmentMenuVisible(false)}>
-          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setAttachmentMenuVisible(false)}>
-            <View style={[styles.attachmentSheet, { backgroundColor: isDark ? '#111a10' : colors.card }]}>
-              <View style={[styles.sheetHandle, { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : colors.border }]} />
-              <Text style={[styles.sheetTitle, { color: colors.text }]}>{language === 'sw' ? 'Zana za Sankofa' : 'Sankofa Tools'}</Text>
+        <Modal
+          visible={attachmentMenuVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setAttachmentMenuVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setAttachmentMenuVisible(false)}
+          >
+            <View
+              style={[
+                styles.attachmentSheet,
+                { backgroundColor: isDark ? '#111a10' : colors.card },
+              ]}
+            >
+              <View
+                style={[
+                  styles.sheetHandle,
+                  { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : colors.border },
+                ]}
+              />
+              <Text style={[styles.sheetTitle, { color: colors.text }]}>
+                {language === 'sw' ? 'Zana za Sankofa' : 'Sankofa Tools'}
+              </Text>
 
               {[
-                { icon: <FileSpreadsheet size={22} color="#22d15a" />, title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet', sub: 'Excel / CSV → Q&A', onPress: handleExcelPick },
-                { icon: <Leaf size={22} color="#22d15a" />, title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment', sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist', onPress: () => { setAttachmentMenuVisible(false); setDiseaseModalVisible(true); } },
-                { icon: <Camera size={22} color="#22d15a" />, title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner', sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves', onPress: () => { setAttachmentMenuVisible(false); router.push('/scan' as any); } },
+                {
+                  icon: <FileSpreadsheet size={22} color="#22d15a" />,
+                  title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet',
+                  sub: 'Excel / CSV → Q&A',
+                  onPress: handleExcelPick,
+                },
+                {
+                  icon: <Leaf size={22} color="#22d15a" />,
+                  title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment',
+                  sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist',
+                  onPress: () => {
+                    setAttachmentMenuVisible(false);
+                    setDiseaseModalVisible(true);
+                  },
+                },
+                {
+                  icon: <Camera size={22} color="#22d15a" />,
+                  title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner',
+                  sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves',
+                  onPress: () => {
+                    setAttachmentMenuVisible(false);
+                    router.push('/scan' as any);
+                  },
+                },
               ].map((item, i) => (
-                <TouchableOpacity key={i} style={[styles.sheetOption, i < 2 && { borderBottomColor: colors.border }]} onPress={item.onPress}>
+                <TouchableOpacity
+                  key={i}
+                  style={[styles.sheetOption, i < 2 && { borderBottomColor: colors.border }]}
+                  onPress={item.onPress}
+                >
                   <View style={styles.sheetIconWrap}>{item.icon}</View>
                   <View style={{ flex: 1 }}>
-                    <Text style={[styles.sheetOptionTitle, { color: colors.text }]}>{item.title}</Text>
-                    <Text style={[styles.sheetOptionSub, { color: colors.textMute }]}>{item.sub}</Text>
+                    <Text style={[styles.sheetOptionTitle, { color: colors.text }]}>
+                      {item.title}
+                    </Text>
+                    <Text style={[styles.sheetOptionSub, { color: colors.textMute }]}>
+                      {item.sub}
+                    </Text>
                   </View>
-                  <ArrowRight size={16} color={isDark ? "rgba(255,255,255,0.2)" : colors.textMute} />
+                  <ArrowRight
+                    size={16}
+                    color={isDark ? 'rgba(255,255,255,0.2)' : colors.textMute}
+                  />
                 </TouchableOpacity>
               ))}
 
-              <TouchableOpacity style={[styles.sheetCancel, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card }]} onPress={() => setAttachmentMenuVisible(false)}>
-                <Text style={[styles.sheetCancelText, { color: colors.textMute }]}>{language === 'sw' ? 'Ghairi' : 'Cancel'}</Text>
+              <TouchableOpacity
+                style={[
+                  styles.sheetCancel,
+                  { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.card },
+                ]}
+                onPress={() => setAttachmentMenuVisible(false)}
+              >
+                <Text style={[styles.sheetCancelText, { color: colors.textMute }]}>
+                  {language === 'sw' ? 'Ghairi' : 'Cancel'}
+                </Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -648,9 +904,13 @@ export default function SankofaScreen() {
 
         {isParsingExcel && (
           <View style={styles.loaderOverlay}>
-            <View style={[styles.loaderCard, { backgroundColor: isDark ? '#111a10' : colors.card }]}>
+            <View
+              style={[styles.loaderCard, { backgroundColor: isDark ? '#111a10' : colors.card }]}
+            >
               <ActivityIndicator size="large" color="#22d15a" />
-              <Text style={[styles.loaderText, { color: colors.text }]}>{language === 'sw' ? 'Inasoma lahajedwali…' : 'Parsing spreadsheet…'}</Text>
+              <Text style={[styles.loaderText, { color: colors.text }]}>
+                {language === 'sw' ? 'Inasoma lahajedwali…' : 'Parsing spreadsheet…'}
+              </Text>
             </View>
           </View>
         )}
@@ -663,7 +923,14 @@ export default function SankofaScreen() {
 //  Sub-components
 // ─────────────────────────────────────────
 
-function ChatMessage({ item, index, language, activeExcelData, setActiveExcelData, onShortcut }: any) {
+function ChatMessage({
+  item,
+  index,
+  language,
+  activeExcelData,
+  setActiveExcelData,
+  onShortcut,
+}: any) {
   const { colors, isDark } = useTheme();
   const isAi = item.sender === 'ai';
   const isExcel = item.sender === 'excel_preview';
@@ -672,10 +939,18 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
     const isActive = activeExcelData && activeExcelData.fileName === item.excelData.fileName;
     if (!isActive) {
       return (
-        <Animated.View entering={FadeInDown} style={[styles.detachedCard, { borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border }]}>
-          <FileSpreadsheet size={14} color={isDark ? "rgba(255,255,255,0.3)" : colors.textMute} />
+        <Animated.View
+          entering={FadeInDown}
+          style={[
+            styles.detachedCard,
+            { borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border },
+          ]}
+        >
+          <FileSpreadsheet size={14} color={isDark ? 'rgba(255,255,255,0.3)' : colors.textMute} />
           <Text style={[styles.detachedText, { color: colors.text }]}>
-            {language === 'sw' ? `Lahajedwali imetenganishwa: ${item.excelData.fileName}` : `Detached: ${item.excelData.fileName}`}
+            {language === 'sw'
+              ? `Lahajedwali imetenganishwa: ${item.excelData.fileName}`
+              : `Detached: ${item.excelData.fileName}`}
           </Text>
         </Animated.View>
       );
@@ -683,7 +958,10 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
     return (
       <ExcelPreviewCard
         data={item.excelData}
-        onClear={() => { setActiveExcelData(null); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning); }}
+        onClear={() => {
+          setActiveExcelData(null);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        }}
         onShortcut={onShortcut}
         language={language}
       />
@@ -691,7 +969,10 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
   }
 
   return (
-    <Animated.View entering={FadeInDown} style={[styles.msgRow, isAi ? styles.msgRowAi : styles.msgRowUser]}>
+    <Animated.View
+      entering={FadeInDown}
+      style={[styles.msgRow, isAi ? styles.msgRowAi : styles.msgRowUser]}
+    >
       {isAi && (
         <LinearGradient colors={['#112519', '#060e08']} style={styles.avatar}>
           <BrainCircuit size={14} color="#22d15a" />
@@ -702,7 +983,8 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
         <View style={styles.aiBubble}>
           <LinearGradient
             colors={['rgba(34,209,90,0.13)', 'transparent']}
-            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
             style={styles.aiBubbleShimmer}
           />
           <View style={styles.aiBubbleSourceRow}>
@@ -717,7 +999,8 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
       ) : (
         <LinearGradient
           colors={['#2be066', '#14a345']}
-          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
           style={[styles.bubble, styles.userBubble]}
         >
           <Text style={[styles.msgText, styles.userText]}>{item.text}</Text>
@@ -784,25 +1067,59 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           <FileSpreadsheet size={20} color="#22d15a" />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
-          <Text style={[styles.excelFileName, { color: colors.text }]} numberOfLines={1}>{data.fileName}</Text>
-          <Text style={[styles.excelMeta, { color: colors.textMute }]}>{data.rowCount} rows · {data.columnCount} cols</Text>
+          <Text style={[styles.excelFileName, { color: colors.text }]} numberOfLines={1}>
+            {data.fileName}
+          </Text>
+          <Text style={[styles.excelMeta, { color: colors.textMute }]}>
+            {data.rowCount} rows · {data.columnCount} cols
+          </Text>
         </View>
-        <TouchableOpacity onPress={onClear} style={styles.excelTrash}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Remove uploaded file"
+          onPress={onClear}
+          style={styles.excelTrash}
+        >
           <Trash2 size={16} color="#ef4444" />
         </TouchableOpacity>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
         {data.headers.map((h: string, i: number) => (
-          <View key={i} style={[styles.headerChip, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.primaryLight }]}>
-            <Text style={[styles.headerChipText, { color: isDark ? 'rgba(255,255,255,0.7)' : colors.text }]}>{h}</Text>
+          <View
+            key={i}
+            style={[
+              styles.headerChip,
+              { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : colors.primaryLight },
+            ]}
+          >
+            <Text
+              style={[
+                styles.headerChipText,
+                { color: isDark ? 'rgba(255,255,255,0.7)' : colors.text },
+              ]}
+            >
+              {h}
+            </Text>
           </View>
         ))}
       </ScrollView>
 
-      <TouchableOpacity style={styles.excelToggle} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setExpanded(!expanded); }}>
+      <TouchableOpacity
+        style={styles.excelToggle}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setExpanded(!expanded);
+        }}
+      >
         <Text style={styles.excelToggleText}>
-          {expanded ? (language === 'sw' ? 'Ficha data' : 'Hide preview') : (language === 'sw' ? 'Onyesha data' : 'Show preview')}
+          {expanded
+            ? language === 'sw'
+              ? 'Ficha data'
+              : 'Hide preview'
+            : language === 'sw'
+              ? 'Onyesha data'
+              : 'Show preview'}
         </Text>
       </TouchableOpacity>
 
@@ -811,8 +1128,23 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           <View style={[styles.table, { borderColor: colors.border }]}>
             <View style={styles.tableHeaderRow}>
               {data.headers.map((h: string, i: number) => (
-                <View key={i} style={[styles.tableCell, styles.tableHeaderCell, { borderBottomColor: colors.border }]}>
-                  <Text style={[styles.tableHeaderText, { color: isDark ? 'rgba(255,255,255,0.7)' : colors.textMute }]} numberOfLines={1}>{h}</Text>
+                <View
+                  key={i}
+                  style={[
+                    styles.tableCell,
+                    styles.tableHeaderCell,
+                    { borderBottomColor: colors.border },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tableHeaderText,
+                      { color: isDark ? 'rgba(255,255,255,0.7)' : colors.textMute },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {h}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -820,7 +1152,15 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
               <View key={rIdx} style={styles.tableRow}>
                 {data.headers.map((h: string, cIdx: number) => (
                   <View key={cIdx} style={[styles.tableCell, { borderBottomColor: colors.border }]}>
-                    <Text style={[styles.tableCellText, { color: isDark ? 'rgba(255,255,255,0.6)' : colors.text }]} numberOfLines={1}>{String(row[h] ?? '')}</Text>
+                    <Text
+                      style={[
+                        styles.tableCellText,
+                        { color: isDark ? 'rgba(255,255,255,0.6)' : colors.text },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {String(row[h] ?? '')}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -835,7 +1175,11 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           { key: 'trends', label: language === 'sw' ? 'Mwenendo' : 'Trends' },
           { key: 'compare', label: language === 'sw' ? 'Linganisha' : 'Compare' },
         ].map((s) => (
-          <TouchableOpacity key={s.key} style={styles.shortcutBtn} onPress={() => onShortcut(s.key)}>
+          <TouchableOpacity
+            key={s.key}
+            style={styles.shortcutBtn}
+            onPress={() => onShortcut(s.key)}
+          >
             <Sparkles size={11} color="#22d15a" style={{ marginRight: 4 }} />
             <Text style={styles.shortcutText}>{s.label}</Text>
           </TouchableOpacity>
@@ -863,7 +1207,7 @@ const styles = StyleSheet.create({
     height: 340,
     borderRadius: 170,
     backgroundColor: 'rgba(34,209,90,0.1)',
-    ...(Platform.OS === 'web' ? { filter: 'blur(90px)' } as any : {}),
+    ...(Platform.OS === 'web' ? ({ filter: 'blur(90px)' } as any) : {}),
   },
   glowBL: {
     position: 'absolute',
@@ -873,7 +1217,7 @@ const styles = StyleSheet.create({
     height: 260,
     borderRadius: 130,
     backgroundColor: 'rgba(34,209,90,0.06)',
-    ...(Platform.OS === 'web' ? { filter: 'blur(70px)' } as any : {}),
+    ...(Platform.OS === 'web' ? ({ filter: 'blur(70px)' } as any) : {}),
   },
 
   safeArea: { flex: 1 },

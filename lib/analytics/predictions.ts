@@ -20,7 +20,7 @@ export interface YieldForecast {
   forecastTonnesHa: number;
   changePct: number;
   confidence: 'high' | 'medium' | 'low';
-  seasonalFactor: number;   // 1.0 = neutral
+  seasonalFactor: number; // 1.0 = neutral
   trend: 'up' | 'flat' | 'down';
   horizon: 'Mwisho wa msimu' | 'Msimu ujao';
 }
@@ -55,15 +55,13 @@ export function forecastYield(vitals: FarmVitals, profile: FarmProfile | null): 
   const forecast = α * adjusted + (1 - α) * base;
 
   const changePct = base > 0 ? ((forecast - base) / base) * 100 : 0;
-  const trend: YieldForecast['trend'] =
-    changePct > 5 ? 'up' : changePct < -5 ? 'down' : 'flat';
+  const trend: YieldForecast['trend'] = changePct > 5 ? 'up' : changePct < -5 ? 'down' : 'flat';
 
   // Confidence: based on data freshness (lastUpdated) + how extreme vitals are
   const staleness = Date.now() - new Date(vitals.lastUpdated).getTime();
   const hoursStale = staleness / 3_600_000;
   const confidence: YieldForecast['confidence'] =
-    hoursStale < 24 && vitals.soilHealth > 30 ? 'high'
-    : hoursStale < 72 ? 'medium' : 'low';
+    hoursStale < 24 && vitals.soilHealth > 30 ? 'high' : hoursStale < 72 ? 'medium' : 'low';
 
   return {
     currentTonnesHa: Math.round(base * 100) / 100,
@@ -79,7 +77,7 @@ export function forecastYield(vitals: FarmVitals, profile: FarmProfile | null): 
 // ─── 2. Pest Risk Score ───────────────────────────────────────────────────────
 
 export interface PestRisk {
-  score: number;          // 0–100
+  score: number; // 0–100
   level: 'Chini' | 'Ya kati' | 'Juu' | 'Hatari';
   color: string;
   primaryDrivers: string[];
@@ -87,8 +85,13 @@ export interface PestRisk {
 }
 
 const CROP_SENSITIVITY: Record<string, number> = {
-  'Mahindi': 0.6, 'Mpunga': 0.7, 'Nyanya': 0.9,
-  'Kahawa': 0.8, 'Maharagwe': 0.5, 'Mihogo': 0.3, 'Alizeti': 0.4,
+  Mahindi: 0.6,
+  Mpunga: 0.7,
+  Nyanya: 0.9,
+  Kahawa: 0.8,
+  Maharagwe: 0.5,
+  Mihogo: 0.3,
+  Alizeti: 0.4,
 };
 
 export function scorePestRisk(vitals: FarmVitals, profile: FarmProfile | null): PestRisk {
@@ -96,18 +99,35 @@ export function scorePestRisk(vitals: FarmVitals, profile: FarmProfile | null): 
   let score = 20; // baseline
 
   // Moisture: >70% triggers fungal/bacterial risk
-  if (vitals.moisture > 80) { score += 35; drivers.push('Unyevu mwingi sana (hatari ya ukungu)'); }
-  else if (vitals.moisture > 65) { score += 20; drivers.push('Unyevu wa juu'); }
-  else if (vitals.moisture < 20) { score += 15; drivers.push('Ukame — wadudu wa ardhi'); }
+  if (vitals.moisture > 80) {
+    score += 35;
+    drivers.push('Unyevu mwingi sana (hatari ya ukungu)');
+  } else if (vitals.moisture > 65) {
+    score += 20;
+    drivers.push('Unyevu wa juu');
+  } else if (vitals.moisture < 20) {
+    score += 15;
+    drivers.push('Ukame — wadudu wa ardhi');
+  }
 
   // Temperature: >32°C boosts aphid/thrip reproduction
-  if (vitals.temperature > 35) { score += 25; drivers.push('Joto kali — wadudu wanaongezeka haraka'); }
-  else if (vitals.temperature > 30) { score += 12; }
-  else if (vitals.temperature < 15) { score += 8; drivers.push('Baridi — hatari ya ugonjwa wa mizizi'); }
+  if (vitals.temperature > 35) {
+    score += 25;
+    drivers.push('Joto kali — wadudu wanaongezeka haraka');
+  } else if (vitals.temperature > 30) {
+    score += 12;
+  } else if (vitals.temperature < 15) {
+    score += 8;
+    drivers.push('Baridi — hatari ya ugonjwa wa mizizi');
+  }
 
   // Soil health: degraded soil = weaker plant immunity
-  if (vitals.soilHealth < 40) { score += 20; drivers.push('Afya ya udongo ni mbaya — mimea dhaifu'); }
-  else if (vitals.soilHealth < 60) { score += 10; }
+  if (vitals.soilHealth < 40) {
+    score += 20;
+    drivers.push('Afya ya udongo ni mbaya — mimea dhaifu');
+  } else if (vitals.soilHealth < 60) {
+    score += 10;
+  }
 
   // Crop-specific sensitivity
   const primaryCrop = profile?.primaryCrops?.[0] ?? '';
@@ -121,11 +141,16 @@ export function scorePestRisk(vitals: FarmVitals, profile: FarmProfile | null): 
     score >= 75 ? '#ef4444' : score >= 50 ? '#f97316' : score >= 25 ? '#f59e0b' : '#22c55e';
 
   const recs: string[] = [];
-  if (vitals.moisture > 70) recs.push('Punguza umwagiliaji. Hakikisha mifereji ya maji inafanya kazi.');
-  if (vitals.temperature > 32) recs.push('Panda mazao yanayostahimili joto au panda asubuhi mapema.');
-  if (vitals.soilHealth < 50) recs.push('Ongeza mboji ili kuzidisha vijidudu vya udongo vinavyolinda mimea.');
-  if (score >= 50) recs.push('Angalia shamba kila siku 2–3. Tumia dawa za asili kwanza kabla ya kemikali.');
-  if (recs.length === 0) recs.push('Hali iko sawa. Endelea na ufuatiliaji wa kawaida wa wiki moja.');
+  if (vitals.moisture > 70)
+    recs.push('Punguza umwagiliaji. Hakikisha mifereji ya maji inafanya kazi.');
+  if (vitals.temperature > 32)
+    recs.push('Panda mazao yanayostahimili joto au panda asubuhi mapema.');
+  if (vitals.soilHealth < 50)
+    recs.push('Ongeza mboji ili kuzidisha vijidudu vya udongo vinavyolinda mimea.');
+  if (score >= 50)
+    recs.push('Angalia shamba kila siku 2–3. Tumia dawa za asili kwanza kabla ya kemikali.');
+  if (recs.length === 0)
+    recs.push('Hali iko sawa. Endelea na ufuatiliaji wa kawaida wa wiki moja.');
 
   return { score, level, color, primaryDrivers: drivers.slice(0, 3), recommendations: recs };
 }
@@ -147,13 +172,13 @@ export interface PriceTrend {
 // Seed price series for 7 major crops (last 6 months, TZS/kg)
 // Values sourced from AMCOS/EWURA typical farmgate ranges (Tanzania 2024-25)
 const PRICE_HISTORY: Record<string, number[]> = {
-  'Mahindi':   [620, 640, 680, 710, 700, 650],
-  'Mpunga':    [1050, 1080, 1120, 1150, 1130, 1090],
-  'Maharagwe': [2100, 2200, 2300, 2150, 2050, 2000],
-  'Kahawa':    [4800, 5000, 5200, 5100, 4950, 4900],
-  'Nyanya':    [300, 420, 480, 360, 290, 420],
-  'Mihogo':    [260, 270, 290, 310, 300, 280],
-  'Alizeti':   [1700, 1750, 1820, 1800, 1780, 1820],
+  Mahindi: [620, 640, 680, 710, 700, 650],
+  Mpunga: [1050, 1080, 1120, 1150, 1130, 1090],
+  Maharagwe: [2100, 2200, 2300, 2150, 2050, 2000],
+  Kahawa: [4800, 5000, 5200, 5100, 4950, 4900],
+  Nyanya: [300, 420, 480, 360, 290, 420],
+  Mihogo: [260, 270, 290, 310, 300, 280],
+  Alizeti: [1700, 1750, 1820, 1800, 1780, 1820],
 };
 
 /** Simple OLS linear regression over the 6-month series */
@@ -161,8 +186,12 @@ function linearRegression(y: number[]): { slope: number; intercept: number } {
   const n = y.length;
   const xMean = (n - 1) / 2;
   const yMean = y.reduce((a, b) => a + b, 0) / n;
-  let num = 0; let den = 0;
-  y.forEach((yi, i) => { num += (i - xMean) * (yi - yMean); den += (i - xMean) ** 2; });
+  let num = 0;
+  let den = 0;
+  y.forEach((yi, i) => {
+    num += (i - xMean) * (yi - yMean);
+    den += (i - xMean) ** 2;
+  });
   const slope = den === 0 ? 0 : num / den;
   return { slope, intercept: yMean - slope * xMean };
 }
@@ -174,7 +203,7 @@ export function trendCropPrice(crop: string): PriceTrend {
 
   const current = history[n - 1];
   const forecast30 = Math.round(intercept + slope * (n + 0.5)); // ~1 month ahead
-  const forecast90 = Math.round(intercept + slope * (n + 2));   // ~3 months ahead
+  const forecast90 = Math.round(intercept + slope * (n + 2)); // ~3 months ahead
 
   const changePct30d = current > 0 ? ((forecast30 - current) / current) * 100 : 0;
   const trendDirection: PriceTrend['trendDirection'] =
@@ -192,9 +221,11 @@ export function trendCropPrice(crop: string): PriceTrend {
   else signal = 'Uza sasa';
 
   const seasonalNote =
-    month >= 2 && month <= 4 ? 'Masika — bei zinashuka baada ya mavuno.'
-    : month >= 9 && month <= 11 ? 'Vuli — bei zinashuka; hifadhi kwa wiki 6–8 kwa faida bora.'
-    : 'Kipindi kati ya mavuno — bei zinabaki thabiti au kupanda kidogo.';
+    month >= 2 && month <= 4
+      ? 'Masika — bei zinashuka baada ya mavuno.'
+      : month >= 9 && month <= 11
+        ? 'Vuli — bei zinashuka; hifadhi kwa wiki 6–8 kwa faida bora.'
+        : 'Kipindi kati ya mavuno — bei zinabaki thabiti au kupanda kidogo.';
 
   return {
     crop,

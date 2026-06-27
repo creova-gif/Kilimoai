@@ -18,20 +18,33 @@
  *   risk_score  = 0–100 composite (drought + pest + market)
  */
 
-export const CROPS = ['Mahindi', 'Mpunga', 'Maharagwe', 'Kahawa', 'Nyanya', 'Mihogo', 'Alizeti'] as const;
-export type Crop = typeof CROPS[number];
+export const CROPS = [
+  'Mahindi',
+  'Mpunga',
+  'Maharagwe',
+  'Kahawa',
+  'Nyanya',
+  'Mihogo',
+  'Alizeti',
+] as const;
+export type Crop = (typeof CROPS)[number];
 
-export const SOIL_TYPES = ['Tifutifu (Loam)', 'Mchanga (Sandy)', 'Udongo (Clay)', 'Mboji (Organic)'] as const;
-export type SoilType = typeof SOIL_TYPES[number];
+export const SOIL_TYPES = [
+  'Tifutifu (Loam)',
+  'Mchanga (Sandy)',
+  'Udongo (Clay)',
+  'Mboji (Organic)',
+] as const;
+export type SoilType = (typeof SOIL_TYPES)[number];
 
 export interface TwinInputs {
   crop: Crop;
-  areaHa: number;            // 0.5 – 50
-  rainfallMm: number;        // seasonal total, 200 – 2000
-  fertilizerKgHa: number;    // 0 – 400
+  areaHa: number; // 0.5 – 50
+  rainfallMm: number; // seasonal total, 200 – 2000
+  fertilizerKgHa: number; // 0 – 400
   irrigated: boolean;
-  soilHealth: number;        // 0 – 100 (from farm vitals)
-  plantingDensityPct: number;// 50 – 150 (% of recommended)
+  soilHealth: number; // 0 – 100 (from farm vitals)
+  plantingDensityPct: number; // 50 – 150 (% of recommended)
   soilType: SoilType;
 }
 
@@ -41,44 +54,127 @@ export interface TwinOutput {
   revenuesTZS: number;
   totalCostTZS: number;
   netProfitTZS: number;
-  roi: number;               // %
+  roi: number; // %
   waterUsageM3: number;
-  riskScore: number;         // 0–100 (lower = safer)
+  riskScore: number; // 0–100 (lower = safer)
   riskBreakdown: { drought: number; pest: number; market: number };
-  costBreakdown: { seed: number; fertilizer: number; labor: number; irrigation: number; overhead: number };
-  advice: string[];           // Swahili advisory strings
+  costBreakdown: {
+    seed: number;
+    fertilizer: number;
+    labor: number;
+    irrigation: number;
+    overhead: number;
+  };
+  advice: string[]; // Swahili advisory strings
 }
 
 // ─── Per-crop constants (calibrated from CIMMYT / IRRI / FAO EAfrica data) ──
 
 interface CropParams {
-  baseYieldTHa: number;      // attainable ceiling (t/ha) with good management
-  optimalRainMm: number;     // season total mm for full rf=1
-  priceTZSkg: number;        // farmgate typical price
-  recFertKgHa: number;       // recommended N+P2O5+K2O (combined)
-  recDensityPlHa: number;    // recommended plants/ha (for reference)
+  baseYieldTHa: number; // attainable ceiling (t/ha) with good management
+  optimalRainMm: number; // season total mm for full rf=1
+  priceTZSkg: number; // farmgate typical price
+  recFertKgHa: number; // recommended N+P2O5+K2O (combined)
+  recDensityPlHa: number; // recommended plants/ha (for reference)
   seedCostTZSha: number;
-  laborDaysCost: number;     // TZS/ha
-  waterLitersMMha: number;   // litres per mm per ha (for water calcs)
-  pestSensitivity: number;   // 0–1 (pest risk multiplier)
-  marketVolatility: number;  // 0–1 (price risk)
+  laborDaysCost: number; // TZS/ha
+  waterLitersMMha: number; // litres per mm per ha (for water calcs)
+  pestSensitivity: number; // 0–1 (pest risk multiplier)
+  marketVolatility: number; // 0–1 (price risk)
 }
 
 const CROP_PARAMS: Record<Crop, CropParams> = {
-  'Mahindi':    { baseYieldTHa: 5,   optimalRainMm: 600,  priceTZSkg: 650,   recFertKgHa: 120, recDensityPlHa: 53_000, seedCostTZSha: 85_000,  laborDaysCost: 320_000, waterLitersMMha: 1000, pestSensitivity: 0.6, marketVolatility: 0.5 },
-  'Mpunga':     { baseYieldTHa: 5.5, optimalRainMm: 1200, priceTZSkg: 1100,  recFertKgHa: 150, recDensityPlHa: 400_000,seedCostTZSha: 140_000, laborDaysCost: 480_000, waterLitersMMha: 1500, pestSensitivity: 0.7, marketVolatility: 0.4 },
-  'Maharagwe':  { baseYieldTHa: 2,   optimalRainMm: 400,  priceTZSkg: 2200,  recFertKgHa: 60,  recDensityPlHa: 250_000,seedCostTZSha: 70_000,  laborDaysCost: 260_000, waterLitersMMha: 800,  pestSensitivity: 0.5, marketVolatility: 0.6 },
-  'Kahawa':     { baseYieldTHa: 1.5, optimalRainMm: 1500, priceTZSkg: 5000,  recFertKgHa: 200, recDensityPlHa: 1_667,  seedCostTZSha: 250_000, laborDaysCost: 600_000, waterLitersMMha: 2000, pestSensitivity: 0.8, marketVolatility: 0.7 },
-  'Nyanya':     { baseYieldTHa: 30,  optimalRainMm: 600,  priceTZSkg: 450,   recFertKgHa: 250, recDensityPlHa: 16_000, seedCostTZSha: 180_000, laborDaysCost: 550_000, waterLitersMMha: 1200, pestSensitivity: 0.9, marketVolatility: 0.8 },
-  'Mihogo':     { baseYieldTHa: 14,  optimalRainMm: 700,  priceTZSkg: 280,   recFertKgHa: 80,  recDensityPlHa: 10_000, seedCostTZSha: 60_000,  laborDaysCost: 240_000, waterLitersMMha: 900,  pestSensitivity: 0.3, marketVolatility: 0.4 },
-  'Alizeti':    { baseYieldTHa: 1.8, optimalRainMm: 500,  priceTZSkg: 1800,  recFertKgHa: 100, recDensityPlHa: 44_000, seedCostTZSha: 95_000,  laborDaysCost: 290_000, waterLitersMMha: 900,  pestSensitivity: 0.4, marketVolatility: 0.5 },
+  Mahindi: {
+    baseYieldTHa: 5,
+    optimalRainMm: 600,
+    priceTZSkg: 650,
+    recFertKgHa: 120,
+    recDensityPlHa: 53_000,
+    seedCostTZSha: 85_000,
+    laborDaysCost: 320_000,
+    waterLitersMMha: 1000,
+    pestSensitivity: 0.6,
+    marketVolatility: 0.5,
+  },
+  Mpunga: {
+    baseYieldTHa: 5.5,
+    optimalRainMm: 1200,
+    priceTZSkg: 1100,
+    recFertKgHa: 150,
+    recDensityPlHa: 400_000,
+    seedCostTZSha: 140_000,
+    laborDaysCost: 480_000,
+    waterLitersMMha: 1500,
+    pestSensitivity: 0.7,
+    marketVolatility: 0.4,
+  },
+  Maharagwe: {
+    baseYieldTHa: 2,
+    optimalRainMm: 400,
+    priceTZSkg: 2200,
+    recFertKgHa: 60,
+    recDensityPlHa: 250_000,
+    seedCostTZSha: 70_000,
+    laborDaysCost: 260_000,
+    waterLitersMMha: 800,
+    pestSensitivity: 0.5,
+    marketVolatility: 0.6,
+  },
+  Kahawa: {
+    baseYieldTHa: 1.5,
+    optimalRainMm: 1500,
+    priceTZSkg: 5000,
+    recFertKgHa: 200,
+    recDensityPlHa: 1_667,
+    seedCostTZSha: 250_000,
+    laborDaysCost: 600_000,
+    waterLitersMMha: 2000,
+    pestSensitivity: 0.8,
+    marketVolatility: 0.7,
+  },
+  Nyanya: {
+    baseYieldTHa: 30,
+    optimalRainMm: 600,
+    priceTZSkg: 450,
+    recFertKgHa: 250,
+    recDensityPlHa: 16_000,
+    seedCostTZSha: 180_000,
+    laborDaysCost: 550_000,
+    waterLitersMMha: 1200,
+    pestSensitivity: 0.9,
+    marketVolatility: 0.8,
+  },
+  Mihogo: {
+    baseYieldTHa: 14,
+    optimalRainMm: 700,
+    priceTZSkg: 280,
+    recFertKgHa: 80,
+    recDensityPlHa: 10_000,
+    seedCostTZSha: 60_000,
+    laborDaysCost: 240_000,
+    waterLitersMMha: 900,
+    pestSensitivity: 0.3,
+    marketVolatility: 0.4,
+  },
+  Alizeti: {
+    baseYieldTHa: 1.8,
+    optimalRainMm: 500,
+    priceTZSkg: 1800,
+    recFertKgHa: 100,
+    recDensityPlHa: 44_000,
+    seedCostTZSha: 95_000,
+    laborDaysCost: 290_000,
+    waterLitersMMha: 900,
+    pestSensitivity: 0.4,
+    marketVolatility: 0.5,
+  },
 };
 
 const SOIL_MULTIPLIER: Record<SoilType, number> = {
-  'Tifutifu (Loam)':  1.0,
-  'Mchanga (Sandy)':  0.78,
-  'Udongo (Clay)':    0.88,
-  'Mboji (Organic)':  1.12,
+  'Tifutifu (Loam)': 1.0,
+  'Mchanga (Sandy)': 0.78,
+  'Udongo (Clay)': 0.88,
+  'Mboji (Organic)': 1.12,
 };
 
 // ─── Factor functions ─────────────────────────────────────────────────────────
@@ -111,7 +207,7 @@ function fertFactor(rate: number, recommended: number): number {
 function densityFactor(pct: number): number {
   // Peak at 100%; falls off symmetrically: under-planted or over-planted both hurt
   const d = pct / 100;
-  if (d <= 1) return 0.5 + 0.5 * d;       // 50–100%
+  if (d <= 1) return 0.5 + 0.5 * d; // 50–100%
   return Math.max(0.75, 1.0 - 0.25 * (d - 1.0)); // over-planted
 }
 
@@ -154,23 +250,32 @@ function buildAdvice(inputs: TwinInputs, output: TwinOutput, p: CropParams): str
   if (riskBreakdown.drought > 60 && !inputs.irrigated)
     tips.push('Hatari ya ukame ni kubwa. Fikiria umwagiliaji au kuhifadhi maji ya mvua.');
   if (inputs.fertilizerKgHa < p.recFertKgHa * 0.5)
-    tips.push(`Mbolea ni chini ya mapendekezo (${p.recFertKgHa} kg/ha). Ongeza hadi nusu ya mapendekezo kwa faida bora.`);
+    tips.push(
+      `Mbolea ni chini ya mapendekezo (${p.recFertKgHa} kg/ha). Ongeza hadi nusu ya mapendekezo kwa faida bora.`
+    );
   if (inputs.fertilizerKgHa > p.recFertKgHa * 1.4)
     tips.push('Mbolea nyingi sana — unaweza kusababisha kuchomwa kwa mizizi. Punguza kidogo.');
   if (inputs.soilHealth < 50)
-    tips.push('Afya ya udongo ni chini ya wastani. Tumia mboji au mbolea ya kijani kabla ya kupanda.');
+    tips.push(
+      'Afya ya udongo ni chini ya wastani. Tumia mboji au mbolea ya kijani kabla ya kupanda.'
+    );
   if (inputs.plantingDensityPct > 130)
     tips.push('Msongamano wa mimea ni mkubwa sana — hewa haitoshi na magonjwa yataenea haraka.');
   if (inputs.plantingDensityPct < 70)
     tips.push('Mimea ni michache mno — unaacha ardhi bure. Ongeza msongamano kwa mavuno zaidi.');
   if (riskBreakdown.pest > 70)
-    tips.push('Hatari ya wadudu na magonjwa ni ya juu. Angalia shamba mara kwa mara na tumia dawa za kuzuia.');
+    tips.push(
+      'Hatari ya wadudu na magonjwa ni ya juu. Angalia shamba mara kwa mara na tumia dawa za kuzuia.'
+    );
   if (output.roi < 20)
-    tips.push('Faida ya mtaji ni ndogo. Angalia kupunguza gharama za kazi au kuuza kwa bei bora zaidi.');
-  if (output.roi > 100)
-    tips.push('Hali nzuri sana! Weka akiba ya sehemu ya faida kwa msimu ujao.');
+    tips.push(
+      'Faida ya mtaji ni ndogo. Angalia kupunguza gharama za kazi au kuuza kwa bei bora zaidi.'
+    );
+  if (output.roi > 100) tips.push('Hali nzuri sana! Weka akiba ya sehemu ya faida kwa msimu ujao.');
   if (tips.length === 0)
-    tips.push('Hali ya shamba lako iko vizuri. Endelea na mpango huu na ufuatilie mavuno kwa karibu.');
+    tips.push(
+      'Hali ya shamba lako iko vizuri. Endelea na mpango huu na ufuatilie mavuno kwa karibu.'
+    );
   return tips;
 }
 
@@ -201,11 +306,11 @@ export function runTwinModel(inputs: TwinInputs): TwinOutput {
 
   const riskBreakdown = {
     drought: droughtRisk(inputs.rainfallMm, p.optimalRainMm, inputs.irrigated),
-    pest:    pestRisk(inputs.soilHealth, inputs.rainfallMm, p.optimalRainMm, p.pestSensitivity),
-    market:  marketRisk(p.marketVolatility),
+    pest: pestRisk(inputs.soilHealth, inputs.rainfallMm, p.optimalRainMm, p.pestSensitivity),
+    market: marketRisk(p.marketVolatility),
   };
   const riskScore = Math.round(
-    riskBreakdown.drought * 0.4 + riskBreakdown.pest * 0.35 + riskBreakdown.market * 0.25,
+    riskBreakdown.drought * 0.4 + riskBreakdown.pest * 0.35 + riskBreakdown.market * 0.25
   );
 
   const output: TwinOutput = {

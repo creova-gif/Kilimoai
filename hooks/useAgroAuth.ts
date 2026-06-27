@@ -20,14 +20,22 @@ const SESSION_KEY = 'kilimo_session_token';
 const SecureStore = {
   getItemAsync: async (key: string): Promise<string | null> => {
     if (Platform.OS === 'web') {
-      try { return localStorage.getItem(key); } catch { return null; }
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
     }
     const ss = require('expo-secure-store');
     return ss.getItemAsync(key);
   },
   setItemAsync: async (key: string, value: string): Promise<void> => {
     if (Platform.OS === 'web') {
-      try { localStorage.setItem(key, value); } catch {}
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        /* storage unavailable */
+      }
       return;
     }
     const ss = require('expo-secure-store');
@@ -35,7 +43,11 @@ const SecureStore = {
   },
   deleteItemAsync: async (key: string): Promise<void> => {
     if (Platform.OS === 'web') {
-      try { localStorage.removeItem(key); } catch {}
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        /* storage unavailable */
+      }
       return;
     }
     const ss = require('expo-secure-store');
@@ -83,7 +95,9 @@ export function useAgroAuth() {
         if (!token || isAuthenticated) return;
 
         if (supabase) {
-          const { data: { user } } = await supabase.auth.getUser(token);
+          const {
+            data: { user },
+          } = await supabase.auth.getUser(token);
           if (user) {
             // Fetch Agro ID profile from DB
             const { data: profile } = await supabase
@@ -124,7 +138,7 @@ export function useAgroAuth() {
     setLoading(true);
     try {
       if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating phone OTP send for:', phone);
+        if (__DEV__) console.log('[AgroAuth MOCK] Simulating phone OTP send for:', phone);
         await new Promise((r) => setTimeout(r, 1000));
         await SecureStore.setItemAsync('kilimo_phone', phone);
         const { Alert } = require('react-native');
@@ -141,17 +155,17 @@ export function useAgroAuth() {
       if (error) throw error;
       await SecureStore.setItemAsync('kilimo_phone', phone);
     } catch (err: any) {
-      throw new Error(err.message ?? 'Failed to send OTP');
+      throw new Error(err.message ?? 'Failed to send OTP', { cause: err });
     } finally {
       setLoading(false);
     }
   }, []);
   const signInWithEmail = useCallback(async (email: string) => {
-    console.log('[AgroAuth] signInWithEmail starting for:', email);
+    if (__DEV__) console.log('[AgroAuth] signInWithEmail starting for:', email);
     setLoading(true);
     try {
       if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating email OTP send for:', email);
+        if (__DEV__) console.log('[AgroAuth MOCK] Simulating email OTP send for:', email);
         await new Promise((r) => setTimeout(r, 1000));
         await SecureStore.setItemAsync('kilimo_email', email);
         const { Alert } = require('react-native');
@@ -161,7 +175,7 @@ export function useAgroAuth() {
         );
         return { success: true };
       }
-      console.log('[AgroAuth] Calling Supabase signInWithOtp for email...');
+      if (__DEV__) console.log('[AgroAuth] Calling Supabase signInWithOtp for email...');
       const { error } = await supabase.auth.signInWithOtp({
         email,
       });
@@ -173,67 +187,82 @@ export function useAgroAuth() {
       return { success: true };
     } catch (err: any) {
       console.error('[AgroAuth] signInWithEmail exception caught:', err);
-      throw new Error(err.message ?? 'Failed to send OTP to email');
+      throw new Error(err.message ?? 'Failed to send OTP to email', { cause: err });
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const verifyOtp = useCallback(async (contact: string, token: string) => {
-    setLoading(true);
-    const normalized = contact.trim().replace(/\s/g, '');
-    const isEmail = normalized.includes('@');
-    try {
-      if (!supabase) {
-        console.log('[AgroAuth MOCK] Simulating OTP verification for:', normalized, 'token:', token);
-        await new Promise((r) => setTimeout(r, 800));
-        if (token === '123456') {
-          await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');
-          const mockUserId = 'mock-user-' + normalized.replace(/[^a-zA-Z0-9]/g, '');
-          const currentAgroId = useKilimoStore.getState().agroId;
-          if (currentAgroId && currentAgroId.id === mockUserId) {
-            return { existingUser: true, user: { id: mockUserId, email: isEmail ? normalized : normalized + '@mock.com' } };
+  const verifyOtp = useCallback(
+    async (contact: string, token: string) => {
+      setLoading(true);
+      const normalized = contact.trim().replace(/\s/g, '');
+      const isEmail = normalized.includes('@');
+      try {
+        if (!supabase) {
+          if (__DEV__)
+            console.log(
+              '[AgroAuth MOCK] Simulating OTP verification for:',
+              normalized,
+              'token:',
+              token
+            );
+          await new Promise((r) => setTimeout(r, 800));
+          if (token === '123456') {
+            await SecureStore.setItemAsync(SESSION_KEY, 'mock-access-token');
+            const mockUserId = 'mock-user-' + normalized.replace(/[^a-zA-Z0-9]/g, '');
+            const currentAgroId = useKilimoStore.getState().agroId;
+            if (currentAgroId && currentAgroId.id === mockUserId) {
+              return {
+                existingUser: true,
+                user: { id: mockUserId, email: isEmail ? normalized : normalized + '@mock.com' },
+              };
+            }
+            return {
+              existingUser: false,
+              user: { id: mockUserId, email: isEmail ? normalized : normalized + '@mock.com' },
+            };
+          } else {
+            throw new Error('Invalid verification code');
           }
-          return { existingUser: false, user: { id: mockUserId, email: isEmail ? normalized : normalized + '@mock.com' } };
-        } else {
-          throw new Error('Invalid verification code');
         }
-      }
-      
-      const verifyPayload: any = {
-        token,
-        type: isEmail ? 'email' : 'sms',
-      };
-      if (isEmail) {
-        verifyPayload.email = normalized;
-      } else {
-        verifyPayload.phone = normalized;
-      }
 
-      const { data, error } = await supabase.auth.verifyOtp(verifyPayload);
-      if (error) throw error;
-      
-      // Persist session token securely
-      await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
+        const verifyPayload: any = {
+          token,
+          type: isEmail ? 'email' : 'sms',
+        };
+        if (isEmail) {
+          verifyPayload.email = normalized;
+        } else {
+          verifyPayload.phone = normalized;
+        }
 
-      // Check if profile exists, to hydrate if it's an existing user.
-      const { data: profile, error: profileError } = await supabase
-        .from('agro_profiles')
-        .select('*')
-        .eq('user_id', data.user.id)
-        .single();
+        const { data, error } = await supabase.auth.verifyOtp(verifyPayload);
+        if (error) throw error;
 
-      if (!profileError && profile) {
-        setAgroId(profile as AgroID);
-        return { existingUser: true, user: data.user };
+        // Persist session token securely
+        await SecureStore.setItemAsync(SESSION_KEY, data.session?.access_token ?? '');
+
+        // Check if profile exists, to hydrate if it's an existing user.
+        const { data: profile, error: profileError } = await supabase
+          .from('agro_profiles')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+
+        if (!profileError && profile) {
+          setAgroId(profile as AgroID);
+          return { existingUser: true, user: data.user };
+        }
+        return { existingUser: false, user: data.user };
+      } catch (err: any) {
+        throw new Error(err.message ?? 'Failed to verify OTP', { cause: err });
+      } finally {
+        setLoading(false);
       }
-      return { existingUser: false, user: data.user };
-    } catch (err: any) {
-      throw new Error(err.message ?? 'Failed to verify OTP');
-    } finally {
-      setLoading(false);
-    }
-  }, [setAgroId]);
+    },
+    [setAgroId]
+  );
 
   // ── Sign out ─────────────────────────────────────────────────────────────
   const signOut = useCallback(async () => {

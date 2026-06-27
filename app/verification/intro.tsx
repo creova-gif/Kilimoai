@@ -19,14 +19,19 @@ export default function VerificationIntro() {
           <ShieldCheck size={48} color={colors.primary} />
         </View>
         <Text style={[styles.desc, { color: colors.text }]}>
-          To unlock financial features like Kilimo Wallet and Smart Contracts, we must verify your identity in compliance with Tanzanian regulations.
+          To unlock financial features like Kilimo Wallet and Smart Contracts, we must verify your
+          identity in compliance with Tanzanian regulations.
         </Text>
 
         <GlassCard style={styles.card}>
           <Text style={[styles.cardTitle, { color: colors.text }]}>What you'll need:</Text>
           <Text style={[styles.bullet, { color: colors.textMute }]}>• NIDA ID or Passport</Text>
-          <Text style={[styles.bullet, { color: colors.textMute }]}>• A clear photo of yourself</Text>
-          <Text style={[styles.bullet, { color: colors.textMute }]}>• Farm or Business Registration (if applicable)</Text>
+          <Text style={[styles.bullet, { color: colors.textMute }]}>
+            • A clear photo of yourself
+          </Text>
+          <Text style={[styles.bullet, { color: colors.textMute }]}>
+            • Farm or Business Registration (if applicable)
+          </Text>
         </GlassCard>
 
         <View style={styles.consentRow}>
@@ -36,7 +41,9 @@ export default function VerificationIntro() {
             trackColor={{ false: '#333', true: colors.primary }}
           />
           <Text style={[styles.consentText, { color: colors.textMute }]}>
-            I consent to Kilimo AI processing my personal data for identity verification under the PDPA regulations. My data will be kept secure and deleted after 90 days if verification fails.
+            I consent to Kilimo AI processing my personal data for identity verification under the
+            PDPA regulations. My data will be kept secure and deleted after 90 days if verification
+            fails.
           </Text>
         </View>
 
@@ -58,7 +65,13 @@ export default function VerificationIntro() {
 const styles = StyleSheet.create({
   content: { padding: 24 },
   iconWrap: { alignItems: 'center', marginBottom: 24 },
-  desc: { fontSize: 16, fontFamily: 'Inter_500Medium', lineHeight: 24, textAlign: 'center', marginBottom: 32 },
+  desc: {
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
+    lineHeight: 24,
+    textAlign: 'center',
+    marginBottom: 32,
+  },
   card: { padding: 20, marginBottom: 32 },
   cardTitle: { fontSize: 15, fontFamily: 'Inter_800ExtraBold', marginBottom: 12 },
   bullet: { fontSize: 14, fontFamily: 'Inter_500Medium', marginBottom: 8, lineHeight: 22 },

@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  Alert
+  Alert,
 } from 'react-native';
 import {
   Award,
@@ -29,25 +29,25 @@ import {
   Bot,
   GraduationCap,
   Play,
-  RotateCcw
+  RotateCcw,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../constants/Theme';
-import Animated, { 
-  FadeIn, 
-  FadeOut, 
-  SlideInRight, 
-  useSharedValue, 
-  useAnimatedStyle, 
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInRight,
+  useSharedValue,
+  useAnimatedStyle,
   withSpring,
   withSequence,
   withTiming,
   withRepeat,
   Easing,
-  interpolate
+  interpolate,
 } from 'react-native-reanimated';
 import { useKilimoStore } from '../store/useKilimoStore';
 
@@ -78,21 +78,23 @@ const MODULES_DATA = (colors: any): Module[] => [
     titleEn: '1. Introduction to Sankofa AI',
     subtitleSw: 'Jinsi ya kujitambulisha vizuri',
     subtitleEn: 'How to introduce yourself properly',
-    lessonSw: 'Sankofa AI ni mshauri wako wa kilimo lakini anahitaji muktadha ili kukusaidia vizuri zaidi. Unapoanza mazungumzo, jitambulishe kwa jina, taja eneo lako (mkoa/wilaya), mazao unayokuza, na tatizo lako. Hii inasaidia AI kutoa ushauri unaoendana na hali ya hewa na udongo wa eneo lako.',
-    lessonEn: 'Sankofa AI is your farming advisor, but it needs context to help you best. When starting a chat, introduce yourself by name, state your location (region/district), the crops you grow, and your issue. This helps the AI provide advice tailored to your local weather and soil conditions.',
+    lessonSw:
+      'Sankofa AI ni mshauri wako wa kilimo lakini anahitaji muktadha ili kukusaidia vizuri zaidi. Unapoanza mazungumzo, jitambulishe kwa jina, taja eneo lako (mkoa/wilaya), mazao unayokuza, na tatizo lako. Hii inasaidia AI kutoa ushauri unaoendana na hali ya hewa na udongo wa eneo lako.',
+    lessonEn:
+      'Sankofa AI is your farming advisor, but it needs context to help you best. When starting a chat, introduce yourself by name, state your location (region/district), the crops you grow, and your issue. This helps the AI provide advice tailored to your local weather and soil conditions.',
     questionSw: 'Ni ipi njia bora ya kuanzisha mazungumzo na Sankofa AI?',
     questionEn: 'What is the best way to start a conversation with Sankofa AI?',
     optionsSw: [
       'A) "Nina shida na mmea wangu wa mahindi."',
       'B) "Habari! Mimi ni Juma kutoka Mbeya, nina shamba la ekari 2 la mahindi. Majani yameanza kugeuka manjano."',
-      'C) "Nisaidie haraka mazao yangu yanakufa!"'
+      'C) "Nisaidie haraka mazao yangu yanakufa!"',
     ],
     optionsEn: [
       'A) "I have a problem with my maize plant."',
       'B) "Hello! I am Juma from Mbeya, I have a 2-acre maize farm. The leaves have started turning yellow."',
-      'C) "Help me quickly my crops are dying!"'
+      'C) "Help me quickly my crops are dying!"',
     ],
-    correctAnswerIdx: 1
+    correctAnswerIdx: 1,
   },
   {
     id: 'prompting',
@@ -101,21 +103,23 @@ const MODULES_DATA = (colors: any): Module[] => [
     titleEn: '2. Effective Prompting',
     subtitleSw: 'Kutoa maelezo maalum na ya kina',
     subtitleEn: 'Providing specific and detailed prompts',
-    lessonSw: 'Ili kupata majibu sahihi zaidi kutoka kwa Sankofa AI, epuka maswali ya jumla. Toa maelezo ya aina ya mbegu uliyotumia, umri wa mmea, hali ya unyevu wa udongo, na mabadiliko ya hali ya hewa ya hivi karibuni. AI itakupa mpango kamili wa hatua kwa hatua kulingana na maelezo hayo.',
-    lessonEn: 'To get the most accurate answers from Sankofa AI, avoid general questions. Provide details about the seed variety used, plant age, soil moisture conditions, and recent weather changes. The AI will give you a complete step-by-step plan based on that details.',
+    lessonSw:
+      'Ili kupata majibu sahihi zaidi kutoka kwa Sankofa AI, epuka maswali ya jumla. Toa maelezo ya aina ya mbegu uliyotumia, umri wa mmea, hali ya unyevu wa udongo, na mabadiliko ya hali ya hewa ya hivi karibuni. AI itakupa mpango kamili wa hatua kwa hatua kulingana na maelezo hayo.',
+    lessonEn:
+      'To get the most accurate answers from Sankofa AI, avoid general questions. Provide details about the seed variety used, plant age, soil moisture conditions, and recent weather changes. The AI will give you a complete step-by-step plan based on that details.',
     questionSw: 'Sankofa AI itakupa ushauri bora zaidi ukiipatia maelezo gani?',
     questionEn: 'Sankofa AI will give you the best advice if you provide which details?',
     optionsSw: [
       'A) Historia ya shamba, aina ya mbegu, na umri wa mmea',
       'B) Bei ya mbolea pekee',
-      'C) Kuuliza "kwa nini kilimo ni kigumu"'
+      'C) Kuuliza "kwa nini kilimo ni kigumu"',
     ],
     optionsEn: [
       'A) Farm history, seed variety, and plant age',
       'B) Fertilizer price only',
-      'C) Asking "why farming is hard"'
+      'C) Asking "why farming is hard"',
     ],
-    correctAnswerIdx: 0
+    correctAnswerIdx: 0,
   },
   {
     id: 'photos',
@@ -124,21 +128,23 @@ const MODULES_DATA = (colors: any): Module[] => [
     titleEn: '3. Capturing Crop Diseases',
     subtitleSw: 'Kanuni za kupata picha iliyo wazi',
     subtitleEn: 'Rules for getting a clear photo',
-    lessonSw: 'Sankofa AI ina uwezo wa kutambua magonjwa kwa kuona picha, lakini picha zikiwa na giza au ukungu, itashindwa. Piga picha kwenye mwanga wa jua (mchana), umbali wa sm 15–30 kutoka kwa mmea, ukilenga sehemu yenye tatizo (majani, shina au tunda). Hakikisha picha haijatikisika.',
-    lessonEn: 'Sankofa AI can diagnose diseases from photos, but if photos are dark or blurry, it will fail. Take photos in bright daylight, from a distance of 15–30 cm from the plant, focusing on the affected part (leaves, stem, or fruit). Make sure the photo is stable and clear.',
+    lessonSw:
+      'Sankofa AI ina uwezo wa kutambua magonjwa kwa kuona picha, lakini picha zikiwa na giza au ukungu, itashindwa. Piga picha kwenye mwanga wa jua (mchana), umbali wa sm 15–30 kutoka kwa mmea, ukilenga sehemu yenye tatizo (majani, shina au tunda). Hakikisha picha haijatikisika.',
+    lessonEn:
+      'Sankofa AI can diagnose diseases from photos, but if photos are dark or blurry, it will fail. Take photos in bright daylight, from a distance of 15–30 cm from the plant, focusing on the affected part (leaves, stem, or fruit). Make sure the photo is stable and clear.',
     questionSw: 'Ipi ni kanuni sahihi ya kupiga picha kwa ajili ya utambuzi wa AI?',
     questionEn: 'What is the correct rule for taking a photo for AI diagnosis?',
     optionsSw: [
       'A) Piga picha ya shamba zima kutoka mbali wakati wa jioni',
       'B) Piga picha usiku ukitumia flash ya kamera',
-      'C) Piga picha karibu (sm 15-30), mchana, iliyolenga sehemu iliyoathirika na isiyotikisika'
+      'C) Piga picha karibu (sm 15-30), mchana, iliyolenga sehemu iliyoathirika na isiyotikisika',
     ],
     optionsEn: [
       'A) Take a photo of the whole farm from a distance in the evening',
       'B) Take a photo at night using camera flash',
-      'C) Take a close-up (15-30cm), in daylight, focused on the affected part, and stable'
+      'C) Take a close-up (15-30cm), in daylight, focused on the affected part, and stable',
     ],
-    correctAnswerIdx: 2
+    correctAnswerIdx: 2,
   },
   {
     id: 'confidence',
@@ -147,21 +153,24 @@ const MODULES_DATA = (colors: any): Module[] => [
     titleEn: '4. Understanding Confidence Scores',
     subtitleSw: 'Kutambua lini AI haina uhakika',
     subtitleEn: 'Recognizing when the AI is unsure',
-    lessonSw: 'Kila utambuzi wa picha unaambatana na kiwango cha uhakika (Confidence Score). Kiwango kikiwa "High", AI ina uhakika mkubwa. Kikiwa "Low", maana yake picha haikuwa wazi au ugonjwa haufahamiki vizuri. Ikiwa kiwango ni "Low", usichukue hatua za haraka — piga picha nyingine bora zaidi au tafuta msaada wa mtaalamu.',
-    lessonEn: 'Every image diagnosis comes with a confidence score. "High" means the AI is very sure. "Low" means the photo was unclear or the disease is not well recognized. If the score is "Low", do not take immediate action — take another better photo or seek expert advice.',
-    questionSw: 'Nini unapaswa kufanya ikiwa Sankofa AI inakupa kiwango cha chini cha uhakika (Low Confidence)?',
+    lessonSw:
+      'Kila utambuzi wa picha unaambatana na kiwango cha uhakika (Confidence Score). Kiwango kikiwa "High", AI ina uhakika mkubwa. Kikiwa "Low", maana yake picha haikuwa wazi au ugonjwa haufahamiki vizuri. Ikiwa kiwango ni "Low", usichukue hatua za haraka — piga picha nyingine bora zaidi au tafuta msaada wa mtaalamu.',
+    lessonEn:
+      'Every image diagnosis comes with a confidence score. "High" means the AI is very sure. "Low" means the photo was unclear or the disease is not well recognized. If the score is "Low", do not take immediate action — take another better photo or seek expert advice.',
+    questionSw:
+      'Nini unapaswa kufanya ikiwa Sankofa AI inakupa kiwango cha chini cha uhakika (Low Confidence)?',
     questionEn: 'What should you do if Sankofa AI gives you a low confidence score?',
     optionsSw: [
       'A) Weka dawa ya zao bila kujali',
       'B) Piga picha nyingine bora zaidi yenye mwanga mzuri au wasiliana na Afisa Ugani',
-      'C) Futa programu na uache kulima'
+      'C) Futa programu na uache kulima',
     ],
     optionsEn: [
       'A) Apply pesticides to the crop regardless',
       'B) Take a better photo with good light or consult an Extension Officer',
-      'C) Delete the app and stop farming'
+      'C) Delete the app and stop farming',
     ],
-    correctAnswerIdx: 1
+    correctAnswerIdx: 1,
   },
   {
     id: 'escalation',
@@ -170,22 +179,24 @@ const MODULES_DATA = (colors: any): Module[] => [
     titleEn: '5. Action & Expert Escalation',
     subtitleSw: 'Mipaka ya AI na usalama wa kemikali',
     subtitleEn: 'AI boundaries and chemical safety',
-    lessonSw: 'Sankofa AI haitoi dozi maalum za kemikali kwa sababu dozi isiyo sahihi inaweza kuharibu mazao yako au kuumiza afya yako. AI itakuelekeza aina ya dawa lakini itasisitiza kupata usaidizi wa Afisa Ugani. Ikiwa tatizo ni kubwa sana, chagua kitufe cha "Wasiliana na Wataalamu" ili kupata msaada wa binadamu.',
-    lessonEn: 'Sankofa AI does not provide specific chemical dosages because incorrect dosage can destroy your crops or harm your health. The AI will guide you on the type of pesticide but will emphasize getting help from an Extension Officer. If the issue is severe, tap "Contact Expert" for human help.',
+    lessonSw:
+      'Sankofa AI haitoi dozi maalum za kemikali kwa sababu dozi isiyo sahihi inaweza kuharibu mazao yako au kuumiza afya yako. AI itakuelekeza aina ya dawa lakini itasisitiza kupata usaidizi wa Afisa Ugani. Ikiwa tatizo ni kubwa sana, chagua kitufe cha "Wasiliana na Wataalamu" ili kupata msaada wa binadamu.',
+    lessonEn:
+      'Sankofa AI does not provide specific chemical dosages because incorrect dosage can destroy your crops or harm your health. The AI will guide you on the type of pesticide but will emphasize getting help from an Extension Officer. If the issue is severe, tap "Contact Expert" for human help.',
     questionSw: 'Kwa nini Sankofa AI haitoi dozi maalum za viuatilifu vya kemikali?',
     questionEn: 'Why does Sankofa AI not give specific chemical pesticide dosages?',
     optionsSw: [
       'A) Kwa sababu dozi isiyo sahihi inaweza kuua mazao au kudhuru afya, na inahitaji uthibitisho wa Afisa Ugani',
       'B) AI haina ufahamu wa dawa za kilimo',
-      'C) Kwa sababu kemikali ni za bure'
+      'C) Kwa sababu kemikali ni za bure',
     ],
     optionsEn: [
       'A) Because incorrect dosage can kill crops or harm health, and needs confirmation from an Extension Officer',
       'B) The AI has no knowledge of agricultural chemicals',
-      'C) Because chemicals are free'
+      'C) Because chemicals are free',
     ],
-    correctAnswerIdx: 0
-  }
+    correctAnswerIdx: 0,
+  },
 ];
 
 export default function AITrainingHubScreen() {
@@ -197,10 +208,10 @@ export default function AITrainingHubScreen() {
   const aiCertified = useKilimoStore((s) => s.aiCertified);
 
   const modules = MODULES_DATA(colors);
-  
+
   // Tabs & Navigation State
   const [currentTab, setCurrentTab] = useState<'sankofa' | 'motion'>('sankofa');
-  
+
   // Sankofa States
   const [activeIdx, setActiveIdx] = useState(0);
   const [selectedAns, setSelectedAns] = useState<number | null>(null);
@@ -222,7 +233,9 @@ export default function AITrainingHubScreen() {
   const [anticipationPrompt, setAnticipationPrompt] = useState('');
   const [anticipationFeedback, setAnticipationFeedback] = useState('');
   const [anticipationQuizAns, setAnticipationQuizAns] = useState<number | null>(null);
-  const [anticipationQuizStatus, setAnticipationQuizStatus] = useState<'idle' | 'success' | 'fail'>('idle');
+  const [anticipationQuizStatus, setAnticipationQuizStatus] = useState<'idle' | 'success' | 'fail'>(
+    'idle'
+  );
 
   // Shared values for Animations
   const squashAnim = useSharedValue(0);
@@ -266,17 +279,13 @@ export default function AITrainingHubScreen() {
     );
 
     return {
-      transform: [
-        { translateY: y },
-        { scaleX },
-        { scaleY }
-      ] as any
+      transform: [{ translateY: y }, { scaleX }, { scaleY }] as any,
     };
   });
 
   const animatedArrowStyle = useAnimatedStyle(() => {
     const p = arrowAnim.value;
-    let x = 0;
+    let x: number;
     if (p < 0.7) {
       // Pull back slowly
       const progress = p / 0.7;
@@ -291,7 +300,7 @@ export default function AITrainingHubScreen() {
       x = interpolate(progress, [0, 1], [160, 0]);
     }
     return {
-      transform: [{ translateX: x }] as any
+      transform: [{ translateX: x }] as any,
     };
   });
 
@@ -301,7 +310,12 @@ export default function AITrainingHubScreen() {
     const pr = squashPrompt.toLowerCase().trim();
     if (!pr) return;
 
-    if (pr.includes('heavy') || pr.includes('slow') || pr.includes('zito') || pr.includes('polepole')) {
+    if (
+      pr.includes('heavy') ||
+      pr.includes('slow') ||
+      pr.includes('zito') ||
+      pr.includes('polepole')
+    ) {
       setBounceDuration(1800);
       setBounceHeight(50);
       setSquashFeedback(
@@ -309,7 +323,13 @@ export default function AITrainingHubScreen() {
           ? 'AI imeweka mfumo wa vitu VIKUBWA/VIZITO. Mpira unadunda polepole na kufinyika sana!'
           : 'AI set HEAVY physics. The ball now moves slower and squashes flatter to simulate weight!'
       );
-    } else if (pr.includes('fast') || pr.includes('light') || pr.includes('haraka') || pr.includes('wepesi') || pr.includes('spring')) {
+    } else if (
+      pr.includes('fast') ||
+      pr.includes('light') ||
+      pr.includes('haraka') ||
+      pr.includes('wepesi') ||
+      pr.includes('spring')
+    ) {
       setBounceDuration(600);
       setBounceHeight(95);
       setSquashFeedback(
@@ -347,14 +367,25 @@ export default function AITrainingHubScreen() {
     const pr = anticipationPrompt.toLowerCase().trim();
     if (!pr) return;
 
-    if (pr.includes('extreme') || pr.includes('mbali') || pr.includes('far') || pr.includes('deep') || pr.includes('nguvu')) {
+    if (
+      pr.includes('extreme') ||
+      pr.includes('mbali') ||
+      pr.includes('far') ||
+      pr.includes('deep') ||
+      pr.includes('nguvu')
+    ) {
       setArrowTension(55);
       setAnticipationFeedback(
         language === 'sw'
           ? 'AI imeweka uvutaji MKUBWA! Mshale unavutwa mbali zaidi kuonyesha matarajio makubwa.'
           : 'AI configured extreme pullback! The arrow is pulled deep, creating massive anticipation.'
       );
-    } else if (pr.includes('weak') || pr.includes('short') || pr.includes('kidogo') || pr.includes('polepole')) {
+    } else if (
+      pr.includes('weak') ||
+      pr.includes('short') ||
+      pr.includes('kidogo') ||
+      pr.includes('polepole')
+    ) {
       setArrowTension(15);
       setArrowDuration(2200);
       setAnticipationFeedback(
@@ -467,12 +498,14 @@ export default function AITrainingHubScreen() {
 
   const shakeStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: shakeOffset.value }]
+      transform: [{ translateX: shakeOffset.value }],
     };
   });
 
   const getProgressPercent = () => {
-    return (completedModules.filter(id => !id.startsWith('motion_')).length / modules.length) * 100;
+    return (
+      (completedModules.filter((id) => !id.startsWith('motion_')).length / modules.length) * 100
+    );
   };
 
   const getMotionProgressPercent = () => {
@@ -485,14 +518,14 @@ export default function AITrainingHubScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      
+
       {/* Background Gradient */}
       <View style={StyleSheet.absoluteFill}>
         <LinearGradient
           colors={[
             isDark ? colors.slate[950] : '#f1f5f9',
             isDark ? colors.slate[900] + 'ee' : colors.slate[100] + 'ee',
-            'transparent'
+            'transparent',
           ]}
           style={styles.bgGradient}
         />
@@ -502,8 +535,15 @@ export default function AITrainingHubScreen() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' }]}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.canGoBack() ? router.back() : router.replace('/'); }}
+            style={[
+              styles.backButton,
+              { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' },
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              if (router.canGoBack()) router.back();
+              else router.replace('/');
+            }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
           >
@@ -519,54 +559,87 @@ export default function AITrainingHubScreen() {
         <View style={styles.categorySwitcher}>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setCurrentTab('sankofa'); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setCurrentTab('sankofa');
+            }}
             style={[
               styles.categoryPill,
-              currentTab === 'sankofa' 
-                ? { backgroundColor: colors.primary } 
-                : { borderColor: colors.border, borderWidth: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#fff' }
+              currentTab === 'sankofa'
+                ? { backgroundColor: colors.primary }
+                : {
+                    borderColor: colors.border,
+                    borderWidth: 1,
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#fff',
+                  },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Sankofa AI Guide"
           >
-            <Text style={[styles.categoryPillText, { color: currentTab === 'sankofa' ? '#FCFBF7' : colors.text }]}>
+            <Text
+              style={[
+                styles.categoryPillText,
+                { color: currentTab === 'sankofa' ? '#FCFBF7' : colors.text },
+              ]}
+            >
               {language === 'sw' ? 'Mwongozo wa Sankofa' : 'Sankofa AI Guide'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setCurrentTab('motion'); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setCurrentTab('motion');
+            }}
             style={[
               styles.categoryPill,
-              currentTab === 'motion' 
-                ? { backgroundColor: colors.primary } 
-                : { borderColor: colors.border, borderWidth: 1, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#fff' }
+              currentTab === 'motion'
+                ? { backgroundColor: colors.primary }
+                : {
+                    borderColor: colors.border,
+                    borderWidth: 1,
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#fff',
+                  },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Creative Art & Motion"
           >
-            <Text style={[styles.categoryPillText, { color: currentTab === 'motion' ? '#FCFBF7' : colors.text }]}>
+            <Text
+              style={[
+                styles.categoryPillText,
+                { color: currentTab === 'motion' ? '#FCFBF7' : colors.text },
+              ]}
+            >
               {language === 'sw' ? 'Sanaa ya Picha na Mwendo' : 'Creative Art & Motion'}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <ScrollView 
-          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
         >
           {/* TAB 1: SANKOFA AI GUIDE FLOW */}
-          {currentTab === 'sankofa' && (
-            showCertificate ? (
+          {currentTab === 'sankofa' &&
+            (showCertificate ? (
               /* 🏆 CERTIFICATE OF COMPLETION SCREEN */
               <Animated.View entering={FadeIn.delay(200)} style={styles.certCard}>
-                <BlurView intensity={isDark ? 40 : 80} tint={isDark ? "dark" : "light"} style={[styles.certBlur, { borderColor: colors.border }]}>
+                <BlurView
+                  intensity={isDark ? 40 : 80}
+                  tint={isDark ? 'dark' : 'light'}
+                  style={[styles.certBlur, { borderColor: colors.border }]}
+                >
                   <LinearGradient
-                    colors={isDark ? ['rgba(34, 209, 90, 0.2)', 'rgba(30, 41, 59, 0.5)'] : ['rgba(34, 209, 90, 0.1)', 'rgba(255, 255, 255, 0.9)']}
+                    colors={
+                      isDark
+                        ? ['rgba(34, 209, 90, 0.2)', 'rgba(30, 41, 59, 0.5)']
+                        : ['rgba(34, 209, 90, 0.1)', 'rgba(255, 255, 255, 0.9)']
+                    }
                     style={StyleSheet.absoluteFill}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                   />
-                  
+
                   <View style={styles.certIconBg}>
                     <Award size={64} color="#eab308" />
                     <Sparkles size={24} color="#eab308" style={styles.sparkleIcon} />
@@ -575,9 +648,9 @@ export default function AITrainingHubScreen() {
                   <Text style={[styles.certHeading, { color: colors.text }]}>
                     {language === 'sw' ? 'Hongera Sana!' : 'Congratulations!'}
                   </Text>
-                  
+
                   <Text style={[styles.certSub, { color: colors.textMute }]}>
-                    {language === 'sw' 
+                    {language === 'sw'
                       ? 'Umekamilisha moduli zote 5 za Mafunzo ya Sankofa AI na kuwa Mkulima aliyethibitishwa!'
                       : 'You have completed all 5 Sankofa AI Training modules and are now a Certified AI Farmer!'}
                   </Text>
@@ -632,25 +705,41 @@ export default function AITrainingHubScreen() {
                 <View style={styles.progressContainer}>
                   <View style={styles.progressHeader}>
                     <Text style={[styles.progressLabel, { color: colors.textMute }]}>
-                      {language === 'sw' ? `Hatua ya ${activeIdx + 1} kati ya 5` : `Module ${activeIdx + 1} of 5`}
+                      {language === 'sw'
+                        ? `Hatua ya ${activeIdx + 1} kati ya 5`
+                        : `Module ${activeIdx + 1} of 5`}
                     </Text>
                     <Text style={[styles.progressVal, { color: colors.primary }]}>
                       {Math.round(getProgressPercent())}%
                     </Text>
                   </View>
-                  <View style={[styles.progressBarBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
-                    <View style={[styles.progressBarFill, { width: `${getProgressPercent()}%`, backgroundColor: colors.primary }]} />
+                  <View
+                    style={[
+                      styles.progressBarBg,
+                      { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.progressBarFill,
+                        { width: `${getProgressPercent()}%`, backgroundColor: colors.primary },
+                      ]}
+                    />
                   </View>
                 </View>
 
                 {/* Modules Carousel Tabs */}
-                <ScrollView showsVerticalScrollIndicator={false} horizontal 
-                  showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.tabsScroll}
                 >
                   {modules.map((m, index) => {
                     const isCompleted = completedModules.includes(m.id);
                     const isActive = index === activeIdx;
-                    const isLocked = index > completedModules.filter(id => !id.startsWith('motion_')).length;
+                    const isLocked =
+                      index > completedModules.filter((id) => !id.startsWith('motion_')).length;
 
                     return (
                       <TouchableOpacity
@@ -666,11 +755,15 @@ export default function AITrainingHubScreen() {
                           styles.tabItem,
                           {
                             borderColor: isActive ? colors.primary : colors.border,
-                            backgroundColor: isActive 
-                              ? (isDark ? 'rgba(34,209,90,0.2)' : 'rgba(34,209,90,0.05)')
-                              : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
-                            opacity: isLocked ? 0.4 : 1
-                          }
+                            backgroundColor: isActive
+                              ? isDark
+                                ? 'rgba(34,209,90,0.2)'
+                                : 'rgba(34,209,90,0.05)'
+                              : isDark
+                                ? 'rgba(255,255,255,0.03)'
+                                : 'rgba(0,0,0,0.02)',
+                            opacity: isLocked ? 0.4 : 1,
+                          },
                         ]}
                         accessibilityRole="button"
                         accessibilityLabel={`Tab ${index + 1}`}
@@ -681,9 +774,16 @@ export default function AITrainingHubScreen() {
                         ) : isCompleted ? (
                           <CheckCircle size={14} color="#10b981" />
                         ) : (
-                          <View style={[styles.uncompletedDot, { backgroundColor: colors.textMute }]} />
+                          <View
+                            style={[styles.uncompletedDot, { backgroundColor: colors.textMute }]}
+                          />
                         )}
-                        <Text style={[styles.tabText, { color: isActive ? colors.text : colors.textMute }]}>
+                        <Text
+                          style={[
+                            styles.tabText,
+                            { color: isActive ? colors.text : colors.textMute },
+                          ]}
+                        >
                           {language === 'sw' ? `Mada ${index + 1}` : `Lesson ${index + 1}`}
                         </Text>
                       </TouchableOpacity>
@@ -694,15 +794,32 @@ export default function AITrainingHubScreen() {
                 {/* Lesson Card */}
                 {activeModule && (
                   <Animated.View entering={SlideInRight} style={styles.cardContainer}>
-                    <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.moduleCard, { borderColor: colors.border }]}>
+                    <BlurView
+                      intensity={isDark ? 30 : 70}
+                      tint={isDark ? 'dark' : 'light'}
+                      style={[styles.moduleCard, { borderColor: colors.border }]}
+                    >
                       <LinearGradient
-                        colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
+                        colors={
+                          isDark
+                            ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
+                            : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
+                        }
                         style={StyleSheet.absoluteFill}
                       />
 
                       {/* Lesson Section */}
                       <View style={styles.lessonHeader}>
-                        <View style={[styles.moduleIconBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' }]}>
+                        <View
+                          style={[
+                            styles.moduleIconBg,
+                            {
+                              backgroundColor: isDark
+                                ? 'rgba(255,255,255,0.06)'
+                                : 'rgba(0,0,0,0.03)',
+                            },
+                          ]}
+                        >
                           {activeModule.icon}
                         </View>
                         <View style={{ flex: 1 }}>
@@ -736,7 +853,9 @@ export default function AITrainingHubScreen() {
                         <View style={styles.sectionHeaderRow}>
                           <HelpCircle size={16} color="#3b82f6" />
                           <Text style={[styles.sectionTitle, { color: '#3b82f6' }]}>
-                            {language === 'sw' ? 'JARIBIO LA PAPI KWA PAPO / MINI QUIZ' : 'POP QUIZ'}
+                            {language === 'sw'
+                              ? 'JARIBIO LA PAPI KWA PAPO / MINI QUIZ'
+                              : 'POP QUIZ'}
                           </Text>
                         </View>
 
@@ -745,11 +864,14 @@ export default function AITrainingHubScreen() {
                         </Text>
 
                         <View style={styles.optionsList}>
-                          {(language === 'sw' ? activeModule.optionsSw : activeModule.optionsEn).map((option, idx) => {
+                          {(language === 'sw'
+                            ? activeModule.optionsSw
+                            : activeModule.optionsEn
+                          ).map((option, idx) => {
                             const isSelected = selectedAns === idx;
                             let optBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
                             let optBorder = colors.border;
-                            
+
                             if (isSelected) {
                               optBg = isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)';
                               optBorder = '#3b82f6';
@@ -765,26 +887,37 @@ export default function AITrainingHubScreen() {
                             return (
                               <TouchableOpacity
                                 key={idx}
-                                style={[styles.optionItem, { backgroundColor: optBg, borderColor: optBorder }]}
+                                style={[
+                                  styles.optionItem,
+                                  { backgroundColor: optBg, borderColor: optBorder },
+                                ]}
                                 onPress={() => handleSelectOption(idx)}
                                 activeOpacity={0.8}
                                 accessibilityRole="radio"
                                 accessibilityState={{ checked: isSelected }}
                                 accessibilityLabel={option}
                               >
-                                <Text style={[
-                                  styles.optionText, 
-                                  { 
-                                    color: isSelected 
-                                      ? (quizStatus === 'fail' ? '#ef4444' : '#3b82f6') 
-                                      : (quizStatus === 'success' && idx === activeModule.correctAnswerIdx ? '#10b981' : colors.text)
-                                  }
-                                ]}>
+                                <Text
+                                  style={[
+                                    styles.optionText,
+                                    {
+                                      color: isSelected
+                                        ? quizStatus === 'fail'
+                                          ? '#ef4444'
+                                          : '#3b82f6'
+                                        : quizStatus === 'success' &&
+                                            idx === activeModule.correctAnswerIdx
+                                          ? '#10b981'
+                                          : colors.text,
+                                    },
+                                  ]}
+                                >
                                   {option}
                                 </Text>
-                                {quizStatus === 'success' && idx === activeModule.correctAnswerIdx && (
-                                  <CheckCircle size={18} color="#10b981" />
-                                )}
+                                {quizStatus === 'success' &&
+                                  idx === activeModule.correctAnswerIdx && (
+                                    <CheckCircle size={18} color="#10b981" />
+                                  )}
                                 {quizStatus === 'fail' && isSelected && (
                                   <XCircle size={18} color="#ef4444" />
                                 )}
@@ -799,7 +932,9 @@ export default function AITrainingHubScreen() {
                             <View style={styles.successBanner}>
                               <Sparkles size={16} color="#10b981" />
                               <Text style={styles.successText}>
-                                {language === 'sw' ? 'Jibu Sahihi! Umefaulu.' : 'Correct! Well done.'}
+                                {language === 'sw'
+                                  ? 'Jibu Sahihi! Umefaulu.'
+                                  : 'Correct! Well done.'}
                               </Text>
                             </View>
                             {activeIdx < modules.length - 1 ? (
@@ -823,7 +958,9 @@ export default function AITrainingHubScreen() {
                               >
                                 <Award size={18} color="#fff" />
                                 <Text style={styles.primaryBtnText}>
-                                  {language === 'sw' ? 'Kamilisha & Pata Cheti' : 'Finish & Get Certified'}
+                                  {language === 'sw'
+                                    ? 'Kamilisha & Pata Cheti'
+                                    : 'Finish & Get Certified'}
                                 </Text>
                               </TouchableOpacity>
                             )}
@@ -832,11 +969,12 @@ export default function AITrainingHubScreen() {
                           <TouchableOpacity
                             disabled={selectedAns === null}
                             style={[
-                              styles.primaryBtn, 
-                              { 
-                                backgroundColor: selectedAns === null ? colors.border : colors.primary,
-                                opacity: selectedAns === null ? 0.6 : 1
-                              }
+                              styles.primaryBtn,
+                              {
+                                backgroundColor:
+                                  selectedAns === null ? colors.border : colors.primary,
+                                opacity: selectedAns === null ? 0.6 : 1,
+                              },
                             ]}
                             onPress={handleVerifyAnswer}
                             accessibilityRole="button"
@@ -852,8 +990,7 @@ export default function AITrainingHubScreen() {
                   </Animated.View>
                 )}
               </View>
-            )
-          )}
+            ))}
 
           {/* TAB 2: CREATIVE ART & MOTION SECTION */}
           {currentTab === 'motion' && (
@@ -862,26 +999,41 @@ export default function AITrainingHubScreen() {
               <View style={styles.progressContainer}>
                 <View style={styles.progressHeader}>
                   <Text style={[styles.progressLabel, { color: colors.textMute }]}>
-                    {language === 'sw' ? `Mwendo: Mada ${activeMotionIdx + 1} ya 2` : `Motion: Lesson ${activeMotionIdx + 1} of 2`}
+                    {language === 'sw'
+                      ? `Mwendo: Mada ${activeMotionIdx + 1} ya 2`
+                      : `Motion: Lesson ${activeMotionIdx + 1} of 2`}
                   </Text>
                   <Text style={[styles.progressVal, { color: colors.primary }]}>
                     {Math.round(getMotionProgressPercent())}%
                   </Text>
                 </View>
-                <View style={[styles.progressBarBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
-                  <View style={[styles.progressBarFill, { width: `${getMotionProgressPercent()}%`, backgroundColor: colors.primary }]} />
+                <View
+                  style={[
+                    styles.progressBarBg,
+                    { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      { width: `${getMotionProgressPercent()}%`, backgroundColor: colors.primary },
+                    ]}
+                  />
                 </View>
               </View>
 
               {/* Sub-selector pills for Squash vs Anticipation */}
               <View style={styles.motionPillTabContainer}>
                 <TouchableOpacity
-                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveMotionIdx(0); }}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setActiveMotionIdx(0);
+                  }}
                   style={[
                     styles.motionPill,
                     activeMotionIdx === 0
                       ? { backgroundColor: colors.primary + '20', borderColor: colors.primary }
-                      : { borderColor: colors.border }
+                      : { borderColor: colors.border },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel="Squash & Stretch"
@@ -897,12 +1049,15 @@ export default function AITrainingHubScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveMotionIdx(1); }}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setActiveMotionIdx(1);
+                  }}
                   style={[
                     styles.motionPill,
                     activeMotionIdx === 1
                       ? { backgroundColor: colors.primary + '20', borderColor: colors.primary }
-                      : { borderColor: colors.border }
+                      : { borderColor: colors.border },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel="Anticipation & Spacing"
@@ -921,15 +1076,25 @@ export default function AITrainingHubScreen() {
               {/* LESSON 1: SQUASH AND STRETCH */}
               {activeMotionIdx === 0 && (
                 <Animated.View entering={SlideInRight} style={styles.cardContainer}>
-                  <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.moduleCard, { borderColor: colors.border }]}>
+                  <BlurView
+                    intensity={isDark ? 30 : 70}
+                    tint={isDark ? 'dark' : 'light'}
+                    style={[styles.moduleCard, { borderColor: colors.border }]}
+                  >
                     <LinearGradient
-                      colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
+                      colors={
+                        isDark
+                          ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
+                          : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
+                      }
                       style={StyleSheet.absoluteFill}
                     />
 
                     {/* Lesson Header */}
                     <View style={styles.lessonHeader}>
-                      <View style={[styles.moduleIconBg, { backgroundColor: 'rgba(59,130,246,0.1)' }]}>
+                      <View
+                        style={[styles.moduleIconBg, { backgroundColor: 'rgba(59,130,246,0.1)' }]}
+                      >
                         <Sparkles size={24} color="#3b82f6" />
                       </View>
                       <View style={{ flex: 1 }}>
@@ -937,7 +1102,9 @@ export default function AITrainingHubScreen() {
                           {language === 'sw' ? 'Mbinu ya Kufinya na Kukaza' : 'Squash & Stretch'}
                         </Text>
                         <Text style={[styles.moduleSubtitle, { color: colors.textMute }]}>
-                          {language === 'sw' ? 'Kujifunza wepesi, uzito na kubadilika kwa maumbo' : 'Learn flexibility, mass, and shape volume'}
+                          {language === 'sw'
+                            ? 'Kujifunza wepesi, uzito na kubadilika kwa maumbo'
+                            : 'Learn flexibility, mass, and shape volume'}
                         </Text>
                       </View>
                     </View>
@@ -964,16 +1131,30 @@ export default function AITrainingHubScreen() {
                     {/* Animation Canvas Demo */}
                     <View style={styles.canvasContainer}>
                       <Text style={styles.canvasLabel}>
-                        {language === 'sw' ? 'MIFANO YA 60FPS YA UHAKIKA' : '60FPS HARDWARE-ACCELERATED PREVIEW'}
+                        {language === 'sw'
+                          ? 'MIFANO YA 60FPS YA UHAKIKA'
+                          : '60FPS HARDWARE-ACCELERATED PREVIEW'}
                       </Text>
-                      <View 
-                        style={[styles.motionCanvas, { backgroundColor: isDark ? '#080a06' : '#f8fafc', borderColor: colors.border }]}
+                      <View
+                        style={[
+                          styles.motionCanvas,
+                          {
+                            backgroundColor: isDark ? '#080a06' : '#f8fafc',
+                            borderColor: colors.border,
+                          },
+                        ]}
                         accessibilityLabel="Bouncing ball showcasing squash and stretch principles"
                       >
                         {/* Floor Line */}
                         <View style={[styles.canvasFloor, { backgroundColor: colors.border }]} />
                         {/* Reanimated Ball */}
-                        <Animated.View style={[styles.animatedBall, { backgroundColor: colors.primary }, animatedBallStyle]} />
+                        <Animated.View
+                          style={[
+                            styles.animatedBall,
+                            { backgroundColor: colors.primary },
+                            animatedBallStyle,
+                          ]}
+                        />
                       </View>
                     </View>
 
@@ -981,26 +1162,43 @@ export default function AITrainingHubScreen() {
 
                     {/* Sliders Presets Control */}
                     <View style={styles.lessonBody}>
-                      <Text style={[styles.sectionTitle, { color: colors.primary, marginBottom: 12 }]}>
-                        {language === 'sw' ? 'DHIBITI PARAMETA ZA MWENDO' : 'MOTION PARAMETER CONTROL'}
+                      <Text
+                        style={[styles.sectionTitle, { color: colors.primary, marginBottom: 12 }]}
+                      >
+                        {language === 'sw'
+                          ? 'DHIBITI PARAMETA ZA MWENDO'
+                          : 'MOTION PARAMETER CONTROL'}
                       </Text>
-                      
+
                       {/* Speed Presets */}
                       <Text style={[styles.fieldLabel, { color: colors.text }]}>
                         {language === 'sw' ? 'Kasi ya Dundo / Bounce Speed:' : 'Bounce Speed:'}
                       </Text>
                       <View style={styles.presetRow}>
-                        {([
+                        {[
                           { label: language === 'sw' ? 'Polepole' : 'Slow', val: 1800 },
                           { label: language === 'sw' ? 'Kawaida' : 'Normal', val: 1200 },
-                          { label: language === 'sw' ? 'Haraka' : 'Fast', val: 600 }
-                        ]).map((item) => (
+                          { label: language === 'sw' ? 'Haraka' : 'Fast', val: 600 },
+                        ].map((item) => (
                           <TouchableOpacity
                             key={item.val}
-                            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setBounceDuration(item.val); }}
-                            style={[styles.presetBtn, bounceDuration === item.val ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }]}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                              setBounceDuration(item.val);
+                            }}
+                            style={[
+                              styles.presetBtn,
+                              bounceDuration === item.val
+                                ? { backgroundColor: colors.primary }
+                                : { borderColor: colors.border, borderWidth: 1 },
+                            ]}
                           >
-                            <Text style={[styles.presetBtnText, { color: bounceDuration === item.val ? '#FCFBF7' : colors.text }]}>
+                            <Text
+                              style={[
+                                styles.presetBtnText,
+                                { color: bounceDuration === item.val ? '#FCFBF7' : colors.text },
+                              ]}
+                            >
                               {item.label}
                             </Text>
                           </TouchableOpacity>
@@ -1012,17 +1210,30 @@ export default function AITrainingHubScreen() {
                         {language === 'sw' ? 'Kina cha Juu / Bounce Height:' : 'Bounce Height:'}
                       </Text>
                       <View style={styles.presetRow}>
-                        {([
+                        {[
                           { label: language === 'sw' ? 'Chini' : 'Low', val: 40 },
                           { label: language === 'sw' ? 'Kati' : 'Medium', val: 80 },
-                          { label: language === 'sw' ? 'Juu' : 'High', val: 130 }
-                        ]).map((item) => (
+                          { label: language === 'sw' ? 'Juu' : 'High', val: 130 },
+                        ].map((item) => (
                           <TouchableOpacity
                             key={item.val}
-                            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setBounceHeight(item.val); }}
-                            style={[styles.presetBtn, bounceHeight === item.val ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }]}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                              setBounceHeight(item.val);
+                            }}
+                            style={[
+                              styles.presetBtn,
+                              bounceHeight === item.val
+                                ? { backgroundColor: colors.primary }
+                                : { borderColor: colors.border, borderWidth: 1 },
+                            ]}
                           >
-                            <Text style={[styles.presetBtnText, { color: bounceHeight === item.val ? '#FCFBF7' : colors.text }]}>
+                            <Text
+                              style={[
+                                styles.presetBtnText,
+                                { color: bounceHeight === item.val ? '#FCFBF7' : colors.text },
+                              ]}
+                            >
                               {item.label}
                             </Text>
                           </TouchableOpacity>
@@ -1037,10 +1248,12 @@ export default function AITrainingHubScreen() {
                       <View style={styles.sectionHeaderRow}>
                         <Brain size={16} color="#3b82f6" />
                         <Text style={[styles.sectionTitle, { color: '#3b82f6' }]}>
-                          {language === 'sw' ? 'JARIBU MAELEZO YA KIFANISHAJI (PHYSICS PROMPTING)' : 'PHYSICS PROMPT CHALLENGE'}
+                          {language === 'sw'
+                            ? 'JARIBU MAELEZO YA KIFANISHAJI (PHYSICS PROMPTING)'
+                            : 'PHYSICS PROMPT CHALLENGE'}
                         </Text>
                       </View>
-                      
+
                       <Text style={[styles.promptDesc, { color: colors.textMute }]}>
                         {language === 'sw'
                           ? 'Andika maelezo ya fizikia (mfano "heavy slow bounce" au "haraka sana chini") kuona AI inavyobadili dundo la mpira.'
@@ -1051,8 +1264,15 @@ export default function AITrainingHubScreen() {
                         <TextInput
                           value={squashPrompt}
                           onChangeText={setSquashPrompt}
-                          style={[styles.promptInput, { color: colors.text, borderColor: colors.border }]}
-                          placeholder={language === 'sw' ? 'Andika mfumo wa fizikia...' : 'Enter physics prompt...'}
+                          style={[
+                            styles.promptInput,
+                            { color: colors.text, borderColor: colors.border },
+                          ]}
+                          placeholder={
+                            language === 'sw'
+                              ? 'Andika mfumo wa fizikia...'
+                              : 'Enter physics prompt...'
+                          }
                           placeholderTextColor={colors.textMute}
                           accessibilityLabel="Squash Prompt Input"
                         />
@@ -1067,9 +1287,21 @@ export default function AITrainingHubScreen() {
                       </View>
 
                       {squashFeedback ? (
-                        <View style={[styles.promptFeedbackBox, { backgroundColor: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)', borderColor: '#3b82f6' }]}>
+                        <View
+                          style={[
+                            styles.promptFeedbackBox,
+                            {
+                              backgroundColor: isDark
+                                ? 'rgba(59,130,246,0.1)'
+                                : 'rgba(59,130,246,0.05)',
+                              borderColor: '#3b82f6',
+                            },
+                          ]}
+                        >
                           <Sparkles size={14} color="#3b82f6" style={{ marginTop: 2 }} />
-                          <Text style={[styles.promptFeedbackText, { color: colors.text }]}>{squashFeedback}</Text>
+                          <Text style={[styles.promptFeedbackText, { color: colors.text }]}>
+                            {squashFeedback}
+                          </Text>
                         </View>
                       ) : null}
                     </View>
@@ -1092,24 +1324,24 @@ export default function AITrainingHubScreen() {
                       </Text>
 
                       <View style={styles.optionsList}>
-                        {([
+                        {[
                           {
                             sw: 'A) Inatoa hisia za uzito, wepesi na mvuto bila kupoteza ujazo wake wa asili.',
-                            en: 'A) It provides a sense of weight, flexibility, and drag without losing its original volume.'
+                            en: 'A) It provides a sense of weight, flexibility, and drag without losing its original volume.',
                           },
                           {
                             sw: 'B) Inafanya kitu kionekane kama chuma kigumu kisichoweza kubadilika.',
-                            en: 'B) It makes the object look like rigid solid steel that cannot deform.'
+                            en: 'B) It makes the object look like rigid solid steel that cannot deform.',
                           },
                           {
                             sw: 'C) Inapunguza kiwango cha picha kwa sekunde.',
-                            en: 'C) It decreases the frame rate of the render.'
-                          }
-                        ]).map((opt, idx) => {
+                            en: 'C) It decreases the frame rate of the render.',
+                          },
+                        ].map((opt, idx) => {
                           const isSelected = squashQuizAns === idx;
                           let optBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
                           let optBorder = colors.border;
-                          
+
                           if (isSelected) {
                             optBg = isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)';
                             optBorder = '#3b82f6';
@@ -1125,7 +1357,10 @@ export default function AITrainingHubScreen() {
                           return (
                             <TouchableOpacity
                               key={idx}
-                              style={[styles.optionItem, { backgroundColor: optBg, borderColor: optBorder }]}
+                              style={[
+                                styles.optionItem,
+                                { backgroundColor: optBg, borderColor: optBorder },
+                              ]}
                               onPress={() => {
                                 if (squashQuizStatus === 'success') return;
                                 setSquashQuizAns(idx);
@@ -1145,13 +1380,22 @@ export default function AITrainingHubScreen() {
                         <View style={styles.successBanner}>
                           <CheckCircle size={16} color="#10b981" />
                           <Text style={styles.successText}>
-                            {language === 'sw' ? 'Hongera! Jibu Lako ni Sahihi.' : 'Correct! Lesson completed.'}
+                            {language === 'sw'
+                              ? 'Hongera! Jibu Lako ni Sahihi.'
+                              : 'Correct! Lesson completed.'}
                           </Text>
                         </View>
                       ) : (
                         <TouchableOpacity
                           disabled={squashQuizAns === null}
-                          style={[styles.primaryBtn, { backgroundColor: squashQuizAns === null ? colors.border : colors.primary, opacity: squashQuizAns === null ? 0.6 : 1 }]}
+                          style={[
+                            styles.primaryBtn,
+                            {
+                              backgroundColor:
+                                squashQuizAns === null ? colors.border : colors.primary,
+                              opacity: squashQuizAns === null ? 0.6 : 1,
+                            },
+                          ]}
                           onPress={handleVerifySquashQuiz}
                         >
                           <Text style={styles.primaryBtnText}>
@@ -1167,23 +1411,37 @@ export default function AITrainingHubScreen() {
               {/* LESSON 2: ANTICIPATION AND SPACING */}
               {activeMotionIdx === 1 && (
                 <Animated.View entering={SlideInRight} style={styles.cardContainer}>
-                  <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.moduleCard, { borderColor: colors.border }]}>
+                  <BlurView
+                    intensity={isDark ? 30 : 70}
+                    tint={isDark ? 'dark' : 'light'}
+                    style={[styles.moduleCard, { borderColor: colors.border }]}
+                  >
                     <LinearGradient
-                      colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
+                      colors={
+                        isDark
+                          ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
+                          : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
+                      }
                       style={StyleSheet.absoluteFill}
                     />
 
                     {/* Lesson Header */}
                     <View style={styles.lessonHeader}>
-                      <View style={[styles.moduleIconBg, { backgroundColor: 'rgba(234,179,8,0.1)' }]}>
+                      <View
+                        style={[styles.moduleIconBg, { backgroundColor: 'rgba(234,179,8,0.1)' }]}
+                      >
                         <Play size={24} color="#eab308" />
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={[styles.moduleTitle, { color: colors.text }]}>
-                          {language === 'sw' ? 'Mbinu ya Matarajio na Nafasi' : 'Anticipation & Spacing'}
+                          {language === 'sw'
+                            ? 'Mbinu ya Matarajio na Nafasi'
+                            : 'Anticipation & Spacing'}
                         </Text>
                         <Text style={[styles.moduleSubtitle, { color: colors.textMute }]}>
-                          {language === 'sw' ? 'Kujifunza ufyatuaji na harakati za maandalizi' : 'Learn pullback, acceleration, and release'}
+                          {language === 'sw'
+                            ? 'Kujifunza ufyatuaji na harakati za maandalizi'
+                            : 'Learn pullback, acceleration, and release'}
                         </Text>
                       </View>
                     </View>
@@ -1210,10 +1468,18 @@ export default function AITrainingHubScreen() {
                     {/* Animation Canvas Demo */}
                     <View style={styles.canvasContainer}>
                       <Text style={styles.canvasLabel}>
-                        {language === 'sw' ? 'MIFANO YA 60FPS YA UHAKIKA' : '60FPS HARDWARE-ACCELERATED PREVIEW'}
+                        {language === 'sw'
+                          ? 'MIFANO YA 60FPS YA UHAKIKA'
+                          : '60FPS HARDWARE-ACCELERATED PREVIEW'}
                       </Text>
-                      <View 
-                        style={[styles.motionCanvas, { backgroundColor: isDark ? '#080a06' : '#f8fafc', borderColor: colors.border }]}
+                      <View
+                        style={[
+                          styles.motionCanvas,
+                          {
+                            backgroundColor: isDark ? '#080a06' : '#f8fafc',
+                            borderColor: colors.border,
+                          },
+                        ]}
                         accessibilityLabel="Bow and arrow animation showcasing anticipation and spacing principles"
                       >
                         {/* Bow shape SVG representation using styled lines */}
@@ -1231,26 +1497,45 @@ export default function AITrainingHubScreen() {
 
                     {/* Sliders Presets Control */}
                     <View style={styles.lessonBody}>
-                      <Text style={[styles.sectionTitle, { color: colors.primary, marginBottom: 12 }]}>
-                        {language === 'sw' ? 'DHIBITI PARAMETA ZA MWENDO' : 'MOTION PARAMETER CONTROL'}
+                      <Text
+                        style={[styles.sectionTitle, { color: colors.primary, marginBottom: 12 }]}
+                      >
+                        {language === 'sw'
+                          ? 'DHIBITI PARAMETA ZA MWENDO'
+                          : 'MOTION PARAMETER CONTROL'}
                       </Text>
-                      
+
                       {/* Pullback Presets */}
                       <Text style={[styles.fieldLabel, { color: colors.text }]}>
-                        {language === 'sw' ? 'Urefu wa Kuvuta Nyuma / Pullback Tension:' : 'Pullback Tension:'}
+                        {language === 'sw'
+                          ? 'Urefu wa Kuvuta Nyuma / Pullback Tension:'
+                          : 'Pullback Tension:'}
                       </Text>
                       <View style={styles.presetRow}>
-                        {([
+                        {[
                           { label: language === 'sw' ? 'Kidogo' : 'Light', val: 15 },
                           { label: language === 'sw' ? 'Kati' : 'Medium', val: 35 },
-                          { label: language === 'sw' ? 'Kubwa' : 'Extreme', val: 55 }
-                        ]).map((item) => (
+                          { label: language === 'sw' ? 'Kubwa' : 'Extreme', val: 55 },
+                        ].map((item) => (
                           <TouchableOpacity
                             key={item.val}
-                            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setArrowTension(item.val); }}
-                            style={[styles.presetBtn, arrowTension === item.val ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }]}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                              setArrowTension(item.val);
+                            }}
+                            style={[
+                              styles.presetBtn,
+                              arrowTension === item.val
+                                ? { backgroundColor: colors.primary }
+                                : { borderColor: colors.border, borderWidth: 1 },
+                            ]}
                           >
-                            <Text style={[styles.presetBtnText, { color: arrowTension === item.val ? '#FCFBF7' : colors.text }]}>
+                            <Text
+                              style={[
+                                styles.presetBtnText,
+                                { color: arrowTension === item.val ? '#FCFBF7' : colors.text },
+                              ]}
+                            >
                               {item.label}
                             </Text>
                           </TouchableOpacity>
@@ -1262,17 +1547,30 @@ export default function AITrainingHubScreen() {
                         {language === 'sw' ? 'Muda wa Kufyatua / Release Cycle:' : 'Release Cycle:'}
                       </Text>
                       <View style={styles.presetRow}>
-                        {([
+                        {[
                           { label: language === 'sw' ? 'Haraka' : 'Snap', val: 800 },
                           { label: language === 'sw' ? 'Kawaida' : 'Normal', val: 1400 },
-                          { label: language === 'sw' ? 'Taratibu' : 'Slow', val: 2200 }
-                        ]).map((item) => (
+                          { label: language === 'sw' ? 'Taratibu' : 'Slow', val: 2200 },
+                        ].map((item) => (
                           <TouchableOpacity
                             key={item.val}
-                            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setArrowDuration(item.val); }}
-                            style={[styles.presetBtn, arrowDuration === item.val ? { backgroundColor: colors.primary } : { borderColor: colors.border, borderWidth: 1 }]}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                              setArrowDuration(item.val);
+                            }}
+                            style={[
+                              styles.presetBtn,
+                              arrowDuration === item.val
+                                ? { backgroundColor: colors.primary }
+                                : { borderColor: colors.border, borderWidth: 1 },
+                            ]}
                           >
-                            <Text style={[styles.presetBtnText, { color: arrowDuration === item.val ? '#FCFBF7' : colors.text }]}>
+                            <Text
+                              style={[
+                                styles.presetBtnText,
+                                { color: arrowDuration === item.val ? '#FCFBF7' : colors.text },
+                              ]}
+                            >
                               {item.label}
                             </Text>
                           </TouchableOpacity>
@@ -1287,10 +1585,12 @@ export default function AITrainingHubScreen() {
                       <View style={styles.sectionHeaderRow}>
                         <Brain size={16} color="#3b82f6" />
                         <Text style={[styles.sectionTitle, { color: '#3b82f6' }]}>
-                          {language === 'sw' ? 'JARIBU MAELEZO YA KIFANISHAJI (PHYSICS PROMPTING)' : 'PHYSICS PROMPT CHALLENGE'}
+                          {language === 'sw'
+                            ? 'JARIBU MAELEZO YA KIFANISHAJI (PHYSICS PROMPTING)'
+                            : 'PHYSICS PROMPT CHALLENGE'}
                         </Text>
                       </View>
-                      
+
                       <Text style={[styles.promptDesc, { color: colors.textMute }]}>
                         {language === 'sw'
                           ? 'Andika maelezo ya fizikia (mfano "extreme pull back" au "weak short pullback") kuona AI inavyobadili uzani wa mshale.'
@@ -1301,8 +1601,15 @@ export default function AITrainingHubScreen() {
                         <TextInput
                           value={anticipationPrompt}
                           onChangeText={setAnticipationPrompt}
-                          style={[styles.promptInput, { color: colors.text, borderColor: colors.border }]}
-                          placeholder={language === 'sw' ? 'Andika mfumo wa fizikia...' : 'Enter physics prompt...'}
+                          style={[
+                            styles.promptInput,
+                            { color: colors.text, borderColor: colors.border },
+                          ]}
+                          placeholder={
+                            language === 'sw'
+                              ? 'Andika mfumo wa fizikia...'
+                              : 'Enter physics prompt...'
+                          }
                           placeholderTextColor={colors.textMute}
                           accessibilityLabel="Anticipation Prompt Input"
                         />
@@ -1317,9 +1624,21 @@ export default function AITrainingHubScreen() {
                       </View>
 
                       {anticipationFeedback ? (
-                        <View style={[styles.promptFeedbackBox, { backgroundColor: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)', borderColor: '#3b82f6' }]}>
+                        <View
+                          style={[
+                            styles.promptFeedbackBox,
+                            {
+                              backgroundColor: isDark
+                                ? 'rgba(59,130,246,0.1)'
+                                : 'rgba(59,130,246,0.05)',
+                              borderColor: '#3b82f6',
+                            },
+                          ]}
+                        >
                           <Sparkles size={14} color="#3b82f6" style={{ marginTop: 2 }} />
-                          <Text style={[styles.promptFeedbackText, { color: colors.text }]}>{anticipationFeedback}</Text>
+                          <Text style={[styles.promptFeedbackText, { color: colors.text }]}>
+                            {anticipationFeedback}
+                          </Text>
                         </View>
                       ) : null}
                     </View>
@@ -1342,24 +1661,24 @@ export default function AITrainingHubScreen() {
                       </Text>
 
                       <View style={styles.optionsList}>
-                        {([
+                        {[
                           {
                             sw: 'A) Inatayarisha macho ya mtazamaji na kuonyesha nishati inayokusanywa kabla ya harakati ya haraka kuanza.',
-                            en: 'A) It prepares the viewer\'s eyes and highlights potential energy built up before a high-speed motion starts.'
+                            en: "A) It prepares the viewer's eyes and highlights potential energy built up before a high-speed motion starts.",
                           },
                           {
                             sw: 'B) Inazuia mshale usijikunje au kupasuka katikati.',
-                            en: 'B) It prevents the arrow from bending or splitting in half.'
+                            en: 'B) It prevents the arrow from bending or splitting in half.',
                           },
                           {
                             sw: 'C) Inapunguza ukubwa wa simu yako.',
-                            en: 'C) It decreases the storage size of your app.'
-                          }
-                        ]).map((opt, idx) => {
+                            en: 'C) It decreases the storage size of your app.',
+                          },
+                        ].map((opt, idx) => {
                           const isSelected = anticipationQuizAns === idx;
                           let optBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
                           let optBorder = colors.border;
-                          
+
                           if (isSelected) {
                             optBg = isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.05)';
                             optBorder = '#3b82f6';
@@ -1375,7 +1694,10 @@ export default function AITrainingHubScreen() {
                           return (
                             <TouchableOpacity
                               key={idx}
-                              style={[styles.optionItem, { backgroundColor: optBg, borderColor: optBorder }]}
+                              style={[
+                                styles.optionItem,
+                                { backgroundColor: optBg, borderColor: optBorder },
+                              ]}
                               onPress={() => {
                                 if (anticipationQuizStatus === 'success') return;
                                 setAnticipationQuizAns(idx);
@@ -1395,13 +1717,22 @@ export default function AITrainingHubScreen() {
                         <View style={styles.successBanner}>
                           <CheckCircle size={16} color="#10b981" />
                           <Text style={styles.successText}>
-                            {language === 'sw' ? 'Hongera! Jibu Lako ni Sahihi.' : 'Correct! Lesson completed.'}
+                            {language === 'sw'
+                              ? 'Hongera! Jibu Lako ni Sahihi.'
+                              : 'Correct! Lesson completed.'}
                           </Text>
                         </View>
                       ) : (
                         <TouchableOpacity
                           disabled={anticipationQuizAns === null}
-                          style={[styles.primaryBtn, { backgroundColor: anticipationQuizAns === null ? colors.border : colors.primary, opacity: anticipationQuizAns === null ? 0.6 : 1 }]}
+                          style={[
+                            styles.primaryBtn,
+                            {
+                              backgroundColor:
+                                anticipationQuizAns === null ? colors.border : colors.primary,
+                              opacity: anticipationQuizAns === null ? 0.6 : 1,
+                            },
+                          ]}
                           onPress={handleVerifyAnticipationQuiz}
                         >
                           <Text style={styles.primaryBtnText}>
@@ -1881,5 +2212,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
     lineHeight: 18,
     flex: 1,
-  }
+  },
 });

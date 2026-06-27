@@ -25,9 +25,7 @@ export function EmptyState({
   return (
     <View style={[styles.container, style]} {...rest}>
       {icon && (
-        <View style={[styles.iconBox, { backgroundColor: colors.primaryLight }]}>
-          {icon}
-        </View>
+        <View style={[styles.iconBox, { backgroundColor: colors.primaryLight }]}>{icon}</View>
       )}
       <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
       <Text style={[styles.description, { color: colors.textMute }]}>{description}</Text>

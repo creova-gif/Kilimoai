@@ -196,7 +196,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$220',
         costSw: 'TSh 572,000',
         desc: 'High-performance flight controller for autonomous mission planning and hexacopter stabilization.',
-        descSw: 'Mdhibiti wa ndege wa utendaji wa juu kwa upangaji wa safari za anga na uimarishaji wa hexacopter.',
+        descSw:
+          'Mdhibiti wa ndege wa utendaji wa juu kwa upangaji wa safari za anga na uimarishaji wa hexacopter.',
         url: 'https://www.amazon.com/s?k=Holybro+Pixhawk+6C',
       },
       {
@@ -206,7 +207,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$55',
         costSw: 'TSh 143,000',
         desc: 'High-precision GNSS module for accurate positioning and waypoint navigation.',
-        descSw: 'Moduli ya GPS ya usahihi wa hali ya juu kwa maeneo sahihi na urambazaji wa pointi za anga.',
+        descSw:
+          'Moduli ya GPS ya usahihi wa hali ya juu kwa maeneo sahihi na urambazaji wa pointi za anga.',
         url: 'https://www.amazon.com/s?k=Holybro+M10+GPS',
       },
       {
@@ -216,7 +218,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$4,500',
         costSw: 'TSh 11,700,000',
         desc: 'High-resolution multispectral sensor for crop health analysis and vegetation indices.',
-        descSw: 'Kihisi cha multispectral cha azimio la juu kwa uchambuzi wa afya ya mazao na fahirisi za uoto.',
+        descSw:
+          'Kihisi cha multispectral cha azimio la juu kwa uchambuzi wa afya ya mazao na fahirisi za uoto.',
         url: 'https://www.micasense.com/rededge-p/',
       },
       {
@@ -226,7 +229,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$450',
         costSw: 'TSh 1,170,000',
         desc: 'Brushless DC motors with electronic speed controllers for heavy-lift aerial propulsion.',
-        descSw: 'Mota za DC zisizo na brashi zilizo na vidhibiti vya kasi vya kielektroniki kwa urushaji wa mizigo mizito.',
+        descSw:
+          'Mota za DC zisizo na brashi zilizo na vidhibiti vya kasi vya kielektroniki kwa urushaji wa mizigo mizito.',
         url: null,
       },
       {
@@ -236,7 +240,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$350',
         costSw: 'TSh 910,000',
         desc: 'High-capacity 6S Lithium-Polymer battery with integrated power management module.',
-        descSw: 'Betri ya Lithium-Polymer ya 6S yenye uwezo mkubwa na moduli ya usimamizi wa nguvu iliyounganishwa.',
+        descSw:
+          'Betri ya Lithium-Polymer ya 6S yenye uwezo mkubwa na moduli ya usimamizi wa nguvu iliyounganishwa.',
         url: null,
       },
     ],
@@ -273,19 +278,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Print Structural Mounts',
         titleSw: 'Chapisha Milingoti ya Muundo',
         desc: 'Print structural mounts in high-temperature ASA or PETG materials with 40% gyroid infill for maximum strength.',
-        descSw: 'Chapisha milingoti ya muundo katika nyenzo za ASA au PETG za joto la juu zenye ujazo wa gyroid wa 40% kwa nguvu ya juu.',
+        descSw:
+          'Chapisha milingoti ya muundo katika nyenzo za ASA au PETG za joto la juu zenye ujazo wa gyroid wa 40% kwa nguvu ya juu.',
       },
       {
         title: 'Vibration-Damping Mounts',
         titleSw: 'Milingoti ya Kupunguza Mtetemo',
         desc: 'Print flight controller vibration-damping mounts in flexible TPU filament (95A hardness).',
-        descSw: 'Chapisha milingoti ya kupunguza mtetemo wa mdhibiti wa ndege katika nyuzi rahisi ya TPU (ugumu wa 95A).',
+        descSw:
+          'Chapisha milingoti ya kupunguza mtetemo wa mdhibiti wa ndege katika nyuzi rahisi ya TPU (ugumu wa 95A).',
       },
       {
         title: 'Fabricate Component Enclosures',
         titleSw: 'Tengeneza Sehemu za Kuhifadhi',
         desc: 'Print ESC clips and telemetry radio mounts using standard PLA/PETG materials.',
-        descSw: 'Chapisha klipu za ESC na milingoti ya redio ya telemetry kwa kutumia nyenzo za kawaida za PLA/PETG.',
+        descSw:
+          'Chapisha klipu za ESC na milingoti ya redio ya telemetry kwa kutumia nyenzo za kawaida za PLA/PETG.',
       },
     ],
     wiring: [
@@ -293,19 +301,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Power Harness',
         titleSw: 'Mshipi wa Nguvu',
         desc: 'Solder the main power distribution board harness with high-current XT90 anti-spark connectors.',
-        descSw: 'Leza mshipi mkuu wa bodi ya usambazaji wa nguvu na viunganishi vya sasa ya juu vya XT90 vya kuzuia cheche.',
+        descSw:
+          'Leza mshipi mkuu wa bodi ya usambazaji wa nguvu na viunganishi vya sasa ya juu vya XT90 vya kuzuia cheche.',
       },
       {
         title: 'Motor Phase Connections',
         titleSw: 'Viunganishi vya Awamu ya Mota',
         desc: 'Connect the three brushless motor phases to the Electronic Speed Controller (ESC) outputs and cover with 5mm heat shrink.',
-        descSw: 'Unganisha awamu tatu za mota zisizo na brashi kwenye matokeo ya ESC na ufunike kwa neli za kupunguza joto za 5mm.',
+        descSw:
+          'Unganisha awamu tatu za mota zisizo na brashi kwenye matokeo ya ESC na ufunike kwa neli za kupunguza joto za 5mm.',
       },
       {
         title: 'Signal Lines',
         titleSw: 'Njia za Mawimbi',
         desc: 'Route PWM or DShot signal cables from the ESCs to the flight controller outputs, keeping them away from high-current battery leads.',
-        descSw: 'Elekeza nyaya za mawimbi za PWM au DShot kutoka kwa ESC hadi matokeo ya mdhibiti wa ndege, ukiweka mbali na nyaya za betri za sasa ya juu.',
+        descSw:
+          'Elekeza nyaya za mawimbi za PWM au DShot kutoka kwa ESC hadi matokeo ya mdhibiti wa ndege, ukiweka mbali na nyaya za betri za sasa ya juu.',
       },
     ],
     bringup: [
@@ -313,19 +324,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Firmware Flashing',
         titleSw: 'Kuweka Firmware',
         desc: 'Flash ArduCopter or PX4 Hexacopter firmware onto the flight controller using Mission Planner or QGroundControl.',
-        descSw: 'Weka firmware ya ArduCopter au PX4 Hexacopter kwenye mdhibiti wa ndege kwa kutumia Mission Planner au QGroundControl.',
+        descSw:
+          'Weka firmware ya ArduCopter au PX4 Hexacopter kwenye mdhibiti wa ndege kwa kutumia Mission Planner au QGroundControl.',
       },
       {
         title: 'Sensor Calibration',
         titleSw: 'Urekebishaji wa Sensorer',
         desc: 'Calibrate the onboard IMU, dual compasses, and GPS module on a flat, level surface away from metallic interference.',
-        descSw: 'Rekebisha IMU ya ndani, dira mbili, na moduli ya GPS kwenye uso tambarare mbali na mwingiliano wa metali.',
+        descSw:
+          'Rekebisha IMU ya ndani, dira mbili, na moduli ya GPS kwenye uso tambarare mbali na mwingiliano wa metali.',
       },
       {
         title: 'ESC Calibration',
         titleSw: 'Urekebishaji wa ESC',
         desc: 'Perform throttle range calibration for all 6 ESCs and verify correct motor spinning directions.',
-        descSw: 'Fanya urekebishaji wa anuwai ya throttle kwa ESC zote 6 na uthibitishe mwelekeo sahihi wa kuzunguka kwa mota.',
+        descSw:
+          'Fanya urekebishaji wa anuwai ya throttle kwa ESC zote 6 na uthibitishe mwelekeo sahihi wa kuzunguka kwa mota.',
       },
     ],
     assembly: [
@@ -333,19 +347,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Frame Assembly',
         titleSw: 'Uunganishaji wa Fremu',
         desc: 'Clamp carbon fiber tubes into the center plates, securing folding mechanism bolts with blue threadlocker.',
-        descSw: 'Bana mirija ya nyuzi za kaboni kwenye bodi za katikati, ukifunga boli za utaratibu wa kukunja kwa gundi ya bluu.',
+        descSw:
+          'Bana mirija ya nyuzi za kaboni kwenye bodi za katikati, ukifunga boli za utaratibu wa kukunja kwa gundi ya bluu.',
       },
       {
         title: 'Motor and ESC Mounting',
         titleSw: 'Ufungaji wa Mota na ESC',
         desc: 'Mount the 6 motors to the end of the carbon arms, securing ESCs underneath using zip ties.',
-        descSw: 'Weka mota 6 mwishoni mwa mikono ya kaboni, ukifunga ESC chini kwa kutumia kamba za nailoni.',
+        descSw:
+          'Weka mota 6 mwishoni mwa mikono ya kaboni, ukifunga ESC chini kwa kutumia kamba za nailoni.',
       },
       {
         title: 'Flight Deck Installation',
         titleSw: 'Ufungaji wa Sitaha ya Ndege',
         desc: 'Mount the flight controller to the TPU damping plate, wire the GPS module onto a folding mast, and attach the MicaSense payload bay.',
-        descSw: 'Weka mdhibiti wa ndege kwenye bodi ya TPU ya kupunguza mtetemo, unganisha moduli ya GPS kwenye mlingoti wa kukunja, na uambatishe sehemu ya mzigo ya MicaSense.',
+        descSw:
+          'Weka mdhibiti wa ndege kwenye bodi ya TPU ya kupunguza mtetemo, unganisha moduli ya GPS kwenye mlingoti wa kukunja, na uambatishe sehemu ya mzigo ya MicaSense.',
       },
     ],
   },
@@ -358,7 +375,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$350',
         costSw: 'TSh 910,000',
         desc: 'Triple-redundant autopilot running PX4/ArduPilot for high-reliability soil analysis flights.',
-        descSw: 'Autopilot ya ziada mara tatu inayotumia PX4/ArduPilot kwa safari za anga za uhakika wa juu za uchambuzi wa udongo.',
+        descSw:
+          'Autopilot ya ziada mara tatu inayotumia PX4/ArduPilot kwa safari za anga za uhakika wa juu za uchambuzi wa udongo.',
         url: 'https://www.digikey.com/en/products/result?keywords=Cube+Orange+Plus',
       },
       {
@@ -368,7 +386,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$499',
         costSw: 'TSh 1,297,400',
         desc: 'Edge AI processing unit with 8GB memory for real-time multispectral index generation and vision-based landing.',
-        descSw: 'Kompyuta ya Edge AI yenye kumbukumbu ya 8GB kwa ajili ya uzalishaji wa fahirisi za uoto na kutua kwa kutumia kamera.',
+        descSw:
+          'Kompyuta ya Edge AI yenye kumbukumbu ya 8GB kwa ajili ya uzalishaji wa fahirisi za uoto na kutua kwa kutumia kamera.',
         url: 'https://www.digikey.com/en/products/result?keywords=Jetson+Orin+Nano',
       },
       {
@@ -378,7 +397,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$8,500',
         costSw: 'TSh 22,100,000',
         desc: 'Premium high-resolution sensor mapping crop vigor, nitrogen levels, and soil moisture variations.',
-        descSw: 'Kihisi cha ubora wa juu cha ramani ya afya ya mazao, viwango vya nitrojeni, na mabadiliko ya unyevu wa udongo.',
+        descSw:
+          'Kihisi cha ubora wa juu cha ramani ya afya ya mazao, viwango vya nitrojeni, na mabadiliko ya unyevu wa udongo.',
         url: 'https://www.micasense.com/rededge-p/',
       },
       {
@@ -398,7 +418,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$450',
         costSw: 'TSh 1,170,000',
         desc: 'High-thrust motors with T-Motor Flame 60A ESCs for stable flight under heavy payloads.',
-        descSw: 'Mota za nguvu za juu zenye ESC za T-Motor Flame 60A kwa safari thabiti chini ya mizigo mizito.',
+        descSw:
+          'Mota za nguvu za juu zenye ESC za T-Motor Flame 60A kwa safari thabiti chini ya mizigo mizito.',
         url: 'https://www.amazon.com/s?k=T-Motor+MN4014',
       },
     ],
@@ -437,13 +458,15 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Print Companion Computer Mounts',
         titleSw: 'Chapisha Milingoti ya Kompyuta Andani',
         desc: 'Load PETG filament and print the Jetson Mount Plate flat on the bed using 30% infill and 3 shells.',
-        descSw: 'Weka nyuzi ya PETG and uchapishe Sahani ya Mlima wa Jetson ikiwa tambarare kwa kutumia ujazo wa 30% na makombora 3.',
+        descSw:
+          'Weka nyuzi ya PETG and uchapishe Sahani ya Mlima wa Jetson ikiwa tambarare kwa kutumia ujazo wa 30% na makombora 3.',
       },
       {
         title: 'Print Landing Cradles',
         titleSw: 'Chapisha Milingoti ya Kutua',
         desc: 'Print 4 Vehicle Landing Cradle components in ASA using 40% infill and 4 shells to guarantee UV resistance.',
-        descSw: 'Chapisha vipengele 4 vya Mlingoti wa Kutua katika ASA kwa kutumia ujazo wa 40% na makombora 4 ili kuhakikisha upinzani wa UV.',
+        descSw:
+          'Chapisha vipengele 4 vya Mlingoti wa Kutua katika ASA kwa kutumia ujazo wa 40% na makombora 4 ili kuhakikisha upinzani wa UV.',
       },
     ],
     wiring: [
@@ -451,19 +474,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Main Power Distribution',
         titleSw: 'Usambazaji wa Nguvu Mkuu',
         desc: 'Solder the main XT90-AS anti-spark power lead and ESC battery cables to the PDB board.',
-        descSw: 'Leza risasi kuu ya nguvu ya XT90-AS ya kuzuia cheche na nyaya za betri za ESC kwenye bodi ya PDB.',
+        descSw:
+          'Leza risasi kuu ya nguvu ya XT90-AS ya kuzuia cheche na nyaya za betri za ESC kwenye bodi ya PDB.',
       },
       {
         title: 'Companion Power Supply',
         titleSw: 'Ugavi wa Nguvu wa Kompyuta Andani',
         desc: 'Connect the Jetson Orin Nano power input pins to the 12V regulated regulator rail from the Mauch power module.',
-        descSw: 'Unganisha pini za pembejeo za nguvu za Jetson Orin Nano kwenye njia ya kidhibiti ya 12V kutoka kwa moduli ya nguvu ya Mauch.',
+        descSw:
+          'Unganisha pini za pembejeo za nguvu za Jetson Orin Nano kwenye njia ya kidhibiti ya 12V kutoka kwa moduli ya nguvu ya Mauch.',
       },
       {
         title: 'Telemetry Links',
         titleSw: 'Viungo vya Telemetry',
         desc: 'Wire CAN bus lines from Here3+ GPS to autopilot and UART lines from Jetson companion computer to TELEM2 port.',
-        descSw: 'Unganisha nyaya za CAN bus kutoka Here3+ GPS hadi autopilot na nyaya za UART kutoka kompyuta ya Jetson hadi bandari ya TELEM2.',
+        descSw:
+          'Unganisha nyaya za CAN bus kutoka Here3+ GPS hadi autopilot na nyaya za UART kutoka kompyuta ya Jetson hadi bandari ya TELEM2.',
       },
     ],
     bringup: [
@@ -471,19 +497,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Autopilot Setup',
         titleSw: 'Usanidi wa Autopilot',
         desc: 'Flash ArduCopter firmware, set hexacopter frame geometry, and perform ESC endpoint range calibration.',
-        descSw: 'Weka firmware ya ArduCopter, weka jiometri ya fremu ya hexacopter, na ufanye urekebishaji wa anuwai ya ESC.',
+        descSw:
+          'Weka firmware ya ArduCopter, weka jiometri ya fremu ya hexacopter, na ufanye urekebishaji wa anuwai ya ESC.',
       },
       {
         title: 'RTK Injection Test',
         titleSw: 'Jaribio la Uingizaji wa RTK',
         desc: 'Establish RTK corrections via the ground control station and verify centimeter-level positioning accuracy.',
-        descSw: 'Weka marekebisho ya RTK kupitia kituo cha kudhibiti ardhi na uthibitishe usahihi wa nafasi ya sentimita.',
+        descSw:
+          'Weka marekebisho ya RTK kupitia kituo cha kudhibiti ardhi na uthibitishe usahihi wa nafasi ya sentimita.',
       },
       {
         title: 'MAVLink Verification',
         titleSw: 'Uthibitishaji wa MAVLink',
         desc: 'Log into Jetson Linux terminal and run companion-computer service to verify active bidirectional MAVLink packets.',
-        descSw: 'Ingia kwenye terminal ya Jetson Linux na uendeshe huduma ya kompyuta andani ili kuthibitisha pakiti za MAVLink.',
+        descSw:
+          'Ingia kwenye terminal ya Jetson Linux na uendeshe huduma ya kompyuta andani ili kuthibitisha pakiti za MAVLink.',
       },
     ],
     assembly: [
@@ -491,19 +520,22 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Core Electronics Integration',
         titleSw: 'Uunganishaji wa Kielektroniki',
         desc: 'Secure the autopilot Cube and Mauch PDB in the center plates, securing with vibration-damping TPU standoffs.',
-        descSw: 'Funga autopilot Cube na Mauch PDB kwenye bodi za katikati, ukifunga kwa TPU za kupunguza mtetemo.',
+        descSw:
+          'Funga autopilot Cube na Mauch PDB kwenye bodi za katikati, ukifunga kwa TPU za kupunguza mtetemo.',
       },
       {
         title: 'Propulsion Assembly',
         titleSw: 'Mkusanyiko wa Kusukuma',
         desc: 'Mount the brushless motors and 15-inch folding props onto the carbon arms, verifying motor layout order.',
-        descSw: 'Weka mota na mapanga ya kukunja ya inchi 15 kwenye mikono ya kaboni, ukithibitisha mpangilio sahihi wa mota.',
+        descSw:
+          'Weka mota na mapanga ya kukunja ya inchi 15 kwenye mikono ya kaboni, ukithibitisha mpangilio sahihi wa mota.',
       },
       {
         title: 'Camera Gimbal Attachment',
         titleSw: 'Ufungaji wa Gimbal ya Kamera',
         desc: 'Mount the MicaSense camera on the 3D-printed gimbal mount underneath the payload bay, ensuring free motion.',
-        descSw: 'Weka kamera ya MicaSense kwenye mlingoti wa gimbal uliochapishwa wa 3D chini ya sehemu ya mzigo, ukihakikisha mwendo huru.',
+        descSw:
+          'Weka kamera ya MicaSense kwenye mlingoti wa gimbal uliochapishwa wa 3D chini ya sehemu ya mzigo, ukihakikisha mwendo huru.',
       },
     ],
   },
@@ -516,7 +548,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$650',
         costSw: 'TSh 1,690,000',
         desc: 'Autopilot with redundancy and integrated ADSB receiver to detect manned aircraft.',
-        descSw: 'Autopilot yenye mfumo wa ziada na mpokeaji wa ADSB ili kugundua ndege zenye rubani.',
+        descSw:
+          'Autopilot yenye mfumo wa ziada na mpokeaji wa ADSB ili kugundua ndege zenye rubani.',
         url: 'https://www.getfpv.com/cube-orange-standard-set-with-ads-b-carrier-board.html',
       },
       {
@@ -536,7 +569,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$350',
         costSw: 'TSh 910,000',
         desc: 'Encrypted long-range 900MHz wireless data link for command and control telemetry.',
-        descSw: 'Mawasiliano ya waya ya 900MHz yenye usimbaji fiche kwa ajili ya telemetry na amri.',
+        descSw:
+          'Mawasiliano ya waya ya 900MHz yenye usimbaji fiche kwa ajili ya telemetry na amri.',
         url: 'https://www.unmannedsystemsresource.com/product/pico-p900-radio/',
       },
       {
@@ -589,7 +623,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Print Coaxial Motor Mounts',
         titleSw: 'Chapisha Milingoti ya Coaxial ya Mota',
         desc: 'Print 4 coaxial motor mounts in Carbon-Filled Nylon using 100% infill for maximum load rating.',
-        descSw: 'Chapisha milingoti 4 ya mota ya coaxial katika Nylon ya kaboni kwa kutumia ujazo wa 100% kwa uwezo wa juu wa mzigo.',
+        descSw:
+          'Chapisha milingoti 4 ya mota ya coaxial katika Nylon ya kaboni kwa kutumia ujazo wa 100% kwa uwezo wa juu wa mzigo.',
       },
       {
         title: 'Fabricate Weather-Sealed Enclosures',
@@ -603,13 +638,15 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'High Voltage Bus Solder',
         titleSw: 'Kuleza Njia Kuu ya Voltage ya Juu',
         desc: 'Solder high-voltage ESC power leads directly to the Mauch 200A PDB bus bar using lead-free silver solder.',
-        descSw: 'Leza nyaya za ESC za voltage ya juu moja kwa moja kwenye bodi ya Mauch 200A PDB kwa kutumia risasi ya fedha isiyo na risasi.',
+        descSw:
+          'Leza nyaya za ESC za voltage ya juu moja kwa moja kwenye bodi ya Mauch 200A PDB kwa kutumia risasi ya fedha isiyo na risasi.',
       },
       {
         title: 'Redundant Power Integration',
         titleSw: 'Uunganishaji wa Nguvu wa Ziada',
         desc: 'Wire dual power modules from the 12S battery lines into power ports 1 and 2 on the Cube carrier board.',
-        descSw: 'Unganisha moduli mbili za nguvu kutoka kwenye betri za 12S hadi bandari za nguvu 1 na 2 kwenye bodi ya Cube.',
+        descSw:
+          'Unganisha moduli mbili za nguvu kutoka kwenye betri za 12S hadi bandari za nguvu 1 na 2 kwenye bodi ya Cube.',
       },
     ],
     bringup: [
@@ -617,13 +654,15 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'ADSB Receiver Scan',
         titleSw: 'Scan ya Mpokeaji wa ADSB',
         desc: 'Power on the carrier board, verify ADSB telemetry feeds, and run check sweeps for local transponders.',
-        descSw: 'Washa bodi kuu, thibitisha data ya ADSB, na ufanye vipimo kwa transponder za karibu.',
+        descSw:
+          'Washa bodi kuu, thibitisha data ya ADSB, na ufanye vipimo kwa transponder za karibu.',
       },
       {
         title: 'Lidar Distance Check',
         titleSw: 'Jaribio la Umbali la Lidar',
         desc: 'Verify SF20/C lidar readings over serial, calibrating offsets to match the physical height profile.',
-        descSw: 'Thibitisha usomaji wa SF20/C lidar kupitia serial, ukirekebisha ili zilingane na urefu halisi.',
+        descSw:
+          'Thibitisha usomaji wa SF20/C lidar kupitia serial, ukirekebisha ili zilingane na urefu halisi.',
       },
     ],
     assembly: [
@@ -631,13 +670,15 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Chassis Tube Assembly',
         titleSw: 'Uunganishaji wa Mirija ya Fremu',
         desc: 'Assemble carbon fiber arms onto the core plates, securing locking bolts using threadlocker.',
-        descSw: 'Unganisha mikono ya nyuzi za kaboni kwenye bodi za katikati, ukifunga boli kwa gundi.',
+        descSw:
+          'Unganisha mikono ya nyuzi za kaboni kwenye bodi za katikati, ukifunga boli kwa gundi.',
       },
       {
         title: 'Peltier Cooler Integration',
         titleSw: 'Ufungaji wa Peltier Cooler',
         desc: 'Install thermoelectric coolers and heat sinks inside the medical cargo bay, routing control leads to companion computer.',
-        descSw: 'Weka Peltier coolers na heatsinks ndani ya chumba cha matibabu, ukielekeza nyaya za kudhibiti kwenye kompyuta.',
+        descSw:
+          'Weka Peltier coolers na heatsinks ndani ya chumba cha matibabu, ukielekeza nyaya za kudhibiti kwenye kompyuta.',
       },
     ],
   },
@@ -650,7 +691,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$12.50',
         costSw: 'TSh 32,500',
         desc: 'Ultra-low power LoRaWAN node microcontroller with battery charging circuits.',
-        descSw: 'Microcontroller ya nguvu ya chini sana ya LoRaWAN yenye mzunguko wa kuchaji betri.',
+        descSw:
+          'Microcontroller ya nguvu ya chini sana ya LoRaWAN yenye mzunguko wa kuchaji betri.',
         url: 'https://www.heltec.org/project/htcc-ab01/',
       },
       {
@@ -660,7 +702,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$4.50',
         costSw: 'TSh 11,700',
         desc: 'Digital digital temperature probe for monitoring core livestock body health.',
-        descSw: 'Kipima joto cha kielektroniki kwa ajili ya kufuatilia afya ya joto la mwili wa mifugo.',
+        descSw:
+          'Kipima joto cha kielektroniki kwa ajili ya kufuatilia afya ya joto la mwili wa mifugo.',
         url: null,
       },
       {
@@ -703,7 +746,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Print TPU Tag Casing',
         titleSw: 'Chapisha Kasha la TPU la Sikio',
         desc: 'Print the tag housing in flexible TPU with 100% infill to ensure complete water isolation and flexibility.',
-        descSw: 'Chapisha kasha la sikio katika TPU rahisi yenye ujazo wa 100% ili kuhakikisha uzuiaji kamili wa maji.',
+        descSw:
+          'Chapisha kasha la sikio katika TPU rahisi yenye ujazo wa 100% ili kuhakikisha uzuiaji kamili wa maji.',
       },
     ],
     wiring: [
@@ -711,7 +755,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Solder Tag Sensors',
         titleSw: 'Leza Sensorer za Sikio',
         desc: 'Solder the digital thermistor and accelerometer I2C lines to the Heltec CubeCell pins.',
-        descSw: 'Leza kipima joto cha dijitali na laini za I2C za accelerometer kwenye pini za Heltec CubeCell.',
+        descSw:
+          'Leza kipima joto cha dijitali na laini za I2C za accelerometer kwenye pini za Heltec CubeCell.',
       },
     ],
     bringup: [
@@ -719,7 +764,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Heltec Firmware Upload',
         titleSw: 'Pakia Firmware ya Heltec',
         desc: 'Upload the LoRaWAN tracking stack firmware using Arduino IDE and verify keys registration.',
-        descSw: 'Pakia firmware ya LoRaWAN ya ufuatiliaji kwa kutumia Arduino IDE na uthibitishe funguo.',
+        descSw:
+          'Pakia firmware ya LoRaWAN ya ufuatiliaji kwa kutumia Arduino IDE na uthibitishe funguo.',
       },
     ],
     assembly: [
@@ -727,7 +773,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Tag Sealing',
         titleSw: 'Kufunga Kifaa cha Sikio',
         desc: 'Slide the electronics into the TPU tag housing and seal the perimeter using cyanoacrylate adhesive.',
-        descSw: 'Ingiza vifaa vya elektroniki kwenye kasha la TPU na ufunge ukingo kwa kutumia gundi maalum.',
+        descSw:
+          'Ingiza vifaa vya elektroniki kwenye kasha la TPU na ufunge ukingo kwa kutumia gundi maalum.',
       },
     ],
   },
@@ -760,7 +807,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         cost: '$18.00',
         costSw: 'TSh 46,800',
         desc: 'Infrared gas monitor for detection of grain respiration and crop spoilage signs.',
-        descSw: 'Kihisi cha gesi cha infrared kwa ajili ya kugundua upumuaji vya nafaka na uharibifu.',
+        descSw:
+          'Kihisi cha gesi cha infrared kwa ajili ya kugundua upumuaji vya nafaka na uharibifu.',
         url: 'https://www.amazon.com/s?k=MH-Z19B',
       },
       {
@@ -815,7 +863,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Print Perforated Silo Probe',
         titleSw: 'Chapisha Kishikizo cha Silo',
         desc: 'Print the perforated sensor probe housing in PETG with 3 walls and 20% gyroid infill.',
-        descSw: 'Chapisha kishikizo kilichotobolewa cha sensorer katika PETG chenye kuta 3 na ujazo wa 20%.',
+        descSw:
+          'Chapisha kishikizo kilichotobolewa cha sensorer katika PETG chenye kuta 3 na ujazo wa 20%.',
       },
     ],
     wiring: [
@@ -831,7 +880,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Run I2C Bus Scan',
         titleSw: 'Fanya I2C Scanner',
         desc: 'Flash I2C scanner code to verify addresses of all integrated sensors.',
-        descSw: 'Pakia programu ya I2C scanner ili kuthibitisha anwani za sensorer zote zilizounganishwa.',
+        descSw:
+          'Pakia programu ya I2C scanner ili kuthibitisha anwani za sensorer zote zilizounganishwa.',
       },
     ],
     assembly: [
@@ -839,7 +889,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Mount Core Components',
         titleSw: 'Unganisha Vipengele Muhimu',
         desc: 'Assemble sensors into their printed brackets and slide the array into the perforated silo probe.',
-        descSw: 'Weka sensorer kwenye mabano yake na telezesha seti nzima kwenye kishikizo cha silo.',
+        descSw:
+          'Weka sensorer kwenye mabano yake na telezesha seti nzima kwenye kishikizo cha silo.',
       },
     ],
   },
@@ -931,7 +982,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Solder Power Rails',
         titleSw: 'Leza Nyaya za Nguvu',
         desc: 'Connect the 18650 battery holder leads through the TP4056 charging module to the buck-boost converter.',
-        descSw: 'Unganisha nyaya za betri ya 18650 kupitia moduli ya TP4056 hadi kigeuzi cha TPS63060.',
+        descSw:
+          'Unganisha nyaya za betri ya 18650 kupitia moduli ya TP4056 hadi kigeuzi cha TPS63060.',
       },
     ],
     bringup: [
@@ -939,7 +991,8 @@ const HARDWARE_DATA: Record<string, DeviceHardwareData> = {
         title: 'Verify Cellular Sync',
         titleSw: 'Thibitisha Mawasiliano ya Simu',
         desc: 'Establish connection with LTE-M network and send mock temperature package to KilimoAI API.',
-        descSw: 'Weka mawasiliano na mtandao wa LTE-M na utume ujumbe wa majaribio ya joto kwenye API.',
+        descSw:
+          'Weka mawasiliano na mtandao wa LTE-M na utume ujumbe wa majaribio ya joto kwenye API.',
       },
     ],
     assembly: [
@@ -1031,14 +1084,15 @@ export default function IOTSystems() {
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    
+
     const newDevName = deviceNameInput.trim() || `${deviceTypeInput} Node ${devices.length + 1}`;
     const newIoTDevice: IoTDevice = {
       id: String(devices.length + 1),
       name: newDevName,
       nameSw: newDevName,
       type: deviceTypeInput,
-      iconName: deviceTypeInput === 'SENSOR' ? 'zap' : deviceTypeInput === 'GATE' ? 'cpu' : 'droplets',
+      iconName:
+        deviceTypeInput === 'SENSOR' ? 'zap' : deviceTypeInput === 'GATE' ? 'cpu' : 'droplets',
       battery: 100,
       latency: 75,
       lastSeen: 'Just now',
@@ -1116,7 +1170,10 @@ export default function IOTSystems() {
         style={StyleSheet.absoluteFillObject}
       >
         <LinearGradient
-          colors={[isDark ? 'rgba(18,26,15,0.85)' : 'rgba(255,255,255,0.7)', isDark ? '#121A0F' : '#FCFBF7']}
+          colors={[
+            isDark ? 'rgba(18,26,15,0.85)' : 'rgba(255,255,255,0.7)',
+            isDark ? '#121A0F' : '#FCFBF7',
+          ]}
           style={StyleSheet.absoluteFillObject}
           locations={[0, 0.45]}
         />
@@ -1127,7 +1184,10 @@ export default function IOTSystems() {
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-            style={[styles.iconButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+            style={[
+              styles.iconButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
             accessibilityRole="button"
             accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
           >
@@ -1137,7 +1197,10 @@ export default function IOTSystems() {
             {language === 'sw' ? 'Mifumo ya IoT & Drones' : 'IoT & Drone Systems'}
           </Text>
           <TouchableOpacity
-            style={[styles.iconButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+            style={[
+              styles.iconButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
             onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
             accessibilityRole="button"
             accessibilityLabel={language === 'sw' ? 'Mipangilio' : 'Settings'}
@@ -1146,13 +1209,23 @@ export default function IOTSystems() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Device Hub — Connection Status */}
           <Animated.View entering={FadeInUp.delay(50).springify()}>
-            <View style={[styles.deviceHubBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.deviceHubBanner,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               <View style={[styles.deviceHubHeader, { backgroundColor: 'rgba(34,209,90,0.06)' }]}>
                 <View style={styles.deviceHubTitleRow}>
-                  <Animated.View style={[styles.searchingDot, animatedPulse, { backgroundColor: '#22d15a' }]} />
+                  <Animated.View
+                    style={[styles.searchingDot, animatedPulse, { backgroundColor: '#22d15a' }]}
+                  />
                   <Text style={[styles.deviceHubTitle, { color: colors.text }]}>
                     {language === 'sw' ? 'KITUO CHA VIFAA' : 'DEVICE HUB'}
                   </Text>
@@ -1167,7 +1240,9 @@ export default function IOTSystems() {
                   }}
                   style={styles.registerFab}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Sajili kifaa kipya' : 'Register new device'}
+                  accessibilityLabel={
+                    language === 'sw' ? 'Sajili kifaa kipya' : 'Register new device'
+                  }
                 >
                   <Plus size={12} color="#fff" />
                   <Text style={styles.registerFabText}>
@@ -1183,8 +1258,15 @@ export default function IOTSystems() {
                     key={device.id}
                     onPress={() => handleDevicePress(device)}
                     accessibilityRole="button"
-                    accessibilityLabel={language === 'sw' ? `Fungua maelezo ya ${device.nameSw}` : `Open details for ${device.name}`}
-                    style={{ borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }}
+                    accessibilityLabel={
+                      language === 'sw'
+                        ? `Fungua maelezo ya ${device.nameSw}`
+                        : `Open details for ${device.name}`
+                    }
+                    style={{
+                      borderTopWidth: StyleSheet.hairlineWidth,
+                      borderTopColor: colors.border,
+                    }}
                   >
                     <Animated.View
                       entering={FadeInDown.delay(80 + i * 50).springify()}
@@ -1200,16 +1282,20 @@ export default function IOTSystems() {
                         <Text style={[styles.deviceType, { color: colors.textMute }]}>
                           S/N: {device.serialNumber} {device.agroIdLinked ? `· Linked` : ''}
                         </Text>
-                        
+
                         {/* Sub telemetry status */}
                         <View style={styles.telemetryMiniRow}>
                           <View style={styles.telemetryMiniBox}>
                             <BatteryCharging size={10} color={colors.textMute} />
-                            <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>{device.battery}%</Text>
+                            <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>
+                              {device.battery}%
+                            </Text>
                           </View>
                           <View style={styles.telemetryMiniBox}>
                             <Wifi size={10} color={colors.textMute} />
-                            <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>{device.latency}ms</Text>
+                            <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>
+                              {device.latency}ms
+                            </Text>
                           </View>
                           <Text style={[styles.telemetryMiniTxt, { color: colors.textMute }]}>
                             Seen: {language === 'sw' ? device.lastSeenSw : device.lastSeen}
@@ -1245,22 +1331,29 @@ export default function IOTSystems() {
               {language === 'sw' ? 'Udhibiti wa Ndege Nyuki (Drone)' : 'Agricultural Drone Control'}
             </Text>
 
-            <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.glassCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleRow}>
                   <View style={[styles.iconBadge, { backgroundColor: 'rgba(59,130,246,0.1)' }]}>
                     <Target size={20} color="#3b82f6" />
                   </View>
                   <View>
-                    <Text style={[styles.cardTitle, { color: colors.text }]}>KilimoAI AgriDrone AD-40</Text>
+                    <Text style={[styles.cardTitle, { color: colors.text }]}>
+                      KilimoAI AgriDrone AD-40
+                    </Text>
                     <Text style={[styles.cardSubtitle, { color: '#3b82f6' }]}>
                       {droneActive
                         ? language === 'sw'
                           ? 'Iko Hewani'
                           : 'In Flight'
                         : language === 'sw'
-                        ? 'Ipo Kituoni'
-                        : 'Standby'}
+                          ? 'Ipo Kituoni'
+                          : 'Standby'}
                     </Text>
                   </View>
                 </View>
@@ -1269,7 +1362,9 @@ export default function IOTSystems() {
                   onValueChange={handleDroneToggle}
                   trackColor={{ false: colors.border, true: '#3b82f6' }}
                   thumbColor="#fff"
-                  accessibilityLabel={language === 'sw' ? 'Washa au zima drone' : 'Toggle agricultural drone'}
+                  accessibilityLabel={
+                    language === 'sw' ? 'Washa au zima drone' : 'Toggle agricultural drone'
+                  }
                 />
               </View>
 
@@ -1299,29 +1394,43 @@ export default function IOTSystems() {
 
               <View style={styles.droneActions}>
                 <TouchableOpacity
-                  style={[styles.actionBtn, { backgroundColor: droneActive ? '#ef4444' : colors.primary }]}
+                  style={[
+                    styles.actionBtn,
+                    { backgroundColor: droneActive ? '#ef4444' : colors.primary },
+                  ]}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     setDroneActive(!droneActive);
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={droneActive
-                    ? (language === 'sw' ? 'Tua drone sasa' : 'Land agricultural drone now')
-                    : (language === 'sw' ? 'Rusha drone sasa' : 'Launch agricultural drone now')}
+                  accessibilityLabel={
+                    droneActive
+                      ? language === 'sw'
+                        ? 'Tua drone sasa'
+                        : 'Land agricultural drone now'
+                      : language === 'sw'
+                        ? 'Rusha drone sasa'
+                        : 'Launch agricultural drone now'
+                  }
                 >
                   {droneActive ? (
                     <PlaneLanding size={18} color="#fff" />
                   ) : (
                     <PlaneTakeoff size={18} color={isDark ? '#000' : '#fff'} />
                   )}
-                  <Text style={[styles.actionBtnText, { color: droneActive ? '#fff' : isDark ? '#000' : '#fff' }]}>
+                  <Text
+                    style={[
+                      styles.actionBtnText,
+                      { color: droneActive ? '#fff' : isDark ? '#000' : '#fff' },
+                    ]}
+                  >
                     {droneActive
                       ? language === 'sw'
                         ? 'Tua Sasa'
                         : 'Land Now'
                       : language === 'sw'
-                      ? 'Rusha Drone'
-                      : 'Launch Drone'}
+                        ? 'Rusha Drone'
+                        : 'Launch Drone'}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1331,7 +1440,9 @@ export default function IOTSystems() {
                     setShowWaypointModal(true);
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Chora au panga njia ya drone' : 'Plan drone waypoints'}
+                  accessibilityLabel={
+                    language === 'sw' ? 'Chora au panga njia ya drone' : 'Plan drone waypoints'
+                  }
                 >
                   <Map size={18} color={colors.text} />
                   <Text style={[styles.actionBtnTextSecondary, { color: colors.text }]}>
@@ -1348,10 +1459,17 @@ export default function IOTSystems() {
               {language === 'sw' ? 'Msaada wa Matunzo (Premium)' : 'Premium Maintenance Support'}
             </Text>
 
-            <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.glassCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               <View style={{ gap: 4, marginBottom: 12 }}>
                 <Text style={[styles.subTitleText, { color: colors.text }]}>
-                  {language === 'sw' ? 'KilimoAI Premium IoT Subscription' : 'KilimoAI Premium IoT Subscription'}
+                  {language === 'sw'
+                    ? 'KilimoAI Premium IoT Subscription'
+                    : 'KilimoAI Premium IoT Subscription'}
                 </Text>
                 <Text style={[styles.subBodyText, { color: colors.textMute }]}>
                   {language === 'sw'
@@ -1367,11 +1485,16 @@ export default function IOTSystems() {
                     styles.subTierBox,
                     {
                       borderColor: selectedSubTier === 'monthly' ? '#22d15a' : colors.border,
-                      backgroundColor: selectedSubTier === 'monthly' ? 'rgba(34,209,90,0.06)' : 'transparent',
+                      backgroundColor:
+                        selectedSubTier === 'monthly' ? 'rgba(34,209,90,0.06)' : 'transparent',
                     },
                   ]}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Kifurushi cha Kila Mwezi, TSh 15,000 kwa mwezi' : 'Monthly tier, 15,000 Shillings per month'}
+                  accessibilityLabel={
+                    language === 'sw'
+                      ? 'Kifurushi cha Kila Mwezi, TSh 15,000 kwa mwezi'
+                      : 'Monthly tier, 15,000 Shillings per month'
+                  }
                   accessibilityState={{ selected: selectedSubTier === 'monthly' }}
                 >
                   <Text style={[styles.subTierName, { color: colors.text }]}>
@@ -1387,11 +1510,16 @@ export default function IOTSystems() {
                     styles.subTierBox,
                     {
                       borderColor: selectedSubTier === 'yearly' ? '#22d15a' : colors.border,
-                      backgroundColor: selectedSubTier === 'yearly' ? 'rgba(34,209,90,0.06)' : 'transparent',
+                      backgroundColor:
+                        selectedSubTier === 'yearly' ? 'rgba(34,209,90,0.06)' : 'transparent',
                     },
                   ]}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Kifurushi cha Kila Mwaka, TSh 150,000 kwa mwaka' : 'Annual tier, 150,000 Shillings per year'}
+                  accessibilityLabel={
+                    language === 'sw'
+                      ? 'Kifurushi cha Kila Mwaka, TSh 150,000 kwa mwaka'
+                      : 'Annual tier, 150,000 Shillings per year'
+                  }
                   accessibilityState={{ selected: selectedSubTier === 'yearly' }}
                 >
                   <Text style={[styles.subTierName, { color: colors.text }]}>
@@ -1410,7 +1538,12 @@ export default function IOTSystems() {
               {language === 'sw' ? 'Umwagiliaji wa Akili' : 'Smart Irrigation'}
             </Text>
 
-            <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View
+              style={[
+                styles.glassCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleRow}>
                   <Animated.View
@@ -1426,14 +1559,19 @@ export default function IOTSystems() {
                     <Text style={[styles.cardTitle, { color: colors.text }]}>
                       {language === 'sw' ? 'Bomba Kuu (Kanda 1-4)' : 'Main Valve (Zones 1-4)'}
                     </Text>
-                    <Text style={[styles.cardSubtitle, { color: irrigationActive ? '#0ea5e9' : colors.textMute }]}>
+                    <Text
+                      style={[
+                        styles.cardSubtitle,
+                        { color: irrigationActive ? '#0ea5e9' : colors.textMute },
+                      ]}
+                    >
                       {irrigationActive
                         ? language === 'sw'
                           ? 'Inamwagilia (2.4L/s)'
                           : 'Active (2.4L/s)'
                         : language === 'sw'
-                        ? 'Imezimwa'
-                        : 'Inactive'}
+                          ? 'Imezimwa'
+                          : 'Inactive'}
                     </Text>
                   </View>
                 </View>
@@ -1442,7 +1580,9 @@ export default function IOTSystems() {
                   onValueChange={handleIrrigationToggle}
                   trackColor={{ false: colors.border, true: '#0ea5e9' }}
                   thumbColor="#fff"
-                  accessibilityLabel={language === 'sw' ? 'Washa au zima umwagiliaji' : 'Toggle smart irrigation'}
+                  accessibilityLabel={
+                    language === 'sw' ? 'Washa au zima umwagiliaji' : 'Toggle smart irrigation'
+                  }
                 />
               </View>
 
@@ -1455,7 +1595,9 @@ export default function IOTSystems() {
                     42% <Text style={{ color: '#ef4444', fontSize: 12 }}>(Chini)</Text>
                   </Text>
                   <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, { width: '42%', backgroundColor: '#ef4444' }]} />
+                    <View
+                      style={[styles.progressBarFill, { width: '42%', backgroundColor: '#ef4444' }]}
+                    />
                   </View>
                 </View>
                 <View style={styles.iStat}>
@@ -1464,7 +1606,9 @@ export default function IOTSystems() {
                   </Text>
                   <Text style={[styles.iStatValue, { color: colors.text }]}>65%</Text>
                   <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, { width: '65%', backgroundColor: '#22c55e' }]} />
+                    <View
+                      style={[styles.progressBarFill, { width: '65%', backgroundColor: '#22c55e' }]}
+                    />
                   </View>
                 </View>
               </View>
@@ -1491,10 +1635,26 @@ export default function IOTSystems() {
                   value: '24°C',
                   color: '#f59e0b',
                 },
-                { icon: <Droplets size={24} color="#3b82f6" />, label: 'pH Level', value: '6.4', color: '#3b82f6' },
-                { icon: <Target size={24} color="#22c55e" />, label: 'Nitrogen (N)', value: 'Optimal', color: '#22c55e' },
+                {
+                  icon: <Droplets size={24} color="#3b82f6" />,
+                  label: 'pH Level',
+                  value: '6.4',
+                  color: '#3b82f6',
+                },
+                {
+                  icon: <Target size={24} color="#22c55e" />,
+                  label: 'Nitrogen (N)',
+                  value: 'Optimal',
+                  color: '#22c55e',
+                },
               ].map((s, i) => (
-                <View key={i} style={[styles.sensorCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <View
+                  key={i}
+                  style={[
+                    styles.sensorCard,
+                    { backgroundColor: colors.card, borderColor: colors.border },
+                  ]}
+                >
                   <View style={[styles.sensorIcon, { backgroundColor: s.color + '15' }]}>
                     {s.icon}
                   </View>
@@ -1507,9 +1667,16 @@ export default function IOTSystems() {
           {/* RIFT HerdTag Section */}
           <Animated.View entering={FadeInDown.delay(350).springify()}>
             <Text style={[styles.sectionTitle, { color: colors.textMute }]}>
-              {language === 'sw' ? 'RIFT HerdTag™ · Ufuatiliaji wa Mifugo' : 'RIFT HerdTag™ · Livestock Tracking'}
+              {language === 'sw'
+                ? 'RIFT HerdTag™ · Ufuatiliaji wa Mifugo'
+                : 'RIFT HerdTag™ · Livestock Tracking'}
             </Text>
-            <View style={[styles.glassCard, { backgroundColor: colors.card, borderColor: '#22d15a30', borderWidth: 1.5 }]}>
+            <View
+              style={[
+                styles.glassCard,
+                { backgroundColor: colors.card, borderColor: '#22d15a30', borderWidth: 1.5 },
+              ]}
+            >
               {/* Header */}
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleRow}>
@@ -1519,13 +1686,17 @@ export default function IOTSystems() {
                   <View>
                     <Text style={[styles.cardTitle, { color: colors.text }]}>RIFT HerdTag™</Text>
                     <Text style={[styles.cardSubtitle, { color: '#22d15a' }]}>
-                      {language === 'sw' ? 'Masikio Smart · 4G + BLE + GPS' : 'Smart Ear Tag · 4G + BLE + GPS'}
+                      {language === 'sw'
+                        ? 'Masikio Smart · 4G + BLE + GPS'
+                        : 'Smart Ear Tag · 4G + BLE + GPS'}
                     </Text>
                   </View>
                 </View>
                 <View style={{ alignItems: 'flex-end', gap: 4 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                    <Animated.View style={[styles.statusPulseDot, animatedPulse, { backgroundColor: '#22d15a' }]} />
+                    <Animated.View
+                      style={[styles.statusPulseDot, animatedPulse, { backgroundColor: '#22d15a' }]}
+                    />
                     <Text style={{ fontSize: 10, fontFamily: 'Inter_700Bold', color: '#22d15a' }}>
                       {language === 'sw' ? '1 IMESAJILIWA' : '1 REGISTERED'}
                     </Text>
@@ -1550,31 +1721,94 @@ export default function IOTSystems() {
               {/* Registered tag */}
               <View style={{ gap: 8 }}>
                 {[
-                  { tag: 'TZ-0421', species: language === 'sw' ? 'Ng\'ombe' : 'Cattle', name: 'Sita', lat: -3.3869, lng: 36.6830, heartRate: 68, temp: 38.2, battery: 87, active: true },
-                  { tag: 'TZ-0422', species: language === 'sw' ? 'Ng\'ombe' : 'Cattle', name: 'Bahati', lat: -3.3871, lng: 36.6832, heartRate: 72, temp: 38.5, battery: 72, active: false },
-                  { tag: 'GT-118',  species: language === 'sw' ? 'Mbuzi' : 'Goat', name: '—', lat: -3.3875, lng: 36.6828, heartRate: 82, temp: 39.1, battery: 95, active: false },
+                  {
+                    tag: 'TZ-0421',
+                    species: language === 'sw' ? "Ng'ombe" : 'Cattle',
+                    name: 'Sita',
+                    lat: -3.3869,
+                    lng: 36.683,
+                    heartRate: 68,
+                    temp: 38.2,
+                    battery: 87,
+                    active: true,
+                  },
+                  {
+                    tag: 'TZ-0422',
+                    species: language === 'sw' ? "Ng'ombe" : 'Cattle',
+                    name: 'Bahati',
+                    lat: -3.3871,
+                    lng: 36.6832,
+                    heartRate: 72,
+                    temp: 38.5,
+                    battery: 72,
+                    active: false,
+                  },
+                  {
+                    tag: 'GT-118',
+                    species: language === 'sw' ? 'Mbuzi' : 'Goat',
+                    name: '—',
+                    lat: -3.3875,
+                    lng: 36.6828,
+                    heartRate: 82,
+                    temp: 39.1,
+                    battery: 95,
+                    active: false,
+                  },
                 ].map((a) => (
-                  <View key={a.tag} style={[{
-                    flexDirection: 'row', alignItems: 'center', padding: 12,
-                    borderRadius: 14, borderWidth: 1,
-                    backgroundColor: a.active ? 'rgba(34,209,90,0.05)' : 'rgba(0,0,0,0.02)',
-                    borderColor: a.active ? '#22d15a40' : colors.border,
-                  }]}>
-                    <View style={[styles.deviceIconBox, { backgroundColor: a.active ? '#22d15a18' : colors.background }]}>
+                  <View
+                    key={a.tag}
+                    style={[
+                      {
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        padding: 12,
+                        borderRadius: 14,
+                        borderWidth: 1,
+                        backgroundColor: a.active ? 'rgba(34,209,90,0.05)' : 'rgba(0,0,0,0.02)',
+                        borderColor: a.active ? '#22d15a40' : colors.border,
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.deviceIconBox,
+                        { backgroundColor: a.active ? '#22d15a18' : colors.background },
+                      ]}
+                    >
                       <BatteryCharging size={16} color={a.active ? '#22d15a' : colors.textMute} />
                     </View>
                     <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={[styles.deviceName, { color: colors.text }]}>{a.tag} · {a.name} ({a.species})</Text>
+                      <Text style={[styles.deviceName, { color: colors.text }]}>
+                        {a.tag} · {a.name} ({a.species})
+                      </Text>
                       <Text style={[styles.deviceType, { color: colors.textMute }]}>
                         {a.active
                           ? `❤️ ${a.heartRate} bpm · 🌡 ${a.temp}°C · 🔋 ${a.battery}%`
-                          : language === 'sw' ? 'Haijasajiliwa bado' : 'Not registered yet'}
+                          : language === 'sw'
+                            ? 'Haijasajiliwa bado'
+                            : 'Not registered yet'}
                       </Text>
                     </View>
                     <View style={[styles.deviceStatusRow]}>
-                      <View style={[styles.statusPulseDot, { backgroundColor: a.active ? '#22d15a' : '#94a3b8' }]} />
-                      <Text style={[styles.deviceStatusText, { color: a.active ? '#22d15a' : '#94a3b8' }]}>
-                        {a.active ? (language === 'sw' ? 'Hai' : 'Live') : (language === 'sw' ? 'Tumisha' : 'Activate')}
+                      <View
+                        style={[
+                          styles.statusPulseDot,
+                          { backgroundColor: a.active ? '#22d15a' : '#94a3b8' },
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.deviceStatusText,
+                          { color: a.active ? '#22d15a' : '#94a3b8' },
+                        ]}
+                      >
+                        {a.active
+                          ? language === 'sw'
+                            ? 'Hai'
+                            : 'Live'
+                          : language === 'sw'
+                            ? 'Tumisha'
+                            : 'Activate'}
                       </Text>
                     </View>
                   </View>
@@ -1601,9 +1835,18 @@ export default function IOTSystems() {
       </SafeAreaView>
 
       {/* Waypoints Planning Modal */}
-      <Modal visible={showWaypointModal} transparent animationType="slide" onRequestClose={() => setShowWaypointModal(false)}>
+      <Modal
+        visible={showWaypointModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowWaypointModal(false)}
+      >
         <View style={styles.modalOverlay}>
-          <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={isDark ? 40 : 60}
+            tint={isDark ? 'dark' : 'light'}
+            style={StyleSheet.absoluteFill}
+          />
           <View style={[styles.modalSheet, { backgroundColor: colors.card }]}>
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>
@@ -1642,7 +1885,9 @@ export default function IOTSystems() {
                 placeholderTextColor={colors.textMute}
                 style={[styles.modalInput, { color: colors.text, borderColor: colors.border }]}
                 accessibilityLabel={language === 'sw' ? 'Njia mpya ya drone' : 'New waypoint'}
-                accessibilityHint={language === 'sw' ? 'Weka viwianishi vya eneo' : 'Enter location coordinates'}
+                accessibilityHint={
+                  language === 'sw' ? 'Weka viwianishi vya eneo' : 'Enter location coordinates'
+                }
               />
               <TouchableOpacity
                 onPress={handleAddWaypoint}
@@ -1660,7 +1905,9 @@ export default function IOTSystems() {
                 setShowWaypointModal(false);
                 Alert.alert(
                   language === 'sw' ? 'Njia Imetumwa!' : 'Path Uploaded!',
-                  language === 'sw' ? 'Gridi ya usambazaji imehamishiwa kwenye Drone.' : 'Waypoints grid path uploaded to drone flight deck.'
+                  language === 'sw'
+                    ? 'Gridi ya usambazaji imehamishiwa kwenye Drone.'
+                    : 'Waypoints grid path uploaded to drone flight deck.'
                 );
               }}
               style={[styles.saveBtn, { backgroundColor: colors.primary }]}
@@ -1683,11 +1930,25 @@ export default function IOTSystems() {
         onRequestClose={() => setShowDetailsModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={isDark ? 40 : 60}
+            tint={isDark ? 'dark' : 'light'}
+            style={StyleSheet.absoluteFill}
+          />
           <View style={[styles.modalSheet, { backgroundColor: colors.card, maxHeight: '85%' }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 }]} numberOfLines={1}>
-                {selectedDevice ? (language === 'sw' ? selectedDevice.nameSw : selectedDevice.name) : ''}
+              <Text
+                style={[
+                  styles.modalTitle,
+                  { color: colors.text, fontFamily: 'InstrumentSerif_400Regular', fontSize: 24 },
+                ]}
+                numberOfLines={1}
+              >
+                {selectedDevice
+                  ? language === 'sw'
+                    ? selectedDevice.nameSw
+                    : selectedDevice.name
+                  : ''}
               </Text>
               <TouchableOpacity
                 onPress={() => setShowDetailsModal(false)}
@@ -1708,16 +1969,21 @@ export default function IOTSystems() {
                 }}
                 style={[
                   styles.detailTabButton,
-                  activeDetailsTab === 'specs' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }
+                  activeDetailsTab === 'specs' && {
+                    borderBottomColor: colors.primary,
+                    borderBottomWidth: 2,
+                  },
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Vipimo' : 'Specifications'}
                 accessibilityState={{ selected: activeDetailsTab === 'specs' }}
               >
-                <Text style={[
-                  styles.detailTabButtonText,
-                  { color: activeDetailsTab === 'specs' ? colors.primary : colors.textMute }
-                ]}>
+                <Text
+                  style={[
+                    styles.detailTabButtonText,
+                    { color: activeDetailsTab === 'specs' ? colors.primary : colors.textMute },
+                  ]}
+                >
                   {language === 'sw' ? 'Vipimo' : 'Specifications'}
                 </Text>
               </TouchableOpacity>
@@ -1729,28 +1995,39 @@ export default function IOTSystems() {
                 }}
                 style={[
                   styles.detailTabButton,
-                  activeDetailsTab === 'guide' && { borderBottomColor: colors.primary, borderBottomWidth: 2 }
+                  activeDetailsTab === 'guide' && {
+                    borderBottomColor: colors.primary,
+                    borderBottomWidth: 2,
+                  },
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Mwongozo' : 'Assembly Guide'}
                 accessibilityState={{ selected: activeDetailsTab === 'guide' }}
               >
-                <Text style={[
-                  styles.detailTabButtonText,
-                  { color: activeDetailsTab === 'guide' ? colors.primary : colors.textMute }
-                ]}>
+                <Text
+                  style={[
+                    styles.detailTabButtonText,
+                    { color: activeDetailsTab === 'guide' ? colors.primary : colors.textMute },
+                  ]}
+                >
                   {language === 'sw' ? 'Mwongozo' : 'Assembly Guide'}
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={{ paddingBottom: 24, gap: 16 }} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 24, gap: 16 }}
+              showsVerticalScrollIndicator={false}
+            >
               {selectedDeviceData ? (
                 activeDetailsTab === 'specs' ? (
                   /* Specs Tab */
                   <View style={{ gap: 16 }}>
                     {selectedDeviceData.specs.map((spec, index) => (
-                      <View key={index} style={[styles.specItemCard, { borderColor: colors.border }]}>
+                      <View
+                        key={index}
+                        style={[styles.specItemCard, { borderColor: colors.border }]}
+                      >
                         <View style={{ flex: 1, gap: 4 }}>
                           <Text style={[styles.specName, { color: colors.text }]}>
                             {language === 'sw' ? spec.nameSw : spec.name}
@@ -1771,7 +2048,9 @@ export default function IOTSystems() {
                               onPress={() => Linking.openURL(spec.url!)}
                               style={[styles.buyBtn, { backgroundColor: colors.primary }]}
                               accessibilityRole="button"
-                              accessibilityLabel={language === 'sw' ? `Nunua ${spec.name}` : `Buy ${spec.name}`}
+                              accessibilityLabel={
+                                language === 'sw' ? `Nunua ${spec.name}` : `Buy ${spec.name}`
+                              }
                             >
                               <Text style={styles.buyBtnText}>
                                 {language === 'sw' ? 'Nunua' : 'Buy'}
@@ -1787,7 +2066,10 @@ export default function IOTSystems() {
                       <Text style={[styles.toolsTitle, { color: colors.text }]}>
                         {language === 'sw' ? 'Vifaa Vinavyohitajika' : 'Required Assembly Tools'}
                       </Text>
-                      {(language === 'sw' ? selectedDeviceData.toolsSw : selectedDeviceData.tools).map((tool, index) => (
+                      {(language === 'sw'
+                        ? selectedDeviceData.toolsSw
+                        : selectedDeviceData.tools
+                      ).map((tool, index) => (
                         <Text key={index} style={[styles.toolBullet, { color: colors.text }]}>
                           • {tool}
                         </Text>
@@ -1797,9 +2079,14 @@ export default function IOTSystems() {
                     {/* Assumptions Card */}
                     <View style={[styles.assumptionsCard, { borderColor: colors.border }]}>
                       <Text style={[styles.assumptionsTitle, { color: colors.text }]}>
-                        {language === 'sw' ? 'Prerequisites na Kudhania' : 'Prerequisites & Assumptions'}
+                        {language === 'sw'
+                          ? 'Prerequisites na Kudhania'
+                          : 'Prerequisites & Assumptions'}
                       </Text>
-                      {(language === 'sw' ? selectedDeviceData.assumptionsSw : selectedDeviceData.assumptions).map((asm, index) => (
+                      {(language === 'sw'
+                        ? selectedDeviceData.assumptionsSw
+                        : selectedDeviceData.assumptions
+                      ).map((asm, index) => (
                         <Text key={index} style={[styles.assumptionBullet, { color: colors.text }]}>
                           • {asm}
                         </Text>
@@ -1813,12 +2100,21 @@ export default function IOTSystems() {
                     {selectedDeviceData.assembly && selectedDeviceData.assembly.length > 0 && (
                       <View style={styles.guideSectionCard}>
                         <Text style={[styles.guideSectionTitle, { color: colors.primary }]}>
-                          {language === 'sw' ? '1. Uunganishaji (Assembly)' : '1. Physical Assembly'}
+                          {language === 'sw'
+                            ? '1. Uunganishaji (Assembly)'
+                            : '1. Physical Assembly'}
                         </Text>
                         {selectedDeviceData.assembly.map((step, idx) => (
-                          <View key={idx} style={[styles.stepItemCard, { borderColor: colors.border }]}>
+                          <View
+                            key={idx}
+                            style={[styles.stepItemCard, { borderColor: colors.border }]}
+                          >
                             <View style={[styles.stepItemNum, { backgroundColor: colors.primary }]}>
-                              <Text style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}>{idx + 1}</Text>
+                              <Text
+                                style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}
+                              >
+                                {idx + 1}
+                              </Text>
                             </View>
                             <View style={{ flex: 1, gap: 2 }}>
                               <Text style={[styles.stepItemTitle, { color: colors.text }]}>
@@ -1837,12 +2133,21 @@ export default function IOTSystems() {
                     {selectedDeviceData.wiring && selectedDeviceData.wiring.length > 0 && (
                       <View style={styles.guideSectionCard}>
                         <Text style={[styles.guideSectionTitle, { color: colors.primary }]}>
-                          {language === 'sw' ? '2. Uunganishaji Waya (Wiring)' : '2. Electrical Wiring'}
+                          {language === 'sw'
+                            ? '2. Uunganishaji Waya (Wiring)'
+                            : '2. Electrical Wiring'}
                         </Text>
                         {selectedDeviceData.wiring.map((step, idx) => (
-                          <View key={idx} style={[styles.stepItemCard, { borderColor: colors.border }]}>
+                          <View
+                            key={idx}
+                            style={[styles.stepItemCard, { borderColor: colors.border }]}
+                          >
                             <View style={[styles.stepItemNum, { backgroundColor: colors.primary }]}>
-                              <Text style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}>{idx + 1}</Text>
+                              <Text
+                                style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}
+                              >
+                                {idx + 1}
+                              </Text>
                             </View>
                             <View style={{ flex: 1, gap: 2 }}>
                               <Text style={[styles.stepItemTitle, { color: colors.text }]}>
@@ -1858,39 +2163,64 @@ export default function IOTSystems() {
                     )}
 
                     {/* Fabrication Section */}
-                    {selectedDeviceData.fabrication && selectedDeviceData.fabrication.length > 0 && (
-                      <View style={styles.guideSectionCard}>
-                        <Text style={[styles.guideSectionTitle, { color: colors.primary }]}>
-                          {language === 'sw' ? '3. Kazi za Viwanda (Fabrication)' : '3. Custom Fabrication'}
-                        </Text>
-                        {selectedDeviceData.fabrication.map((step, idx) => (
-                          <View key={idx} style={[styles.stepItemCard, { borderColor: colors.border }]}>
-                            <View style={[styles.stepItemNum, { backgroundColor: colors.primary }]}>
-                              <Text style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}>{idx + 1}</Text>
+                    {selectedDeviceData.fabrication &&
+                      selectedDeviceData.fabrication.length > 0 && (
+                        <View style={styles.guideSectionCard}>
+                          <Text style={[styles.guideSectionTitle, { color: colors.primary }]}>
+                            {language === 'sw'
+                              ? '3. Kazi za Viwanda (Fabrication)'
+                              : '3. Custom Fabrication'}
+                          </Text>
+                          {selectedDeviceData.fabrication.map((step, idx) => (
+                            <View
+                              key={idx}
+                              style={[styles.stepItemCard, { borderColor: colors.border }]}
+                            >
+                              <View
+                                style={[styles.stepItemNum, { backgroundColor: colors.primary }]}
+                              >
+                                <Text
+                                  style={{
+                                    color: '#000',
+                                    fontFamily: 'Inter_700Bold',
+                                    fontSize: 12,
+                                  }}
+                                >
+                                  {idx + 1}
+                                </Text>
+                              </View>
+                              <View style={{ flex: 1, gap: 2 }}>
+                                <Text style={[styles.stepItemTitle, { color: colors.text }]}>
+                                  {language === 'sw' ? step.titleSw : step.title}
+                                </Text>
+                                <Text style={[styles.stepItemText, { color: colors.textMute }]}>
+                                  {language === 'sw' ? step.descSw : step.desc}
+                                </Text>
+                              </View>
                             </View>
-                            <View style={{ flex: 1, gap: 2 }}>
-                              <Text style={[styles.stepItemTitle, { color: colors.text }]}>
-                                {language === 'sw' ? step.titleSw : step.title}
-                              </Text>
-                              <Text style={[styles.stepItemText, { color: colors.textMute }]}>
-                                {language === 'sw' ? step.descSw : step.desc}
-                              </Text>
-                            </View>
-                          </View>
-                        ))}
-                      </View>
-                    )}
+                          ))}
+                        </View>
+                      )}
 
                     {/* Bring-up Section */}
                     {selectedDeviceData.bringup && selectedDeviceData.bringup.length > 0 && (
                       <View style={styles.guideSectionCard}>
                         <Text style={[styles.guideSectionTitle, { color: colors.primary }]}>
-                          {language === 'sw' ? '4. Uwashaji wa Mwanzo (Bring-Up)' : '4. Initial Bring-Up & Calibration'}
+                          {language === 'sw'
+                            ? '4. Uwashaji wa Mwanzo (Bring-Up)'
+                            : '4. Initial Bring-Up & Calibration'}
                         </Text>
                         {selectedDeviceData.bringup.map((step, idx) => (
-                          <View key={idx} style={[styles.stepItemCard, { borderColor: colors.border }]}>
+                          <View
+                            key={idx}
+                            style={[styles.stepItemCard, { borderColor: colors.border }]}
+                          >
                             <View style={[styles.stepItemNum, { backgroundColor: colors.primary }]}>
-                              <Text style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}>{idx + 1}</Text>
+                              <Text
+                                style={{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 12 }}
+                              >
+                                {idx + 1}
+                              </Text>
                             </View>
                             <View style={{ flex: 1, gap: 2 }}>
                               <Text style={[styles.stepItemTitle, { color: colors.text }]}>
@@ -1908,7 +2238,14 @@ export default function IOTSystems() {
                 )
               ) : (
                 <View style={{ padding: 24, alignItems: 'center' }}>
-                  <Text style={{ color: colors.textMute, textAlign: 'center', fontFamily: 'Inter_600SemiBold', fontSize: 14 }}>
+                  <Text
+                    style={{
+                      color: colors.textMute,
+                      textAlign: 'center',
+                      fontFamily: 'Inter_600SemiBold',
+                      fontSize: 14,
+                    }}
+                  >
                     {language === 'sw'
                       ? 'Hakuna maelezo ya kina ya kifaa hiki cha kienyeji/manually.'
                       : 'No build specifications available for manually added hardware.'}
@@ -1921,9 +2258,18 @@ export default function IOTSystems() {
       </Modal>
 
       {/* QR Registration Modal */}
-      <Modal visible={showRegModal} transparent animationType="slide" onRequestClose={() => setShowRegModal(false)}>
+      <Modal
+        visible={showRegModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowRegModal(false)}
+      >
         <View style={styles.modalOverlay}>
-          <BlurView intensity={isDark ? 40 : 60} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={isDark ? 40 : 60}
+            tint={isDark ? 'dark' : 'light'}
+            style={StyleSheet.absoluteFill}
+          />
           <View style={[styles.modalSheet, { backgroundColor: colors.card }]}>
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>
@@ -1945,7 +2291,9 @@ export default function IOTSystems() {
                   <QrCode size={120} color={colors.textMute} strokeWidth={1} />
                   <Animated.View style={[styles.scannerLaser, { borderColor: colors.primary }]} />
                   <Text style={[styles.scannerDescText, { color: colors.textMute }]}>
-                    {language === 'sw' ? 'Sogeza QR Code karibu na Kamera' : 'Align QR Code within the frame'}
+                    {language === 'sw'
+                      ? 'Sogeza QR Code karibu na Kamera'
+                      : 'Align QR Code within the frame'}
                   </Text>
                 </View>
 
@@ -1953,10 +2301,16 @@ export default function IOTSystems() {
                   onPress={startManualRegistration}
                   style={[styles.manualBtn, { borderColor: colors.border }]}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Weka namba ya utambulisho kwa mkono' : 'Enter serial number manually'}
+                  accessibilityLabel={
+                    language === 'sw'
+                      ? 'Weka namba ya utambulisho kwa mkono'
+                      : 'Enter serial number manually'
+                  }
                 >
                   <Text style={[styles.manualBtnText, { color: colors.text }]}>
-                    {language === 'sw' ? 'Weka Serial Number kwa Mkono' : 'Enter Serial Number Manually'}
+                    {language === 'sw'
+                      ? 'Weka Serial Number kwa Mkono'
+                      : 'Enter Serial Number Manually'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1976,14 +2330,20 @@ export default function IOTSystems() {
                         styles.typeOptionBox,
                         {
                           borderColor: deviceTypeInput === type ? '#22d15a' : colors.border,
-                          backgroundColor: deviceTypeInput === type ? 'rgba(34,209,90,0.08)' : 'transparent',
+                          backgroundColor:
+                            deviceTypeInput === type ? 'rgba(34,209,90,0.08)' : 'transparent',
                         },
                       ]}
                       accessibilityRole="button"
                       accessibilityLabel={type}
                       accessibilityState={{ selected: deviceTypeInput === type }}
                     >
-                      <Text style={[styles.typeOptionText, { color: deviceTypeInput === type ? '#22d15a' : colors.textMute }]}>
+                      <Text
+                        style={[
+                          styles.typeOptionText,
+                          { color: deviceTypeInput === type ? '#22d15a' : colors.textMute },
+                        ]}
+                      >
                         {type}
                       </Text>
                     </TouchableOpacity>
@@ -2000,7 +2360,9 @@ export default function IOTSystems() {
                   placeholderTextColor={colors.textMute}
                   style={[styles.modalInput, { color: colors.text, borderColor: colors.border }]}
                   accessibilityLabel={language === 'sw' ? 'Jina la kifaa' : 'Device name'}
-                  accessibilityHint={language === 'sw' ? 'Weka jina la kifaa chako' : 'Enter name for your device'}
+                  accessibilityHint={
+                    language === 'sw' ? 'Weka jina la kifaa chako' : 'Enter name for your device'
+                  }
                 />
 
                 <Text style={[styles.inputLabel, { color: colors.textMute }]}>
@@ -2013,7 +2375,11 @@ export default function IOTSystems() {
                   placeholderTextColor={colors.textMute}
                   style={[styles.modalInput, { color: colors.text, borderColor: colors.border }]}
                   accessibilityLabel={language === 'sw' ? 'Namba ya utambulisho' : 'Serial number'}
-                  accessibilityHint={language === 'sw' ? 'Weka namba ya utambulisho ya kifaa' : 'Enter device serial number'}
+                  accessibilityHint={
+                    language === 'sw'
+                      ? 'Weka namba ya utambulisho ya kifaa'
+                      : 'Enter device serial number'
+                  }
                 />
 
                 <View style={styles.linkAlert}>
@@ -2029,7 +2395,9 @@ export default function IOTSystems() {
                   onPress={handleRegisterDevice}
                   style={[styles.saveBtn, { backgroundColor: colors.primary }]}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Sajili kifaa sasa' : 'Register device now'}
+                  accessibilityLabel={
+                    language === 'sw' ? 'Sajili kifaa sasa' : 'Register device now'
+                  }
                 >
                   <Text style={styles.saveBtnText}>
                     {language === 'sw' ? 'Sajili Kifaa' : 'Register Device'}
@@ -2054,11 +2422,18 @@ export default function IOTSystems() {
                     setShowRegModal(false);
                     setRegStep('scan');
                   }}
-                  style={[styles.saveBtn, { backgroundColor: colors.primary, width: '100%', marginTop: 24 }]}
+                  style={[
+                    styles.saveBtn,
+                    { backgroundColor: colors.primary, width: '100%', marginTop: 24 },
+                  ]}
                   accessibilityRole="button"
-                  accessibilityLabel={language === 'sw' ? 'Kamilisha usajili' : 'Finish registration'}
+                  accessibilityLabel={
+                    language === 'sw' ? 'Kamilisha usajili' : 'Finish registration'
+                  }
                 >
-                  <Text style={styles.saveBtnText}>{language === 'sw' ? 'Kamilisha' : 'Finish'}</Text>
+                  <Text style={styles.saveBtnText}>
+                    {language === 'sw' ? 'Kamilisha' : 'Finish'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             )}

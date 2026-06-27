@@ -1,6 +1,14 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useKilimoStore } from '../store/useKilimoStore';
-import { ChatMessage, VisionDiagnosis, Severity, Confidence, ImgQuality, normalizeSeverity, AIError } from './ai';
+import {
+  ChatMessage,
+  VisionDiagnosis,
+  Severity,
+  Confidence,
+  ImgQuality,
+  normalizeSeverity,
+  AIError,
+} from './ai';
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? '';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -16,11 +24,13 @@ export async function chat(messages: ChatMessage[]): Promise<string> {
 
   // Gemini expects history in { role: "user" | "model", parts: [{ text: "..." }] } format
   const customPrompt = useKilimoStore.getState().customSystemPrompt;
-  const systemText = customPrompt || `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki...`;
+  const systemText =
+    customPrompt ||
+    `Wewe ni Sankofa AI — mshauri mkuu wa kilimo wa KILIMO AI, ukihudumia wakulima wa Tanzania na Afrika Mashariki...`;
 
-  const formattedHistory = messages.map(m => ({
+  const formattedHistory = messages.map((m) => ({
     role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
+    parts: [{ text: m.content }],
   }));
 
   try {
@@ -28,7 +38,7 @@ export async function chat(messages: ChatMessage[]): Promise<string> {
       history: [
         { role: 'user', parts: [{ text: systemText }] },
         { role: 'model', parts: [{ text: 'Understood. I will act as Sankofa AI.' }] },
-        ...formattedHistory.slice(0, -1) // All but last message
+        ...formattedHistory.slice(0, -1), // All but last message
       ],
     });
 
@@ -42,12 +52,14 @@ export async function chat(messages: ChatMessage[]): Promise<string> {
 
 export async function diagnoseCropPhoto(
   imageBase64: string,
-  opts: { mimeType?: string; prompt?: string } = {},
+  opts: { mimeType?: string; prompt?: string } = {}
 ): Promise<VisionDiagnosis> {
   if (!aiConfigured()) throw new AIError('Gemini API key not configured', 'not_configured');
 
   const mimeType = opts.mimeType ?? 'image/jpeg';
-  const prompt = opts.prompt ?? `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu... (Ensure JSON output only)`;
+  const prompt =
+    opts.prompt ??
+    `Chunguza picha hii ya mmea kwa makini na toa uchambuzi wa kitaalamu... (Ensure JSON output only)`;
 
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -57,9 +69,9 @@ export async function diagnoseCropPhoto(
       {
         inlineData: {
           data: imageBase64,
-          mimeType: mimeType
-        }
-      }
+          mimeType: mimeType,
+        },
+      },
     ]);
 
     const content = result.response.text();

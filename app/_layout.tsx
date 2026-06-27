@@ -11,7 +11,16 @@ import {
 } from '@expo-google-fonts/instrument-sans';
 import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { AppState, AppStateStatus, Platform, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from 'react-native';
 import { WifiOff, X } from 'lucide-react-native';
 import { pingActivity } from '../hooks/useIdleTimeout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -107,7 +116,9 @@ function OfflineBanner() {
   return (
     <View style={styles.offlineBanner} pointerEvents="box-none">
       <WifiOff size={13} color="#fff" style={{ marginRight: 6 }} />
-      <Text style={styles.offlineText} numberOfLines={1}>{msg}</Text>
+      <Text style={styles.offlineText} numberOfLines={1}>
+        {msg}
+      </Text>
       <TouchableOpacity onPress={() => setDismissed(true)} hitSlop={8} style={{ marginLeft: 8 }}>
         <X size={13} color="#fff" />
       </TouchableOpacity>
@@ -146,11 +157,11 @@ const styles = StyleSheet.create({
  * Keeps RootLayout clean; all side effects live here.
  */
 function AppServices() {
-  useSyncEngine();       // 🔄 Offline queue drain
-  useNotifications();    // 🔔 Push notification registration
-  useFarmVitals();       // 🌱 Sensor telemetry polling
-  useIdleTimeout();      // 🔒 AUTH-06 session inactivity gate
-  useResumeRefresh();    // 🔁 Invalidate stale queries on foreground resume (#14)
+  useSyncEngine(); // 🔄 Offline queue drain
+  useNotifications(); // 🔔 Push notification registration
+  useFarmVitals(); // 🌱 Sensor telemetry polling
+  useIdleTimeout(); // 🔒 AUTH-06 session inactivity gate
+  useResumeRefresh(); // 🔁 Invalidate stale queries on foreground resume (#14)
   return null;
 }
 
@@ -240,13 +251,13 @@ export default function RootLayout() {
   }
 
   const [loaded, error] = useFonts({
-    'Inter_400Regular': InstrumentSans_400Regular,
-    'Inter_500Medium': InstrumentSans_500Medium,
-    'Inter_600SemiBold': InstrumentSans_600SemiBold,
-    'Inter_700Bold': InstrumentSans_700Bold,
-    'Inter_800ExtraBold': InstrumentSans_700Bold,
-    'Inter_900Black': InstrumentSans_700Bold,
-    'InstrumentSerif_400Regular': InstrumentSerif_400Regular,
+    Inter_400Regular: InstrumentSans_400Regular,
+    Inter_500Medium: InstrumentSans_500Medium,
+    Inter_600SemiBold: InstrumentSans_600SemiBold,
+    Inter_700Bold: InstrumentSans_700Bold,
+    Inter_800ExtraBold: InstrumentSans_700Bold,
+    Inter_900Black: InstrumentSans_700Bold,
+    InstrumentSerif_400Regular: InstrumentSerif_400Regular,
   });
 
   useEffect(() => {
@@ -290,45 +301,138 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="forecast" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="scan" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
+              <Stack.Screen
+                name="forecast"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="scan"
+                options={{ headerShown: false, presentation: 'fullScreenModal' }}
+              />
               <Stack.Screen name="tasks" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="calendar" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen
+                name="calendar"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
               <Stack.Screen name="map" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="notifications" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen
+                name="notifications"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
               <Stack.Screen name="agro-id" options={{ headerShown: false, presentation: 'card' }} />
               <Stack.Screen name="contracts" options={{ headerShown: false }} />
-              <Stack.Screen name="livestock" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="inventory" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="insurance" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="input-supply" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="peer-groups" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="consultations" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="crop-planning" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen
+                name="livestock"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="inventory"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="insurance"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="input-supply"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="peer-groups"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="consultations"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="edit-profile"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="crop-planning"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
               <Stack.Screen name="farm-twin" options={{ headerShown: false }} />
               <Stack.Screen name="analytics" options={{ headerShown: false }} />
               <Stack.Screen name="wallet-admin" options={{ headerShown: false }} />
-              <Stack.Screen name="upgrade" options={{ headerShown: false, presentation: 'modal' }} />
-              <Stack.Screen name="otp-auth" options={{ headerShown: false, presentation: 'modal' }} />
-              <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', presentation: 'modal' }} />
-              <Stack.Screen name="terms" options={{ title: 'Terms of Service', presentation: 'modal' }} />
-              <Stack.Screen name="ai-voice" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="ai-admin" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen
+                name="upgrade"
+                options={{ headerShown: false, presentation: 'modal' }}
+              />
+              <Stack.Screen
+                name="otp-auth"
+                options={{ headerShown: false, presentation: 'modal' }}
+              />
+              <Stack.Screen
+                name="privacy"
+                options={{ title: 'Privacy Policy', presentation: 'modal' }}
+              />
+              <Stack.Screen
+                name="terms"
+                options={{ title: 'Terms of Service', presentation: 'modal' }}
+              />
+              <Stack.Screen
+                name="ai-voice"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="ai-admin"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
               <Stack.Screen name="finance" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="mobile-money" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="offline-queue" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="soil-analysis" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="iot-systems" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="vra-setup" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="crop-library" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="ai-training-hub" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="video-hub" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="field/[id]" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="verification/intro" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="verification/personal" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="verification/business" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="verification/pending" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen
+                name="mobile-money"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="offline-queue"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="soil-analysis"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="iot-systems"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="vra-setup"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="crop-library"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="ai-training-hub"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="video-hub"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="field/[id]"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="verification/intro"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="verification/personal"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="verification/business"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
+              <Stack.Screen
+                name="verification/pending"
+                options={{ headerShown: false, presentation: 'card' }}
+              />
             </Stack>
           </View>
           {/* Task #15 — opaque overlay during auth-expire → onboarding redirect */}

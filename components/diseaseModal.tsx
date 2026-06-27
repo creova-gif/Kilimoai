@@ -13,8 +13,18 @@ import {
   Alert,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { 
-  X, Camera, ClipboardList, Check, AlertTriangle, Play, ChevronRight, RefreshCw, Sparkles, MapPin, ExternalLink
+import {
+  X,
+  Camera,
+  ClipboardList,
+  Check,
+  AlertTriangle,
+  Play,
+  ChevronRight,
+  RefreshCw,
+  Sparkles,
+  MapPin,
+  ExternalLink,
 } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,11 +36,11 @@ import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
 import { diagnoseCropPhoto, aiConfigured } from '../lib/ai';
 import { demoDiagnosis } from '../lib/ai-demo';
-import { 
-  CROP_SYMPTOMS, 
-  solveSymptomChecklist, 
-  REGIONS_LIST, 
-  DiseaseResult 
+import {
+  CROP_SYMPTOMS,
+  solveSymptomChecklist,
+  REGIONS_LIST,
+  DiseaseResult,
 } from '../lib/diseaseDetector';
 
 const { width: SW, height: SH } = Dimensions.get('window');
@@ -45,7 +55,7 @@ const CROPS_LIST = [
   { key: 'sorghum', nameSw: 'Mtama', nameEn: 'Sorghum' },
   { key: 'sunflower', nameSw: 'Alizeti', nameEn: 'Sunflower' },
   { key: 'cabbage', nameSw: 'Kabichi', nameEn: 'Cabbage' },
-  { key: 'chili', nameSw: 'Pilipili', nameEn: 'Chili' }
+  { key: 'chili', nameSw: 'Pilipili', nameEn: 'Chili' },
 ];
 
 interface DiseaseModalProps {
@@ -56,11 +66,11 @@ interface DiseaseModalProps {
 
 export default function DiseaseModal({ visible, onClose, preselectedCrop }: DiseaseModalProps) {
   const { colors, isDark } = useTheme();
-  const language = useKilimoStore(s => s.language);
-  const isOffline = useKilimoStore(s => s.isOffline);
-  const agroId = useKilimoStore(s => s.agroId);
-  const addCropHealthLog = useKilimoStore(s => s.addCropHealthLog);
-  const addNotification = useKilimoStore(s => s.addNotification);
+  const language = useKilimoStore((s) => s.language);
+  const isOffline = useKilimoStore((s) => s.isOffline);
+  const agroId = useKilimoStore((s) => s.agroId);
+  const addCropHealthLog = useKilimoStore((s) => s.addCropHealthLog);
+  const addNotification = useKilimoStore((s) => s.addNotification);
 
   // States
   const [selectedCrop, setSelectedCrop] = useState('maize');
@@ -78,9 +88,10 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
   useEffect(() => {
     if (preselectedCrop) {
       const found = CROPS_LIST.find(
-        c => c.nameEn.toLowerCase() === preselectedCrop.toLowerCase() || 
-             c.nameSw.toLowerCase() === preselectedCrop.toLowerCase() ||
-             c.key === preselectedCrop.toLowerCase()
+        (c) =>
+          c.nameEn.toLowerCase() === preselectedCrop.toLowerCase() ||
+          c.nameSw.toLowerCase() === preselectedCrop.toLowerCase() ||
+          c.key === preselectedCrop.toLowerCase()
       );
       if (found) {
         setSelectedCrop(found.key);
@@ -91,8 +102,8 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
   // Autofill region from AgroID if available
   useEffect(() => {
     if (agroId?.location) {
-      const matchedRegion = REGIONS_LIST.find(
-        r => agroId.location.toLowerCase().includes(r.label.split(' ')[0].toLowerCase())
+      const matchedRegion = REGIONS_LIST.find((r) =>
+        agroId.location.toLowerCase().includes(r.label.split(' ')[0].toLowerCase())
       );
       if (matchedRegion) {
         setSelectedRegion(matchedRegion.label);
@@ -103,8 +114,8 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
   // Toggle symptom checkboxes
   const toggleSymptom = (id: string) => {
     Haptics.selectionAsync();
-    setSelectedSymptoms(prev => 
-      prev.includes(id) ? prev.filter(sId => sId !== id) : [...prev, id]
+    setSelectedSymptoms((prev) =>
+      prev.includes(id) ? prev.filter((sId) => sId !== id) : [...prev, id]
     );
   };
 
@@ -113,13 +124,15 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
     if (selectedSymptoms.length === 0) {
       Alert.alert(
         language === 'sw' ? 'Chagua dalili' : 'Select symptoms',
-        language === 'sw' ? 'Tafadhali chagua angalau dalili moja.' : 'Please select at least one symptom.'
+        language === 'sw'
+          ? 'Tafadhali chagua angalau dalili moja.'
+          : 'Please select at least one symptom.'
       );
       return;
     }
     setAnalyzing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    
+
     // Simulate short calculation delay
     setTimeout(() => {
       const sortedResults = solveSymptomChecklist(selectedCrop, selectedRegion, selectedSymptoms);
@@ -134,19 +147,23 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
     if (isOffline) {
       Alert.alert(
         language === 'sw' ? 'Njia ya Nje ya Mtandao' : 'Offline Mode',
-        language === 'sw' ? 'Kamera ya AI inahitaji mtandao. Tumia Orodha ya Dalili.' : 'AI Camera requires network. Please use the Symptom Checklist.'
+        language === 'sw'
+          ? 'Kamera ya AI inahitaji mtandao. Tumia Orodha ya Dalili.'
+          : 'AI Camera requires network. Please use the Symptom Checklist.'
       );
       return;
     }
 
-    const permissionResult = useCamera 
+    const permissionResult = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
       Alert.alert(
         language === 'sw' ? 'Ruhusa inahitajika' : 'Permission Required',
-        language === 'sw' ? 'Tafadhali ruhusu kamera/picha kwenye mipangilio.' : 'Please allow camera/photos access in settings.'
+        language === 'sw'
+          ? 'Tafadhali ruhusu kamera/picha kwenye mipangilio.'
+          : 'Please allow camera/photos access in settings.'
       );
       return;
     }
@@ -157,14 +174,14 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
           allowsEditing: true,
           aspect: [4, 3],
           quality: 0.4, // Compresses file under 1MB naturally
-          base64: true
+          base64: true,
         })
       : await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ['images'],
           allowsEditing: true,
           aspect: [4, 3],
           quality: 0.4,
-          base64: true
+          base64: true,
         });
 
     if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets[0]) {
@@ -181,13 +198,13 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
     try {
       let diagnosis;
       const activeRegion = selectedRegion;
-      const activeCropName = CROPS_LIST.find(c => c.key === selectedCrop)?.nameEn || 'crop';
-      
+      const activeCropName = CROPS_LIST.find((c) => c.key === selectedCrop)?.nameEn || 'crop';
+
       const regionPrompt = `The farmer is located in the region of ${activeRegion} in East Africa. Consider typical local diseases like Maize Streak Virus, Cassava Mosaic Disease, or Rice Blast. The crop is ${activeCropName}.`;
 
       if (aiConfigured()) {
         diagnosis = await diagnoseCropPhoto(base64, {
-          prompt: `Chunguza picha hii ya mmea wa ${activeCropName} kutoka eneo la ${activeRegion}. Jibu kwa JSON ya Kiswahili pekee kama ilivyoelekezwa katika mfumo.`
+          prompt: `Chunguza picha hii ya mmea wa ${activeCropName} kutoka eneo la ${activeRegion}. Jibu kwa JSON ya Kiswahili pekee kama ilivyoelekezwa katika mfumo.`,
         });
       } else {
         // Fallback to demo database
@@ -195,8 +212,9 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
       }
 
       // Convert vision response into our format
-      const confidence = diagnosis.confidence === 'high' ? 92 : diagnosis.confidence === 'medium' ? 74 : 52;
-      
+      const confidence =
+        diagnosis.confidence === 'high' ? 92 : diagnosis.confidence === 'medium' ? 74 : 52;
+
       const res: DiseaseResult = {
         diseaseNameEn: diagnosis.disease || 'Unknown Disease',
         diseaseNameSw: diagnosis.disease || 'Ugonjwa Usiojulikana',
@@ -205,14 +223,17 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
         organicControlEn: diagnosis.actions?.[0] || 'Remove affected plants.',
         chemicalControlSw: diagnosis.actions?.[1] || 'Wasiliana na Afisa Ugani.',
         chemicalControlEn: diagnosis.actions?.[1] || 'Consult Agronomist.',
-        videoId: selectedCrop === 'maize' ? 'v1' : selectedCrop === 'tomatoes' ? 'v5' : undefined
+        videoId: selectedCrop === 'maize' ? 'v1' : selectedCrop === 'tomatoes' ? 'v5' : undefined,
       };
-      
+
       setResults([res]);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err) {
       console.error(err);
-      Alert.alert(language === 'sw' ? 'Hitilafu' : 'Error', language === 'sw' ? 'Imeshindikana kuchambua picha.' : 'Failed to analyze the photo.');
+      Alert.alert(
+        language === 'sw' ? 'Hitilafu' : 'Error',
+        language === 'sw' ? 'Imeshindikana kuchambua picha.' : 'Failed to analyze the photo.'
+      );
     } finally {
       setAnalyzing(false);
     }
@@ -222,26 +243,29 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
   const saveToLog = () => {
     if (!results || results.length === 0) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    
+
     addCropHealthLog({
       id: `log_${Date.now()}`,
       crop: selectedCrop,
       region: selectedRegion,
       date: new Date().toLocaleDateString(),
-      results: results
+      results: results,
     });
 
     addNotification({
       title: language === 'sw' ? 'Afya ya Mazao' : 'Crop Health Log',
-      body: language === 'sw'
-        ? `Uchunguzi wa ${CROPS_LIST.find(c => c.key === selectedCrop)?.nameSw} umehifadhiwa kwenye rekodi.`
-        : `${CROPS_LIST.find(c => c.key === selectedCrop)?.nameEn} diagnosis saved to your records.`,
-      type: 'success'
+      body:
+        language === 'sw'
+          ? `Uchunguzi wa ${CROPS_LIST.find((c) => c.key === selectedCrop)?.nameSw} umehifadhiwa kwenye rekodi.`
+          : `${CROPS_LIST.find((c) => c.key === selectedCrop)?.nameEn} diagnosis saved to your records.`,
+      type: 'success',
     });
 
     Alert.alert(
       language === 'sw' ? 'Imehifadhiwa' : 'Saved',
-      language === 'sw' ? 'Rekodi imehifadhiwa kwenye daftari la afya.' : 'Record saved successfully to your health log.'
+      language === 'sw'
+        ? 'Rekodi imehifadhiwa kwenye daftari la afya.'
+        : 'Record saved successfully to your health log.'
     );
   };
 
@@ -253,15 +277,15 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
     setShowVideoId(null);
   };
 
-  const activeCrop = CROPS_LIST.find(c => c.key === selectedCrop);
+  const activeCrop = CROPS_LIST.find((c) => c.key === selectedCrop);
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <BlurView intensity={isDark ? 30 : 60} tint="dark" style={StyleSheet.absoluteFill} />
       <View style={styles.modalCentered}>
-        <BlurView 
-          intensity={isDark ? 40 : 90} 
-          tint={isDark ? 'dark' : 'light'} 
+        <BlurView
+          intensity={isDark ? 40 : 90}
+          tint={isDark ? 'dark' : 'light'}
           style={[styles.sheet, { backgroundColor: colors.card, borderColor: colors.border }]}
         >
           {/* Header */}
@@ -271,10 +295,15 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                 {language === 'sw' ? 'Tathmini ya Afya' : 'Crop Health Check'}
               </Text>
               <Text style={[styles.subtitle, { color: colors.textMute }]}>
-                {language === 'sw' ? 'Tambua magonjwa kieneo' : 'Location-aware disease diagnostics'}
+                {language === 'sw'
+                  ? 'Tambua magonjwa kieneo'
+                  : 'Location-aware disease diagnostics'}
               </Text>
             </View>
-            <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.border }]}>
+            <TouchableOpacity
+              onPress={onClose}
+              style={[styles.closeBtn, { backgroundColor: colors.border }]}
+            >
               <X size={18} color={colors.text} />
             </TouchableOpacity>
           </View>
@@ -289,21 +318,30 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                 {language === 'sw' ? 'Inachanganua afya ya mmea...' : 'Analyzing plant health...'}
               </Text>
               <Text style={[styles.loadingSub, { color: colors.textMute }]}>
-                {mode === 'camera' 
-                  ? (language === 'sw' ? 'AI inasoma picha kulingana na eneo lako' : 'AI analyzing photo tailored to your region') 
-                  : (language === 'sw' ? 'Inatafuta kwenye orodha ya magonjwa' : 'Cross-referencing symptom checklists')}
+                {mode === 'camera'
+                  ? language === 'sw'
+                    ? 'AI inasoma picha kulingana na eneo lako'
+                    : 'AI analyzing photo tailored to your region'
+                  : language === 'sw'
+                    ? 'Inatafuta kwenye orodha ya magonjwa'
+                    : 'Cross-referencing symptom checklists'}
               </Text>
             </View>
           ) : results ? (
             /* Results View */
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollArea}
+            >
               <View style={styles.resultsHeader}>
                 <Text style={[styles.sectionLabel, { color: colors.textMute }]}>
                   {language === 'sw' ? 'MAJIBU YA UCHUNGUZI' : 'DIAGNOSIS REPORT'}
                 </Text>
                 <View style={styles.locBadge}>
                   <MapPin size={10} color={colors.primary} />
-                  <Text style={[styles.locBadgeText, { color: colors.primary }]}>{selectedRegion.split(' ')[0]}</Text>
+                  <Text style={[styles.locBadgeText, { color: colors.primary }]}>
+                    {selectedRegion.split(' ')[0]}
+                  </Text>
                 </View>
               </View>
 
@@ -314,7 +352,9 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                     {language === 'sw' ? 'Hakuna Ugonjwa Uliotambuliwa' : 'No Diseases Identified'}
                   </Text>
                   <Text style={[styles.emptySubText, { color: colors.textMute }]}>
-                    {language === 'sw' ? 'Dalili hazilingani na magonjwa yanayojulikana. Wasiliana na mtaalamu ugani.' : 'Symptoms do not match typical profiles. Suggest expert consultation.'}
+                    {language === 'sw'
+                      ? 'Dalili hazilingani na magonjwa yanayojulikana. Wasiliana na mtaalamu ugani.'
+                      : 'Symptoms do not match typical profiles. Suggest expert consultation.'}
                   </Text>
                 </View>
               ) : (
@@ -324,14 +364,32 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                       <Text style={[styles.resultTitle, { color: colors.text }]}>
                         {language === 'sw' ? res.diseaseNameSw : res.diseaseNameEn}
                       </Text>
-                      <Text style={[styles.confText, { color: res.confidence > 75 ? colors.primary : '#F59E0B' }]}>
+                      <Text
+                        style={[
+                          styles.confText,
+                          { color: res.confidence > 75 ? colors.primary : '#F59E0B' },
+                        ]}
+                      >
                         {res.confidence}%
                       </Text>
                     </View>
 
                     {/* Confidence bar */}
-                    <View style={[styles.barBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }]}>
-                      <View style={[styles.barFill, { width: `${res.confidence}%`, backgroundColor: res.confidence > 75 ? colors.primary : '#F59E0B' }]} />
+                    <View
+                      style={[
+                        styles.barBg,
+                        { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.barFill,
+                          {
+                            width: `${res.confidence}%`,
+                            backgroundColor: res.confidence > 75 ? colors.primary : '#F59E0B',
+                          },
+                        ]}
+                      />
                     </View>
 
                     {/* Localized Advice */}
@@ -352,8 +410,14 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
 
                     {/* Embedded Video Player trigger */}
                     {res.videoId && (
-                      <TouchableOpacity 
-                        style={[styles.videoBtn, { backgroundColor: colors.primary + '12', borderColor: colors.primary + '30' }]}
+                      <TouchableOpacity
+                        style={[
+                          styles.videoBtn,
+                          {
+                            backgroundColor: colors.primary + '12',
+                            borderColor: colors.primary + '30',
+                          },
+                        ]}
                         onPress={() => setShowVideoId(res.videoId || null)}
                       >
                         <Play size={14} color={colors.primary} fill={colors.primary} />
@@ -370,14 +434,18 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
               {showVideoId && (
                 <View style={[styles.playerContainer, { borderColor: colors.border }]}>
                   <View style={styles.playerHeader}>
-                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_800ExtraBold' }}>INLINE TUTORIAL</Text>
+                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_800ExtraBold' }}>
+                      INLINE TUTORIAL
+                    </Text>
                     <TouchableOpacity onPress={() => setShowVideoId(null)}>
                       <X size={16} color="#fff" />
                     </TouchableOpacity>
                   </View>
                   <View style={{ height: 160, backgroundColor: '#000' }}>
                     <WebView
-                      source={{ uri: `https://www.youtube.com/embed/${showVideoId === 'v1' ? 'q2KlyV45xZg' : 'eH6lI_g3FfI'}?autoplay=1&playsinline=1` }}
+                      source={{
+                        uri: `https://www.youtube.com/embed/${showVideoId === 'v1' ? 'q2KlyV45xZg' : 'eH6lI_g3FfI'}?autoplay=1&playsinline=1`,
+                      }}
                       allowsInlineMediaPlayback
                       style={{ flex: 1 }}
                     />
@@ -386,28 +454,41 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
               )}
 
               {/* Expert consult option */}
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.expertBtn, { borderColor: colors.border }]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  Alert.alert(language === 'sw' ? 'Wasiliana na Mtaalamu' : 'Contact Expert', language === 'sw' ? 'Ujumbe wako umetumwa kwa afisa ugani wa eneo lako.' : 'Message sent to your local extension officer.');
+                  Alert.alert(
+                    language === 'sw' ? 'Wasiliana na Mtaalamu' : 'Contact Expert',
+                    language === 'sw'
+                      ? 'Ujumbe wako umetumwa kwa afisa ugani wa eneo lako.'
+                      : 'Message sent to your local extension officer.'
+                  );
                 }}
               >
                 <Text style={[styles.expertBtnText, { color: colors.text }]}>
-                  {language === 'sw' ? 'Ushauri haueleweki? Uliza Mtaalamu' : 'Not sure? Consult an Expert'}
+                  {language === 'sw'
+                    ? 'Ushauri haueleweki? Uliza Mtaalamu'
+                    : 'Not sure? Consult an Expert'}
                 </Text>
                 <ChevronRight size={16} color={colors.textMute} />
               </TouchableOpacity>
 
               {/* Control Buttons */}
               <View style={styles.actionRow}>
-                <TouchableOpacity onPress={resetDiagnosis} style={[styles.resetBtn, { borderColor: colors.border }]}>
+                <TouchableOpacity
+                  onPress={resetDiagnosis}
+                  style={[styles.resetBtn, { borderColor: colors.border }]}
+                >
                   <Text style={{ color: colors.textMute, fontFamily: 'Inter_700Bold' }}>
                     {language === 'sw' ? 'Pima Tena' : 'Re-test'}
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={saveToLog} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
+                <TouchableOpacity
+                  onPress={saveToLog}
+                  style={[styles.saveBtn, { backgroundColor: colors.primary }]}
+                >
                   <Check size={16} color="#FCFBF7" style={{ marginRight: 6 }} />
                   <Text style={{ color: '#FCFBF7', fontFamily: 'Inter_800ExtraBold' }}>
                     {language === 'sw' ? 'Hifadhi Kumbukumbu' : 'Save to Log'}
@@ -415,28 +496,41 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.reportBtn}
                 onPress={() => {
                   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  Alert.alert(language === 'sw' ? 'Usaidizi' : 'Feedback Report', language === 'sw' ? 'Asante, tutatumia ripoti hii kuboresha AI yetu.' : 'Thank you. Report received for model training.');
+                  Alert.alert(
+                    language === 'sw' ? 'Usaidizi' : 'Feedback Report',
+                    language === 'sw'
+                      ? 'Asante, tutatumia ripoti hii kuboresha AI yetu.'
+                      : 'Thank you. Report received for model training.'
+                  );
                 }}
               >
                 <Text style={[styles.reportBtnText, { color: colors.textMute }]}>
-                  {language === 'sw' ? 'Ripoti matokeo yasiyo sahihi' : 'Report incorrect diagnosis'}
+                  {language === 'sw'
+                    ? 'Ripoti matokeo yasiyo sahihi'
+                    : 'Report incorrect diagnosis'}
                 </Text>
               </TouchableOpacity>
             </ScrollView>
           ) : (
             /* Setup Flow */
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollArea}
+            >
               {/* Dropdowns */}
               <Text style={[styles.label, { color: colors.textMute }]}>
                 {language === 'sw' ? 'CHAGUA ZAO' : 'SELECT CROP'}
               </Text>
-              <TouchableOpacity 
-                onPress={() => setShowCropSelect(!showCropSelect)} 
-                style={[styles.dropdownTrigger, { borderColor: colors.border, backgroundColor: colors.background }]}
+              <TouchableOpacity
+                onPress={() => setShowCropSelect(!showCropSelect)}
+                style={[
+                  styles.dropdownTrigger,
+                  { borderColor: colors.border, backgroundColor: colors.background },
+                ]}
               >
                 <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>
                   {language === 'sw' ? activeCrop?.nameSw : activeCrop?.nameEn}
@@ -445,12 +539,20 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
               </TouchableOpacity>
 
               {showCropSelect && (
-                <View style={[styles.dropdownMenu, { borderColor: colors.border, backgroundColor: colors.card }]}>
-                  {CROPS_LIST.map(c => (
-                    <TouchableOpacity 
-                      key={c.key} 
+                <View
+                  style={[
+                    styles.dropdownMenu,
+                    { borderColor: colors.border, backgroundColor: colors.card },
+                  ]}
+                >
+                  {CROPS_LIST.map((c) => (
+                    <TouchableOpacity
+                      key={c.key}
                       style={[styles.dropdownOption, { borderBottomColor: colors.border }]}
-                      onPress={() => { setSelectedCrop(c.key); setShowCropSelect(false); }}
+                      onPress={() => {
+                        setSelectedCrop(c.key);
+                        setShowCropSelect(false);
+                      }}
                     >
                       <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>
                         {language === 'sw' ? c.nameSw : c.nameEn}
@@ -463,9 +565,12 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
               <Text style={[styles.label, { color: colors.textMute, marginTop: 16 }]}>
                 {language === 'sw' ? 'MKOA WAKO (LOCATION)' : 'YOUR REGION (LOCATION)'}
               </Text>
-              <TouchableOpacity 
-                onPress={() => setShowRegionSelect(!showRegionSelect)} 
-                style={[styles.dropdownTrigger, { borderColor: colors.border, backgroundColor: colors.background }]}
+              <TouchableOpacity
+                onPress={() => setShowRegionSelect(!showRegionSelect)}
+                style={[
+                  styles.dropdownTrigger,
+                  { borderColor: colors.border, backgroundColor: colors.background },
+                ]}
               >
                 <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold' }}>
                   {selectedRegion}
@@ -474,12 +579,20 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
               </TouchableOpacity>
 
               {showRegionSelect && (
-                <View style={[styles.dropdownMenu, { borderColor: colors.border, backgroundColor: colors.card }]}>
-                  {REGIONS_LIST.map(r => (
-                    <TouchableOpacity 
-                      key={r.label} 
+                <View
+                  style={[
+                    styles.dropdownMenu,
+                    { borderColor: colors.border, backgroundColor: colors.card },
+                  ]}
+                >
+                  {REGIONS_LIST.map((r) => (
+                    <TouchableOpacity
+                      key={r.label}
                       style={[styles.dropdownOption, { borderBottomColor: colors.border }]}
-                      onPress={() => { setSelectedRegion(r.label); setShowRegionSelect(false); }}
+                      onPress={() => {
+                        setSelectedRegion(r.label);
+                        setShowRegionSelect(false);
+                      }}
                     >
                       <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>
                         {r.label}
@@ -491,22 +604,38 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
 
               {/* Mode Selectors */}
               <View style={styles.modeToggle}>
-                <TouchableOpacity 
-                  style={[styles.modeBtn, mode === 'checklist' && { backgroundColor: colors.primary }]}
+                <TouchableOpacity
+                  style={[
+                    styles.modeBtn,
+                    mode === 'checklist' && { backgroundColor: colors.primary },
+                  ]}
                   onPress={() => setMode('checklist')}
                 >
-                  <ClipboardList size={16} color={mode === 'checklist' ? '#FCFBF7' : colors.textMute} />
-                  <Text style={[styles.modeBtnText, { color: mode === 'checklist' ? '#FCFBF7' : colors.textMute }]}>
+                  <ClipboardList
+                    size={16}
+                    color={mode === 'checklist' ? '#FCFBF7' : colors.textMute}
+                  />
+                  <Text
+                    style={[
+                      styles.modeBtnText,
+                      { color: mode === 'checklist' ? '#FCFBF7' : colors.textMute },
+                    ]}
+                  >
                     {language === 'sw' ? 'Dalili' : 'Symptom Checklist'}
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.modeBtn, mode === 'camera' && { backgroundColor: colors.primary }]}
                   onPress={() => setMode('camera')}
                 >
                   <Camera size={16} color={mode === 'camera' ? '#FCFBF7' : colors.textMute} />
-                  <Text style={[styles.modeBtnText, { color: mode === 'camera' ? '#FCFBF7' : colors.textMute }]}>
+                  <Text
+                    style={[
+                      styles.modeBtnText,
+                      { color: mode === 'camera' ? '#FCFBF7' : colors.textMute },
+                    ]}
+                  >
                     {language === 'sw' ? 'Kamera ya AI' : 'AI Camera'}
                   </Text>
                 </TouchableOpacity>
@@ -516,18 +645,26 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                 /* Symptom Checklist Selector */
                 <View style={{ marginTop: 10 }}>
                   <Text style={[styles.sectionHeading, { color: colors.text }]}>
-                    {language === 'sw' ? 'Chagua Dalili Zilizopo shambani' : 'Check observed plant symptoms'}
+                    {language === 'sw'
+                      ? 'Chagua Dalili Zilizopo shambani'
+                      : 'Check observed plant symptoms'}
                   </Text>
-                  
-                  {CROP_SYMPTOMS[selectedCrop]?.map(sym => {
+
+                  {CROP_SYMPTOMS[selectedCrop]?.map((sym) => {
                     const checked = selectedSymptoms.includes(sym.id);
                     return (
-                      <TouchableOpacity 
-                        key={sym.id} 
+                      <TouchableOpacity
+                        key={sym.id}
                         style={[styles.checkboxRow, { borderColor: colors.border }]}
                         onPress={() => toggleSymptom(sym.id)}
                       >
-                        <View style={[styles.checkbox, { borderColor: colors.primary }, checked && { backgroundColor: colors.primary }]}>
+                        <View
+                          style={[
+                            styles.checkbox,
+                            { borderColor: colors.primary },
+                            checked && { backgroundColor: colors.primary },
+                          ]}
+                        >
                           {checked && <Check size={12} color="#FCFBF7" />}
                         </View>
                         <Text style={[styles.checkboxLabel, { color: colors.text }]}>
@@ -537,7 +674,10 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                     );
                   })}
 
-                  <TouchableOpacity onPress={runChecklistDiagnosis} style={[styles.diagBtn, { backgroundColor: colors.primary }]}>
+                  <TouchableOpacity
+                    onPress={runChecklistDiagnosis}
+                    style={[styles.diagBtn, { backgroundColor: colors.primary }]}
+                  >
                     <Sparkles size={16} color="#FCFBF7" style={{ marginRight: 8 }} />
                     <Text style={styles.diagBtnText}>
                       {language === 'sw' ? 'Anza Uchunguzi' : 'Analyze Symptoms'}
@@ -551,15 +691,19 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                     <View style={styles.offlineAlert}>
                       <AlertTriangle size={18} color="#ef4444" />
                       <Text style={styles.offlineAlertText}>
-                        {language === 'sw' 
-                          ? 'Huduma ya picha ya AI inahitaji mtandao. Tafadhali tumia Orodha ya Dalili.' 
+                        {language === 'sw'
+                          ? 'Huduma ya picha ya AI inahitaji mtandao. Tafadhali tumia Orodha ya Dalili.'
                           : 'AI vision scanner requires active internet. Please use the Symptom Checklist.'}
                       </Text>
                     </View>
                   )}
 
-                  <TouchableOpacity 
-                    style={[styles.photoTrigger, isOffline && { opacity: 0.5 }, { borderColor: colors.primary, backgroundColor: colors.primary + '08' }]}
+                  <TouchableOpacity
+                    style={[
+                      styles.photoTrigger,
+                      isOffline && { opacity: 0.5 },
+                      { borderColor: colors.primary, backgroundColor: colors.primary + '08' },
+                    ]}
                     onPress={() => pickImage(true)}
                     disabled={isOffline}
                   >
@@ -569,8 +713,12 @@ export default function DiseaseModal({ visible, onClose, preselectedCrop }: Dise
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity 
-                    style={[styles.galleryTrigger, isOffline && { opacity: 0.5 }, { borderColor: colors.border }]}
+                  <TouchableOpacity
+                    style={[
+                      styles.galleryTrigger,
+                      isOffline && { opacity: 0.5 },
+                      { borderColor: colors.border },
+                    ]}
                     onPress={() => pickImage(false)}
                     disabled={isOffline}
                   >
@@ -607,7 +755,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.06)'
+    borderBottomColor: 'rgba(255,255,255,0.06)',
   },
   title: {
     fontSize: 18,
@@ -931,5 +1079,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
     textAlign: 'center',
     paddingHorizontal: 20,
-  }
+  },
 });

@@ -7,12 +7,12 @@ async function generateEmbedding(text: string): Promise<number[]> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${openaiKey}`
+      Authorization: `Bearer ${openaiKey}`,
     },
     body: JSON.stringify({
       input: text,
-      model: 'text-embedding-3-small'
-    })
+      model: 'text-embedding-3-small',
+    }),
   });
   if (!res.ok) throw new Error(`OpenAI error: ${await res.text()}`);
   const data = await res.json();
@@ -24,12 +24,12 @@ export async function fetchRAGContext(query: string): Promise<string> {
 
   try {
     const queryEmbedding = await generateEmbedding(query);
-    
+
     // Call the match_knowledge RPC
     const { data, error } = await supabase.rpc('match_knowledge', {
       query_embedding: queryEmbedding,
       match_threshold: 0.7,
-      match_count: 3
+      match_count: 3,
     });
 
     if (error || !data || data.length === 0) return '';

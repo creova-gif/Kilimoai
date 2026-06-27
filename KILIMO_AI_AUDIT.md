@@ -1,69 +1,66 @@
-# Kilimoai Project Architecture Audit Report
+# Kilimo AI — UI/UX & Code Audit
+
+_Last updated: 2026-06-27 · Multi-disciplinary audit (UI/UX, full-stack, accessibility, gamification, ML/AI)_
 
 ## 1. Executive Summary
-The Kilimoai project has undergone a successful architectural evolution. It maintains a high-quality, dual-target infrastructure supporting both **Native (Expo/iOS/Android)** and **Web (Vite/PWA)** platforms. The primary objective of migrating from the legacy `react-native` `Animated` API to the modern `motion/react` framework is **100% complete** across all critical application paths.
 
----
+Kilimo AI is a **single-target Expo / React Native app** (SDK 54, React 19, `expo-router` v6),
+not the dual Vite/PWA setup described in the previous version of this document. Animations use
+`react-native-reanimated` v4 (with a local `motion/react` shim aliased in `tsconfig.json`).
+State is managed with `zustand`; data services target Supabase with graceful offline/seed fallbacks.
 
-## 2. Technical Stack Assessment
+The app is **largely feature-complete and compiles cleanly**. This pass fixed all blocking
+lint errors, eliminated every "coming soon" stub, and implemented two genuinely missing features.
 
-### Core Frameworks
-| Target | Framework | Navigation | UI Components |
-| :--- | :--- | :--- | :--- |
-| **Native** | Expo SDK 51 | `expo-router` | React Native + Custom UI |
-| **Web / PWA** | Vite + React 18 | Vite Router | Radix UI + Tailwind CSS |
+## 2. Stack (verified)
 
-### Animation Engine
-- **Library**: `motion/react` (Framer Motion 12+)
-- **Status**: **Fully Adopted**. 
-- **Legacy Audit**: A project-wide scan confirmed zero usage of `Animated.View`, `Animated.Value`, or other legacy React Native animation APIs. All animations now utilize the declarative `motion` component syntax.
+| Area | Implementation |
+| :--- | :--- |
+| Framework | Expo SDK 54, React Native 0.81, React 19 |
+| Navigation | `expo-router` v6 (file-based, `app/`) |
+| Animation | `react-native-reanimated` v4 (`motion` shim in `shims/motion`) |
+| State | `zustand` (`store/`) |
+| Data | `@supabase/supabase-js` + offline queue / seed fallbacks |
+| AI | `@google/generative-ai` (Gemini) via `lib/ai*.ts` |
+| Maps | `react-native-maps` (`.native`/`.web` wrappers) |
+| i18n | In-app `language` flag (`sw`/`en`) threaded through screens |
 
----
+## 3. Fixed in this pass
 
-## 3. Structural Consistency Audit
+### 3.1 Tooling
+- **ESLint was completely broken** — `eslint.config.mjs` used legacy `module.exports` in an
+  ESM file under ESLint 10 (flat-config only). Rewritten as a proper flat config. Lint runs again.
 
-The audit verified consistency across the 5 primary application pillars:
+### 3.2 Correctness (20 ESLint errors → 0; `tsc --noEmit` clean)
+- 10 × ternary-as-statement (`cond ? a() : b()`) converted to `if/else`.
+- 4 × dead initializers removed (`no-useless-assignment`).
+- 3 × empty `catch {}` blocks documented.
+- 3 × rethrows now preserve the original error via `{ cause }`.
 
-### 3.1. Dashboard
-- **Native**: `app/(tabs)/index.tsx`
-- **Web**: `src/components/AgribusinessDashboard.tsx`
-- **Consistency**: Both implementations feature high-contrast "Glassmorphism" cards and background orbs animated via `motion/react`.
+### 3.3 Missing features implemented
+- **`lib/diseaseDetector.ts`** — *Common Rust* for maize was scored (`rustScore`) but **never
+  surfaced** in results. Added the full bilingual disease entry (organic + chemical control,
+  region-risk weighting), so the symptom checker now reports it.
+- **`app/contracts/[id].tsx`** — replaced 3 "coming soon" `Alert` stubs:
+  - **QR verification**: real `react-native-qrcode-svg` modal encoding contract terms
+    (`id, crop, qty, price, total, buyer, status, signature flags`) as a `kilimo.ai/verify` link.
+  - **Share**: native `Share` sheet with a bilingual contract summary (iOS includes the verify URL).
+- **`app/scan.tsx`** — the scanning "laser" was a **static** `Animated.View` (`/* Reanimated Todo */`).
+  Implemented a driven sweep (`useSharedValue` + `withRepeat`/`withTiming`) active during `SCANNING`,
+  and gave the camera/header entrance animations.
 
-### 3.2. Onboarding
-- **Native**: `app/onboarding.tsx`
-- **Web**: `src/components/onboarding-v3/`
-- **Consistency**: High-fidelity slide transitions and haptic feedback integration are maintained across targets.
+## 4. Recommendations (not yet actioned — backlog)
 
-### 3.3. AI Chat (Sankofa)
-- **Native**: `app/sankofa.tsx`
-- **Web**: `src/components/unified/UnifiedAIAdvisor.tsx`
-- **Consistency**: Conversational UI uses `AnimatePresence` for smooth message entry/exit, ensuring a premium feel.
+| Priority | Finding | Notes |
+| :--- | :--- | :--- |
+| High | **Offline image dependency** | 6 screens load hero images from `images.unsplash.com`. For rural/low-connectivity users these fail silently. Bundle local assets or add cached placeholders. |
+| Medium | **Accessibility coverage** | ~27% of `TouchableOpacity` (256/936) carry `accessibilityLabel`. Icon-only buttons are the priority gap; content rows are mostly covered by child `Text`. |
+| Medium | **Test harness** | `jest.config.js` references `jest-expo` (not installed) and there are **no test files**. Install `jest-expo` and add smoke tests for stores/`diseaseDetector`. |
+| Low | **Lint warnings (8.3k)** | Almost entirely Prettier formatting + stray `console.log`. Run `eslint --fix` in a dedicated formatting-only commit to avoid mixing churn with logic changes. |
 
-### 3.4. Spatial Intelligence (Map)
-- **Native**: `app/map.tsx`
-- **Web**: `src/components/unified/UnifiedFarmMap.tsx`
-- **Consistency**: Interactive map overlays and data sheets use consistent spring physics.
+## 5. Verification
 
-### 3.5. Crop Analysis (Scan)
-- **Native**: `app/scan.tsx`
-- **Web**: `src/components/unified/UnifiedCropIntelligence.tsx`
-- **Consistency**: Scanning animations (lasers, progress bars) are implemented using `motion` variants.
-
----
-
-## 4. Key Architectural Findings
-
-> [!IMPORTANT]
-> **Unified Animation Logic**: By adopting `motion/react`, the team has enabled a "write once, feel consistent" animation strategy that bridges the gap between Web and Native.
-
-> [!TIP]
-> **Design Tokens**: The project successfully centralizes theme management in `constants/Theme.ts`, ensuring visual parity even when using different UI primitives (Radix vs. Native).
-
----
-
-## 5. Conclusion & Recommendations
-The Kilimoai project demonstrates exceptional technical maturity. The removal of legacy animation dependencies significantly reduces technical debt and improves performance across low-end mobile devices.
-
-**Next Steps:**
-1. **Shared Logic**: Consider moving non-UI logic from `src/components` to `services/` or `hooks/` to further unify the two targets.
-2. **Standardization**: Ensure any new UI components follow the `motion/react` pattern established in this audit.
+```
+npx tsc --noEmit      # exit 0
+npx eslint .          # 0 errors (warnings are formatting/console only)
+```

@@ -28,7 +28,7 @@ export function Input({
       {label && <Text style={[styles.label, { color: colors.textMute }]}>{label}</Text>}
       <BlurView
         intensity={isDark ? 20 : 60}
-        tint={isDark ? "dark" : "light"}
+        tint={isDark ? 'dark' : 'light'}
         style={[
           styles.container,
           { borderColor: colors.border, backgroundColor: colors.card },
