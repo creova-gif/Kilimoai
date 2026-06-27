@@ -43,7 +43,7 @@ import { useTheme } from '../constants/Theme';
 import { useKilimoStore } from '../store/useKilimoStore';
 
 const { width: SW } = Dimensions.get('window');
-const PRIMARY = '#22d15a';
+const PRIMARY = '#2E6F40';
 const ORB_SIZE = 136;
 const ORB_CONTAINER = 220;
 

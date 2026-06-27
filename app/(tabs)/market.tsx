@@ -860,7 +860,7 @@ export default function MarketScreen() {
                                   : `Add ${prod.name} to cart`
                               }
                             >
-                              <ShoppingCart size={12} color="#000" />
+                              <ShoppingCart size={12} color="#fff" />
                               <Text style={styles.addToCartText}>
                                 {language === 'sw' ? 'Ongeza' : 'Add'}
                               </Text>
@@ -1110,7 +1110,7 @@ export default function MarketScreen() {
                       </Text>
                       <View
                         style={{
-                          backgroundColor: ord.status === 'Delivered' ? '#22d15a20' : '#f59e0b20',
+                          backgroundColor: ord.status === 'Delivered' ? '#2E6F4020' : '#f59e0b20',
                           paddingHorizontal: 8,
                           paddingVertical: 4,
                           borderRadius: 8,
@@ -1120,7 +1120,7 @@ export default function MarketScreen() {
                           style={{
                             fontSize: 12,
                             fontFamily: 'Inter_700Bold',
-                            color: ord.status === 'Delivered' ? '#22d15a' : '#f59e0b',
+                            color: ord.status === 'Delivered' ? '#2E6F40' : '#f59e0b',
                           }}
                         >
                           {ord.status}
@@ -1181,7 +1181,7 @@ export default function MarketScreen() {
                   language === 'sw' ? 'Fungua kikapu cha ununuzi' : 'Open shopping cart'
                 }
               >
-                <ShoppingCart size={18} color="#000" />
+                <ShoppingCart size={18} color="#fff" />
                 <View style={styles.cartCountBadge}>
                   <Text style={styles.cartCountBadgeTxt}>
                     {cart.reduce((sum, c) => sum + c.qty, 0)}
@@ -1592,7 +1592,7 @@ export default function MarketScreen() {
 
                 {/* Mobile Money Integration Note */}
                 <View style={styles.mobiMoneyNote}>
-                  <CheckCircle2 size={12} color="#22d15a" />
+                  <CheckCircle2 size={12} color="#2E6F40" />
                   <Text style={styles.mobiMoneyText}>
                     {language === 'sw'
                       ? 'Lipa salama kupitia M-Pesa / TigoPesa'
@@ -2399,19 +2399,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#22d15a',
+    backgroundColor: '#2E6F40',
     paddingHorizontal: 8,
     borderRadius: 8,
     minHeight: 44,
     justifyContent: 'center',
   },
-  addToCartText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#000' },
+  addToCartText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#fff' },
   cartFab: { position: 'absolute', bottom: 32, right: 24, zIndex: 100 },
   cartFabBtn: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#22d15a',
+    backgroundColor: '#2E6F40',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -2515,7 +2515,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(34, 209, 90, 0.1)',
+    backgroundColor: 'rgba(46, 111, 64, 0.1)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,

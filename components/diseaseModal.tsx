@@ -922,7 +922,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(34, 209, 90, 0.08)',
+    backgroundColor: 'rgba(46, 111, 64, 0.08)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,

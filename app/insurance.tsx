@@ -45,7 +45,7 @@ const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
 const STATUS_META = {
   browse: { color: '#94a3b8', label: 'Available' },
   pending: { color: '#f59e0b', label: 'Pending' },
-  active: { color: '#22d15a', label: 'Active' },
+  active: { color: '#2E6F40', label: 'Active' },
   expired: { color: '#64748b', label: 'Expired' },
   claimed: { color: '#3b82f6', label: 'Claim Filed' },
 };
@@ -352,7 +352,7 @@ export default function InsuranceScreen() {
               {enrollStep === 1 && (
                 <View style={{ gap: 14 }}>
                   <View style={s.prefillBanner}>
-                    <Sparkles size={14} color="#22d15a" />
+                    <Sparkles size={14} color={colors.primary} />
                     <Text style={s.prefillBannerText}>
                       {language === 'sw' 
                         ? 'Habari zimejazwa moja kwa moja kutoka kwenye Agro ID yako.' 
@@ -494,7 +494,7 @@ export default function InsuranceScreen() {
                     </View>
                     <View style={s.pnlRow}>
                       <Text style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.text }}>Cooperative Subsidy (30%):</Text>
-                      <Text style={{ fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>
+                      <Text style={{ fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: colors.primary }}>
                         - TZS {fmt(Math.round((selectedEnrollPolicy?.premiumTZS ?? 0) * 0.3))}
                       </Text>
                     </View>
@@ -757,7 +757,7 @@ export default function InsuranceScreen() {
                       <View style={[s.photoPreviewContainer, { borderColor: colors.border }]}>
                         <Image source={{ uri: claimPhoto }} style={s.photoPreview} />
                         <View style={s.photoSuccessOverlay}>
-                          <CheckCircle2 size={24} color="#22d15a" />
+                          <CheckCircle2 size={24} color={colors.primary} />
                         </View>
                       </View>
                       
@@ -944,7 +944,7 @@ function Spec({ label, value, highlight }: any) {
   return (
     <View style={{ flex: 1 }}>
       <Text style={[s.specLabel, { color: colors.textMute }]}>{label.toUpperCase()}</Text>
-      <Text style={[s.specValue, { color: highlight ? '#22d15a' : colors.text }]} numberOfLines={1}>{value}</Text>
+      <Text style={[s.specValue, { color: highlight ? colors.primary : colors.text }]} numberOfLines={1}>{value}</Text>
     </View>
   );
 }
@@ -990,7 +990,7 @@ const s = StyleSheet.create({
   stepNumCircle: { width: 22, height: 22, borderRadius: 11, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5 },
   stepLine: { height: 2, flex: 1, marginHorizontal: 6 },
   
-  prefillBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10, backgroundColor: 'rgba(34,209,90,0.06)', borderRadius: 10, borderWidth: 0.5, borderColor: 'rgba(34,209,90,0.2)', marginBottom: 8 },
+  prefillBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10, backgroundColor: 'rgba(46, 111, 64,0.06)', borderRadius: 10, borderWidth: 0.5, borderColor: 'rgba(46, 111, 64,0.2)', marginBottom: 8 },
   prefillBannerText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: '#146e2e', flex: 1 },
   
   inputGroup: { gap: 6 },

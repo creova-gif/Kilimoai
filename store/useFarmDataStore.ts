@@ -189,7 +189,7 @@ interface FarmDataState {
   cancelConsultation: (id: string) => void;
 
   // Ledger
-  addLedgerEntry: (e: Omit<LedgerEntry, 'id'>) => void;
+  addLedgerEntry: (e: Omit<LedgerEntry, 'id'> & { id?: string }) => void;
   removeLedgerEntry: (id: string) => void;
 }
 
@@ -743,7 +743,14 @@ export const useFarmDataStore = create<FarmDataState>()(
           ),
         })),
 
-      addLedgerEntry: (e) => set((s) => ({ ledger: [{ ...e, id: uid('l') }, ...s.ledger] })),
+      addLedgerEntry: (e) => set((s) => {
+        // A caller may supply an explicit id for offline-first reconciliation
+        // (same client_id added locally then re-synced); skip if it already
+        // exists so we never double-count in the income/expense/net reducers.
+        const id = e.id ?? uid('l');
+        if (s.ledger.some((x) => x.id === id)) return s;
+        return { ledger: [{ ...e, id }, ...s.ledger] };
+      }),
       removeLedgerEntry: (id) => set((s) => ({ ledger: s.ledger.filter((x) => x.id !== id) })),
     }),
     {

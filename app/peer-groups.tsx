@@ -354,14 +354,14 @@ export default function PeerGroupsScreen() {
                             style={[
                               s.volunteerBtn, 
                               { 
-                                backgroundColor: t.joined ? '#22d15a20' : colors.primary,
-                                borderColor: t.joined ? '#22d15a70' : 'transparent',
+                                backgroundColor: t.joined ? '#2E6F4020' : colors.primary,
+                                borderColor: t.joined ? '#2E6F4070' : 'transparent',
                               }
                             ]}
                           >
                             {t.joined ? (
                               <>
-                                <Check size={12} color="#22d15a" />
+                                <Check size={12} color={colors.primary} />
                                 <Text style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: '#1b632e' }}>Umejiunga · Joined</Text>
                               </>
                             ) : (
@@ -418,14 +418,14 @@ export default function PeerGroupsScreen() {
                             style={[
                               s.rsvpBtn, 
                               { 
-                                backgroundColor: e.rsvp ? '#22d15a20' : colors.primary,
-                                borderColor: e.rsvp ? '#22d15a70' : 'transparent',
+                                backgroundColor: e.rsvp ? '#2E6F4020' : colors.primary,
+                                borderColor: e.rsvp ? '#2E6F4070' : 'transparent',
                               }
                             ]}
                           >
                             {e.rsvp ? (
                               <>
-                                <Check size={12} color="#22d15a" />
+                                <Check size={12} color={colors.primary} />
                                 <Text style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: '#1b632e' }}>Nitakuja · RSVP Yes</Text>
                               </>
                             ) : (
@@ -488,7 +488,7 @@ const s = StyleSheet.create({
   volunteerBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.04)' },
   volunteerBtn: { marginTop: 12, height: 44, borderRadius: 10, borderWidth: 1.5, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   
-  attendeePill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: 'rgba(34,209,90,0.1)' },
+  attendeePill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: 'rgba(46, 111, 64,0.1)' },
   rsvpBtn: { marginTop: 12, height: 44, borderRadius: 10, borderWidth: 1.5, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
 });

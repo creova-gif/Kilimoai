@@ -2,14 +2,12 @@
  * Wallet Admin — Transactions ledger with filters
  */
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Platform } from 'react-native';
 import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Receipt,
-  ShieldCheck,
-  TrendingUp,
-  TrendingDown,
+  View, Text, StyleSheet, TouchableOpacity, FlatList, Platform,
+} from 'react-native';
+import {
+  ArrowDownRight, ArrowUpRight, Receipt, ShieldCheck,
+  TrendingUp, TrendingDown,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -19,25 +17,25 @@ import { Gate } from '../../lib/access';
 import { useWalletAdminStore, Transaction, TxnType } from '../../store/useWalletAdminStore';
 
 const FILTERS: { key: 'all' | TxnType; label: string; symbol: string }[] = [
-  { key: 'all', label: 'Yote', symbol: '●' },
-  { key: 'deposit', label: 'Mapokezi', symbol: '↓' },
-  { key: 'payout', label: 'Malipo', symbol: '↑' },
-  { key: 'fee', label: 'Ada', symbol: '%' },
+  { key: 'all',      label: 'Yote',       symbol: '●' },
+  { key: 'deposit',  label: 'Mapokezi',   symbol: '↓' },
+  { key: 'payout',   label: 'Malipo',     symbol: '↑' },
+  { key: 'fee',      label: 'Ada',        symbol: '%' },
   { key: 'transfer', label: 'Uhamishaji', symbol: '⇄' },
 ];
 
 const TYPE_LABELS: Record<TxnType, string> = {
-  deposit: 'MAPOKEZI',
-  payout: 'MALIPO',
-  fee: 'ADA',
+  deposit:  'MAPOKEZI',
+  payout:   'MALIPO',
+  fee:      'ADA',
   transfer: 'HAMISHA',
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  completed: '#22d15a',
-  pending: '#f59e0b',
-  failed: '#ef4444',
-  reversed: '#94a3b8',
+  completed: '#2E6F40',
+  pending:   '#f59e0b',
+  failed:    '#ef4444',
+  reversed:  '#94a3b8',
 };
 
 const fmt = (n: number) => `TSh ${new Intl.NumberFormat('en-US').format(n)}`;
@@ -48,7 +46,7 @@ const fmt = (n: number) => `TSh ${new Intl.NumberFormat('en-US').format(n)}`;
 function SummaryBanner({ items }: { items: Transaction[] }) {
   const { colors, isDark } = useTheme();
 
-  const totalIn = items
+  const totalIn  = items
     .filter((t) => t.type === 'deposit' || t.type === 'transfer')
     .reduce((sum, t) => sum + t.amountTZS, 0);
   const totalOut = items
@@ -56,30 +54,24 @@ function SummaryBanner({ items }: { items: Transaction[] }) {
     .reduce((sum, t) => sum + t.amountTZS, 0);
 
   return (
-    <View
-      style={[
-        bn.wrap,
-        {
-          backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
-          borderColor: 'rgba(34,209,90,0.15)',
-        },
-      ]}
-    >
+    <View style={[bn.wrap, {
+      backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+      borderColor: colors.primary + '26',
+    }]}>
       <LinearGradient
-        colors={['rgba(34,209,90,0.09)', 'transparent']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        colors={[colors.primary + '17', 'transparent']}
+        start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
         style={bn.shimmer}
       />
 
       {/* Total in */}
       <View style={bn.col}>
         <View style={bn.iconBox}>
-          <TrendingDown size={13} color="#22d15a" />
+          <TrendingDown size={13} color={colors.primary} />
         </View>
         <View>
           <Text style={bn.label}>MAPOKEZI</Text>
-          <Text style={[bn.val, { color: '#22d15a' }]}>+{fmt(totalIn)}</Text>
+          <Text style={[bn.val, { color: colors.primary }]}>+{fmt(totalIn)}</Text>
         </View>
       </View>
 
@@ -120,43 +112,35 @@ function SummaryBanner({ items }: { items: Transaction[] }) {
 function TxnCard({ item, index }: { item: Transaction; index: number }) {
   const { colors, isDark } = useTheme();
 
-  const isOut = item.type === 'payout' || item.type === 'fee';
-  const isFailed = item.status === 'failed' || item.status === 'reversed';
-  const accent = isFailed ? '#94a3b8' : isOut ? '#ef4444' : '#22d15a';
+  const isOut     = item.type === 'payout' || item.type === 'fee';
+  const isFailed  = item.status === 'failed' || item.status === 'reversed';
+  const accent    = isFailed ? '#94a3b8' : isOut ? '#ef4444' : colors.primary;
   const statusClr = STATUS_COLORS[item.status] ?? '#94a3b8';
 
   const dateStr = new Date(item.createdAt).toLocaleDateString('sw-TZ', {
-    day: 'numeric',
-    month: 'short',
+    day: 'numeric', month: 'short',
   });
 
   return (
     <Animated.View entering={FadeInDown.delay(index * 45).springify()}>
-      <View
-        style={[
-          cd.wrap,
-          {
-            backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
-            borderColor: isDark ? 'rgba(255,255,255,0.05)' : colors.border,
-            borderLeftColor: accent,
-          },
-        ]}
-      >
+      <View style={[cd.wrap, {
+        backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
+        borderColor: isDark ? 'rgba(255,255,255,0.05)' : colors.border,
+        borderLeftColor: accent,
+      }]}>
         {/* Shimmer strip */}
         <LinearGradient
           colors={[`${accent}20`, 'transparent']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
           style={cd.shimmer}
         />
 
         {/* Icon */}
         <View style={[cd.iconBox, { backgroundColor: `${accent}18` }]}>
-          {isOut ? (
-            <ArrowUpRight size={17} color={accent} />
-          ) : (
-            <ArrowDownRight size={17} color={accent} />
-          )}
+          {isOut
+            ? <ArrowUpRight size={17} color={accent} />
+            : <ArrowDownRight size={17} color={accent} />
+          }
         </View>
 
         {/* Details */}
@@ -165,22 +149,18 @@ function TxnCard({ item, index }: { item: Transaction; index: number }) {
             <Text style={[cd.name, { color: isDark ? '#fff' : colors.text }]} numberOfLines={1}>
               {item.memberName}
             </Text>
-            <View
-              style={[
-                cd.badge,
-                {
-                  backgroundColor: `${accent}15`,
-                  borderColor: `${accent}35`,
-                },
-              ]}
-            >
-              <Text style={[cd.badgeText, { color: accent }]}>{TYPE_LABELS[item.type]}</Text>
+            <View style={[cd.badge, {
+              backgroundColor: `${accent}15`,
+              borderColor: `${accent}35`,
+            }]}>
+              <Text style={[cd.badgeText, { color: accent }]}>
+                {TYPE_LABELS[item.type]}
+              </Text>
             </View>
           </View>
 
           <Text style={[cd.ref, { color: colors.textMute }]} numberOfLines={1}>
-            {item.reference}
-            {item.note ? ` · ${item.note}` : ''}
+            {item.reference}{item.note ? ` · ${item.note}` : ''}
           </Text>
 
           <View style={cd.metaRow}>
@@ -193,8 +173,7 @@ function TxnCard({ item, index }: { item: Transaction; index: number }) {
 
         {/* Amount */}
         <Text style={[cd.amount, { color: accent }]}>
-          {isOut ? '−' : '+'}
-          {fmt(item.amountTZS)}
+          {isOut ? '−' : '+'}{fmt(item.amountTZS)}
         </Text>
       </View>
     </Animated.View>
@@ -211,7 +190,7 @@ export default function TransactionsScreen() {
 
   const filtered = useMemo(
     () => (filter === 'all' ? transactions : transactions.filter((t) => t.type === filter)),
-    [transactions, filter]
+    [transactions, filter],
   );
 
   return (
@@ -221,14 +200,7 @@ export default function TransactionsScreen() {
         <PageScaffold title="Daftari la Miamala" badge="ENTERPRISE">
           <GlassCard style={{ margin: 24, padding: 24, alignItems: 'center' as const, gap: 12 }}>
             <ShieldCheck size={32} color="#64748b" />
-            <Text
-              style={{
-                fontFamily: 'Inter_700Bold',
-                fontSize: 16,
-                color: '#64748b',
-                textAlign: 'center',
-              }}
-            >
+            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 16, color: '#64748b', textAlign: 'center' }}>
               Hairuhusiwi{'\n'}Daftari hili ni kwa Viongozi wa Ushirika na Wasimamizi pekee.
             </Text>
           </GlassCard>
@@ -236,6 +208,7 @@ export default function TransactionsScreen() {
       }
     >
       <PageScaffold title="Daftari la Miamala" subtitle="Ledger" badge="ENTERPRISE">
+
         {/* ── Filter pills ── */}
         <View style={s.filterRow}>
           {FILTERS.map((f) => {
@@ -248,22 +221,18 @@ export default function TransactionsScreen() {
                   s.pill,
                   {
                     backgroundColor: active
-                      ? '#22d15a'
-                      : isDark
-                        ? 'rgba(255,255,255,0.04)'
-                        : colors.card,
+                      ? colors.primary
+                      : (isDark ? 'rgba(255,255,255,0.04)' : colors.card),
                     borderColor: active
-                      ? '#22d15a'
-                      : isDark
-                        ? 'rgba(255,255,255,0.1)'
-                        : colors.border,
+                      ? colors.primary
+                      : (isDark ? 'rgba(255,255,255,0.1)' : colors.border),
                   },
                 ]}
               >
-                <Text style={[s.pillSymbol, { color: active ? '#064e1a' : '#22d15a' }]}>
+                <Text style={[s.pillSymbol, { color: active ? '#fff' : colors.primary }]}>
                   {f.symbol}
                 </Text>
-                <Text style={[s.pillText, { color: active ? '#000' : colors.text }]}>
+                <Text style={[s.pillText, { color: active ? '#fff' : colors.text }]}>
                   {f.label}
                 </Text>
               </TouchableOpacity>
@@ -292,6 +261,7 @@ export default function TransactionsScreen() {
             contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 100 }}
           />
         )}
+
       </PageScaffold>
     </Gate>
   );
@@ -356,7 +326,7 @@ const bn = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 8,
-    backgroundColor: 'rgba(34,209,90,0.12)',
+    backgroundColor: 'rgba(46, 111, 64,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },

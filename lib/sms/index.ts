@@ -1,40 +1,38 @@
 /**
- * Kilimo AI — SMS Adapter (Phase 1 stub)
+ * Kilimo AI — SMS Adapter
  *
- * Sends SMS via a pluggable provider. In Phase 1 this is a no-op that logs to
- * console and pushes an in-app notification so the user can see what would have
- * been sent. Wire Africa's Talking or Selcom in Phase 2 by:
+ * Dispatches SMS through the Supabase `sms-send` edge function so the Africa's
+ * Talking credentials NEVER ship inside the mobile bundle. When no backend is
+ * configured (dev / offline), it degrades to a logged in-app notification so
+ * the channel is still observable.
  *
- *   1. Add AFRICAS_TALKING_API_KEY + AFRICAS_TALKING_USERNAME secrets
- *   2. Replace the body of `sendSms` with a fetch to the provider
+ * SECURITY: do not reintroduce EXPO_PUBLIC_AT_* / EXPO_PUBLIC_AFRICAS_TALKING_*
+ * here. SMS credentials are billable — a leaked key lets anyone send SMS on
+ * your account. The provider call lives in supabase/functions/sms-send.
  *
  * The Notification Delivery Matrix (PRD 2.2) routes through here for all
  * SMS-backed events: critical diagnosis, price alerts, severe weather.
  */
 
 import { useKilimoStore } from '../../store/useKilimoStore';
+import { supabase } from '../supabase';
 
-export type SmsEvent = 'critical_diagnosis' | 'price_alert' | 'severe_weather' | 'payment_received';
+export type SmsEvent =
+  | 'critical_diagnosis'
+  | 'price_alert'
+  | 'severe_weather'
+  | 'payment_received';
 
 export interface SmsPayload {
-  to: string; // E.164, e.g. "+255712345678"
-  body: string; // Plain text, < 160 chars ideally
+  to: string;          // E.164, e.g. "+255712345678"
+  body: string;        // Plain text, < 160 chars ideally
   event: SmsEvent;
   meta?: Record<string, unknown>;
 }
 
-const AT_API_KEY =
-  process.env.EXPO_PUBLIC_AT_API_KEY || process.env.EXPO_PUBLIC_AFRICAS_TALKING_API_KEY || '';
-const AT_USERNAME =
-  process.env.EXPO_PUBLIC_AT_USERNAME || process.env.EXPO_PUBLIC_AFRICAS_TALKING_USERNAME || '';
-const AT_SENDER_ID =
-  process.env.EXPO_PUBLIC_AT_SENDER_ID || process.env.EXPO_PUBLIC_AFRICAS_TALKING_SENDER_ID || '';
-
-const PROVIDER_CONFIGURED = AT_API_KEY.length > 0 && AT_USERNAME.length > 0;
-
 export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reason?: string }> {
-  if (!PROVIDER_CONFIGURED) {
-    if (__DEV__) console.log('[SMS:stub]', payload.event, '→', payload.to, '·', payload.body);
+  if (!supabase) {
+    if (__DEV__) console.log('[SMS:stub]', payload.event, '→', maskNumber(payload.to), '· [redacted]');
 
     // Mirror to in-app notification so the user sees the channel firing
     useKilimoStore.getState().addNotification({
@@ -43,63 +41,41 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
       type: 'info',
     });
 
-    return { ok: false, reason: 'sms_provider_not_configured' };
+    return { ok: false, reason: 'sms_backend_not_configured' };
   }
 
   try {
-    const details = {
-      username: AT_USERNAME,
-      to: payload.to,
-      message: payload.body,
-      ...(AT_SENDER_ID ? { from: AT_SENDER_ID } : {}),
-    };
-
-    // urlencoded payload format required by Africa's Talking
-    const formBody = Object.entries(details)
-      .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
-      .join('&');
-
-    const response = await fetch('https://api.africastalking.com/version1/messaging', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        apiKey: AT_API_KEY,
-      },
-      body: formBody,
+    const { data, error } = await supabase.functions.invoke('sms-send', {
+      body: { to: payload.to, message: payload.body, event: payload.event, meta: payload.meta },
     });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('[SMS:AfricaTalking] Error sending SMS:', errText);
-      return { ok: false, reason: `africastalking_http_${response.status}` };
+    if (error) {
+      // The edge function returns structured reasons (e.g. sms_provider_not_configured)
+      // in the response body; on a non-2xx status supabase-js surfaces that body via
+      // error.context, so read it before falling back to the generic message.
+      let reason = error.message || 'sms_invoke_error';
+      try {
+        const body = await (error as any).context?.json?.();
+        if (body?.reason) reason = body.reason;
+      } catch {
+        /* body not JSON / already consumed — keep message fallback */
+      }
+      console.error('[SMS:edge] invoke error:', reason);
+      return { ok: false, reason };
     }
-
-    const data = await response.json();
-    const recipient = data?.SMSMessageData?.Recipients?.[0];
-    if (recipient?.status === 'Success') {
-      if (__DEV__) console.log('[SMS:AfricaTalking] Successfully sent SMS to:', payload.to);
-      return { ok: true };
-    } else {
-      console.error('[SMS:AfricaTalking] Dispatch failed:', recipient?.status || 'Unknown error');
-      return { ok: false, reason: recipient?.status || 'dispatch_failed' };
-    }
+    if (data?.ok) return { ok: true };
+    return { ok: false, reason: data?.reason || 'dispatch_failed' };
   } catch (err: any) {
-    console.error('[SMS:AfricaTalking] Network exception:', err);
+    console.error('[SMS:edge] Network exception:', err);
     return { ok: false, reason: err.message || 'network_exception' };
   }
 }
 
 function labelForEvent(e: SmsEvent): string {
   switch (e) {
-    case 'critical_diagnosis':
-      return 'Critical Diagnosis';
-    case 'price_alert':
-      return 'Price Alert';
-    case 'severe_weather':
-      return 'Severe Weather';
-    case 'payment_received':
-      return 'Payment Received';
+    case 'critical_diagnosis': return 'Critical Diagnosis';
+    case 'price_alert': return 'Price Alert';
+    case 'severe_weather': return 'Severe Weather';
+    case 'payment_received': return 'Payment Received';
   }
 }
 

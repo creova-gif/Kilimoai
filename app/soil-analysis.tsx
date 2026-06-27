@@ -10,39 +10,17 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import {
-  ChevronLeft,
-  Info,
-  Sprout,
-  ArrowUpRight,
-  AlertTriangle,
-  ShieldAlert,
-  BookOpen,
-} from 'lucide-react-native';
+import { ChevronLeft, Info, Sprout, ArrowUpRight, AlertTriangle, ShieldAlert, BookOpen } from 'lucide-react-native';
 import { useTheme } from '../constants/Theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, {
-  Polyline,
-  Circle as SvgCircle,
-  Rect,
-  Line as SvgLine,
-  Text as SvgText,
-} from 'react-native-svg';
+import Svg, { Polyline, Circle as SvgCircle, Rect, Line as SvgLine, Text as SvgText } from 'react-native-svg';
 import { useKilimoStore } from '../store/useKilimoStore';
 
 const { width: SW } = Dimensions.get('window');
 
 // ─── Soil pH Trend SVG Chart ───────────────────────────────────────────────────
-function SoilPHTrendChart({
-  data,
-  months,
-  colors,
-}: {
-  data: number[];
-  months: string[];
-  colors: any;
-}) {
+function SoilPHTrendChart({ data, months, colors }: { data: number[]; months: string[]; colors: any }) {
   const chartW = SW - 80;
   const chartH = 80;
   const max = 7.5;
@@ -59,28 +37,17 @@ function SoilPHTrendChart({
     <View style={{ marginVertical: 12, height: chartH }}>
       <Svg width={chartW} height={chartH}>
         <Rect width={chartW} height={chartH} fill="rgba(0,0,0,0.02)" rx={8} />
-
+        
         {/* pH Reference Lines */}
-        <SvgLine
-          x1="10"
-          y1={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15}
-          x2={chartW - 10}
-          y2={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15}
-          stroke="#22d15a"
-          strokeDasharray="3,3"
-          strokeWidth="1"
-        />
-        <SvgText
-          x={chartW - 35}
-          y={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 18}
-          fontSize="7"
-          fill="#22d15a"
-          fontFamily="Inter_700Bold"
-        >
-          Optimum (6.5)
-        </SvgText>
+        <SvgLine x1="10" y1={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} x2={chartW - 10} y2={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 15} stroke={colors.primary} strokeDasharray="3,3" strokeWidth="1" />
+        <SvgText x={chartW - 35} y={chartH - ((6.5 - min) / (max - min)) * (chartH - 20) - 18} fontSize="7" fill={colors.primary} fontFamily="Inter_700Bold">Optimum (6.5)</SvgText>
 
-        <Polyline fill="none" stroke="#ef4444" strokeWidth="2.5" points={points} />
+        <Polyline
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth="2.5"
+          points={points}
+        />
         {data.map((val, index) => {
           const x = (index / (data.length - 1)) * (chartW - 20) + 10;
           const y = chartH - ((val - min) / (max - min || 1)) * (chartH - 20) - 15;
@@ -90,7 +57,7 @@ function SoilPHTrendChart({
                 cx={x}
                 cy={y}
                 r="3.5"
-                fill={val < 5.5 ? '#ef4444' : '#22d15a'}
+                fill={val < 5.5 ? '#ef4444' : colors.primary}
                 stroke="#FFF"
                 strokeWidth="1.5"
               />
@@ -133,11 +100,7 @@ export default function SoilAnalysis() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={styles.scrollContent}>
         {/* Hero */}
         <LinearGradient
           colors={isDark ? ['#0a2010', '#0c1a08', '#071205'] : ['#1a4a22', '#0d2e12', '#082009']}
@@ -145,8 +108,8 @@ export default function SoilAnalysis() {
         >
           <SafeAreaView edges={['top']} style={styles.headerSafe}>
             <View style={styles.headerRow}>
-              <TouchableOpacity
-                onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+              <TouchableOpacity 
+                onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
                 style={[styles.backBtn, { backgroundColor: 'rgba(255,255,255,0.2)' }]}
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Rudi nyuma' : 'Go back'}
@@ -156,7 +119,7 @@ export default function SoilAnalysis() {
             </View>
             <View style={styles.heroContent}>
               <View style={styles.heroBadge}>
-                <Sprout size={11} color="#22d15a" />
+                <Sprout size={11} color={colors.primary} />
                 <Text style={styles.heroBadgeText}>
                   {language === 'sw' ? 'UCHAMBUZI' : 'ANALYSIS'}
                 </Text>
@@ -173,12 +136,7 @@ export default function SoilAnalysis() {
 
         {/* N-P-K Status Card */}
         <View style={styles.contentPadding}>
-          <View
-            style={[
-              styles.statusCard,
-              { backgroundColor: colors.card, borderColor: colors.border },
-            ]}
-          >
+          <View style={[styles.statusCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.statusHeader}>
               <View>
                 <Text style={[styles.statusLabel, { color: colors.textMute }]}>
@@ -197,19 +155,14 @@ export default function SoilAnalysis() {
 
             {/* Bars */}
             <View style={styles.barsContainer}>
-              <NutrientBar label="Nitrogen (N)" value={85} color="#22d15a" />
+              <NutrientBar label="Nitrogen (N)" value={85} color={colors.primary} />
               <NutrientBar label="Phosphorus (P)" value={70} color="#F59E0B" />
               <NutrientBar label="Potassium (K)" value={60} color="#3b82f6" />
             </View>
           </View>
 
           {/* Soil pH Anomaly Alert Banner */}
-          <View
-            style={[
-              styles.anomalyAlert,
-              { backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' },
-            ]}
-          >
+          <View style={[styles.anomalyAlert, { backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
             <ShieldAlert size={20} color="#ef4444" />
             <View style={{ flex: 1 }}>
               <Text style={styles.anomalyTitle}>
@@ -225,26 +178,12 @@ export default function SoilAnalysis() {
 
           {/* Soil pH History Line Chart Section */}
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {language === 'sw'
-              ? 'Mwenendo wa pH (Mwisho Miezi 6)'
-              : 'pH Level History (Past 6 Months)'}
+            {language === 'sw' ? 'Mwenendo wa pH (Mwisho Miezi 6)' : 'pH Level History (Past 6 Months)'}
           </Text>
-          <View
-            style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-          >
+          <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <SoilPHTrendChart data={phTrendData} months={phTrendMonths} colors={colors} />
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: 'Inter_500Medium',
-                color: colors.textMute,
-                textAlign: 'center',
-                marginTop: 4,
-              }}
-            >
-              {language === 'sw'
-                ? 'Kiwango cha pH kinapaswa kuwa kati ya 6.0 na 7.0 kwa mazao mengi'
-                : 'pH levels should ideally range between 6.0 and 7.0 for most staple crops'}
+            <Text style={{ fontSize: 12, fontFamily: 'Inter_500Medium', color: colors.textMute, textAlign: 'center', marginTop: 4 }}>
+              {language === 'sw' ? 'Kiwango cha pH kinapaswa kuwa kati ya 6.0 na 7.0 kwa mazao mengi' : 'pH levels should ideally range between 6.0 and 7.0 for most staple crops'}
             </Text>
           </View>
 
@@ -252,50 +191,31 @@ export default function SoilAnalysis() {
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             {language === 'sw' ? 'Mapendekezo ya Haraka' : 'Urgent Recommendations'}
           </Text>
-
-          <RecommendationItem
-            title={
-              language === 'sw'
-                ? 'Weka Chokaa cha Kilimo (Agri-Lime)'
-                : 'Apply Agriculture Agri-Lime'
-            }
-            desc={
-              language === 'sw'
-                ? 'Weka tani 1.5 za Minjingu Agri-Lime kwa hekta ili kupunguza asidi na kupandisha pH.'
-                : 'Apply 1.5 Tonnes of Minjingu Agri-Lime per hectare to raise pH back to optimum.'
-            }
+          
+          <RecommendationItem 
+            title={language === 'sw' ? 'Weka Chokaa cha Kilimo (Agri-Lime)' : 'Apply Agriculture Agri-Lime'}
+            desc={language === 'sw' ? 'Weka tani 1.5 za Minjingu Agri-Lime kwa hekta ili kupunguza asidi na kupandisha pH.' : 'Apply 1.5 Tonnes of Minjingu Agri-Lime per hectare to raise pH back to optimum.'}
             imageUri="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=300&auto=format&fit=crop"
             onPress={() => router.push('/tasks' as any)}
             btnText={language === 'sw' ? 'Tengeneza Kazi' : 'Create Task'}
           />
 
-          <RecommendationItem
-            title={
-              language === 'sw'
-                ? 'Badilisha Mazao yanayohimili Asidi'
-                : 'Shift to Acid-Tolerant Crops'
-            }
-            desc={
-              language === 'sw'
-                ? 'Hustawisha chai, muhogo, au viazi vitamu ambavyo vinaweza kuhimili pH ya chini hadi 5.0.'
-                : 'Plant acid-tolerant crops like tea, cassava, or sweet potatoes if soil pH remains low.'
-            }
+          <RecommendationItem 
+            title={language === 'sw' ? 'Badilisha Mazao yanayohimili Asidi' : 'Shift to Acid-Tolerant Crops'}
+            desc={language === 'sw' ? 'Hustawisha chai, muhogo, au viazi vitamu ambavyo vinaweza kuhimili pH ya chini hadi 5.0.' : 'Plant acid-tolerant crops like tea, cassava, or sweet potatoes if soil pH remains low.'}
             imageUri="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?q=80&w=300&auto=format&fit=crop"
             onPress={() => router.push('/crop-library' as any)}
             btnText={language === 'sw' ? 'Maktaba ya Mazao' : 'Crop Library'}
           />
 
-          <RecommendationItem
+          <RecommendationItem 
             title={language === 'sw' ? 'Epuka Mbolea zenye Ammonium' : 'Avoid Ammonium Fertilizers'}
-            desc={
-              language === 'sw'
-                ? 'Mbolea zenye ammonium (e.g. Ammonium Sulphate) huongeza zaidi asidi kwenye udongo.'
-                : 'Avoid acidifying ammonium-based fertilizers. Prefer nitrate-based nitrogen sources.'
-            }
+            desc={language === 'sw' ? 'Mbolea zenye ammonium (e.g. Ammonium Sulphate) huongeza zaidi asidi kwenye udongo.' : 'Avoid acidifying ammonium-based fertilizers. Prefer nitrate-based nitrogen sources.'}
             imageUri="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=300&auto=format&fit=crop"
             onPress={() => router.push('/consultations' as any)}
             btnText={language === 'sw' ? 'Ongea na Mtaalamu' : 'Ask Agronomist'}
           />
+
         </View>
       </ScrollView>
     </View>
@@ -317,38 +237,22 @@ function NutrientBar({ label, value, color }: { label: string; value: number; co
   );
 }
 
-function RecommendationItem({
-  title,
-  desc,
-  imageUri,
-  onPress,
-  btnText,
-}: {
-  title: string;
-  desc: string;
-  imageUri: string;
-  onPress: () => void;
-  btnText: string;
-}) {
+function RecommendationItem({ title, desc, imageUri, onPress, btnText }: { title: string; desc: string; imageUri: string; onPress: () => void; btnText: string }) {
   const { colors } = useTheme();
   return (
     <View style={[styles.recCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Image source={{ uri: imageUri }} style={styles.recImage} />
       <View style={styles.recContent}>
-        <Text style={[styles.recTitle, { color: colors.text }]} numberOfLines={1}>
-          {title}
-        </Text>
-        <Text style={[styles.recDesc, { color: colors.textMute }]} numberOfLines={3}>
-          {desc}
-        </Text>
-        <TouchableOpacity
-          style={styles.recAction}
+        <Text style={[styles.recTitle, { color: colors.text }]} numberOfLines={1}>{title}</Text>
+        <Text style={[styles.recDesc, { color: colors.textMute }]} numberOfLines={3}>{desc}</Text>
+        <TouchableOpacity 
+          style={styles.recAction} 
           onPress={onPress}
           accessibilityRole="button"
           accessibilityLabel={btnText}
         >
           <Text style={styles.recActionText}>{btnText}</Text>
-          <ChevronLeft color="#22d15a" size={14} style={{ transform: [{ rotate: '180deg' }] }} />
+          <ChevronLeft color={colors.primary} size={14} style={{ transform: [{ rotate: '180deg' }] }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -398,7 +302,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(34,209,90,0.2)',
+    backgroundColor: 'rgba(46, 111, 64,0.2)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 20,
@@ -408,7 +312,7 @@ const styles = StyleSheet.create({
   heroBadgeText: {
     fontFamily: 'Inter_700Bold',
     fontSize: 9,
-    color: '#22d15a',
+    color: '#2E6F40',
     letterSpacing: 1,
   },
   heroTitle: {
@@ -557,7 +461,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(34, 209, 90, 0.08)',
+    backgroundColor: 'rgba(46, 111, 64, 0.08)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
@@ -565,7 +469,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   recActionText: {
-    color: '#22d15a',
+    color: '#2E6F40',
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
   },

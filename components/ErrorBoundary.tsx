@@ -36,10 +36,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         container: { backgroundColor: isDark ? '#020617' : '#F2F7F2' },
         title: { color: isDark ? '#f8fafc' : '#0F1F0F' },
         subtitle: { color: isDark ? '#94a3b8' : '#4A6B4A' },
-        errorMsg: {
-          color: '#ef4444',
-          backgroundColor: isDark ? 'rgba(239,68,68,0.08)' : 'rgba(239,68,68,0.06)',
-        },
+        errorMsg: { color: '#ef4444', backgroundColor: isDark ? 'rgba(239,68,68,0.08)' : 'rgba(239,68,68,0.06)' },
         btnText: { color: isDark ? '#020617' : '#0F1F0F' },
       };
       return (
@@ -68,26 +65,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-  inner: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
-  iconWrap: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: 'rgba(239,68,68,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  title: { fontSize: 24, fontFamily: 'Inter_900Black', marginBottom: 8, textAlign: 'center' },
-  subtitle: { fontSize: 15, marginBottom: 16, textAlign: 'center', fontFamily: 'Inter_500Medium' },
-  errorMsg: {
-    fontSize: 11,
-    fontFamily: 'Inter_500Medium',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 24,
-    width: '100%',
-  },
-  btn: { backgroundColor: '#22d15a', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 },
-  btnText: { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
+  inner:     { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
+  iconWrap:  { width: 88, height: 88, borderRadius: 44, backgroundColor: 'rgba(239,68,68,0.12)', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
+  title:     { fontSize: 24, fontFamily: 'Inter_900Black', marginBottom: 8, textAlign: 'center' },
+  subtitle:  { fontSize: 15, marginBottom: 16, textAlign: 'center', fontFamily: 'Inter_500Medium' },
+  errorMsg:  { fontSize: 11, fontFamily: 'Inter_500Medium', padding: 12, borderRadius: 10, marginBottom: 24, width: '100%' },
+  btn:       { backgroundColor: '#2E6F40', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 },
+  btnText:   { fontSize: 15, fontFamily: 'Inter_800ExtraBold' },
 });

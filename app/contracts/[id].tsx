@@ -100,7 +100,7 @@ function SectionTitle({ label }: { label: string }) {
 }
 const ST = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 28, marginBottom: 12 },
-  accent: { width: 3, height: 14, borderRadius: 2, backgroundColor: '#22d15a' },
+  accent: { width: 3, height: 14, borderRadius: 2, backgroundColor: '#2E6F40' },
   label: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
 });
 
@@ -109,7 +109,7 @@ function DetailRow({ label, value, accent }: { label: string; value: string; acc
   return (
     <View style={DR.row}>
       <Text style={[DR.label, { color: colors.textMute }]}>{label}</Text>
-      <Text style={[DR.value, { color: accent ? '#22d15a' : colors.text }]} numberOfLines={1}>
+      <Text style={[DR.value, { color: accent ? '#2E6F40' : colors.text }]} numberOfLines={1}>
         {value}
       </Text>
     </View>
@@ -143,8 +143,8 @@ function SignatureRow({
       <Text style={[DR.label, { color: colors.textMute }]}>{label}</Text>
       {when ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <CheckCircle2 size={14} color="#22d15a" />
-          <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' }}>
+          <CheckCircle2 size={14} color="#2E6F40" />
+          <Text style={{ fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' }}>
             {new Date(when).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: 'short',
@@ -196,13 +196,13 @@ export default function ContractDetail() {
         <TouchableOpacity
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/contracts'))}
           style={{
-            backgroundColor: '#22d15a20',
+            backgroundColor: '#2E6F4020',
             paddingHorizontal: 20,
             paddingVertical: 10,
             borderRadius: 12,
           }}
         >
-          <Text style={{ color: '#22d15a', fontFamily: 'Inter_700Bold' }}>Rudi Nyuma</Text>
+          <Text style={{ color: '#2E6F40', fontFamily: 'Inter_700Bold' }}>Rudi Nyuma</Text>
         </TouchableOpacity>
       </View>
     );
@@ -353,7 +353,7 @@ export default function ContractDetail() {
               {/* Floating annotation: milestone count */}
               {contract.milestones.length > 0 && (
                 <View style={S.floatAnnotation}>
-                  <View style={[S.floatDot, { backgroundColor: '#22d15a' }]} />
+                  <View style={[S.floatDot, { backgroundColor: '#2E6F40' }]} />
                   <Text style={S.floatText}>
                     {contract.milestones.filter((m) => m.paid).length}/{contract.milestones.length}{' '}
                     {sw ? 'Hatua Zimekamilika' : 'Milestones Done'}
@@ -400,13 +400,13 @@ export default function ContractDetail() {
                 style={[
                   S.valueCard,
                   {
-                    backgroundColor: isDark ? 'rgba(34,209,90,0.07)' : 'rgba(34,209,90,0.05)',
-                    borderColor: isDark ? 'rgba(34,209,90,0.22)' : 'rgba(34,209,90,0.14)',
+                    backgroundColor: isDark ? 'rgba(46, 111, 64,0.07)' : 'rgba(46, 111, 64,0.05)',
+                    borderColor: isDark ? 'rgba(46, 111, 64,0.22)' : 'rgba(46, 111, 64,0.14)',
                   },
                 ]}
               >
                 <LinearGradient
-                  colors={['#22d15a10', '#22d15a00']}
+                  colors={['#2E6F4010', '#2E6F4000']}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={{ flex: 1 }}>
@@ -419,7 +419,7 @@ export default function ContractDetail() {
                   </Text>
                   {paidAmount > 0 && (
                     <View style={S.paidRow}>
-                      <TrendingUp size={11} color="#22d15a" />
+                      <TrendingUp size={11} color="#2E6F40" />
                       <Text style={S.paidText}>
                         TZS {fmt(paidAmount)} {sw ? 'Imelipwa' : 'paid'} · TZS{' '}
                         {fmt(total - paidAmount)} {sw ? 'Imesalia' : 'remaining'}
@@ -428,7 +428,7 @@ export default function ContractDetail() {
                   )}
                 </View>
                 <View
-                  style={[S.cropBadge, { backgroundColor: '#22d15a18', borderColor: '#22d15a35' }]}
+                  style={[S.cropBadge, { backgroundColor: '#2E6F4018', borderColor: '#2E6F4035' }]}
                 >
                   <Text style={S.cropBadgeText}>{contract.crop}</Text>
                 </View>
@@ -454,11 +454,11 @@ export default function ContractDetail() {
                             S.tlDot,
                             {
                               backgroundColor: m.paid
-                                ? '#22d15a'
+                                ? '#2E6F40'
                                 : isDark
                                   ? 'rgba(255,255,255,0.1)'
                                   : '#e2e8f0',
-                              borderColor: m.paid ? '#22d15a' : colors.border,
+                              borderColor: m.paid ? '#2E6F40' : colors.border,
                             },
                           ]}
                         >
@@ -468,7 +468,7 @@ export default function ContractDetail() {
                           <View
                             style={[
                               S.tlLine,
-                              { backgroundColor: m.paid ? '#22d15a' : colors.border },
+                              { backgroundColor: m.paid ? '#2E6F40' : colors.border },
                             ]}
                           />
                         )}
@@ -496,7 +496,7 @@ export default function ContractDetail() {
                         S.mCard,
                         {
                           backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#fff',
-                          borderColor: m.paid ? '#22d15a30' : colors.border,
+                          borderColor: m.paid ? '#2E6F4030' : colors.border,
                         },
                       ]}
                     >
@@ -505,7 +505,7 @@ export default function ContractDetail() {
                           S.mCardLeft,
                           {
                             backgroundColor: m.paid
-                              ? '#22d15a18'
+                              ? '#2E6F4018'
                               : isDark
                                 ? 'rgba(255,255,255,0.05)'
                                 : '#f8fafc',
@@ -513,7 +513,7 @@ export default function ContractDetail() {
                         ]}
                       >
                         {m.paid ? (
-                          <CheckCircle2 size={20} color="#22d15a" />
+                          <CheckCircle2 size={20} color="#2E6F40" />
                         ) : (
                           <Circle size={20} color={colors.textMute} />
                         )}
@@ -533,7 +533,7 @@ export default function ContractDetail() {
                             {new Date(m.dueDate).toLocaleDateString('en-GB')}
                           </Text>
                         </View>
-                        <Text style={[S.mAmt, { color: '#22d15a' }]}>TZS {fmt(m.amountTZS)}</Text>
+                        <Text style={[S.mAmt, { color: '#2E6F40' }]}>TZS {fmt(m.amountTZS)}</Text>
                       </View>
                       {!m.paid ? (
                         <TouchableOpacity
@@ -543,14 +543,14 @@ export default function ContractDetail() {
                           }}
                           style={[
                             S.payBtn,
-                            { backgroundColor: '#22d15a18', borderColor: '#22d15a50' },
+                            { backgroundColor: '#2E6F4018', borderColor: '#2E6F4050' },
                           ]}
                         >
-                          <Banknote size={12} color="#22d15a" />
+                          <Banknote size={12} color="#2E6F40" />
                           <Text style={S.payText}>{sw ? 'Lipia' : 'Mark Paid'}</Text>
                         </TouchableOpacity>
                       ) : (
-                        <View style={[S.paidBadge, { backgroundColor: '#22d15a12' }]}>
+                        <View style={[S.paidBadge, { backgroundColor: '#2E6F4012' }]}>
                           <Text style={S.paidBadgeText}>
                             ✓{' '}
                             {m.completedAt
@@ -660,7 +660,7 @@ export default function ContractDetail() {
                             S.lcDot,
                             {
                               backgroundColor: done
-                                ? '#22d15a'
+                                ? '#2E6F40'
                                 : current
                                   ? sc
                                   : isDark
@@ -679,7 +679,7 @@ export default function ContractDetail() {
                               S.lcConnector,
                               {
                                 backgroundColor: done
-                                  ? '#22d15a'
+                                  ? '#2E6F40'
                                   : isDark
                                     ? 'rgba(255,255,255,0.08)'
                                     : '#e2e8f0',
@@ -759,7 +759,7 @@ export default function ContractDetail() {
                         <LinearGradient
                           colors={
                             isSign
-                              ? ['#22d15a', '#0a3d18']
+                              ? ['#2E6F40', '#0a3d18']
                               : [statusColor + 'ee', statusColor + 'bb']
                           }
                           start={{ x: 0, y: 0 }}
@@ -893,7 +893,7 @@ export default function ContractDetail() {
                 style={S.qrShareBtn}
               >
                 <LinearGradient
-                  colors={['#22d15a', '#0a3d18']}
+                  colors={['#2E6F40', '#0a3d18']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={S.qrShareInner}
@@ -1002,7 +1002,7 @@ const S = StyleSheet.create({
   valueAmt: { fontSize: 28, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.8 },
   valueSub: { fontSize: 12, fontFamily: 'Inter_500Medium', marginTop: 4 },
   paidRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8 },
-  paidText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#22d15a' },
+  paidText: { fontSize: 11, fontFamily: 'Inter_700Bold', color: '#2E6F40' },
   cropBadge: {
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -1011,7 +1011,7 @@ const S = StyleSheet.create({
     alignSelf: 'flex-start',
     marginLeft: 10,
   },
-  cropBadgeText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  cropBadgeText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
 
   // Timeline
   timelineScroll: { paddingHorizontal: 2, paddingBottom: 16, paddingTop: 4, gap: 0 },
@@ -1062,9 +1062,9 @@ const S = StyleSheet.create({
     borderWidth: 1,
     margin: 12,
   },
-  payText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  payText: { fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
   paidBadge: { paddingHorizontal: 9, paddingVertical: 5, borderRadius: 8, margin: 12 },
-  paidBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#22d15a' },
+  paidBadgeText: { fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' },
 
   // Detail card
   detailCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },

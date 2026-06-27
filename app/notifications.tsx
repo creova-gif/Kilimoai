@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  ActivityIndicator,
+  ActivityIndicator
 } from 'react-native';
 import {
   ChevronLeft,
@@ -29,10 +29,10 @@ import { getSupabase } from '../lib/supabase';
 import { useKilimoStore } from '../store/useKilimoStore';
 
 const TYPE_CONFIG = {
-  alert: { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
-  warning: { icon: Zap, color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
-  info: { icon: Info, color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
-  success: { icon: CheckCircle2, color: '#22d15a', bg: 'rgba(34, 209, 90, 0.12)' },
+  alert:   { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
+  warning: { icon: Zap,           color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
+  info:    { icon: Info,          color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
+  success: { icon: CheckCircle2,  color: '#2E6F40', bg: 'rgba(46, 111, 64, 0.12)' },
 };
 
 function timeAgo(iso: string): string {
@@ -57,12 +57,8 @@ function NotificationItem({
   colors: any;
 }) {
   const language = useKilimoStore((s) => s.language);
-  const typeKey =
-    item.title.toLowerCase().includes('hatari') || item.title.toLowerCase().includes('alert')
-      ? 'alert'
-      : item.title.toLowerCase().includes('okoa')
-        ? 'success'
-        : 'info';
+  const typeKey = (item.title.toLowerCase().includes('hatari') || item.title.toLowerCase().includes('alert')) ? 'alert' 
+                : item.title.toLowerCase().includes('okoa') ? 'success' : 'info';
   const cfg = TYPE_CONFIG[typeKey];
   const Icon = cfg.icon;
   const isRead = item.status === 'read';
@@ -76,24 +72,16 @@ function NotificationItem({
           onRead(item.id);
         }}
         accessibilityRole="button"
-        accessibilityLabel={
-          isRead
-            ? item.title
-            : language === 'sw'
-              ? `Soma bado haijasomwa: ${item.title}`
-              : `Unread: ${item.title}`
-        }
+        accessibilityLabel={isRead ? item.title : (language === 'sw' ? `Soma bado haijasomwa: ${item.title}` : `Unread: ${item.title}`)}
       >
-        <View
-          style={[
-            styles.notifCard,
-            {
-              backgroundColor: colors.card,
-              borderColor: isRead ? colors.border : cfg.color + '40',
-              borderWidth: isRead ? 1 : 1.5,
-            },
-          ]}
-        >
+        <View style={[
+          styles.notifCard,
+          {
+            backgroundColor: colors.card,
+            borderColor: isRead ? colors.border : cfg.color + '40',
+            borderWidth: isRead ? 1 : 1.5,
+          },
+        ]}>
           {!isRead && (
             <LinearGradient
               colors={[cfg.bg, 'transparent']}
@@ -112,7 +100,9 @@ function NotificationItem({
               <Text style={[styles.notifTitle, { color: colors.text, opacity: isRead ? 0.6 : 1 }]}>
                 {item.title}
               </Text>
-              <Text style={[styles.notifBody, { color: colors.textMute }]}>{item.body}</Text>
+              <Text style={[styles.notifBody, { color: colors.textMute }]}>
+                {item.body}
+              </Text>
               <Text style={[styles.notifTime, { color: colors.textMute }]}>
                 {timeAgo(item.created_at)}
               </Text>
@@ -142,7 +132,7 @@ export default function NotificationsScreen() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
   const language = useKilimoStore((s) => s.language);
-
+  
   const [dbNotifications, setDbNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -153,18 +143,18 @@ export default function NotificationsScreen() {
   const fetchNotifications = async () => {
     const sb = getSupabase();
     if (!sb) return setLoading(false);
-
+    
     // Fallback to anonymous user for testing if no auth session
     const { data: sessionData } = await sb.auth.getSession();
     const userId = sessionData?.session?.user?.id || 'd3b07384-d9a2-4a0b-99f5-1b88e1a89c9c'; // Test user UUID
-
+    
     const { data, error } = await sb
       .from('user_notifications')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(50);
-
+      
     if (data) {
       setDbNotifications(data);
     }
@@ -173,7 +163,7 @@ export default function NotificationsScreen() {
 
   const markNotificationRead = async (id: string) => {
     const sb = getSupabase();
-    setDbNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, status: 'read' } : n)));
+    setDbNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
     if (sb) {
       await sb.from('user_notifications').update({ status: 'read' }).eq('id', id);
     }
@@ -181,7 +171,7 @@ export default function NotificationsScreen() {
 
   const removeNotification = async (id: string) => {
     const sb = getSupabase();
-    setDbNotifications((prev) => prev.filter((n) => n.id !== id));
+    setDbNotifications(prev => prev.filter(n => n.id !== id));
     if (sb) {
       await sb.from('user_notifications').delete().eq('id', id);
     }
@@ -189,7 +179,7 @@ export default function NotificationsScreen() {
 
   const markAllRead = async () => {
     const sb = getSupabase();
-    setDbNotifications((prev) => prev.map((n) => ({ ...n, status: 'read' })));
+    setDbNotifications(prev => prev.map(n => ({ ...n, status: 'read' })));
     if (sb) {
       const { data: sessionData } = await sb.auth.getSession();
       const userId = sessionData?.session?.user?.id || 'd3b07384-d9a2-4a0b-99f5-1b88e1a89c9c';
@@ -197,40 +187,25 @@ export default function NotificationsScreen() {
     }
   };
 
-  const unreadCount = dbNotifications.filter((n) => n.status !== 'read').length;
+  const unreadCount = dbNotifications.filter(n => n.status !== 'read').length;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <SafeAreaView style={styles.safeArea}>
-        <View
-          style={[
-            styles.header,
-            { borderBottomColor: colors.border, backgroundColor: colors.card },
-          ]}
-        >
+        <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
           <TouchableOpacity
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
             style={styles.backBtn}
             accessibilityRole="button"
-            accessibilityLabel={
-              unreadCount > 0
-                ? language === 'sw'
-                  ? 'Rudi nyuma, arifa'
-                  : 'Go back, notifications'
-                : language === 'sw'
-                  ? 'Rudi nyuma'
-                  : 'Go back'
-            }
+            accessibilityLabel={unreadCount > 0 ? (language === 'sw' ? 'Rudi nyuma, arifa' : 'Go back, notifications') : (language === 'sw' ? 'Rudi nyuma' : 'Go back')}
           >
             <ChevronLeft size={28} color={colors.text} />
           </TouchableOpacity>
 
           <View style={styles.headerCenter}>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>
-              {language === 'sw' ? 'Arifa' : 'Notifications'}
-            </Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>{language === 'sw' ? 'Arifa' : 'Notifications'}</Text>
             {unreadCount > 0 && (
               <View style={styles.countBadge}>
                 <Text style={styles.countText}>{unreadCount}</Text>
@@ -248,10 +223,7 @@ export default function NotificationsScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {loading ? (
             <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
           ) : dbNotifications.length === 0 ? (
@@ -285,41 +257,19 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   safeArea: { flex: 1 },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
+    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
   headerCenter: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
   headerTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5 },
-  countBadge: {
-    backgroundColor: '#ef4444',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
+  countBadge: { backgroundColor: '#ef4444', borderRadius: 12, paddingHorizontal: 8, paddingVertical: 2 },
   countText: { color: '#fff', fontSize: 12, fontFamily: 'Inter_700Bold' },
-  actionBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
+  actionBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'flex-end' },
   scrollContent: { padding: 16, gap: 12 },
   notifWrapper: { marginBottom: 0 },
   notifCard: { borderRadius: 16, overflow: 'hidden' },
   notifRow: { flexDirection: 'row', alignItems: 'flex-start', padding: 16, gap: 12 },
-  notifIconBg: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
-  },
+  notifIconBg: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   notifContent: { flex: 1, gap: 4 },
   notifTitle: { fontSize: 15, fontFamily: 'Inter_700Bold' },
   notifBody: { fontSize: 13, fontFamily: 'Inter_500Medium', lineHeight: 20 },
@@ -327,24 +277,7 @@ const styles = StyleSheet.create({
   unreadDot: { width: 8, height: 8, borderRadius: 4, marginTop: 6, flexShrink: 0 },
   deleteBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   emptyState: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 40 },
-  emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  emptyTitle: {
-    fontSize: 24,
-    fontFamily: 'InstrumentSerif_400Regular',
-    letterSpacing: -0.5,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_500Medium',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
+  emptyIcon: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
+  emptyTitle: { fontSize: 24, fontFamily: 'InstrumentSerif_400Regular', letterSpacing: -0.5, marginBottom: 8 },
+  emptySubtitle: { fontSize: 15, fontFamily: 'Inter_500Medium', textAlign: 'center', lineHeight: 22 },
 });

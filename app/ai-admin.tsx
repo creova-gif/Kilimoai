@@ -11,7 +11,7 @@ import {
   StatusBar,
   Platform,
   Alert,
-  ActivityIndicator,
+  ActivityIndicator
 } from 'react-native';
 import {
   Bot,
@@ -30,7 +30,7 @@ import {
   ChevronRight,
   TrendingUp,
   Award,
-  MessageSquare,
+  MessageSquare
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -56,7 +56,7 @@ export default function AIAdminScreen() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
   const language = useKilimoStore((s) => s.language);
-
+  
   // Zustand Store values
   const customSystemPrompt = useKilimoStore((s) => s.customSystemPrompt);
   const seededDocuments = useKilimoStore((s) => s.seededDocuments);
@@ -67,12 +67,10 @@ export default function AIAdminScreen() {
   const setAiAccuracy = useKilimoStore((s) => s.setAiAccuracy);
 
   // Local state
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'prompt' | 'rag' | 'pipeline' | 'feedback'
-  >('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'prompt' | 'rag' | 'pipeline' | 'feedback'>('overview');
   const [promptText, setPromptText] = useState(customSystemPrompt || DEFAULT_SYSTEM_PROMPT);
   const [newDocName, setNewDocName] = useState('');
-
+  
   // Pipeline local states
   const [isRetraining, setIsRetraining] = useState(false);
   const [pipelineProgress, setPipelineProgress] = useState(0);
@@ -91,11 +89,10 @@ export default function AIAdminScreen() {
       crop: 'Mahindi / Maize',
       location: 'Mbeya',
       type: 'positive',
-      commentSw:
-        'Ushauri wa kupanda mahindi mwezi wa tatu ulikuwa sahihi sana na nimepata mazao mengi.',
+      commentSw: 'Ushauri wa kupanda mahindi mwezi wa tatu ulikuwa sahihi sana na nimepata mazao mengi.',
       commentEn: 'The advice to plant maize in March was very accurate and I got a high yield.',
       timestamp: 'Leo (Today)',
-      resolved: false,
+      resolved: false
     },
     {
       id: 'f2',
@@ -103,12 +100,10 @@ export default function AIAdminScreen() {
       crop: 'Nyanya / Tomatoes',
       location: 'Iringa',
       type: 'negative',
-      commentSw:
-        'AI ilisema niweke dawa ya wadudu lakini haikutaja vipimo maalum, ilibidi nitafute Afisa Ugani.',
-      commentEn:
-        'AI told me to apply pesticide but did not specify dosage, I had to contact the Extension Officer.',
+      commentSw: 'AI ilisema niweke dawa ya wadudu lakini haikutaja vipimo maalum, ilibidi nitafute Afisa Ugani.',
+      commentEn: 'AI told me to apply pesticide but did not specify dosage, I had to contact the Extension Officer.',
       timestamp: 'Jana (Yesterday)',
-      resolved: false,
+      resolved: false
     },
     {
       id: 'f3',
@@ -116,52 +111,25 @@ export default function AIAdminScreen() {
       crop: 'Mpunga / Rice',
       location: 'Shinyanga',
       type: 'positive',
-      commentSw:
-        'Picha ya wadudu wa mpunga ilitambuliwa haraka sana kama Rice Blast. Nilifuata maelekezo ikasaidia.',
-      commentEn:
-        'Rice Blast photo identified very quickly. Followed the instructions and it helped.',
+      commentSw: 'Picha ya wadudu wa mpunga ilitambuliwa haraka sana kama Rice Blast. Nilifuata maelekezo ikasaidia.',
+      commentEn: 'Rice Blast photo identified very quickly. Followed the instructions and it helped.',
       timestamp: 'Siku 2 zilizopita (2 days ago)',
-      resolved: false,
-    },
+      resolved: false
+    }
   ]);
 
   const handleResolveFeedback = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setFeedbacks((prev) => prev.map((f) => (f.id === id ? { ...f, resolved: true } : f)));
+    setFeedbacks(prev => prev.map(f => f.id === id ? { ...f, resolved: true } : f));
   };
 
   // Tab configurations
   const tabs = [
-    {
-      id: 'overview',
-      labelSw: 'Ufupisho',
-      labelEn: 'Overview',
-      icon: (color: string) => <Layers size={18} color={color} />,
-    },
-    {
-      id: 'prompt',
-      labelSw: 'Prompt ya Mfumo',
-      labelEn: 'System Prompt',
-      icon: (color: string) => <Sliders size={18} color={color} />,
-    },
-    {
-      id: 'rag',
-      labelSw: 'RAG / Nyaraka',
-      labelEn: 'Knowledge Base',
-      icon: (color: string) => <Database size={18} color={color} />,
-    },
-    {
-      id: 'pipeline',
-      labelSw: 'Mifereji ya Mafunzo',
-      labelEn: 'Retraining',
-      icon: (color: string) => <Cpu size={18} color={color} />,
-    },
-    {
-      id: 'feedback',
-      labelSw: 'Maoni ya Wakulima',
-      labelEn: 'Feedback Reviewer',
-      icon: (color: string) => <MessageSquare size={18} color={color} />,
-    },
+    { id: 'overview', labelSw: 'Ufupisho', labelEn: 'Overview', icon: (color: string) => <Layers size={18} color={color} /> },
+    { id: 'prompt', labelSw: 'Prompt ya Mfumo', labelEn: 'System Prompt', icon: (color: string) => <Sliders size={18} color={color} /> },
+    { id: 'rag', labelSw: 'RAG / Nyaraka', labelEn: 'Knowledge Base', icon: (color: string) => <Database size={18} color={color} /> },
+    { id: 'pipeline', labelSw: 'Mifereji ya Mafunzo', labelEn: 'Retraining', icon: (color: string) => <Cpu size={18} color={color} /> },
+    { id: 'feedback', labelSw: 'Maoni ya Wakulima', labelEn: 'Feedback Reviewer', icon: (color: string) => <MessageSquare size={18} color={color} /> }
   ] as const;
 
   // Handle system prompt save
@@ -170,8 +138,8 @@ export default function AIAdminScreen() {
     setCustomSystemPrompt(promptText);
     Alert.alert(
       language === 'sw' ? 'Prompt Imesasishwa!' : 'Prompt Saved Successfully!',
-      language === 'sw'
-        ? 'Mabadiliko yatatumika sasa hivi kwenye majibu ya chatbot.'
+      language === 'sw' 
+        ? 'Mabadiliko yatatumika sasa hivi kwenye majibu ya chatbot.' 
         : 'The changes will apply immediately to the chatbot replies.'
     );
   };
@@ -183,34 +151,27 @@ export default function AIAdminScreen() {
     setCustomSystemPrompt(null);
     Alert.alert(
       language === 'sw' ? 'Imerejeshwa!' : 'Reset Successful!',
-      language === 'sw'
-        ? 'Prompt ya mfumo imerudishwa kwenye hali ya msingi.'
-        : 'The system prompt has been reset to defaults.'
+      language === 'sw' ? 'Prompt ya mfumo imerudishwa kwenye hali ya msingi.' : 'The system prompt has been reset to defaults.'
     );
   };
 
   // Add mock seeded document
   const handleAddDocument = () => {
     if (!newDocName.trim()) return;
-
+    
     // Simple file validation
     const name = newDocName.trim();
     if (!name.endsWith('.pdf') && !name.endsWith('.txt') && !name.endsWith('.docx')) {
       Alert.alert(
         language === 'sw' ? 'Aina ya Faili Isiyo Sahihi' : 'Invalid File Type',
-        language === 'sw'
-          ? 'Tafadhali tumia faili za (.pdf, .txt, .docx)'
-          : 'Please use (.pdf, .txt, or .docx) formats.'
+        language === 'sw' ? 'Tafadhali tumia faili za (.pdf, .txt, .docx)' : 'Please use (.pdf, .txt, or .docx) formats.'
       );
       return;
     }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     addSeededDocument(name);
-    setLogs((prev) => [
-      `[${new Date().toLocaleTimeString()}] Seeded context document: ${name}`,
-      ...prev,
-    ]);
+    setLogs(prev => [`[${new Date().toLocaleTimeString()}] Seeded context document: ${name}`, ...prev]);
     setNewDocName('');
   };
 
@@ -218,17 +179,14 @@ export default function AIAdminScreen() {
   const handleRemoveDocument = (docName: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     removeSeededDocument(docName);
-    setLogs((prev) => [
-      `[${new Date().toLocaleTimeString()}] Removed context document: ${docName}`,
-      ...prev,
-    ]);
+    setLogs(prev => [`[${new Date().toLocaleTimeString()}] Removed context document: ${docName}`, ...prev]);
   };
 
   // Quick templates for RAG seeding
   const RAG_TEMPLATES = [
     'Mbeya Soil Quality 2026.txt',
     'East Africa Cassava Pest Control.pdf',
-    'Cabbage Irrigation Schedule Arusha.pdf',
+    'Cabbage Irrigation Schedule Arusha.pdf'
   ];
 
   const handleSeedTemplate = (templateName: string) => {
@@ -238,50 +196,31 @@ export default function AIAdminScreen() {
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     addSeededDocument(templateName);
-    setLogs((prev) => [
-      `[${new Date().toLocaleTimeString()}] Seeded context document: ${templateName}`,
-      ...prev,
-    ]);
+    setLogs(prev => [`[${new Date().toLocaleTimeString()}] Seeded context document: ${templateName}`, ...prev]);
   };
 
   // Mock Retraining Pipeline
   const runRetrainingPipeline = () => {
     setIsRetraining(true);
     setPipelineProgress(0.1);
-    setPipelineStep(
-      language === 'sw'
-        ? '1/4: Inachanganua faili za muktadha...'
-        : '1/4: Parsing knowledge documents...'
-    );
+    setPipelineStep(language === 'sw' ? '1/4: Inachanganua faili za muktadha...' : '1/4: Parsing knowledge documents...');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     setTimeout(() => {
       setPipelineProgress(0.4);
-      setPipelineStep(
-        language === 'sw'
-          ? '2/4: Inatengeneza embeddings...'
-          : '2/4: Regenerating vector embeddings...'
-      );
+      setPipelineStep(language === 'sw' ? '2/4: Inatengeneza embeddings...' : '2/4: Regenerating vector embeddings...');
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }, 500);
 
     setTimeout(() => {
       setPipelineProgress(0.7);
-      setPipelineStep(
-        language === 'sw'
-          ? '3/4: Inapanga vigezo vya mtindo...'
-          : '3/4: Fine-tuning prompt weights...'
-      );
+      setPipelineStep(language === 'sw' ? '3/4: Inapanga vigezo vya mtindo...' : '3/4: Fine-tuning prompt weights...');
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }, 1000);
 
     setTimeout(() => {
       setPipelineProgress(1.0);
-      setPipelineStep(
-        language === 'sw'
-          ? '4/4: Kazi imekamilika! Inapima usahihi...'
-          : '4/4: Success! Compiling metrics...'
-      );
+      setPipelineStep(language === 'sw' ? '4/4: Kazi imekamilika! Inapima usahihi...' : '4/4: Success! Compiling metrics...');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }, 1500);
 
@@ -289,12 +228,12 @@ export default function AIAdminScreen() {
       setIsRetraining(false);
       const nextAcc = Math.min(99.9, Number((aiAccuracy + 0.4).toFixed(1)));
       setAiAccuracy(nextAcc);
-
+      
       const timeStr = new Date().toLocaleTimeString();
-      setLogs((prev) => [
+      setLogs(prev => [
         `[${timeStr}] PIPELINE SUCCESS: Model retrained. New Accuracy: ${nextAcc}%`,
         `[${timeStr}] Evaluated on 100+ local farming scenarios`,
-        ...prev,
+        ...prev
       ]);
     }, 1800);
   };
@@ -310,7 +249,7 @@ export default function AIAdminScreen() {
             colors={[
               isDark ? colors.slate[950] : '#f1f5f9',
               isDark ? colors.slate[900] + 'ee' : colors.slate[100] + 'ee',
-              'transparent',
+              'transparent'
             ]}
             style={styles.bgGradient}
           />
@@ -319,15 +258,8 @@ export default function AIAdminScreen() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            style={[
-              styles.backButton,
-              { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' },
-            ]}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              if (router.canGoBack()) router.back();
-              else router.replace('/');
-            }}
+            style={[styles.backButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' }]}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); if (router.canGoBack()) router.back(); else router.replace('/'); }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
           >
@@ -346,12 +278,7 @@ export default function AIAdminScreen() {
 
         {/* Tabs navigation */}
         <View style={styles.tabsContainer}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabsScroll}
-          >
+          <ScrollView showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const label = language === 'sw' ? tab.labelSw : tab.labelEn;
@@ -362,14 +289,10 @@ export default function AIAdminScreen() {
                     styles.tabItem,
                     {
                       borderColor: isActive ? colors.primary : colors.border,
-                      backgroundColor: isActive
-                        ? isDark
-                          ? 'rgba(34,209,90,0.2)'
-                          : 'rgba(34,209,90,0.05)'
-                        : isDark
-                          ? 'rgba(255,255,255,0.03)'
-                          : 'rgba(0,0,0,0.02)',
-                    },
+                      backgroundColor: isActive 
+                        ? (isDark ? colors.primary + '33' : colors.primary + '0D')
+                        : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)')
+                    }
                   ]}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -380,9 +303,7 @@ export default function AIAdminScreen() {
                   accessibilityLabel={label}
                 >
                   {tab.icon(isActive ? colors.primary : colors.textMute)}
-                  <Text
-                    style={[styles.tabText, { color: isActive ? colors.text : colors.textMute }]}
-                  >
+                  <Text style={[styles.tabText, { color: isActive ? colors.text : colors.textMute }]}>
                     {label}
                   </Text>
                 </TouchableOpacity>
@@ -392,25 +313,16 @@ export default function AIAdminScreen() {
         </View>
 
         {/* Tab content area */}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+        <ScrollView 
+          showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}
         >
           {activeTab === 'overview' && (
             /* 📊 OVERVIEW TAB */
             <Animated.View entering={FadeIn}>
               {/* Accuracy Display */}
-              <BlurView
-                intensity={isDark ? 20 : 60}
-                tint={isDark ? 'dark' : 'light'}
-                style={[styles.consoleCard, { borderColor: colors.border }]}
-              >
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.consoleCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={
-                    isDark
-                      ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
-                      : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
-                  }
+                  colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.cardHeader}>
@@ -419,7 +331,7 @@ export default function AIAdminScreen() {
                     {language === 'sw' ? 'Kiwango cha Usahihi wa AI' : 'AI Model Accuracy'}
                   </Text>
                 </View>
-
+                
                 <View style={styles.accuracyMeterRow}>
                   <View style={styles.meterContainer}>
                     <Text style={[styles.meterNumber, { color: colors.text }]}>{aiAccuracy}%</Text>
@@ -432,9 +344,7 @@ export default function AIAdminScreen() {
                       <Text style={[styles.metricLabel, { color: colors.textMute }]}>
                         {language === 'sw' ? 'Usawazishaji RAG:' : 'Knowledge Sources:'}
                       </Text>
-                      <Text style={[styles.metricValue, { color: colors.text }]}>
-                        {seededDocuments.length} docs
-                      </Text>
+                      <Text style={[styles.metricValue, { color: colors.text }]}>{seededDocuments.length} docs</Text>
                     </View>
                     <View style={styles.metricItem}>
                       <Text style={[styles.metricLabel, { color: colors.textMute }]}>
@@ -448,11 +358,7 @@ export default function AIAdminScreen() {
 
               {/* Status Stats Grid */}
               <View style={styles.statsGrid}>
-                <BlurView
-                  intensity={isDark ? 20 : 60}
-                  tint={isDark ? 'dark' : 'light'}
-                  style={[styles.gridCard, { borderColor: colors.border }]}
-                >
+                <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.gridCard, { borderColor: colors.border }]}>
                   <Text style={[styles.gridLabel, { color: colors.textMute }]}>
                     {language === 'sw' ? 'Wateja Walioridhika' : 'Customer Satisfaction'}
                   </Text>
@@ -460,11 +366,7 @@ export default function AIAdminScreen() {
                   <Text style={styles.gridSubText}>+1.2% this month</Text>
                 </BlurView>
 
-                <BlurView
-                  intensity={isDark ? 20 : 60}
-                  tint={isDark ? 'dark' : 'light'}
-                  style={[styles.gridCard, { borderColor: colors.border }]}
-                >
+                <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.gridCard, { borderColor: colors.border }]}>
                   <Text style={[styles.gridLabel, { color: colors.textMute }]}>
                     {language === 'sw' ? 'Maswali ya AI Leo' : 'AI Inquiries Today'}
                   </Text>
@@ -474,11 +376,7 @@ export default function AIAdminScreen() {
               </View>
 
               {/* Quick Prompt Editor Card link */}
-              <BlurView
-                intensity={isDark ? 20 : 60}
-                tint={isDark ? 'dark' : 'light'}
-                style={[styles.linkCard, { borderColor: colors.border }]}
-              >
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.linkCard, { borderColor: colors.border }]}>
                 <TouchableOpacity
                   style={styles.linkCardContent}
                   onPress={() => setActiveTab('prompt')}
@@ -491,13 +389,9 @@ export default function AIAdminScreen() {
                       {language === 'sw' ? 'Hariri Mfumo wa Prompt' : 'Edit System Prompts'}
                     </Text>
                     <Text style={[styles.linkCardSub, { color: colors.textMute }]}>
-                      {customSystemPrompt
-                        ? language === 'sw'
-                          ? 'Prompt Maalum inatumika sasa'
-                          : 'Custom instructions active'
-                        : language === 'sw'
-                          ? 'Hakuna marekebisho (Chaguo-msingi)'
-                          : 'Using standard system model defaults'}
+                      {customSystemPrompt 
+                        ? (language === 'sw' ? 'Prompt Maalum inatumika sasa' : 'Custom instructions active')
+                        : (language === 'sw' ? 'Hakuna marekebisho (Chaguo-msingi)' : 'Using standard system model defaults')}
                     </Text>
                   </View>
                   <ChevronRight size={20} color={colors.textMute} />
@@ -509,24 +403,14 @@ export default function AIAdminScreen() {
           {activeTab === 'prompt' && (
             /* 📝 SYSTEM PROMPT TAB */
             <Animated.View entering={FadeIn}>
-              <BlurView
-                intensity={isDark ? 20 : 60}
-                tint={isDark ? 'dark' : 'light'}
-                style={[styles.consoleCard, { borderColor: colors.border }]}
-              >
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.consoleCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={
-                    isDark
-                      ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
-                      : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
-                  }
+                  colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
                   style={StyleSheet.absoluteFill}
                 />
-
+                
                 <Text style={[styles.inputLabel, { color: colors.text }]}>
-                  {language === 'sw'
-                    ? 'Kiongozi cha Sankofa AI System Prompt'
-                    : 'Sankofa AI System Prompt Override'}
+                  {language === 'sw' ? 'Kiongozi cha Sankofa AI System Prompt' : 'Sankofa AI System Prompt Override'}
                 </Text>
                 <Text style={[styles.inputHint, { color: colors.textMute }]}>
                   {language === 'sw'
@@ -536,12 +420,12 @@ export default function AIAdminScreen() {
 
                 <TextInput
                   style={[
-                    styles.promptTextInput,
-                    {
-                      color: colors.text,
+                    styles.promptTextInput, 
+                    { 
+                      color: colors.text, 
                       borderColor: colors.border,
-                      backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.8)',
-                    },
+                      backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.8)'
+                    }
                   ]}
                   value={promptText}
                   onChangeText={setPromptText}
@@ -584,36 +468,26 @@ export default function AIAdminScreen() {
           {activeTab === 'rag' && (
             /* 📂 KNOWLEDGE BASE TAB */
             <Animated.View entering={FadeIn}>
-              <BlurView
-                intensity={isDark ? 20 : 60}
-                tint={isDark ? 'dark' : 'light'}
-                style={[styles.consoleCard, { borderColor: colors.border }]}
-              >
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.consoleCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={
-                    isDark
-                      ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
-                      : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
-                  }
+                  colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
                   style={StyleSheet.absoluteFill}
                 />
 
                 <Text style={[styles.inputLabel, { color: colors.text }]}>
-                  {language === 'sw'
-                    ? 'Nyaraka za Muktadha (RAG Seeding)'
-                    : 'Context Knowledge Seeding (RAG)'}
+                  {language === 'sw' ? 'Nyaraka za Muktadha (RAG Seeding)' : 'Context Knowledge Seeding (RAG)'}
                 </Text>
-
+                
                 {/* Upload Section */}
                 <View style={styles.uploadRow}>
                   <TextInput
                     style={[
-                      styles.docInput,
-                      {
-                        color: colors.text,
+                      styles.docInput, 
+                      { 
+                        color: colors.text, 
                         borderColor: colors.border,
-                        backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.8)',
-                      },
+                        backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.8)'
+                      }
                     ]}
                     value={newDocName}
                     onChangeText={setNewDocName}
@@ -639,13 +513,7 @@ export default function AIAdminScreen() {
                   {RAG_TEMPLATES.map((tpl) => (
                     <TouchableOpacity
                       key={tpl}
-                      style={[
-                        styles.templateChip,
-                        {
-                          backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                          borderColor: colors.border,
-                        },
-                      ]}
+                      style={[styles.templateChip, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)', borderColor: colors.border }]}
                       onPress={() => handleSeedTemplate(tpl)}
                       accessibilityRole="button"
                       accessibilityLabel={`Seed ${tpl}`}
@@ -657,40 +525,22 @@ export default function AIAdminScreen() {
                 </View>
 
                 {/* Seeded files list */}
-                <View
-                  style={[styles.divider, { backgroundColor: colors.border, marginVertical: 20 }]}
-                />
-
+                <View style={[styles.divider, { backgroundColor: colors.border, marginVertical: 20 }]} />
+                
                 <Text style={[styles.subLabel, { color: colors.text }]}>
-                  {language === 'sw'
-                    ? 'Nyaraka Amilifu kwenye Mfumo:'
-                    : 'Currently Seeded Context Documents:'}
+                  {language === 'sw' ? 'Nyaraka Amilifu kwenye Mfumo:' : 'Currently Seeded Context Documents:'}
                 </Text>
 
                 <View style={styles.docList}>
                   {seededDocuments.length === 0 ? (
                     <Text style={[styles.emptyText, { color: colors.textMute }]}>
-                      {language === 'sw'
-                        ? 'Hakuna nyaraka zilizowekwa.'
-                        : 'No context files seeded yet.'}
+                      {language === 'sw' ? 'Hakuna nyaraka zilizowekwa.' : 'No context files seeded yet.'}
                     </Text>
                   ) : (
                     seededDocuments.map((doc) => (
-                      <View
-                        key={doc}
-                        style={[
-                          styles.docItem,
-                          {
-                            borderColor: colors.border,
-                            backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
-                          },
-                        ]}
-                      >
+                      <View key={doc} style={[styles.docItem, { borderColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)' }]}>
                         <FileText size={16} color={colors.primary} />
-                        <Text
-                          style={[styles.docItemText, { color: colors.text }]}
-                          numberOfLines={1}
-                        >
+                        <Text style={[styles.docItemText, { color: colors.text }]} numberOfLines={1}>
                           {doc}
                         </Text>
                         <TouchableOpacity
@@ -712,17 +562,9 @@ export default function AIAdminScreen() {
           {activeTab === 'pipeline' && (
             /* ⚙️ RETRAINING PIPELINE TAB */
             <Animated.View entering={FadeIn}>
-              <BlurView
-                intensity={isDark ? 20 : 60}
-                tint={isDark ? 'dark' : 'light'}
-                style={[styles.consoleCard, { borderColor: colors.border }]}
-              >
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.consoleCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={
-                    isDark
-                      ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
-                      : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
-                  }
+                  colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
                   style={StyleSheet.absoluteFill}
                 />
 
@@ -738,32 +580,14 @@ export default function AIAdminScreen() {
                 {isRetraining ? (
                   <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color={colors.primary} />
-                    <Text style={[styles.loaderStepText, { color: colors.text }]}>
-                      {pipelineStep}
-                    </Text>
-                    <View
-                      style={[
-                        styles.progressBarBg,
-                        {
-                          backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                          marginTop: 12,
-                        },
-                      ]}
-                    >
-                      <View
-                        style={[
-                          styles.progressBarFill,
-                          { width: `${pipelineProgress * 100}%`, backgroundColor: colors.primary },
-                        ]}
-                      />
+                    <Text style={[styles.loaderStepText, { color: colors.text }]}>{pipelineStep}</Text>
+                    <View style={[styles.progressBarBg, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', marginTop: 12 }]}>
+                      <View style={[styles.progressBarFill, { width: `${pipelineProgress * 100}%`, backgroundColor: colors.primary }]} />
                     </View>
                   </View>
                 ) : (
                   <TouchableOpacity
-                    style={[
-                      styles.primaryBtn,
-                      { backgroundColor: colors.primary, marginVertical: 20 },
-                    ]}
+                    style={[styles.primaryBtn, { backgroundColor: colors.primary, marginVertical: 20 }]}
                     onPress={runRetrainingPipeline}
                     accessibilityRole="button"
                     accessibilityLabel="Trigger retraining pipeline"
@@ -775,27 +599,14 @@ export default function AIAdminScreen() {
                   </TouchableOpacity>
                 )}
 
-                <View
-                  style={[styles.divider, { backgroundColor: colors.border, marginVertical: 10 }]}
-                />
+                <View style={[styles.divider, { backgroundColor: colors.border, marginVertical: 10 }]} />
 
                 <Text style={[styles.subLabel, { color: colors.text, marginBottom: 12 }]}>
-                  {language === 'sw'
-                    ? 'Kumbukumbu za Utekelezaji (Pipeline Logs):'
-                    : 'Pipeline Execution Logs:'}
+                  {language === 'sw' ? 'Kumbukumbu za Utekelezaji (Pipeline Logs):' : 'Pipeline Execution Logs:'}
                 </Text>
 
-                <View
-                  style={[
-                    styles.logConsole,
-                    { backgroundColor: '#090d16', borderColor: colors.border },
-                  ]}
-                >
-                  <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    nestedScrollEnabled
-                    style={{ maxHeight: 200 }}
-                  >
+                <View style={[styles.logConsole, { backgroundColor: '#090d16', borderColor: colors.border }]}>
+                  <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled style={{ maxHeight: 200 }}>
                     {logs.map((log, index) => (
                       <Text key={index} style={styles.logLine}>
                         {log}
@@ -810,17 +621,9 @@ export default function AIAdminScreen() {
           {activeTab === 'feedback' && (
             /* 💬 FEEDBACK REVIEWER TAB */
             <Animated.View entering={FadeIn}>
-              <BlurView
-                intensity={isDark ? 20 : 60}
-                tint={isDark ? 'dark' : 'light'}
-                style={[styles.consoleCard, { borderColor: colors.border }]}
-              >
+              <BlurView intensity={isDark ? 20 : 60} tint={isDark ? "dark" : "light"} style={[styles.consoleCard, { borderColor: colors.border }]}>
                 <LinearGradient
-                  colors={
-                    isDark
-                      ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)']
-                      : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']
-                  }
+                  colors={isDark ? ['rgba(255,255,255,0.01)', 'rgba(30,41,59,0.3)'] : ['rgba(255,255,255,0.6)', 'rgba(248,250,252,0.9)']}
                   style={StyleSheet.absoluteFill}
                 />
 
@@ -842,44 +645,20 @@ export default function AIAdminScreen() {
                         {
                           borderColor: f.resolved ? 'rgba(16,185,129,0.2)' : colors.border,
                           backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
-                          opacity: f.resolved ? 0.6 : 1,
-                        },
+                          opacity: f.resolved ? 0.6 : 1
+                        }
                       ]}
                     >
                       <View style={styles.feedbackCardHeader}>
                         <View style={styles.farmerMeta}>
-                          <Text style={[styles.feedbackFarmer, { color: colors.text }]}>
-                            {f.farmer}
-                          </Text>
+                          <Text style={[styles.feedbackFarmer, { color: colors.text }]}>{f.farmer}</Text>
                           <Text style={[styles.feedbackSub, { color: colors.textMute }]}>
                             {f.crop} • {f.location}
                           </Text>
                         </View>
-                        <View
-                          style={[
-                            styles.badge,
-                            {
-                              backgroundColor:
-                                f.type === 'positive'
-                                  ? 'rgba(16,185,129,0.1)'
-                                  : 'rgba(239,68,68,0.1)',
-                            },
-                          ]}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 10,
-                              fontFamily: 'Inter_800ExtraBold',
-                              color: f.type === 'positive' ? '#10b981' : '#ef4444',
-                            }}
-                          >
-                            {f.type === 'positive'
-                              ? language === 'sw'
-                                ? 'IMEPENDWA'
-                                : 'HELPFUL'
-                              : language === 'sw'
-                                ? 'HAIJAPENDWA'
-                                : 'UNHELPFUL'}
+                        <View style={[styles.badge, { backgroundColor: f.type === 'positive' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)' }]}>
+                          <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: f.type === 'positive' ? '#10b981' : '#ef4444' }}>
+                            {f.type === 'positive' ? (language === 'sw' ? 'IMEPENDWA' : 'HELPFUL') : (language === 'sw' ? 'HAIJAPENDWA' : 'UNHELPFUL')}
                           </Text>
                         </View>
                       </View>
@@ -889,9 +668,7 @@ export default function AIAdminScreen() {
                       </Text>
 
                       <View style={styles.feedbackCardFooter}>
-                        <Text style={[styles.feedbackTime, { color: colors.textMute }]}>
-                          {f.timestamp}
-                        </Text>
+                        <Text style={[styles.feedbackTime, { color: colors.textMute }]}>{f.timestamp}</Text>
                         {!f.resolved ? (
                           <TouchableOpacity
                             style={[styles.resolveBtn, { backgroundColor: colors.primary }]}
