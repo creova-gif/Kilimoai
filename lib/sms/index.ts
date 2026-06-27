@@ -32,7 +32,7 @@ export interface SmsPayload {
 
 export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reason?: string }> {
   if (!supabase) {
-    console.log('[SMS:stub]', payload.event, '→', payload.to, '·', payload.body);
+    console.log('[SMS:stub]', payload.event, '→', maskNumber(payload.to), '· [redacted]');
 
     // Mirror to in-app notification so the user sees the channel firing
     useKilimoStore.getState().addNotification({
@@ -49,8 +49,18 @@ export async function sendSms(payload: SmsPayload): Promise<{ ok: boolean; reaso
       body: { to: payload.to, message: payload.body, event: payload.event, meta: payload.meta },
     });
     if (error) {
-      console.error('[SMS:edge] invoke error:', error.message);
-      return { ok: false, reason: error.message || 'sms_invoke_error' };
+      // The edge function returns structured reasons (e.g. sms_provider_not_configured)
+      // in the response body; on a non-2xx status supabase-js surfaces that body via
+      // error.context, so read it before falling back to the generic message.
+      let reason = error.message || 'sms_invoke_error';
+      try {
+        const body = await (error as any).context?.json?.();
+        if (body?.reason) reason = body.reason;
+      } catch {
+        /* body not JSON / already consumed — keep message fallback */
+      }
+      console.error('[SMS:edge] invoke error:', reason);
+      return { ok: false, reason };
     }
     if (data?.ok) return { ok: true };
     return { ok: false, reason: data?.reason || 'dispatch_failed' };

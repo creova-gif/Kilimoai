@@ -1632,8 +1632,8 @@ export default function IOTSystems() {
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Ona ramani ya mifugo' : 'View Herd Map'}
               >
-                <Map size={16} color="#000" />
-                <Text style={[styles.actionBtnText, { color: '#000' }]}>
+                <Map size={16} color="#fff" />
+                <Text style={[styles.actionBtnText, { color: '#fff' }]}>
                   {language === 'sw' ? 'Ona Ramani ya Mifugo' : 'View Herd Map'}
                 </Text>
               </TouchableOpacity>
@@ -2308,7 +2308,7 @@ const styles = StyleSheet.create({
   registerFabText: {
     fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
-    color: '#000',
+    color: '#fff',
   },
   deviceRow: {
     flexDirection: 'row',

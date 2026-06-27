@@ -60,7 +60,7 @@ const STAT_CHIPS = [
   {
     key: 'pest',  labelSw: 'WADUDU',  labelEn: 'PEST',
     value: '18%', subSw: 'Kiwango cha Kawaida', subEn: 'Normal Level',
-    bg: '#2E6F40', text: '#000',
+    bg: '#2E6F40', text: '#fff',
   },
   {
     key: 'water', labelSw: 'MAJI',    labelEn: 'WATER',

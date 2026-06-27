@@ -184,7 +184,7 @@ interface FarmDataState {
   cancelConsultation: (id: string) => void;
 
   // Ledger
-  addLedgerEntry: (e: Omit<LedgerEntry, 'id'>) => void;
+  addLedgerEntry: (e: Omit<LedgerEntry, 'id'> & { id?: string }) => void;
   removeLedgerEntry: (id: string) => void;
 }
 
@@ -334,7 +334,7 @@ export const useFarmDataStore = create<FarmDataState>()(
         consultations: s.consultations.map((c) => c.id === id ? { ...c, status: 'cancelled' } : c),
       })),
 
-      addLedgerEntry: (e) => set((s) => ({ ledger: [{ ...e, id: uid('l') }, ...s.ledger] })),
+      addLedgerEntry: (e) => set((s) => ({ ledger: [{ ...e, id: e.id ?? uid('l') }, ...s.ledger] })),
       removeLedgerEntry: (id) => set((s) => ({ ledger: s.ledger.filter((x) => x.id !== id) })),
     }),
     {

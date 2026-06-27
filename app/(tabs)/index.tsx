@@ -1394,14 +1394,14 @@ export default function HomeScreen() {
     progress.value = withTiming(1, { duration: 1500 });
 
     setTimeout(() => {
-      const randomDigits = Math.floor(1000 + Math.random() * 9000);
-      let idVal = 'NIDA';
-      if (agroId?.nationalId) idVal = `NIDA-${agroId.nationalId.slice(-4)}`;
-      else if (agroId?.tinNumber) idVal = `TIN-${agroId.tinNumber.slice(-4)}`;
-      else if (agroId?.businessLicense) idVal = `LIC-${agroId.businessLicense.slice(-4)}`;
-      else idVal = `REG-${randomDigits}`;
-
-      const newId = `AGRO-2026-${idVal}`;
+      // The Agro-ID is embedded in a PUBLIC verification QR, so it must be
+      // high-entropy and must NOT encode identifying document numbers. Keep a
+      // readable doc-type tag, but make the unique part opaque/random so IDs
+      // cannot be enumerated and national-ID/TIN digits never leak in the URL.
+      const docTag = agroId?.nationalId ? 'NIDA' : agroId?.tinNumber ? 'TIN' : agroId?.businessLicense ? 'LIC' : 'REG';
+      const rand = () => Math.random().toString(36).slice(2, 10);
+      const opaque = `${rand()}${rand()}`.toUpperCase(); // ~16 chars of entropy
+      const newId = `AGRO-2026-${docTag}-${opaque}`;
 
       updateAgroId({
         verificationStatus: 'verified',

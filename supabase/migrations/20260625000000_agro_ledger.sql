@@ -13,6 +13,14 @@ create table if not exists public.agro_ledger (
   category     text not null,
   description  text not null default '',
   amount_tzs   bigint not null,               -- +income / -expense, whole TZS
+  -- Provenance: client-inserted rows are 'self_reported' and unverified by
+  -- default. Only a trusted server process (cooperative payout webhook,
+  -- contract settlement, bank feed) may mark a row verified — clients cannot
+  -- (RLS insert check below forces these defaults). Credit scoring and the
+  -- public attestation should weight `verified` rows so a farmer cannot inflate
+  -- their score by posting invented income.
+  source       text not null default 'self_reported',
+  verified     boolean not null default false,
   created_at   timestamptz not null default now(),
   unique (user_id, client_id)
 );
@@ -25,8 +33,14 @@ alter table public.agro_ledger enable row level security;
 create policy "own rows: select" on public.agro_ledger
   for select using (auth.uid() = user_id);
 
+-- Clients may only insert their own, self-reported, unverified rows. Marking a
+-- row verified is reserved for trusted server processes using the service role.
 create policy "own rows: insert" on public.agro_ledger
-  for insert with check (auth.uid() = user_id);
+  for insert with check (
+    auth.uid() = user_id
+    and source = 'self_reported'
+    and verified = false
+  );
 
 -- Intentionally NO update/delete policies → ledger is append-only (tamper-evident).
 
@@ -36,9 +50,13 @@ create or replace view public.agro_ledger_summary as
 select
   user_id,
   count(*)                                          as entry_count,
+  count(*) filter (where verified)                  as verified_entry_count,
   coalesce(sum(amount_tzs) filter (where amount_tzs > 0), 0) as total_income_tzs,
   coalesce(sum(amount_tzs) filter (where amount_tzs < 0), 0) as total_expense_tzs,
   coalesce(sum(amount_tzs), 0)                      as net_tzs,
+  -- Verified-only net lets the public attestation report a trustworthy figure
+  -- that a farmer cannot inflate with self-reported entries.
+  coalesce(sum(amount_tzs) filter (where verified), 0) as verified_net_tzs,
   min(entry_date)                                   as first_entry_at,
   max(entry_date)                                   as last_entry_at
 from public.agro_ledger

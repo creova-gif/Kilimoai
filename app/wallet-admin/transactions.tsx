@@ -229,10 +229,10 @@ export default function TransactionsScreen() {
                   },
                 ]}
               >
-                <Text style={[s.pillSymbol, { color: active ? '#064e1a' : '#2E6F40' }]}>
+                <Text style={[s.pillSymbol, { color: active ? '#fff' : '#2E6F40' }]}>
                   {f.symbol}
                 </Text>
-                <Text style={[s.pillText, { color: active ? '#000' : colors.text }]}>
+                <Text style={[s.pillText, { color: active ? '#fff' : colors.text }]}>
                   {f.label}
                 </Text>
               </TouchableOpacity>

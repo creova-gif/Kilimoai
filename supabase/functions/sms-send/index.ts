@@ -35,8 +35,29 @@ serve(async (req) => {
   }
 
   try {
-    const { to, message } = await req.json();
+    const { to, message, event } = await req.json();
     if (!to || !message) return json({ ok: false, reason: 'missing_to_or_message' }, 400);
+
+    // Authorization gate beyond bare JWT auth: verify_jwt only proves the caller
+    // is *authenticated*, not that they're *authorized* to spend SMS credits.
+    // Constrain what an authenticated caller can dispatch so this endpoint can't
+    // be abused as a general-purpose SMS cannon:
+    //   • only the app's known notification events are allowed
+    //   • recipient must be a valid E.164 number
+    //   • body length is capped (one or two SMS segments)
+    // NOTE: a per-user ownership/rate-limit check (only send to the caller's own
+    // verified number) is the recommended next layer once the profiles schema
+    // is wired in here.
+    const ALLOWED_EVENTS = ['critical_diagnosis', 'price_alert', 'severe_weather', 'payment_received'];
+    if (!event || !ALLOWED_EVENTS.includes(event)) {
+      return json({ ok: false, reason: 'event_not_allowed' }, 403);
+    }
+    if (!/^\+[1-9]\d{6,14}$/.test(String(to))) {
+      return json({ ok: false, reason: 'invalid_recipient' }, 400);
+    }
+    if (String(message).length > 320) {
+      return json({ ok: false, reason: 'message_too_long' }, 400);
+    }
 
     const details: Record<string, string> = { username: AT_USERNAME, to, message };
     if (AT_SENDER_ID) details.from = AT_SENDER_ID;

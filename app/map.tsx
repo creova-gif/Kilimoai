@@ -111,10 +111,10 @@ export default function MapScreen() {
   const handleLocate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const text = language === 'sw'
-      ? `Nafasi ya GPS imethibitishwa. Upo mkoa wa ${farmProfile?.region || 'Arusha'}, kitalu A.`
-      : `GPS position confirmed. You are located in ${farmProfile?.region || 'Arusha'}, Block A.`;
+      ? `Nafasi ya GPS imethibitishwa. Upo mkoa wa ${farmProfile?.region || 'Tanzania'}, kitalu A.`
+      : `GPS position confirmed. You are located in ${farmProfile?.region || 'Tanzania'}, Block A.`;
     speak(text);
-    Alert.alert('GPS', `Eneo lako: ${farmProfile?.region || 'Arusha'}, Kitalu A\nHekta 2.4\n8.9° S, 33.4° E`);
+    Alert.alert('GPS', `Eneo lako: ${farmProfile?.region || 'Tanzania'}, Kitalu A\nHekta 2.4\n8.9° S, 33.4° E`);
   };
 
   const handleFullscreen = () => {

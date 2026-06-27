@@ -716,7 +716,7 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
         </View>
       ) : (
         <LinearGradient
-          colors={['#2be066', '#14a345']}
+          colors={['#3A8D52', '#2E6F40']}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           style={[styles.bubble, styles.userBubble]}
         >

@@ -40,31 +40,36 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const url = new URL(req.url);
-  const agroId = url.searchParams.get('id');
-  if (!agroId) return json({ verified: false, reason: 'missing id' }, 400);
+  // Accept `token` (preferred) and fall back to `id` for older QR codes.
+  const agroId = url.searchParams.get('token') ?? url.searchParams.get('id');
+  if (!agroId) return json({ verified: false, reason: 'missing token' }, 400);
 
   try {
-    // Map the public Agro-ID to a user, then read the aggregate summary.
-    const { data: profile } = await admin
+    // Map the public Agro-ID to a user. Select ONLY the join key — no PII
+    // (name/region) is ever returned on this unauthenticated endpoint, so a
+    // guessed/enumerated ID cannot be used to identify a farmer.
+    const { data: profile, error: profileErr } = await admin
       .from('agro_profiles')
-      .select('user_id, region, name')
+      .select('user_id')
       .eq('agro_id', agroId)
       .maybeSingle();
 
+    // Distinguish a backend failure (500) from a genuinely missing ID (404);
+    // never let an outage masquerade as a verification result.
+    if (profileErr) return json({ verified: false, reason: 'lookup_failed' }, 500);
     if (!profile) return json({ verified: false, reason: 'not_found' }, 404);
 
-    const { data: summary } = await admin
+    const { data: summary, error: summaryErr } = await admin
       .from('agro_ledger_summary')
       .select('*')
       .eq('user_id', profile.user_id)
       .maybeSingle();
 
+    if (summaryErr) return json({ verified: false, reason: 'lookup_failed' }, 500);
+
+    // Non-PII attestation only: existence + aggregate, non-identifying history.
     return json({
       verified: true,
-      agroId,
-      region: profile.region ?? null,
-      // First-name-only to limit PII exposure on a public endpoint.
-      holder: (profile.name ?? '').split(' ')[0] ?? null,
       history: summary
         ? {
             entryCount: summary.entry_count,

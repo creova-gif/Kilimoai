@@ -660,7 +660,7 @@ function RIFTHerdTagSection({ animals }: { animals: LivestockAnimal[] }) {
                   borderColor: isReg ? '#2E6F40' : colors.primary + '40',
                 }]}
               >
-                <Text style={[rt.regText, { color: isReg ? '#000' : colors.primary }]}>
+                <Text style={[rt.regText, { color: isReg ? '#fff' : colors.primary }]}>
                   {isReg ? 'Imesajiliwa ✓' : 'Sajili'}
                 </Text>
               </TouchableOpacity>

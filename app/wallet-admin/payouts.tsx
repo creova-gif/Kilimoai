@@ -132,8 +132,8 @@ export default function PayoutsScreen() {
               style={[s.btn, { backgroundColor: STATUS_COLOR.settled }]}
               onPress={() => onApprove(item)}
             >
-              <Check size={16} color="#000" />
-              <Text style={[s.btnText, { color: '#000' }]}>Idhinisha</Text>
+              <Check size={16} color="#fff" />
+              <Text style={[s.btnText, { color: '#fff' }]}>Idhinisha</Text>
             </TouchableOpacity>
           </View>
         )}

@@ -77,7 +77,7 @@ export default function AgroIdScreen() {
   // Verifiable QR — points at the public verify-agro-id edge function when the
   // backend URL is configured, falling back to the marketing verify page.
   const qrPayload = SUPABASE_URL
-    ? `${SUPABASE_URL}/functions/v1/verify-agro-id?id=${encodeURIComponent(agroId?.id ?? 'unknown')}`
+    ? `${SUPABASE_URL}/functions/v1/verify-agro-id?token=${encodeURIComponent(agroId?.id ?? 'unknown')}`
     : `https://kilimo.ai/verify/${agroId?.id ?? 'unknown'}`;
 
   async function handleExport() {
@@ -123,6 +123,10 @@ export default function AgroIdScreen() {
       return;
     }
     const cat = entryCategory || (entryType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0]);
+    // One id shared by the local row and the server row so the two can be
+    // reconciled/deduped (the store keeps this id; pushLedgerEntry sends it as
+    // client_id).
+    const clientId = `l_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
     const entry = {
       date: new Date().toISOString(),
       category: cat,
@@ -132,15 +136,19 @@ export default function AgroIdScreen() {
 
     setSavingEntry(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addLedgerEntry(entry);
-    // Best-effort server sync (offline-first — failure is non-blocking).
-    pushLedgerEntry({ id: `l_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, ...entry }).catch(() => {});
+    // Offline-first: the entry is saved locally immediately, then synced. We
+    // await the sync so the confirmation reflects whether the server has it yet
+    // (self-reported entries are not "verified" until a trusted source confirms).
+    addLedgerEntry({ ...entry, id: clientId });
+    const sync = await pushLedgerEntry({ id: clientId, ...entry });
     setSavingEntry(false);
     resetEntryForm();
     setUpdateModalVisible(false);
     Alert.alert(
       sw ? 'Imehifadhiwa' : 'Saved',
-      sw ? 'Muamala umeongezwa kwenye leja yako.' : 'Entry added to your verified ledger.',
+      sync.ok
+        ? (sw ? 'Muamala umehifadhiwa na kusawazishwa.' : 'Entry saved and synced to your ledger.')
+        : (sw ? 'Muamala umehifadhiwa kwenye kifaa; itasawazishwa ukiwa mtandaoni.' : 'Entry saved on device; it will sync when you’re online.'),
     );
   }
 
@@ -390,8 +398,8 @@ export default function AgroIdScreen() {
                 <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>
                   {language === 'sw' ? 'RIPOTI YA MAPATO NA MATUMIZI' : 'FINANCIAL PASSPORT LEDGER'}
                 </Text>
-                <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: colors.primary }}>
-                  NET: TZS {fmt(net)}
+                <Text style={{ fontSize: 10, fontFamily: 'Inter_800ExtraBold', color: net < 0 ? '#ef4444' : colors.primary }}>
+                  NET: {net < 0 ? '−' : ''}TZS {fmt(net)}
                 </Text>
               </View>
               

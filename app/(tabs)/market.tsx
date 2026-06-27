@@ -592,7 +592,7 @@ export default function MarketScreen() {
                               accessibilityRole="button"
                               accessibilityLabel={language === 'sw' ? `Ongeza ${prod.nameSw} kwenye kikapu` : `Add ${prod.name} to cart`}
                             >
-                              <ShoppingCart size={12} color="#000" />
+                              <ShoppingCart size={12} color="#fff" />
                               <Text style={styles.addToCartText}>{language === 'sw' ? 'Ongeza' : 'Add'}</Text>
                             </TouchableOpacity>
                           </View>
@@ -798,7 +798,7 @@ export default function MarketScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={language === 'sw' ? 'Fungua kikapu cha ununuzi' : 'Open shopping cart'}
               >
-                <ShoppingCart size={18} color="#000" />
+                <ShoppingCart size={18} color="#fff" />
                 <View style={styles.cartCountBadge}>
                   <Text style={styles.cartCountBadgeTxt}>{cart.reduce((sum, c) => sum + c.qty, 0)}</Text>
                 </View>
@@ -1529,7 +1529,7 @@ const styles = StyleSheet.create({
   prodCardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(0,0,0,0.08)', paddingTop: 6 },
   prodPrice: { fontSize: 12.5, fontFamily: 'Inter_800ExtraBold' },
   addToCartBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#2E6F40', paddingHorizontal: 8, borderRadius: 8, minHeight: 44, justifyContent: 'center' },
-  addToCartText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#000' },
+  addToCartText: { fontSize: 12, fontFamily: 'Inter_800ExtraBold', color: '#fff' },
   cartFab: { position: 'absolute', bottom: 32, right: 24, zIndex: 100 },
   cartFabBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#2E6F40', alignItems: 'center', justifyContent: 'center', position: 'relative', shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5 },
   cartCountBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: '#000', borderRadius: 8, width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
