@@ -124,8 +124,8 @@ export default function OfflineQueueScreen() {
             onPress={toggleOnline}
             style={[s.onlineBtn, { backgroundColor: online ? '#2E6F4022' : '#ef444422', borderColor: online ? '#2E6F4055' : '#ef444455' }]}
           >
-            {online ? <Wifi size={16} color="#2E6F40" /> : <WifiOff size={16} color="#ef4444" />}
-            <Text style={[s.onlineTxt, { color: online ? '#2E6F40' : '#ef4444' }]}>
+            {online ? <Wifi size={16} color={colors.primary} /> : <WifiOff size={16} color="#ef4444" />}
+            <Text style={[s.onlineTxt, { color: online ? colors.primary : '#ef4444' }]}>
               {online ? (language === 'sw' ? 'MTANDAO' : 'ONLINE') : (language === 'sw' ? 'BILA MTANDAO' : 'OFFLINE')}
             </Text>
           </TouchableOpacity>
@@ -138,7 +138,7 @@ export default function OfflineQueueScreen() {
             style={[s.statusCard, { borderColor: online ? '#2E6F4030' : 'rgba(239,68,68,0.25)' }]}
           >
             <View style={[s.statusIcon, { backgroundColor: online ? '#2E6F4022' : '#ef444422' }]}>
-              {online ? <Cloud size={22} color="#2E6F40" /> : <CloudOff size={22} color="#ef4444" />}
+              {online ? <Cloud size={22} color={colors.primary} /> : <CloudOff size={22} color="#ef4444" />}
             </View>
             <View style={{ flex: 1, gap: 2 }}>
               <Text style={[s.statusTitle, { color: colors.text }]}>
@@ -152,7 +152,7 @@ export default function OfflineQueueScreen() {
               </Text>
             </View>
             <View style={[s.storageBar, { backgroundColor: colors.border }]}>
-              <View style={[s.storageFill, { width: '13%', backgroundColor: online ? '#2E6F40' : '#ef4444' }]} />
+              <View style={[s.storageFill, { width: '13%', backgroundColor: online ? colors.primary : '#ef4444' }]} />
             </View>
           </LinearGradient>
         </Animated.View>
@@ -173,7 +173,7 @@ export default function OfflineQueueScreen() {
               <Animated.View key={item.id} entering={FadeInDown.delay(i * 60).springify()}>
                 <View style={[s.qCard, { backgroundColor: colors.card, borderColor: done ? '#2E6F4044' : colors.border, opacity: done ? 0.6 : 1 }]}>
                   <View style={[s.typeIcon, { backgroundColor: meta.color + '18' }]}>
-                    {done ? <CheckCircle2 size={16} color="#2E6F40" /> : meta.icon(meta.color)}
+                    {done ? <CheckCircle2 size={16} color={colors.primary} /> : meta.icon(meta.color)}
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -201,7 +201,7 @@ export default function OfflineQueueScreen() {
                       <Trash2 size={14} color="#ef4444" />
                     </TouchableOpacity>
                   )}
-                  {done && <CheckCircle2 size={18} color="#2E6F40" />}
+                  {done && <CheckCircle2 size={18} color={colors.primary} />}
                 </View>
               </Animated.View>
             );
@@ -213,7 +213,7 @@ export default function OfflineQueueScreen() {
           <TouchableOpacity
             onPress={handleSync}
             activeOpacity={0.85}
-            style={[s.syncBtn, { backgroundColor: online ? '#2E6F40' : colors.card, borderColor: online ? '#2E6F40' : colors.border }]}
+            style={[s.syncBtn, { backgroundColor: online ? colors.primary : colors.card, borderColor: online ? colors.primary : colors.border }]}
           >
             <SyncSpinner syncing={syncing} />
             <Text style={[s.syncText, { color: online ? '#fff' : colors.textMute }]}>

@@ -96,7 +96,7 @@ export default function WalletAdminOverview() {
               onPress={() => router.push('/wallet-admin/transactions')}
             >
               <View style={[s.tileBadge, { backgroundColor: '#2E6F4022' }]}>
-                <Text style={[s.tileBadgeText, { color: '#2E6F40' }]}>{transactions.length}</Text>
+                <Text style={[s.tileBadgeText, { color: colors.primary }]}>{transactions.length}</Text>
               </View>
               <Text style={[s.tileTitle, { color: colors.text }]}>Daftari la Miamala</Text>
               <Text style={[s.tileSub, { color: colors.textMute }]}>Miamala yote ya M-Pesa</Text>
@@ -112,7 +112,7 @@ export default function WalletAdminOverview() {
             ) : (
               recent.map((t, idx) => {
                 const isOut = t.type === 'payout' || t.type === 'fee';
-                const color = isOut ? '#ef4444' : '#2E6F40';
+                const color = isOut ? '#ef4444' : colors.primary;
                 return (
                   <View
                     key={t.id}
@@ -151,7 +151,7 @@ export default function WalletAdminOverview() {
                 <View style={{ alignItems: 'flex-end' }}>
                   <Text style={[s.memBalance, { color: colors.text }]}>{fmt(m.balanceTZS)}</Text>
                   <Text
-                    style={[s.memStatus, { color: m.status === 'active' ? '#2E6F40' : '#ef4444' }]}
+                    style={[s.memStatus, { color: m.status === 'active' ? colors.primary : '#ef4444' }]}
                   >
                     {m.status === 'active' ? 'Hai' : 'Imesimamishwa'}
                   </Text>

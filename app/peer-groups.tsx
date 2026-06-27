@@ -361,7 +361,7 @@ export default function PeerGroupsScreen() {
                           >
                             {t.joined ? (
                               <>
-                                <Check size={12} color="#2E6F40" />
+                                <Check size={12} color={colors.primary} />
                                 <Text style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: '#1b632e' }}>Umejiunga · Joined</Text>
                               </>
                             ) : (
@@ -425,7 +425,7 @@ export default function PeerGroupsScreen() {
                           >
                             {e.rsvp ? (
                               <>
-                                <Check size={12} color="#2E6F40" />
+                                <Check size={12} color={colors.primary} />
                                 <Text style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: '#1b632e' }}>Nitakuja · RSVP Yes</Text>
                               </>
                             ) : (

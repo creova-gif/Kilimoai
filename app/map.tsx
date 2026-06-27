@@ -149,7 +149,7 @@ export default function MapScreen() {
             </TouchableOpacity>
             
             <View style={styles.headerCenter}>
-              <View style={[styles.spatialBadge, { backgroundColor: 'rgba(46, 111, 64, 0.25)' }]}>
+              <View style={[styles.spatialBadge, { backgroundColor: colors.primary + '40' }]}>
                 <Globe size={10} color={colors.primary} />
                 <Text style={[styles.spatialText, { color: colors.primary }]}>SPATIAL INTELLIGENCE v4.1</Text>
               </View>
@@ -172,7 +172,7 @@ export default function MapScreen() {
           {voicePlaying && (
             <Animated.View entering={FadeInUp} exiting={FadeOut} style={styles.voiceGuidanceCard}>
               <BlurView intensity={70} tint="dark" style={styles.voiceGuidanceInner}>
-                <Volume2 size={16} color="#2E6F40" style={styles.voiceIconPulse} />
+                <Volume2 size={16} color={colors.primary} style={styles.voiceIconPulse} />
                 <Text style={styles.voiceGuidanceText} numberOfLines={2}>
                   {voiceText}
                 </Text>
@@ -219,8 +219,8 @@ export default function MapScreen() {
             </TouchableOpacity>
             {/* Trigger Voice guidance manually */}
             <TouchableOpacity onPress={triggerVoiceGuidance} style={styles.controlItem}>
-              <BlurView intensity={50} tint="dark" style={[styles.controlInner, voicePlaying && { borderColor: '#2E6F40' }]}>
-                <Volume2 size={20} color={voicePlaying ? '#2E6F40' : '#fff'} />
+              <BlurView intensity={50} tint="dark" style={[styles.controlInner, voicePlaying && { borderColor: colors.primary }]}>
+                <Volume2 size={20} color={voicePlaying ? colors.primary : '#fff'} />
               </BlurView>
             </TouchableOpacity>
           </View>

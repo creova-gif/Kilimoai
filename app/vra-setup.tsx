@@ -74,7 +74,7 @@ export default function VRASetupScreen() {
       let color = `${colors.primary}`; // default base
       
       if (activeInput === 'fertilizer') {
-        color = intensity > 0.6 ? '#D97706' : intensity > 0.3 ? '#10B981' : '#2E6F40';
+        color = intensity > 0.6 ? '#D97706' : intensity > 0.3 ? '#10B981' : colors.primary;
       } else if (activeInput === 'water') {
         color = intensity > 0.6 ? '#3B82F6' : '#93C5FD';
       } else {

@@ -145,7 +145,7 @@ export function OtpAuthFlow({ onSuccess, onSkip, embedded = false }: Props) {
   if (step === 'success') {
     return (
       <View style={[s.successWrap, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <ShieldCheck size={40} color="#2E6F40" />
+        <ShieldCheck size={40} color={colors.primary} />
         <Text style={[s.successText, { color: colors.text }]}>
           {isSw ? 'Nambari imethibitishwa!' : 'Phone verified!'}
         </Text>
@@ -260,7 +260,7 @@ export default function OtpAuthScreen() {
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <LinearGradient
-        colors={['rgba(46, 111, 64,0.12)', 'transparent']}
+        colors={[colors.primary + '1F', 'transparent']}
         style={StyleSheet.absoluteFill}
         start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 0.5 }}
       />

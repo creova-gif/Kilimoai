@@ -169,7 +169,7 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
     }]}>
       {/* Shimmer strip */}
       <LinearGradient
-        colors={['rgba(46, 111, 64,0.08)', 'transparent']}
+        colors={[colors.primary + '14', 'transparent']}
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
         style={StyleSheet.absoluteFill}
         pointerEvents="none"
@@ -192,8 +192,8 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
           accessibilityRole="button"
           accessibilityLabel={language === 'sw' ? 'Changanua ufuatiliaji' : 'Scan tracker'}
         >
-          <Microscope size={12} color="#2E6F40" />
-          <Text style={{ color: '#2E6F40', fontFamily: 'Inter_700Bold', fontSize: 12 }}>
+          <Microscope size={12} color={colors.primary} />
+          <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 12 }}>
             {language === 'sw' ? 'Changanua' : 'QR Scan'}
           </Text>
         </TouchableOpacity>
@@ -211,8 +211,8 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
           const isNext = idx === nextIdx;
           const isActive = activeStep === idx;
           const isLast = idx === records.length - 1;
-          const dotBorder = isCompleted ? '#2E6F40' : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.22)' : colors.border);
-          const lineColor = isCompleted ? 'rgba(46, 111, 64,0.35)' : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)');
+          const dotBorder = isCompleted ? colors.primary : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.22)' : colors.border);
+          const lineColor = isCompleted ? colors.primary + '59' : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)');
 
           return (
             <TouchableOpacity
@@ -226,7 +226,7 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
               {/* Left column: dot + vertical connector */}
               <View style={styles.trackRowLeft}>
                 <View style={[styles.trackRowDot, {
-                  backgroundColor: isCompleted ? '#2E6F40' : isNext ? 'rgba(245,158,11,0.12)' : (isDark ? 'rgba(255,255,255,0.05)' : colors.background),
+                  backgroundColor: isCompleted ? colors.primary : isNext ? 'rgba(245,158,11,0.12)' : (isDark ? 'rgba(255,255,255,0.05)' : colors.background),
                   borderColor: dotBorder,
                   borderWidth: isNext ? 2.5 : 2,
                 }]}>
@@ -245,20 +245,20 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
               <View style={[styles.trackRowContent, isLast && { paddingBottom: 4 }]}>
                 <View style={styles.trackRowTopRow}>
                   <View style={[styles.trackRowDateChip, {
-                    backgroundColor: isCompleted ? 'rgba(46, 111, 64,0.1)' : isNext ? 'rgba(245,158,11,0.1)' : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
-                    borderColor: isCompleted ? 'rgba(46, 111, 64,0.25)' : isNext ? 'rgba(245,158,11,0.3)' : 'transparent',
+                    backgroundColor: isCompleted ? colors.primary + '1A' : isNext ? 'rgba(245,158,11,0.1)' : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                    borderColor: isCompleted ? colors.primary + '40' : isNext ? 'rgba(245,158,11,0.3)' : 'transparent',
                   }]}>
                     <Text style={[styles.trackRowDateText, {
-                      color: isCompleted ? '#2E6F40' : isNext ? '#f59e0b' : colors.textMute,
+                      color: isCompleted ? colors.primary : isNext ? '#f59e0b' : colors.textMute,
                     }]}>
                       {item.date}
                     </Text>
                   </View>
                   <View style={[styles.trackRowStatusChip, {
-                    backgroundColor: isCompleted ? 'rgba(46, 111, 64,0.1)' : isNext ? 'rgba(245,158,11,0.08)' : 'transparent',
+                    backgroundColor: isCompleted ? colors.primary + '1A' : isNext ? 'rgba(245,158,11,0.08)' : 'transparent',
                   }]}>
                     <Text style={[styles.trackRowStatusText, {
-                      color: isCompleted ? '#2E6F40' : isNext ? '#f59e0b' : colors.textMute,
+                      color: isCompleted ? colors.primary : isNext ? '#f59e0b' : colors.textMute,
                     }]}>
                       {isCompleted
                         ? (language === 'sw' ? '✓ IMEKAMILIKA' : '✓ DONE')
@@ -283,12 +283,12 @@ const TrackRecords = ({ colors, isDark, language, router: _router }: any) => {
       {/* Expanded step detail */}
       {activeStep !== null && (
         <Animated.View entering={FadeInDown.springify()} style={[styles.trackExpanded, {
-          backgroundColor: isDark ? 'rgba(46, 111, 64,0.05)' : 'rgba(46, 111, 64,0.04)',
-          borderColor: 'rgba(46, 111, 64,0.15)',
+          backgroundColor: isDark ? colors.primary + '0D' : colors.primary + '0A',
+          borderColor: colors.primary + '26',
         }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Leaf size={13} color="#2E6F40" />
-            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: '#2E6F40' }}>
+            <Leaf size={13} color={colors.primary} />
+            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 12, color: colors.primary }}>
               {records[activeStep].title}
             </Text>
           </View>
@@ -366,7 +366,7 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
       : `Prepare clean storage bags. Harvest ${cropMeta.displayName} early morning to avoid heat stress.`;
   })();
 
-  const healthColor  = farmVitals.soilPh >= 6 && farmVitals.soilPh <= 7.5 ? '#2E6F40' : '#f59e0b';
+  const healthColor  = farmVitals.soilPh >= 6 && farmVitals.soilPh <= 7.5 ? colors.primary : '#f59e0b';
   const healthLabel  = farmVitals.soilPh >= 6 && farmVitals.soilPh <= 7.5
     ? (language === 'sw' ? 'Nzuri' : 'Good')
     : (language === 'sw' ? 'Wastani' : 'Fair');
@@ -378,7 +378,7 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
         borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
       }]}>
         <LinearGradient
-          colors={['rgba(46, 111, 64,0.09)', 'rgba(46, 111, 64,0.03)', 'transparent']}
+          colors={[colors.primary + '17', colors.primary + '08', 'transparent']}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
@@ -451,7 +451,7 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
               {language === 'sw' ? 'Est. Thamani' : 'Est. Market Value'}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
-              <Text style={[styles.cropValueStatBig, { color: '#2E6F40' }]}>
+              <Text style={[styles.cropValueStatBig, { color: colors.primary }]}>
                 {(estValueTZS / 1000000).toFixed(2)}M
               </Text>
             </View>
@@ -489,10 +489,10 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
 
         {/* Daily tip strip */}
         <View style={[styles.cropValueTipRow, {
-          backgroundColor: isDark ? 'rgba(46, 111, 64,0.05)' : 'rgba(46, 111, 64,0.04)',
-          borderColor: 'rgba(46, 111, 64,0.13)',
+          backgroundColor: isDark ? colors.primary + '0D' : colors.primary + '0A',
+          borderColor: colors.primary + '21',
         }]}>
-          <Lightbulb size={12} color="#2E6F40" />
+          <Lightbulb size={12} color={colors.primary} />
           <Text style={[styles.cropValueTipText, { color: colors.textMute }]} numberOfLines={2}>
             {stageTip}
           </Text>
@@ -502,11 +502,11 @@ const CropValueCard = ({ colors, isDark, language }: any) => {
         <View style={styles.cropValueFooter}>
           <TouchableOpacity
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); routerInner.push('/crop-planning' as any); }}
-            style={[styles.cropValueCtaBtn, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.12)' : colors.primaryLight, borderColor: 'rgba(46, 111, 64,0.25)' }]}
+            style={[styles.cropValueCtaBtn, { backgroundColor: isDark ? colors.primary + '1F' : colors.primaryLight, borderColor: colors.primary + '40' }]}
             accessibilityRole="button"
             accessibilityLabel={language === 'sw' ? 'Fungua Mpango wa Mazao' : 'Open Crop Plan'}
           >
-            <Leaf size={12} color="#2E6F40" />
+            <Leaf size={12} color={colors.primary} />
             <Text style={styles.cropValueCtaText}>
               {language === 'sw' ? 'Mpango wa Mazao' : 'Crop Plan'}
             </Text>
@@ -552,15 +552,15 @@ const DailyOrganizerStrip = ({ colors, isDark, language }: any) => {
   const catIcon = (cat: string) => {
     switch (cat) {
       case 'irrigation': return <Droplets size={13} color="#3b82f6" />;
-      case 'planting':   return <Leaf size={13} color="#2E6F40" />;
+      case 'planting':   return <Leaf size={13} color={colors.primary} />;
       case 'harvest':    return <Sparkles size={13} color="#f59e0b" />;
       case 'scouting':   return <Microscope size={13} color="#a78bfa" />;
-      case 'finance':    return <BarChart3 size={13} color="#2E6F40" />;
+      case 'finance':    return <BarChart3 size={13} color={colors.primary} />;
       default:           return <Target size={13} color={colors.textMute} />;
     }
   };
   const priorityColor = (p: string) => ({
-    critical: '#ef4444', high: '#f59e0b', medium: '#2E6F40', low: colors.textMute
+    critical: '#ef4444', high: '#f59e0b', medium: colors.primary, low: colors.textMute
   }[p] ?? colors.textMute);
 
   const formatDue = (dueDate?: string) => {
@@ -579,7 +579,7 @@ const DailyOrganizerStrip = ({ colors, isDark, language }: any) => {
         borderColor: isDark ? 'rgba(255,255,255,0.06)' : colors.border,
       }]}>
         <LinearGradient
-          colors={['rgba(46, 111, 64,0.06)', 'transparent']}
+          colors={[colors.primary + '0F', 'transparent']}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
@@ -595,8 +595,8 @@ const DailyOrganizerStrip = ({ colors, isDark, language }: any) => {
               {new Date().toLocaleDateString(language === 'sw' ? 'sw-TZ' : 'en-TZ', { weekday: 'long', day: 'numeric', month: 'short' })}
             </Text>
           </View>
-          <View style={[styles.organizerBadge, { backgroundColor: pendingTotal > 0 ? 'rgba(239,68,68,0.12)' : 'rgba(46, 111, 64,0.1)', borderColor: pendingTotal > 0 ? 'rgba(239,68,68,0.25)' : 'rgba(46, 111, 64,0.2)' }]}>
-            <Text style={[styles.organizerBadgeText, { color: pendingTotal > 0 ? '#ef4444' : '#2E6F40' }]}>
+          <View style={[styles.organizerBadge, { backgroundColor: pendingTotal > 0 ? 'rgba(239,68,68,0.12)' : colors.primary + '1A', borderColor: pendingTotal > 0 ? 'rgba(239,68,68,0.25)' : colors.primary + '33' }]}>
+            <Text style={[styles.organizerBadgeText, { color: pendingTotal > 0 ? '#ef4444' : colors.primary }]}>
               {pendingTotal} {language === 'sw' ? 'zingooja' : 'pending'}
             </Text>
           </View>
@@ -605,7 +605,7 @@ const DailyOrganizerStrip = ({ colors, isDark, language }: any) => {
         {/* Task rows */}
         {upcoming.length === 0 ? (
           <View style={styles.organizerEmpty}>
-            <Check size={16} color="#2E6F40" />
+            <Check size={16} color={colors.primary} />
             <Text style={[styles.organizerEmptyText, { color: colors.textMute }]}>
               {language === 'sw' ? 'Hakuna kazi leo — imara sana!' : 'No tasks due — all clear!'}
             </Text>
@@ -651,13 +651,13 @@ const DailyOrganizerStrip = ({ colors, isDark, language }: any) => {
         {/* Footer CTA */}
         <TouchableOpacity
           onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); routerInner.push('/tasks' as any); }}
-          style={[styles.organizerFooterBtn, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.1)' : colors.primaryLight }]}
+          style={[styles.organizerFooterBtn, { backgroundColor: isDark ? colors.primary + '1A' : colors.primaryLight }]}
         >
-          <LayoutGrid size={12} color="#2E6F40" />
+          <LayoutGrid size={12} color={colors.primary} />
           <Text style={styles.organizerFooterText}>
             {language === 'sw' ? 'Angalia Ratiba Yote' : 'View Full Schedule'}
           </Text>
-          <ArrowRight size={12} color="#2E6F40" />
+          <ArrowRight size={12} color={colors.primary} />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -735,7 +735,7 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
         <Svg width={chartW} height={chartH}>
           <Defs>
             <SvgLinearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0%" stopColor="#2E6F40" stopOpacity="1" />
+              <Stop offset="0%" stopColor={colors.primary} stopOpacity="1" />
               <Stop offset="100%" stopColor="#0a3d18" stopOpacity="0.7" />
             </SvgLinearGradient>
           </Defs>
@@ -752,7 +752,7 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
                   width={barW}
                   height={barH}
                   rx={4}
-                  fill={isHighlighted ? '#2E6F40' : 'url(#barGrad)'}
+                  fill={isHighlighted ? colors.primary : 'url(#barGrad)'}
                   opacity={isHighlighted ? 1 : 0.6}
                 />
                 {isHighlighted && (
@@ -760,7 +760,7 @@ const GrowthChart = ({ colors, isDark, language }: any) => {
                     x={x + barW / 2}
                     y={y - 5}
                     fontSize={12}
-                    fill="#2E6F40"
+                    fill={colors.primary}
                     textAnchor="middle"
                     fontWeight="bold"
                   >
@@ -1473,9 +1473,9 @@ export default function HomeScreen() {
   ];
 
   const quickActions = useMemo(() => [
-    { id: 'scan',         label: language === 'sw' ? 'Uchunguzi' : 'Scan',         icon: <Camera    size={22} color="#fff" />, color: '#2E6F40', desc: language === 'sw' ? 'Chunguza Ugonjwa'    : 'AI Crop Scan'       },
+    { id: 'scan',         label: language === 'sw' ? 'Uchunguzi' : 'Scan',         icon: <Camera    size={22} color="#fff" />, color: colors.primary, desc: language === 'sw' ? 'Chunguza Ugonjwa'    : 'AI Crop Scan'       },
     { id: 'calendar',     label: language === 'sw' ? 'Kalenda' : 'Calendar',        icon: <Calendar  size={22} color="#fff" />, color: '#3A8D52', desc: language === 'sw' ? 'Ratiba ya Shamba'    : 'Farm Schedule'      },
-    { id: 'tasks',        label: language === 'sw' ? 'Kazi' : 'Tasks',              icon: <LayoutGrid size={22} color="#fff" />, color: '#2E6F40', desc: language === 'sw' ? 'Kazi za Shamba'     : 'Farm Tasks'         },
+    { id: 'tasks',        label: language === 'sw' ? 'Kazi' : 'Tasks',              icon: <LayoutGrid size={22} color="#fff" />, color: colors.primary, desc: language === 'sw' ? 'Kazi za Shamba'     : 'Farm Tasks'         },
     { id: 'market',       label: language === 'sw' ? 'Soko' : 'Market',             icon: <TrendingUp size={22} color="#fff" />, color: '#256035', desc: language === 'sw' ? 'Bei za Mazao'       : 'Market Prices'      },
     { id: 'crop-planning',label: language === 'sw' ? 'Upangaji' : 'Planning',       icon: <Leaf      size={22} color="#fff" />, color: '#1C4A29', desc: language === 'sw' ? 'Upangaji wa Mazao'  : 'AI Crop Planning'   },
     { id: 'contracts',    label: language === 'sw' ? 'Mikataba' : 'Contracts',      icon: <BarChart3 size={22} color="#fff" />, color: '#13351D', desc: language === 'sw' ? 'Kilimo cha Mkataba'  : 'Contract Farming'   },
@@ -1688,9 +1688,9 @@ export default function HomeScreen() {
             style={StyleSheet.absoluteFill}
           />
           <Svg width={200} height={200} style={{ position: 'absolute', top: -20, right: -20, opacity: 0.09 }}>
-            <Circle cx={180} cy={20} r={60} stroke="#2E6F40" strokeWidth={1} fill="none" />
-            <Circle cx={180} cy={20} r={92} stroke="#2E6F40" strokeWidth={0.75} fill="none" />
-            <Circle cx={180} cy={20} r={124} stroke="#2E6F40" strokeWidth={0.5} fill="none" />
+            <Circle cx={180} cy={20} r={60} stroke={colors.primary} strokeWidth={1} fill="none" />
+            <Circle cx={180} cy={20} r={92} stroke={colors.primary} strokeWidth={0.75} fill="none" />
+            <Circle cx={180} cy={20} r={124} stroke={colors.primary} strokeWidth={0.5} fill="none" />
           </Svg>
           
           {/* Crop Overlay Visual Telemetry Markers */}
@@ -1724,7 +1724,7 @@ export default function HomeScreen() {
                 <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
                   <View style={{ width: 56, height: 56, alignItems: 'center', justifyContent: 'center' }}>
                     <Svg width={56} height={56} style={{ position: 'absolute' }}>
-                      <Circle cx={28} cy={28} r={26} stroke="#2E6F40" strokeWidth={1.5} fill="none" strokeDasharray="9 5" strokeLinecap="round" />
+                      <Circle cx={28} cy={28} r={26} stroke={colors.primary} strokeWidth={1.5} fill="none" strokeDasharray="9 5" strokeLinecap="round" />
                     </Svg>
                     {agroId?.avatarUrl ? (
                       <Image source={{ uri: agroId.avatarUrl }} style={{ width: 44, height: 44, borderRadius: 22 }} />
@@ -1745,7 +1745,7 @@ export default function HomeScreen() {
                     {agroId?.name ? agroId.name.split(' ')[0] : (language === 'sw' ? 'Mkulima' : 'Farmer')}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 3 }}>
-                    <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#2E6F40' }} />
+                    <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.primary }} />
                     <Text style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter_700Bold', letterSpacing: 0.9 }}>
                       {((agroId?.role as string) || 'MKULIMA').replace(/_/g, ' ').toUpperCase()}
                     </Text>
@@ -1829,7 +1829,7 @@ export default function HomeScreen() {
                   styles.noCropCard,
                   {
                     borderColor: colors.primary + '30',
-                    backgroundColor: isDark ? 'rgba(46, 111, 64, 0.25)' : 'rgba(46, 111, 64, 0.05)',
+                    backgroundColor: isDark ? colors.primary + '40' : colors.primary + '0D',
                   }
                 ]}
               >
@@ -1885,7 +1885,7 @@ export default function HomeScreen() {
                     <View style={{ flexDirection: 'row', gap: 3, marginBottom: 5 }}>
                       {Array.from({ length: 12 }).map((_, i) => {
                         const filled = i < Math.round((cropMeta.currentDay / cropMeta.harvestDays) * 12);
-                        return <View key={i} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: filled ? '#2E6F40' : 'rgba(255,255,255,0.15)' }} />;
+                        return <View key={i} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: filled ? colors.primary : 'rgba(255,255,255,0.15)' }} />;
                       })}
                     </View>
                     <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 9, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.3 }}>
@@ -1894,8 +1894,8 @@ export default function HomeScreen() {
                   </View>
 
                   <View style={{ gap: 6 }}>
-                    <View style={{ backgroundColor: 'rgba(46, 111, 64,0.18)', borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.3)', borderRadius: 12, paddingHorizontal: 11, paddingVertical: 6, alignItems: 'center' }}>
-                      <Text style={{ color: '#2E6F40', fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 21 }}>
+                    <View style={{ backgroundColor: colors.primary + '2E', borderWidth: 1, borderColor: colors.primary + '4D', borderRadius: 12, paddingHorizontal: 11, paddingVertical: 6, alignItems: 'center' }}>
+                      <Text style={{ color: colors.primary, fontSize: 18, fontFamily: 'InstrumentSerif_400Regular', lineHeight: 21 }}>
                         {Math.round((cropMeta.currentDay / cropMeta.harvestDays) * 100)}%
                       </Text>
                       <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 7, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
@@ -2316,7 +2316,7 @@ export default function HomeScreen() {
                     <View style={styles.weeklyHeroBubble2} />
                     <View style={styles.weeklyHeroBadgeRow}>
                       <View style={styles.weeklyHeroAiBadge}>
-                        <Sparkles size={10} color="#2E6F40" />
+                        <Sparkles size={10} color={colors.primary} />
                         <Text style={styles.weeklyHeroAiBadgeText}>AI ENGINE V4.5</Text>
                       </View>
                       <View style={styles.weeklyHeroLivePill}>
@@ -2333,7 +2333,7 @@ export default function HomeScreen() {
                         <Text style={styles.weeklyHeroCtaText}>
                           {language === 'sw' ? 'Angalia' : 'Explore'}
                         </Text>
-                        <ArrowUpRight size={12} color="#2E6F40" />
+                        <ArrowUpRight size={12} color={colors.primary} />
                       </View>
                     </View>
                   </View>

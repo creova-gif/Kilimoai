@@ -887,7 +887,7 @@ function DoneStep({ t, name, role, lang }: any) {
 
       {/* ID card preview */}
       <LinearGradient
-        colors={isDark ? ['rgba(46, 111, 64, 0.12)', 'rgba(46, 111, 64, 0.03)'] : ['#F0FAF2', '#FFFFFF']}
+        colors={isDark ? [colors.primary + '1F', colors.primary + '08'] : ['#F0FAF2', '#FFFFFF']}
         style={[s.idCard, { borderColor: colors.border }]}
       >
         <View style={s.idRow}>

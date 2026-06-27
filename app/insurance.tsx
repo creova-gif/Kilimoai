@@ -352,7 +352,7 @@ export default function InsuranceScreen() {
               {enrollStep === 1 && (
                 <View style={{ gap: 14 }}>
                   <View style={s.prefillBanner}>
-                    <Sparkles size={14} color="#2E6F40" />
+                    <Sparkles size={14} color={colors.primary} />
                     <Text style={s.prefillBannerText}>
                       {language === 'sw' 
                         ? 'Habari zimejazwa moja kwa moja kutoka kwenye Agro ID yako.' 
@@ -494,7 +494,7 @@ export default function InsuranceScreen() {
                     </View>
                     <View style={s.pnlRow}>
                       <Text style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.text }}>Cooperative Subsidy (30%):</Text>
-                      <Text style={{ fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: '#2E6F40' }}>
+                      <Text style={{ fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: colors.primary }}>
                         - TZS {fmt(Math.round((selectedEnrollPolicy?.premiumTZS ?? 0) * 0.3))}
                       </Text>
                     </View>
@@ -757,7 +757,7 @@ export default function InsuranceScreen() {
                       <View style={[s.photoPreviewContainer, { borderColor: colors.border }]}>
                         <Image source={{ uri: claimPhoto }} style={s.photoPreview} />
                         <View style={s.photoSuccessOverlay}>
-                          <CheckCircle2 size={24} color="#2E6F40" />
+                          <CheckCircle2 size={24} color={colors.primary} />
                         </View>
                       </View>
                       
@@ -944,7 +944,7 @@ function Spec({ label, value, highlight }: any) {
   return (
     <View style={{ flex: 1 }}>
       <Text style={[s.specLabel, { color: colors.textMute }]}>{label.toUpperCase()}</Text>
-      <Text style={[s.specValue, { color: highlight ? '#2E6F40' : colors.text }]} numberOfLines={1}>{value}</Text>
+      <Text style={[s.specValue, { color: highlight ? colors.primary : colors.text }]} numberOfLines={1}>{value}</Text>
     </View>
   );
 }

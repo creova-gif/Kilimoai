@@ -446,7 +446,7 @@ function CropCard({ crop, index, onPress }: { crop: any; index: number; onPress:
       <TouchableOpacity onPress={onPress} activeOpacity={0.88} style={{ width: SW * 0.44 }}>
         <View style={[cc.wrap, {
           backgroundColor: colors.card,
-          borderColor: isHighProfit ? 'rgba(46, 111, 64,0.25)' : colors.border,
+          borderColor: isHighProfit ? colors.primary + '40' : colors.border,
           borderWidth: isHighProfit ? 1.5 : 1,
         }]}>
           {/* Image */}

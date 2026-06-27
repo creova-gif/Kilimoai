@@ -764,7 +764,7 @@ export default function MarketScreen() {
                         Order: #{ord.id}
                       </Text>
                       <View style={{ backgroundColor: ord.status === 'Delivered' ? '#2E6F4020' : '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
-                        <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? '#2E6F40' : '#f59e0b' }}>
+                        <Text style={{ fontSize: 12, fontFamily: 'Inter_700Bold', color: ord.status === 'Delivered' ? colors.primary : '#f59e0b' }}>
                           {ord.status}
                         </Text>
                       </View>
@@ -1083,7 +1083,7 @@ export default function MarketScreen() {
 
                 {/* Mobile Money Integration Note */}
                 <View style={styles.mobiMoneyNote}>
-                  <CheckCircle2 size={12} color="#2E6F40" />
+                  <CheckCircle2 size={12} color={colors.primary} />
                   <Text style={styles.mobiMoneyText}>
                     {language === 'sw'
                       ? 'Lipa salama kupitia M-Pesa / TigoPesa'

@@ -221,7 +221,7 @@ export default function AgroIdScreen() {
             </Text>
 
             {/* Credit Score — transparent, ledger-derived */}
-            <View style={[styles.creditCard, { backgroundColor: isDark ? 'rgba(46,111,64,0.08)' : 'rgba(46,111,64,0.05)', borderColor: colors.primary + '33' }]}>
+            <View style={[styles.creditCard, { backgroundColor: isDark ? colors.primary + '14' : colors.primary + '0D', borderColor: colors.primary + '33' }]}>
               <View style={styles.creditTop}>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.creditLabel, { color: colors.textMute }]}>
@@ -337,7 +337,7 @@ export default function AgroIdScreen() {
             <View style={styles.section}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <Text style={[styles.sectionHeader, { color: colors.textMute, marginBottom: 0 }]}>TRACK RECORDS</Text>
-                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: '#2E6F40' }}>
+                <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: colors.primary }}>
                   {TRACK_RECORDS.filter(r => r.completed).length}/{TRACK_RECORDS.length} Done
                 </Text>
               </View>
@@ -347,15 +347,15 @@ export default function AgroIdScreen() {
                   const nextIdx = TRACK_RECORDS.findIndex(r => !r.completed);
                   const isCompleted = item.completed;
                   const isNext = !item.completed && nextIdx === idx;
-                  const accentColor = isCompleted ? '#2E6F40' : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.1)' : '#c4d0c0');
+                  const accentColor = isCompleted ? colors.primary : isNext ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.1)' : '#c4d0c0');
                   return (
                     <View key={idx} style={[styles.trackCard2, {
                       backgroundColor: isCompleted
-                        ? (isDark ? 'rgba(46, 111, 64,0.07)' : 'rgba(46, 111, 64,0.05)')
+                        ? (isDark ? colors.primary + '12' : colors.primary + '0D')
                         : isNext
                         ? (isDark ? 'rgba(245,158,11,0.07)' : 'rgba(245,158,11,0.05)')
                         : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
-                      borderColor: isCompleted ? 'rgba(46, 111, 64,0.22)' : isNext ? 'rgba(245,158,11,0.28)' : colors.border,
+                      borderColor: isCompleted ? colors.primary + '38' : isNext ? 'rgba(245,158,11,0.28)' : colors.border,
                     }]}>
                       {/* Left accent bar */}
                       <View style={[styles.trackAccentBar, { backgroundColor: accentColor }]} />
@@ -365,15 +365,15 @@ export default function AgroIdScreen() {
                         {/* Top row: status circle + date */}
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
                           <View style={[styles.trackStatusCircle, {
-                            backgroundColor: isCompleted ? 'rgba(46, 111, 64,0.15)' : isNext ? 'rgba(245,158,11,0.15)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
+                            backgroundColor: isCompleted ? colors.primary + '26' : isNext ? 'rgba(245,158,11,0.15)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
                           }]}>
                             {isCompleted
-                              ? <Check size={10} color="#2E6F40" strokeWidth={3} />
+                              ? <Check size={10} color={colors.primary} strokeWidth={3} />
                               : isNext
                               ? <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#f59e0b' }} />
                               : <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : '#c4d0c0' }} />}
                           </View>
-                          <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: isCompleted ? '#2E6F40' : isNext ? '#f59e0b' : colors.textMute }}>
+                          <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: isCompleted ? colors.primary : isNext ? '#f59e0b' : colors.textMute }}>
                             {item.date}
                           </Text>
                         </View>
@@ -441,8 +441,8 @@ export default function AgroIdScreen() {
                   setQrModalVisible(true);
                 }}
               >
-                <QrCode size={18} color={isDark ? '#FFFFFF' : '#2E6F40'} />
-                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : '#2E6F40' }]}>Download QR</Text>
+                <QrCode size={18} color={isDark ? '#FFFFFF' : colors.primary} />
+                <Text style={[styles.downloadText, { color: isDark ? '#FFFFFF' : colors.primary }]}>Download QR</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 

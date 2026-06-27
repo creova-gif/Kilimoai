@@ -290,7 +290,7 @@ export default function AIAdminScreen() {
                     {
                       borderColor: isActive ? colors.primary : colors.border,
                       backgroundColor: isActive 
-                        ? (isDark ? 'rgba(46, 111, 64,0.2)' : 'rgba(46, 111, 64,0.05)')
+                        ? (isDark ? colors.primary + '33' : colors.primary + '0D')
                         : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)')
                     }
                   ]}

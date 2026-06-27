@@ -230,7 +230,7 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
 
   const vacDays = a.nextVaccineDue ? daysUntil(a.nextVaccineDue) : null;
   const vacColor = vacDays !== null
-    ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : '#2E6F40')
+    ? (vacDays < 0 ? '#ef4444' : vacDays < 14 ? '#f59e0b' : colors.primary)
     : colors.textMute;
   // Urgency fill: 0 = far away, 1 = overdue
   const vacUrgency = vacDays !== null
@@ -380,9 +380,9 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
             style={[ac.expandedBox, { borderTopColor: colors.border, backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }]}
           >
             {/* RIFT HerdTag System Overlay Info */}
-            <View style={{ marginBottom: 12, padding: 10, backgroundColor: 'rgba(46, 111, 64, 0.05)', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(46, 111, 64,0.2)' }}>
+            <View style={{ marginBottom: 12, padding: 10, backgroundColor: colors.primary + '0D', borderRadius: 10, borderWidth: 1, borderColor: colors.primary + '33' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                <Cpu size={14} color="#2E6F40" />
+                <Cpu size={14} color={colors.primary} />
                 <Text style={{ fontSize: 11, fontFamily: 'Inter_800ExtraBold', color: colors.text }}>RIFT HerdTag LoRa ear tag</Text>
               </View>
               <Detail label="Serial Number" value={tagSerialNumber} />
@@ -405,7 +405,7 @@ function AnimalCard({ a, idx, onUpdateHealth, onDelete }: {
               
               {/* Visual chart overlay */}
               <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, marginTop: 10, letterSpacing: 0.5 }}>RUMINATION PATTERN (PAST 6 HOURS)</Text>
-              <VitalTrendChart data={a.healthStatus === 'sick' ? [45, 43, 40, 42, 41, 42] : [62, 65, 60, 61, 63, 64]} color="#2E6F40" />
+              <VitalTrendChart data={a.healthStatus === 'sick' ? [45, 43, 40, 42, 41, 42] : [62, 65, 60, 61, 63, 64]} color={colors.primary} />
               
               <Text style={{ fontSize: 9, fontFamily: 'Inter_800ExtraBold', color: colors.textMute, marginTop: 6, letterSpacing: 0.5 }}>HEAT STRESS PROFILE (BODY TEMP TREND)</Text>
               <VitalTrendChart data={a.healthStatus === 'sick' ? [38.6, 38.9, 39.2, 39.7, 40.1, 40.2] : [38.5, 38.6, 38.5, 38.6, 38.7, 38.6]} color="#ef4444" />
@@ -473,7 +473,7 @@ export default function LivestockScreen() {
           <View style={{ paddingHorizontal: 24, gap: 12 }}>
             <Animated.View entering={FadeInDown}>
               <GlassCard style={s.summaryCard}>
-                <SummaryPill count={healthy}   label="Wazima"     color="#2E6F40" />
+                <SummaryPill count={healthy}   label="Wazima"     color={colors.primary} />
                 <SummaryPill count={attention} label="Tahadhari"  color="#f59e0b" />
                 <SummaryPill count={sick}      label="Wagonjwa"   color="#ef4444" />
                 {dueSoon.length > 0 && <SummaryPill count={dueSoon.length} label="Chanjo Hivi Karibuni" color="#3b82f6" />}
@@ -615,14 +615,14 @@ function RIFTHerdTagSection({ animals }: { animals: LivestockAnimal[] }) {
       <View style={{ paddingHorizontal: 24, gap: 10 }}>
 
         {/* Feature pills */}
-        <View style={[rt.featureCard, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.06)' : 'rgba(46, 111, 64,0.04)', borderColor: '#2E6F4030' }]}>
+        <View style={[rt.featureCard, { backgroundColor: isDark ? colors.primary + '0F' : colors.primary + '0A', borderColor: '#2E6F4030' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <View style={[rt.tagIconBg, { backgroundColor: '#2E6F4018' }]}>
               <Text style={{ fontSize: 16 }}>🏷️</Text>
             </View>
             <View>
               <Text style={[rt.tagTitle, { color: colors.text }]}>RIFT HerdTag™</Text>
-              <Text style={[rt.tagSub, { color: '#2E6F40' }]}>Smart Ear Tag · 4G + BLE + GPS</Text>
+              <Text style={[rt.tagSub, { color: colors.primary }]}>Smart Ear Tag · 4G + BLE + GPS</Text>
             </View>
           </View>
           <View style={rt.featureGrid}>
@@ -644,20 +644,20 @@ function RIFTHerdTagSection({ animals }: { animals: LivestockAnimal[] }) {
           const sp = SPECIES.find((x) => x.key === a.species);
           return (
             <GlassCard key={a.id} style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[rt.animalIcon, { backgroundColor: (sp?.color ?? '#2E6F40') + '18' }]}>
-                <SpeciesIcon species={a.species} size={18} color={sp?.color ?? '#2E6F40'} />
+              <View style={[rt.animalIcon, { backgroundColor: (sp?.color ?? colors.primary) + '18' }]}>
+                <SpeciesIcon species={a.species} size={18} color={sp?.color ?? colors.primary} />
               </View>
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={[rt.animalTag, { color: colors.text }]}>{a.tag}{a.name ? ` · ${a.name}` : ''}</Text>
-                <Text style={[rt.animalSub, { color: isReg ? '#2E6F40' : colors.textMute }]}>
+                <Text style={[rt.animalSub, { color: isReg ? colors.primary : colors.textMute }]}>
                   {isReg ? '📡 RIFT tag imeunganishwa · Ikiangaliwa' : 'Haijaunganishwa na RIFT tag'}
                 </Text>
               </View>
               <TouchableOpacity
                 onPress={() => toggleTag(a.id)}
                 style={[rt.regBtn, {
-                  backgroundColor: isReg ? '#2E6F40' : colors.primary + '15',
-                  borderColor: isReg ? '#2E6F40' : colors.primary + '40',
+                  backgroundColor: isReg ? colors.primary : colors.primary + '15',
+                  borderColor: isReg ? colors.primary : colors.primary + '40',
                 }]}
               >
                 <Text style={[rt.regText, { color: isReg ? '#fff' : colors.primary }]}>

@@ -142,7 +142,7 @@ export default function FarmHub() {
   // Function to determine polygon color depending on active filter and zone values
   const getZoneColor = (zone: ZoneData) => {
     if (activeFilter === 'productivity') {
-      if (zone.productivity === 'High') return '#2E6F40';
+      if (zone.productivity === 'High') return colors.primary;
       if (zone.productivity === 'Average') return '#3D7A29';
       return '#F59E0B'; // Low
     }
@@ -154,7 +154,7 @@ export default function FarmHub() {
     }
     // Soil pH
     if (zone.ph < 6.0) return '#EA580C'; // Acidic (Orange)
-    if (zone.ph <= 7.0) return '#2E6F40'; // Optimal (Green)
+    if (zone.ph <= 7.0) return colors.primary; // Optimal (Green)
     return '#0891B2'; // Alkaline (Teal)
   };
 
@@ -290,10 +290,10 @@ export default function FarmHub() {
                     style={[
                       styles.filterPill,
                       { borderColor: colors.border, backgroundColor: 'rgba(255,255,255,0.9)' },
-                      active && { backgroundColor: '#2E6F40', borderColor: '#2E6F40' },
+                      active && { backgroundColor: colors.primary, borderColor: colors.primary },
                     ]}
                   >
-                    <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : '#2E6F40' }]}>
+                    <Text style={[styles.filterText, active && styles.filterTextActive, { color: active ? '#FCFBF7' : colors.primary }]}>
                       {label}
                     </Text>
                   </TouchableOpacity>
@@ -316,7 +316,7 @@ export default function FarmHub() {
                 backgroundColor: isDark ? '#0b150d' : '#ffffff',
                 borderColor: activeZone.alertType === 'warning'
                   ? 'rgba(245,158,11,0.35)'
-                  : isDark ? 'rgba(46, 111, 64,0.2)' : 'rgba(46, 111, 64,0.25)',
+                  : isDark ? colors.primary + '33' : colors.primary + '40',
                 padding: 0,
                 flexDirection: 'row',
                 overflow: 'hidden',
@@ -326,7 +326,7 @@ export default function FarmHub() {
                 <LinearGradient
                   colors={activeZone.alertType === 'warning'
                     ? ['#F59E0B', '#D97706']
-                    : ['#2E6F40', '#1C4A29']}
+                    : [colors.primary, '#1C4A29']}
                   style={{ width: 4, alignSelf: 'stretch' }}
                 />
 
@@ -340,11 +340,11 @@ export default function FarmHub() {
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                         <View style={{
                           width: 5, height: 5, borderRadius: 3,
-                          backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : '#2E6F40',
+                          backgroundColor: activeZone.alertType === 'warning' ? '#F59E0B' : colors.primary,
                         }} />
                         <Text style={{
                           fontSize: 8.5, fontFamily: 'Inter_700Bold',
-                          color: activeZone.alertType === 'warning' ? '#F59E0B' : '#2E6F40',
+                          color: activeZone.alertType === 'warning' ? '#F59E0B' : colors.primary,
                           letterSpacing: 1.6, textTransform: 'uppercase',
                         }}>
                           {language === 'sw' ? 'UCHAGUZI WA SASA' : 'ACTIVE SELECTION'}
@@ -377,7 +377,7 @@ export default function FarmHub() {
                       accessibilityRole="button"
                       accessibilityLabel="Recenter map"
                     >
-                      <Target size={15} color="#2E6F40" />
+                      <Target size={15} color={colors.primary} />
                     </TouchableOpacity>
                   </View>
 
@@ -392,21 +392,21 @@ export default function FarmHub() {
                         label: language === 'sw' ? 'UKUBWA' : 'SIZE',
                         value: activeZone.area,
                         pct: 0.45,
-                        barColor: '#2E6F40',
+                        barColor: colors.primary,
                       },
                       {
                         key: 'ndvi',
                         label: 'NDVI',
                         value: String(activeZone.ndvi),
                         pct: activeZone.ndvi,
-                        barColor: '#2E6F40',
+                        barColor: colors.primary,
                       },
                       {
                         key: 'ph',
                         label: 'PH',
                         value: String(activeZone.ph),
                         pct: activeZone.ph / 14,
-                        barColor: activeZone.ph < 6.0 ? '#EA580C' : activeZone.ph <= 7.0 ? '#2E6F40' : '#0891B2',
+                        barColor: activeZone.ph < 6.0 ? '#EA580C' : activeZone.ph <= 7.0 ? colors.primary : '#0891B2',
                       },
                       {
                         key: 'moisture',
@@ -460,7 +460,7 @@ export default function FarmHub() {
                   }}>
                     {/* Section header */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 10 }}>
-                      <Sparkles size={11} color="#2E6F40" />
+                      <Sparkles size={11} color={colors.primary} />
                       <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 10, color: colors.text, letterSpacing: 0.3 }}>
                         {language === 'sw' ? 'Uchambuzi wa Virutubisho' : 'Soil Nutrient Analysis'}
                       </Text>
@@ -517,7 +517,7 @@ export default function FarmHub() {
                         <View style={{ height: 3, backgroundColor: colors.border, borderRadius: 1.5 }}>
                           <LinearGradient
                             colors={
-                              n.data.color === '#2E6F40' ? ['#2E6F40', '#1C4A29']
+                              n.data.color === colors.primary ? [colors.primary, '#1C4A29']
                               : n.data.color === '#D97706' ? ['#FBBF24', '#D97706']
                               : ['#F87171', '#DC2626']
                             }

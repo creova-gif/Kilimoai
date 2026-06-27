@@ -412,9 +412,9 @@ export default function SankofaScreen() {
             <View style={styles.headerCenter}>
               <View style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center' }}>
                 <LinearGradient colors={['#112519', '#060e08']} style={styles.aiAvatar}>
-                  <BrainCircuit size={19} color="#2E6F40" />
+                  <BrainCircuit size={19} color={colors.primary} />
                 </LinearGradient>
-                <View style={[styles.avatarRing, { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : 'rgba(46, 111, 64,0.5)' }]} />
+                <View style={[styles.avatarRing, { borderColor: isOffline ? 'rgba(239,68,68,0.55)' : colors.primary + '80' }]} />
               </View>
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
@@ -424,7 +424,7 @@ export default function SankofaScreen() {
                   </View>
                 </View>
                 <View style={styles.statusRow}>
-                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : '#2E6F40' }]} />
+                  <View style={[styles.statusDot, { backgroundColor: isOffline ? '#ef4444' : colors.primary }]} />
                   <Text style={styles.statusLabel}>
                     {isOffline ? 'SMS Fallback' : 'Neural Link Active'}
                   </Text>
@@ -512,18 +512,18 @@ export default function SankofaScreen() {
                   ))}
                   <LinearGradient
                     colors={voiceState === 'LISTENING'
-                      ? ['#2E6F40', '#16a34a']
+                      ? [colors.primary, '#16a34a']
                       : voiceState === 'PROCESSING'
                       ? ['rgba(139,92,246,0.4)', 'rgba(139,92,246,0.1)']
-                      : ['rgba(46, 111, 64,0.2)', 'rgba(46, 111, 64,0.05)']
+                      : [colors.primary + '33', colors.primary + '0D']
                     }
                     style={styles.voiceOrbCore}
                   >
                     {voiceState === 'PROCESSING'
                       ? <BrainCircuit size={44} color="#a78bfa" />
                       : voiceState === 'SPEAKING'
-                      ? <Zap size={44} color="#2E6F40" />
-                      : <Mic size={44} color={voiceState === 'LISTENING' ? '#fff' : '#2E6F40'} />
+                      ? <Zap size={44} color={colors.primary} />
+                      : <Mic size={44} color={voiceState === 'LISTENING' ? '#fff' : colors.primary} />
                     }
                   </LinearGradient>
                 </TouchableOpacity>
@@ -553,12 +553,12 @@ export default function SankofaScreen() {
                     {SUGGESTED_PROMPTS.map((prompt, i) => (
                       <TouchableOpacity
                         key={i}
-                        style={[styles.suggestionBtn, { backgroundColor: isDark ? 'rgba(46, 111, 64,0.07)' : colors.card }]}
+                        style={[styles.suggestionBtn, { backgroundColor: isDark ? colors.primary + '12' : colors.card }]}
                         onPress={() => { setInputText(prompt); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
                         accessibilityRole="button"
                         accessibilityLabel={language === 'sw' ? `Uliza pendekezo: ${prompt}` : `Ask suggestion: ${prompt}`}
                       >
-                        <Sparkles size={11} color="#2E6F40" style={{ marginRight: 5 }} />
+                        <Sparkles size={11} color={colors.primary} style={{ marginRight: 5 }} />
                         <Text style={[styles.suggestionText, { color: colors.text }]}>{prompt}</Text>
                       </TouchableOpacity>
                     ))}
@@ -599,7 +599,7 @@ export default function SankofaScreen() {
                         <Mic size={19} color={isDark ? "rgba(255,255,255,0.4)" : colors.textMute} />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? '#2E6F40' : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
+                        style={[styles.sendBtn, { backgroundColor: (inputText.trim() && !isTyping) ? colors.primary : (isDark ? 'rgba(255,255,255,0.1)' : colors.border) }]}
                         onPress={handleSend}
                         disabled={!inputText.trim() || isTyping}
                         accessibilityRole="button"
@@ -623,9 +623,9 @@ export default function SankofaScreen() {
               <Text style={[styles.sheetTitle, { color: colors.text }]}>{language === 'sw' ? 'Zana za Sankofa' : 'Sankofa Tools'}</Text>
 
               {[
-                { icon: <FileSpreadsheet size={22} color="#2E6F40" />, title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet', sub: 'Excel / CSV → Q&A', onPress: handleExcelPick },
-                { icon: <Leaf size={22} color="#2E6F40" />, title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment', sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist', onPress: () => { setAttachmentMenuVisible(false); setDiseaseModalVisible(true); } },
-                { icon: <Camera size={22} color="#2E6F40" />, title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner', sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves', onPress: () => { setAttachmentMenuVisible(false); router.push('/scan' as any); } },
+                { icon: <FileSpreadsheet size={22} color={colors.primary} />, title: language === 'sw' ? 'Pakia Lahajedwali' : 'Upload Spreadsheet', sub: 'Excel / CSV → Q&A', onPress: handleExcelPick },
+                { icon: <Leaf size={22} color={colors.primary} />, title: language === 'sw' ? 'Tathmini ya Mazao' : 'Crop Assessment', sub: language === 'sw' ? 'Kamera / dalili' : 'Camera / checklist', onPress: () => { setAttachmentMenuVisible(false); setDiseaseModalVisible(true); } },
+                { icon: <Camera size={22} color={colors.primary} />, title: language === 'sw' ? 'Kamera ya AI' : 'AI Vision Scanner', sub: language === 'sw' ? 'Changanua majani' : 'Scan plant leaves', onPress: () => { setAttachmentMenuVisible(false); router.push('/scan' as any); } },
               ].map((item, i) => (
                 <TouchableOpacity key={i} style={[styles.sheetOption, i < 2 && { borderBottomColor: colors.border }]} onPress={item.onPress}>
                   <View style={styles.sheetIconWrap}>{item.icon}</View>
@@ -649,7 +649,7 @@ export default function SankofaScreen() {
         {isParsingExcel && (
           <View style={styles.loaderOverlay}>
             <View style={[styles.loaderCard, { backgroundColor: isDark ? '#111a10' : colors.card }]}>
-              <ActivityIndicator size="large" color="#2E6F40" />
+              <ActivityIndicator size="large" color={colors.primary} />
               <Text style={[styles.loaderText, { color: colors.text }]}>{language === 'sw' ? 'Inasoma lahajedwali…' : 'Parsing spreadsheet…'}</Text>
             </View>
           </View>
@@ -694,19 +694,19 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
     <Animated.View entering={FadeInDown} style={[styles.msgRow, isAi ? styles.msgRowAi : styles.msgRowUser]}>
       {isAi && (
         <LinearGradient colors={['#112519', '#060e08']} style={styles.avatar}>
-          <BrainCircuit size={14} color="#2E6F40" />
+          <BrainCircuit size={14} color={colors.primary} />
         </LinearGradient>
       )}
 
       {isAi ? (
         <View style={styles.aiBubble}>
           <LinearGradient
-            colors={['rgba(46, 111, 64,0.13)', 'transparent']}
+            colors={[colors.primary + '21', 'transparent']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             style={styles.aiBubbleShimmer}
           />
           <View style={styles.aiBubbleSourceRow}>
-            <BrainCircuit size={9} color="#2E6F40" />
+            <BrainCircuit size={9} color={colors.primary} />
             <Text style={styles.aiBubbleSourceText}>SANKOFA</Text>
           </View>
           <Text style={[styles.msgText, styles.aiText]}>{item.text}</Text>
@@ -716,7 +716,7 @@ function ChatMessage({ item, index, language, activeExcelData, setActiveExcelDat
         </View>
       ) : (
         <LinearGradient
-          colors={['#3A8D52', '#2E6F40']}
+          colors={['#3A8D52', colors.primary]}
           start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           style={[styles.bubble, styles.userBubble]}
         >
@@ -781,7 +781,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
     <Animated.View entering={FadeInDown} style={styles.excelCard}>
       <View style={styles.excelHeader}>
         <View style={styles.excelIconBox}>
-          <FileSpreadsheet size={20} color="#2E6F40" />
+          <FileSpreadsheet size={20} color={colors.primary} />
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <Text style={[styles.excelFileName, { color: colors.text }]} numberOfLines={1}>{data.fileName}</Text>
@@ -836,7 +836,7 @@ function ExcelPreviewCard({ data, onClear, onShortcut, language }: any) {
           { key: 'compare', label: language === 'sw' ? 'Linganisha' : 'Compare' },
         ].map((s) => (
           <TouchableOpacity key={s.key} style={styles.shortcutBtn} onPress={() => onShortcut(s.key)}>
-            <Sparkles size={11} color="#2E6F40" style={{ marginRight: 4 }} />
+            <Sparkles size={11} color={colors.primary} style={{ marginRight: 4 }} />
             <Text style={styles.shortcutText}>{s.label}</Text>
           </TouchableOpacity>
         ))}

@@ -56,10 +56,10 @@ function SummaryBanner({ items }: { items: Transaction[] }) {
   return (
     <View style={[bn.wrap, {
       backgroundColor: isDark ? 'rgba(9,20,11,0.97)' : colors.card,
-      borderColor: 'rgba(46, 111, 64,0.15)',
+      borderColor: colors.primary + '26',
     }]}>
       <LinearGradient
-        colors={['rgba(46, 111, 64,0.09)', 'transparent']}
+        colors={[colors.primary + '17', 'transparent']}
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
         style={bn.shimmer}
       />
@@ -67,11 +67,11 @@ function SummaryBanner({ items }: { items: Transaction[] }) {
       {/* Total in */}
       <View style={bn.col}>
         <View style={bn.iconBox}>
-          <TrendingDown size={13} color="#2E6F40" />
+          <TrendingDown size={13} color={colors.primary} />
         </View>
         <View>
           <Text style={bn.label}>MAPOKEZI</Text>
-          <Text style={[bn.val, { color: '#2E6F40' }]}>+{fmt(totalIn)}</Text>
+          <Text style={[bn.val, { color: colors.primary }]}>+{fmt(totalIn)}</Text>
         </View>
       </View>
 
@@ -114,7 +114,7 @@ function TxnCard({ item, index }: { item: Transaction; index: number }) {
 
   const isOut     = item.type === 'payout' || item.type === 'fee';
   const isFailed  = item.status === 'failed' || item.status === 'reversed';
-  const accent    = isFailed ? '#94a3b8' : isOut ? '#ef4444' : '#2E6F40';
+  const accent    = isFailed ? '#94a3b8' : isOut ? '#ef4444' : colors.primary;
   const statusClr = STATUS_COLORS[item.status] ?? '#94a3b8';
 
   const dateStr = new Date(item.createdAt).toLocaleDateString('sw-TZ', {
@@ -221,15 +221,15 @@ export default function TransactionsScreen() {
                   s.pill,
                   {
                     backgroundColor: active
-                      ? '#2E6F40'
+                      ? colors.primary
                       : (isDark ? 'rgba(255,255,255,0.04)' : colors.card),
                     borderColor: active
-                      ? '#2E6F40'
+                      ? colors.primary
                       : (isDark ? 'rgba(255,255,255,0.1)' : colors.border),
                   },
                 ]}
               >
-                <Text style={[s.pillSymbol, { color: active ? '#fff' : '#2E6F40' }]}>
+                <Text style={[s.pillSymbol, { color: active ? '#fff' : colors.primary }]}>
                   {f.symbol}
                 </Text>
                 <Text style={[s.pillText, { color: active ? '#fff' : colors.text }]}>

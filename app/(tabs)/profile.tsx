@@ -182,7 +182,7 @@ export default function ProfileScreen() {
               >
                 <BlurView intensity={isDark ? 30 : 70} tint={isDark ? "dark" : "light"} style={[styles.idCard, { borderColor: colors.border }]}>
                   <LinearGradient
-                    colors={isDark ? ['rgba(46, 111, 64, 0.15)', 'rgba(30, 41, 59, 0.4)'] : ['rgba(46, 111, 64, 0.1)', 'rgba(255, 255, 255, 0.8)']}
+                    colors={isDark ? [colors.primary + '26', 'rgba(30, 41, 59, 0.4)'] : [colors.primary + '1A', 'rgba(255, 255, 255, 0.8)']}
                     style={StyleSheet.absoluteFill}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}

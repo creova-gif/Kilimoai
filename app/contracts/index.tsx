@@ -93,7 +93,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
           <LinearGradient colors={['#2E6F4018','#2E6F4000']} style={cm.sheetHeaderGrad}>
             <View style={cm.sheetHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <LinearGradient colors={['#2E6F40','#0a3d18']} style={cm.iconCircle}>
+                <LinearGradient colors={[colors.primary,'#0a3d18']} style={cm.iconCircle}>
                   <Handshake size={18} color="#fff" />
                 </LinearGradient>
                 <View>
@@ -113,7 +113,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
             {contractValue > 0 && (
               <Animated.View entering={FadeInDown} style={[cm.valueBar, { backgroundColor: '#2E6F4015', borderColor: '#2E6F4030' }]}>
                 <Text style={[cm.valueBarLabel, { color: colors.textMute }]}>Thamani ya mkataba</Text>
-                <Text style={[cm.valueBarAmount, { color: '#2E6F40' }]}>TZS {fmt(contractValue)}</Text>
+                <Text style={[cm.valueBarAmount, { color: colors.primary }]}>TZS {fmt(contractValue)}</Text>
               </Animated.View>
             )}
 
@@ -123,12 +123,12 @@ function CreateContractModal({ visible, onClose, onCreate }: {
                 placeholderTextColor={colors.textMute} placeholder="e.g. Mahindi Hifadhi ya 2026..." />
             </View>
 
-            <LabelRow icon={<Wheat size={12} color="#2E6F40" />} label="ZAO" />
+            <LabelRow icon={<Wheat size={12} color={colors.primary} />} label="ZAO" />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {CROPS.map((c) => (
                 <TouchableOpacity key={c} onPress={() => { Haptics.selectionAsync(); setCrop(c); }}
-                  style={[cm.chip, { borderColor: crop === c ? '#2E6F40' : colors.border, backgroundColor: crop === c ? '#2E6F4020' : 'transparent' }]}>
-                  <Text style={[cm.chipText, { color: crop === c ? '#2E6F40' : colors.textMute }]}>{c}</Text>
+                  style={[cm.chip, { borderColor: crop === c ? colors.primary : colors.border, backgroundColor: crop === c ? '#2E6F4020' : 'transparent' }]}>
+                  <Text style={[cm.chipText, { color: crop === c ? colors.primary : colors.textMute }]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -143,8 +143,8 @@ function CreateContractModal({ visible, onClose, onCreate }: {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
               {REGIONS.map((r) => (
                 <TouchableOpacity key={r} onPress={() => { Haptics.selectionAsync(); setRegion(r); }}
-                  style={[cm.chip, { borderColor: region === r ? '#2E6F40' : colors.border, backgroundColor: region === r ? '#2E6F4020' : 'transparent' }]}>
-                  <Text style={[cm.chipText, { color: region === r ? '#2E6F40' : colors.textMute }]}>{r}</Text>
+                  style={[cm.chip, { borderColor: region === r ? colors.primary : colors.border, backgroundColor: region === r ? '#2E6F4020' : 'transparent' }]}>
+                  <Text style={[cm.chipText, { color: region === r ? colors.primary : colors.textMute }]}>{r}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -168,7 +168,7 @@ function CreateContractModal({ visible, onClose, onCreate }: {
 
             {/* CTA */}
             <TouchableOpacity onPress={handleCreate} activeOpacity={0.88} style={{ marginTop: 28 }}>
-              <LinearGradient colors={['#2E6F40','#0a3d18']} style={cm.createBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+              <LinearGradient colors={[colors.primary,'#0a3d18']} style={cm.createBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                 <Handshake size={18} color="#fff" />
                 <Text style={cm.createBtnText}>Tengeneza Mkataba</Text>
                 <ArrowUpRight size={16} color="#fff" />
@@ -187,7 +187,7 @@ function LabelRow({ icon, label, required }: { icon?: React.ReactNode; label: st
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 20, marginBottom: 8 }}>
       {icon}
       <Text style={[cm.fieldLabel, { color: colors.textMute }]}>{label}</Text>
-      {required && <Text style={{ color: '#2E6F40', fontSize: 10, fontFamily: 'Inter_700Bold' }}>*</Text>}
+      {required && <Text style={{ color: colors.primary, fontSize: 10, fontFamily: 'Inter_700Bold' }}>*</Text>}
     </View>
   );
 }
@@ -261,7 +261,7 @@ export default function ContractsScreen() {
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setShowModal(true); }}
                     activeOpacity={0.88}
                   >
-                    <LinearGradient colors={['#2E6F40','#0a3d18']} style={s.addBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                    <LinearGradient colors={[colors.primary,'#0a3d18']} style={s.addBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                       <Plus size={20} color="#fff" />
                     </LinearGradient>
                   </TouchableOpacity>
@@ -270,8 +270,8 @@ export default function ContractsScreen() {
                 {/* Portfolio value */}
                 {contracts.length > 0 && (
                   <Animated.View entering={FadeInDown.springify()} style={[s.portfolioCard, {
-                    backgroundColor: isDark ? 'rgba(46, 111, 64,0.08)' : 'rgba(46, 111, 64,0.06)',
-                    borderColor: isDark ? 'rgba(46, 111, 64,0.2)' : 'rgba(46, 111, 64,0.15)',
+                    backgroundColor: isDark ? colors.primary + '14' : colors.primary + '0F',
+                    borderColor: isDark ? colors.primary + '33' : colors.primary + '26',
                   }]}>
                     <View style={{ flex: 1 }}>
                       <Text style={[s.portfolioLabel, { color: colors.textMute }]}>Thamani ya Jumla</Text>
@@ -279,7 +279,7 @@ export default function ContractsScreen() {
                         TZS {fmt(portfolio)}
                       </Text>
                     </View>
-                    <TrendingUp size={22} color="#2E6F40" />
+                    <TrendingUp size={22} color={colors.primary} />
                   </Animated.View>
                 )}
 
@@ -287,7 +287,7 @@ export default function ContractsScreen() {
                 {contracts.length > 0 && (
                   <View style={s.statRow}>
                     <StatChip count={contracts.length} label="Yote"        color={colors.text}  />
-                    <StatChip count={active}           label="Inaendelea"  color="#2E6F40"       />
+                    <StatChip count={active}           label="Inaendelea"  color={colors.primary}       />
                     <StatChip count={pending}          label="Inakaguliwa" color="#f59e0b"       />
                     <StatChip count={draft}            label="Rasimu"      color={colors.textMute}/>
                   </View>
@@ -313,7 +313,7 @@ export default function ContractsScreen() {
                   style={[
                     s.filterPill,
                     isActive
-                      ? { backgroundColor: '#2E6F40', borderColor: '#2E6F40' }
+                      ? { backgroundColor: colors.primary, borderColor: colors.primary }
                       : { backgroundColor: 'transparent', borderColor: colors.border },
                   ]}
                 >
@@ -332,7 +332,7 @@ export default function ContractsScreen() {
           >
             {/* Section label */}
             <View style={s.secRow}>
-              <View style={[s.secAccent, { backgroundColor: '#2E6F40' }]} />
+              <View style={[s.secAccent, { backgroundColor: colors.primary }]} />
               <Text style={[s.secLabel, { color: colors.textMute }]}>
                 {filtered.length} MIKATABA
               </Text>
@@ -415,7 +415,7 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
 
           {/* Value + crop chip row */}
           <View style={s.cardMidRow}>
-            <Text style={[s.cardValue, { color: '#2E6F40' }]}>TZS {fmt(totalValue)}</Text>
+            <Text style={[s.cardValue, { color: colors.primary }]}>TZS {fmt(totalValue)}</Text>
             <View style={[s.cropPill, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Text style={[s.cropText, { color: colors.textMute }]}>{c.crop}</Text>
             </View>
@@ -442,7 +442,7 @@ function ContractCard({ c, onPress }: { c: Contract; onPress: () => void }) {
                   key={i}
                   style={[
                     s.segment,
-                    { flex: 1, backgroundColor: m.paid ? '#2E6F40' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0') },
+                    { flex: 1, backgroundColor: m.paid ? colors.primary : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0') },
                     i === 0 && { borderTopLeftRadius: 4, borderBottomLeftRadius: 4 },
                     i === c.milestones.length - 1 && { borderTopRightRadius: 4, borderBottomRightRadius: 4 },
                   ]}
